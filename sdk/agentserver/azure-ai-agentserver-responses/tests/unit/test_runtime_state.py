@@ -92,6 +92,44 @@ async def test_reserve_rejects_duplicate_live_id_only_within_user() -> None:
     assert await state.reserve(response_id, "user-B") is False
 
 
+@pytest.mark.asyncio
+async def test_deletion_reservation_blocks_admission_after_eviction_and_create_cleanup():
+    state = _RuntimeState()
+    record = _make_execution("shared", user_id_key="owner", status="completed")
+    assert await state.reserve("shared", "owner")
+    await state.add(record)
+    assert await state.begin_deletion("shared", "owner")
+    assert await state.try_evict("shared", "owner")
+    await state.release_reservation("shared", "owner")
+    assert not await state.reserve("shared", "owner")
+    assert not await state.begin_deletion("shared", "owner")
+    assert await state.reserve("shared", "other")
+    await state.end_deletion("shared", "owner")
+    assert await state.reserve("shared", "owner")
+
+
+@pytest.mark.asyncio
+async def test_deletion_cannot_enter_during_unpublished_create():
+    state = _RuntimeState()
+    assert await state.reserve("shared", "owner")
+    assert not await state.begin_deletion("shared", "owner")
+    await state.release_reservation("shared", "owner")
+    assert await state.begin_deletion("shared", "owner")
+    await state.end_deletion("shared", "owner")
+
+
+@pytest.mark.asyncio
+async def test_compare_delete_does_not_remove_a_replacement_record():
+    state = _RuntimeState()
+    old = _make_execution("shared", user_id_key="owner", status="completed")
+    replacement = _make_execution("shared", user_id_key="owner")
+    await state.add(old)
+    await state.add(replacement)
+    assert not await state.delete("shared", "owner", expected_record=old)
+    assert await state.get("shared", "owner") is replacement
+    assert not await state.is_deleted("shared", "owner")
+
+
 def test_anonymous_user_isolation_is_not_a_wildcard() -> None:
     assert _RuntimeState.check_user_isolation(None, None) is True
     assert _RuntimeState.check_user_isolation(None, "user-A") is False

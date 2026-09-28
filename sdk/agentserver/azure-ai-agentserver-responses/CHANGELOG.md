@@ -18,6 +18,8 @@
   duplicate admission, authorized replay, and deletion.
 - Return an error when replay cleanup fails during DELETE and retain ownership
   state so the owner can retry cleanup.
+- Reserve the caller-scoped response ID throughout DELETE cleanup so a new
+  POST cannot reuse the ID before stream, runtime, and provider cleanup finish.
 
 ### Breaking Changes
 

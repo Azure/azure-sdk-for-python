@@ -59,6 +59,7 @@ class _RuntimeState:
         self._pending_records: dict[_RuntimeKey, ResponseExecution] = {}
         self._deleted_response_ids: set[_RuntimeKey] = set()
         self._reservations: set[_RuntimeKey] = set()
+        self._deletions: set[_RuntimeKey] = set()
         self._draining = False
         self._lock = asyncio.Lock()
 
@@ -74,7 +75,12 @@ class _RuntimeState:
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
-            if key in self._records or key in self._pending_records or key in self._reservations:
+            if (
+                key in self._records
+                or key in self._pending_records
+                or key in self._reservations
+                or key in self._deletions
+            ):
                 return False
             self._reservations.add(key)
             return True
@@ -90,6 +96,37 @@ class _RuntimeState:
         """
         async with self._lock:
             self._reservations.discard(_runtime_key(response_id, user_id_key))
+
+    async def begin_deletion(self, response_id: str, user_id_key: str | None) -> bool:
+        """Block new creates while a caller deletes an existing response.
+
+        :param response_id: The response identifier to delete.
+        :type response_id: str
+        :param user_id_key: The caller's user partition.
+        :type user_id_key: str | None
+        :return: Whether deletion acquired the scoped lifecycle reservation.
+        :rtype: bool
+        """
+        key = _runtime_key(response_id, user_id_key)
+        async with self._lock:
+            if key in self._deletions:
+                return False
+            if key not in self._records and (key in self._reservations or key in self._pending_records):
+                return False
+            self._deletions.add(key)
+            return True
+
+    async def end_deletion(self, response_id: str, user_id_key: str | None) -> None:
+        """Release a deletion reservation without releasing a create reservation.
+
+        :param response_id: The response identifier being deleted.
+        :type response_id: str
+        :param user_id_key: The caller's user partition.
+        :type user_id_key: str | None
+        :rtype: None
+        """
+        async with self._lock:
+            self._deletions.discard(_runtime_key(response_id, user_id_key))
 
     async def add(self, record: ResponseExecution) -> None:
         """Add or replace an execution record in the store.
@@ -171,21 +208,30 @@ class _RuntimeState:
         async with self._lock:
             return _runtime_key(response_id, user_id_key) in self._deleted_response_ids
 
-    async def delete(self, response_id: str, user_id_key: str | None = None) -> bool:
+    async def delete(
+        self,
+        response_id: str,
+        user_id_key: str | None = None,
+        *,
+        expected_record: ResponseExecution | None = None,
+    ) -> bool:
         """Delete an execution record by response ID.
 
         :param response_id: The response ID to delete.
         :type response_id: str
         :param user_id_key: The user partition, or ``None`` for anonymous.
         :type user_id_key: str | None
+        :keyword expected_record: Only remove this exact record when supplied.
+        :paramtype expected_record: ResponseExecution | None
         :return: ``True`` if the record was found and deleted, ``False`` otherwise.
         :rtype: bool
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
-            record = self._records.pop(key, None)
-            if record is None:
+            record = self._records.get(key)
+            if record is None or (expected_record is not None and record is not expected_record):
                 return False
+            del self._records[key]
             self._deleted_response_ids.add(key)
             return True
 

@@ -1513,6 +1513,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return format_error
 
         _context = _extract_platform_context(request)
+        if not await self._runtime_state.begin_deletion(response_id, _context.user_id_key):
+            return _not_found(response_id, _hdrs)
+        try:
+            return await self._handle_reserved_delete(request, response_id, _context, _hdrs)
+        finally:
+            await self._runtime_state.end_deletion(response_id, _context.user_id_key)
+
+    async def _handle_reserved_delete(
+        self, request: Request, response_id: str, _context: PlatformContext, _hdrs: dict[str, str]
+    ) -> Response:
+        """Delete while holding the caller-scoped lifecycle reservation.
+
+        :param request: The incoming DELETE request.
+        :type request: Request
+        :param response_id: The response identifier to delete.
+        :type response_id: str
+        :param _context: The authenticated caller context.
+        :type _context: PlatformContext
+        :param _hdrs: Session response headers.
+        :type _hdrs: dict[str, str]
+        :return: Deletion confirmation or error.
+        :rtype: Response
+        """
         logger.info(
             "Deleting response %s, has_user_id=%s has_call_id=%s",
             response_id,
@@ -1585,8 +1608,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Stream delete failed for response_id=%s", response_id, exc_info=True)
             return _error_response(exc, _hdrs)
 
-        deleted = await self._runtime_state.delete(response_id, _context.user_id_key)
+        deleted = await self._runtime_state.delete(response_id, _context.user_id_key, expected_record=record)
         if not deleted:
+            if await self._runtime_state.get(response_id, _context.user_id_key) is not None:
+                return _invalid_request("Response execution changed. Retry deletion.", _hdrs)
             # Race: the background task's eager eviction (try_evict) removed
             # the record between our get() and delete() calls. Eviction for
             # terminal responses typically happens after a provider

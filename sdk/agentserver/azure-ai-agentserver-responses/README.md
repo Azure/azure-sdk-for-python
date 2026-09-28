@@ -63,6 +63,9 @@ response; it is not an idempotent retry of POST.
 With file-backed replay, Core 2.2.1 or later also discovers retained logs after
 restart for admission, authorized replay, and deletion. Missing logs are not
 created by lookups, and expired logs no longer reserve the response ID.
+DELETE keeps the same user-scoped ID reserved through stream, runtime, and
+provider cleanup. New POSTs cannot reuse it midway through deletion; other
+users' partitions remain independent.
 
 Storage providers must also enforce the supplied `PlatformContext` for response,
 item, and history operations. Runtime partitioning does not make a shared custom

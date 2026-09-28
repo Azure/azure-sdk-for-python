@@ -90,20 +90,18 @@ class TestDeleteEvictionRace:
         _original_try_evict = _RuntimeState.try_evict
         _original_delete = _RuntimeState.delete
 
-        async def _patched_try_evict(
-            self: _RuntimeState, response_id: str, user_id_key: str | None = None
-        ) -> bool:
+        async def _patched_try_evict(self: _RuntimeState, response_id: str, user_id_key: str | None = None) -> bool:
             if _suppress_eviction:
                 return False  # Keep record in memory for the race setup
             return await _original_try_evict(self, response_id, user_id_key)
 
         async def _racing_delete(
-            self: _RuntimeState, response_id: str, user_id_key: str | None = None
+            self: _RuntimeState, response_id: str, user_id_key: str | None = None, **kwargs
         ) -> bool:
             if _force_race:
                 # Simulate the bg task's try_evict completing right now
                 await _original_try_evict(self, response_id, user_id_key)
-            return await _original_delete(self, response_id, user_id_key)
+            return await _original_delete(self, response_id, user_id_key, **kwargs)
 
         monkeypatch.setattr(_RuntimeState, "try_evict", _patched_try_evict)
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
@@ -162,9 +160,7 @@ class TestDeleteEvictionRace:
         _original_rs_get = RS.get
         _eviction_detected = False
 
-        async def _detecting_get(
-            self_rs: Any, response_id: str, user_id_key: str | None = None
-        ) -> Any:
+        async def _detecting_get(self_rs: Any, response_id: str, user_id_key: str | None = None) -> Any:
             nonlocal _eviction_detected
             result = await _original_rs_get(self_rs, response_id, user_id_key)
             if result is None:
@@ -219,19 +215,17 @@ class TestDeleteEvictionRace:
         _original_try_evict = _RuntimeState.try_evict
         _original_delete = _RuntimeState.delete
 
-        async def _patched_try_evict(
-            self: _RuntimeState, response_id: str, user_id_key: str | None = None
-        ) -> bool:
+        async def _patched_try_evict(self: _RuntimeState, response_id: str, user_id_key: str | None = None) -> bool:
             if _suppress_eviction:
                 return False
             return await _original_try_evict(self, response_id, user_id_key)
 
         async def _racing_delete(
-            self: _RuntimeState, response_id: str, user_id_key: str | None = None
+            self: _RuntimeState, response_id: str, user_id_key: str | None = None, **kwargs
         ) -> bool:
             if _force_race:
                 await _original_try_evict(self, response_id, user_id_key)
-            return await _original_delete(self, response_id, user_id_key)
+            return await _original_delete(self, response_id, user_id_key, **kwargs)
 
         monkeypatch.setattr(_RuntimeState, "try_evict", _patched_try_evict)
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
