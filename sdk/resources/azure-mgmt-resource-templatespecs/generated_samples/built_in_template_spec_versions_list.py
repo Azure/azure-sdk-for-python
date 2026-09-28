@@ -16,7 +16,7 @@ from azure.mgmt.resource.templatespecs import TemplateSpecsClient
     pip install azure-identity
     pip install azure-mgmt-resource-templatespecs
 # USAGE
-    python template_specs_list_by_subscription.py
+    python built_in_template_spec_versions_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,14 +28,16 @@ from azure.mgmt.resource.templatespecs import TemplateSpecsClient
 def main():
     client = TemplateSpecsClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.template_specs.list_by_subscription()
+    response = client.template_spec_versions.list_built_ins(
+        template_spec_name="nameOfTheBuiltIn",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2022-02-01/examples/TemplateSpecsListBySubscription.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2022-02-01/examples/BuiltInTemplateSpecVersionsList.json
 if __name__ == "__main__":
     main()
