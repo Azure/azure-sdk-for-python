@@ -1306,15 +1306,23 @@ class Task(Generic[Input, Output]):
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
                 # pylint: disable=protected-access
-                ack_future = manager._register_steering_future(task_id)
-                await self._append_steering_input(
-                    manager,
-                    task_id=task_id,
-                    input_val=input,
-                    existing=existing,
-                    input_id=input_id,
-                    if_last_input_id=if_last_input_id,
-                )
+                # Keep drain from binding a future before its append is accepted.
+                async with manager._get_task_write_lock(task_id):
+                    ack_future = manager._register_steering_future(task_id)
+                    appended = False
+                    try:
+                        await self._append_steering_input(
+                            manager,
+                            task_id=task_id,
+                            input_val=input,
+                            existing=existing,
+                            input_id=input_id,
+                            if_last_input_id=if_last_input_id,
+                        )
+                        appended = True
+                    finally:
+                        if not appended:
+                            manager._unregister_steering_future(task_id, ack_future)
                 # Set cancel on in-memory context if task runs in this process
                 active = manager._active_tasks.get(task_id)
                 # pylint: enable=protected-access

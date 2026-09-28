@@ -633,6 +633,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._pending_steering_futures[task_id].append(future)
         return future
 
+    def _unregister_steering_future(self, task_id: str, future: asyncio.Future[Any]) -> None:
+        """Discard only the future owned by a failed steering append.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param future: The failed append's registered future.
+        :type future: asyncio.Future[Any]
+        """
+        pending = self._pending_steering_futures.get(task_id)
+        if pending is not None:
+            if future in pending:
+                pending.remove(future)
+            if not pending:
+                self._pending_steering_futures.pop(task_id, None)
+        future.cancel()
+
     async def _cancel_queued_steering_input(  # pylint: disable=unused-argument
         self,
         *,
