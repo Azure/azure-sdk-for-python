@@ -308,49 +308,6 @@ Explore the [samples][samples] to rerank text or JSON documents with API-key or
 Microsoft Entra authentication. Adapt the request's model, target paths, and
 scoring options to your application's documents and endpoint.
 
-## Development
-
-`tsp-location.yaml` records the generation source and pins the TypeSpec contract to
-`dafaf0e653d76726b8a480323908fee8395d4789`. Its service title is **Azure Data AI**
-and its namespace is `Azure.Data.AI`; the route, authentication header/token
-audience, request fields, and API version remain unchanged.
-This package adopts the default output of `@azure-tools/typespec-python` 0.63.8,
-generated from that contract. The emitter dependency and lock files under `eng/`
-pin the generation toolchain. Request/response model generation is enabled.
-
-The generated Python API uses `InferenceClient` in both `azure.data.ai` and
-`azure.data.ai.aio`. The TypeSpec explicitly selects this client name for Python
-and C#. The package lives at
-`sdk/dataai/azure-data-ai`, matching the spec's `sdk/dataai` service directory.
-
-The public surface includes `InferenceClient.semantic_rerank(request)`,
-request/response models, TypedDict definitions, raw `send_request`, and client
-lifecycle methods. Reranking accepts model, dictionary, and binary request forms
-and treats HTTP 200 as the successful response.
-
-Regenerate with the repository's standard TypeSpec workflow, for example from this
-package directory:
-
-```bash
-npm exec --prefix ../../../eng/common/tsp-client --no -- tsp-client update \
-  --emitter-options "package-version=0.1.0b1;generate-packaging-files=false"
-```
-
-Do not edit files marked as generated. Keep handwritten customizations in the
-supported `_patch.py` hooks, and retain tests and samples across regeneration.
-Package metadata is maintained separately: keep `generate-packaging-files=false`
-to preserve the Python-version-specific dependency requirements in `pyproject.toml`.
-
-To run the offline tests:
-
-```bash
-python -m pip install -r dev_requirements.txt
-python -m pip install -e .
-python -m pytest tests
-```
-
-Follow the [Azure SDK Python design guidelines][python_guidelines] for changes.
-
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
@@ -373,4 +330,3 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com/free/
 [cosmos_reranker]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/semantic-reranker
 [samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/dataai/azure-data-ai/samples/README.md
-[python_guidelines]: https://azure.github.io/azure-sdk/python_design.html

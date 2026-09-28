@@ -1,2 +1,4 @@
+# Regenerate with generate-packaging-files=false to preserve the Python-version-specific
+# dependency requirements maintained in pyproject.toml.
 [packaging]
 auto_update = false
