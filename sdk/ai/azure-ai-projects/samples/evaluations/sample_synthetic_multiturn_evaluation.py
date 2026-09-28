@@ -55,10 +55,10 @@ from azure.ai.projects.models import (
     AgentDataGenerationJobSource,
     DataGenerationJob,
     DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
     DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
     SimulationSeedDataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
@@ -111,7 +111,9 @@ def main() -> None:
                         ),
                     ],
                     options=generation_options,
-                    output_options=DataGenerationJobOutputOptions(name=f"{agent_name}-simulation-seeds"),
+                    output_configuration=EvaluationDataGenerationJobOutputTarget(
+                        name=f"{agent_name}-simulation-seeds"
+                    ),
                 ),
             ),
             polling_interval=10,
