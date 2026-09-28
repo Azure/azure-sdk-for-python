@@ -140,7 +140,8 @@ These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-
 
 ### VERSION CONSISTENCY
 - The version string in `_version.py` **must** match the latest version listed in `CHANGELOG.md`.
-- Preview API versions must use preview SDK versions: when the package metadata file (`sdk/<service>/azure-mgmt-<package>/_metadata.json`) has an `apiVersion` containing `preview`, the generated package version file (`sdk/<service>/azure-mgmt-<package>/azure/mgmt/<package>/_version.py`) **must** define a beta version such as `1.0.0b1`, not a stable version such as `1.0.0`.
+- Use the `apiVersions` service-to-version map in `sdk/<service>/azure-mgmt-<package>/_metadata.json` for API-version checks, not the nullable singular `apiVersion`. Missing or malformed maps are unverified evidence, not a reason to fall back to `apiVersion`.
+- Preview API versions must use preview SDK versions: if **any value** in `apiVersions` contains `preview` (case-insensitive), the generated package version file (`sdk/<service>/azure-mgmt-<package>/azure/mgmt/<package>/_version.py`) **must** define a beta version such as `1.0.0b1`, not a stable version such as `1.0.0`. This includes maps containing both stable and preview API versions.
 
 ### CHANGELOG DATE
 - If the release date of the latest version in `CHANGELOG.md` is **more than 3 weeks in the future** from the current date, remind the author to verify and update the date.

@@ -24,7 +24,7 @@ CHECKS = AUTOMATIC_CHECKS + SEMANTIC_CHECKS
 MAX_REGISTERED_FILES = 20
 MAX_REGISTERED_BYTES = 1024 * 1024
 MAX_SNAPSHOT_BYTES = 8 * 1024 * 1024
-RULES_SHA256 = "fd2b994f5b3c7cbd4c9848b6bac4dddee131222d37c4d05e30798206e146dfbb"
+RULES_SHA256 = "33576db8f096b4a40ecc284f6680d5a6f9ed4a91e2381d6e98fa6cc4fe01dcf7"
 
 
 def allowed_sdk_file(relative, check=None):
@@ -74,6 +74,19 @@ def citation(record, start=0, end=0, reason=""):
     if start:
         url += f"#L{start}" + (f"-L{end}" if end != start else "")
     return {"url": url, "line_status": "verified" if start else "unavailable", "reason": reason}
+
+
+def normalize_api_versions(value):
+    if not isinstance(value, dict) or not value:
+        raise ValueError("apiVersions must be a nonempty object mapping service names to API-version strings.")
+    for service, version in value.items():
+        if not isinstance(service, str) or not service.strip() or service != service.strip():
+            raise ValueError("apiVersions service names must be nonempty strings without surrounding whitespace.")
+        if not isinstance(version, str) or not version.strip() or version != version.strip():
+            raise ValueError(
+                f"apiVersions[{service!r}] must be a nonempty API-version string without surrounding whitespace."
+            )
+    return dict(sorted(value.items()))
 
 
 def deterministic_checks(context, package):
@@ -190,14 +203,13 @@ def deterministic_checks(context, package):
                 elif name == "Preview version":
                     record = file("/_metadata.json")
                     metadata = json.loads(record["content"])
-                    api = metadata.get("apiVersion") if isinstance(metadata, dict) else None
-                    if not isinstance(api, str) or not api:
-                        raise ValueError("_metadata.json lacks a nonempty string apiVersion.")
+                    apis = normalize_api_versions(metadata.get("apiVersions") if isinstance(metadata, dict) else None)
                     # JSON/TOML parsers do not expose locations. Cite the parsed document,
                     # not a text match that could point at a comment or a nested key.
                     evidence.append(citation(record, 1, record["lineCount"]))
-                    if "preview" in api.lower() and not beta:
-                        observation = f"Preview API {api} requires a beta SDK version, not {value}."
+                    previews = {service: api for service, api in apis.items() if "preview" in api.lower()}
+                    if previews and not beta:
+                        observation = f"Preview APIs {json.dumps(previews, sort_keys=True)} require a beta SDK version, not {value}."
                 else:
                     record = file("/pyproject.toml")
                     project = tomllib.loads(record["content"])

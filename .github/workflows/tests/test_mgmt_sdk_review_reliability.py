@@ -55,7 +55,7 @@ def fixture():
         [
             record("azure/mgmt/example/_version.py", 'VERSION = "1.0.0b1"\n'),
             record("CHANGELOG.md", "## 1.0.0b1 (2026-09-28)\n\n### Other Changes\n- Initial version.\n"),
-            record("_metadata.json", '{"apiVersion": "2026-09-01-preview"}\n'),
+            record("_metadata.json", '{"apiVersion": null, "apiVersions": {"Example": "2026-09-01-preview"}}\n'),
             record(
                 "pyproject.toml",
                 ('[project]\nclassifiers = ["Development Status :: 4 - Beta"]\n' "[packaging]\nis_stable = false\n"),
@@ -369,6 +369,122 @@ class EvidenceAndChecksTests(unittest.TestCase):
         )
         self.assertEqual(["completed"] * 4 + ["not_applicable"], [item["outcome"] for item in checks])
         self.assertTrue(all(item["severity"] == "Blocking" for item in findings))
+
+    def api_provenance(self, versions, singular=None):
+        return collector.summarize_provenance(
+            [
+                {
+                    "status": "available",
+                    "path": PACKAGE + "/_metadata.json",
+                    "content": json.dumps({"apiVersion": singular, "apiVersions": versions}),
+                }
+            ]
+        )
+
+    def test_api_version_drift_compares_complete_maps_not_order_or_flattened_versions(self):
+        first = {"Example": "2026-01-01", "Other": "2026-02-01"}
+        for latest, expected in (
+            ({"Other": "2026-02-01", "Example": "2026-01-01"}, "unchanged"),
+            ({"Example": "2026-02-01", "Other": "2026-01-01"}, "changed"),
+            ({**first, "Added": "2026-01-01"}, "changed"),
+            ({"Example": "2026-01-01"}, "changed"),
+        ):
+            with self.subTest(latest=latest):
+                result = collector.api_version_drift(
+                    PACKAGE,
+                    "a" * 40,
+                    HEAD,
+                    self.api_provenance(first, "ignored-preview"),
+                    self.api_provenance(latest, "ignored-stable"),
+                )
+                self.assertEqual(expected, result["status"])
+                self.assertEqual(first, result["firstApiVersions"])
+                self.assertEqual(latest, result["latestApiVersions"])
+                self.assertEqual(sorted(latest), list(result["latestApiVersions"]))
+                self.assertIsNone(result["error"])
+
+    def test_preview_check_uses_any_map_value_and_ignores_singular_api_version(self):
+        for versions, singular, sdk_version, blocking in (
+            ({"Example": "2026-01-01"}, "2026-01-01-preview", "1.0.0", False),
+            ({"PreviewService": "2026-01-01"}, None, "1.0.0", False),
+            ({"Example": "2026-01-01-preview"}, "2026-01-01", "1.0.0", True),
+            ({"Stable": "2026-01-01", "Preview": "2026-02-01-Preview"}, None, "1.0.0", True),
+            ({"Stable": "2026-01-01", "Preview": "2026-02-01-preview"}, None, "1.0.0b1", False),
+        ):
+            with self.subTest(versions=versions, sdk_version=sdk_version):
+                _, trusted = fixture()
+                metadata = next(item for item in trusted["sources"] if item["path"].endswith("_metadata.json"))
+                metadata["content"] = json.dumps({"apiVersion": singular, "apiVersions": versions})
+                version = next(item for item in trusted["sources"] if item["path"].endswith("_version.py"))
+                version["content"] = f'VERSION = "{sdk_version}"\n'
+                checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                check = next(item for item in checks if item["name"] == "Preview version")
+                self.assertEqual("completed", check["outcome"])
+                preview_findings = [item for item in findings if item["check"] == "Preview version"]
+                self.assertEqual(int(blocking), len(preview_findings))
+                if blocking:
+                    self.assertEqual("Blocking", preview_findings[0]["severity"])
+                    self.assertIn("preview", preview_findings[0]["observation"].lower())
+
+    def test_invalid_api_maps_remain_unverified_in_both_checks_without_fallback(self):
+        for versions in (
+            None,
+            {},
+            [],
+            "2026-01-01",
+            {"Example": None},
+            {"Example": ""},
+            {"Example": 2026},
+            {"Example": ["2026-01-01"]},
+            {"Example": " 2026-01-01"},
+            {"": "2026-01-01"},
+            {" Example": "2026-01-01"},
+            {"Stable": "2026-01-01", "Invalid": None},
+        ):
+            with self.subTest(versions=versions):
+                _, trusted = fixture()
+                metadata = next(item for item in trusted["sources"] if item["path"].endswith("_metadata.json"))
+                metadata["content"] = json.dumps({"apiVersion": "2026-01-01-preview", "apiVersions": versions})
+                checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                check = next(item for item in checks if item["name"] == "Preview version")
+                self.assertEqual("unverified", check["outcome"])
+                self.assertIn("apiVersions", check["reason"])
+                self.assertFalse([item for item in findings if item["check"] == "Preview version"])
+                provenance = self.api_provenance(versions, "2026-01-01-preview")
+                drift = collector.api_version_drift(PACKAGE, "a" * 40, HEAD, provenance, provenance)
+                self.assertEqual("unverified", drift["status"])
+                self.assertIn(check["reason"], drift["error"])
+
+    def test_null_api_version_with_valid_map_is_not_incomplete(self):
+        draft, trusted = fixture()
+        provenance = self.api_provenance({"Example": "2026-09-01-preview"})
+        trusted["apiVersionDrift"] = [
+            collector.api_version_drift(PACKAGE, trusted["firstRevision"], HEAD, provenance, provenance)
+        ]
+        body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        self.assertIn("Review completeness: complete", body)
+        self.assertIn("**Findings:** None.", body)
+
+    def test_compute_null_scalar_regression_detects_gallery_change(self):
+        # Actual API maps from the revisions cited in:
+        # https://github.com/Azure/azure-sdk-for-python/pull/48997#issuecomment-5770214235
+        first = {
+            "Compute": "2026-04-01",
+            "ComputeDisk": "2026-03-02",
+            "ComputeGallery": "2025-12-03",
+            "ComputeSku": "2021-07-01",
+        }
+        latest = {**first, "ComputeGallery": "2026-03-03"}
+        draft, trusted = fixture()
+        drift = collector.api_version_drift(
+            PACKAGE, trusted["firstRevision"], HEAD, self.api_provenance(first), self.api_provenance(latest)
+        )
+        self.assertEqual("changed", drift["status"])
+        trusted["apiVersionDrift"] = [drift]
+        body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        for expected in ("Blocking", "API versions changed", "ComputeGallery", "2025-12-03", "2026-03-03"):
+            self.assertIn(expected, body)
+        self.assertIn("service-to-API-version mapping", body)
 
     def test_calendar_boundary_and_malformed_latest_heading(self):
         _, trusted = fixture()

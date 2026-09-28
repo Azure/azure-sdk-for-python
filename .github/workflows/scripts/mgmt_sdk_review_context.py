@@ -23,6 +23,7 @@ from mgmt_sdk_review_evidence import (
     MAX_SNAPSHOT_BYTES,
     allowed_sdk_file,
     deterministic_checks,
+    normalize_api_versions,
     source_record,
 )
 
@@ -396,11 +397,10 @@ def summarize_provenance(files):
     return summary
 
 
-def metadata_api_version(provenance):
+def metadata_api_versions(provenance):
     metadata = provenance.get("metadata") or {}
-    item = metadata.get("apiVersion") or {}
-    value = item.get("value")
-    return value if isinstance(value, str) and value else None
+    item = metadata.get("apiVersions") or {}
+    return normalize_api_versions(item.get("value"))
 
 
 def collect_provenance(client, package_path, revision):
@@ -409,31 +409,31 @@ def collect_provenance(client, package_path, revision):
 
 
 def api_version_drift(package_path, first_revision, latest_revision, first_provenance, latest_provenance):
-    first_api_version = metadata_api_version(first_provenance)
-    latest_api_version = metadata_api_version(latest_provenance)
     drift_errors = first_provenance["issues"] + latest_provenance["issues"]
-    for label, revision, version in (
-        ("first", first_revision, first_api_version),
-        ("latest", latest_revision, latest_api_version),
+    versions = {}
+    for label, revision, provenance in (
+        ("first", first_revision, first_provenance),
+        ("latest", latest_revision, latest_provenance),
     ):
-        if not version:
-            drift_errors.append(
-                f"{package_path}/_metadata.json at {label} revision {revision} "
-                "does not contain a non-empty string apiVersion"
-            )
+        try:
+            versions[label] = metadata_api_versions(provenance)
+        except ValueError as error:
+            versions[label] = None
+            drift_errors.append(f"{package_path}/_metadata.json at {label} revision {revision}: {error}")
+    first_api_versions, latest_api_versions = versions["first"], versions["latest"]
     return {
         "packagePath": package_path,
         "metadataPath": f"{package_path}/_metadata.json",
         "status": (
             "unverified"
-            if not first_api_version or not latest_api_version
-            else "unchanged" if first_api_version == latest_api_version else "changed"
+            if first_api_versions is None or latest_api_versions is None
+            else "unchanged" if first_api_versions == latest_api_versions else "changed"
         ),
         "firstRevision": first_revision,
-        "firstApiVersion": first_api_version,
+        "firstApiVersions": first_api_versions,
         "latestRevision": latest_revision,
-        "latestApiVersion": latest_api_version,
-        "error": "; ".join(drift_errors) if (not first_api_version or not latest_api_version) else None,
+        "latestApiVersions": latest_api_versions,
+        "error": "; ".join(drift_errors) if (first_api_versions is None or latest_api_versions is None) else None,
     }
 
 
@@ -677,9 +677,9 @@ def collect():
                     "metadataPath": f"{package_path}/_metadata.json",
                     "status": "unverified",
                     "firstRevision": first_revision,
-                    "firstApiVersion": None,
+                    "firstApiVersions": None,
                     "latestRevision": latest_revision,
-                    "latestApiVersion": None,
+                    "latestApiVersions": None,
                     "error": reason,
                 }
             )

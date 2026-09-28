@@ -513,6 +513,12 @@ introduced entry identity. The publisher recomputes routine checks from pinned c
 Do not duplicate these facts or findings. Missing, truncated, ambiguous and access-error evidence
 stays explicitly unverified; confirmed initial releases retain their corroboration requirements.
 
+Both API-version drift and preview/beta compatibility use the `_metadata.json` `apiVersions`
+service-to-version map, never the nullable singular `apiVersion`. Drift compares the complete map
+between the first and latest PR revisions, including service additions/removals and version changes;
+key order is irrelevant. Any preview value requires a beta SDK, including mixed stable/preview maps.
+Missing, empty or malformed maps remain unverified without a singular-field fallback.
+
 For confirmed first releases, the trusted `Initial client name` check requires public synchronous
 and asynchronous client class names to end with the exact suffix `MgmtClient`. A mismatch produces
 a **Blocking** finding instructing the author to customize the name in `client.tsp`, then regenerate

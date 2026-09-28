@@ -627,17 +627,17 @@ def render(data, context):
                 evidence = "<br>".join(
                     link(file_url(context, drift["metadataPath"], drift[which + "Revision"]), drift[which + "Revision"])
                     + ": "
-                    + text(drift[which + "ApiVersion"])
+                    + text(json.dumps(drift[which + "ApiVersions"], ensure_ascii=False, sort_keys=True))
                     for which in ("first", "latest")
                 )
                 findings.append(
                     [
                         "Blocking",
-                        "API version changed",
+                        "API versions changed",
                         text(name),
                         evidence + "<br>Line anchors unavailable in collector summary.",
                         "API-version drift",
-                        "Restore the original API version or explain the change and obtain approval.",
+                        "Restore the original service-to-API-version mapping or explain the change and obtain approval.",
                     ]
                 )
         if context["packageDiscovery"]["status"] == "complete":

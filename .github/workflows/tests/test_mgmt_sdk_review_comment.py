@@ -52,8 +52,8 @@ def context():
                 "metadataPath": PACKAGE + "/_metadata.json",
                 "firstRevision": FIRST,
                 "latestRevision": HEAD,
-                "firstApiVersion": "2026-01-01",
-                "latestApiVersion": "2026-01-01",
+                "firstApiVersions": {"Example": "2026-01-01"},
+                "latestApiVersions": {"Example": "2026-01-01"},
                 "status": "unchanged",
                 "error": None,
             }
@@ -644,13 +644,21 @@ class StructuredReviewTests(unittest.TestCase):
 
     def test_api_drift_is_rendered_only_from_trusted_results(self):
         drift = self.context["apiVersionDrift"][0]
-        drift.update(status="changed", latestApiVersion="2026-09-22-preview")
+        drift.update(status="changed", latestApiVersions={"Example": "2026-09-22-preview"})
         body = self.render()
-        for expected in ("API version changed", "Blocking", FIRST, HEAD, "2026-01-01", "2026-09-22-preview"):
+        for expected in (
+            "API versions changed",
+            "Blocking",
+            FIRST,
+            HEAD,
+            "Example",
+            "2026-01-01",
+            "2026-09-22-preview",
+        ):
             self.assertIn(expected, body)
         drift.update(status="unverified", error="Metadata file returned HTTP 404.")
         self.assertIn("Metadata file returned HTTP 404", self.render())
-        self.assertNotIn("API version changed", self.render())
+        self.assertNotIn("API versions changed", self.render())
 
     def test_trusted_context_bound_to_workflow_event(self):
         MODULE.validate_context(self.context, REPO, 49107, HEAD, TOOLING)

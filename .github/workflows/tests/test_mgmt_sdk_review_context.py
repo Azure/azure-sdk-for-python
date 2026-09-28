@@ -325,7 +325,7 @@ class CollectionTests(unittest.TestCase):
                         raise urllib.error.HTTPError(request.full_url, old_status, "baseline unavailable", {}, None)
                     content = changelog
                 elif filename.endswith("/_metadata.json"):
-                    content = json.dumps({"apiVersion": "2026-01-01"})
+                    content = json.dumps({"apiVersion": None, "apiVersions": {"Contoso": "2026-01-01"}})
                 else:
                     content = "{}"
                 data = {
@@ -617,8 +617,20 @@ class CollectionTests(unittest.TestCase):
 
 
 class FailureHandlingTests(unittest.TestCase):
+
     def test_drift_reports_missing_or_invalid_api_version(self):
-        for metadata in ({}, [], None, {"apiVersion": ""}, {"apiVersion": 42}):
+        for metadata in (
+            {},
+            [],
+            None,
+            {"apiVersion": "2026-01-01"},
+            {"apiVersions": None},
+            {"apiVersions": []},
+            {"apiVersions": {}},
+            {"apiVersions": {"Example": None}},
+            {"apiVersions": {"Example": ""}},
+            {"apiVersions": {"Example": ["2026-01-01"]}},
+        ):
             with self.subTest(metadata=metadata):
                 provenance = MODULE.summarize_provenance(
                     [{"status": "available", "path": "pkg/_metadata.json", "content": json.dumps(metadata)}]
@@ -628,12 +640,12 @@ class FailureHandlingTests(unittest.TestCase):
                 self.assertEqual("unverified", result["status"])
                 self.assertIn(f"first revision {'a' * 40}", result["error"])
                 self.assertIn(f"latest revision {'b' * 40}", result["error"])
-                self.assertIn("non-empty string apiVersion", result["error"])
+                self.assertIn("apiVersions", result["error"])
                 self.assertEqual([], provenance["issues"])
 
     def test_drift_preserves_valid_comparisons_and_failure_details(self):
-        first = {"metadata": {"apiVersion": {"value": "2026-01-01"}}, "issues": []}
-        latest = {"metadata": {"apiVersion": {"value": "2026-02-01"}}, "issues": []}
+        first = {"metadata": {"apiVersions": {"value": {"Example": "2026-01-01"}}}, "issues": []}
+        latest = {"metadata": {"apiVersions": {"value": {"Example": "2026-02-01"}}}, "issues": []}
         for provenance, expected in ((first, "unchanged"), (latest, "changed")):
             result = MODULE.api_version_drift("pkg", "a" * 40, "b" * 40, first, provenance)
             self.assertEqual(expected, result["status"])
