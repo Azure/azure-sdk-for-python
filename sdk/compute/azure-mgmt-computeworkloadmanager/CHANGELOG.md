@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client `WorkloadManagerClient`
+  - Renamed client `WorkloadManagerClient` to `ComputeWorkloadManagerMgmtClient`
 
 ## 1.0.0b1 (2026-09-23)
 
