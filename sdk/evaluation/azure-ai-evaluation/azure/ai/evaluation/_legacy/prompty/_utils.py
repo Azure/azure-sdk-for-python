@@ -638,6 +638,17 @@ async def format_llm_response(
     return to_ret
 
 
+def _is_insufficient_quota(body: object) -> bool:
+    """Recognize structured quota subtypes without interpreting error messages."""
+    if not isinstance(body, Mapping):
+        return False
+    if any(
+        isinstance(body.get(field), str) and body[field].lower() == "insufficient_quota" for field in ("type", "code")
+    ):
+        return True
+    return any(_is_insufficient_quota(body.get(field)) for field in ("error", "innerError", "innererror"))
+
+
 def openai_error_retryable(
     error: OpenAIError, retry: int, entity_retry: List[int], max_entity_retries: int
 ) -> Tuple[bool, float]:
@@ -673,6 +684,16 @@ def openai_error_retryable(
         )
     elif isinstance(error, APIStatusError):
         status_code: int = error.response.status_code
+        if (
+            status_code == 424
+            and error.type == "CustomerManagedDownstreamError"
+            and isinstance(error.body, Mapping)
+            and error.body.get("customerManagedDownstreamIssue") is True
+            and error.body.get("innerStatusCode") == 429
+        ):
+            # Classify explicit downstream throttling without changing the original response.
+            status_code = 429
+
         if status_code == 422:
             # As per the original legacy code, UnprocessableEntityError (HTTP 422) should be handled differently
             # with a smaller retry count, as retrying more may not be beneficial.
@@ -681,11 +702,7 @@ def openai_error_retryable(
         elif status_code == 429:
             # Two types, one is you are throttled and so should retry after a delay, the other is you have exceeded
             # your quota and should not retry.
-            if (error.type or "").lower() == "insufficient_quota":
-                should_retry = False
-            else:
-                should_retry = True
-            should_retry = error.type != "insufficient_quota"
+            should_retry = not _is_insufficient_quota(error.body)
         else:
             should_retry = status_code >= 500
 
