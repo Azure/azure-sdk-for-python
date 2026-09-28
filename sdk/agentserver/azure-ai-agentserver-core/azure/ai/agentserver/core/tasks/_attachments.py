@@ -99,6 +99,29 @@ _MAX_ATTACHMENTS = 20
 _STEERING_QUEUE_CAP = 9
 
 
+def _steering_pending_ack_ids(steering: dict[str, Any], pending_count: int) -> list[str | None]:
+    """Align internal acknowledgment IDs with queued inputs from older records.
+
+    :param steering: Persisted steering state.
+    :type steering: dict[str, Any]
+    :param pending_count: Number of queued inputs.
+    :type pending_count: int
+    :return: IDs aligned with pending inputs, including untagged legacy slots.
+    :rtype: list[str | None]
+    :raises ValueError: If stored IDs cannot align with the pending queue.
+    """
+    if pending_count == 0:
+        return []
+    ids = steering.get("pending_ack_ids")
+    if ids is None:
+        return [None] * pending_count
+    if not isinstance(ids, list) or len(ids) > pending_count or any(
+        value is not None and not isinstance(value, str) for value in ids
+    ):
+        raise ValueError("Invalid steering pending_ack_ids for pending queue")
+    return ids + [None] * (pending_count - len(ids))
+
+
 # --------------------------------------------------------------------------- #
 # Hash helper
 # --------------------------------------------------------------------------- #

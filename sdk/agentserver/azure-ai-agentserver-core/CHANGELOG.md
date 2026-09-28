@@ -5,7 +5,8 @@
 ### Bugs Fixed
 
 - Failed steering queue appends no longer retain an unreturned acknowledgment
-  future or disrupt acknowledgments for earlier accepted inputs.
+  future. Per-slot acknowledgment IDs prevent a committed append with a lost
+  response from misrouting the next accepted input's result.
 
 ## 2.2.0 (2026-09-23)
 
