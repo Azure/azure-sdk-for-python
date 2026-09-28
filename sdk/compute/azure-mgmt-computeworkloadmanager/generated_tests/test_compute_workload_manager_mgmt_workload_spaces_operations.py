@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.computeworkloadmanager import WorkloadManagerClient
+from azure.mgmt.computeworkloadmanager import ComputeWorkloadManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestWorkloadManagerRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
+class TestComputeWorkloadManagerMgmtWorkloadSpacesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(WorkloadManagerClient)
+        self.client = self.create_mgmt_client(ComputeWorkloadManagerMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_bindings_get(self, resource_group):
-        response = self.client.runtime_bindings.get(
+    def test_workload_spaces_get(self, resource_group):
+        response = self.client.workload_spaces.get(
             resource_group_name=resource_group.name,
             space_name="str",
-            binding_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,17 +31,15 @@ class TestWorkloadManagerRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_bindings_begin_create_or_update(self, resource_group):
-        response = self.client.runtime_bindings.begin_create_or_update(
+    def test_workload_spaces_begin_create_or_update(self, resource_group):
+        response = self.client.workload_spaces.begin_create_or_update(
             resource_group_name=resource_group.name,
             space_name="str",
-            binding_name="str",
             resource={
                 "location": "str",
                 "id": "str",
-                "kind": "str",
                 "name": "str",
-                "properties": "runtime_binding_properties",
+                "properties": {"provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -61,18 +58,11 @@ class TestWorkloadManagerRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_bindings_begin_update(self, resource_group):
-        response = self.client.runtime_bindings.begin_update(
+    def test_workload_spaces_begin_update(self, resource_group):
+        response = self.client.workload_spaces.begin_update(
             resource_group_name=resource_group.name,
             space_name="str",
-            binding_name="str",
-            properties={
-                "properties": {
-                    "identityProfile": {"executionIdentity": {"scope": "str"}},
-                    "networkProfile": {"egressMode": "str", "subnetResourceId": "str"},
-                },
-                "tags": {"str": "str"},
-            },
+            properties={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,11 +70,10 @@ class TestWorkloadManagerRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_bindings_begin_delete(self, resource_group):
-        response = self.client.runtime_bindings.begin_delete(
+    def test_workload_spaces_begin_delete(self, resource_group):
+        response = self.client.workload_spaces.begin_delete(
             resource_group_name=resource_group.name,
             space_name="str",
-            binding_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,11 +81,18 @@ class TestWorkloadManagerRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_bindings_list_by_workload_space(self, resource_group):
-        response = self.client.runtime_bindings.list_by_workload_space(
+    def test_workload_spaces_list_by_resource_group(self, resource_group):
+        response = self.client.workload_spaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            space_name="str",
         )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workload_spaces_list_by_subscription(self, resource_group):
+        response = self.client.workload_spaces.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
