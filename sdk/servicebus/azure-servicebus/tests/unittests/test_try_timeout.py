@@ -29,6 +29,7 @@ import azure.servicebus._common.utils as utils_module
 import azure.servicebus._servicebus_receiver as sync_receiver_module
 import azure.servicebus.aio._servicebus_receiver_async as async_receiver_module
 import azure.servicebus._pyamqp.client as pyamqp_client_module
+import azure.servicebus._pyamqp.aio._client_async as pyamqp_async_client_module
 
 import pytest
 
@@ -939,6 +940,7 @@ class TestPyamqpManagementRequestReadiness:
         from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
 
         clock = VirtualClock()
+        listen_calls = 0
         client = AMQPClientAsync.__new__(AMQPClientAsync)
         client._mgmt_link_lock_async = asyncio.Lock()
         mgmt_link = MagicMock()
@@ -950,6 +952,8 @@ class TestPyamqpManagementRequestReadiness:
             return True
 
         async def listen(**kwargs):
+            nonlocal listen_calls
+            listen_calls += 1
             await clock.sleep_async(0.02)
 
         mgmt_link.ready = ready
@@ -958,9 +962,11 @@ class TestPyamqpManagementRequestReadiness:
         client._connection = MagicMock()
         client._connection.listen = listen
 
-        with patch.object(pyamqp_client_module, "time", clock):
+        with patch.object(pyamqp_client_module, "time", clock), patch.object(pyamqp_async_client_module, "time", clock):
             with pytest.raises(TimeoutError):
                 await client.mgmt_request_async(MagicMock(), timeout=0.05)
+
+        assert listen_calls == 3
 
 
 class TestAsyncLinkAcquisitionIsBounded:
