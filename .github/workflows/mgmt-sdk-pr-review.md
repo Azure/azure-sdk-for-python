@@ -602,6 +602,11 @@ The final `.` reads a JSON object from stdin. Never use `--body -`, a placeholde
 Markdown. Never write through GitHub tools or direct APIs. Do not change the submission after
 preflight. A matching redundant `item_number` is tolerated and removed; all other targets and
 unsupported publication fields are rejected. Budgets are 48 links and 60,000 UTF-8 body bytes.
+Multi-package reviews use shared evidence references (`E1`, `E2`, etc.) so an identical
+URL is linked only once across checks, findings and attribution. Each use retains its label
+and any unavailable-line explanation; different revisions or line ranges remain distinct.
+Single-package comments retain inline links. The same budgets still apply after rendering;
+genuinely oversized reviews remain incomplete rather than dropping findings or evidence.
 Publication errors stay incomplete, not successful reviews.
 
 ## Integration, trust and maintenance
@@ -668,6 +673,10 @@ remain unverified instead of executing packaging code. Collection preserves the 
 256-KiB-per-file limits, with an 8-MiB source-catalog text cap; specification registration has
 separate 20-file/1-MiB per-package caps. Retrieval stops when the remaining text budget cannot
 cover one bounded file request. The collector's initial-release safeguards remain unchanged.
+Source discovery fetches the pinned `pyproject.toml` before deriving version/client paths,
+including for packages handed off by the earlier per-package request-budget check. The
+fetch shares the source reader's cache and budget guard, preserving the last request for
+the final PR consistency check. Unavailable project data remains explicitly unverified.
 
 Production accepts only schema version 2. Version-1/Markdown failure fixtures are explicitly
 transformed by tests, never accepted by a legacy production fallback. `RENDER_SCHEMA` is private

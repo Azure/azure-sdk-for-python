@@ -16,6 +16,7 @@ import tempfile
 import time
 import unittest
 from unittest import mock
+import urllib.parse
 import urllib.request
 
 from test_mgmt_sdk_review_comment import (
@@ -66,6 +67,35 @@ def fixture():
         zip(("checks", "findings"), evidence.deterministic_checks(trusted, PACKAGE))
     )
     return data, trusted
+
+
+def multipackage_fixture(count=7):
+    draft, trusted = fixture()
+    result, context = copy.deepcopy(draft), copy.deepcopy(trusted)
+    result["packages"] = []
+    for key in ("affectedPackages", "sources", "apiVersionDrift", "breakingChangeContext"):
+        context[key] = []
+    for index in range(count):
+        name = PACKAGE + f"-{index}"
+
+        def clone(value):
+            return json.loads(json.dumps(value).replace(PACKAGE, name))
+
+        package = json.dumps(clone(draft["packages"][0]))
+        for source in trusted["sources"]:
+            copied = clone(source)
+            copied["id"] = evidence.source_id(copied["repository"], copied["revision"], copied["path"])
+            package = package.replace(source["id"], copied["id"])
+            context["sources"].append(copied)
+        result["packages"].append(json.loads(package))
+        context["affectedPackages"].append(name)
+        for key in ("apiVersionDrift", "breakingChangeContext"):
+            context[key].extend(clone(trusted[key]))
+    context["deterministicChecks"] = {
+        name: dict(zip(("checks", "findings"), evidence.deterministic_checks(context, name)))
+        for name in context["affectedPackages"]
+    }
+    return result, context
 
 
 def record(path, content, status="available"):
@@ -219,6 +249,125 @@ class EvidenceAndChecksTests(unittest.TestCase):
         self.assertEqual("truncated", project["status"])
         self.assertEqual("", project["content"])
         self.assertEqual(0, project["lineCount"])
+
+    def test_cold_cache_handoff_discovers_same_sources_as_warm_cache(self):
+        for cached in (False, True):
+            with self.subTest(cached=cached):
+                _, trusted = fixture()
+                contents = {item["path"]: item["content"] for item in trusted["sources"]}
+                project = PACKAGE + "/pyproject.toml"
+                contents[
+                    project
+                ] += '\n[tool.setuptools.dynamic.version]\nattr = "azure.mgmt.example._version.VERSION"\n'
+                for suffix in ("_client.py", "aio/_client.py"):
+                    contents[PACKAGE + "/azure/mgmt/example/" + suffix] = "class ExampleMgmtClient:\n    pass\n"
+                trusted.update(changedFiles=[{"filename": PACKAGE + "/README.md"}], collectionLimits={})
+                client = collector.GitHubClient(REPO, "test")
+                client.request_count = collector.MAX_API_REQUESTS - 20
+                self.assertLess(20, collector.MAX_PACKAGE_API_REQUESTS)
+
+                def fetch(path, revision):
+                    client.request_count += 1
+                    return {
+                        "path": path,
+                        "revision": revision,
+                        "status": "available" if path in contents else "missing",
+                        "content": contents.get(path, ""),
+                        "error": "",
+                    }
+
+                with mock.patch.object(client, "_read_file", side_effect=fetch) as reads:
+                    if cached:
+                        client.read_file(project, HEAD)
+                    collector.collect_review_sources(client, trusted)
+                self.assertEqual(8, reads.call_count)
+                self.assertEqual(1, reads.call_args_list.count(mock.call(project, HEAD)))
+                self.assertEqual(mock.call(project, HEAD), reads.call_args_list[0])
+                self.assertEqual(collector.MAX_API_REQUESTS - 12, client.request_count)
+                self.assertEqual([], trusted["sourceCollectionIssues"])
+                paths = {item["path"] for item in trusted["sources"]}
+                for suffix in ("_version.py", "_client.py", "aio/_client.py"):
+                    self.assertIn(PACKAGE + "/azure/mgmt/example/" + suffix, paths)
+                self.assertEqual("completed", trusted["deterministicChecks"][PACKAGE]["checks"][0]["outcome"])
+
+    def test_project_discovery_preserves_last_request_and_cached_evidence(self):
+        for remaining in (1, 2):
+            with self.subTest(remaining=remaining):
+                _, trusted = fixture()
+                trusted.update(changedFiles=[], collectionLimits={})
+                client = collector.GitHubClient(REPO, "test")
+                client.request_count = collector.MAX_API_REQUESTS - remaining
+                readme = PACKAGE + "/README.md"
+                client.files[(readme, HEAD)] = {
+                    "path": readme,
+                    "revision": HEAD,
+                    "status": "available",
+                    "content": "Retained evidence.",
+                }
+
+                def fetch(path, revision):
+                    client.request_count += 1
+                    return {
+                        "path": path,
+                        "revision": revision,
+                        "status": "available",
+                        "content": '[tool.setuptools.dynamic.version]\nattr = "azure.mgmt.example._version.VERSION"\n',
+                    }
+
+                with mock.patch.object(client, "_read_file", side_effect=fetch) as reads:
+                    collector.collect_review_sources(client, trusted)
+                self.assertEqual(remaining - 1, reads.call_count)
+                self.assertEqual(collector.MAX_API_REQUESTS - 1, client.request_count)
+                preserved = next(item for item in trusted["sources"] if item["path"] == readme)
+                self.assertEqual("Retained evidence.", preserved["content"])
+                self.assertEqual("available", preserved["status"])
+                self.assertTrue(any(item["status"] == "unverified" for item in trusted["sources"]))
+                self.assertEqual("unverified", trusted["deterministicChecks"][PACKAGE]["checks"][0]["outcome"])
+
+    def test_unavailable_project_does_not_invent_source_paths(self):
+        for status, content in (("missing", ""), ("unverified", ""), ("available", "malformed = [")):
+            with self.subTest(status=status):
+                _, trusted = fixture()
+                trusted.update(changedFiles=[], collectionLimits={})
+                client = collector.GitHubClient(REPO, "test")
+                with mock.patch.object(
+                    client,
+                    "_read_file",
+                    side_effect=lambda path, revision: {
+                        "path": path,
+                        "revision": revision,
+                        "status": status,
+                        "content": content,
+                        "error": "Project unavailable." if status != "available" else "",
+                    },
+                ):
+                    collector.collect_review_sources(client, trusted)
+                self.assertTrue(trusted["sourceCollectionIssues"])
+                self.assertFalse(any(item["path"].endswith("/_version.py") for item in trusted["sources"]))
+                self.assertEqual("unverified", trusted["deterministicChecks"][PACKAGE]["checks"][0]["outcome"])
+
+    def test_project_discovery_counts_toward_package_file_limit(self):
+        _, trusted = fixture()
+        trusted.update(
+            changedFiles=[{"filename": f"{PACKAGE}/azure/mgmt/example/extra{index}/_client.py"} for index in range(20)],
+            collectionLimits={},
+        )
+        client = collector.GitHubClient(REPO, "test")
+        with mock.patch.object(
+            client,
+            "_read_file",
+            side_effect=lambda path, revision: {
+                "path": path,
+                "revision": revision,
+                "status": "missing",
+                "error": "Pinned file missing.",
+            },
+        ) as reads:
+            collector.collect_review_sources(client, trusted)
+        self.assertEqual(16, reads.call_count)
+        self.assertEqual(16, len(trusted["sources"]))
+        self.assertIn((PACKAGE + "/pyproject.toml", HEAD), client.files)
+        self.assertTrue(any("16-file package limit" in issue for issue in trusted["sourceCollectionIssues"]))
 
     def test_rules_policy_fingerprint_matches_authoritative_rules(self):
         self.assertEqual(evidence.RULES_SHA256, hashlib.sha256(RULE_TEXT.strip().encode()).hexdigest())
@@ -640,6 +789,76 @@ class EvidenceAndChecksTests(unittest.TestCase):
         self.assertIn("Snippet mismatch", body)
         self.assertNotIn("**Findings:** None.", body)
 
+    def test_multi_package_reviews_share_links_without_dropping_checks(self):
+        draft, trusted = multipackage_fixture()
+        result = contract.preflight(draft, trusted)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual("complete", result["reviewCompleteness"])
+        self.assertEqual(35, result["links"])
+        body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        self.assertIn("### Evidence references", body)
+        for check in evidence.CHECKS:
+            self.assertEqual(7, body.count(check))
+        urls = re.findall(r"https?://[^)]+", body)
+        self.assertEqual(35, len(set(urls)))
+        for number in range(1, 36):
+            self.assertIn(f"[E{number}]", body)
+            self.assertIn(f"| E{number} |", body)
+        # Existing single-package formatting and repeated inline links are unchanged.
+        draft, trusted = fixture()
+        body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        self.assertNotIn("### Evidence references", body)
+        self.assertEqual(11, len(re.findall(r"https?://", body)))
+
+    def test_shared_references_preserve_findings_partial_checks_and_distinct_ranges(self):
+        draft, trusted = multipackage_fixture(2)
+        package = draft["packages"][0]
+        ref = package["checks"]["README snippets"]["sources"][0]
+        package["findings"] = [
+            {
+                "check": "README snippets",
+                "severity": "Blocking",
+                "title": "Snippet mismatch",
+                "observation": "Incorrect signature.",
+                "remediation": "Use the real signature.",
+                "sources": [ref],
+            }
+        ]
+        check = package["checks"]["Client name consistency"]
+        check.update(
+            outcome="unverified",
+            reason="No precise lines.",
+            sources=[{**ref, "start_line": 0, "end_line": 0, "reason": "Exact lines unavailable."}],
+        )
+        package["checks"]["Client signature"]["sources"] = [{**ref, "start_line": 1, "end_line": 1}]
+        trusted["apiVersionDrift"][0].update(status="changed", latestApiVersions={"Example": "2026-02-01"})
+        result = contract.preflight(draft, trusted)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual("partial", result["reviewCompleteness"])
+        body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        self.assertIn("Snippet mismatch", body)
+        self.assertIn("API versions changed", body)
+        self.assertIn("lines unverified", body)
+        self.assertIn("Exact lines unavailable.", body)
+        urls = re.findall(r"https?://[^)]+", body)
+        self.assertEqual(len(urls), len(set(urls)))
+        readme = next(item for item in trusted["sources"] if item["id"] == ref["source_id"])
+        for start, end in ((0, 0), (1, 1), (2, 3)):
+            self.assertIn(evidence.citation(readme, start, end)["url"], urls)
+        for revision in (trusted["firstRevision"], trusted["latestRevision"]):
+            self.assertIn(f"/blob/{revision}/{package['package']}/_metadata.json", body)
+
+    def test_unique_multi_package_evidence_still_enforces_link_budget(self):
+        draft, trusted = multipackage_fixture(10)
+        result = service.ReviewService(trusted).call({"operation": "preflight", "draft": draft})
+        self.assertFalse(result["ok"])
+        self.assertNotIn("submission", result)
+        self.assertIn("publication_link_budget", {item["code"] for item in result["errors"]})
+        final = {**draft, "registrations": []}
+        final["preflight"] = {"attempt": 1, "digest": contract.digest(final)}
+        with self.assertRaisesRegex(contract.ReviewError, "publication_link_budget"):
+            contract.prepare_output(envelope(final), trusted)
+
 
 class ServiceAndPublicationTests(unittest.TestCase):
     def test_retained_production_shapes_require_explicit_new_contract(self):
@@ -890,6 +1109,102 @@ class ServiceAndPublicationTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("GH_AW_RUNTIME"), "Set GH_AW_RUNTIME to v0.88.8 runtime; required for release.")
 class PinnedPreflightRuntimeTests(unittest.TestCase):
+    def publish_multi_package(self, draft, trusted):
+        payload = submit(draft, trusted)
+        payload["items"][0]["body"] = contract.SUBMISSION
+        harness = Path(__file__).with_name("mgmt_review_runtime.cjs")
+        result = subprocess.run(
+            ["node", str(harness)],
+            input=json.dumps(
+                {"mode": "ingest", "item": payload["items"][0], "validation": lock_json("GH_AW_VALIDATION_JSON")}
+            ),
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30,
+        )
+        ingested = json.loads(result.stdout)
+        self.assertTrue(ingested["isValid"], ingested)
+        prepared = contract.prepare_output({"items": [ingested["normalizedItem"]], "errors": []}, trusted)
+        result = subprocess.run(
+            ["node", str(harness)],
+            input=json.dumps({"mode": "publish", "payload": prepared, "existing": True}),
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30,
+        )
+        published = json.loads(result.stdout)
+        self.assertTrue(published["result"]["success"], published)
+        self.assertEqual(1, published["writes"])
+        self.assertEqual(1, published["hides"])
+        self.assertEqual(49107, published["comment"]["issue_number"])
+        body = published["comment"]["body"]
+        for url in re.findall(r"https?://[^)]+", prepared["items"][0]["body"]):
+            self.assertIn(url, body)
+        for name in trusted["affectedPackages"]:
+            self.assertIn(name, body)
+        return body
+
+    def test_multi_package_citations_survive_ingestion_and_publication(self):
+        draft, trusted = multipackage_fixture()
+        body = self.publish_multi_package(draft, trusted)
+        for number in range(1, 36):
+            self.assertIn(f"[E{number}]", body)
+            self.assertIn(f"| E{number} |", body)
+
+    def test_multi_package_attribution_keeps_shared_specification_and_historical_evidence(self):
+        draft, trusted = multipackage_fixture(2)
+        expected_urls = set()
+        for package, breaking in zip(draft["packages"], trusted["breakingChangeContext"]):
+            name = package["package"]
+            entry = {
+                "text": "Renamed <Widget> | @clientName.",
+                "release": "1.0.0b1 (2026-09-28)",
+                "startLine": 1,
+                "endLine": 1,
+                "changeKind": "added",
+            }
+            breaking["introducedEntries"] = [entry]
+            spec_refs = []
+            for revision in (NEW_SPEC, breaking["specificationSources"]["mergeBase"]["revision"]):
+                spec = evidence.source_record(
+                    "Azure/azure-rest-api-specs",
+                    {
+                        "path": "specification/example/@renamedFrom(Widget)&\uff21Widget file.tsp",
+                        "revision": revision,
+                        "status": "available",
+                        "content": "model Widget {}",
+                    },
+                    name,
+                    "specification",
+                )
+                trusted["sources"].append(spec)
+                spec_refs.append(reference(spec))
+                expected_urls.add(evidence.citation(spec, 1, 1)["url"])
+            sdk = next(
+                item for item in trusted["sources"] if item["package"] == name and item["path"].endswith("/README.md")
+            )
+            historical = evidence.source_record(REPO, {**sdk, "revision": trusted["mergeBaseRevision"]}, name)
+            trusted["sources"].append(historical)
+            expected_urls.add(evidence.citation(historical, 1, 1)["url"])
+            package["attribution"] = [
+                {
+                    "entry_id": evidence.entry_id(entry),
+                    "cause": "typespec_api",
+                    "explanation": '@renamedFrom("Widget") explains the <Widget> rename.',
+                    "sources": spec_refs,
+                    "sdk_context": [reference(historical)],
+                }
+            ]
+        body = self.publish_multi_package(draft, trusted)
+        for url in expected_urls:
+            self.assertEqual(1, body.count(urllib.parse.quote(url, safe="/:%#._-~")))
+        self.assertEqual(2, body.count('@renamedFrom("Widget")'))
+        self.assertIn("<Widget>", body)
+        self.assertNotIn("%2520", body)
+        self.assertIn("TypeSpec/API", body)
+
     def test_actual_compiled_python_tool_and_documented_commands(self):
         harness = Path(__file__).with_name("mgmt_review_runtime.cjs")
         lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")

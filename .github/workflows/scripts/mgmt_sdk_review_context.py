@@ -927,11 +927,26 @@ def collect_review_sources(client, context):
     context["sources"] = []
     context["sourceCollectionIssues"] = []
     byte_count = 0
+
+    def read(path):
+        key = (path, context["latestRevision"])
+        if key not in client.files and client.request_count >= MAX_API_REQUESTS - 1:
+            client.files[key] = {
+                "path": path,
+                "revision": context["latestRevision"],
+                "status": "unverified",
+                "error": "Evidence request budget exhausted; completed evidence is preserved.",
+            }
+        else:
+            client.read_file(*key)
+        return client.files[key]
+
     for package in context["affectedPackages"]:
         paths = {
             f"{package}/{name}" for name in ("README.md", "api.md", "_metadata.json", "pyproject.toml", "CHANGELOG.md")
         }
-        project = client.files.get((f"{package}/pyproject.toml", context["latestRevision"]), {})
+        project_path = f"{package}/pyproject.toml"
+        project = read(project_path)
         if project.get("status") == "available":
             try:
                 attr = (
@@ -965,17 +980,8 @@ def collect_review_sources(client, context):
             )
         if len(paths) > 16:
             context["sourceCollectionIssues"].append(f"{package}: source discovery exceeded the 16-file package limit.")
-        for path in sorted(paths)[:16]:
-            key = (path, context["latestRevision"])
-            if key not in client.files and client.request_count >= MAX_API_REQUESTS - 1:
-                client.files[key] = {
-                    "path": path,
-                    "revision": context["latestRevision"],
-                    "status": "unverified",
-                    "error": "Evidence request budget exhausted; completed evidence is preserved.",
-                }
-            else:
-                client.read_file(*key)
+        for path in sorted(paths, key=lambda path: (path != project_path, path))[:16]:
+            read(path)
         for (path, revision), evidence in client.files.items():
             if not path.startswith(package + "/"):
                 continue

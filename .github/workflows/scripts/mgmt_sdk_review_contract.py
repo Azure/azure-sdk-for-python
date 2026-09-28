@@ -541,11 +541,11 @@ def link(url, label):
     return f"[{text(label)}]({destination})"
 
 
-def sources(values):
+def sources(values, render_link=link):
     result = []
     for source in values:
         label = unquote(urlsplit(source["url"]).path.rsplit("/", 1)[-1])
-        rendered = link(source["url"], label)
+        rendered = render_link(source["url"], label)
         if source["line_status"] == "unavailable":
             rendered += " (lines unverified: " + text(source["reason"]) + ")"
         result.append(rendered)
@@ -576,6 +576,15 @@ def render(data, context):
             + "\n\n## Management SDK review not applicable\n\n"
             + ("This pull request does not change a package matching `sdk/*/azure-mgmt-*`.\n")
         )
+    references = {}
+
+    def evidence_link(url, label):
+        if len(data["packages"]) == 1:
+            return link(url, label)
+        if url not in references:
+            references[url] = len(references) + 1
+        return f"{text(label)} [E{references[url]}]"
+
     findings, unverified, summary, attribution_sections = [], [], [], []
     if context["packageDiscovery"]["status"] == "unverified":
         unverified.append(["All packages", "Management package discovery", text(context["packageDiscovery"]["error"])])
@@ -593,21 +602,22 @@ def render(data, context):
                     [
                         text(name),
                         text(check["name"]),
-                        text(check["reason"]) + ("<br>" + sources(check["sources"]) if check["sources"] else ""),
+                        text(check["reason"])
+                        + ("<br>" + sources(check["sources"], evidence_link) if check["sources"] else ""),
                     ]
                 )
             else:
                 label = text(check["name"])
                 if check["outcome"] == "not_applicable":
                     label += " (not applicable: " + text(check["reason"]) + ")"
-                label += " " + sources(check["sources"])
+                label += " " + sources(check["sources"], evidence_link)
                 completed.append(label)
         for finding in package["findings"]:
             findings.append(
                 [
                     finding["severity"],
                     text(finding["title"]),
-                    text(name) + "<br>" + sources(finding["sources"]),
+                    text(name) + "<br>" + sources(finding["sources"], evidence_link),
                     text(finding["observation"]),
                     text(finding["check"]),
                     text(finding["remediation"]),
@@ -625,7 +635,9 @@ def render(data, context):
             completed.append("API-version drift")
             if drift["status"] == "changed":
                 evidence = "<br>".join(
-                    link(file_url(context, drift["metadataPath"], drift[which + "Revision"]), drift[which + "Revision"])
+                    evidence_link(
+                        file_url(context, drift["metadataPath"], drift[which + "Revision"]), drift[which + "Revision"]
+                    )
                     + ": "
                     + text(json.dumps(drift[which + "ApiVersions"], ensure_ascii=False, sort_keys=True))
                     for which in ("first", "latest")
@@ -655,11 +667,11 @@ def render(data, context):
             if entry["cause"] == "human_review":
                 explanation = "**Needs human review:** " + explanation
             if entry["sources"] or entry["sdk_context"]:
-                explanation += "<br>" + sources(entry["sources"] + entry["sdk_context"])
+                explanation += "<br>" + sources(entry["sources"] + entry["sdk_context"], evidence_link)
             release = trusted["release"] if trusted["release"] is not None else "Unverified release (missing heading)"
             groups.setdefault(release, []).append(
                 [
-                    link(url, trusted["text"]) + "<br>Change: " + text(trusted["changeKind"]),
+                    evidence_link(url, trusted["text"]) + "<br>Change: " + text(trusted["changeKind"]),
                     "TypeSpec/API" if entry["cause"] == "typespec_api" else "Human review",
                     explanation,
                     "High" if entry["confidence"] == "high" else "N/A",
@@ -733,6 +745,18 @@ def render(data, context):
         )
         + "\n"
     )
+    if references:
+        body += (
+            "\n### Evidence references\n\n"
+            + table(
+                ["Reference", "Source"],
+                [
+                    [f"E{number}", link(url, unquote(urlsplit(url).path.rsplit("/", 1)[-1]))]
+                    for url, number in references.items()
+                ],
+            )
+            + "\n"
+        )
     require(
         len(body.encode("utf-8")) <= 60000,
         "rendered.body",
