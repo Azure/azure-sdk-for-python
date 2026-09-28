@@ -1,5 +1,5 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-../azure-storage-blob
-aiohttp>=3.13.5
+../../core/azure-mgmt-core
+aiohttp
