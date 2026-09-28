@@ -292,6 +292,41 @@ class TestGetOrCreateAtomicity:
 
 
 class TestPersistedLookup:
+    async def test_windows_lock_file_removal_failure_is_retryable(self, tmp_path: Path, monkeypatch):
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        original = await streams.get_or_create("windows-retry")
+        await original.emit({"n": 1})
+        await original.close()
+        lock_path = tmp_path / "windows-retry.jsonl.lock"
+        unlink = Path.unlink
+
+        def denied(path, *args, **kwargs):
+            if path == lock_path:
+                raise PermissionError("lock removal denied")
+            return unlink(path, *args, **kwargs)
+
+        with monkeypatch.context() as patch:
+            patch.setattr(Path, "unlink", denied)
+            for _ in range(2):
+                with pytest.raises(PermissionError, match="lock removal denied"):
+                    await streams.delete("windows-retry")
+                assert streams._slots["windows-retry"] is not _TOMBSTONE
+                assert original._lock_fd is None
+                assert lock_path.exists()
+                assert (tmp_path / "windows-retry.jsonl").exists()
+
+        await streams.delete("windows-retry")
+        assert list(tmp_path.iterdir()) == []
+        fresh = await streams.get_or_create("windows-retry")
+        await fresh.emit({"n": 2})
+        await fresh.close()
+        assert [event async for event in fresh.subscribe()] == [{"n": 2}]
+        await streams.delete("windows-retry")
+
     @pytest.mark.parametrize("expired", [False, True])
     async def test_unlink_failure_preserves_slot_until_cleanup_retry(self, tmp_path: Path, monkeypatch, expired):
         from azure.ai.agentserver.core.streaming import _concrete
