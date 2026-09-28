@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/stable/2019-07-01/examples/deleteApplicationDefinition.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/preview/2020-08-21-preview/examples/deleteApplicationDefinition.json
 if __name__ == "__main__":
     main()

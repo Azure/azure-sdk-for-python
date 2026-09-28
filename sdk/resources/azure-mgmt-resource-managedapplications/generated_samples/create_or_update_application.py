@@ -36,7 +36,6 @@ def main():
         application_name="myManagedApplication",
         parameters={
             "kind": "ServiceCatalog",
-            "location": "East US 2",
             "properties": {
                 "applicationDefinitionId": "/subscriptions/subid/resourceGroups/rg/providers/Microsoft.Solutions/applicationDefinitions/myAppDef",
                 "managedResourceGroupId": "/subscriptions/subid/resourceGroups/myManagedRG",
@@ -46,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/stable/2019-07-01/examples/createOrUpdateApplication.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/preview/2020-08-21-preview/examples/createOrUpdateApplication.json
 if __name__ == "__main__":
     main()

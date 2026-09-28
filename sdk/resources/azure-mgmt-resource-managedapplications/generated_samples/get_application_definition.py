@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/stable/2019-07-01/examples/getApplicationDefinition.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/preview/2020-08-21-preview/examples/getApplicationDefinition.json
 if __name__ == "__main__":
     main()

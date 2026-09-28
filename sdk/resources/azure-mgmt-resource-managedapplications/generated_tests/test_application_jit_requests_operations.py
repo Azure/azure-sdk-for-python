@@ -24,7 +24,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jit_requests.get(
             resource_group_name=resource_group.name,
             jit_request_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "updatedBy": {"applicationId": "str", "oid": "str", "puid": "str"},
             },
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             jit_request_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
         response = self.client.jit_requests.delete(
             resource_group_name=resource_group.name,
             jit_request_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_jit_requests_list_by_subscription(self, resource_group):
         response = self.client.jit_requests.list_by_subscription(
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestApplicationJitRequestsOperations(AzureMgmtRecordedTestCase):
     def test_jit_requests_list_by_resource_group(self, resource_group):
         response = self.client.jit_requests.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself

@@ -35,19 +35,18 @@ def main():
         resource_group_name="rg",
         application_definition_name="myManagedApplicationDef",
         parameters={
-            "location": "East US 2",
             "properties": {
                 "authorizations": [{"principalId": "validprincipalguid", "roleDefinitionId": "validroleguid"}],
                 "description": "myManagedApplicationDef description",
                 "displayName": "myManagedApplicationDef",
                 "lockLevel": "None",
                 "packageFileUri": "https://path/to/packagezipfile",
-            },
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/stable/2019-07-01/examples/createOrUpdateApplicationDefinition.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Solutions/managedapplications/preview/2020-08-21-preview/examples/createOrUpdateApplicationDefinition.json
 if __name__ == "__main__":
     main()

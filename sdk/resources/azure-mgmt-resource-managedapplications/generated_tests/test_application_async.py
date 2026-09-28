@@ -23,7 +23,7 @@ class TestApplicationAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_operations(self, resource_group):
         response = self.client.list_operations(
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

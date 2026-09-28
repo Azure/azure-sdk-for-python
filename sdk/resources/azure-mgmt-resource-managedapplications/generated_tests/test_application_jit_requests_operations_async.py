@@ -25,7 +25,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.jit_requests.get(
             resource_group_name=resource_group.name,
             jit_request_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedBy": {"applicationId": "str", "oid": "str", "puid": "str"},
                 },
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -71,7 +71,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             jit_request_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.jit_requests.delete(
             resource_group_name=resource_group.name,
             jit_request_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_jit_requests_list_by_subscription(self, resource_group):
         response = await self.client.jit_requests.list_by_subscription(
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestApplicationJitRequestsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_jit_requests_list_by_resource_group(self, resource_group):
         response = await self.client.jit_requests.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself

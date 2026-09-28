@@ -25,7 +25,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.applications.get(
             resource_group_name=resource_group.name,
             application_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.applications.begin_delete(
                 resource_group_name=resource_group.name,
                 application_name="str",
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedBy": {"applicationId": "str", "oid": "str", "puid": "str"},
                 },
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +115,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.applications.update(
             resource_group_name=resource_group.name,
             application_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_applications_list_by_resource_group(self, resource_group):
         response = self.client.applications.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -136,7 +136,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_applications_list_by_subscription(self, resource_group):
         response = self.client.applications.list_by_subscription(
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_applications_get_by_id(self, resource_group):
         response = await self.client.applications.get_by_id(
             application_id="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -159,7 +159,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await (
             await self.client.applications.begin_delete_by_id(
                 application_id="str",
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -222,7 +222,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedBy": {"applicationId": "str", "oid": "str", "puid": "str"},
                 },
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -234,7 +234,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_applications_update_by_id(self, resource_group):
         response = await self.client.applications.update_by_id(
             application_id="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -247,7 +247,7 @@ class TestApplicationApplicationsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.applications.begin_refresh_permissions(
                 resource_group_name=resource_group.name,
                 application_name="str",
-                api_version="2019-07-01",
+                api_version="2020-08-21-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

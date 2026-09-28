@@ -500,6 +500,8 @@ class ApplicationDefinition(GenericResource):
     :vartype description: str
     :ivar package_file_uri: The managed application definition package file Uri. Use this element.
     :vartype package_file_uri: str
+    :ivar storage_account_id: The storage account id for bring your own storage scenario.
+    :vartype storage_account_id: str
     :ivar main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
     :vartype main_template: JSON
@@ -545,6 +547,7 @@ class ApplicationDefinition(GenericResource):
         "artifacts": {"key": "properties.artifacts", "type": "[ApplicationDefinitionArtifact]"},
         "description": {"key": "properties.description", "type": "str"},
         "package_file_uri": {"key": "properties.packageFileUri", "type": "str"},
+        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
         "main_template": {"key": "properties.mainTemplate", "type": "object"},
         "create_ui_definition": {"key": "properties.createUiDefinition", "type": "object"},
         "notification_policy": {"key": "properties.notificationPolicy", "type": "ApplicationNotificationPolicy"},
@@ -568,6 +571,7 @@ class ApplicationDefinition(GenericResource):
         artifacts: Optional[list["_models.ApplicationDefinitionArtifact"]] = None,
         description: Optional[str] = None,
         package_file_uri: Optional[str] = None,
+        storage_account_id: Optional[str] = None,
         main_template: Optional[JSON] = None,
         create_ui_definition: Optional[JSON] = None,
         notification_policy: Optional["_models.ApplicationNotificationPolicy"] = None,
@@ -607,6 +611,8 @@ class ApplicationDefinition(GenericResource):
         :keyword package_file_uri: The managed application definition package file Uri. Use this
          element.
         :paramtype package_file_uri: str
+        :keyword storage_account_id: The storage account id for bring your own storage scenario.
+        :paramtype storage_account_id: str
         :keyword main_template: The inline main template json which has resources to be provisioned. It
          can be a JObject or well-formed JSON string.
         :paramtype main_template: JSON
@@ -637,6 +643,7 @@ class ApplicationDefinition(GenericResource):
         self.artifacts = artifacts
         self.description = description
         self.package_file_uri = package_file_uri
+        self.storage_account_id = storage_account_id
         self.main_template = main_template
         self.create_ui_definition = create_ui_definition
         self.notification_policy = notification_policy
@@ -1340,8 +1347,9 @@ class ErrorAdditionalInfo(_serialization.Model):
         self.info: Optional[JSON] = None
 
 
-class ErrorDetail(_serialization.Model):
-    """The error detail.
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1352,7 +1360,7 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.resource.managedapplications.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.resource.managedapplications.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
      list[~azure.mgmt.resource.managedapplications.models.ErrorAdditionalInfo]
@@ -1370,7 +1378,7 @@ class ErrorDetail(_serialization.Model):
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
@@ -1380,29 +1388,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.details: Optional[list["_models.ErrorResponse"]] = None
         self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
-
-
-class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.resource.managedapplications.models.ErrorDetail
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.resource.managedapplications.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.error = error
 
 
 class Identity(_serialization.Model):
@@ -1739,111 +1726,60 @@ class JitSchedulingPolicy(_serialization.Model):
 
 
 class Operation(_serialization.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+    """Microsoft.Solutions operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for ARM/control-plane operations.
+    :ivar is_data_action: Indicates whether the operation is a data action.
     :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
+    :ivar display: The object that represents the operation.
     :vartype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: str or ~azure.mgmt.resource.managedapplications.models.Origin
-    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. "Internal"
-    :vartype action_type: str or ~azure.mgmt.resource.managedapplications.models.ActionType
     """
-
-    _validation = {
-        "name": {"readonly": True},
-        "is_data_action": {"readonly": True},
-        "origin": {"readonly": True},
-        "action_type": {"readonly": True},
-    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "is_data_action": {"key": "isDataAction", "type": "bool"},
         "display": {"key": "display", "type": "OperationDisplay"},
-        "origin": {"key": "origin", "type": "str"},
-        "action_type": {"key": "actionType", "type": "str"},
-    }
-
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
-        """
-        :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
-        """
-        super().__init__(**kwargs)
-        self.name: Optional[str] = None
-        self.is_data_action: Optional[bool] = None
-        self.display = display
-        self.origin: Optional[Union[str, "_models.Origin"]] = None
-        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
-
-
-class OperationAutoGenerated(_serialization.Model):
-    """Microsoft.Solutions operation.
-
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar display: The object that represents the operation.
-    :vartype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplayAutoGenerated
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "display": {"key": "display", "type": "OperationDisplayAutoGenerated"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["_models.OperationDisplayAutoGenerated"] = None,
+        is_data_action: Optional[bool] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
         :keyword display: The object that represents the operation.
-        :paramtype display:
-         ~azure.mgmt.resource.managedapplications.models.OperationDisplayAutoGenerated
+        :paramtype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
 
 
 class OperationDisplay(_serialization.Model):
-    """Localized display information for this particular operation.
+    """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
+    :ivar provider: Service provider: Microsoft.Solutions.
     :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :ivar resource: Resource on which the operation is performed: Application, JitRequest, etc.
     :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :ivar operation: Operation type: Read, write, delete, etc.
     :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
+    :ivar description: Localized friendly description for the operation.
     :vartype description: str
     """
 
     _validation = {
-        "provider": {"readonly": True},
-        "resource": {"readonly": True},
-        "operation": {"readonly": True},
         "description": {"readonly": True},
     }
 
@@ -1852,32 +1788,6 @@ class OperationDisplay(_serialization.Model):
         "resource": {"key": "resource", "type": "str"},
         "operation": {"key": "operation", "type": "str"},
         "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.provider: Optional[str] = None
-        self.resource: Optional[str] = None
-        self.operation: Optional[str] = None
-        self.description: Optional[str] = None
-
-
-class OperationDisplayAutoGenerated(_serialization.Model):
-    """The object that represents the operation.
-
-    :ivar provider: Service provider: Microsoft.Solutions.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Application, JitRequest, etc.
-    :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
-    :vartype operation: str
-    """
-
-    _attribute_map = {
-        "provider": {"key": "provider", "type": "str"},
-        "resource": {"key": "resource", "type": "str"},
-        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -1900,35 +1810,36 @@ class OperationDisplayAutoGenerated(_serialization.Model):
         self.provider = provider
         self.resource = resource
         self.operation = operation
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
-    to get the next set of results.
+    """Result of the request to list Microsoft.Solutions operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of operations supported by the resource provider.
+    :ivar value: List of Microsoft.Solutions operations.
     :vartype value: list[~azure.mgmt.resource.managedapplications.models.Operation]
-    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Operation]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of Microsoft.Solutions operations.
+        :paramtype value: list[~azure.mgmt.resource.managedapplications.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[list["_models.Operation"]] = None
-        self.next_link: Optional[str] = None
+        self.value = value
+        self.next_link = next_link
 
 
 class Plan(_serialization.Model):

@@ -24,7 +24,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
         response = self.client.application_definitions.get(
             resource_group_name=resource_group.name,
             application_definition_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
         response = self.client.application_definitions.begin_delete(
             resource_group_name=resource_group.name,
             application_definition_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -68,10 +68,11 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
                 "packageFileUri": "str",
                 "policies": [{"name": "str", "parameters": "str", "policyDefinitionId": "str"}],
                 "sku": {"name": "str", "capacity": 0, "family": "str", "model": "str", "size": "str", "tier": "str"},
+                "storageAccountId": "str",
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +83,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
     def test_application_definitions_list_by_resource_group(self, resource_group):
         response = self.client.application_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -94,7 +95,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
         response = self.client.application_definitions.get_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +107,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
         response = self.client.application_definitions.begin_delete_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -138,10 +139,11 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
                 "packageFileUri": "str",
                 "policies": [{"name": "str", "parameters": "str", "policyDefinitionId": "str"}],
                 "sku": {"name": "str", "capacity": 0, "family": "str", "model": "str", "size": "str", "tier": "str"},
+                "storageAccountId": "str",
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2019-07-01",
+            api_version="2020-08-21-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
