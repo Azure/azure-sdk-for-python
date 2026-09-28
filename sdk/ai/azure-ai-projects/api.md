@@ -3280,7 +3280,7 @@ namespace azure.ai.projects.models
         base_url: Optional[str]
         project_connection_id: Optional[str]
         send_credentials_for_agent_card: Optional[bool]
-        type: Literal[ToolType.A2A]
+        type: Literal[ToolType.A2_A]
 
         @overload
         def __init__(
@@ -3306,7 +3306,7 @@ namespace azure.ai.projects.models
         project_connection_id: Optional[str]
         send_credentials_for_agent_card: Optional[bool]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.A2A]
+        type: Literal[ToolboxToolType.A2_A]
 
         @overload
         def __init__(
@@ -14498,8 +14498,8 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        A2A = "a2a"
         A2A_PREVIEW = "a2a_preview"
+        A2_A = "a2a"
         APPLY_PATCH = "apply_patch"
         AZURE_AI_SEARCH = "azure_ai_search"
         AZURE_FUNCTION = "azure_function"
@@ -14734,8 +14734,8 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        A2A = "a2a"
         A2A_PREVIEW = "a2a_preview"
+        A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
