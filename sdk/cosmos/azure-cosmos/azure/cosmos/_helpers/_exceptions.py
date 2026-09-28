@@ -15,7 +15,7 @@ It also exposes a small ``_ResponseAdapter``. When a Cosmos call fails, the
 raised exception carries a ``.response`` object, and customer ``except`` blocks
 read ``e.response.status_code`` / ``e.response.headers`` / ``e.response.text()``
 off it. That object is normally an azure-core ``HttpResponse``, but
-RustBackend hands back a ``BackendResponse`` instead. ``_ResponseAdapter``
+BindingAdapter hands back a ``BackendResponse`` instead. ``_ResponseAdapter``
 wraps that ``BackendResponse`` and re-exposes just those same attributes and
 methods for Cosmos exception construction and common error handlers. It is not
 a complete ``HttpResponse`` implementation or a guarantee of execution-path parity.

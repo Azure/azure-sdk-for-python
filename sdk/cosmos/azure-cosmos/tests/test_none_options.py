@@ -28,11 +28,13 @@ class TestNoneOptions(unittest.TestCase):
     def setUp(self) -> None:
         # Key-auth client for control-plane operations (throughput, conflicts, etc.)
         self.key_client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        self.addCleanup(self.key_client.close)
         self.key_database = self.key_client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.key_container = self.key_database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # AAD (or key, depending on env var) client for data-plane operations
         self.client = test_config.TestConfig.create_data_client()
+        self.addCleanup(self.client.close)
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 

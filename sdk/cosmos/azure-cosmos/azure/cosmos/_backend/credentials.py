@@ -24,7 +24,7 @@ from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Tuple
 
 from ._async_credential_bridge import AsyncTokenCredentialBridge
-from ._rust_backend_shared import close_credential_bridge_quietly
+from ._binding_adapter_shared import close_credential_bridge_quietly
 
 
 def _is_async_credential(credential: Any) -> bool:

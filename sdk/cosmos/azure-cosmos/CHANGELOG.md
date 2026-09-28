@@ -6,9 +6,18 @@
 
 #### Features Added
 
+* Added simple-token combination to synchronous and asynchronous `ContainerProxy.get_latest_session_token()`, alongside existing vector-token support.
+
 #### Breaking Changes
 
+* For v5, removed `DatabaseProxy.read_offer()` and `ContainerProxy.read_offer()`; use `get_throughput()` to read the same configured throughput.
+* Container `get_throughput()` now rejects unsupported Rust inputs instead of using legacy Python and isolates returned throughput from response-hook mutations.
+
 #### Bugs Fixed
+
+* Fixed container `get_throughput()` response-header retention, input-option ownership, missing-offer errors and recovery after container recreation.
+* Fixed `get_latest_session_token()` discarding a saved parent token when child observations leave an uncovered gap, and restored acceptance of a single simple token.
+* Restored synchronous and asynchronous `read_item()` support for mappings containing only `_self`, without requiring an additional `id` or changing the saved resource address.
 
 #### Other Changes
 

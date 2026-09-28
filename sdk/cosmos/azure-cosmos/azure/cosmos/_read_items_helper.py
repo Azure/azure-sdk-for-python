@@ -367,11 +367,11 @@ class ReadItemsHelperSync:
         helper: Union[ItemHelper, LegacyItemHelper]
         if context is None:
             helper = LegacyItemHelper.from_legacy_connection(self.client)
-        elif context.backend.name == "core-python":
+        elif context.adapter.name == "core-python":
             helper = LegacyItemHelper(self.client)
         else:
             helper = ItemHelper(
-                context.backend, context.defaults, context.response_state,
+                context.adapter, context.defaults, context.response_state,
             )
         try:
             result = helper.read_item(

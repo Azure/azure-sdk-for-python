@@ -160,7 +160,9 @@ def test_lazy_pages_and_continuation_resume(listing_case):
     """
     case = listing_case
     hooks = []
-    pager = case.database.list_containers(max_item_count=1, response_hook=hooks.append)
+    pager = case.database.list_containers(
+        max_item_count=1, response_hook=lambda headers, results: hooks.append((headers, results))
+    )
     assert not inspect.isawaitable(pager)
     assert case.requests == [] and hooks == []
 
@@ -186,6 +188,8 @@ def test_lazy_pages_and_continuation_resume(listing_case):
         return first, rest
 
     first, rest = _run(case, sync_call, async_call)
+    assert hooks[0][1] is pager
+    assert hooks[0][0]["x-ms-activity-id"] == "c1"
     assert first == [{"id": "c1"}] and rest == [{"id": "c2"}]
     assert len(case.requests) == 2
     if case.rust:
@@ -222,7 +226,9 @@ def test_falsey_hook_receives_each_page_as_an_isolated_snapshot(listing_case, em
         def __bool__(self):
             return False
 
-        def __call__(self, headers):
+        def __call__(self, headers, results_iterator):
+            assert results_iterator is pager
+            assert len(case.requests) == len(snapshots) + 1
             assert headers is not case.connection.last_response_headers
             snapshots.append(headers)
             headers["x-hook-mutation"] = "local"
@@ -247,8 +253,32 @@ def test_empty_database_still_reports_its_successful_page(listing_case):
     case = listing_case
     case.responses[""] = _page([])
     hook = MagicMock()
-    assert _drain(case, case.database.list_containers(response_hook=hook)) == []
+    pager = case.database.list_containers(response_hook=hook)
+    assert _drain(case, pager) == []
     hook.assert_called_once()
+    assert hook.call_args.args[1] is pager
+
+
+def test_hook_keeps_each_listings_iterator_and_can_retain_it(listing_case):
+    """A shared hook receives each listing's own iterator, usable after the hook returns."""
+    case = listing_case
+    observed = []
+
+    def hook(headers, results_iterator):
+        observed.append((headers["x-ms-activity-id"], results_iterator))
+
+    first = case.database.list_containers(response_hook=hook)
+    second = case.database.list_containers(response_hook=hook)
+    assert observed == [] and case.requests == []
+
+    async def advance_first():
+        return await first.__anext__()
+
+    assert _run(case, lambda: next(first), advance_first) == {"id": "c1"}
+    assert observed == [("c1", first)]
+    assert _drain(case, observed[0][1]) == [{"id": "c2"}]
+    assert _drain(case, second) == [{"id": "c1"}, {"id": "c2"}]
+    assert observed == [("c1", first), ("c2", first), ("c1", second), ("c2", second)]
 
 
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics", "availability_strategy"])
@@ -492,7 +522,7 @@ def test_empty_service_page_does_not_reset_current_page_budget(listing_case, mon
     monkeypatch.setattr(time, "time", lambda: clock[0])
     case.responses[""] = _page([], "next")
 
-    def hook(headers):
+    def hook(headers, results_iterator):
         clock[0] += 2
 
     with pytest.raises(exceptions.CosmosClientTimeoutError):

@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Keep the Python backend, operation defaults, and response headers available
+"""Keep the Python adapter, operation defaults, and response headers available
 to database, container, and operation helpers.
 
 The customer app configures CosmosClient once. Its database and container
 objects then retain the same ItemClientContext, which groups references
-to the existing Python backend, ItemClientDefaults, and
+to the existing Python adapter, ItemClientDefaults, and
 ClientLastResponseHeaders.
 
 Helpers use these references directly rather than retrieve them through
@@ -72,7 +72,7 @@ class ClientLastResponseHeaders:
 
 @dataclass(frozen=True)
 class ItemClientContext(Generic[_BackendT]):
-    """Group references to one client's Python backend, defaults, and header state.
+    """Group references to one client's Python adapter, defaults, and header state.
 
     Client state means the information retained for a client, not the
     CosmosClient object itself. For a synchronous Rust-backed client with
@@ -80,11 +80,11 @@ class ItemClientContext(Generic[_BackendT]):
 
         CosmosClient object
             |
-            +-- _backend -----------------------> RustBackend object
+            +-- _adapter -----------------------> BindingAdapter object
             |                                         ^
             +-- _item_context -> ItemClientContext    |
                                      |                |
-                                     +-- backend -----+
+                                     +-- adapter -----+
                                      |
                                      +-- defaults -> ItemClientDefaults
                                      |                   priority = "High"
@@ -92,17 +92,17 @@ class ItemClientContext(Generic[_BackendT]):
                                      +-- response_state -> ClientLastResponseHeaders
                                                                latest headers
 
-    There is one RustBackend object in this illustration, reached through
+    There is one BindingAdapter object in this illustration, reached through
     two references. ItemClientContext is a separate object, not another
     CosmosClient. DatabaseProxy for "sales" and ContainerProxy for "orders"
-    retain this same context rather than copy the backend or prepare client
+    retain this same context rather than copy the adapter or prepare client
     settings again.
 
     The defaults hold values used when operations omit their own, and the
     response_state holds the latest published headers. For an asynchronous
-    Rust-backed client, backend refers to AsyncRustBackend instead.
+    Rust-backed client, adapter refers to AsyncBindingAdapter instead.
     """
 
-    backend: _BackendT
+    adapter: _BackendT
     defaults: ItemClientDefaults = field(default_factory=ItemClientDefaults)
     response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Private, success-only Rust attempt tracing proof for async create_item."""
+"""Private Rust attempt tracing proof for async create_item results and driver errors."""
 
 from __future__ import annotations
 
@@ -41,10 +41,10 @@ async def create_item_with_attempt_tracing(
     This private helper neither installs an exporter nor enables tracing globally.
     """
     from opentelemetry import trace  # pylint: disable=import-outside-toplevel
-    from ._backend.rust_backend import AsyncRustBackend  # pylint: disable=import-outside-toplevel
+    from ._backend.binding_adapter import AsyncBindingAdapter  # pylint: disable=import-outside-toplevel
 
     backend = getattr(container._get_item_helper(), "_backend", None)  # pylint: disable=protected-access
-    if not isinstance(backend, AsyncRustBackend):
+    if not isinstance(backend, AsyncBindingAdapter):
         raise ValueError("Attempt tracing POC requires the async Rust backend")
     token = _CAPTURE.set(
         _Capture(trace.get_current_span().get_span_context(), backend, asyncio.current_task())
@@ -118,6 +118,16 @@ def _decode_payload(payload: object) -> tuple[int, int, list[_Attempt]]:
             raise ValueError("Invalid attempt timing or execution context")
         attempts.append(_Attempt(start, end, status, reason))
     return total, retained, attempts
+
+
+def emit_exception_attempts(parent: Span, error: BaseException) -> None:
+    """Read private binding diagnostics without changing the operation error."""
+    try:
+        payload = getattr(error, "_cosmos_attempt_payload", None)
+    except Exception:  # pylint: disable=broad-except
+        _LOGGER.warning("Rust attempt POC could not read error diagnostics; operation error is unchanged")
+        return
+    emit_attempts(parent, payload)
 
 
 def emit_attempts(parent: Span, payload: object) -> None:

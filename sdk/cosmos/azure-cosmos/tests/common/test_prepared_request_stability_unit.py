@@ -18,8 +18,8 @@ from azure.cosmos._backend.contracts import (
 )
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._backend.request_settings import RequestSettings
-from azure.cosmos._backend.rust_backend import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.rust_backend import build_binding_request_from_page as async_page
+from azure.cosmos._backend.binding_adapter import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.binding_adapter import build_binding_request_from_page as async_page
 
 
 def test_frozen_mapping_is_a_value_mapping_not_a_hash_key():

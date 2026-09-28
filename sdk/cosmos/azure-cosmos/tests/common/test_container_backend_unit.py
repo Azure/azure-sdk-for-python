@@ -110,7 +110,7 @@ def _created_container_response() -> BackendResponse:
     )
 
 
-class _RustBackend(CosmosBackend):
+class _BindingAdapter(CosmosBackend):
     """Stand-in Rust backend: records the request it was handed and returns a
     canned reply, so a test can check what would have gone on the wire."""
     name = "rust"
@@ -126,7 +126,7 @@ class _RustBackend(CosmosBackend):
         return self.response
 
 
-class _AsyncRustBackend(AsyncCosmosBackend):
+class _AsyncBindingAdapter(AsyncCosmosBackend):
     """Async stand-in Rust backend: records the request it was handed and returns
     a canned reply.
 
@@ -162,7 +162,7 @@ def container_create_case(request):
     mid-setup and run the same call on the other engine.
     """
     is_async = request.param == "async"
-    backend = _AsyncRustBackend() if is_async else _RustBackend()
+    backend = _AsyncBindingAdapter() if is_async else _BindingAdapter()
     mock_type = AsyncMock if is_async else MagicMock
     backend.execute = mock_type(wraps=backend.execute)
     headers = CaseInsensitiveDict({"x-ms-request-charge": "5.25"})
@@ -1330,7 +1330,7 @@ def test_list_containers_sends_no_query_body():
     """A read feed has no SQL. The page adapter refuses a feed op that is not on its
     parameterless list, so leaving ``list_containers`` off it makes every
     ``list_containers`` call fail once it reaches the binding."""
-    from azure.cosmos._backend.rust_backend import build_binding_request_from_page
+    from azure.cosmos._backend.binding_adapter import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_list_containers_prepared_page_request(
@@ -1346,7 +1346,7 @@ def test_list_containers_sends_no_query_body():
 
 def test_query_containers_sends_the_query_body():
     """The query payload must arrive as JSON in ``body_bytes``, not as a URL parameter."""
-    from azure.cosmos._backend.rust_backend import build_binding_request_from_page
+    from azure.cosmos._backend.binding_adapter import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_query_containers_prepared_page_request(
@@ -1390,7 +1390,7 @@ def test_sync_create_container_routes_to_rust_and_fires_the_hook_once():
         CreateContainer=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _RustBackend()
+    backend = _BindingAdapter()
     hooks = []
 
     result = ContainerHelper(connection, backend).create_container(
@@ -1445,7 +1445,7 @@ def test_async_create_container_routes_to_rust():
         CreateContainer=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _AsyncRustBackend()
+    backend = _AsyncBindingAdapter()
 
     result = asyncio.run(
         AsyncContainerHelper(connection, backend).create_container(
@@ -1935,7 +1935,7 @@ def test_sync_read_container_routes_to_rust_and_fires_the_hook_once():
         ReadContainer=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
     )
-    backend = _RustBackend(_read_container_response())
+    backend = _BindingAdapter(_read_container_response())
     hooks = []
 
     result = ContainerHelper(connection, backend).read_container(
@@ -2002,7 +2002,7 @@ def test_async_read_container_routes_to_rust():
         ReadContainer=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
     )
-    backend = _AsyncRustBackend(_read_container_response())
+    backend = _AsyncBindingAdapter(_read_container_response())
 
     result = asyncio.run(
         AsyncContainerHelper(connection, backend).read_container(
@@ -2097,7 +2097,7 @@ def test_async_create_container_fires_the_hook_once_on_the_rust_path():
     hooks = []
 
     result = asyncio.run(
-        AsyncContainerHelper(connection, _AsyncRustBackend()).create_container(
+        AsyncContainerHelper(connection, _AsyncBindingAdapter()).create_container(
             "dbs/db1",
             {"id": "c1"},
             {},
@@ -2120,7 +2120,7 @@ def test_async_read_container_fires_the_hook_once_on_the_rust_path():
     hooks = []
 
     result = asyncio.run(
-        AsyncContainerHelper(connection, _AsyncRustBackend(_read_container_response())).read_container(
+        AsyncContainerHelper(connection, _AsyncBindingAdapter(_read_container_response())).read_container(
             "dbs/db1/colls/c1",
             {},
             response_hook=lambda headers, body: hooks.append((headers, body)),

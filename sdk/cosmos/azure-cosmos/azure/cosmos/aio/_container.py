@@ -143,16 +143,16 @@ class ContainerProxy:
         if context is None:
             from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
             return AsyncLegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
-        if context.backend.name == "core-python":
+        if context.adapter.name == "core-python":
             from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
             return AsyncLegacyItemHelper(self.client_connection, self._get_properties_with_options)
-        helper = AsyncItemHelper(context.backend, context.defaults, context.response_state)
+        helper = AsyncItemHelper(context.adapter, context.defaults, context.response_state)
         self._item_helper_cache = (context, helper)
         return helper
 
     async def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         """Rust resolves sentinel values using its backend metadata."""
-        if self._item_context is not None and self._item_context.backend.name != "core-python":
+        if self._item_context is not None and self._item_context.adapter.name != "core-python":
             return partition_key
         if self._item_context is None:
             from .._helpers._legacy_item_operations import require_legacy_item_connection
@@ -413,7 +413,7 @@ class ContainerProxy:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or returned item mapping to retrieve.
-            For a mapping, the SDK preserves its ``_self`` resource address.
+            For a mapping, the SDK uses its ``_self`` resource address; ``id`` is not required.
         :type item: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
@@ -483,7 +483,7 @@ class ContainerProxy:
             availability_strategy=availability_strategy,
         )
         deadline = prepare_read_item_kwargs(kwargs, partition_key, response_hook=response_hook)
-        item_id = item if isinstance(item, str) else item["id"]
+        item_id = item if isinstance(item, str) else None
 
         result = await self._get_item_helper().read_item(
             container_link=self.container_link,
@@ -1771,12 +1771,19 @@ class ContainerProxy:
     ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
-        If no ThroughputProperties already exists for the container, an exception is raised.
+        This reads dedicated container throughput, not shared database throughput.
+        Missing dedicated throughput raises CosmosResourceNotFoundError. A stale
+        container identity can be refreshed once before repeating the Rust query.
+        Unsupported Rust inputs and invalid callbacks fail before metadata requests.
+        The result retains the final offer-response headers; callback changes do
+        not change the returned throughput or the customer app's input options.
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[dict[str, str], list[dict[str, Any]]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be retrieved.
+        :raises NotImplementedError: The Rust path cannot honor the supplied settings.
+        :raises TypeError: The response hook or an options dictionary is invalid.
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
@@ -1784,6 +1791,7 @@ class ContainerProxy:
             client_connection=self.client_connection,
             container_link=self.container_link,
             get_properties=self._get_properties,
+            refresh_properties=self.read,
             response_hook=response_hook,
             kwargs=kwargs,
         )
@@ -2158,6 +2166,10 @@ class ContainerProxy:
         overlap the target. It does not fetch the service's latest state, check complete target coverage,
         or update a client's session-token cache. Pass the returned string as ``session_token`` on a later
         read or query. The result may combine progress from several inputs rather than select one input token.
+
+        Both simple tokens (such as ``0:54``) and vector tokens (such as ``0:1#54``) are supported.
+        For the same partition, simple values combine by taking the larger value; a vector token
+        supersedes a simple token. Tokens for different partitions may remain separate segments.
 
         Obtain feed ranges with ``feed_range_from_partition_key`` or ``read_feed_ranges`` and pass their
         dictionaries unchanged. All ranges and tokens must come from the same container; this method

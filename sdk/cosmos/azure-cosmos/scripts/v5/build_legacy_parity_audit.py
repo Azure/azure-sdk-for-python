@@ -81,8 +81,9 @@ def _load_parity_helpers():
 #   tests/test_xxx.py::Cls::method SKIPPED (reason)
 #   tests/test_xxx.py::Cls::method ERROR
 _TEST_PATH = r"(?:tests|docs[/\\]V5[/\\]_parity_runs)[/\\][^\s:]+\.py"
+_TEST_METHOD = r"[A-Za-z_]\w*(?:\[[^\r\n]*\])?"
 _RESULT_LINE = re.compile(
-    rf"^(?P<path>{_TEST_PATH})::(?P<cls>[A-Za-z_][\w]*)::(?P<method>[A-Za-z_][\w\[\]\-_.]*)"
+    rf"^(?P<path>{_TEST_PATH})::(?P<cls>[A-Za-z_][\w]*)::(?P<method>{_TEST_METHOD})"
     r"\s+(?P<outcome>PASSED|FAILED|SKIPPED|ERROR|XFAIL|XPASS)"
     r"(?:\s+\((?P<reason>[^)]*)\))?",
 )
@@ -98,7 +99,7 @@ _RESULT_LINE = re.compile(
 # ``_BARE_OUTCOME_LINE`` matches the second.
 _PENDING_NODEID_LINE = re.compile(
     rf"^(?P<path>{_TEST_PATH})::(?P<cls>[A-Za-z_][\w]*)::"
-    r"(?P<method>[A-Za-z_][\w\[\]\-_.]*)\s*$",
+    rf"(?P<method>{_TEST_METHOD})\s*$",
 )
 _BARE_OUTCOME_LINE = re.compile(
     r"^(?P<outcome>PASSED|FAILED|SKIPPED|ERROR|XFAIL|XPASS)"
@@ -994,14 +995,25 @@ def emit_markdown(
     lines.append("")
     lines.append("## What this report covers")
     lines.append("")
-    lines.append(
-        f"This audit checks the **`{op}`** operation. Every test below "
-        f"was run twice against the live Azure Cosmos account at "
-        f"**`{account_host}`** — once on the legacy core-python "
-        f"backend and once on the new rust backend — and the two runs "
-        f"were diffed call-by-call to see whether the rust path still "
-        f"honours the contracts the v4 SDK already shipped."
-    )
+    if op == "get_latest_session_token":
+        lines.append(
+            "This audit compares supplied observations, target ranges, returned strings "
+            "and errors with core-python and rust explicitly selected in the current checkout. "
+            "Both selections use the same local Python utility, not independent token-merging "
+            "implementations. The utility makes no request and has no response headers. "
+            "Live setup and writes are outside its measured call. Zero native operations "
+            "and zero compatibility fallbacks are required for each captured utility call. "
+            "This report does not prove later query enforcement, real splits or replica-delay behavior."
+        )
+    else:
+        lines.append(
+            f"This audit checks the **`{op}`** operation. Every test below "
+            f"was run twice against the live Azure Cosmos account at "
+            f"**`{account_host}`** — once on the legacy core-python "
+            f"backend and once on the new rust backend — and the two runs "
+            f"were diffed call-by-call to see whether the rust path still "
+            f"honours the contracts the v4 SDK already shipped."
+        )
     lines.append("")
     lines.append("## Trust status")
     lines.append("")
@@ -1259,6 +1271,8 @@ def _validate_audit_inputs(
                 )
             )
         for block in blocks:
+            local_utility = op == "get_latest_session_token"
+            expected_engine = "local-python" if local_utility else expected_backend
             if block.backend != expected_backend:
                 errors.append(
                     "{} transcript captured backend {!r} for {}".format(
@@ -1271,7 +1285,20 @@ def _validate_audit_inputs(
                         label, block.op, op, block.nodeid
                     )
                 )
-            if block.executed_engine != expected_backend:
+            local_rejection = (
+                not local_utility
+                and expected_backend == "rust"
+                and block.executed_engine == "no-rust-operation"
+                and block.rust_operation_delta == 0
+                and block.rust_fallback_delta == 0
+                and block.status == "raised"
+                and block.return_value is None
+                and not block.response_headers
+                and isinstance(block.exception, dict)
+                and block.exception.get("type") in ("TypeError", "ValueError", "NotImplementedError")
+                and block.exception.get("status_code") is None
+            )
+            if block.executed_engine != expected_engine and not local_rejection:
                 errors.append(
                     "{} transcript selected {!r} but actually executed {!r} for {}".format(
                         label, block.backend, block.executed_engine, block.nodeid
@@ -1291,18 +1318,20 @@ def _validate_audit_inputs(
                 )
             elif (
                 block.rust_operation_delta is not None
-                and expected_backend == "core-python"
+                and (expected_backend == "core-python" or local_utility)
                 and block.rust_operation_delta != 0
             ):
                 errors.append(
-                    "core-python transcript executed {} Rust operation(s) for {}".format(
-                        block.rust_operation_delta, block.nodeid
+                    "{} transcript executed {} Rust operation(s) for {}".format(
+                        label, block.rust_operation_delta, block.nodeid
                     )
                 )
             elif (
                 block.rust_operation_delta is not None
                 and expected_backend == "rust"
+                and not local_utility
                 and block.rust_operation_delta <= 0
+                and not local_rejection
             ):
                 errors.append(
                     "rust transcript executed no Rust operation for {}".format(
@@ -1314,6 +1343,10 @@ def _validate_audit_inputs(
                     "{} transcript has unusable capture status {!r} for {}".format(
                         label, block.status, block.nodeid
                     )
+                )
+            if local_utility and block.response_headers:
+                errors.append(
+                    "{} local utility capture contains response headers for {}".format(label, block.nodeid)
                 )
             if block.status == "raised" and not block.exception:
                 errors.append(
@@ -1338,6 +1371,15 @@ def _validate_audit_inputs(
                         label, block.nodeid
                     )
                 )
+            if op in ("get_database_throughput", "read_offer") and block.status == "ok":
+                required = {
+                    "offer_throughput", "auto_scale_max_throughput",
+                    "auto_scale_increment_percent", "properties",
+                }
+                if not isinstance(block.return_value, dict) or not required <= block.return_value.keys():
+                    errors.append(
+                        "{} capture for {} is missing structured throughput fields".format(label, block.nodeid)
+                    )
 
     core_versions = {block.plugin_version for block in corepy_blocks}
     rust_versions = {block.plugin_version for block in rust_blocks}

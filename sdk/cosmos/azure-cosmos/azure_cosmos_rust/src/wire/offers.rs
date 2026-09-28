@@ -19,7 +19,7 @@ use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::CosmosError,
     models::{ActivityId, CosmosOperation, CosmosResponse, SessionToken},
-    options::ContentResponseOnWrite,
+    options::{ContentResponseOnWrite, PlanOptions},
 };
 
 use super::diagnostics::BINDING_OP_COUNT;
@@ -28,7 +28,7 @@ use super::response::{tuple_from_offer_feed_result, tuple_from_result};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
-/// Run one offer-query page and return its binding response tuple.
+/// Complete the offer query and return its binding response tuple.
 /// Wait on the calling thread with Python's global interpreter lock (GIL) released.
 pub(crate) fn run_read_offer_operation<'py>(
     py: Python<'py>,
@@ -41,7 +41,7 @@ pub(crate) fn run_read_offer_operation<'py>(
     let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
+    let response_result = py.allow_threads(|| {
         runtime_ctx
             .tokio_rt
             .block_on(run_read_offer_future(driver, modifiers, body_bytes))
@@ -145,7 +145,7 @@ async fn run_read_offer_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
-) -> Result<Option<CosmosResponse>, CosmosError> {
+) -> Result<Vec<CosmosResponse>, CosmosError> {
     let account = driver.account().clone();
     let mut op = CosmosOperation::query_offers(account).with_body(body_bytes);
 
@@ -171,7 +171,17 @@ async fn run_read_offer_future(
         modifiers.availability_strategy,
         custom_headers,
     );
-    driver.execute_operation(op, options).await
+    let mut plan = driver
+        .plan_operation(op, &options, None, &PlanOptions::default())
+        .await?;
+    let mut responses = Vec::new();
+    while let Some(response) = driver
+        .execute_plan(&mut plan, None, options.clone())
+        .await?
+    {
+        responses.push(response);
+    }
+    Ok(responses)
 }
 
 /// Build replace_offer using the offer resource id and prepared replacement body.
@@ -205,4 +215,225 @@ async fn run_replace_offer_future(
         modifiers.custom_headers,
     );
     driver.execute_singleton_operation(op, options).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    use azure_core::http::{StatusCode, Url};
+    use azure_data_cosmos_driver::{
+        fault_injection::{
+            CustomResponse, CustomResponseBuilder, FaultInjectionResultBuilder, FaultInjectionRule,
+            FaultInjectionRuleBuilder,
+        },
+        in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+        models::AccountReference,
+        options::DriverOptions,
+    };
+    use pyo3::types::PyBytes;
+
+    fn page(
+        status: StatusCode,
+        body: &str,
+        continuation: Option<&str>,
+        charge: &str,
+    ) -> CustomResponse {
+        let mut response = CustomResponseBuilder::new(status)
+            .with_header("x-ms-request-charge", charge.to_owned())
+            .with_header("etag", format!("page-{charge}"))
+            .with_body(body.as_bytes().to_vec());
+        if let Some(token) = continuation {
+            response = response.with_header("x-ms-continuation", token.to_owned());
+        }
+        response.build()
+    }
+
+    async fn setup(
+        pages: Vec<CustomResponse>,
+    ) -> (Arc<CosmosDriver>, Vec<Arc<FaultInjectionRule>>) {
+        pyo3::prepare_freethreaded_python();
+        let url = Url::parse("https://offers.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        let rules: Vec<_> = pages
+            .into_iter()
+            .enumerate()
+            .map(|(index, response)| {
+                let rule = Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        format!("offer-page-{index}"),
+                        FaultInjectionResultBuilder::new()
+                            .with_custom_response(response)
+                            .build(),
+                    )
+                    .with_hit_limit(1)
+                    .build(),
+                );
+                rule.disable();
+                rule
+            })
+            .collect();
+        let runtime = emulator
+            .runtime_builder_with_fault_rules(rules.clone())
+            .build()
+            .await
+            .unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        for rule in &rules {
+            rule.enable();
+        }
+        (driver, rules)
+    }
+
+    fn modifiers() -> RequestHeadersAndOptions {
+        RequestHeadersAndOptions {
+            activity_header: None,
+            session_header: None,
+            content_response_on_write: ContentResponseOnWrite::Enabled,
+            excluded_regions_value: None,
+            driver_timeout_policy: None,
+            operation_timeout: None,
+            availability_strategy: None,
+            custom_headers: HashMap::new(),
+        }
+    }
+
+    #[tokio::test]
+    async fn drains_empty_and_nonempty_offer_pages_and_keeps_final_headers() {
+        let (driver, rules) = setup(vec![
+            page(StatusCode::Ok, r#"{"Offers":[]}"#, Some("second"), "1"),
+            page(StatusCode::Ok, r#"{"Offers":[{"id":"a","content":{"offerThroughput":4000}}]}"#, Some("third"), "2"),
+            page(StatusCode::Ok, r#"{"Offers":[{"id":"b","content":{"offerAutopilotSettings":{"maxThroughput":10000}}}]}"#, None, "3"),
+        ]).await;
+        let result = run_read_offer_future(
+            driver,
+            modifiers(),
+            br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+        )
+        .await;
+        assert!(rules.iter().all(|rule| rule.hit_count() == 1));
+        Python::with_gil(|py| {
+            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            let bytes = response.get_item(3).unwrap();
+            let body: serde_json::Value =
+                serde_json::from_slice(bytes.downcast::<PyBytes>().unwrap().as_bytes()).unwrap();
+            assert_eq!(body["Offers"].as_array().unwrap().len(), 2);
+            assert_eq!(body["Offers"][0]["content"]["offerThroughput"], 4000);
+            assert_eq!(
+                body["Offers"][1]["content"]["offerAutopilotSettings"]["maxThroughput"],
+                10000
+            );
+            let headers = response.get_item(2).unwrap();
+            assert_eq!(
+                headers
+                    .get_item("etag")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "page-3"
+            );
+            assert_eq!(
+                headers
+                    .get_item("x-ms-request-charge")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "3"
+            );
+        });
+    }
+
+    #[tokio::test]
+    async fn later_offer_failure_does_not_return_partial_success() {
+        let (driver, rules) = setup(vec![
+            page(
+                StatusCode::Ok,
+                r#"{"Offers":[{"id":"a"}]}"#,
+                Some("second"),
+                "1",
+            ),
+            page(
+                StatusCode::Forbidden,
+                r#"{"code":"Forbidden","message":"second page denied"}"#,
+                None,
+                "2",
+            ),
+        ])
+        .await;
+        let result = run_read_offer_future(
+            driver,
+            modifiers(),
+            br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+        )
+        .await;
+        assert!(result.is_err());
+        assert!(rules.iter().all(|rule| rule.hit_count() == 1));
+        Python::with_gil(|py| {
+            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 403);
+            assert_eq!(
+                response
+                    .get_item(2)
+                    .unwrap()
+                    .get_item("etag")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "page-2"
+            );
+        });
+    }
+
+    #[tokio::test]
+    async fn empty_final_offer_page_is_a_complete_empty_result() {
+        let (driver, rules) =
+            setup(vec![page(StatusCode::Ok, r#"{"Offers":[]}"#, None, "1")]).await;
+        let result = run_read_offer_future(
+            driver,
+            modifiers(),
+            br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+        )
+        .await;
+        assert_eq!(rules[0].hit_count(), 1);
+        Python::with_gil(|py| {
+            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            let bytes = response.get_item(3).unwrap();
+            let body: serde_json::Value =
+                serde_json::from_slice(bytes.downcast::<PyBytes>().unwrap().as_bytes()).unwrap();
+            assert_eq!(body, serde_json::json!({"Offers":[]}));
+        });
+    }
+
+    #[tokio::test]
+    async fn malformed_later_offer_page_cannot_be_partial_success() {
+        let (driver, _) = setup(vec![
+            page(
+                StatusCode::Ok,
+                r#"{"Offers":[{"id":"a"}]}"#,
+                Some("second"),
+                "1",
+            ),
+            page(StatusCode::Ok, r#"{"Offers":"invalid"}"#, None, "2"),
+        ])
+        .await;
+        let result = run_read_offer_future(
+            driver,
+            modifiers(),
+            br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+        )
+        .await;
+        Python::with_gil(|py| match result {
+            Err(_) => {}
+            Ok(responses) => assert!(tuple_from_offer_feed_result(py, Ok(responses)).is_err()),
+        });
+    }
 }

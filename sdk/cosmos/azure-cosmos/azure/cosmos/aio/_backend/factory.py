@@ -8,11 +8,11 @@
 ``azure.cosmos._backend.factory._make_backend`` decides which Python backend to
 use and checks its startup inputs. It also cleans up the async credential bridge
 if construction fails.
-This module supplies AsyncRustBackend and the shared AsyncLegacyBackend instance.
+This module supplies AsyncBindingAdapter and the shared AsyncLegacyBackend instance.
 Legacy-path selection is a migration control, not a release execution choice.
 
 Construction itself is synchronous: make_async_backend(...) returns a Python
-object without acquiring a driver handle. Operations on AsyncRustBackend later
+object without acquiring a driver handle. Operations on AsyncBindingAdapter later
 call the binding and await its results.
 """
 from __future__ import annotations
@@ -23,7 +23,7 @@ from azure.cosmos._backend.factory import _make_backend
 
 from .cosmos_backend import AsyncCosmosBackend
 from .legacy import ASYNC_LEGACY_BACKEND
-from .rust_backend import AsyncRustBackend
+from .binding_adapter import AsyncBindingAdapter
 
 
 def make_async_backend(
@@ -52,12 +52,12 @@ def make_async_backend(
     """Return a Python backend for async operations; this factory is not awaited.
 
     For example, endpoint and preferred-region inputs become the stored settings
-    of AsyncRustBackend. Its construction checks completed CosmosDriverRuntime
+    of AsyncBindingAdapter. Its construction checks completed CosmosDriverRuntime
     initialization but does not initialize it or reserve its settings.
     """
     return _make_backend(
         explicit,
-        rust_backend_type=AsyncRustBackend,
+        rust_backend_type=AsyncBindingAdapter,
         legacy_backend=ASYNC_LEGACY_BACKEND,
         url=url,
         credential=credential,

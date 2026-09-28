@@ -22,8 +22,8 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as sync_client
 import azure.cosmos.aio._cosmos_client as async_client
-from azure.cosmos._backend import rust_backend as sync_backend
-from azure.cosmos.aio._backend import rust_backend as async_backend
+from azure.cosmos._backend import binding_adapter as sync_backend
+from azure.cosmos.aio._backend import binding_adapter as async_backend
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._retry_options import RetryOptions
@@ -73,7 +73,7 @@ def test_factory_forwards_every_declared_option_to_shared_construction(monkeypat
     assert factory("rust", **options) is shared.return_value
     shared.assert_called_once_with(
         "rust",
-        rust_backend_type=module.AsyncRustBackend if async_mode else module.RustBackend,
+        rust_backend_type=module.AsyncBindingAdapter if async_mode else module.BindingAdapter,
         legacy_backend=module.ASYNC_LEGACY_BACKEND if async_mode else module.LEGACY_BACKEND,
         **options,
     )
@@ -115,7 +115,7 @@ def test_factory_keeps_credential_guard_active_through_construction(
     monkeypatch.setattr(sync_factory, "resolved_credential", guard)
     monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
     monkeypatch.setattr(
-        module, "AsyncRustBackend" if async_mode else "RustBackend", stage("constructor", result)
+        module, "AsyncBindingAdapter" if async_mode else "BindingAdapter", stage("constructor", result)
     )
     if failure_stage is None:
         assert factory("rust", url="https://startup.invalid", credential=credential) is result
@@ -206,7 +206,7 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
         module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
     assert len(retained) == 1
     assert retained[0]._closing
-    replacement = sync_backend.RustBackend(
+    replacement = sync_backend.BindingAdapter(
         "https://startup.invalid", master_key="ZmFrZQ==",
         client_config=PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=3,
                                           read_timeout_seconds=30),
@@ -218,11 +218,11 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
 def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
     validator = MagicMock()
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
-    first = sync_backend.RustBackend(
+    first = sync_backend.BindingAdapter(
         "https://first.invalid", master_key="key",
         client_config=PreparedClientConfig(read_timeout_seconds=20),
     )
-    other = sync_backend.RustBackend(
+    other = sync_backend.BindingAdapter(
         "https://other.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=30),
     )
@@ -245,7 +245,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
 
     binding = SimpleNamespace(acquire_driver_handle=initialize, release_driver_handle=MagicMock())
     monkeypatch.setattr(async_backend, "_rust_module", binding)
-    backend = async_backend.AsyncRustBackend(
+    backend = async_backend.AsyncBindingAdapter(
         "https://account.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True),
     )
@@ -254,7 +254,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
         try:
             assert started.wait(10)
             close_backend(backend)
-            replacement = sync_backend.RustBackend(
+            replacement = sync_backend.BindingAdapter(
                 "https://account.invalid", master_key="key",
                 client_config=PreparedClientConfig(proxy_allowed=False),
             )
@@ -278,7 +278,7 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
     monkeypatch.setattr(
         sync_backend, "_rust_module", SimpleNamespace(acquire_driver_handle=acquire)
     )
-    backend = sync_backend.RustBackend("https://account.invalid", master_key="key")
+    backend = sync_backend.BindingAdapter("https://account.invalid", master_key="key")
     with pytest.raises(RuntimeError, match="driver failed"):
         backend._ensure_driver_handle()
     backend.close()
@@ -288,7 +288,7 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
         PreparedClientConfig(read_timeout_seconds=30),
     ):
         with pytest.raises(ValueError, match="runtime settings already initialized"):
-            sync_backend.RustBackend("https://other.invalid", master_key="key", client_config=config)
+            sync_backend.BindingAdapter("https://other.invalid", master_key="key", client_config=config)
 
 
 class AsyncCredential:
@@ -323,7 +323,7 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold(mod
     """
     credential = AsyncCredential()
     first = module.CosmosClient("https://first.invalid", credential, _backend="rust")
-    bridge = first._backend._token_credential
+    bridge = first._adapter._token_credential
     bridge.get_token("test-scope")
     thread = bridge._thread
     retained = []
@@ -341,7 +341,7 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold(mod
         module.CosmosClient("https://second.invalid", credential, _backend="rust")
     close_backend(retained[0])
     assert bridge._refcount == 1 and thread.is_alive()
-    close_backend(first._backend)
+    close_backend(first._adapter)
     assert bridge._closed and not thread.is_alive()
 
 
@@ -375,8 +375,8 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
     client = async_client.CosmosClient(
         "https://account.invalid", "ZmFrZQ==", _backend=backend_name, proxy_allowed=False
     )
-    backend_close = AsyncMock(wraps=client._backend.close)
-    monkeypatch.setattr(client._backend, "close", backend_close)
+    backend_close = AsyncMock(wraps=client._adapter.close)
+    monkeypatch.setattr(client._adapter, "close", backend_close)
 
     async def run():
         with pytest.raises(type(error)):
@@ -388,7 +388,7 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
     connection._routing_map_provider.release.assert_called_once()
     backend_close.assert_awaited_once()
     if backend_name == "rust":
-        assert client._backend._closing
+        assert client._adapter._closing
         connection._setup.assert_not_awaited()
 
 
@@ -407,7 +407,28 @@ def test_client_priority_defaults_are_captured(module):
     )
     assert client._item_context.defaults.priority == "Low"
     assert client._item_context.defaults.throughput_bucket == 3
-    close_backend(client._backend)
+    close_backend(client._adapter)
+
+
+@pytest.mark.parametrize("backend_name", ["rust", "core-python"])
+def test_client_and_proxies_share_the_adapter_field(module, backend_name):
+    client = module.CosmosClient(
+        "https://account.invalid", "ZmFrZQ==", _backend=backend_name
+    )
+    try:
+        context = client._item_context
+        assert context.adapter is client._adapter
+        assert "_backend" not in vars(client)
+        assert not hasattr(context, "backend")
+        assert client.client_connection._backend is client._adapter
+
+        database = client.get_database_client("sales")
+        container = database.get_container_client("orders")
+        assert database._item_context is context
+        assert container._item_context is context
+        assert container._item_context.adapter is client._adapter
+    finally:
+        close_backend(client._adapter)
 
 
 def test_native_validation_does_not_initialize_or_reserve_runtime():

@@ -11,8 +11,8 @@ import pytest
 from azure.cosmos import _operation_deadline
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._helpers import _item_prep
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.core import MatchConditions
@@ -50,7 +50,7 @@ def replacement(request, monkeypatch):
     binding = SimpleNamespace(replace_item=native_call, replace_item_async=native_call)
     module = async_rust if asynchronous else sync_rust
     monkeypatch.setattr(module, "_rust_module", binding)
-    backend_type = async_rust.AsyncRustBackend if asynchronous else sync_rust.RustBackend
+    backend_type = async_rust.AsyncBindingAdapter if asynchronous else sync_rust.BindingAdapter
     backend = backend_type("https://replacement.invalid", master_key="ZmFrZQ==")
     initialize_call = wrap(side_effect=initialize)
     monkeypatch.setattr(backend, "_ensure_driver_handle", initialize_call)

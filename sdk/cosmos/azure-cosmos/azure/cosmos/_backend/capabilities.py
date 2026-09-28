@@ -20,6 +20,8 @@ from . import operations as ops
 GET_OR_CREATE_DATABASE = "create_database_if_not_exists"
 GET_OR_CREATE_CONTAINER = "create_container_if_not_exists"
 REPLACE_THROUGHPUT = "replace_throughput"
+GET_DATABASE_THROUGHPUT = "get_database_throughput"
+GET_CONTAINER_THROUGHPUT = "get_container_throughput"
 
 
 @dataclass(frozen=True)
@@ -30,6 +32,24 @@ class OpCapability:
 
 
 CAPABILITIES: dict[str, OpCapability] = {
+    GET_CONTAINER_THROUGHPUT: OpCapability(
+        frozenset({ops.OP_READ_OFFER}),
+        unsupported_message=(
+            "The container throughput read cannot honor this input on the Rust path: "
+            "a per-call timeout, availability strategy, request-header override, or "
+            "additional keyword is unsupported. The Python wrapper will not send "
+            "the request through the legacy Python path."
+        ),
+    ),
+    GET_DATABASE_THROUGHPUT: OpCapability(
+        frozenset({ops.OP_READ_OFFER}),
+        unsupported_message=(
+            "The database throughput read cannot honor this input on the Rust path: "
+            "a per-call timeout, availability strategy, request-header override, or "
+            "additional keyword is unsupported. The Python wrapper will not send "
+            "the request through the legacy Python path."
+        ),
+    ),
     REPLACE_THROUGHPUT: OpCapability(
         frozenset({ops.OP_READ_OFFER, ops.OP_REPLACE_OFFER}), fallback_allowed=True
     ),

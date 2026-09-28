@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 class CosmosBackend(abc.ABC):
     """Shared Python methods used while legacy migration code remains.
 
-    RustBackend is part of the Python wrapper; it calls the compiled
+    BindingAdapter is part of the Python wrapper; it calls the compiled
     Python/Rust binding with prepared requests. LegacyBackend runs a supplied
     function using the original Python arguments; it overrides run_operation
     and run_page_operation and does not send PreparedRequest objects.
@@ -156,7 +156,7 @@ class CosmosBackend(abc.ABC):
     ) -> Iterator[BackendPage]:
         """Fetch results as BackendPage objects, or raise if unsupported.
 
-        RustBackend yields one backend page per call. Retained paging also
+        BindingAdapter yields one backend page per call. Retained paging also
         passes a feed cursor to the binding. A supplied deadline contributes
         its remaining seconds. LegacyBackend instead uses a legacy-path function.
         """

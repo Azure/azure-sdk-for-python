@@ -11,7 +11,7 @@ operations' ``legacy/`` folders. Async source has no
 the negative-validation test is sync-only.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
-and deletes them in ``asyncTearDown``. Reads ``ACCOUNT_HOST`` and
+and registers deletion and client closure immediately, including on setup failure. Reads ``ACCOUNT_HOST`` and
 ``ACCOUNT_KEY`` from the environment, defaulting to the local emulator when unset.
 
 Run with::
@@ -50,21 +50,17 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
         self._db_id = "legacy_ri_headers_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
+        self.addAsyncCleanup(self.client.delete_database, self._db_id)
+        print(f"\nOwned read-test database: {self._db_id}")
         self.container = await self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    async def asyncTearDown(self):
-        try:
-            await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
 
     async def test_container_read_item_throughput_bucket_async(self):
         """Pass a throughput bucket and a header-checking async raw-response hook.

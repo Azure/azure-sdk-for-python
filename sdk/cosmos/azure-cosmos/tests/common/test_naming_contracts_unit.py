@@ -35,13 +35,13 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos._backend import _rust_backend_shared as shared_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos._backend import _binding_adapter_shared as shared_rust
 from azure.cosmos._backend import contracts as backend_contracts
 from azure.cosmos._backend import _binding_conversions as binding_conversions
 from azure.cosmos._backend import operations as backend_operations
 from azure.cosmos._backend import request_settings as backend_request_settings
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import (
     BackendResponse,
     PreparedPageRequest,
@@ -69,7 +69,7 @@ from azure.cosmos.aio._helpers._query_items import AsyncQueryPageIterator
 from azure.cosmos import _operation_deadline
 from azure.cosmos import _query_rust_routing as page_helpers
 from azure.cosmos._helpers._document import serialize_document
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
 from azure.cosmos._helpers._response_parse import (
     parse_backend_response,
     process_backend_response,
@@ -87,12 +87,15 @@ from azure.cosmos.exceptions import (
 @pytest.mark.parametrize(
     "module,current,retired",
     [
-        (sync_rust, "RustBackend", "RustBinding"),
-        (async_rust, "AsyncRustBackend", "AsyncRustBinding"),
-        (shared_rust, "RustBackendShared", "RustBindingShared"),
+        (sync_rust, "BindingAdapter", "RustBinding"),
+        (async_rust, "AsyncBindingAdapter", "AsyncRustBinding"),
+        (shared_rust, "BindingAdapterShared", "RustBindingShared"),
+        (sync_rust, "BindingAdapter", "RustBackend"),
+        (async_rust, "AsyncBindingAdapter", "AsyncRustBackend"),
+        (shared_rust, "BindingAdapterShared", "RustBackendShared"),
     ],
 )
-def test_python_backend_class_names_have_no_binding_aliases(module, current, retired):
+def test_binding_adapter_class_names_have_no_retired_aliases(module, current, retired):
     backend_type = getattr(module, current)
     assert inspect.isclass(backend_type)
     assert backend_type.__name__ == current
@@ -102,22 +105,37 @@ def test_python_backend_class_names_have_no_binding_aliases(module, current, ret
 @pytest.mark.parametrize(
     "module,backend_type,expected_module",
     [
-        (sync_rust, sync_rust.RustBackend, "azure.cosmos._backend.rust_backend"),
-        (async_rust, async_rust.AsyncRustBackend, "azure.cosmos.aio._backend.rust_backend"),
+        (sync_rust, sync_rust.BindingAdapter, "azure.cosmos._backend.binding_adapter"),
+        (async_rust, async_rust.AsyncBindingAdapter, "azure.cosmos.aio._backend.binding_adapter"),
     ],
 )
-def test_python_backend_modules_are_not_named_as_the_compiled_binding(module, backend_type, expected_module):
+def test_binding_adapter_modules_match_their_role(module, backend_type, expected_module):
     assert module.__name__ == expected_module
     assert backend_type.__module__ == expected_module
-    assert Path(module.__file__).name == "rust_backend.py"
+    assert Path(module.__file__).name == "binding_adapter.py"
     assert not Path(module.__file__).with_name("binding.py").exists()
+    assert not Path(module.__file__).with_name("rust_backend.py").exists()
 
 
-def test_shared_backend_module_identifies_which_implementations_share_it():
-    expected_module = "azure.cosmos._backend._rust_backend_shared"
+def test_shared_adapter_module_identifies_which_implementations_share_it():
+    expected_module = "azure.cosmos._backend._binding_adapter_shared"
     assert shared_rust.__name__ == expected_module
-    assert shared_rust.RustBackendShared.__module__ == expected_module
+    assert shared_rust.BindingAdapterShared.__module__ == expected_module
+    assert Path(shared_rust.__file__).name == "_binding_adapter_shared.py"
     assert not Path(shared_rust.__file__).with_name("_shared.py").exists()
+    assert not Path(shared_rust.__file__).with_name("_rust_backend_shared.py").exists()
+
+
+def test_item_client_context_names_its_execution_reference_adapter():
+    assert [field.name for field in fields(ItemClientContext)] == [
+        "adapter", "defaults", "response_state",
+    ]
+    adapter = MagicMock(spec=CosmosBackend)
+    context = ItemClientContext(adapter=adapter)
+    assert context.adapter is adapter
+    assert not hasattr(context, "backend")
+    with pytest.raises(TypeError, match="backend"):
+        ItemClientContext(backend=adapter)
 
 
 @pytest.mark.parametrize(
@@ -179,8 +197,8 @@ def test_binding_call_helpers_use_canonical_names_without_retired_aliases(module
     ],
 )
 def test_async_acquisition_helpers_do_not_imply_new_driver_creation(current, retired):
-    assert callable(getattr(async_rust.AsyncRustBackend, current))
-    assert not hasattr(async_rust.AsyncRustBackend, retired)
+    assert callable(getattr(async_rust.AsyncBindingAdapter, current))
+    assert not hasattr(async_rust.AsyncBindingAdapter, retired)
 
 
 def test_item_argument_module_is_not_named_as_binding_dispatch():
@@ -318,7 +336,7 @@ def executor(request, monkeypatch):
     """
     async_mode = request.param
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
     state = SimpleNamespace(now=100.0, init_delay=0.0)
 
@@ -649,7 +667,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     with nothing extra at all, so the two forms cannot quietly converge.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
     handle = (
         AsyncMock(return_value="handle")
@@ -764,7 +782,7 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
     the fallback and taking a driver are traps, so this proves neither happened.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
     forbidden = MagicMock(
         side_effect=AssertionError("driver acquisition or stateless dispatch")
@@ -838,7 +856,7 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypa
     if async_mode:
         module._close_driver_handle_quietly(handle)
     else:
-        adapter = object.__new__(module.RustBackend)
+        adapter = object.__new__(module.BindingAdapter)
         adapter._driver_handle_lock = threading.Lock()
         adapter._driver_handle = handle
         monkeypatch.setattr(adapter, "_close_token_credential_bridge", lambda: None)

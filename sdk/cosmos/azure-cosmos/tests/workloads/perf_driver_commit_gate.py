@@ -15,7 +15,7 @@ import re
 
 HEADER = "### Rust driver commit (azure-sdk-for-rust) ###"
 
-# Values that name no build. ``perf_config._get_git_sha`` returns "unknown" when
+# Values that name no build. ``perf_reporting_config._get_git_sha`` returns "unknown" when
 # git is unavailable; the rest are the usual stand-ins for an absent field. All
 # are compared case-insensitively after stripping.
 UNSTAMPED_COMMIT_VALUES = frozenset({"", "unknown", "none", "null", "n/a", "na", "-"})

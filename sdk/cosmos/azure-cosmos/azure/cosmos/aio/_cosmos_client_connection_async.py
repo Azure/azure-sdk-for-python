@@ -21,7 +21,27 @@
 
 # pylint: disable=protected-access,too-many-lines
 
-"""Document client class for the Azure Cosmos database service.
+"""Provide the retained asynchronous Python connection and legacy request methods.
+
+CosmosClient still creates CosmosClientConnection for helpers and lifecycle
+methods that depend on it. This is a Python wrapper object, not a single
+network connection or a CosmosDriver. Legacy means the Python request
+implementation that predates the Rust driver.
+
+Construction creates the asynchronous Python HTTP pipeline without
+running legacy account setup. The asynchronous CosmosClient performs
+that setup on entry to an async with block for the explicit legacy path,
+but skips it for the Rust path. A retained legacy request can initialize
+the account state later.
+
+A migrated Rust operation uses the binding and Rust driver instead of
+this legacy account setup. Retaining this object does not mean that
+every operation uses the Python HTTP pipeline.
+
+This object is retained during migration and is intended to be removed
+after its remaining responsibilities move and callers no longer depend
+on it. The public CosmosClient, DatabaseProxy, and ContainerProxy classes
+remain; their dependency on this internal connection object is removed.
 """
 import asyncio
 import logging
@@ -389,7 +409,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
-        """Initialize legacy account state only before legacy execution."""
+        """Prepare this connection's account information for legacy requests.
+
+        Use account information already supplied in _setup_kwargs, or fetch it
+        and refresh the Python endpoint information. Apply the requested or
+        account-default consistency choice and create session state if needed.
+        This does not read the sales database, orders container, or order-42 item.
+
+        The per-connection asynchronous lock lets one caller complete setup
+        while other callers wait. Later calls reuse successfully initialized
+        state. Failure or cancellation propagates without marking setup complete.
+        """
         if self._setup_complete:
             return
         async with self._setup_lock:

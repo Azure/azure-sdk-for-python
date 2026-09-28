@@ -3,15 +3,13 @@
 """The existing legacy database-throughput check, re-run on the Rust engine.
 
 Why this file exists: a database can own throughput that all of its containers
-share. A customer reads that number with ``read_offer`` (the older name) or
-``get_throughput`` (the current name), and puts it into cost and capacity
-dashboards. ``read_offer`` is not a separate request path -- it forwards to
-``get_throughput`` -- so this file also proves the older name still returns the
-same number after the move to Rust. If Rust returned a different RU/s here, a
+share. A customer reads that number with ``get_throughput`` and puts it into
+cost and capacity dashboards. If Rust returned a different RU/s here, a
 customer would size their database against a wrong figure.
 
 What it does: the real legacy test copied from ``tests/test_crud_database.py``,
-changed in one place -- the client is built with ``_backend="rust"``. It
+adapted to build the client with ``_backend="rust"`` and call
+``get_throughput`` instead of the removed ``read_offer`` alias. It
 creates a database with 1000 RU/s, reads the offer back and checks it says
 1000, replaces it with 2000, and checks the replace result says 2000.
 
@@ -62,7 +60,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
     def test_database_level_offer_throughput(self):
         """Throughput set on a database can be read back, then read back again after a change.
 
-        Creates a database at 1000 request units, confirms ``read_offer``
+        Creates a database at 1000 request units, confirms ``get_throughput``
         reports it, raises it to 2000 and confirms the new figure comes back.
 
         Kept here for the reading half. Three operations have to agree about
@@ -81,7 +79,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
-        offer = created_db.read_offer()
+        offer = created_db.get_throughput()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput

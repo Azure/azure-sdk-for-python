@@ -223,6 +223,17 @@ class ReporterParserTests(unittest.TestCase):
         self.assertIn(("test_alpha", "TestDup", "test_same", "PASSED"), keys)
         self.assertIn(("test_beta", "TestDup", "test_same", "FAILED"), keys)
 
+    def test_parameterized_token_ids_survive_combined_and_split_lines(self):
+        methods = ["test_merge[0:1#55#3=52,2:1#54#3=52]", "test_merge[0:54 with spaces]"]
+        path = self._write_temp(
+            f"tests/test_tokens.py::TestTokens::{methods[0]} PASSED [ 50%]\n"
+            f"tests/test_tokens.py::TestTokens::{methods[1]} \n"
+            "capture output\nPASSED\n"
+        )
+        rows = self.reporter.parse_transcript(path)
+        self.assertEqual([row.method_name for row in rows], methods)
+        self.assertEqual([row.outcome for row in rows], ["PASSED", "PASSED"])
+
     def test_index_captures_disambiguates_same_class_method_by_file(self):
         """Capture indexing must keep file-level separation for duplicate names."""
         text = (
@@ -638,6 +649,84 @@ class ReporterRenderingTests(unittest.TestCase):
             rust_blocks=[rs],
         )
         self.assertTrue(any("actually executed 'core-python'" in e for e in errors))
+
+    def test_validation_accepts_explicit_local_rejections_but_not_unproved_execution(self):
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        rejection = dict(
+            backend="rust", executed_engine="no-rust-operation", rust_operation_delta=0,
+            status="raised", return_value=None, response_headers={},
+            exception={"type": "ValueError", "message": "invalid input", "status_code": None},
+        )
+        for override, valid in [
+            ({}, True),
+            ({"status": "ok", "exception": None}, False),
+            ({"rust_fallback_delta": 1}, False),
+            ({"exception": {"type": "RuntimeError", "message": "unexplained failure"}}, False),
+            ({"response_headers": {"etag": "service-response"}}, False),
+            ({"exception": {"type": "ValueError", "status_code": 400}}, False),
+        ]:
+            with self.subTest(override=override):
+                errors = self.reporter._validate_audit_inputs(
+                    op="read_item", corepy=[result], rust=[result],
+                    corepy_blocks=[self._block(backend="core-python")],
+                    rust_blocks=[self._block(**(rejection | override))],
+                )
+                self.assertEqual(not errors, valid, errors)
+
+    def test_local_token_utility_requires_zero_counters_and_no_response(self):
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        common = dict(
+            op="get_latest_session_token", executed_engine="local-python",
+            rust_operation_delta=0, rust_fallback_delta=0,
+            return_value="0:54", response_headers={},
+        )
+        for override, valid in [
+            ({}, True),
+            ({"executed_engine": "rust", "rust_operation_delta": 1}, False),
+            ({"rust_operation_delta": None}, False),
+            ({"rust_fallback_delta": 1}, False),
+            ({"response_headers": {"etag": "stale"}}, False),
+            ({"op": "read_item"}, False),
+        ]:
+            with self.subTest(override=override):
+                errors = self.reporter._validate_audit_inputs(
+                    op="get_latest_session_token", corepy=[result], rust=[result],
+                    corepy_blocks=[self._block(backend="core-python", **common)],
+                    rust_blocks=[self._block(backend="rust", **(common | override))],
+                )
+                self.assertEqual(not errors, valid, errors)
+
+    def test_validation_rejects_opaque_throughput_capture(self):
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        blocks = [
+            self._block(
+                backend=backend, op="get_database_throughput",
+                return_value="<azure.cosmos.offer.ThroughputProperties object>",
+            )
+            for backend in ("core-python", "rust")
+        ]
+        errors = self.reporter._validate_audit_inputs(
+            op="get_database_throughput", corepy=[result], rust=[result],
+            corepy_blocks=blocks[:1], rust_blocks=blocks[1:],
+        )
+        self.assertTrue(any("missing structured throughput fields" in e for e in errors))
+
+    def test_throughput_value_difference_is_not_hidden(self):
+        common = {
+            "auto_scale_max_throughput": None,
+            "auto_scale_increment_percent": None,
+            "properties": {"content": {"offerThroughput": 4000}},
+        }
+        cp = self._block(backend="core-python", return_value=dict(common, offer_throughput=4000))
+        rs = self._block(backend="rust", return_value=dict(common, offer_throughput=999))
+        comparison = self.reporter._build_comparison("TestX", "test_y", cp, rs)
+        self.assertTrue(any(diff.startswith("return_value:") for diff in comparison.diffs))
 
     def test_validation_rejects_unmaterialized_query_capture(self):
         """A pager repr is not evidence that query iteration matched."""

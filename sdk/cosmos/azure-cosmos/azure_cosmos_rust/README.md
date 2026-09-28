@@ -452,7 +452,7 @@ Start at `lib.rs` to see the exported surface, then read in this order:
 - **Build/packaging questions** (why the cdylib gets renamed, what
   `extension-module` and `abi3-py310` actually do, why a `.dll` ends up
   named `.pyd`): `../docs/PYTHON_RUST_PACKAGING.md`.
-- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/rust_backend.py`
+- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/binding_adapter.py`
   builds the `PreparedRequest` and parses the backend tuple. Reading it
   alongside `lib.rs` shows exactly what every parameter and every return
   value carries.

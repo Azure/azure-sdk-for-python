@@ -9,7 +9,7 @@ Failed-call runs cannot establish the first call from successful durations alone
 The launcher uses concurrency one so completion order also describes call order.
 
 USAGE:
-  source ./perf_env.sh
+  source ./perf_drill_defaults.sh
   python3 coldstart_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix cold-]
 """
 

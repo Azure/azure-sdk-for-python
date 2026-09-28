@@ -83,7 +83,7 @@ def test_both_public_clients_merge_locally_without_connection_state(async_client
 @pytest.mark.parametrize("token", [
     "", "missing-colon", ":1#2", "0:bad", "0:1#2:ignored",
     "0:1#2,", ",0:1#2", "0:1#2,,1:1#3", "0:1#2#bad",
-    "0:42",
+    "0:-1", "0:54.5", "0: 54", "0:54 ", "0:５４", "0:18446744073709551616", "0:" + "9" * 5000,
 ])
 def test_overlapping_malformed_or_unsupported_tokens_fail_explicitly(async_client, token):
     with pytest.raises(ValueError, match="session token"):
@@ -175,6 +175,108 @@ def test_compound_tokens_merge_repeated_partition_segments(async_client):
     inputs = [(_range(), "0:1#51#3=52,1:1#53#3=50"), (_range(), "0:1#54#3=50")]
     result = _call(async_client, inputs, _range())
     assert sorted(result.split(",")) == ["0:1#54#3=52", "1:1#53#3=50"]
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("tokens,expected", [
+    (["0:54"], "0:54"),
+    (["0:0"], "0:0"),
+    (["0:00054"], "0:00054"),
+    (["0:18446744073709551615"], "0:18446744073709551615"),
+    (["0:54", "0:60", "0:55"], "0:60"),
+    (["0:9", "0:10"], "0:10"),
+    (["0:54", "0:54"], "0:54"),
+    (["0:54,1:30", "0:60,1:20"], "0:60,1:30"),
+    (["0:1000", "0:1#5#3=2"], "0:1#5#3=2"),
+    (["0:1000,1:30", "0:1#5#3=2,1:40"], "0:1#5#3=2,1:40"),
+    (["0:1000", "1:1#5#3=2"], "1:1#5#3=2"),
+])
+def test_simple_and_mixed_tokens_merge_locally_for_every_input_order(async_client, tokens, expected):
+    for ordering in permutations(tokens):
+        inputs = [(_range(), token) for token in ordering]
+        before = deepcopy(inputs)
+        actual = _call(async_client, inputs, _range())
+        assert sorted(actual.split(",")) == sorted(expected.split(","))
+        assert inputs == before
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+def test_simple_tokens_for_distinct_ranges_preserve_both_partitions(async_client):
+    inputs = [(_range("AA", "BB"), "0:54"), (_range("BB", "DD"), "1:60")]
+    assert _call(async_client, inputs, _range()) == "0:54,1:60"
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("pairs,target,expected", CASES)
+def test_simple_tokens_preserve_existing_range_selection_cases(async_client, pairs, target, expected):
+    def simple(token):
+        return ",".join(
+            segment.split(":")[0] + ":" + segment.split("#")[1]
+            for segment in token.split(",")
+        )
+
+    for ordering in permutations(pairs):
+        inputs = [(_range(*bounds), simple(token)) for bounds, token in ordering]
+        before = deepcopy(inputs)
+        actual = _call(async_client, inputs, _range(*target))
+        assert sorted(actual.split(",")) == sorted(simple(expected).split(","))
+        assert inputs == before
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("vector", [False, True])
+@pytest.mark.parametrize("left_max,right_min,keep_parent", [
+    ("40", "80", True),
+    ("80", "80", False),
+    ("90", "80", False),
+])
+def test_children_must_cover_parent_before_replacing_its_observation(
+    async_client, vector, left_max, right_min, keep_parent
+):
+    value = "1#" if vector else ""
+    parent, left, right = (f"{partition}:{value}{lsn}" for partition, lsn in [(0, 55), (3, 60), (2, 70)])
+    pairs = [
+        (_range("", "FF"), parent),
+        (_range("", left_max), left),
+        (_range(right_min, "FF"), right),
+    ]
+    expected = {left, right, parent} if keep_parent else {left, right}
+    for ordering in permutations(pairs):
+        inputs = list(ordering)
+        before = deepcopy(inputs)
+        actual = _call(async_client, inputs, _range("", "FF"))
+        assert set(actual.split(",")) == expected
+        assert inputs == before
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("parent,children,expected", [
+    ("0:1000", ["1:1#5", "2:1#6"], {"1:1#5", "2:1#6"}),
+    ("0:1#5", ["1:1000", "2:2000"], {"0:1#5"}),
+])
+def test_mixed_formats_in_complete_split_ranges_prefer_vector_tokens(async_client, parent, children, expected):
+    pairs = [
+        (_range("AA", "DD"), parent),
+        (_range("AA", "BB"), children[0]),
+        (_range("BB", "DD"), children[1]),
+    ]
+    for ordering in permutations(pairs):
+        assert set(_call(async_client, list(ordering), _range()).split(",")) == expected
+
+
+@pytest.mark.parametrize("left,right,expected", [
+    (Range("AA", "BB", True, False), Range("DD", "FF", True, False), False),
+    (Range("AA", "BB", True, False), Range("BB", "DD", True, False), True),
+    (Range("AA", "BB", True, False), Range("BB", "DD", False, False), False),
+    (Range("AA", "BB", True, True), Range("BB", "DD", False, False), True),
+    (Range("AA", "DD", True, False), Range("BB", "FF", True, False), True),
+])
+def test_range_mergeability_requires_overlap_or_an_included_shared_boundary(left, right, expected):
+    assert left.can_merge(right) is expected
+    assert right.can_merge(left) is expected
+    if not expected:
+        with pytest.raises(ValueError, match="Ranges do not overlap"):
+            left.merge(right)
 
 
 @pytest.mark.parametrize("async_client", [False, True])

@@ -21,13 +21,41 @@
 
 """Combine supplied session observations locally in the Python wrapper."""
 from collections.abc import Iterable
-from typing import Tuple, Any
+from dataclasses import dataclass
+from typing import Tuple, Any, Union
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._vector_session_token import VectorSessionToken
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 # pylint: disable=protected-access
+
+
+@dataclass(frozen=True)
+class _SimpleSessionToken:
+    global_lsn: int
+    session_token: str
+
+
+_SessionTokenValue = Union[_SimpleSessionToken, VectorSessionToken]
+
+
+def _has_higher_range_progress(left: _SessionTokenValue, right: _SessionTokenValue) -> bool:
+    # Vector tokens supersede simple tokens; keep the existing GLSN comparison
+    # when both observations use the same format.
+    return (isinstance(left, VectorSessionToken), left.global_lsn) > (
+        isinstance(right, VectorSessionToken), right.global_lsn
+    )
+
+
+def _merge_token_values(left: _SessionTokenValue, right: _SessionTokenValue) -> _SessionTokenValue:
+    if isinstance(left, _SimpleSessionToken):
+        if isinstance(right, VectorSessionToken) or right.global_lsn > left.global_lsn:
+            return right
+        return left
+    if isinstance(right, _SimpleSessionToken):
+        return left
+    return left.merge(right)
 
 
 # ex inputs and outputs:
@@ -40,25 +68,32 @@ def merge_session_tokens_with_same_range(session_token1: str, session_token2: st
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
     # After a partition merge, the same feed range can carry different physical
-    # partition IDs. Preserve the existing ID-selection rule based on global LSN.
+    # partition IDs. Preserve GLSN-based selection within the same token format.
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
-            if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
-    vector_session_token = vector_session_token1.merge(vector_session_token2)
+            if _has_higher_range_progress(vector_session_token1, vector_session_token2) else pk_range_id2
+    vector_session_token = _merge_token_values(vector_session_token1, vector_session_token2)
     return pk_range_id + ":" +  vector_session_token.session_token
 
 def is_compound_session_token(session_token: str) -> bool:
     return "," in session_token
 
-def parse_session_token(session_token: str) -> Tuple[str, VectorSessionToken]:
+def parse_session_token(session_token: str) -> Tuple[str, _SessionTokenValue]:
     if not isinstance(session_token, str):
         raise TypeError("A session token must be a string.")
     tokens = session_token.split(":")
     if len(tokens) != 2 or not tokens[0]:
         raise ValueError("A session token segment must contain a partition range ID and one ':' separator.")
-    vector_session_token = VectorSessionToken.create(tokens[1])
+    value = tokens[1]
+    if value and value.isascii() and value.isdecimal():
+        digits = value.lstrip("0") or "0"
+        if len(digits) <= 20:
+            lsn = int(digits)
+            if lsn <= 0xFFFFFFFFFFFFFFFF:
+                return tokens[0], _SimpleSessionToken(lsn, value)
+    vector_session_token = VectorSessionToken.create(value)
     if vector_session_token is None:
-        raise ValueError("The session token does not contain a supported vector token value.")
+        raise ValueError("The session token does not contain a supported simple or vector token value.")
     return tokens[0], vector_session_token
 
 def split_compound_session_tokens(compound_session_tokens: list[Tuple[Range, str]]) -> list[str]:
@@ -88,7 +123,7 @@ def merge_session_tokens_for_same_partition(session_tokens: list[str]) -> list[s
         pk_range_id, vector_session_token = parse_session_token(session_tokens_same_pk[0])
         for session_token in session_tokens_same_pk[1:]:
             _, vector_session_token_1 = parse_session_token(session_token)
-            vector_session_token = vector_session_token.merge(vector_session_token_1)
+            vector_session_token = _merge_token_values(vector_session_token, vector_session_token_1)
         processed_session_tokens.append(pk_range_id + ":" + vector_session_token.session_token)
 
     return processed_session_tokens
@@ -135,7 +170,7 @@ def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> li
             merged_indices = [subsets[j][2]]
             if len(subsets) == 1:
                 _, vector_session_token = parse_session_token(session_tokens[0])
-                if vector_session_token_cmp.global_lsn > vector_session_token.global_lsn:
+                if _has_higher_range_progress(vector_session_token_cmp, vector_session_token):
                     overlapping_ranges.remove(overlapping_ranges[merged_indices[0]])
             else:
                 for k, subset in enumerate(subsets):
@@ -153,7 +188,7 @@ def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> li
                         parent_more_updated = True
                         for session_token in session_tokens:
                             _, vector_session_token = parse_session_token(session_token)
-                            if vector_session_token_cmp.global_lsn > vector_session_token.global_lsn:
+                            if _has_higher_range_progress(vector_session_token_cmp, vector_session_token):
                                 children_more_updated = False
                             else:
                                 parent_more_updated = False

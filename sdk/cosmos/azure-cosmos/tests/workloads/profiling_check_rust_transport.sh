@@ -34,30 +34,30 @@
 #
 # Usage:
 #   bash ./profiling_check_rust_transport.sh              # reads test-1 by default
-#   PROFILING_PROOF_ITEM=test-42 bash ./profiling_check_rust_transport.sh
+#   PROFILING_CHECK_ITEM_ID=test-42 bash ./profiling_check_rust_transport.sh
 # After a baseline, the script automatically reads that run's saved target.
 # The target comes only from the validated profiling configuration.
-# PROFILING_PROOF_ITEM and PROFILING_PROOF_PK select the item, not another target.
+# PROFILING_CHECK_ITEM_ID and PROFILING_CHECK_PARTITION_KEY_VALUE select the item, not another target.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 cd "$(dirname "$0")"
 
-source ./profiling_common.sh
+source ./profiling_common.sh || exit 2
 profiling_load_env || exit 2
 
-if [[ -z "${ARTIFACTS:-}" || ! -d "${ARTIFACTS}" ]]; then
+if [[ -z "${PROFILING_SESSION_DIR:-}" || ! -d "${PROFILING_SESSION_DIR}" ]]; then
   echo "ERROR: no profiling session is loaded, so this check has nowhere to save evidence." >&2
-  echo "       Run: source ./profiling_activate.sh <directory-name>" >&2
+  echo "       Run: source ./profiling_load_session.sh <directory-name>" >&2
   exit 2
 fi
 
 # The loaded extension must match the recorded profiling session build.
-profiling_load_session "${ARTIFACTS}" || exit 2
+profiling_load_session "${PROFILING_SESSION_DIR}" || exit 2
 
 RECORDED_DATABASE=""
 RECORDED_CONTAINER=""
 RECORDED_PARTITION_KEY=""
-BASELINE_TARGET_FILE="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}/baseline-target.env"
+BASELINE_TARGET_FILE="${PROFILING_SESSION_DIR}/light-load-baseline-${PROFILING_SESSION_ID}/baseline-target.env"
 if [[ -f "${BASELINE_TARGET_FILE}" ]]; then
   # Written with printf %q by the baseline script. Historical field names are retained.
   # shellcheck disable=SC1090
@@ -78,8 +78,8 @@ if [[ -f "$BASELINE_TARGET_FILE" ]] &&
 fi
 unset BASELINE_DATABASE BASELINE_CONTAINER BASELINE_PARTITION_KEY
 
-READ_ITEM="${PROFILING_PROOF_ITEM:-test-1}"
-DIAGNOSTICS_FILE="${ARTIFACTS}/rust-diagnostics-sample.txt"
+READ_ITEM="${PROFILING_CHECK_ITEM_ID:-test-1}"
+DIAGNOSTICS_FILE="${PROFILING_SESSION_DIR}/rust-diagnostics-sample.txt"
 if [[ -e "${DIAGNOSTICS_FILE}" ]]; then
   echo "ERROR: transport evidence already exists; start a new profiling session to preserve it." >&2
   exit 2
@@ -91,7 +91,7 @@ echo "    item      : ${READ_ITEM}"
 echo "    output    : ${DIAGNOSTICS_FILE}"
 echo
 
-COSMOS_BACKEND=rust PROFILING_PROOF_ITEM="${READ_ITEM}" \
+COSMOS_BACKEND=rust PROFILING_CHECK_ITEM_ID="${READ_ITEM}" \
 python3 - <<'PY' 2>&1 | tee "${DIAGNOSTICS_FILE}"
 import asyncio
 import os
@@ -111,7 +111,7 @@ except Exception as exc:
     sys.exit(2)
 
 DIAGNOSTICS = "x-ms-cosmos-sdk-diagnostics"
-ITEM = os.environ.get("PROFILING_PROOF_ITEM", "test-1")
+ITEM = os.environ.get("PROFILING_CHECK_ITEM_ID", "test-1")
 
 # The seeded container partitions on /id, so the item id and the partition-key
 # value are the same string. A container with a different path needs an id and
@@ -135,9 +135,9 @@ async def main() -> int:
         os.environ["COSMOS_URI"], os.environ["COSMOS_KEY"],
         preferred_locations=regions, _backend="rust",
     ) as client:
-        backend = type(client._backend).__name__
+        backend = type(client._adapter).__name__
         print("runtime backend:", backend)
-        if backend != "AsyncRustBackend":
+        if backend != "AsyncBindingAdapter":
             # Everything below would describe the core-Python path instead.
             print("TRANSPORT VERDICT: invalid sample -- the client is not Rust-backed")
             return 2
@@ -154,10 +154,10 @@ async def main() -> int:
             pk_value = ITEM
         elif PK_PATH == "pk" and re.fullmatch(r"test-\d+", ITEM):
             pk_value = "pk-" + ITEM.removeprefix("test-")
-        elif os.environ.get("PROFILING_PROOF_PK"):
-            pk_value = os.environ["PROFILING_PROOF_PK"]
+        elif os.environ.get("PROFILING_CHECK_PARTITION_KEY_VALUE"):
+            pk_value = os.environ["PROFILING_CHECK_PARTITION_KEY_VALUE"]
         else:
-            print("TRANSPORT VERDICT: invalid sample -- supply PROFILING_PROOF_PK for this item")
+            print("TRANSPORT VERDICT: invalid sample -- supply PROFILING_CHECK_PARTITION_KEY_VALUE for this item")
             return 2
         try:
             item = await container.read_item(

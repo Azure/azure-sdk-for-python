@@ -3,6 +3,25 @@
 
 //! Acquire and release CosmosDriver objects for the Python wrapper.
 //!
+//! A customer app reading database "sales" needs that read to use its account
+//! address, credential, and applicable client settings. The Python wrapper
+//! retains those inputs and passes them to this binding module.
+//!
+//! A CosmosDriver is an object supplied by the separately owned Rust driver
+//! library, configured for an account and used to perform operations. When a
+//! new object is needed, the binding prepares the library's configuration from
+//! the supplied inputs and asks the library to create it.
+//!
+//! The configuration combines:
+//!   - account address: which Cosmos DB account to access
+//!   - credential: authentication information for that account
+//!   - applicable client settings: for example, a preferred region
+//!
+//! Preferred region is an optional client setting, not a separate required
+//! input category. Database, container, and item identifiers belong to
+//! individual operation calls; the object is not specific to database "sales"
+//! or container "orders".
+//!
 //! Two matching clients can reuse a CosmosDriver object rather than build one
 //! each. The binding computes a driver identity from the endpoint, credential,
 //! and PreparedClientConfig fields. It uses that identity as the driver-cache
@@ -10,15 +29,27 @@
 //! Each acquisition adds to the entry's count; a balanced final release removes
 //! the entry. An active operation can still retain the CosmosDriver afterward.
 //!
-//! RuntimeContext retains access to two different objects. CosmosDriverRuntime
-//! creates CosmosDriver objects and supplies their shared connection resources.
-//! The Tokio runtime runs asynchronous Rust work. They are not Python's event
-//! loop, and neither is a CosmosDriver object.
+//! Reading database "sales" requires communication with the service backend.
+//! The account address, credential, and client settings describe the account
+//! access; they are not the connections used to perform it.
+//!
+//! The binding obtains a CosmosDriverRuntime from the Rust driver library.
+//! This object supplies resources used to establish and use network connections.
+//! The binding calls its create_driver method with the account configuration
+//! to obtain a CosmosDriver for operation calls.
+//!
+//! RuntimeContext retains access to CosmosDriverRuntime and the Tokio runtime.
+//! The Tokio runtime runs asynchronous Rust work; it has a different role from
+//! CosmosDriverRuntime and is not Python's event loop.
 //!
 //! A client's first operation requiring the Rust driver acquires a driver
 //! handle. Acquisition initializes RuntimeContext when needed. Within this
 //! Python process, it retains one CosmosDriverRuntime and records the requested
 //! connection settings.
+//!
+//! Separate Python clients can use different CosmosDriver objects, but those
+//! objects use the same CosmosDriverRuntime. Creating another CosmosDriver
+//! therefore does not provide an independent connection timeout.
 //!
 //! For example, client A requests connection_timeout=2 and client B requests
 //! connection_timeout=5. If A's acquisition initializes CosmosDriverRuntime
@@ -506,8 +537,10 @@ pub(crate) fn acquire_driver_handle(
         }
     };
 
-    // DriverOptions combines the account, prepared client configuration, and
-    // driver operation defaults. It is not Python's ItemClientDefaults record.
+    // Combine the account address, credential, and applicable client settings
+    // into the options used to create a CosmosDriver. Preferred regions are
+    // one example of those settings; connection settings are applied separately
+    // to CosmosDriverRuntime.
     let driver_options = {
         let mut builder = DriverOptions::builder(account)
             .with_operation_options(operation_options)

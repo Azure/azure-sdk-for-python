@@ -8,8 +8,7 @@ separate backend object. A throughput read that works on the sync path proves
 nothing about the async path. Customers running async apps read a database's
 shared RU/s the same way, and Rust must report the same number there.
 
-Note the async surface has no ``read_offer``: the older alias exists only on
-the sync ``DatabaseProxy``, so this test calls ``get_throughput`` directly.
+Both v5 clients expose ``get_throughput`` without a ``read_offer`` alias.
 
 What it does: the real legacy test copied from
 ``tests/test_crud_database_async.py``, changed in one place -- the client is
@@ -64,7 +63,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_database_level_offer_throughput_async(self):
         """Throughput set on a database can be read back, then read back again after a change.
 
-        Creates a database at 1000 request units, confirms ``read_offer``
+        Creates a database at 1000 request units, confirms ``get_throughput``
         reports it, raises it to 2000 and confirms the new figure comes back.
 
         Kept here for the reading half. Three operations have to agree about

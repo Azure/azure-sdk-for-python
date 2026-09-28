@@ -27,8 +27,8 @@ from azure.cosmos._backend.request_settings import (
     RequestSettings, ItemSettings, QuerySettings, HedgingSettings,
     binding_settings_contract_error, _request_settings_schema,
 )
-from azure.cosmos._backend.rust_backend import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.rust_backend import build_binding_request_from_page as async_page
+from azure.cosmos._backend.binding_adapter import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.binding_adapter import build_binding_request_from_page as async_page
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 
 
@@ -75,12 +75,12 @@ def test_incompatible_schema_fails_before_driver_acquisition(monkeypatch, async_
     and the asynchronous backend.
     """
     import asyncio
-    from azure.cosmos._backend import rust_backend as sync_rust
-    from azure.cosmos.aio._backend import rust_backend as async_rust
+    from azure.cosmos._backend import binding_adapter as sync_rust
+    from azure.cosmos.aio._backend import binding_adapter as async_rust
 
     module = async_rust if async_mode else sync_rust
     monkeypatch.setattr(module, "_REQUEST_CONTRACT_ERROR", "Rebuild for typed settings")
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = backend_type("https://unused.invalid", master_key="ZmFrZQ==")
 
     async def check_async():
@@ -127,8 +127,8 @@ del native._request_settings_schema
 sys.modules["azure.cosmos._rust"] = native
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from azure.cosmos._backend import rust_backend as rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 assert "rebuild" in rust._REQUEST_CONTRACT_ERROR
 assert "rebuild" in async_rust._REQUEST_CONTRACT_ERROR
 """, native.__file__],

@@ -224,14 +224,14 @@ def test_permitted_fallback_initializes_legacy_before_dispatch(monkeypatch, asyn
 
     async def run():
         async with env.client:
-            result = await AsyncCosmosBackend.run_operation(env.client._backend, **options)
+            result = await AsyncCosmosBackend.run_operation(env.client._adapter, **options)
             assert result["id"] == "offer"
 
     if async_mode:
         asyncio.run(run())
     else:
         with env.client:
-            assert CosmosBackend.run_operation(env.client._backend, **options)["id"] == "offer"
+            assert CosmosBackend.run_operation(env.client._adapter, **options)["id"] == "offer"
     env.manager._GetDatabaseAccount.assert_called_once()
 
 

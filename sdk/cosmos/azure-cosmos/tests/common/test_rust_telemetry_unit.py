@@ -22,17 +22,22 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
 from azure.core import instrumentation
+from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._container import ContainerProxy
-from azure.cosmos.aio._backend import rust_backend
+from azure.cosmos.aio._backend import binding_adapter
 from azure.cosmos.aio import _telemetry_poc as telemetry
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceExistsError
 
 
-ORDER = {"id": "order-42", "customerId": "customer-17", "total": 125.5}
+ORDER = {"id": "order-17", "customerId": "customer-17", "total": 125.5}
+
+
+class DriverTransportError(RuntimeError):
+    pass
 
 
 @pytest.fixture(params=["native", "plugin"])
@@ -62,13 +67,14 @@ def recording(request, monkeypatch):
 
 @pytest.fixture
 def create(recording, monkeypatch):
-    backend = rust_backend.AsyncRustBackend("https://example.documents.azure.com", master_key="unused")
+    backend = binding_adapter.AsyncBindingAdapter("https://example.documents.azure.com", master_key="unused")
     container = ContainerProxy(None, "dbs/sales", "orders", _item_context=ItemClientContext(backend))
     harness = SimpleNamespace(
         backend=backend, container=container, calls=[], payloads=[],
-        transform=lambda result: result, error=None, gate=None,
+        transform=lambda result: result, error=None, gate=None, response_status=201, driver_error=None,
     )
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="test-driver"))
+    monkeypatch.setattr(binding_adapter, "_DRIVER_TRANSPORT_ERROR", DriverTransportError)
 
     async def binding(driver_handle, prepared, *, timeout_seconds=None, include_attempts=False):
         assert driver_handle == "test-driver"
@@ -86,14 +92,24 @@ def create(recording, monkeypatch):
             "schema_version": 1, "request_count": 5, "retained_request_count": 2, "error": None,
             "attempts": [
                 {"start_ns": start, "end_ns": end, "driver_status_code": 503, "execution_context": "initial"},
-                {"start_ns": start, "end_ns": end, "driver_status_code": 201, "execution_context": "retry"},
+                {"start_ns": start, "end_ns": end, "driver_status_code": harness.response_status,
+                 "execution_context": "retry"},
             ],
         }
         harness.payloads.append(payload)
-        response = (201, 0, {"x-ms-request-charge": "5.0"}, prepared.body_bytes, "diagnostic-text")
+        if harness.response_status == 408:
+            # This is a driver error without a service response, not an HTTP 408 response.
+            harness.driver_error = DriverTransportError("driver failure")
+            if include_attempts:
+                _, payload = harness.transform((None, payload))
+                if payload is not None:
+                    harness.driver_error._cosmos_attempt_payload = payload
+            raise harness.driver_error
+        body = prepared.body_bytes if harness.response_status == 201 else b'{"message":"conflict"}'
+        response = (harness.response_status, 0, {"x-ms-request-charge": "5.0"}, body, "diagnostic-text")
         return harness.transform((response, payload)) if include_attempts else response
 
-    monkeypatch.setattr(rust_backend, "_rust_module", SimpleNamespace(create_item_async=binding))
+    monkeypatch.setattr(binding_adapter, "_rust_module", SimpleNamespace(create_item_async=binding))
     yield harness
     asyncio.run(backend.close())
 
@@ -153,7 +169,10 @@ def test_create_preserves_result_and_records_exact_sibling_attempts(create, reco
 
 
 @pytest.mark.parametrize("mode", ["ordinary", "disabled", "global-disabled", "merged", "nested", "sampled-out"])
-def test_no_attempts_without_a_new_recording_operation(create, recording, mode):
+@pytest.mark.parametrize("response_status", [201, 409, 408])
+def test_no_attempts_without_a_new_recording_operation(create, recording, mode, response_status):
+    create.response_status = response_status
+
     async def run():
         with trace.get_tracer("customer").start_as_current_span("checkout") as checkout:
             kwargs = {}
@@ -165,15 +184,27 @@ def test_no_attempts_without_a_new_recording_operation(create, recording, mode):
                 kwargs["merge_span"] = True
             elif mode == "sampled-out":
                 recording.provider.sampler = ALWAYS_OFF
-            if mode == "ordinary":
-                await create.container.create_item(ORDER)
-            elif mode == "nested":
-                @distributed_trace_async
-                async def outer():
-                    return await telemetry.create_item_with_attempt_tracing(create.container, ORDER)
-                await outer()
+            async def call():
+                if mode == "ordinary":
+                    return await create.container.create_item(ORDER)
+                if mode == "nested":
+                    @distributed_trace_async
+                    async def outer():
+                        return await telemetry.create_item_with_attempt_tracing(create.container, ORDER)
+                    return await outer()
+                return await telemetry.create_item_with_attempt_tracing(create.container, ORDER, **kwargs)
+
+            if response_status == 409:
+                with pytest.raises(CosmosResourceExistsError, match="conflict") as error:
+                    await call()
+                assert error.value.headers["x-ms-request-charge"] == "5.0"
+            elif response_status == 408:
+                with pytest.raises(ServiceResponseError, match="driver failure") as error:
+                    await call()
+                assert error.value.__cause__ is create.driver_error
+                assert not hasattr(create.driver_error, "_cosmos_attempt_payload")
             else:
-                await telemetry.create_item_with_attempt_tracing(create.container, ORDER, **kwargs)
+                assert await call() == ORDER
             assert not any(key.startswith("cosmos.poc.") for key in checkout.attributes)
 
     asyncio.run(run())
@@ -185,7 +216,10 @@ def test_no_attempts_without_a_new_recording_operation(create, recording, mode):
 @pytest.mark.parametrize("defect", [
     "schema", "count", "rows", "start", "end", "backwards", "status", "reason", "binding-error", "conversion-error",
 ])
-def test_invalid_detail_reports_without_changing_the_write(create, recording, caplog, defect):
+@pytest.mark.parametrize("response_status", [201, 409, 408])
+def test_invalid_detail_reports_without_changing_the_write(create, recording, caplog, defect, response_status):
+    create.response_status = response_status
+
     def corrupt(result):
         response, payload = result
         if defect == "schema":
@@ -212,8 +246,19 @@ def test_invalid_detail_reports_without_changing_the_write(create, recording, ca
 
     create.transform = corrupt
     with caplog.at_level(logging.WARNING):
-        result = asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
-    assert result == ORDER
+        if response_status == 409:
+            with pytest.raises(CosmosResourceExistsError, match="conflict") as error:
+                asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+            assert error.value.status_code == 409
+            assert error.value.headers["x-ms-request-charge"] == "5.0"
+            assert error.value.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+        elif response_status == 408:
+            with pytest.raises(ServiceResponseError, match="driver failure") as error:
+                asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+            assert error.value.__cause__ is create.driver_error
+            assert create.driver_error.args == ("driver failure",)
+        else:
+            assert asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER)) == ORDER
     assert len(create.calls) == 1
     assert not attempt_spans(recording)
     assert "rejected an invalid diagnostics payload" in caplog.text
@@ -244,14 +289,22 @@ def test_missing_database_response_is_not_reported_as_success(create):
     assert len(create.calls) == 1
 
 
-def test_incomplete_attempt_keeps_counts_without_inventing_end_time(create, recording, caplog):
+@pytest.mark.parametrize("response_status", [201, 408])
+def test_incomplete_attempt_keeps_counts_without_inventing_end_time(create, recording, caplog, response_status):
+    create.response_status = response_status
+
     def incomplete(result):
         result[1]["attempts"][0]["end_ns"] = None
         return result
 
     create.transform = incomplete
     with caplog.at_level(logging.WARNING):
-        assert asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER)) == ORDER
+        if response_status == 408:
+            with pytest.raises(ServiceResponseError, match="driver failure") as error:
+                asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+            assert error.value.__cause__ is create.driver_error
+        else:
+            assert asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER)) == ORDER
     assert len(attempt_spans(recording)) == 1
     operation, = operation_spans(recording)
     assert operation.attributes["cosmos.poc.request_count"] == 5
@@ -260,9 +313,11 @@ def test_incomplete_attempt_keeps_counts_without_inventing_end_time(create, reco
 
 
 @pytest.mark.parametrize("failure", ["tracer", "start", "end", "attribute"])
+@pytest.mark.parametrize("response_status", [201, 409, 408])
 def test_instrumentation_exception_does_not_replace_write_result(
-    create, recording, monkeypatch, caplog, failure
+    create, recording, monkeypatch, caplog, failure, response_status
 ):
+    create.response_status = response_status
     original_get_tracer = trace.get_tracer
 
     def fail(*_args, **_kwargs):
@@ -302,14 +357,27 @@ def test_instrumentation_exception_does_not_replace_write_result(
             monkeypatch.setattr(parent, "set_attribute", set_attribute)
             original_emit(parent, payload)
 
-        monkeypatch.setattr(rust_backend, "emit_attempts", emit)
+        monkeypatch.setattr(binding_adapter, "emit_attempts", emit)
+        monkeypatch.setattr(telemetry, "emit_attempts", emit)
     with caplog.at_level(logging.WARNING):
-        result = asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
-    assert result == ORDER
+        if response_status == 409:
+            with pytest.raises(CosmosResourceExistsError, match="conflict") as error:
+                asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+            assert error.value.status_code == 409
+            assert error.value.headers["x-ms-request-charge"] == "5.0"
+            assert error.value.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+        elif response_status == 408:
+            with pytest.raises(ServiceResponseError, match="driver failure") as error:
+                asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+            assert error.value.__cause__ is create.driver_error
+            assert create.driver_error.args == ("driver failure",)
+        else:
+            assert asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER)) == ORDER
     assert len(create.calls) == 1
     assert "could not emit all attempt spans" in caplog.text
     assert "PRIVATE" not in caplog.text
-    assert operation_spans(recording)[0].status.status_code is trace.StatusCode.UNSET
+    expected_status = trace.StatusCode.UNSET if response_status == 201 else trace.StatusCode.ERROR
+    assert operation_spans(recording)[0].status.status_code is expected_status
 
 
 def test_response_hook_error_remains_the_public_failure(create, recording):
@@ -323,12 +391,86 @@ def test_response_hook_error_remains_the_public_failure(create, recording):
     assert operation_spans(recording)[0].status.status_code is trace.StatusCode.ERROR
 
 
-def test_service_error_preserves_exception_and_diagnostics(create, recording):
-    create.transform = lambda _: ((409, 0, {}, b'{"message":"conflict"}', "error-diagnostics"), None)
-    with pytest.raises(CosmosResourceExistsError) as error:
-        asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
-    assert error.value.headers["x-ms-cosmos-sdk-diagnostics"] == "error-diagnostics"
+@pytest.mark.parametrize("has_diagnostics", [True, False])
+@pytest.mark.parametrize("response_status", [409, 408])
+def test_failed_create_preserves_exception_and_diagnostics(create, recording, has_diagnostics, response_status):
+    create.response_status = response_status
+    exception_type = CosmosResourceExistsError if response_status == 409 else ServiceResponseError
+    message = "conflict" if response_status == 409 else "driver failure"
+    if not has_diagnostics:
+        create.transform = lambda result: (result[0], None)
+
+    async def run():
+        with trace.get_tracer("customer").start_as_current_span("checkout") as checkout:
+            with pytest.raises(exception_type, match=message) as error:
+                await telemetry.create_item_with_attempt_tracing(create.container, ORDER)
+            assert trace.get_current_span() is checkout
+        return error.value, checkout
+
+    error, checkout = asyncio.run(run())
+    if response_status == 409:
+        assert error.status_code == 409
+        assert error.headers["x-ms-request-charge"] == "5.0"
+        assert error.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+    else:
+        assert error.__cause__ is create.driver_error
+        assert create.driver_error.args == ("driver failure",)
+        assert str(error) == str(create.driver_error)
     assert len(create.calls) == 1
+    assert create.calls[0][0] is True
+    operation, = operation_spans(recording)
+    assert operation.parent.span_id == checkout.get_span_context().span_id
+    assert operation.status.status_code is trace.StatusCode.ERROR
+    children = attempt_spans(recording)
+    if has_diagnostics:
+        assert operation.attributes["cosmos.poc.request_count"] == 5
+        assert operation.attributes["cosmos.poc.retained_request_count"] == 2
+        assert len(children) == 2
+        for child, row in zip(children, create.payloads[0]["attempts"]):
+            assert child.parent.span_id == operation.context.span_id
+            assert child.context.trace_id == operation.context.trace_id
+            assert child.start_time == row["start_ns"]
+            assert child.end_time == row["end_ns"]
+            assert operation.start_time <= child.start_time <= child.end_time <= operation.end_time
+            assert child.kind is trace.SpanKind.CLIENT
+            assert dict(child.attributes) == {
+                "cosmos.poc.driver_status_code": row["driver_status_code"],
+                "cosmos.poc.execution_context": row["execution_context"],
+            }
+    else:
+        assert not children
+    assert telemetry._CAPTURE.get() is None
+
+
+def test_unreadable_error_diagnostics_preserve_exception(create, recording, caplog):
+    class UnreadableDiagnostics(DriverTransportError):
+        @property
+        def _cosmos_attempt_payload(self):
+            raise RuntimeError("PRIVATE")
+
+    create.error = UnreadableDiagnostics("driver failure")
+    with caplog.at_level(logging.WARNING), pytest.raises(ServiceResponseError, match="driver failure") as error:
+        asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER))
+    assert error.value.__cause__ is create.error
+    assert len(create.calls) == 1
+    assert not attempt_spans(recording)
+    assert "could not read error diagnostics" in caplog.text
+    assert "PRIVATE" not in caplog.text
+    assert operation_spans(recording)[0].status.status_code is trace.StatusCode.ERROR
+    assert telemetry._CAPTURE.get() is None
+
+
+def test_ordinary_error_never_reads_private_diagnostics(create, recording):
+    class UnreadableDiagnostics(DriverTransportError):
+        @property
+        def _cosmos_attempt_payload(self):
+            raise AssertionError("Ordinary create must not inspect tracing diagnostics")
+
+    create.error = UnreadableDiagnostics("driver failure")
+    with pytest.raises(ServiceResponseError, match="driver failure") as error:
+        asyncio.run(create.container.create_item(ORDER))
+    assert error.value.__cause__ is create.error
+    assert create.calls[0][0] is False
     assert not attempt_spans(recording)
 
 
@@ -417,7 +559,7 @@ def test_span_capture_failure_skips_only_attempt_detail(create, recording, monke
             scoped.setattr(trace, "get_current_span", broken_current)
             return original_take(backend)
 
-    monkeypatch.setattr(rust_backend, "take_operation_parent", take)
+    monkeypatch.setattr(binding_adapter, "take_operation_parent", take)
     with caplog.at_level(logging.WARNING):
         assert asyncio.run(telemetry.create_item_with_attempt_tracing(create.container, ORDER)) == ORDER
     assert trace.get_current_span is original_current

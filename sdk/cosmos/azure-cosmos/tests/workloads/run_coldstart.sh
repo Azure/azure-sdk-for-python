@@ -11,7 +11,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
-source ./perf_env.sh >/dev/null 2>&1
+source ./perf_drill_defaults.sh >/dev/null 2>&1
 source ~/venvs/perfdrill/bin/activate
 perf_single_operation_shape
 
@@ -31,7 +31,7 @@ LOG_DIR="logs/cold-${STAMP}"
 perf_create_log_dir "$LOG_DIR" || exit 2
 
 # Seeded probe container so read/replace/delete/patch have existing items to touch.
-# Always target the probe container by default. perf_env.sh exports scale_db/scale_cont,
+# Always target the probe container by default. perf_drill_defaults.sh exports scale_db/scale_cont,
 # so using ${COSMOS_DATABASE:-...} here would silently keep the wrong target.
 export COSMOS_DATABASE="${COLD_COSMOS_DATABASE:-lat_probe_db}"
 export COSMOS_CONTAINER="${COLD_COSMOS_CONTAINER:-lat_probe_cont}"

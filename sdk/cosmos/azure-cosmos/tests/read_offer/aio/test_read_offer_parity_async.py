@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Async side-by-side parity tests for ``Container.get_throughput`` (the
-throughput/offer read, deprecated alias ``read_offer``).
+throughput read; v5 has no public ``read_offer`` alias).
 
 Why these exist: customers call ``get_throughput`` to see their provisioned
 RU/s and autoscale ceiling, and they wire those numbers into cost and capacity

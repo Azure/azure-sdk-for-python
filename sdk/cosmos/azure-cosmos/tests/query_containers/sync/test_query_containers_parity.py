@@ -183,7 +183,8 @@ def test_query_containers_page_hooks_and_timeout(database_with_containers, timeo
                 def __bool__(self):
                     return False
 
-                def __call__(self, headers):
+                def __call__(self, headers, results_iterator):
+                    assert results_iterator is pager
                     assert headers["x-ms-activity-id"]
                     assert float(headers["x-ms-request-charge"]) > 0
                     if client.client_connection._backend.name == "rust":

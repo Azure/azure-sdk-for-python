@@ -34,8 +34,8 @@ import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _rust
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
@@ -64,7 +64,7 @@ def listing(listing_client, request):
     legacy = request.param
     if legacy:
         _configure_legacy_database_feed(connection, is_async)
-        client._backend = connection._backend
+        client._adapter = connection._backend
 
         def respond(*args, **kwargs):
             reply = backend._response
@@ -506,7 +506,7 @@ async def test_real_rust_backend_deducts_setup_before_binding(listing_client, mo
     async def dispatch_async(handle, prepared, *, timeout_seconds):
         return dispatch(handle, prepared, timeout_seconds=timeout_seconds)
     backend._ensure_driver_handle = acquire_async if is_async else acquire
-    execute = module.AsyncRustBackend.execute_pages if is_async else module.RustBackend.execute_pages
+    execute = module.AsyncBindingAdapter.execute_pages if is_async else module.BindingAdapter.execute_pages
     backend.execute_pages = lambda prepared, deadline=None: execute(backend, prepared, deadline=deadline)
     monkeypatch.setattr(module, "_binding_function_by_name", lambda method: dispatch_async if is_async else dispatch)
     pager = client.list_databases(timeout=5).by_page()

@@ -8,11 +8,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import PreparedPageRequest
 from azure.cosmos._backend.operations import STATELESS_PAGE_BINDING_FUNCTION_NAMES, RETAINED_PAGE_BINDING_FUNCTION_NAMES
-from azure.cosmos._backend.rust_backend import build_binding_request_from_page
+from azure.cosmos._backend.binding_adapter import build_binding_request_from_page
 from azure.cosmos.exceptions import CosmosClientTimeoutError
 
 
@@ -27,7 +27,7 @@ def test_every_page_dispatch_preserves_cursor_and_deadline_arguments(
     monkeypatch, async_mode, budget, uses_cursor, op, method
 ):
     module = async_rust if async_mode else sync_rust
-    cls = module.AsyncRustBackend if async_mode else module.RustBackend
+    cls = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(cls)
     acquire = AsyncMock(return_value="handle") if async_mode else MagicMock(return_value="handle")
     monkeypatch.setattr(backend, "_ensure_driver_handle", acquire)
@@ -97,7 +97,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
         "cancelled": asyncio.CancelledError,
     }[error_kind]("page dispatch failed")
     module = async_rust if async_mode else sync_rust
-    backend = object.__new__(module.AsyncRustBackend if async_mode else module.RustBackend)
+    backend = object.__new__(module.AsyncBindingAdapter if async_mode else module.BindingAdapter)
     mock = AsyncMock if async_mode else MagicMock
     monkeypatch.setattr(backend, "_ensure_driver_handle", mock(return_value="handle"))
     dispatch = mock(side_effect=error)
@@ -130,7 +130,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
 
 
 def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
-    backend = object.__new__(async_rust.AsyncRustBackend)
+    backend = object.__new__(async_rust.AsyncBindingAdapter)
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="handle"))
 
     async def run():

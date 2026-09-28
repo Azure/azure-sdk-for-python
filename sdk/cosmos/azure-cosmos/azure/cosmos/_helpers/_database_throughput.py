@@ -29,16 +29,18 @@ proxy method stays a thin delegate that names no backend.
 
 from __future__ import annotations
 
-from azure.cosmos._backend.capabilities import OperationRouting, REPLACE_THROUGHPUT
-
 from typing import Any, Awaitable, Callable, Mapping, Optional, Union
 
+from azure.cosmos._backend.capabilities import (
+    GET_DATABASE_THROUGHPUT,
+    OperationRouting,
+    REPLACE_THROUGHPUT,
+)
 
-from .._base import _deserialize_throughput, _replace_throughput
+from .._base import _replace_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes as _StatusCodes
 from .._offer_rust_routing import (
-    offer_response_headers,
     can_use_rust_backend_for_read_offer,
     can_use_rust_backend_for_replace_throughput,
     process_read_offer_response,
@@ -47,7 +49,20 @@ from .._offer_rust_routing import (
     build_replace_offer_from_connection,
 )
 from ..offer import ThroughputProperties
+from ._throughput_read import prepare_read_kwargs, finish_read, legacy_read_kwargs, read_routing
 from ._throughput_setup import gather_rust_call_inputs, offer_query
+
+
+def _read_routing(
+    backend: Any,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+) -> OperationRouting:
+    return read_routing(
+        backend, options,
+        supported=can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs),
+        capability=GET_DATABASE_THROUGHPUT,
+    )
 
 
 def _require_offers(offers: list[dict[str, Any]], not_found_message: str) -> None:
@@ -69,11 +84,14 @@ def get_database_throughput(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Return the provisioned throughput shared by a database's containers."""
-    properties = get_properties()
-    query_spec = offer_query(properties["_self"])
+    kwargs = prepare_read_kwargs(kwargs, response_hook)
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
+    routing = _read_routing(selected_backend, rust_options, rust_kwargs)
+    legacy_kwargs = legacy_read_kwargs(rust_options, rust_kwargs, kwargs)
+    properties = get_properties()
+    query_spec = offer_query(properties["_self"])
     backend = selected_backend
     offers = backend.run_operation(
         build_request=lambda: build_read_offer_from_connection(
@@ -82,24 +100,16 @@ def get_database_throughput(
             offer_query=query_spec,
             options=rust_options,
         ),
-        routing=OperationRouting(
-            "read_offer",
-            can_use_rust_backend_for_read_offer(
-                backend=selected_backend,
-                options=rust_options,
-                kwargs=rust_kwargs,
-            ),
+        routing=routing,
+        legacy_call=lambda: list(
+            client_connection.QueryOffers(query_spec, **legacy_kwargs)
         ),
-        legacy_call=lambda: list(client_connection.QueryOffers(query_spec, **kwargs)),
         process_response=lambda response: process_read_offer_response(
             response, client_connection=client_connection
         ),
     )
     _require_offers(offers, not_found_message)
-
-    if response_hook:
-        response_hook(offer_response_headers(offers, client_connection), offers)
-    return _deserialize_throughput(throughput=offers)
+    return finish_read(offers, client_connection, response_hook)
 
 
 async def get_database_throughput_async(
@@ -112,11 +122,14 @@ async def get_database_throughput_async(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Return a database's provisioned throughput asynchronously."""
-    properties = await get_properties()
-    query_spec = offer_query(properties["_self"])
+    kwargs = prepare_read_kwargs(kwargs, response_hook)
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
+    routing = _read_routing(selected_backend, rust_options, rust_kwargs)
+    legacy_kwargs = legacy_read_kwargs(rust_options, rust_kwargs, kwargs)
+    properties = await get_properties()
+    query_spec = offer_query(properties["_self"])
     backend = selected_backend
 
     async def run_legacy_read() -> list[dict[str, Any]]:
@@ -126,7 +139,9 @@ async def get_database_throughput_async(
         list result shape expected from the Rust path.
         """
         return [
-            offer async for offer in client_connection.QueryOffers(query_spec, **kwargs)
+            offer async for offer in client_connection.QueryOffers(
+                query_spec, **legacy_kwargs
+            )
         ]
 
     offers = await backend.run_operation(
@@ -136,24 +151,14 @@ async def get_database_throughput_async(
             offer_query=query_spec,
             options=rust_options,
         ),
-        routing=OperationRouting(
-            "read_offer",
-            can_use_rust_backend_for_read_offer(
-                backend=selected_backend,
-                options=rust_options,
-                kwargs=rust_kwargs,
-            ),
-        ),
+        routing=routing,
         legacy_call=run_legacy_read,
         process_response=lambda response: process_read_offer_response(
             response, client_connection=client_connection
         ),
     )
     _require_offers(offers, not_found_message)
-
-    if response_hook:
-        response_hook(offer_response_headers(offers, client_connection), offers)
-    return _deserialize_throughput(throughput=offers)
+    return finish_read(offers, client_connection, response_hook)
 
 
 def replace_database_throughput(

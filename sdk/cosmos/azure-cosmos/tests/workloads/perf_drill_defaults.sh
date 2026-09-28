@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Source shared engineering defaults after exporting credentials and target overrides.
 # These are test settings, not customer capacity or latency recommendations.
+source "$(dirname "${BASH_SOURCE[0]}")/perf_common.sh" || return 2
+perf_resolve_client_lifecycle || return 2
 export COSMOS_URI="${COSMOS_URI:-https://sdkdev-dikshi.documents.azure.com:443/}"
 export COSMOS_DATABASE="${COSMOS_DATABASE:-scale_db}"
 export COSMOS_CONTAINER="${COSMOS_CONTAINER:-scale_cont}"
@@ -25,10 +27,8 @@ export RESULTS_COSMOS_CONTAINER="${RESULTS_COSMOS_CONTAINER:-perfresults-v2}"
 export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-300}"
 
 if [[ -z "${COSMOS_KEY:-}" ]]; then
-  echo "ERROR: export COSMOS_KEY before sourcing perf_env.sh." >&2
+  echo "ERROR: export COSMOS_KEY before sourcing perf_drill_defaults.sh." >&2
   return 1 2>/dev/null || exit 1
 fi
 export COSMOS_KEY
 export RESULTS_COSMOS_KEY="${RESULTS_COSMOS_KEY:-$COSMOS_KEY}"
-
-source "$(dirname "${BASH_SOURCE[0]}")/perf_common.sh" || return 2

@@ -51,7 +51,7 @@ _QUERY_OPTIONS = {
 def uses_rust(proxy: Any) -> bool:
     context = proxy._item_context
     backend = (
-        context.backend if context is not None else proxy.client_connection._backend
+        context.adapter if context is not None else proxy.client_connection._backend
     )
     return backend.name != "core-python"
 

@@ -43,7 +43,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         client = cosmos_client.CosmosClient.__new__(cosmos_client.CosmosClient)
         client.client_connection = mock.MagicMock()
         client.client_connection.last_response_headers = {}
-        client._backend = "rust"
+        client._adapter = "rust"
         return client
 
     def test_delete_database_forwards_access_condition(self):

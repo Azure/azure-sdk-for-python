@@ -20,19 +20,22 @@ read-modify-write is why the replace functions drive two operations, not one.
 
 These helpers keep migration-path decisions out of public proxy methods.
 Each uses the Python backend already stored by the client and supplies
-OperationRouting to run_operation. Any permitted fallback is chosen before
-execution; a failed binding call is not retried as a legacy QueryOffers or
-ReplaceOffer call.
+OperationRouting to run_operation. Reads reject unsupported Rust inputs before
+metadata requests. An empty lookup or a container-recreation error can refresh
+metadata once and repeat the read on the same Rust path if the container changed.
+Replacement retains its separate migration policy.
 """
 
 from __future__ import annotations
 
-from azure.cosmos._backend.capabilities import OperationRouting, REPLACE_THROUGHPUT
-
 from typing import Any, Awaitable, Callable, Dict, Mapping, Optional, Union
 
+from azure.cosmos._backend.capabilities import GET_CONTAINER_THROUGHPUT, OperationRouting, REPLACE_THROUGHPUT
+from azure.cosmos._backend.constants import is_rust_backend
 
-from .._base import _deserialize_throughput, _replace_throughput
+from .._base import _replace_throughput
+from .. import exceptions
+from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._offer_rust_routing import (
@@ -46,6 +49,25 @@ from .._offer_rust_routing import (
 )
 from ..offer import ThroughputProperties
 from ._throughput_setup import gather_rust_call_inputs, offer_query
+from ._throughput_read import prepare_read_kwargs, finish_read, legacy_read_kwargs, read_routing
+
+
+def _finish_container_read(
+    offers: list[dict[str, Any]],
+    client_connection: Any,
+    properties: Mapping[str, Any],
+    response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
+) -> ThroughputProperties:
+    if not offers:
+        raise exceptions.CosmosResourceNotFoundError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Could not find ThroughputProperties for container " + properties["_self"],
+            response=exceptions._InternalCosmosException(
+                status_code=StatusCodes.NOT_FOUND,
+                headers={HttpHeaders.SubStatus: SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND},
+            ),
+        )
+    return finish_read(offers, client_connection, response_hook)
 
 
 def get_container_throughput(
@@ -53,44 +75,59 @@ def get_container_throughput(
     client_connection: Any,
     container_link: str,
     get_properties: Callable[[], Mapping[str, Any]],
+    refresh_properties: Callable[[], Mapping[str, Any]],
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Read container throughput without exposing backend selection to the public proxy."""
+    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
+    routing = read_routing(
+        backend, rust_options,
+        supported=can_use_rust_backend_for_read_offer(
+            backend=backend, options=rust_options, kwargs=rust_kwargs,
+        ),
+        capability=GET_CONTAINER_THROUGHPUT,
+    )
+    legacy_kwargs = legacy_read_kwargs(rust_options, rust_kwargs, kwargs)
     properties = get_properties()
-    query_spec = offer_query(properties["_self"])
-    container_rid = properties["_rid"]
-    legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
-        client_connection, container_rid, kwargs
-    )
-    backend = selected_backend
-    offers = backend.run_operation(
-        build_request=lambda: build_read_offer_from_connection(
-            client_connection=client_connection,
-            container_link=container_link,
-            offer_query=query_spec,
-            options=rust_options,
-        ),
-        routing=OperationRouting(
-            "read_offer",
-            can_use_rust_backend_for_read_offer(
-                backend=selected_backend,
-                options=rust_options,
-                kwargs=rust_kwargs,
-            ),
-        ),
-        legacy_call=lambda: list(
-            client_connection.QueryOffers(query_spec, legacy_options, **kwargs)
-        ),
-        process_response=lambda response: process_read_offer_response(
-            response, client_connection=client_connection
-        ),
-    )
+    offers: list[dict[str, Any]] = []
+    for attempt in range(2):
+        query_spec = offer_query(properties["_self"])
+        rust_options[Constants.ContainerRID] = properties["_rid"]
+        recovery_error = None
+        try:
+            offers = backend.run_operation(
+                build_request=lambda: build_read_offer_from_connection(
+                    client_connection=client_connection,
+                    container_link=container_link,
+                    offer_query=query_spec,
+                    options=rust_options,
+                ),
+                routing=routing,
+                legacy_call=lambda: list(client_connection.QueryOffers(query_spec, **legacy_kwargs)),
+                process_response=lambda response: process_read_offer_response(
+                    response, client_connection=client_connection
+                ),
+            )
+        except exceptions.CosmosHttpResponseError as error:
+            if attempt or not is_rust_backend(backend) or not exceptions._container_recreate_exception(error):
+                raise
+            recovery_error = error
+        else:
+            if offers or attempt or not is_rust_backend(backend):
+                break
+        # An account-level offer query cannot refresh the owning container.
+        refreshed = refresh_properties()
+        if refreshed["_rid"] == properties["_rid"]:
+            if recovery_error is not None:
+                raise recovery_error
+            break
+        properties = refreshed
 
-    if response_hook:
-        response_hook(offer_response_headers(offers, client_connection), offers)
-    return _deserialize_throughput(throughput=offers)
+    return _finish_container_read(offers, client_connection, properties, response_hook)
 
 
 async def get_container_throughput_async(
@@ -98,56 +135,62 @@ async def get_container_throughput_async(
     client_connection: Any,
     container_link: str,
     get_properties: Callable[[], Awaitable[Mapping[str, Any]]],
+    refresh_properties: Callable[[], Awaitable[Mapping[str, Any]]],
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Read container throughput, awaiting metadata and Python backend execution."""
+    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
+    routing = read_routing(
+        backend, rust_options,
+        supported=can_use_rust_backend_for_read_offer(
+            backend=backend, options=rust_options, kwargs=rust_kwargs,
+        ),
+        capability=GET_CONTAINER_THROUGHPUT,
+    )
+    legacy_kwargs = legacy_read_kwargs(rust_options, rust_kwargs, kwargs)
     properties = await get_properties()
-    query_spec = offer_query(properties["_self"])
-    container_rid = properties["_rid"]
-    legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
-        client_connection, container_rid, kwargs
-    )
-    backend = selected_backend
+    offers: list[dict[str, Any]] = []
+    for attempt in range(2):
+        query_spec = offer_query(properties["_self"])
+        rust_options[Constants.ContainerRID] = properties["_rid"]
 
-    async def run_legacy_read() -> list[dict[str, Any]]:
-        """Drain the legacy offer query into a list.
+        async def run_legacy_read() -> list[dict[str, Any]]:
+            return [offer async for offer in client_connection.QueryOffers(query_spec, **legacy_kwargs)]
 
-        On the legacy path, await iteration of QueryOffers to produce the same
-        list result shape expected from the Rust path.
-        """
-        return [
-            offer
-            async for offer in client_connection.QueryOffers(
-                query_spec, legacy_options, **kwargs
+        recovery_error = None
+        try:
+            offers = await backend.run_operation(
+                build_request=lambda: build_read_offer_from_connection(
+                    client_connection=client_connection,
+                    container_link=container_link,
+                    offer_query=query_spec,
+                    options=rust_options,
+                ),
+                routing=routing,
+                legacy_call=run_legacy_read,
+                process_response=lambda response: process_read_offer_response(
+                    response, client_connection=client_connection
+                ),
             )
-        ]
+        except exceptions.CosmosHttpResponseError as error:
+            if attempt or not is_rust_backend(backend) or not exceptions._container_recreate_exception(error):
+                raise
+            recovery_error = error
+        else:
+            if offers or attempt or not is_rust_backend(backend):
+                break
+        refreshed = await refresh_properties()
+        if refreshed["_rid"] == properties["_rid"]:
+            if recovery_error is not None:
+                raise recovery_error
+            break
+        properties = refreshed
 
-    offers = await backend.run_operation(
-        build_request=lambda: build_read_offer_from_connection(
-            client_connection=client_connection,
-            container_link=container_link,
-            offer_query=query_spec,
-            options=rust_options,
-        ),
-        routing=OperationRouting(
-            "read_offer",
-            can_use_rust_backend_for_read_offer(
-                backend=selected_backend,
-                options=rust_options,
-                kwargs=rust_kwargs,
-            ),
-        ),
-        legacy_call=run_legacy_read,
-        process_response=lambda response: process_read_offer_response(
-            response, client_connection=client_connection
-        ),
-    )
-
-    if response_hook:
-        response_hook(offer_response_headers(offers, client_connection), offers)
-    return _deserialize_throughput(throughput=offers)
+    return _finish_container_read(offers, client_connection, properties, response_hook)
 
 
 def replace_container_throughput(

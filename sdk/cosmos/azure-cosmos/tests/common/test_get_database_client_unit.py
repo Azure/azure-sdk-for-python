@@ -53,7 +53,7 @@ def client_and_proxy_type(request):
     yield client, proxy_type
 
     assert client.client_connection.mock_calls == []
-    assert client._item_context.backend.mock_calls == []
+    assert client._item_context.adapter.mock_calls == []
 
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict, MappingProxyType])
@@ -152,7 +152,7 @@ def test_existing_proxy_creates_new_proxy_on_calling_client(client_and_proxy_typ
     assert original._properties is original_properties
     assert client.client_connection.mock_calls == []
     assert original_connection.mock_calls == []
-    assert original_context.backend.mock_calls == []
+    assert original_context.adapter.mock_calls == []
 
 
 def test_missing_id_still_raises_key_error(client_and_proxy_type):
@@ -238,7 +238,7 @@ def test_opposite_proxy_family_is_not_accepted(client_and_proxy_type):
         client.get_database_client(other_database)
 
     assert other_connection.mock_calls == []
-    assert other_context.backend.mock_calls == []
+    assert other_context.adapter.mock_calls == []
 
 
 def test_public_signature_describes_mapping_and_local_return(client_and_proxy_type):

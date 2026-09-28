@@ -76,8 +76,8 @@ def construct_client(client_module, monkeypatch):
 
     yield construct
     for client in clients:
-        if client._backend.name == "rust":
-            result = client._backend.close()
+        if client._adapter.name == "rust":
+            result = client._adapter.close()
             if inspect.isawaitable(result):
                 asyncio.run(result)
 
@@ -113,7 +113,7 @@ def test_grouped_settings_match_direct_keywords(construct_client):
         preferred_locations=["West US", "East US"], excluded_locations=["Central US"],
         retry_throttle_total=3, retry_throttle_backoff_max=12,
     )
-    assert grouped._backend._client_config == direct._backend._client_config == PreparedClientConfig(
+    assert grouped._adapter._client_config == direct._adapter._client_config == PreparedClientConfig(
         preferred_locations=("West US", "East US"), excluded_locations=("Central US",),
         throttling_max_retry_count=3, throttling_max_retry_wait_time_seconds=12,
     )
@@ -135,7 +135,7 @@ def test_default_policy_does_not_pin_rust_settings(construct_client, policy):
     Both forms must give no configuration at all, not an empty one.
     """
     client, _ = construct_client(connection_policy=policy)
-    assert client._backend._client_config is None
+    assert client._adapter._client_config is None
 
 
 def test_connection_string_factory_preserves_grouped_settings(construct_client):
@@ -148,7 +148,7 @@ def test_connection_string_factory_preserves_grouped_settings(construct_client):
     client, legacy = construct_client(
         from_connection_string=True, connection_policy=configured_policy()
     )
-    assert client._backend._client_config.preferred_locations == ("West US", "East US")
+    assert client._adapter._client_config.preferred_locations == ("West US", "East US")
     assert legacy.RetryOptions.MaxRetryAttemptCount == 3
 
 
@@ -165,8 +165,8 @@ def test_policy_zero_retry_limits_are_not_replaced_by_defaults(construct_client)
     policy = ConnectionPolicy()
     policy.RetryOptions = RetryOptions(max_retry_attempt_count=0, max_wait_time_in_seconds=0)
     client, legacy = construct_client(connection_policy=policy)
-    assert client._backend._client_config.throttling_max_retry_count == 0
-    assert client._backend._client_config.throttling_max_retry_wait_time_seconds == 0
+    assert client._adapter._client_config.throttling_max_retry_count == 0
+    assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == 0
     assert legacy.RetryOptions.MaxRetryAttemptCount == 0
     assert legacy.RetryOptions.MaxWaitTimeInSeconds == 0
 
@@ -199,8 +199,8 @@ def test_retry_precedence_includes_zero(construct_client, backend, overrides, co
         _backend=backend, connection_policy=configured_policy(), **overrides
     )
     if backend == "rust":
-        assert client._backend._client_config.throttling_max_retry_count == count
-        assert client._backend._client_config.throttling_max_retry_wait_time_seconds == wait
+        assert client._adapter._client_config.throttling_max_retry_count == count
+        assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == wait
     assert legacy.RetryOptions.MaxRetryAttemptCount == count
     assert legacy.RetryOptions.MaxWaitTimeInSeconds == wait
 
@@ -225,8 +225,8 @@ def test_region_keywords_override_policy_including_empty(construct_client, backe
     assert legacy.PreferredLocations == locations
     assert legacy.ExcludedLocations == []
     if backend == "rust":
-        assert client._backend._client_config.preferred_locations == tuple(locations)
-        assert client._backend._client_config.excluded_locations == ()
+        assert client._adapter._client_config.preferred_locations == tuple(locations)
+        assert client._adapter._client_config.excluded_locations == ()
 
 
 def test_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(construct_client):
@@ -249,7 +249,7 @@ def test_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(constru
     client, legacy = construct_client(
         connection_policy=policy, request_timeout=2000, connection_timeout=3, read_timeout=25
     )
-    config = client._backend._client_config
+    config = client._adapter._client_config
     assert config.connection_timeout_seconds == legacy.RequestTimeout == 2
     assert config.read_timeout_seconds == legacy.ReadTimeout == 25
     assert policy.RequestTimeout == 4
@@ -318,7 +318,7 @@ def test_explicit_transport_overrides_clear_nested_settings(construct_client):
     client, legacy = construct_client(
         connection_policy=policy, proxy_config=None, ssl_config=None, connection_verify=True
     )
-    assert client._backend._client_config is None
+    assert client._adapter._client_config is None
     assert legacy.ProxyConfiguration is None
     assert legacy.SSLConfiguration is None
     assert legacy.DisableSSLVerification is False
@@ -400,7 +400,7 @@ def test_mutable_policy_settings_are_snapshotted(construct_client):
     assert policy.PreferredLocations == ["West US", "East US"]
     assert policy.ExcludedLocations == ["Central US"]
     assert policy.RetryOptions.MaxRetryAttemptCount == 3
-    assert client._backend._client_config.preferred_locations == ("West US", "East US")
+    assert client._adapter._client_config.preferred_locations == ("West US", "East US")
 
 
 def test_normalization_does_not_modify_input_and_is_idempotent():

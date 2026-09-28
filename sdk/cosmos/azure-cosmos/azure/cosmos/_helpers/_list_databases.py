@@ -98,7 +98,7 @@ class ListDatabasesConfig:
             initial.pop(page_size_header, None)
             self.options["initialHeaders"] = initial
         self.kwargs = kwargs
-        self.backend = client._backend
+        self.backend = client._adapter
         self.rust = self.backend.name != "core-python"
         self.response_state = client._item_context.response_state
         self.connection = None if self.rust else client.client_connection

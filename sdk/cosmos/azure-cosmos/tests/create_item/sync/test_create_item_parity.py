@@ -47,8 +47,6 @@ The suite skips cleanly when:
   * ``azure.cosmos._rust`` did not build (``maturin develop`` not run).
 """
 from __future__ import annotations
-from common.typed_requests import key_from_legacy_header
-
 import copy
 import json
 import os
@@ -57,15 +55,17 @@ from typing import Any, Dict
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from azure.cosmos import _cosmos_client_connection as _ccc_module
-from azure.cosmos._backend import rust_backend as _rust_backend_module
+from azure.cosmos._backend import binding_adapter as _rust_backend_module
 from azure.cosmos._backend.operations import OP_CREATE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.rust_backend import RustBackend
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
+from azure.cosmos._backend.binding_adapter import BindingAdapter
 from azure.cosmos._constants import _Constants
 
 from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
+from common.parity_provisioning import create_owned_container
 
 
 pytestmark = [
@@ -81,17 +81,17 @@ pytestmark = [
 @pytest.fixture
 def container_for(request):
     """Build a fresh container per test, against a known db."""
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    db = client.create_database_if_not_exists("parity_db")
     cname = "parity_" + request.node.name + "_" + uuid.uuid4().hex[:6]
-    container = db.create_container(
-        id=cname, partition_key=PartitionKey(path="/pk")
-    )
-    yield container
-    try:
-        db.delete_container(cname)
-    except Exception:  # pylint: disable=broad-except
-        pass
+    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"]) as client:
+        db = client.create_database_if_not_exists("parity_db")
+        try:
+            container = create_owned_container(db, id=cname, partition_key=PartitionKey(path="/pk"))
+            yield container
+        finally:
+            try:
+                db.delete_container(cname)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
 
 
 def _call(container_id: str, body_or_factory, **kwargs):
@@ -198,119 +198,61 @@ def test_indexing_directive(container_for):
          indexing_directive=1).assert_functional_parity()
 
 
-# Binding forwards the per-request header through the driver's custom-headers channel.
-def test_intended_collection_rid_present_on_wire(container_for):
-    """Compare the rid captured at two different Python dispatch boundaries.
+def test_create_item_resolves_container_after_python_preparation(container_for, monkeypatch):
+    """Create in the same container without requiring Python to stamp Rust's RID.
 
-    Capture legacy __Post headers and Rust PreparedRequest.headers, then require
-    matching nonempty values. This retained expectation does not inspect native
-    HTTP headers or establish that the current driver needs a Python-stamped rid.
-    The patched methods are restored in finally.
+    Legacy resolves the container before __Post. Rust receives its name and
+    resolves it below the Python preparation boundary. Use distinct item IDs
+    so the second create is not a duplicate, then check each returned resource
+    address belongs to the expected container. This does not inspect native
+    HTTP request headers.
     """
 
     intended_rid_header = "x-ms-cosmos-intended-collection-rid"
-
+    properties = container_for.read()
     core_request_headers: Dict[str, Any] = {}
-    rust_prepared_headers: Dict[str, Any] = {}
+    rust_requests: list[PreparedRequest] = []
 
-    # Capture on the core-python side: ``__Post`` is the legacy
-    # method that receives ``req_headers`` already fully populated
-    # (intended-rid included) right before it hands the request to the
-    # azure-core pipeline. Patching it on the class is symmetric with
-    # how we patch ``RustBackend.execute`` below.
     original_post = _ccc_module.CosmosClientConnection._CosmosClientConnection__Post  # type: ignore[attr-defined]
 
     def _capturing_post(self, path, request_params, body, req_headers, **kwargs):  # type: ignore[no-redef]
-        # Only keep the last create_item POST; account-metadata pre-flight
-        # reads and other internal POSTs flow through here too and would
-        # otherwise overwrite our capture.
         if "/docs" in path:
             core_request_headers.clear()
             core_request_headers.update(dict(req_headers))
         return original_post(self, path, request_params, body, req_headers, **kwargs)
 
-    original_execute = _rust_backend_module.RustBackend.execute
+    original_execute = _rust_backend_module.BindingAdapter.execute
 
     def _capturing_execute(self, prepared, *, deadline=None):  # type: ignore[no-redef]
         if prepared.op == "create_item":
-            rust_prepared_headers.update(dict(prepared.headers))
+            rust_requests.append(prepared)
         return original_execute(self, prepared, deadline=deadline)
-
-    def _core_factory(_backend_name: str):
-        return CosmosClient(
-            os.environ["ACCOUNT_HOST"],
-            os.environ["ACCOUNT_KEY"],
-            _backend="core-python",  # type: ignore[arg-type]
-        )
-
-    def _rust_factory(_backend_name: str):
-        return CosmosClient(
-            os.environ["ACCOUNT_HOST"],
-            os.environ["ACCOUNT_KEY"],
-            _backend="rust",  # type: ignore[arg-type]
-        )
-
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
 
     def _do(client):
         cont = (
             client.get_database_client("parity_db").get_container_client(container_for.id)
         )
-        return cont.create_item(body=body)
+        result = cont.create_item(body={"id": uuid.uuid4().hex, "pk": "a"})
+        assert result["_self"].rsplit("docs/", 1)[0] == properties["_self"]
+        return result
 
-    _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = _capturing_post  # type: ignore[attr-defined]
-    _rust_backend_module.RustBackend.execute = _capturing_execute  # type: ignore[method-assign]
-    try:
-        def _factory(backend_name: str):
-            return (
-                _core_factory(backend_name)
-                if backend_name == "core-python"
-                else _rust_factory(backend_name)
-            )
-
+    with monkeypatch.context() as capture:
+        capture.setattr(
+            _ccc_module.CosmosClientConnection, "_CosmosClientConnection__Post", _capturing_post
+        )
+        capture.setattr(_rust_backend_module.BindingAdapter, "execute", _capturing_execute)
         cmp = run_on_both_backends(
-            _do,
-            client_factory=_factory,
-            description="baseline + assert intended-rid on REQUEST (both backends)",
-            request_body=body,
+            _do, description="create_item resolves the same container on both paths",
         )
-        cmp.print_report()
-    finally:
-        _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = original_post  # type: ignore[attr-defined]
-        _rust_backend_module.RustBackend.execute = original_execute  # type: ignore[method-assign]
 
-    # core-python: the wire header itself, captured from __Post's req_headers.
-    core_val = core_request_headers.get(intended_rid_header)
-    assert core_val, (
-        "core-python must stamp {!r} on the outgoing request; "
-        "captured headers: {!r}".format(intended_rid_header, sorted(core_request_headers))
-    )
-
-    # Accept the first truthy value under either spelling in the prepared map.
-    # This does not require exactly one spelling or observe native serialization.
-    rust_val = (
-        rust_prepared_headers.get(_Constants.ContainerRID)
-        or rust_prepared_headers.get(intended_rid_header)
-    )
-    assert rust_val, (
-        "rust PreparedRequest.headers must carry the container rid under "
-        "{!r} (or the wire-name {!r}) for the binding to translate it to "
-        "the {!r} header; captured: {!r}".format(
-            _Constants.ContainerRID,
-            intended_rid_header,
-            intended_rid_header,
-            sorted(rust_prepared_headers),
-        )
-    )
-    assert core_val == rust_val, (
-        "intended-rid parity broken: core-python wire value {!r} != "
-        "rust PreparedRequest value {!r}".format(core_val, rust_val)
-    )
-    print(
-        "intended-rid parity OK: core-wire={!r} rust-prepared={!r}".format(
-            core_val, rust_val
-        )
-    )
+    assert cmp.core_python.raised is None and cmp.rust.raised is None
+    cmp.assert_functional_parity()
+    assert cmp.core_python.return_value["id"] != cmp.rust.return_value["id"]
+    assert core_request_headers[intended_rid_header] == properties["_rid"]
+    assert len(rust_requests) == 1
+    assert rust_requests[0].container_link == container_for.container_link
+    assert _Constants.ContainerRID not in rust_requests[0].headers
+    assert intended_rid_header not in rust_requests[0].headers
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
@@ -547,18 +489,16 @@ def test_retired_create_arguments_are_rejected(container_for, name, value):
 
 
 # ---------------------------------------------------------------------------
-# Empty-array legacy-key compatibility case. The helper converts that spelling
-# into a typed partition key before binding dispatch. This test retains an expected
-# partitionless rejection; it does not prove the current driver's routing model
-# or replace an end-to-end test against a partitionless container.
+# Typed partitionless-key rejection. This does not establish the external
+# driver's routing behavior or replace a test against a partitionless container.
 # ---------------------------------------------------------------------------
 
 def test_partitionless_container_rejected_by_rust_binding():
-    """Check rejection of a typed key converted from the legacy empty-array shape.
+    """Check rejection of the explicit typed partitionless-key sentinel.
 
     Accept ValueError or RuntimeError and require 'partitionless' in its message.
-    No partition_key_header field is passed to the binding, and this test does
-    not independently detect whether initialization performed network I/O.
+    A cross-partition query scope is not this sentinel. This test does not
+    independently detect whether initialization performed network I/O.
     """
 
     # Real configuration is required by this test's lazy driver initialization.
@@ -569,26 +509,29 @@ def test_partitionless_container_rejected_by_rust_binding():
         pytest.skip(
             "ACCOUNT_HOST / ACCOUNT_KEY not set; this test needs a real "
             "endpoint to bootstrap the Rust driver before the binding "
-            "ever inspects the partition-key header."
+            "ever inspects the typed partition key."
         )
 
-    backend = RustBackend(endpoint=endpoint, master_key=master_key)
+    backend = BindingAdapter(endpoint=endpoint, master_key=master_key)
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,
         container_link="dbs/parity_db/colls/does_not_matter",
         body_bytes=json.dumps(body).encode("utf-8"),
-        partition_key=key_from_legacy_header("[]"),  # converted to the typed protocol
+        partition_key=BindingPartitionKey("empty_sentinel"),
         headers={},
     )
 
     # Accept either exception type, then check the message substring separately.
-    with pytest.raises((ValueError, RuntimeError)) as excinfo:
-        backend.execute(prepared)
+    try:
+        with pytest.raises((ValueError, RuntimeError)) as excinfo:
+            backend.execute(prepared)
+    finally:
+        backend.close()
 
     message = str(excinfo.value)
     assert "partitionless" in message.lower(), (
-        "Rust binding must reject partition_key_header='[]' with a message "
+        "Rust binding must reject the empty_sentinel partition key with a message "
         "naming the partitionless-container limitation; got: {!r}".format(message)
     )
     print(

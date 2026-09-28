@@ -5,14 +5,15 @@
 # -------------------------------------------------------------------------
 """Execute asynchronous requests through the binding and convert its results.
 
-Like the synchronous RustBackend, this is Python wrapper code. It acquires a
-driver handle identifying a CosmosDriver retained by the binding, then passes
-prepared requests through azure.cosmos._rust.
+A customer app awaiting a read of database "sales" needs properties held by
+the service backend. AsyncBindingAdapter is Python wrapper code: it passes
+the prepared read to the binding's read_database_async function and awaits
+the result.
 
-For an order read, the sequence is:
-
-    PreparedRequest -> call read_item_async on the calling thread
-    -> await the binding result -> convert its tuple to BackendResponse
+The binding translates the prepared inputs into a Rust driver call. The
+separately owned Rust driver performs the service operation. The binding
+converts its result into Python values, which the Python wrapper uses to
+produce the database properties returned to the customer app.
 
 The binding runs Rust work with the Tokio runtime; service I/O does not use
 a Python executor worker per request. Driver acquisition is different: it can
@@ -46,8 +47,8 @@ from azure.cosmos._backend._binding_conversions import (
     build_container_metadata, metadata_exception_from_binding,
     build_backend_page, page_binding_call_arguments,
 )
-from azure.cosmos._backend._rust_backend_shared import (
-    RustBackendShared,
+from azure.cosmos._backend._binding_adapter_shared import (
+    BindingAdapterShared,
     _binding_error_type,
     close_credential_bridge_quietly,
     driver_transport_error_type,
@@ -63,7 +64,7 @@ from ..._operation_deadline import remaining_timeout
 from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
-from .._telemetry_poc import emit_attempts, take_operation_parent
+from .._telemetry_poc import emit_attempts, emit_exception_attempts, take_operation_parent
 
 if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
@@ -77,7 +78,7 @@ try:
     _rust_module = _rust
 except ImportError:
     _LOGGER.debug(
-        "_rust module not available; AsyncRustBackend operations "
+        "_rust module not available; AsyncBindingAdapter operations "
         "will raise NotImplementedError until the Rust module is built."
     )
 
@@ -140,10 +141,10 @@ def _close_driver_handle_quietly(driver_handle: str) -> None:
         _LOGGER.debug("Failed releasing the driver handle")
 
 
-class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
+class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
-    As with RustBackend, the driver handle identifies a CosmosDriver retained
+    As with BindingAdapter, the driver handle identifies a CosmosDriver retained
     by the binding. First use acquires a handle; later calls reuse it. Closing
     releases this client's acquisition, not another client's or an in-flight
     operation's reference.
@@ -165,7 +166,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     ) -> None:
         """Store inputs and check CosmosDriverRuntime settings without acquiring a driver handle.
 
-        RustBackendShared performs the same setup as for RustBackend, including
+        BindingAdapterShared performs the same setup as for BindingAdapter, including
         checking completed CosmosDriverRuntime initialization. This constructor
         also creates locks and empty future fields. Acquisition and close create
         their futures later; construction does not reserve CosmosDriverRuntime settings.
@@ -198,7 +199,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         # the handle is stored, release the new acquisition here.
         if _rust_module is None:
             raise NotImplementedError(
-                "AsyncRustBackend: the compiled azure.cosmos._rust "
+                "AsyncBindingAdapter: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it "
                 "with `maturin develop` from the repo root."
             )
@@ -206,7 +207,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         with self._driver_acquisition_lock:
             with self._driver_handle_lock:
                 if self._closing:
-                    raise RuntimeError("AsyncRustBackend: the client is closed.")
+                    raise RuntimeError("AsyncBindingAdapter: the client is closed.")
                 if self._driver_handle is not None:
                     return self._driver_handle
             new_driver_handle: Optional[str] = self._initialize_driver(_rust_module)
@@ -219,7 +220,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             _close_driver_handle_quietly(surplus_driver_handle)
         if new_driver_handle is None:
             raise RuntimeError(
-                "AsyncRustBackend: the client was closed during initialization."
+                "AsyncBindingAdapter: the client was closed during initialization."
             )
         return new_driver_handle
 
@@ -247,7 +248,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         loop = asyncio.get_running_loop()
         with self._driver_handle_lock:
             if self._closing:
-                raise RuntimeError("AsyncRustBackend: the client is closed.")
+                raise RuntimeError("AsyncBindingAdapter: the client is closed.")
             if self._driver_handle is not None:
                 return self._driver_handle
             init_future = self._init_future
@@ -272,7 +273,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     async def close(self) -> None:
         """Release this client's driver acquisition and async credential bridge use.
 
-        Same release rules as the synchronous ``RustBackend.close``, with one
+        Same release rules as the synchronous ``BindingAdapter.close``, with one
         difference: cleanup normally runs on a worker thread. Each caller
         waits for the result recorded in _close_future through an awaitable
         for its own event loop. Cancelling one caller stops its wait but not
@@ -348,7 +349,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.
 
-        Same last-resort cleanup as RustBackend.__del__; an awaited close()
+        Same last-resort cleanup as BindingAdapter.__del__; an awaited close()
         remains the normal path.
         """
         try:
@@ -365,7 +366,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         """Execute one prepared request and return a backend response.
 
         Same function selection and error translation as the synchronous
-        ``RustBackend.execute``, with one difference: the ``_async`` binding
+        ``BindingAdapter.execute``, with one difference: the ``_async`` binding
         function is called on the calling thread and its returned awaitable is
         awaited rather than waiting synchronously for its result.
         """
@@ -373,7 +374,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             raise TypeError("execute requires a PreparedRequest")
         if _rust_module is None:
             raise NotImplementedError(
-                "AsyncRustBackend.execute: the compiled "
+                "AsyncBindingAdapter.execute: the compiled "
                 "azure.cosmos._rust module is not present in this "
                 "environment. Build it with `maturin develop` from "
                 "the repo root."
@@ -383,7 +384,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         binding_function = _binding_function_for_op(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
-                "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
+                "AsyncBindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
             )
         attempt_parent = take_operation_parent(self) if prepared.op == "create_item" else None
         driver_handle = await self._ensure_driver_handle()
@@ -410,6 +411,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
         except _DRIVER_TRANSPORT_ERROR as exc:
+            if attempt_parent is not None:
+                emit_exception_attempts(attempt_parent, exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
             raise metadata_exception_from_binding(exc) from exc
@@ -439,12 +442,12 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     ) -> ContainerMetadata:
         """Obtain container properties needed to prepare an item operation.
 
-        Same result as the synchronous ``RustBackend.get_container_metadata``,
+        Same result as the synchronous ``BindingAdapter.get_container_metadata``,
         with one difference: the ``_async`` binding function is awaited.
         """
         if _rust_module is None:
             raise NotImplementedError(
-                "AsyncRustBackend.get_container_metadata: the compiled "
+                "AsyncBindingAdapter.get_container_metadata: the compiled "
                 "azure.cosmos._rust module is not present in this environment."
             )
         binding_function = getattr(_rust_module, "get_container_metadata_async", None)
@@ -501,16 +504,16 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:
         """Perform page preflight before acquiring a driver handle or fetching results.
 
-        Same checks as the synchronous ``RustBackend.validate_page_request``,
+        Same checks as the synchronous ``BindingAdapter.validate_page_request``,
         with one difference: it requires the ``_async`` form of each binding
         function.
         """
-        validate_page_request(prepared, _rust_module, _binding_function_by_name, "AsyncRustBackend", "_async")
+        validate_page_request(prepared, _rust_module, _binding_function_by_name, "AsyncBindingAdapter", "_async")
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
         """Create an empty feed cursor retained by one page iterator.
 
-        Same as the synchronous ``RustBackend.create_item_feed_cursor``:
+        Same as the synchronous ``BindingAdapter.create_item_feed_cursor``:
         call the binding's cursor constructor synchronously, without acquiring
         a driver handle or fetching a page.
         """

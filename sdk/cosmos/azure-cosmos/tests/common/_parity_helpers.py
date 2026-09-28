@@ -7,9 +7,11 @@
 
 Each individual test only writes the call shape it cares about; this
 module handles the rest: build a core-python and a rust ``CosmosClient``,
-invoke the same closure against each, capture return value plus
-``last_response_headers`` plus any raised exception, and diff the two
-outcomes.
+invoke the same closure against each, and compare the outcomes. Successful
+calls capture ``last_response_headers``. Failed calls capture the exception's
+own response headers: for example, a failed create must not inherit the
+headers from the successful create that preceded it. Local errors without
+a response have no response headers.
 
 The helpers are operation-agnostic. ``run_on_both_backends(call_fn)``
 accepts any ``Callable[[CosmosClient], Any]`` so the same harness covers
@@ -284,7 +286,7 @@ class BackendComparison:
     # or strengthen an existing one.
     _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
         26,
-        "Original service response headers are discarded",
+        "The original HTTP response headers are discarded",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         "date": _PUSHBACK_RAW_HEADERS,
@@ -840,6 +842,14 @@ async def run_target_operation_async(
             assert fallback_delta == 0, "target fallback unexpectedly attempted Rust first"
 
 
+def _exception_response_headers(error: BaseException) -> Dict[str, str]:
+    """Snapshot the failed response without borrowing an earlier call's headers."""
+    headers = getattr(error, "headers", None)
+    if headers is None:
+        headers = getattr(getattr(error, "response", None), "headers", None)
+    return dict(headers) if headers is not None else {}
+
+
 def run_on_both_backends(
     call_fn: Callable[[Any], Any],
     *,
@@ -856,9 +866,10 @@ def run_on_both_backends(
     must be deterministic given the same client (same body, same id,
     same kwargs) so the diff is meaningful.
 
-    This function records the return value, the
-    ``client_connection.last_response_headers`` snapshot, and (on
-    failure) the raised exception. The two outcomes are then run
+    This function records the return value and the
+    ``client_connection.last_response_headers`` snapshot on success.
+    On failure it records the raised exception and that exception's headers,
+    not client-wide state left by an earlier request. The two outcomes are then run
     through :func:`diff_outcomes`. The optional ``description`` is
     just a label for the printed report — usually the test name.
 
@@ -878,13 +889,12 @@ def run_on_both_backends(
             _assert_expected_backend(client, backend_name)
             try:
                 outcome.return_value = call_fn(client)
-                outcome.response_headers = dict(
-                    client.client_connection.last_response_headers or {}
-                )
             except AssertionError:
                 raise
             except Exception as exc:  # pylint: disable=broad-except
                 outcome.raised = exc
+                outcome.response_headers = _exception_response_headers(exc)
+            else:
                 outcome.response_headers = dict(
                     client.client_connection.last_response_headers or {}
                 )
@@ -933,10 +943,9 @@ async def run_on_both_backends_async(
                 raise
             except Exception as exc:  # pylint: disable=broad-except
                 outcome.raised = exc
-            try:
+                outcome.response_headers = _exception_response_headers(exc)
+            else:
                 outcome.response_headers = dict(client.client_connection.last_response_headers or {})
-            except Exception:  # pylint: disable=broad-except
-                pass
         # Let aiohttp finish closing the connector's TLS transports before the
         # next client opens, so a late close can't surface as an unclosed-session
         # warning against an unrelated test.

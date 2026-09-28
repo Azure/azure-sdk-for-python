@@ -125,7 +125,7 @@ async def test_read_all_items_availability_strategy_backend_contract_async(conta
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = await _seed_docs(container, run_id)
-        if container._item_context.backend.name == "rust":
+        if container._item_context.adapter.name == "rust":
             async def rejected():
                 container.read_all_items(availability_strategy=False)
             with pytest.raises(NotImplementedError, match="no legacy fallback"):

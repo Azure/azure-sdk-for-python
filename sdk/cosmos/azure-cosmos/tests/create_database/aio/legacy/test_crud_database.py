@@ -33,7 +33,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_database_level_offer_throughput_async(self):
         """Throughput set at the database level can be read back and then changed.
 
-        Creates a database with 1000 request units, confirms ``read_offer``
+        Creates a database with 1000 request units, confirms ``get_throughput``
         reports that figure, then raises it to 2000 through
         ``replace_throughput`` and confirms the new value comes back.
 

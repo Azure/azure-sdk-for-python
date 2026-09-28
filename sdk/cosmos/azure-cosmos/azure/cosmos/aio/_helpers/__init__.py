@@ -6,8 +6,8 @@
 """Prepare requests and await execution for the asynchronous Python wrapper.
 
 For a customer app reading "order-42", AsyncItemHelper uses the shared Python
-request builder, awaits AsyncRustBackend.execute, and parses its BackendResponse.
-AsyncRustBackend calls the binding; the Rust driver performs the operation
+request builder, awaits AsyncBindingAdapter.execute, and parses its BackendResponse.
+AsyncBindingAdapter calls the binding; the Rust driver performs the operation
 against the service backend. The helper does not call the Rust driver directly.
 
 Request builders, parsers, and paging state records come from azure.cosmos._helpers

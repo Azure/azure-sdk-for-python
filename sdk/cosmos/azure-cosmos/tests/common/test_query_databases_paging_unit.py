@@ -31,7 +31,7 @@ def query_client(listing_client, request):
     legacy = request.param
     if legacy:
         _configure_legacy_database_feed(connection, is_async)
-        client._backend = connection._backend
+        client._adapter = connection._backend
 
         def respond(*_args, **_kwargs):
             response = backend._response

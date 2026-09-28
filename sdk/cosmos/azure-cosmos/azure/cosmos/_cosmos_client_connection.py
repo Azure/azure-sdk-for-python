@@ -21,7 +21,25 @@
 
 # pylint: disable=too-many-lines, protected-access
 
-"""Document client class for the Azure Cosmos database service.
+"""Provide the retained synchronous Python connection and legacy request methods.
+
+CosmosClient still creates CosmosClientConnection for helpers and lifecycle
+methods that depend on it. This is a Python wrapper object, not a single
+network connection or a CosmosDriver. Legacy means the Python request
+implementation that predates the Rust driver.
+
+Construction creates the Python HTTP pipeline. For a Rust-backed client,
+it leaves legacy account setup until a retained legacy request needs it.
+The explicit legacy path performs that setup during construction.
+
+A migrated Rust operation uses the binding and Rust driver instead of
+this legacy account setup. Retaining this object does not mean that
+every operation uses the Python HTTP pipeline.
+
+This object is retained during migration and is intended to be removed
+after its remaining responsibilities move and callers no longer depend
+on it. The public CosmosClient, DatabaseProxy, and ContainerProxy classes
+remain; their dependency on this internal connection object is removed.
 """
 import logging
 from ._client_lifecycle import initialize_legacy_connection, unwind_connection_construction
@@ -333,7 +351,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self._setup()
 
     def _setup(self) -> None:
-        """Initialize legacy account state only before legacy execution."""
+        """Read account information and prepare this connection for legacy requests.
+
+        Read the account's properties, apply the requested or account-default
+        consistency level, and refresh the Python endpoint information. This
+        does not read the sales database, orders container, or order-42 item.
+
+        The per-connection lock lets one caller complete setup while other
+        callers wait. Once setup succeeds, later calls reuse that state.
+        If setup raises, propagate the error without marking setup complete.
+        """
         if self._setup_complete:
             return
         with self._setup_lock:

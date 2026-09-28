@@ -13,7 +13,7 @@ patch ``CosmosClientConnection._CosmosClientConnection__Get`` directly
 -- internals-only, not a customer contract.
 
 Self-contained: builds its own database + container in ``setUpClass``
-and deletes them in ``tearDownClass``. Reads ``ACCOUNT_HOST`` and
+and registers resource deletion and client closure as each is acquired. Reads ``ACCOUNT_HOST`` and
 ``ACCOUNT_KEY`` from the environment, defaulting to the local emulator when unset.
 
 Run with::
@@ -54,20 +54,16 @@ class TestHeaders(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        cls.addClassCleanup(cls.client.close)
         cls._db_id = "legacy_ri_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
         cls.database = cls.client.create_database(cls._db_id)
+        cls.addClassCleanup(cls.client.delete_database, cls._db_id)
+        print(f"\nOwned read-test database: {cls._db_id}")
         cls.container = cls.database.create_container(
             id=cls._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    @classmethod
-    def tearDownClass(cls):
-        try:
-            cls.client.delete_database(cls._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
 
     def test_container_read_item_throughput_bucket(self):
         """Pass a throughput bucket and a header-checking raw-response hook.

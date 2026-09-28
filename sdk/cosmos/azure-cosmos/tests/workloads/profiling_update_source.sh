@@ -3,7 +3,7 @@
 # Usage: bash profiling_update_source.sh <40-character-commit>
 set -euo pipefail
 cd "$(dirname "$0")"
-source ./profiling_common.sh
+source ./profiling_common.sh || exit 2
 if [[ $# -ne 1 || ! "$1" =~ ^[0-9a-f]{40}$ || -v PROFILING_PYTHON_REF ]]; then
   echo "ERROR: supply one exact 40-character commit; PROFILING_PYTHON_REF/branch defaults are removed." >&2
   exit 2

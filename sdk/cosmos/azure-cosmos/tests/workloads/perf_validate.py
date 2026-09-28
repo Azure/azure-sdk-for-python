@@ -57,7 +57,7 @@ def _connect():
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "
-            "`source ./perf_env.sh` (after exporting the key) first.",
+            "`source ./perf_drill_defaults.sh` (after exporting the key) first.",
             file=sys.stderr,
         )
         sys.exit(2)

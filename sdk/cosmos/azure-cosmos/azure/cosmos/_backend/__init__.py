@@ -7,7 +7,7 @@
 
 The customer app calls CosmosClient and its database/container objects.
 The Python wrapper, including this package, validates values and prepares
-requests. RustBackend is the Python execution component that calls the
+requests. BindingAdapter is the Python execution component that calls the
 binding through azure.cosmos._rust.
 
 The binding calls the Rust driver library.
@@ -25,7 +25,7 @@ before execution. Execution, parsing, and callback failures must not cause
 a request to be repeated through the legacy path.
 
 The Python wrapper passes the time remaining before an operation's deadline
-to the binding. On first use, RustBackend acquires a driver handle identifying
+to the binding. On first use, BindingAdapter acquires a driver handle identifying
 a retained CosmosDriver object. Closing a client releases its acquisition;
 other clients or operations can keep that CosmosDriver alive.
 

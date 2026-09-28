@@ -11,7 +11,7 @@ server time. The reported excess is a diagnostic comparison, not a causal
 attribution to network, binding, driver, or service. Header-derived time
 also need not cover all requests, retries, or metadata work in one call.
 
-Run crt_split_report.py with --run-id and --prefix, after configuring the
+Run client_service_duration_report.py with --run-id and --prefix, after configuring the
 results account.
 """
 
@@ -54,7 +54,7 @@ def _connect():
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "
-            "`source ./perf_env.sh` (after exporting the key) first.",
+            "`source ./perf_drill_defaults.sh` (after exporting the key) first.",
             file=sys.stderr,
         )
         sys.exit(2)

@@ -11,7 +11,8 @@ source ``TestNoneOptions`` class cover ``create_item``, ``upsert_item``,
 folders.
 
 Self-contained: builds its own database + container in ``setUp`` and
-deletes them in ``tearDown``. Reads ``ACCOUNT_HOST`` and ``ACCOUNT_KEY``
+registers cleanup immediately after acquisition, including on setup failure.
+Reads ``ACCOUNT_HOST`` and ``ACCOUNT_KEY``
 from the environment, defaulting to the local emulator when unset.
 
 Run with::
@@ -39,22 +40,16 @@ class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_ri_none_opts_" + uuid.uuid4().hex[:8]
+        self.addCleanup(self.client.close)
+        self._db_id = "legacy_ri_none_opts_" + uuid.uuid4().hex
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
+        self.addCleanup(self.client.delete_database, self._db_id)
+        print(f"\nOwned read-test database: {self._db_id}")
         self.container = self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    def tearDown(self) -> None:
-        try:
-            self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            # Best-effort cleanup: the test has already produced its
-            # verdict by the time tearDown runs, and a stuck account
-            # state should not mask the test result.
-            pass
 
     def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}

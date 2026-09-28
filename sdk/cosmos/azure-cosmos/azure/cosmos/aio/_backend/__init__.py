@@ -6,12 +6,12 @@
 """Execute prepared requests through the asynchronous Python backend.
 
 For a customer app reading "order-42", the Python wrapper builds a
-PreparedRequest and calls AsyncRustBackend.execute. AsyncRustBackend calls the
+PreparedRequest and calls AsyncBindingAdapter.execute. AsyncBindingAdapter calls the
 binding and awaits its result; the Rust driver performs the operation against
 the service backend. The binding's response tuple is converted to BackendResponse
 before a Python response helper parses the body for the customer app.
 
-Page fetches start with PreparedPageRequest. AsyncRustBackend converts it to
+Page fetches start with PreparedPageRequest. AsyncBindingAdapter converts it to
 PreparedRequest, passes a feed cursor separately when retained paging uses one,
 and yields one BackendPage. The page iterator owns subsequent fetches; the
 customer-facing pager uses that iterator.
@@ -31,6 +31,6 @@ AsyncLegacyBackend and OperationRouting's choice of execution path remain only f
 migration. Permitted fallback is chosen before execution, never as a retry of
 execution, parsing, or callback failures. The Rust path is the release target.
 
-Terminology follows docs/V5/VOCABULARY.md. See AsyncRustBackend for the separate
+Terminology follows docs/V5/VOCABULARY.md. See AsyncBindingAdapter for the separate
 rules governing acquisition, cancellation, and the shared close future.
 """

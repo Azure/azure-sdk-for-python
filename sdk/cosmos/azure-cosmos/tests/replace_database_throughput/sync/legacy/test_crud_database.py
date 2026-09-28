@@ -7,11 +7,12 @@ The SDK first queries for the database's offer, edits the RU/s number on the
 document it got back, and sends the whole document back. If Rust queried for
 the wrong offer, or sent back a document missing a field the service requires,
 the change would fail or land on the wrong database -- and a customer's bill
-follows that number. The same call is also what the deprecated ``read_offer``
-name reads back, so this test covers both halves of the read-modify-write.
+follows that number. This test reads the original configuration with
+``get_throughput`` before replacing it.
 
 What it does: the real legacy test copied from ``tests/test_crud_database.py``,
-changed in one place -- the client is built with ``_backend="rust"``. It
+adapted to build the client with ``_backend="rust"`` and call
+``get_throughput`` instead of the removed ``read_offer`` alias. It
 creates a database at 1000 RU/s, reads it back, changes it to 2000, and checks
 the returned object reports 2000.
 
@@ -80,7 +81,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
-        offer = created_db.read_offer()
+        offer = created_db.get_throughput()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput

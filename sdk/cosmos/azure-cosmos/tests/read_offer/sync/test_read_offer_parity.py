@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Side-by-side parity tests for ``Container.get_throughput`` (the throughput/offer
-read, deprecated alias ``read_offer``).
+"""Side-by-side parity tests for ``Container.get_throughput``.
 
 Why these exist: customers call ``get_throughput`` to see their provisioned
 RU/s and autoscale ceiling, and they wire those numbers into cost and capacity

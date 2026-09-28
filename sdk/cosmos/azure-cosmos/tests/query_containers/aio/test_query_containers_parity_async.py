@@ -21,6 +21,7 @@ import pytest
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._parity_helpers import run_on_both_backends_async, run_target_operation_async, skip_unless_emulator, skip_unless_rust_binding
+from common.parity_provisioning import create_owned_container, create_owned_database
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 
@@ -45,10 +46,11 @@ def database_with_containers():
     name = "parity_query_containers_a_" + uuid.uuid4().hex[:8]
     container_ids = []
     try:
-        database = client.create_database(id=name)
+        database = create_owned_database(client, id=name)
         for index in range(CONTAINER_COUNT):
             container_id = "c{}".format(index)
-            database.create_container(
+            create_owned_container(
+                database,
                 id=container_id,
                 partition_key=PartitionKey(path="/pk", kind="Hash"),
             )
@@ -188,7 +190,8 @@ async def test_query_containers_page_hooks_and_timeout_async(database_with_conta
                 def __bool__(self):
                     return False
 
-                def __call__(self, headers):
+                def __call__(self, headers, results_iterator):
+                    assert results_iterator is pager
                     assert headers["x-ms-activity-id"]
                     assert float(headers["x-ms-request-charge"]) > 0
                     if client.client_connection._backend.name == "rust":

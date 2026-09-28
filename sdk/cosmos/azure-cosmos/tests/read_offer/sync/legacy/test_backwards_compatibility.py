@@ -68,8 +68,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        finally:
+            self.client.close()
 
     def test_offer_methods(self):
         """``get_throughput`` returns an object that answers to both its old and new type names.

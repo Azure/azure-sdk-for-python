@@ -9,7 +9,7 @@ When a customer app reads order "order-42", the public container method passes
 its arguments to ItemHelper. On the Rust path, the flow is:
 
     customer app -> Python wrapper builds PreparedRequest
-    -> RustBackend calls the binding -> Rust driver uses the service backend
+    -> BindingAdapter calls the binding -> Rust driver uses the service backend
     -> Python wrapper parses BackendResponse -> customer app receives the result
 
 Request builders and parsers do not perform network I/O. Operation helpers

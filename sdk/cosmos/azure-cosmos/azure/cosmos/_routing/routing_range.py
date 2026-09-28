@@ -308,8 +308,8 @@ class Range(object):
         if self.isSingleValue() and other.isSingleValue():
             return self.min == other.min
         # if share the same boundary, they can merge
-        overlap_boundary1 = self.max == other.min and self.isMaxInclusive or other.isMinInclusive
-        overlap_boundary2 = other.max == self.min and other.isMaxInclusive or self.isMinInclusive
+        overlap_boundary1 = self.max == other.min and (self.isMaxInclusive or other.isMinInclusive)
+        overlap_boundary2 = other.max == self.min and (other.isMaxInclusive or self.isMinInclusive)
         if overlap_boundary1 or overlap_boundary2:
             return True
         return self.overlaps(self, other)

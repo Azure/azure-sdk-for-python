@@ -4,7 +4,7 @@
 # Usage: bash profiling_check_target.sh --confirm-target <endpoint> <database> <container>
 set -uo pipefail
 cd "$(dirname "$0")"
-source ./profiling_common.sh
+source ./profiling_common.sh || exit 2
 profiling_load_env || exit 2
 profiling_confirm_target "$@" || exit 2
 

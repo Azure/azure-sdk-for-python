@@ -285,6 +285,22 @@ def _aio_read_item_target() -> Tuple[Any, str, str]:
 
 _register_op("read_item", sync=_sync_read_item_target, aio=_aio_read_item_target)
 
+def _sync_latest_session_token_target() -> Tuple[Any, str, str]:
+    import azure.cosmos.container as module
+    return module, "ContainerProxy", "get_latest_session_token"
+
+
+def _aio_latest_session_token_target() -> Tuple[Any, str, str]:
+    import azure.cosmos.aio._container as module
+    return module, "ContainerProxy", "get_latest_session_token"
+
+
+_register_op(
+    "get_latest_session_token",
+    sync=_sync_latest_session_token_target,
+    aio=_aio_latest_session_token_target,
+)
+
 
 # upsert_item ----------------------------------------------------------------
 
@@ -511,8 +527,7 @@ _register_op(
 # ContainerProxy would never intercept it, so the database throughput read needs
 # its own registration or its audit could not be generated at all.
 #
-# DatabaseProxy.read_offer is the deprecated alias and forwards to
-# get_throughput, so patching get_throughput records read_offer calls too.
+# Record the retained database throughput API; v5 has no read_offer alias.
 
 def _sync_get_database_throughput_target() -> Tuple[Any, str, str]:
     """Return the synchronous database throughput read to record."""
@@ -764,6 +779,15 @@ def _coerce_json_safe(value: Any) -> Any:
     Unknown objects use a scrubbed repr. This does not guarantee successful
     serialization for arbitrary objects, recursive structures, or failing reprs.
     """
+    from azure.cosmos.offer import ThroughputProperties
+
+    if isinstance(value, ThroughputProperties):
+        return {
+            "offer_throughput": value.offer_throughput,
+            "auto_scale_max_throughput": value.auto_scale_max_throughput,
+            "auto_scale_increment_percent": value.auto_scale_increment_percent,
+            "properties": _coerce_json_safe(value.properties),
+        }
     if value is None or isinstance(value, (bool, int, float, str)):
         return value
     if isinstance(value, dict):
@@ -853,12 +877,15 @@ def _rust_fallback_count() -> int:
     return rust_compatibility_fallback_count()
 
 
-def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str, Any]:
+def _execution_evidence(
+    before: Optional[int], fallback_before: int, *, selected_backend: Optional[str] = None,
+) -> Dict[str, Any]:
     """Classify observed counter deltas using the plugin's reporting rule.
 
     The counters are process-wide and can include unrelated concurrent work.
     A zero delta can also mean early rejection or an uninstrumented path;
-    it does not by itself prove core-Python execution.
+    it does not by itself prove core-Python execution. Exception wrappers pass
+    the selected backend so zero Rust activity is reported without that inference.
     """
     after = _rust_operation_count()
     fallback_delta = max(0, _rust_fallback_count() - fallback_before)
@@ -869,6 +896,12 @@ def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str
             "rust_fallback_delta": fallback_delta,
         }
     delta = max(0, after - before)
+    if selected_backend == "rust" and delta == 0 and fallback_delta == 0:
+        return {
+            "executed_engine": "no-rust-operation",
+            "rust_operation_delta": 0,
+            "rust_fallback_delta": 0,
+        }
     return {
         "executed_engine": (
             "rust"
@@ -900,6 +933,12 @@ def _emit_block(payload: Dict[str, Any]) -> None:
     The fallback write is not protected by another catch, so stdout failures
     can still propagate.
     """
+    if payload.get("op") == "get_latest_session_token":
+        # This string-returning utility has no response; connection headers belong
+        # to an earlier request, not to this operation.
+        payload = dict(payload, response_headers={})
+        if payload.get("rust_operation_delta") == 0 and payload.get("rust_fallback_delta") == 0:
+            payload["executed_engine"] = "local-python"
     token = _ensure_sentinel_token()
     sentinel_start = f"{SENTINEL_PREFIX}{token}{SENTINEL_SUFFIX_START}"
     sentinel_end = f"{SENTINEL_PREFIX}{token}{SENTINEL_SUFFIX_END}"
@@ -1246,7 +1285,9 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 "response_headers": response_headers,
                 "exception": _serialise_exception(exc),
             }
-            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+            payload.update(_execution_evidence(
+                rust_count_before, fallback_count_before, selected_backend=backend,
+            ))
             _emit_block(payload)
             raise
 
@@ -1307,7 +1348,9 @@ def _build_aio_wrapper(op_name: str, surface: str,
                 "response_headers": response_headers,
                 "exception": _serialise_exception(exc),
             }
-            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
+            payload.update(_execution_evidence(
+                rust_count_before, fallback_count_before, selected_backend=backend,
+            ))
             _emit_block(payload)
             raise
 

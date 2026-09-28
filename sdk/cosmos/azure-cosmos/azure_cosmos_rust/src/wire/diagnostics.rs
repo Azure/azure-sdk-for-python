@@ -27,9 +27,9 @@ fn epoch_nanos(
     u64::try_from(nanos).map_err(|_| "attempt timestamp exceeds u64 nanoseconds")
 }
 
-/// Private success-only POC contract. Never export bodies, keys, or endpoints.
-/// Timing failures are reported as data so telemetry cannot turn a completed
-/// write into a retryable operation failure.
+/// Private POC contract. Never export bodies, keys, or endpoints.
+/// Timing failures are reported as data so telemetry cannot change the
+/// database operation's outcome.
 pub(super) fn attempt_payload<'py>(
     py: Python<'py>,
     diagnostics: &DiagnosticsContext,

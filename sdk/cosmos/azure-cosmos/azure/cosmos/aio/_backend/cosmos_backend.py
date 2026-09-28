@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 class AsyncCosmosBackend(abc.ABC):
     """Shared Python interface for asynchronous request execution.
 
-    AsyncRustBackend implements execute and execute_pages through the binding.
+    AsyncBindingAdapter implements execute and execute_pages through the binding.
     AsyncLegacyBackend instead awaits supplied legacy-path functions through
     run_operation and run_page_operation; it does not consume prepared requests.
 
@@ -72,7 +72,7 @@ class AsyncCosmosBackend(abc.ABC):
     ) -> BackendResponse:
         """Execute a prepared request and return a backend response.
 
-        AsyncRustBackend selects a binding function using prepared.op, calls it,
+        AsyncBindingAdapter selects a binding function using prepared.op, calls it,
         and awaits its result. The returned BackendResponse still needs body
         parsing by the caller, including for an empty successful body.
 
@@ -178,7 +178,7 @@ class AsyncCosmosBackend(abc.ABC):
     ) -> AsyncIterator[BackendPage]:
         """Return the asynchronous iterator used to fetch a backend page.
 
-        AsyncRustBackend yields one BackendPage per call. Advancing its async
+        AsyncBindingAdapter yields one BackendPage per call. Advancing its async
         generator performs the fetch; constructing that generator does not.
         The operation name and presence of a feed cursor select stateless or
         retained paging. A supplied deadline contributes its remaining seconds.
@@ -191,7 +191,7 @@ class AsyncCosmosBackend(abc.ABC):
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:
         """Provide a page-preflight hook before driver acquisition or page fetching.
 
-        This base method performs no check. AsyncRustBackend checks that the
+        This base method performs no check. AsyncBindingAdapter checks that the
         operation and cursor mode have the required async binding function.
         """
 

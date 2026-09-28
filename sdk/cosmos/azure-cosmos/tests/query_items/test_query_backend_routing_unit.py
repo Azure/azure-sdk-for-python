@@ -47,8 +47,8 @@ from azure.cosmos._backend.operations import (
 )
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
-from azure.cosmos._backend.rust_backend import build_binding_request_from_page as _sync_binding_request_from_page
-from azure.cosmos.aio._backend.rust_backend import (
+from azure.cosmos._backend.binding_adapter import build_binding_request_from_page as _sync_binding_request_from_page
+from azure.cosmos.aio._backend.binding_adapter import (
     build_binding_request_from_page as _async_binding_request_from_page,
 )
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -213,7 +213,7 @@ def listing_client(request):
     backend = backend_type(response)
     backend.execute_pages = MagicMock(wraps=backend.execute_pages)
     conn._backend = backend
-    client._backend = backend
+    client._adapter = backend
     client._item_context = ItemClientContext(backend, response_state=conn._response_state)
     conn.last_response_headers = CaseInsensitiveDict({"x-ms-activity-id": "stale"})
     legacy_get = AsyncMock if is_async else MagicMock
@@ -708,7 +708,7 @@ async def test_database_feed_timeout_resets_per_page_and_replay(
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
-        listing_client[0]._backend = conn._backend
+        listing_client[0]._adapter = conn._backend
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
     monkeypatch.setattr(time, "monotonic", lambda: clock[0])
@@ -751,7 +751,7 @@ async def test_database_feed_retains_existing_operation_scope_checks(
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
-        listing_client[0]._backend = conn._backend
+        listing_client[0]._adapter = conn._backend
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
     monkeypatch.setattr(time, "monotonic", lambda: clock[0])
@@ -2484,7 +2484,7 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
     conn._backend = FailingBackend()
     client = object.__new__(CosmosClient)
     client.client_connection = conn
-    client._backend = conn._backend
+    client._adapter = conn._backend
     client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     legacy_get = MagicMock(side_effect=AssertionError("legacy replay"))
@@ -2528,7 +2528,7 @@ def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch,
         conn._backend = FailingBackend()
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = conn
-        client._backend = conn._backend
+        client._adapter = conn._backend
         client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
         monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
         legacy_get = AsyncMock(side_effect=AssertionError("legacy replay"))

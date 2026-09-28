@@ -148,7 +148,7 @@ def test_existing_proxy_creates_new_proxy_under_current_database(database_and_pr
     assert original.client_connection is original_connection
     assert original._item_context is original_context
     assert original_connection.mock_calls == []
-    assert original_context.backend.mock_calls == []
+    assert original_context.adapter.mock_calls == []
 
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict])

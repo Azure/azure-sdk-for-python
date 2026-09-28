@@ -19,6 +19,7 @@ import pytest
 
 from azure.cosmos import CosmosClient, ThroughputProperties, exceptions
 from common._parity_helpers import _observed_backend_name, run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
+from common.parity_provisioning import create_owned_database
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -127,21 +128,15 @@ def test_replace_throughput_persists(database_per_backend):
 
 
 def test_replace_throughput_without_provisioned_throughput():
-    """Changing throughput on a database that owns none: rust raises a typed 404."""
-    # Keep the known difference visible until Python also returns the typed 404.
+    """Both implementations reject replacing a missing throughput offer with a typed 404."""
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    created = {}
+    database_id = "parity_repl_db_notp_" + uuid.uuid4().hex
     try:
-        for backend_name in ("core-python", "rust"):
-            database_id = "parity_repl_db_notp_{}_{}".format(
-                backend_name.replace("-", ""), uuid.uuid4().hex[:6]
-            )
-            client.create_database(id=database_id)
-            created[backend_name] = database_id
+        create_owned_database(client, id=database_id)
 
         def _do(inner_client):
             return _normalize_throughput(
-                _database_for(inner_client, created).replace_throughput(2000)
+                inner_client.get_database_client(database_id).replace_throughput(2000)
             )
 
         comparison = run_on_both_backends(
@@ -155,17 +150,17 @@ def test_replace_throughput_without_provisioned_throughput():
             )
         )
         assert comparison.rust.raised.status_code == 404
-        assert isinstance(comparison.core_python.raised, AttributeError), (
-            "core-python is expected to crash in its retry policy for this case; if it "
-            "now raises a Cosmos error, the defect is fixed and this test should require "
-            "matching typed errors on both engines instead. Got {!r}".format(
+        assert isinstance(comparison.core_python.raised, exceptions.CosmosResourceNotFoundError), (
+            "core-python should report a missing offer as a typed 404, got {!r}".format(
                 comparison.core_python.raised
             )
         )
+        assert comparison.core_python.raised.status_code == 404
+        comparison.assert_exception_parity()
     finally:
-        for database_id in created.values():
-            try:
-                client.delete_database(database_id)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        client.close()
+        try:
+            client.delete_database(database_id)
+        except exceptions.CosmosResourceNotFoundError:
+            pass
+        finally:
+            client.close()

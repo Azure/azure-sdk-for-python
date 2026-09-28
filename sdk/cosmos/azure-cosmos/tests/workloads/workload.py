@@ -41,7 +41,7 @@ from workload_configs import (
     WORKLOAD_MIX,
     WORKLOAD_NUM_CLIENTS,
     WORKLOAD_OPERATIONS,
-    WORKLOAD_SKIP_CLOSE,
+    WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
     WORKLOAD_USE_PROXY,
     WORKLOAD_USE_SYNC,
 )
@@ -71,7 +71,7 @@ from workload_utils import (
 # Perf reporting is optional: it needs hdrhistogram and psutil. If they are not
 # installed the import fails and the workload still runs, just without reporting.
 try:
-    from perf_config import get_perf_config
+    from perf_reporting_config import get_perf_config
     from perf_stats import Stats
     from perf_reporter import PerfReporter
     _PERF_IMPORT_ERROR = None
@@ -93,13 +93,13 @@ def _start_reporter():
         if os.environ.get("PERF_ENABLED", "true").lower() == "true":
             raise RuntimeError("Performance reporting dependencies are missing") from _PERF_IMPORT_ERROR
         return None, None
-    perf_config = get_perf_config()
-    if perf_config["enabled"] and perf_config["results_endpoint"]:
+    perf_reporting_config = get_perf_config()
+    if perf_reporting_config["enabled"] and perf_reporting_config["results_endpoint"]:
         stats = Stats()
-        reporter = PerfReporter(stats, perf_config)
+        reporter = PerfReporter(stats, perf_reporting_config)
         reporter.start()
         return stats, reporter
-    if perf_config["enabled"]:
+    if perf_reporting_config["enabled"]:
         raise ValueError("PERF_ENABLED=true requires RESULTS_COSMOS_URI")
     return None, None
 
@@ -113,7 +113,7 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
     Exceptions do not increment this counter.
     """
 
-    backend = client._backend
+    backend = client._adapter
     runtime_name = type(backend).__name__
     backend_counters.set_runtime_backend(runtime_name)
 
@@ -226,7 +226,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             client_kwargs["multiple_write_locations"] = True
 
         client = AsyncClient(COSMOS_URI, COSMOS_CREDENTIAL, **client_kwargs)
-        if not WORKLOAD_SKIP_CLOSE:
+        if WORKLOAD_MANAGE_CLIENT_LIFECYCLE:
             await client.__aenter__()
 
         try:
@@ -315,7 +315,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     except Exception:
                         pass
         finally:
-            if not WORKLOAD_SKIP_CLOSE:
+            if WORKLOAD_MANAGE_CLIENT_LIFECYCLE:
                 await client.__aexit__(None, None, None)
     finally:
         try:

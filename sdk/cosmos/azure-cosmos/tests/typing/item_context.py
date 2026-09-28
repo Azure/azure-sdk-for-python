@@ -56,24 +56,24 @@ def check_backend_separation(
 ) -> None:
     context = ItemClientContext(backend)
     async_context = ItemClientContext(async_backend)
-    assert_type(context.backend, CosmosBackend)
-    assert_type(async_context.backend, AsyncCosmosBackend)
+    assert_type(context.adapter, CosmosBackend)
+    assert_type(async_context.adapter, AsyncCosmosBackend)
     assert_type(context.response_state, ClientLastResponseHeaders)
     assert_type(async_context.response_state, ClientLastResponseHeaders)
     DatabaseProxy(connection, "db", _item_context=context)
     AsyncDatabaseProxy(async_connection, "db", _item_context=async_context)
     ContainerProxy(connection, "dbs/db", "orders", _item_context=context)
     AsyncContainerProxy(async_connection, "dbs/db", "orders", _item_context=async_context)
-    ItemHelper(context.backend)
-    AsyncItemHelper(async_context.backend)
+    ItemHelper(context.adapter)
+    AsyncItemHelper(async_context.adapter)
 
     # These ignores must remain necessary: mixing the two modes is a type error.
     DatabaseProxy(connection, "db", _item_context=async_context)  # type: ignore[arg-type]
     AsyncDatabaseProxy(async_connection, "db", _item_context=context)  # type: ignore[arg-type]
     ContainerProxy(connection, "dbs/db", "orders", _item_context=async_context)  # type: ignore[arg-type]
     AsyncContainerProxy(async_connection, "dbs/db", "orders", _item_context=context)  # type: ignore[arg-type]
-    ItemHelper(async_context.backend)  # type: ignore[arg-type]
-    AsyncItemHelper(context.backend)  # type: ignore[arg-type]
+    ItemHelper(async_context.adapter)  # type: ignore[arg-type]
+    AsyncItemHelper(context.adapter)  # type: ignore[arg-type]
     ItemClientContext(object())  # type: ignore[type-var]
 
     ItemHelper(backend).create_item(deadline=None, container_link="dbs/d/colls/c", body={"id": "item"})

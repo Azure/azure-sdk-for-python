@@ -64,7 +64,7 @@ def test_shared_async_credential_uses_one_bridge_and_thread():
 
             # Dedup happens at construction: clients with the same credential must
             # hold the same bridge object.
-            bridges = {id(c._backend._token_credential) for c in clients}  # noqa: SLF001
+            bridges = {id(c._adapter._token_credential) for c in clients}  # noqa: SLF001
             assert len(bridges) == 1, (
                 "clients sharing one async credential must share one bridge, "
                 "got {} distinct bridges".format(len(bridges))
@@ -118,8 +118,8 @@ def test_distinct_async_credentials_do_not_share_a_bridge():
             client_a = await stack.enter_async_context(CosmosClient(host, cred_a, _backend="rust"))
             client_b = await stack.enter_async_context(CosmosClient(host, cred_b, _backend="rust"))
 
-            bridge_a = client_a._backend._token_credential  # noqa: SLF001
-            bridge_b = client_b._backend._token_credential  # noqa: SLF001
+            bridge_a = client_a._adapter._token_credential  # noqa: SLF001
+            bridge_b = client_b._adapter._token_credential  # noqa: SLF001
             assert bridge_a is not bridge_b, "distinct credentials must map to distinct bridges"
 
             # Sign in both so each starts its own loop thread, so the count is

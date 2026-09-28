@@ -13,14 +13,28 @@ use azure_core::http::headers::HeaderName;
 use azure_data_cosmos_driver::models::{ItemReference, Precondition};
 use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 
-fn item_target(prepared: &Bound<'_, PyAny>, item_id: String) -> PyResult<ItemTarget> {
+fn item_target(
+    prepared: &Bound<'_, PyAny>,
+    item_id: impl FnOnce() -> PyResult<String>,
+) -> PyResult<ItemTarget> {
     match prepared
         .getattr("item_self_link")?
         .extract::<Option<String>>()?
     {
         Some(link) => ItemTarget::from_self_link(&link),
-        None => Ok(item_id.into()),
+        None => Ok(item_id()?.into()),
     }
+}
+
+fn extract_read_item_inputs(
+    prepared: &Bound<'_, PyAny>,
+) -> PyResult<(String, BindingPartitionKey, RequestHeadersAndOptions, ItemTarget)> {
+    let (container_link, partition_key, modifiers) = extract_common_prepared_inputs(prepared)?;
+    if matches!(partition_key, BindingPartitionKey::Extract) {
+        return Err(PyValueError::new_err(READ_ITEM_PARTITION_KEY_REQUIRED));
+    }
+    let target = item_target(prepared, || extract_required_item_id(prepared, READ_ITEM_ID_REQUIRED))?;
+    Ok((container_link, partition_key, modifiers, target))
 }
 
 fn patch_precondition(
@@ -152,7 +166,7 @@ pub(crate) fn replace_item<'py>(
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = item_target(prepared, item_id)?;
+    let target = item_target(prepared, || Ok(item_id))?;
 
     execute_item_operation_sync(
         py,
@@ -219,14 +233,9 @@ pub(crate) fn read_item<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_item")?;
-    let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
-        prepared,
-        READ_ITEM_ID_REQUIRED,
-        READ_ITEM_PARTITION_KEY_REQUIRED,
-    )?;
+    let (container_link, partition_key, mut modifiers, target) = extract_read_item_inputs(prepared)?;
     modifiers.read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_sync(
         py,
@@ -357,7 +366,7 @@ pub(crate) fn replace_item_async<'py>(
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = item_target(prepared, item_id)?;
+    let target = item_target(prepared, || Ok(item_id))?;
 
     execute_item_operation_async(
         py,
@@ -415,14 +424,9 @@ pub(crate) fn read_item_async<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_item")?;
-    let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
-        prepared,
-        READ_ITEM_ID_REQUIRED,
-        READ_ITEM_PARTITION_KEY_REQUIRED,
-    )?;
+    let (container_link, partition_key, mut modifiers, target) = extract_read_item_inputs(prepared)?;
     modifiers.read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_async(
         py,
@@ -542,7 +546,7 @@ mod tests {
                 .unwrap();
             prepared.setattr("item_self_link", py.None()).unwrap();
             assert!(matches!(
-                item_target(&prepared, "item".into()).unwrap(),
+                extract_read_item_inputs(&prepared).unwrap().3,
                 ItemTarget::Name(id) if id == "item"
             ));
             prepared
@@ -551,11 +555,30 @@ mod tests {
                     "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
                 )
                 .unwrap();
+            for id in [py.None(), "different-item".into_py(py), 42.into_py(py)] {
+                prepared.setattr("item_id", id).unwrap();
+                assert!(matches!(
+                    extract_read_item_inputs(&prepared).unwrap().3,
+                    ItemTarget::SelfLink { item, by_rid: true, .. }
+                        if item == "AQAAAIABAAABAAAAAAAAAA=="
+                ));
+                for asynchronous in [false, true] {
+                    let error = if asynchronous {
+                        read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                    } else {
+                        read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                    }
+                    .unwrap_err();
+                    assert!(error.to_string().contains("no driver registered for handle"));
+                }
+            }
+            prepared.delattr("item_id").unwrap();
             assert!(matches!(
-                item_target(&prepared, "item".into()).unwrap(),
+                extract_read_item_inputs(&prepared).unwrap().3,
                 ItemTarget::SelfLink { item, by_rid: true, .. }
                     if item == "AQAAAIABAAABAAAAAAAAAA=="
             ));
+            prepared.setattr("item_id", "item").unwrap();
             for link in ["", "dbs/db/colls/c", "dbs/db/colls/c/docs/"] {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
@@ -569,6 +592,18 @@ mod tests {
                     assert!(error.is_instance_of::<PyValueError>(py));
                     assert!(error.to_string().contains("target _self"));
                 }
+            }
+            prepared.setattr("item_self_link", py.None()).unwrap();
+            prepared.setattr("item_id", py.None()).unwrap();
+            for asynchronous in [false, true] {
+                let error = if asynchronous {
+                    read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                } else {
+                    read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                }
+                .unwrap_err();
+                assert!(error.is_instance_of::<PyValueError>(py));
+                assert!(error.to_string().contains("item_id is required"));
             }
         });
     }

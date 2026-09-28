@@ -13,9 +13,9 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
-source ./perf_env.sh >/dev/null 2>&1
+source ./perf_drill_defaults.sh >/dev/null 2>&1
 source ~/venvs/perfdrill/bin/activate
-export WORKLOAD_USE_SYNC=false WORKLOAD_SKIP_CLOSE=false PERF_ENABLED=true
+export WORKLOAD_USE_SYNC=false WORKLOAD_MANAGE_CLIENT_LIFECYCLE=true PERF_ENABLED=true
 
 DURATION="${1:-900}"
 perf_require_positive "${DURATION}"

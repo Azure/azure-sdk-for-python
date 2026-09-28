@@ -24,7 +24,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
-import azure.cosmos.aio._backend.rust_backend as async_rust_module
+import azure.cosmos.aio._backend.binding_adapter as async_rust_module
 from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_RUST
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -36,7 +36,7 @@ ASYNC_URL = "https://close-async.documents.azure.com"
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mode):
     from types import SimpleNamespace
-    from azure.cosmos._backend.rust_backend import RustBackend
+    from azure.cosmos._backend.binding_adapter import BindingAdapter
 
     started, finish, finished = threading.Event(), threading.Event(), threading.Event()
     calls = []
@@ -49,7 +49,7 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
         finally:
             finished.set()
 
-    backend_type = async_rust_module.AsyncRustBackend if async_mode else RustBackend
+    backend_type = async_rust_module.AsyncBindingAdapter if async_mode else BindingAdapter
     backend = backend_type(
         SYNC_URL, token_credential=SimpleNamespace(_close_cosmos_async_bridge=blocking_close)
     )
@@ -67,7 +67,7 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
 def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
     from types import SimpleNamespace
 
-    class CheckedBackend(async_rust_module.AsyncRustBackend):
+    class CheckedBackend(async_rust_module.AsyncBindingAdapter):
         def __getattribute__(self, name):
             if name in ("_init_future", "_init_future_loop"):
                 assert object.__getattribute__(self, "_driver_handle_lock").locked()
@@ -123,7 +123,7 @@ def test_cancelling_one_initialization_waiter_does_not_cancel_others(monkeypatch
     native = SimpleNamespace(acquire_driver_handle=MagicMock(side_effect=acquire),
                              release_driver_handle=MagicMock())
     monkeypatch.setattr(async_rust_module, "_rust_module", native)
-    backend = async_rust_module.AsyncRustBackend(ASYNC_URL, master_key="key")
+    backend = async_rust_module.AsyncBindingAdapter(ASYNC_URL, master_key="key")
 
     async def run():
         first = asyncio.create_task(backend._ensure_driver_handle())
@@ -185,7 +185,7 @@ def _make_async_client(monkeypatch):
 def _record_backend_closes(monkeypatch, client):
     """Record calls to the backend owned by this client."""
     calls = []
-    monkeypatch.setattr(client._backend, "close", lambda: calls.append("close"))
+    monkeypatch.setattr(client._adapter, "close", lambda: calls.append("close"))
     return calls
 
 
@@ -200,7 +200,7 @@ def _record_async_backend_closes(monkeypatch, client):
     async def _close():
         calls.append("close")
 
-    monkeypatch.setattr(client._backend, "close", _close)
+    monkeypatch.setattr(client._adapter, "close", _close)
     return calls
 
 
@@ -249,7 +249,7 @@ def test_sync_backend_close_failure_still_releases_the_routing_cache(monkeypatch
     def _raise():
         raise RuntimeError("driver refused to close")
 
-    monkeypatch.setattr(client._backend, "close", _raise)
+    monkeypatch.setattr(client._adapter, "close", _raise)
 
     client.close()
 
@@ -314,7 +314,7 @@ async def test_async_close_awaits_a_coroutine_backend_close(monkeypatch):
         awaited.append("awaited")
         raise RuntimeError("driver refused to close")
 
-    monkeypatch.setattr(client._backend, "close", _close)
+    monkeypatch.setattr(client._adapter, "close", _close)
 
     await client.close()
 
@@ -381,8 +381,8 @@ def _install_async_close_resources(monkeypatch, client):
     binding = MagicMock()
     monkeypatch.setattr(async_rust_module, "_rust_module", binding)
     credential = MagicMock(spec=["_close_cosmos_async_bridge"])
-    client._backend._driver_handle = "close-test-driver"
-    client._backend._token_credential = credential
+    client._adapter._driver_handle = "close-test-driver"
+    client._adapter._token_credential = credential
     return binding, credential
 
 
@@ -411,9 +411,9 @@ def test_async_close_after_executor_shutdown_releases_resources(
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     if resources != "driver-and-bridge":
-        client._backend._driver_handle = None
+        client._adapter._driver_handle = None
     if resources == "unused":
-        client._backend._token_credential = None
+        client._adapter._token_credential = None
     caplog.clear()
 
     async def run():
@@ -428,8 +428,8 @@ def test_async_close_after_executor_shutdown_releases_resources(
     )
     assert credential._close_cosmos_async_bridge.call_count == (resources != "unused")
     binding.acquire_driver_handle.assert_not_called()
-    assert client._backend._driver_handle is None
-    assert client._backend._token_credential is None
+    assert client._adapter._driver_handle is None
+    assert client._adapter._token_credential is None
     if resources == "unused":
         assert not caplog.records
     else:
@@ -521,7 +521,7 @@ async def test_cancelled_async_close_releases_only_its_routing_cache_share(
         "transport": client.client_connection.pipeline_client.__aexit__,
         "backend": AsyncMock(),
     }
-    monkeypatch.setattr(client._backend, "close", stages["backend"])
+    monkeypatch.setattr(client._adapter, "close", stages["backend"])
     stages[phase].side_effect = asyncio.CancelledError()
     try:
         assert routing_map_provider._shared_cache_refcounts[endpoint] == 2
@@ -577,7 +577,7 @@ def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch
     binding.release_driver_handle.side_effect = release
 
     def close_on_new_loop():
-        asyncio.run(client._backend.close())
+        asyncio.run(client._adapter.close())
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         first = executor.submit(close_on_new_loop)
@@ -704,7 +704,7 @@ def test_close_rejects_request_options_before_cleanup(monkeypatch, asynchronous,
     try:
         with pytest.raises(TypeError, match=option):
             client.close(**{option: None})
-        assert not client._backend._closing
+        assert not client._adapter._closing
         client.client_connection._routing_map_provider.release.assert_not_called()
     finally:
         if asynchronous:
@@ -718,13 +718,13 @@ async def test_async_close_does_not_start_until_awaited(monkeypatch):
     client = _make_async_client(monkeypatch)
     closing = client.close()
     try:
-        assert not client._backend._closing
+        assert not client._adapter._closing
         client.client_connection._global_endpoint_manager.close.assert_not_awaited()
         client.client_connection.pipeline_client.__aexit__.assert_not_awaited()
         client.client_connection._routing_map_provider.release.assert_not_called()
     finally:
         assert await closing is None
-    assert client._backend._closing
+    assert client._adapter._closing
 
 
 def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
@@ -741,8 +741,8 @@ def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
     depends on the transport being closed each time.
     """
     client = _make_sync_client(monkeypatch)
-    client._backend.close()
-    client._backend = LEGACY_BACKEND
+    client._adapter.close()
+    client._adapter = LEGACY_BACKEND
 
     assert client.close() is None
     assert client.close() is None
@@ -757,8 +757,8 @@ async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
     paths, and the async one additionally has to await the transport each time.
     """
     client = _make_async_client(monkeypatch)
-    await client._backend.close()
-    client._backend = ASYNC_LEGACY_BACKEND
+    await client._adapter.close()
+    client._adapter = ASYNC_LEGACY_BACKEND
 
     assert await client.close() is None
     assert await client.close() is None
@@ -815,7 +815,7 @@ async def test_closed_async_backend_does_not_schedule_initialization(monkeypatch
     monkeypatch.setattr(asyncio.get_running_loop(), "run_in_executor", submit)
 
     with pytest.raises(RuntimeError, match="client is closed"):
-        await client._backend._ensure_driver_handle()
+        await client._adapter._ensure_driver_handle()
 
     submit.assert_not_called()
 
@@ -902,7 +902,7 @@ def test_sync_context_manager_preserves_existing_error_precedence(
     application_error = ValueError("application failed")
     transport_error = RuntimeError("transport cleanup failed")
     monkeypatch.setattr(
-        client._backend,
+        client._adapter,
         "close",
         MagicMock(side_effect=RuntimeError("backend cleanup failed")),
     )
@@ -933,7 +933,7 @@ async def test_async_context_manager_preserves_existing_error_precedence(
     application_error = ValueError("application failed")
     transport_error = RuntimeError("transport cleanup failed")
     monkeypatch.setattr(
-        client._backend,
+        client._adapter,
         "close",
         AsyncMock(side_effect=RuntimeError("backend cleanup failed")),
     )

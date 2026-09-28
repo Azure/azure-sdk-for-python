@@ -9,7 +9,7 @@ Legacy-only request builders initialize account state before preparing headers.
 Rust operations do not use those builders.
 
 For example, a client can retain an async credential bridge before a later
-startup check raises. unwind_client_construction asks the Python backend to
+startup check raises. unwind_client_construction asks the Python adapter to
 release that resource. It also works for the async client because its
 constructor is synchronous; it does not await the client's normal close method.
 
@@ -60,10 +60,10 @@ def _cleanup(action: Callable[[], Any]) -> None:
 def unwind_client_construction(
     constructor: Callable[Concatenate[Any, _P], None],
 ) -> Callable[Concatenate[Any, _P], None]:
-    """Ask an already stored Python backend to clean up failed client construction.
+    """Ask an already stored Python adapter to clean up failed client construction.
 
     If it provides abort_construction, call that method before re-raising the
-    startup error. The Rust Python backends release their async credential
+    startup error. The binding adapters release their async credential
     bridge use, not the customer app's credential.
     """
     @wraps(constructor)
@@ -71,8 +71,8 @@ def unwind_client_construction(
         try:
             constructor(self, *args, **kwargs)
         except BaseException:
-            backend = vars(self).get("_backend")
-            abort = getattr(backend, "abort_construction", None)
+            adapter = vars(self).get("_adapter")
+            abort = getattr(adapter, "abort_construction", None)
             if callable(abort):
                 _cleanup(abort)
             raise

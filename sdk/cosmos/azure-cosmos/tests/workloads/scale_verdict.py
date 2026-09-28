@@ -25,7 +25,7 @@ turns the sweep rows into an explicit verdict per (op, backend):
      are ignored; a point with no non-empty window at all fails the gate.
 
 USAGE:
-  source ./perf_env.sh                        # exports RESULTS_COSMOS_* (incl. key)
+  source ./perf_drill_defaults.sh                        # exports RESULTS_COSMOS_* (incl. key)
   python3 scale_verdict.py [--stamp YYYYMMDD-HHMMSS] [--prefix sweep-] \
       [--warmup 600] [--knee-gain 0.05]
 
@@ -82,7 +82,7 @@ def _connect():
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "
-            "`source ./perf_env.sh` (after exporting the key) first.",
+            "`source ./perf_drill_defaults.sh` (after exporting the key) first.",
             file=sys.stderr,
         )
         sys.exit(2)

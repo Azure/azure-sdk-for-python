@@ -77,7 +77,13 @@ def test_sync_async_parameter_contracts_match():
     """
     sync = inspect.signature(DatabaseProxy.query_containers)
     asynchronous = inspect.signature(AsyncDatabaseProxy.query_containers)
-    assert sync.parameters == asynchronous.parameters
+    assert sync.parameters.keys() == asynchronous.parameters.keys()
+    for name, parameter in sync.parameters.items():
+        other = asynchronous.parameters[name]
+        assert parameter.kind == other.kind
+        assert parameter.default == other.default
+        if name != "response_hook":
+            assert parameter.annotation == other.annotation
 
 
 @pytest.mark.parametrize("form", ["string", "dictionary", "parameters"])
@@ -106,7 +112,10 @@ def test_query_payload_and_lazy_resumable_pages(query_case, form):
     kwargs = {"parameters": PARAMETERS} if form == "parameters" else {}
     original = copy.deepcopy((query, kwargs))
     hooks = []
-    pager = case.database.query_containers(query, max_item_count=1, response_hook=hooks.append, **kwargs)
+    pager = case.database.query_containers(
+        query, max_item_count=1,
+        response_hook=lambda headers, results: hooks.append((headers, results)), **kwargs
+    )
     assert not inspect.isawaitable(pager)
     assert case.requests == [] and hooks == []
 
@@ -131,6 +140,8 @@ def test_query_payload_and_lazy_resumable_pages(query_case, form):
         return first + [item async for page in resumed async for item in page]
 
     assert _run(case, sync_call, async_call) == [{"id": "c1"}, {"id": "c2"}]
+    assert hooks[0][1] is pager
+    assert hooks[0][0]["x-ms-activity-id"] == "c1"
     assert (query, kwargs) == original
     assert len(case.requests) == 2
     expected_parameters = PARAMETERS if form != "string" else []
@@ -174,7 +185,9 @@ def test_page_hooks_are_lazy_independent_and_honor_false_callables(query_case, e
         def __bool__(self):
             return False
 
-        def __call__(self, headers):
+        def __call__(self, headers, results_iterator):
+            assert results_iterator is pager
+            assert len(case.requests) == len(snapshots) + 1
             assert headers is not case.connection.last_response_headers
             snapshots.append(headers)
             headers["x-local"] = "mutation"
@@ -203,10 +216,35 @@ def test_terminal_empty_service_page_still_invokes_hook(query_case):
     case.responses["next"] = _page(["c2"], "last")
     case.responses["last"] = _page([])
     hooks = []
-    rows = _drain(case, case.database.query_containers(SQL, response_hook=hooks.append))
+    pager = case.database.query_containers(
+        SQL, response_hook=lambda headers, results: hooks.append((headers, results))
+    )
+    rows = _drain(case, pager)
     assert rows == [{"id": "c1"}, {"id": "c2"}]
     assert len(hooks) == len(case.requests) == 3
-    assert hooks[-1]["x-ms-activity-id"] == "empty"
+    assert hooks[-1][0]["x-ms-activity-id"] == "empty"
+    assert all(results is pager for _, results in hooks)
+
+
+def test_shared_hook_keeps_each_query_iterator(query_case):
+    case = query_case
+    observed = []
+
+    def hook(headers, results_iterator):
+        observed.append((headers["x-ms-activity-id"], results_iterator))
+
+    first = case.database.query_containers(SQL, response_hook=hook)
+    second = case.database.query_containers(SQL, response_hook=hook)
+    assert observed == [] and case.requests == []
+
+    async def advance_first():
+        return await first.__anext__()
+
+    assert _run(case, lambda: next(first), advance_first) == {"id": "c1"}
+    assert observed == [("c1", first)]
+    assert _drain(case, observed[0][1]) == [{"id": "c2"}]
+    assert _drain(case, second) == [{"id": "c1"}, {"id": "c2"}]
+    assert observed == [("c1", first), ("c2", first), ("c1", second), ("c2", second)]
 
 
 @pytest.mark.parametrize("option", [
@@ -271,7 +309,8 @@ def test_supported_timeout_headers_and_explicit_none_query(query_case, query, ti
     hooks = []
     rows = _drain(case, case.database.query_containers(
         query, timeout=timeout, read_timeout=None,
-        initial_headers={"x-company-trace": "query-containers"}, response_hook=hooks.append,
+        initial_headers={"x-company-trace": "query-containers"},
+        response_hook=lambda headers, results: hooks.append(headers),
     ))
     assert rows == [{"id": "c1"}, {"id": "c2"}]
     assert len(hooks) == 2
@@ -469,7 +508,7 @@ def test_empty_page_does_not_reset_current_budget(query_case, monkeypatch):
     monkeypatch.setattr(time, "time", lambda: clock[0])
     case.responses[""] = _page([], "next")
 
-    def hook(headers):
+    def hook(headers, results_iterator):
         clock[0] += 2
 
     with pytest.raises(exceptions.CosmosClientTimeoutError):

@@ -1,10 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Binding calls for database operations, without a container or partition key.
+//! Expose Rust driver database operations to the Python wrapper.
 //!
-//! For example, a prepared read names database "sales". The binding returns a
-//! response tuple; the Python wrapper parses its body into database properties.
+//! A customer app reading database "sales" needs its properties from the
+//! service backend. The Python wrapper passes the binding a prepared request
+//! identifying the read_database operation, database "sales", and applicable
+//! operation settings. These binding functions extract the database name and
+//! operation settings, then pass them to execution helpers that call the
+//! Rust driver.
+//!
+//! The Rust driver performs the service operation. The binding returns a
+//! response tuple containing the body bytes; the Python wrapper parses that
+//! body into the database properties returned to the customer app.
+//!
+//! The synchronous and asynchronous entry points serve the same operation;
+//! the asynchronous entry points return Python awaitables.
 
 use super::*;
 

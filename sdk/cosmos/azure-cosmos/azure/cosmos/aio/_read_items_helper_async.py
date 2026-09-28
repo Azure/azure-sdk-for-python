@@ -289,11 +289,11 @@ class ReadItemsHelperAsync:
         helper: Union[AsyncItemHelper, AsyncLegacyItemHelper]
         if context is None:
             helper = AsyncLegacyItemHelper.from_legacy_connection(self.client)
-        elif context.backend.name == "core-python":
+        elif context.adapter.name == "core-python":
             helper = AsyncLegacyItemHelper(self.client)
         else:
             helper = AsyncItemHelper(
-                context.backend, context.defaults, context.response_state,
+                context.adapter, context.defaults, context.response_state,
             )
         try:
             result = await helper.read_item(

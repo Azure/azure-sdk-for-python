@@ -54,7 +54,7 @@ from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 
 
-class _RustBackend(CosmosBackend):
+class _BindingAdapter(CosmosBackend):
     """Stand-in Rust backend that returns a canned reply instead of calling a service.
 
     It subclasses the real backend and replaces only ``execute``, so everything
@@ -67,7 +67,7 @@ class _RustBackend(CosmosBackend):
         return self.response
 
 
-class _AsyncRustBackend(AsyncCosmosBackend):
+class _AsyncBindingAdapter(AsyncCosmosBackend):
     """Async stand-in Rust backend that returns a canned reply instead of calling a service."""
     name = "rust"
 
@@ -93,7 +93,7 @@ def delete_case(request):
     """
     is_async = request.param == "async"
     mock = AsyncMock if is_async else MagicMock
-    backend = _AsyncRustBackend() if is_async else _RustBackend()
+    backend = _AsyncBindingAdapter() if is_async else _BindingAdapter()
     headers = CaseInsensitiveDict({"x-ms-request-charge": "3", "x-ms-activity-id": "delete"})
     backend.response = BackendResponse(status_code=204, headers=headers.copy(), body=b"", diagnostics="delete trace")
     backend.execute = mock(wraps=backend.execute)

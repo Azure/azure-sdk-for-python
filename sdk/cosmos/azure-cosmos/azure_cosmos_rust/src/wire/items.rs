@@ -719,9 +719,9 @@ mod tests {
             .await
             .unwrap();
         for (id, minimal, expected_status) in [
-            ("order-42", false, 201),
-            ("order-43", true, 201),
-            ("order-42", false, 409),
+            ("order-17", false, 201),
+            ("order-18", true, 201),
+            ("order-17", false, 409),
         ] {
             let mut options = modifiers();
             options.content_response_on_write = if minimal {
@@ -782,6 +782,13 @@ mod tests {
                 let response = envelope.get_item(0).unwrap();
                 let response = response.downcast::<PyTuple>().unwrap();
                 assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), expected_status);
+                let attempts = envelope.get_item(1).unwrap().get_item("attempts").unwrap();
+                assert!(attempts.len().unwrap() > 0);
+                let last = attempts.get_item(attempts.len().unwrap() - 1).unwrap();
+                assert_eq!(
+                    last.get_item("driver_status_code").unwrap().extract::<u16>().unwrap(),
+                    expected_status
+                );
                 let body = response.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
                 if minimal {
                     assert!(body.is_empty());
@@ -789,10 +796,8 @@ mod tests {
                     let body: serde_json::Value = serde_json::from_slice(&body).unwrap();
                     if expected_status == 409 {
                         assert!(body["message"].is_string() || body["Message"].is_string());
-                        assert!(envelope.get_item(1).unwrap().is_none());
                     } else {
                         assert_eq!(body["id"], id);
-                        assert!(!envelope.get_item(1).unwrap().is_none());
                     }
                 }
             });

@@ -69,7 +69,7 @@ from ._global_secondary_index import _normalize_gsi_container_properties
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
-from .offer import Offer, ThroughputProperties
+from .offer import ThroughputProperties
 from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
@@ -143,16 +143,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if context is None:
             from ._helpers._legacy_item_operations import LegacyItemHelper
             return LegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
-        if context.backend.name == "core-python":
+        if context.adapter.name == "core-python":
             from ._helpers._legacy_item_operations import LegacyItemHelper
             return LegacyItemHelper(self.client_connection, self._get_properties_with_options)
-        helper = ItemHelper(context.backend, context.defaults, context.response_state)
+        helper = ItemHelper(context.adapter, context.defaults, context.response_state)
         self._item_helper_cache = (context, helper)
         return helper
 
     def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         """Leave Rust sentinel resolution to its own metadata provider."""
-        if self._item_context is not None and self._item_context.backend.name != "core-python":
+        if self._item_context is not None and self._item_context.adapter.name != "core-python":
             return partition_key
         if self._item_context is None:
             from ._helpers._legacy_item_operations import require_legacy_item_connection
@@ -308,7 +308,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Get the item identified by `item`.
 
         :param item: The ID (name) or returned item mapping to retrieve.
-            For a mapping, the SDK preserves its ``_self`` resource address.
+            For a mapping, the SDK uses its ``_self`` resource address; ``id`` is not required.
         :type item: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
@@ -377,7 +377,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             availability_strategy=availability_strategy,
         )
         deadline = prepare_read_item_kwargs(kwargs, partition_key, response_hook=response_hook)
-        item_id = item if isinstance(item, str) else item["id"]
+        item_id = item if isinstance(item, str) else None
 
         result = self._get_item_helper().read_item(
             container_link=self.container_link,
@@ -1800,23 +1800,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    def read_offer(self, **kwargs: Any) -> Offer:
-        """Get the ThroughputProperties object for this container.
-        If no ThroughputProperties already exist for the container, an exception is raised.
-
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Throughput for the container.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
-            the throughput properties could not be retrieved.
-        :rtype: ~azure.cosmos.ThroughputProperties
-        """
-        warnings.warn(
-            "read_offer is a deprecated method name, use get_throughput instead",
-            DeprecationWarning
-        )
-        return self.get_throughput(**kwargs)
-
-    @distributed_trace
     def get_throughput(
             self,
             *,
@@ -1824,19 +1807,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
-        If no ThroughputProperties already exist for the container, an exception is raised.
+        This reads dedicated container throughput, not shared database throughput.
+        Missing dedicated throughput raises CosmosResourceNotFoundError. A stale
+        container identity can be refreshed once before repeating the Rust query.
+        Unsupported Rust inputs and invalid callbacks fail before metadata requests.
+        The result retains the final offer-response headers; callback changes do
+        not change the returned throughput or the customer app's input options.
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], list[dict[str, Any]]], None]
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
+        :raises NotImplementedError: The Rust path cannot honor the supplied settings.
+        :raises TypeError: The response hook or an options dictionary is invalid.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         return _get_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
             get_properties=self._get_properties,
+            refresh_properties=self.read,
             response_hook=response_hook,
             kwargs=kwargs,
         )
@@ -2132,6 +2123,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         It does not fetch the service's latest state, check complete target coverage, or update a client's
         session-token cache. Pass the returned string as ``session_token`` on a later read or query.
         The result may combine progress from several inputs rather than select one input token.
+
+        Both simple tokens (such as ``0:54``) and vector tokens (such as ``0:1#54``) are supported.
+        For the same partition, simple values combine by taking the larger value; a vector token
+        supersedes a simple token. Tokens for different partitions may remain separate segments.
 
         Obtain feed ranges with ``feed_range_from_partition_key`` or ``read_feed_ranges`` and pass their
         dictionaries unchanged. All ranges and tokens must come from the same container; this method

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Construct RustBackend or AsyncRustBackend with prepared client settings.
+"""Construct BindingAdapter or AsyncBindingAdapter with prepared client settings.
 
 The Rust path is the only release execution path. This checkout retains private
 controls for comparing it with the legacy path: _backend takes precedence over
@@ -12,7 +12,7 @@ temporary default and those controls must be removed before release; they
 are not customer configuration.
 
 This Python wrapper validates settings and prepares the credential before
-creating RustBackend or AsyncRustBackend. These are Python classes that call
+creating BindingAdapter or AsyncBindingAdapter. These are Python classes that call
 the binding. On first use, they acquire a driver handle through the binding.
 If construction fails, release any async credential bridge acquired here.
 """
@@ -31,7 +31,7 @@ from .constants import (
 )
 from .credentials import resolved_credential
 from .legacy import LEGACY_BACKEND
-from .rust_backend import RustBackend
+from .binding_adapter import BindingAdapter
 from .transport_settings import reject_unsupported_transport_settings
 
 _BackendT = TypeVar("_BackendT")
@@ -164,7 +164,7 @@ def make_backend(
     """Build the synchronous Python wrapper object using shared preparation rules."""
     return _make_backend(
         explicit,
-        rust_backend_type=RustBackend,
+        rust_backend_type=BindingAdapter,
         legacy_backend=LEGACY_BACKEND,
         url=url,
         credential=credential,

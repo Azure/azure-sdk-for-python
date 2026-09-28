@@ -9,8 +9,12 @@
 #
 # Backend is selectable so the same workload runs both paths. Explicitly load
 # the intended profiling session before starting:
-#   bash ./profiling_run_read_baseline.sh 480
-#   BASELINE_BACKENDS=rust bash ./profiling_run_read_baseline.sh 480
+#   bash ./profiling_run_read_baseline.sh 480  # five comparisons by default
+#   BASELINE_COMPARISONS=1 bash ./profiling_run_read_baseline.sh 480
+#   BASELINE_COMPARISONS=5 BASELINE_BACKENDS=rust bash ./profiling_run_read_baseline.sh 480
+# BASELINE_COMPARISONS controls the runner, not the workload configuration.
+# Each comparison gets a separate session; the first uses the loaded session.
+# A failed comparison stops the batch without discarding evidence or retrying.
 # Change workload settings in ~/profiling_config.env and create a fresh session.
 # The baseline retains the validated profiling session's test target and item
 # range. Prepare a new profiling session to change the database or container.
@@ -18,22 +22,31 @@
 # PERF_WORKLOAD_ID=baseline-<op>-<backend>-<profiling-session-id>.
 set -uo pipefail
 cd "$(dirname "$0")"
+BASELINE_COMPARISONS="${BASELINE_COMPARISONS-5}"
+if [[ ! "${BASELINE_COMPARISONS}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "ERROR: BASELINE_COMPARISONS must be a positive whole number." >&2
+  exit 2
+fi
+if (( BASELINE_COMPARISONS <= 0 )) || [[ "$((BASELINE_COMPARISONS))" != "${BASELINE_COMPARISONS}" ]]; then
+  echo "ERROR: BASELINE_COMPARISONS exceeds the supported integer range." >&2
+  exit 2
+fi
 for removed in BASELINE_READ_RPS BASELINE_DATABASE BASELINE_CONTAINER BASELINE_OPERATIONS; do
   if [[ -v "$removed" ]]; then
     echo "ERROR: $removed is removed. Edit ~/profiling_config.env and unset $removed." >&2
     exit 2
   fi
 done
-source ./profiling_common.sh
-if [[ -n "${ARTIFACTS:-}" ]]; then
+source ./profiling_common.sh || exit 2
+if [[ -n "${PROFILING_SESSION_DIR:-}" ]]; then
   profiling_load_env || exit 2
-  profiling_load_session "${ARTIFACTS}" || exit 2
+  profiling_load_session "${PROFILING_SESSION_DIR}" || exit 2
 else
-  echo "ERROR: load the intended profiling session with profiling_activate.sh <directory-name> first." >&2
+  echo "ERROR: load the intended profiling session with profiling_load_session.sh <directory-name> first." >&2
   exit 2
 fi
-: "${PROFILING_SESSION_ID:?no complete profiling session found; run profiling_start_session.sh first}"
-: "${ARTIFACTS:?no complete profiling session found; run profiling_start_session.sh first}"
+: "${PROFILING_SESSION_ID:?no complete profiling session found; run profiling_create_session.sh first}"
+: "${PROFILING_SESSION_DIR:?no complete profiling session found; run profiling_create_session.sh first}"
 
 DURATION="${1:-480}"
 [[ $# -le 1 ]] || { echo "ERROR: expected only an optional duration in seconds." >&2; exit 2; }
@@ -51,7 +64,128 @@ for backend in "${BACKENDS[@]}"; do
   seen_backends+="$backend "
 done
 
-LOG_DIR="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}"
+if (( BASELINE_COMPARISONS > 1 )); then
+  SOURCE_SESSION_DIR="${PROFILING_SESSION_DIR}"
+  SOURCE_SESSION_ID="${PROFILING_SESSION_ID}"
+  BATCH_DIR="${SOURCE_SESSION_DIR}/baseline-batch-${SOURCE_SESSION_ID}"
+  perf_create_log_dir "${BATCH_DIR}" || exit 2
+  exec > >(tee "${BATCH_DIR}/batch-run.log") 2>&1
+  COMPARISON_RESULTS="${BATCH_DIR}/comparisons.tsv"
+  printf 'comparison\tprofiling_session_id\tsession_directory\tstatus\texit_status\n' \
+    > "${COMPARISON_RESULTS}" || exit 1
+  attempted=0
+  completed=0
+  passed=0
+  comparison_open=false
+  current_session_id=""
+  current_session_dir=""
+
+  write_batch_summary() {
+    {
+      printf 'source_session_id=%q\n' "${SOURCE_SESSION_ID}"
+      printf 'requested_comparisons=%s\nattempted_comparisons=%s\ncompleted_comparisons=%s\npassed_comparisons=%s\n' \
+        "${BASELINE_COMPARISONS}" "${attempted}" "${completed}" "${passed}"
+      printf 'duration_seconds_per_backend=%q\nbackends=%q\nstatus=%q\nexit_status=%q\n' \
+        "${DURATION}" "${BACKENDS[*]}" "$1" "$2"
+    } > "${BATCH_DIR}/batch-summary.env.tmp" &&
+      mv -- "${BATCH_DIR}/batch-summary.env.tmp" "${BATCH_DIR}/batch-summary.env"
+  }
+
+  record_comparison() {
+    printf '%s\t%s\t%s\t%s\t%s\n' "${attempted}" \
+      "${current_session_id:--}" "${current_session_dir:--}" "$1" "$2" >> "${COMPARISON_RESULTS}"
+  }
+
+  finish_batch() {
+    local rc=$? status=failed
+    trap - EXIT
+    if [[ "${comparison_open}" == true ]]; then
+      record_comparison interrupted "${rc}" || {
+        echo "ERROR: cannot record interrupted comparison." >&2
+        rc=1
+      }
+    fi
+    if (( rc == 0 && passed == BASELINE_COMPARISONS )); then
+      status=passed
+    elif (( rc == 0 )); then
+      rc=1
+    fi
+    write_batch_summary "${status}" "${rc}" || {
+      echo "ERROR: cannot save baseline batch summary." >&2
+      rc=1
+      status=failed
+    }
+    echo "=== Baseline batch ${status}: ${passed}/${BASELINE_COMPARISONS} comparisons passed ==="
+    echo "=== Batch summary: ${BATCH_DIR}/batch-summary.env ==="
+    echo "=== Comparison sessions: ${COMPARISON_RESULTS} ==="
+    exit "${rc}"
+  }
+  trap finish_batch EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  write_batch_summary running "" || { echo "ERROR: cannot initialize batch summary." >&2; exit 1; }
+
+  for ((index=0; index<BASELINE_COMPARISONS; index++)); do
+    attempted=$((index + 1))
+    comparison_open=true
+    current_session_id=""
+    current_session_dir=""
+    write_batch_summary running "" || { echo "ERROR: cannot update batch summary." >&2; exit 1; }
+    # Revalidate against the original session, not only the newly created one:
+    # otherwise a changed build/configuration could silently enter the batch.
+    if ! profiling_load_env || ! profiling_load_session "${SOURCE_SESSION_DIR}"; then
+      echo "ERROR: original session no longer matches the active setup; stopping batch." >&2
+      record_comparison setup_failed 2 || exit 1
+      comparison_open=false
+      exit 2
+    fi
+    if (( index > 0 )); then
+      control="${BATCH_DIR}/session-creation-${attempted}.log"
+      if ! bash ./profiling_create_session.sh read-baseline 2>&1 | tee "${control}"; then
+        echo "ERROR: comparison ${attempted} session creation failed; stopping batch." >&2
+        record_comparison setup_failed 1 || exit 1
+        comparison_open=false
+        exit 1
+      fi
+      new_session_dir="$(sed -n 's/^artifacts=//p' "${control}")"
+      if [[ -z "${new_session_dir}" || "${new_session_dir}" == *$'\n'* ]]; then
+        echo "ERROR: session creation did not identify exactly one session; stopping batch." >&2
+        record_comparison setup_failed 1 || exit 1
+        comparison_open=false
+        exit 1
+      fi
+      current_session_dir="${new_session_dir}"
+      if ! profiling_load_session "${current_session_dir}"; then
+        echo "ERROR: session creation did not identify one valid session; stopping batch." >&2
+        record_comparison setup_failed 1 || exit 1
+        comparison_open=false
+        exit 1
+      fi
+    fi
+    current_session_id="${PROFILING_SESSION_ID}"
+    current_session_dir="${PROFILING_SESSION_DIR}"
+    echo "=== Comparison ${attempted}/${BASELINE_COMPARISONS}: ${current_session_id} ==="
+    if BASELINE_COMPARISONS=1 bash ./profiling_run_read_baseline.sh "${DURATION}"; then
+      rc=0
+      status=passed
+      passed=$((passed + 1))
+    else
+      rc=$?
+      status=failed
+    fi
+    completed=$((completed + 1))
+    record_comparison "${status}" "${rc}" || { echo "ERROR: cannot save comparison outcome." >&2; exit 1; }
+    comparison_open=false
+    write_batch_summary running "" || { echo "ERROR: cannot update batch summary." >&2; exit 1; }
+    if (( rc != 0 )); then
+      echo "ERROR: comparison ${attempted} failed; no further comparisons will run." >&2
+      exit "${rc}"
+    fi
+  done
+  exit 0
+fi
+
+LOG_DIR="${PROFILING_SESSION_DIR}/light-load-baseline-${PROFILING_SESSION_ID}"
 perf_create_log_dir "$LOG_DIR" || exit 2
 RUN_LOG="${LOG_DIR}/baseline-run.log"
 REPORT_FILE="${LOG_DIR}/latency-report.txt"

@@ -8,7 +8,7 @@ import re
 EXPECTED_RUNTIME = {
     "core-python": {"LegacyBackend", "AsyncLegacyBackend"},
     # Old class labels remain valid in historical measurement artifacts.
-    "rust": {"RustBinding", "AsyncRustBinding", "RustBackend", "AsyncRustBackend"},
+    "rust": {"RustBinding", "AsyncRustBinding", "BindingAdapter", "AsyncBindingAdapter"},
 }
 OPERATIONS = {
     "read": "ReadItem", "create": "CreateItem", "upsert": "UpsertItem",

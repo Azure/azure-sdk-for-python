@@ -44,8 +44,8 @@ import pytest
 from common.typed_requests import legacy_partition_key_from_request
 
 from azure.cosmos import _operation_deadline
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._helpers import _read_all_items
@@ -140,7 +140,7 @@ def query(request, monkeypatch):
         fetch_page_with_cursor_async=AsyncMock(side_effect=page),
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    cls = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
+    cls = async_rust.AsyncBindingAdapter if async_mode else sync_rust.BindingAdapter
     backend = cls("https://queries.invalid", master_key="ZmFrZQ==")
     monkeypatch.setattr(
         backend,

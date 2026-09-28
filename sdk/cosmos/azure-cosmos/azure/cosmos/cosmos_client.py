@@ -320,7 +320,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             ssl_config=kwargs.get("ssl_config"),
             transport=kwargs.get("transport"),
         )
-        self._backend: CosmosBackend = chosen
+        self._adapter: CosmosBackend = chosen
         self._item_context: ItemClientContext[CosmosBackend] = ItemClientContext(
             chosen, ItemClientDefaults(
                 priority=kwargs.get("priority"),
@@ -352,9 +352,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
-        # Retained item/feed paths use _item_context directly. Attach the backend
-        # here for coordinators that still depend on the legacy connection.
-        self.client_connection._backend = self._backend  # pylint: disable=protected-access
+        # Retained item/feed paths use _item_context directly. Attach the adapter
+        # under the legacy connection's _backend field for remaining coordinators.
+        self.client_connection._backend = self._adapter  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
@@ -375,7 +375,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return self.client_connection.pipeline_client.__exit__(*args)
         finally:
             try:
-                self._backend.close()
+                self._adapter.close()
             except Exception:  # pylint: disable=broad-except
                 logging.getLogger(__name__).warning("Failed closing client backend", exc_info=True)
             try:
@@ -584,7 +584,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         database = {"id": id}
         result = DatabaseHelper(
-            self.client_connection, self._backend,
+            self.client_connection, self._adapter,
             response_state=self._item_context.response_state,
         ).create_database(
             database,
@@ -750,7 +750,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         database = {"id": id}
         result = DatabaseHelper(
-            self.client_connection, self._backend,
+            self.client_connection, self._adapter,
             response_state=self._item_context.response_state,
         ).create_database_if_not_exists(
             database,
@@ -950,7 +950,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         database_link = _get_database_link(database)
-        DatabaseHelper(self.client_connection, self._backend).delete_database(
+        DatabaseHelper(self.client_connection, self._adapter).delete_database(
             database_link,
             request_options,
             kwargs=kwargs,
@@ -974,7 +974,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # Reading account properties has not moved to the Rust path yet. On a
         # Rust-backed client, raise rather than quietly falling back to the
         # legacy connection, which would hide that this is still missing.
-        raise_account_read_unsupported(self._backend)
+        raise_account_read_unsupported(self._adapter)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

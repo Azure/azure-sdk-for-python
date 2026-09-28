@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Prepare item operations, execute them through RustBackend, and parse responses.
+"""Prepare item operations, execute them through BindingAdapter, and parse responses.
 
 This file covers the six single-item operations: create, read, replace,
 upsert, patch, and delete. Preparation is local work. ItemHelper then calls
@@ -16,7 +16,7 @@ A call moves through four steps, in this order:
    request needs and the options that shape it.
 2. Reject anything the Rust path cannot honor, naming what to remove.
 3. Build the request object for this particular operation.
-4. Pass the prepared request to RustBackend, then parse its backend response.
+4. Pass the prepared request to BindingAdapter, then parse its backend response.
 
 Which path a client uses was settled earlier, up in the container class.
 By the time this helper exists the choice is made, so nothing here inspects
@@ -157,7 +157,7 @@ def build_item_request(
     """Build the prepared request for one item operation.
 
     Picks the builder that matches the operation and gives it what that
-    operation needs: a read needs an id, a create needs a document. Returns
+    operation needs: a read needs an id or resource address, a create needs a document. Returns
     the finished request and nothing else. No lookups, no sending.
 
     Both the sync and async paths call this and get identical results.

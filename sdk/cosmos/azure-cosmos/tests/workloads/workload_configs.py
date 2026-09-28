@@ -6,6 +6,7 @@ import math
 import os
 
 from azure.identity import DefaultAzureCredential
+from workload_config_helpers import manage_client_lifecycle
 
 
 def _parse_region_list(env_var_name):
@@ -60,7 +61,7 @@ __all__ = [
     "WORKLOAD_MAX_INFLIGHT",
     "WORKLOAD_GC_FREEZE",
     "WORKLOAD_LOOP_LAG_MONITOR",
-    "WORKLOAD_SKIP_CLOSE",
+    "WORKLOAD_MANAGE_CLIENT_LIFECYCLE",
     "WORKLOAD_MIX",
     "WORKLOAD_DOC_PROFILE",
 ]
@@ -154,9 +155,8 @@ WORKLOAD_LOOP_LAG_MONITOR = (
     os.environ.get("WORKLOAD_LOOP_LAG_MONITOR", "true").lower() == "true"
 )
 
-# When true, the client is created without a context manager (no automatic close),
-# to model applications that do not close the Cosmos client.
-WORKLOAD_SKIP_CLOSE = os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"
+# Manage both client entry setup and exit cleanup unless explicitly disabled.
+WORKLOAD_MANAGE_CLIENT_LIFECYCLE = manage_client_lifecycle()
 
 # Blended traffic. WORKLOAD_MIX="read=70,create=10,upsert=10,replace=5,patch=5"
 # makes one process issue a weighted BLEND of operations (a realistic app mix)
@@ -221,13 +221,13 @@ if not WORKLOAD_OPERATIONS and not WORKLOAD_MIX:
     raise ValueError("Select at least one workload operation")
 if PARTITION_KEY not in ("id", "pk"):
     raise ValueError("The seeded workload supports COSMOS_PARTITION_KEY=id or pk")
-if WORKLOAD_USE_SYNC and (WORKLOAD_ARRIVAL_RATE or WORKLOAD_NUM_CLIENTS != 1 or WORKLOAD_SKIP_CLOSE):
+if WORKLOAD_USE_SYNC and (WORKLOAD_ARRIVAL_RATE or WORKLOAD_NUM_CLIENTS != 1 or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE):
     raise ValueError("Sync workloads require zero arrival rate, one client and explicit cleanup")
 if WORKLOAD_ARRIVAL_RATE:
     _paced_ops = set(WORKLOAD_MIX) if WORKLOAD_MIX else WORKLOAD_OPERATIONS
     if not _paced_ops <= {"read", "upsert", "replace", "patch"}:
         raise ValueError("Fixed-rate workloads support only read, upsert, replace and patch")
-for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY", "WORKLOAD_SKIP_CLOSE",
+for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY",
               "WORKLOAD_GC_FREEZE", "WORKLOAD_LOOP_LAG_MONITOR",
               "COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS"):
     if os.environ.get(_name, "false").lower() not in ("true", "false"):

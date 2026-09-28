@@ -31,8 +31,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import CosmosDict, _operation_deadline
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -123,7 +123,7 @@ def point_read(request, monkeypatch):
             get_container_metadata_async=MagicMock(side_effect=AssertionError("Unexpected metadata FFI call")),
         )
         monkeypatch.setattr(module, "_rust_module", binding)
-        backend_type = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
+        backend_type = async_rust.AsyncBindingAdapter if async_mode else sync_rust.BindingAdapter
         backend = backend_type("https://point-read.invalid", master_key="ZmFrZQ==")
         monkeypatch.setattr(backend, "_ensure_driver_handle", wrap(ensure_driver_handle))
     else:
@@ -356,17 +356,47 @@ def test_invalid_feed_timeout_fails_before_metadata(point_read):
     assert point_read.events == []
 
 
-def test_dictionary_target_keeps_original_resource_address(point_read):
+@pytest.mark.parametrize("id_fields", [{}, {"id": "item"}, {"id": "different-item"}, {"id": None}, {"id": 42}])
+def test_dictionary_target_keeps_original_resource_address(point_read, id_fields):
     item = {
-        "id": "item",
+        **id_fields,
         "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
     }
-    point_read.call(item, "pk")
+    before = dict(item)
+    result = point_read.call(item, "pk")
+    assert result["id"] == "item"
+    assert item == before
     if point_read.rust:
-        assert point_read.prepared.item_id == "item"
+        assert point_read.prepared.item_id is None
         assert point_read.prepared.item_self_link == item["_self"]
     else:
         assert point_read.document_link == item["_self"]
+
+
+def test_dictionary_target_requires_self_instead_of_falling_back_to_id(point_read):
+    with pytest.raises(KeyError, match="_self"):
+        point_read.call({"id": "item"}, "pk")
+    assert point_read.events == []
+
+
+@pytest.mark.parametrize("method", ["read_item", "read_item_async"])
+@pytest.mark.parametrize("self_link,error,message", [
+    ("dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+     RuntimeError, "no driver registered for handle"),
+    (None, ValueError, "item_id is required"),
+    ("", ValueError, "target _self"),
+    ("dbs/db/colls/c", ValueError, "target _self"),
+])
+def test_native_read_accepts_address_only_and_rejects_missing_or_invalid_targets(method, self_link, error, message):
+    from azure.cosmos._helpers._request_item import build_read_item_request
+
+    binding = pytest.importorskip("azure.cosmos._rust")
+    prepared = build_read_item_request(
+        container_link="dbs/db/colls/c", item_id=None, item_self_link=self_link,
+        partition_key_value="pk", container_rid=None, request_options={},
+    )
+    with pytest.raises(error, match=message):
+        getattr(binding, method)(driver_handle="invalid-driver-handle", prepared=prepared)
 
 
 @pytest.mark.parametrize("self_link", [None, 42])

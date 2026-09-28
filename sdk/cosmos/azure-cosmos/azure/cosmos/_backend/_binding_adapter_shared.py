@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Share setup, binding checks, and cleanup between the two Python wrappers.
 
-RustBackend and AsyncRustBackend reuse this Python code, but retain separate
+BindingAdapter and AsyncBindingAdapter reuse this Python code, but retain separate
 per-client fields. The binding creates CosmosDriver objects through one
 CosmosDriverRuntime with shared connection settings.
 
@@ -244,19 +244,19 @@ def finalize_backend_resources(credential: Optional[Any], driver_handle: Optiona
         teardown()
 
 
-class RustBackendShared:
-    """Provide common setup and cleanup for RustBackend and AsyncRustBackend.
+class BindingAdapterShared:
+    """Provide common setup and cleanup for BindingAdapter and AsyncBindingAdapter.
 
     Both classes inherit these methods so a setup or cleanup correction can
     be made in one place. Each constructor calls _init_shared::
 
-        RustBackend construction
-            -> _init_shared stores fields on that RustBackend object
+        BindingAdapter construction
+            -> _init_shared stores fields on that BindingAdapter object
 
-        AsyncRustBackend construction
-            -> _init_shared stores fields on that AsyncRustBackend object
+        AsyncBindingAdapter construction
+            -> _init_shared stores fields on that AsyncBindingAdapter object
 
-    There is no additional RustBackendShared object holding the settings.
+    There is no additional BindingAdapterShared object holding the settings.
     The classes share this implementation, not one set of client fields.
 
     The two classes separately decide how to wait for driver acquisition
@@ -278,20 +278,25 @@ class RustBackendShared:
         The Python wrapper retains them like this::
 
             CosmosClient
-                -> _backend: RustBackend object
+                -> _adapter: BindingAdapter object
                     -> _endpoint: supplied account address
                     -> _master_key: supplied account key
                     -> _client_config: PreparedClientConfig
                         -> preferred_locations: ("West US",)
 
         This example uses account-key authentication. The asynchronous
-        CosmosClient retains an AsyncRustBackend with the same fields.
-        Both backend classes are Python wrapper code, not the Rust driver.
+        CosmosClient retains an AsyncBindingAdapter with the same fields.
+        Both adapter classes are Python wrapper code, not the Rust driver.
 
-        These assignments store Python client state; they do not acquire a
-        driver handle. The runtime check does not create CosmosDriverRuntime
-        or reserve its settings. Driver acquisition checks again in case
-        another client initialized it after this check.
+        The Python wrapper knows this client's requested settings; the binding
+        knows whether CosmosDriverRuntime has already been initialized and
+        which settings were recorded. Ask the binding to check compatibility
+        now so a known conflict is reported during client construction.
+
+        For example, requesting a five-second connection timeout fails this
+        check if CosmosDriverRuntime already uses two seconds. The check does
+        not create CosmosDriverRuntime or reserve settings. Driver acquisition
+        checks again because another client may initialize it after this check.
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -328,7 +333,28 @@ class RustBackendShared:
         self._close_token_credential_bridge()
 
     def _initialize_driver(self, binding: Any) -> str:
-        """Acquire a driver handle; the caller coordinates a concurrent close."""
+        """Ask the binding to acquire a driver handle using this client's saved inputs.
+
+        Pass the saved account address, credential, and PreparedClientConfig to
+        acquire_driver_handle. The binding may create a CosmosDriver or reuse
+        one it already retains; this method's name does not imply a new object.
+
+        The returned handle identifies the retained driver. After the caller
+        retains it, the references look like this::
+
+            Python wrapper                         Binding
+            _driver_handle = "H"                    driver cache
+                                                       "H" -> DriverEntry
+                                                                  -> CosmosDriver
+
+        "H" is an illustration, not an actual handle. The handle is a lookup
+        key, not the DriverEntry or CosmosDriver object itself.
+
+        This method returns the handle without storing it. The caller decides
+        whether to retain it and coordinates acquisition with a concurrent close.
+        Acquiring the handle does not execute the pending database or item
+        operation.
+        """
         configure_packaged_query_plan_interop(binding)
         return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
 

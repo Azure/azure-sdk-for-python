@@ -11,6 +11,7 @@ fi
 
 _perf_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${_perf_here}" || return 1
+source ./profiling_common.sh || return 2
 
 _perf_failed=0
 
@@ -23,17 +24,17 @@ elif ! declare -F workload_is_running >/dev/null || ! workload_is_running; then
   _perf_failed=1
 fi
 
-if [[ -z "${ARTIFACTS:-}" || ! -d "${ARTIFACTS}" ]]; then
-  echo "ERROR: ARTIFACTS does not name an existing profiling-session directory." >&2
+if [[ -z "${PROFILING_SESSION_DIR:-}" || ! -d "${PROFILING_SESSION_DIR}" ]]; then
+  echo "ERROR: PROFILING_SESSION_DIR does not name an existing profiling-session directory." >&2
   _perf_failed=1
-elif [[ ! -s "${ARTIFACTS}/smaps-before.txt" ]]; then
-  echo "ERROR: ${ARTIFACTS}/smaps-before.txt is missing or empty." >&2
+elif [[ ! -s "${PROFILING_SESSION_DIR}/smaps-before.txt" ]]; then
+  echo "ERROR: ${PROFILING_SESSION_DIR}/smaps-before.txt is missing or empty." >&2
   echo "       The before/after memory comparison requires the py-spy capture first." >&2
   _perf_failed=1
 fi
 
-if [[ ! "${PROFILE_STAMP:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]]; then
-  echo "ERROR: PROFILE_STAMP is missing or invalid." >&2
+if [[ ! "${PROFILING_CAPTURE_ID:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]]; then
+  echo "ERROR: PROFILING_CAPTURE_ID is missing or invalid." >&2
   echo "       Source profiling_capture_py_spy.sh in this terminal first." >&2
   _perf_failed=1
 fi
@@ -90,14 +91,14 @@ if [[ "${_perf_failed}" -eq 0 ]]; then
     --pid "${WORKLOAD_PID}" \
     --freq "${PERF_SAMPLE_FREQUENCY}" \
     --call-graph dwarf \
-    --output "${ARTIFACTS}/perf.data" \
+    --output "${PROFILING_SESSION_DIR}/perf.data" \
     -- sleep "${PERF_CAPTURE_DURATION}" \
-    2>&1 | tee "${ARTIFACTS}/perf-record.log"
+    2>&1 | tee "${PROFILING_SESSION_DIR}/perf-record.log"
   _perf_record_rc=("${PIPESTATUS[@]}")
   if [[ "${_perf_record_rc[*]}" != "0 0" ]]; then
     echo "ERROR: perf record or its log write failed: ${_perf_record_rc[*]}." >&2
     _perf_failed=1
-  elif [[ ! -s "${ARTIFACTS}/perf.data" ]]; then
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf.data" ]]; then
     echo "ERROR: perf record produced no data." >&2
     _perf_failed=1
   elif ! workload_is_running; then
@@ -110,21 +111,21 @@ if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Writing a readable all-thread report ==="
   sudo perf report \
     --stdio \
-    --input "${ARTIFACTS}/perf.data" \
+    --input "${PROFILING_SESSION_DIR}/perf.data" \
     --sort comm,dso,symbol \
-    2>"${ARTIFACTS}/perf-report.log" \
-    | c++filt >"${ARTIFACTS}/perf-report.txt"
+    2>"${PROFILING_SESSION_DIR}/perf-report.log" \
+    | c++filt >"${PROFILING_SESSION_DIR}/perf-report.txt"
   _perf_report_status=("${PIPESTATUS[@]}")
   _perf_report_rc=${_perf_report_status[0]}
   _perf_demangle_rc=${_perf_report_status[1]}
   if [[ "${_perf_report_rc}" -ne 0 || "${_perf_demangle_rc}" -ne 0 ]]; then
     echo "ERROR: perf report or c++filt failed; see perf-report.log." >&2
     _perf_failed=1
-  elif [[ ! -s "${ARTIFACTS}/perf-report.txt" ]]; then
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf-report.txt" ]]; then
     echo "ERROR: perf report produced no readable text." >&2
     _perf_failed=1
   elif ! grep -Eqi 'tokio|azure_cosmos_driver|_rust\.abi3|python3' \
-    "${ARTIFACTS}/perf-report.txt"; then
+    "${PROFILING_SESSION_DIR}/perf-report.txt"; then
     echo "ERROR: perf report contains no recognizable workload symbols." >&2
     _perf_failed=1
   fi
@@ -134,21 +135,21 @@ if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
   echo "=== Recording scheduler states for ${PERF_SCHED_DURATION}s ==="
   sudo perf sched record \
     --all-cpus \
-    --output "${ARTIFACTS}/perf-sched.data" \
+    --output "${PROFILING_SESSION_DIR}/perf-sched.data" \
     -- sleep "${PERF_SCHED_DURATION}" \
-    2>&1 | tee "${ARTIFACTS}/perf-sched-record.log"
+    2>&1 | tee "${PROFILING_SESSION_DIR}/perf-sched-record.log"
   _perf_sched_record_rc=("${PIPESTATUS[@]}")
   if [[ "${_perf_sched_record_rc[*]}" != "0 0" ]]; then
     echo "ERROR: scheduler capture or its log write failed: ${_perf_sched_record_rc[*]}." >&2
     _perf_failed=1
   elif ! sudo perf sched timehist \
-    --input "${ARTIFACTS}/perf-sched.data" \
+    --input "${PROFILING_SESSION_DIR}/perf-sched.data" \
     --pid "${WORKLOAD_PID}" \
-    >"${ARTIFACTS}/perf-sched-timehist.txt" \
-    2>"${ARTIFACTS}/perf-sched-timehist.log"; then
+    >"${PROFILING_SESSION_DIR}/perf-sched-timehist.txt" \
+    2>"${PROFILING_SESSION_DIR}/perf-sched-timehist.log"; then
     echo "ERROR: perf sched timehist failed; see perf-sched-timehist.log." >&2
     _perf_failed=1
-  elif [[ ! -s "${ARTIFACTS}/perf-sched-timehist.txt" ]]; then
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf-sched-timehist.txt" ]]; then
     echo "ERROR: perf sched produced no workload scheduling timeline." >&2
     _perf_failed=1
   elif ! workload_is_running; then
@@ -160,22 +161,22 @@ fi
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Recording whole-process CPU, memory, disk, fault, and switch measurements for ${SYSTEM_CAPTURE_DURATION}s ==="
   pidstat -rudw -p "${WORKLOAD_PID}" 1 "${SYSTEM_CAPTURE_DURATION}" \
-    | tee "${ARTIFACTS}/pidstat.txt"
+    | tee "${PROFILING_SESSION_DIR}/pidstat.txt"
   _perf_pidstat_rc=("${PIPESTATUS[@]}")
   if [[ "${_perf_pidstat_rc[*]}" != "0 0" ]]; then
     echo "ERROR: pidstat or its log write failed: ${_perf_pidstat_rc[*]}." >&2
     _perf_failed=1
-  elif [[ ! -s "${ARTIFACTS}/pidstat.txt" ]]; then
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/pidstat.txt" ]]; then
     echo "ERROR: pidstat produced no whole-process measurements." >&2
     _perf_failed=1
   elif ! workload_is_running; then
     echo "ERROR: the workload stopped during pidstat." >&2
     _perf_failed=1
-  elif ! cat "/proc/${WORKLOAD_PID}/smaps_rollup" >"${ARTIFACTS}/smaps-after.txt"; then
+  elif ! cat "/proc/${WORKLOAD_PID}/smaps_rollup" >"${PROFILING_SESSION_DIR}/smaps-after.txt"; then
     echo "ERROR: could not capture final process memory totals." >&2
     _perf_failed=1
   elif ! ps -L -p "${WORKLOAD_PID}" -o pid,tid,psr,pcpu,rss,comm \
-    >"${ARTIFACTS}/threads-after.txt"; then
+    >"${PROFILING_SESSION_DIR}/threads-after.txt"; then
     echo "ERROR: could not capture the final thread list." >&2
     _perf_failed=1
   fi
@@ -192,23 +193,23 @@ if [[ "${WORKLOAD_RC:-unknown}" != "0" ]]; then
 fi
 trap - EXIT INT TERM
 
-if [[ -n "${ARTIFACTS:-}" && -d "${ARTIFACTS}" ]]; then
+if [[ -n "${PROFILING_SESSION_DIR:-}" && -d "${PROFILING_SESSION_DIR}" ]]; then
   printf 'profile_workload_rc=%s\n' "${WORKLOAD_RC:-unknown}" \
-    | tee -a "${ARTIFACTS}/run.txt"
+    | tee -a "${PROFILING_SESSION_DIR}/run.txt"
 fi
 
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Checking completed reads, errors, 429 responses, and Rust retries ==="
-  python3 latency_report.py --prefix profile- --run-id "${PROFILE_STAMP}" --workload-health \
-    | tee "${ARTIFACTS}/profile-health.txt"
+  python3 latency_report.py --prefix profile- --run-id "${PROFILING_CAPTURE_ID}" --workload-health \
+    | tee "${PROFILING_SESSION_DIR}/profile-health.txt"
   _perf_health_rc=("${PIPESTATUS[@]}")
   if [[ "${_perf_health_rc[*]}" != "0 0" ]]; then
     echo "ERROR: health report or its log write failed: ${_perf_health_rc[*]}." >&2
     _perf_failed=1
   fi
-  python3 perf_validate.py --prefix profile- --run-id "${PROFILE_STAMP}" \
-    --required-backends rust --log-dir "${ARTIFACTS}" \
-    >"${ARTIFACTS}/profile-integrity.txt" 2>&1 || _perf_failed=1
+  python3 perf_validate.py --prefix profile- --run-id "${PROFILING_CAPTURE_ID}" \
+    --required-backends rust --log-dir "${PROFILING_SESSION_DIR}" \
+    >"${PROFILING_SESSION_DIR}/profile-integrity.txt" 2>&1 || _perf_failed=1
 fi
 
 if [[ "${_perf_failed}" -ne 0 ]]; then
@@ -219,13 +220,13 @@ if [[ "${_perf_failed}" -ne 0 ]]; then
 fi
 
 echo "=== perf, process measurements, and workload health PASSED ==="
-echo "    CPU data       : ${ARTIFACTS}/perf.data"
-echo "    readable report: ${ARTIFACTS}/perf-report.txt"
-echo "    process metrics: ${ARTIFACTS}/pidstat.txt"
-echo "    memory after   : ${ARTIFACTS}/smaps-after.txt"
-echo "    workload health: ${ARTIFACTS}/profile-health.txt"
+echo "    CPU data       : ${PROFILING_SESSION_DIR}/perf.data"
+echo "    readable report: ${PROFILING_SESSION_DIR}/perf-report.txt"
+echo "    process metrics: ${PROFILING_SESSION_DIR}/pidstat.txt"
+echo "    memory after   : ${PROFILING_SESSION_DIR}/smaps-after.txt"
+echo "    workload health: ${PROFILING_SESSION_DIR}/profile-health.txt"
 if [[ "${PERF_CAPTURE_SCHED}" == "true" ]]; then
-  echo "    scheduler trace: ${ARTIFACTS}/perf-sched-timehist.txt"
+  echo "    scheduler trace: ${PROFILING_SESSION_DIR}/perf-sched-timehist.txt"
 fi
 
 unset _perf_here _perf_command _perf_failed _perf_record_rc _perf_report_rc \

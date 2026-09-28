@@ -108,7 +108,7 @@ class ReadAllConfig:
         context = proxy._item_context
         self.response_state = context.response_state if context is not None else None
         self.backend = (
-            context.backend if context is not None else self.connection._backend
+            context.adapter if context is not None else self.connection._backend
         )
         self.rust = self.backend.name != "core-python"
         if self.rust:

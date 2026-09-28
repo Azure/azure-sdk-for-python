@@ -23,8 +23,8 @@ def modules(monkeypatch):
     monkeypatch.syspath_prepend(str(WORKLOADS))
     return {name: importlib.import_module(name) for name in (
         "perf_stats", "perf_results", "perf_validate", "latency_report",
-        "mixed_report", "coldstart_report", "crt_split_report", "perf_reporter",
-        "perf_config", "perf_driver_commit_gate", "workload_utils",
+        "mixed_report", "coldstart_report", "client_service_duration_report", "perf_reporter",
+        "perf_reporting_config", "perf_driver_commit_gate", "workload_utils",
     )}
 
 
@@ -50,7 +50,7 @@ def measurement(modules, **changes):
         "window_id": "window-1", "window_index": 1,
         "window_seconds": 60.0, "elapsed_seconds": 60.0,
         "driver_commit": "a" * 40, "config_backend": "rust",
-        "runtime_backend": "AsyncRustBackend", "rust_execute_calls": 2,
+        "runtime_backend": "AsyncBindingAdapter", "rust_execute_calls": 2,
         "binding_calls": 2, "attempt_calls": 2, "retry_calls": 0,
         "throttled_429": 0, "config_arrival_rate": 250,
         "config_concurrency": 1, "config_num_clients": 1,
@@ -193,7 +193,7 @@ def test_legacy_actual_class_name_is_accepted(modules):
     assert modules["perf_validate"].check_backend_execution(Rows([row]), "baseline-", STAMP)[0]
 
 
-@pytest.mark.parametrize("name", ["RustBackend", "AsyncRustBackend", "RustBinding", "AsyncRustBinding"])
+@pytest.mark.parametrize("name", ["BindingAdapter", "AsyncBindingAdapter", "RustBinding", "AsyncRustBinding"])
 def test_historical_and_current_rust_class_labels_are_accepted(modules, name):
     row = measurement(modules, runtime_backend=name)
     assert modules["perf_validate"].check_backend_execution(Rows([row]), "baseline-", STAMP)[0]
@@ -376,10 +376,15 @@ def test_cargo_build_details_reject_unidentified_source(modules, monkeypatch, so
         build_details.driver_commit()
 
 
-def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_path):
+@pytest.mark.parametrize("relative_path", [
+    "azure/cosmos/client.py",
+    "tests/workloads/profiling_config.env.template",
+    "tests/workloads/workload_config_helpers.py",
+])
+def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_path, relative_path):
     build_details = importlib.import_module("perf_build_details")
     monkeypatch.setattr(build_details, "PACKAGE_ROOT", tmp_path)
-    source = tmp_path / "azure" / "cosmos" / "client.py"
+    source = tmp_path / relative_path
     source.parent.mkdir(parents=True)
     source.write_text("value = 1\n")
     before = build_details.source_digest()
@@ -442,11 +447,16 @@ def embedded_python(script, index=0):
 @pytest.mark.parametrize("saved_name", ["PROFILING_SESSION_ID", "RUN_ID", "both", "missing", "conflicting"])
 @pytest.mark.parametrize("manifest_id", [None, STAMP, "20260918-120000000"])
 @pytest.mark.parametrize("configuration_hash", [None, "same", "changed"])
-def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id, configuration_hash):
+@pytest.mark.parametrize("saved_names", ["current", "legacy", "conflicting"])
+def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id, configuration_hash, saved_names):
     shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
     folder = tmp_path / "session"
     folder.mkdir()
-    settings = ['export ARTIFACTS="$PWD/session"', 'export PERF_PHASE="point-read-profile"']
+    settings = ['export PROFILING_SESSION_DIR="$PWD/session"', 'export PROFILING_SESSION_LABEL="point-read-profile"']
+    if saved_names == "legacy":
+        settings = ['export ARTIFACTS="$PWD/session"', 'export PERF_PHASE="point-read-profile"']
+    elif saved_names == "conflicting":
+        settings.append('export PERF_PHASE="other-label"')
     if saved_name in ("PROFILING_SESSION_ID", "both", "conflicting"):
         settings.append(f'export PROFILING_SESSION_ID="{STAMP}"')
     if saved_name in ("RUN_ID", "both", "conflicting"):
@@ -481,14 +491,16 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id,
         'source ./profiling_common.sh\n'
         'python3() { "$PROFILING_TEST_PYTHON" "$@"; }\n'
         'profiling_verify_extension_build() { return 0; }\n'
+        'ARTIFACTS="stale-parent-directory"\nPERF_PHASE="stale-parent-label"\n'
         'profiling_load_session "$PWD/session" || exit $?\n'
+        '[[ ! -v ARTIFACTS && ! -v PERF_PHASE ]] || exit 3\n'
         'printf "loaded=%s\\n" "$PROFILING_SESSION_ID"\n'
         'python3 -c \'import os; print("exported=" + os.environ["PROFILING_SESSION_ID"])\'\n'
     )
     result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path, env=env,
                             capture_output=True, text=True, timeout=15)
     valid = (saved_name not in ("missing", "conflicting") and manifest_id in (None, STAMP)
-             and configuration_hash in (None, "same"))
+             and configuration_hash in (None, "same") and saved_names != "conflicting")
     if valid:
         assert result.returncode == 0, result.stdout + result.stderr
         assert f"loaded={STAMP}" in result.stdout and f"exported={STAMP}" in result.stdout
@@ -499,7 +511,7 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id,
 
 
 def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
-    shutil.copyfile(WORKLOADS / "profiling_start_session.sh", tmp_path / "profiling_start_session.sh")
+    shutil.copyfile(WORKLOADS / "profiling_create_session.sh", tmp_path / "profiling_create_session.sh")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_validate_phase() { return 0; }\n"
         "profiling_load_env() { return 0; }\n"
@@ -522,7 +534,7 @@ def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
     )
     env = {**os.environ, "PROFILING_TEST_PYTHON": Path(sys.executable).as_posix(),
            "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items", "RUN_ID": "old-parent"}
-    result = subprocess.run([bash_executable(), "profiling_start_session.sh", "test"], cwd=tmp_path,
+    result = subprocess.run([bash_executable(), "profiling_create_session.sh", "test"], cwd=tmp_path,
                             env=env, capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stdout + result.stderr
     folder, = (tmp_path / "artifacts").iterdir()
@@ -532,12 +544,13 @@ def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
     assert manifest["stamp"] == identifier and folder.name == f"test-{identifier}"
     settings = (folder / "session.env").read_text()
     assert f'export PROFILING_SESSION_ID="{identifier}"' in settings
-    assert "RUN_ID" not in settings
+    assert "PROFILING_SESSION_DIR=" in settings and "PROFILING_SESSION_LABEL=" in settings
+    assert not any(name in settings for name in ("RUN_ID", "ARTIFACTS", "PERF_PHASE"))
     assert f"profiling_session_id={identifier}" in (folder / "run.txt").read_text()
     assert f"--profiling-session-id {identifier}" in result.stdout
 
 
-@pytest.mark.parametrize("name", ["latency_report", "crt_split_report", "perf_validate"])
+@pytest.mark.parametrize("name", ["latency_report", "client_service_duration_report", "perf_validate"])
 @pytest.mark.parametrize("flag", ["--profiling-session-id", "--run-id", "--stamp"])
 def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch, name, flag):
     module = modules[name]
@@ -558,7 +571,7 @@ def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch,
     assert selections
 
 
-@pytest.mark.parametrize("name", ["latency_report", "crt_split_report", "perf_validate"])
+@pytest.mark.parametrize("name", ["latency_report", "client_service_duration_report", "perf_validate"])
 def test_profiling_report_rejects_conflicting_identifier_flags(modules, monkeypatch, name):
     def unexpected_connection():
         pytest.fail("Conflicting identifiers must fail before contacting the results container")
@@ -647,11 +660,11 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
         "$COSMOS_MAX_ITEM_INDEX/$WORKLOAD_ARRIVAL_RATE\" >> launched.txt; }\n",
         encoding="utf-8",
     )
-    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
+    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "PROFILING_SESSION_DIR": tmp_path.as_posix(),
            "COSMOS_DATABASE": "verified-db", "COSMOS_CONTAINER": "verified-container",
            "COSMOS_MAX_ITEM_INDEX": "42", "WORKLOAD_ARRIVAL_RATE": "100",
            "RESULTS_COSMOS_DATABASE": "results-db", "RESULTS_COSMOS_CONTAINER": "results",
-           "BASELINE_BACKENDS": "core-python rust"}
+           "BASELINE_BACKENDS": "core-python rust", "BASELINE_COMPARISONS": "1"}
     for name in ("BASELINE_DATABASE", "BASELINE_CONTAINER", "BASELINE_READ_RPS"):
         env.pop(name, None)
     if override:
@@ -670,8 +683,204 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
         assert "--expected-rps 100" in (tmp_path / "report-arguments.txt").read_text()
 
 
+@pytest.fixture
+def baseline_batch(tmp_path):
+    folder = tmp_path / "batch workspace"
+    folder.mkdir()
+    for script in ("profiling_run_read_baseline.sh", "profiling_create_session.sh", "perf_common.sh"):
+        shutil.copyfile(WORKLOADS / script, folder / script)
+    (folder / "profiling_common.sh").write_text(
+        """source ./perf_common.sh
+profiling_load_env() { :; }
+profiling_validate_phase() { :; }
+profiling_require_read_workload() { :; }
+profiling_verify_extension_build() {
+  if [[ "${BATCH_FAIL_STAGE:-}" == create ]]; then
+    echo "ERROR: simulated session creation failure" >&2
+    return 1
+  fi
+}
+profiling_load_session() {
+  if [[ -f setup-changed.txt ]]; then
+    echo "ERROR: simulated changed source/configuration" >&2
+    return 1
+  fi
+  source "$1/session.env"
+  if [[ "${BATCH_FAIL_STAGE:-}" == ambiguous && "$PROFILING_SESSION_LABEL" == read-baseline ]]; then
+    echo "artifacts=unexpected-second-directory"
+  fi
+}
+write_run_manifest() { python3 write-manifest.py "$@"; }
+perf_check_run() {
+  echo "$2/$4" >> integrity-calls.txt
+  [[ "${BATCH_FAIL_STAGE:-}" != integrity || $(wc -l < integrity-calls.txt) -ne 2 ]]
+}
+python3() {
+  if [[ "$1" == latency_report.py ]]; then
+    echo "$*" >> report-calls.txt
+    if [[ "${BATCH_FAIL_STAGE:-}" == changed ]]; then touch setup-changed.txt; fi
+    [[ "${BATCH_FAIL_STAGE:-}" != report || $(wc -l < report-calls.txt) -ne 2 ]]
+  else
+    "$PROFILING_TEST_PYTHON" "$@"
+  fi
+}
+timeout() {
+  echo "$PROFILING_SESSION_ID/$COSMOS_BACKEND/$COSMOS_DATABASE/$COSMOS_CONTAINER/$COSMOS_MAX_ITEM_INDEX/$WORKLOAD_ARRIVAL_RATE/$*" >> launched.txt
+  if [[ "${BATCH_FAIL_STAGE:-}" == interrupt ]]; then kill -TERM "$PPID"; fi
+  [[ "${BATCH_FAIL_STAGE:-}" != process || $(wc -l < launched.txt) -ne 3 ]]
+}
+""", encoding="utf-8")
+    (folder / "write-manifest.py").write_text(
+        "import json, os, pathlib, sys\n"
+        "folder, stamp, phase = sys.argv[1:]\n"
+        "record = {'stamp': stamp, 'phase': phase, "
+        "'profiling_session_id': os.environ['PROFILING_SESSION_ID'], 'build': {"
+        "'git_commit': 'a'*40, 'rust_driver_commit': 'b'*40, "
+        "'rust_extension_path': 'test.so', 'rust_extension_python_commit': 'a'*40, "
+        "'rust_extension_driver_commit': 'b'*40, 'rust_extension_has_operation_counter': 'True'}}\n"
+        "(pathlib.Path(folder) / f'manifest-{stamp}.json').write_text(json.dumps(record))\n",
+        encoding="utf-8")
+    source = folder / "prepared-session"
+    source.mkdir()
+    (source / "session.env").write_text(
+        f'export PROFILING_SESSION_ID="{STAMP}"\n'
+        'export PROFILING_SESSION_DIR="$PWD/prepared-session"\n'
+        'export PROFILING_SESSION_LABEL="read-preparation"\n', encoding="utf-8")
+    (source / "preparation-completion.txt").write_text("preparation_complete=true\n", encoding="utf-8")
+    env = {name: value for name, value in os.environ.items()
+           if not name.startswith(("BASELINE_", "PROFILING_", "BATCH_FAIL_"))}
+    env.update({
+        "PROFILING_SESSION_ID": STAMP, "PROFILING_SESSION_DIR": source.as_posix(),
+        "PROFILING_TEST_PYTHON": Path(sys.executable).as_posix(),
+        "COSMOS_DATABASE": "verified-db", "COSMOS_CONTAINER": "verified-items",
+        "COSMOS_MAX_ITEM_INDEX": "42", "WORKLOAD_ARRIVAL_RATE": "250",
+        "RESULTS_COSMOS_DATABASE": "results-db", "RESULTS_COSMOS_CONTAINER": "results",
+    })
+    return folder, env
+
+
+def run_baseline_batch(folder, env):
+    return subprocess.run(
+        [bash_executable(), "profiling_run_read_baseline.sh", "480"],
+        cwd=folder, env=env, capture_output=True, text=True, timeout=60)
+
+
+def read_baseline_batch(folder):
+    batch = folder / "prepared-session" / f"baseline-batch-{STAMP}"
+    summary = dict(line.split("=", 1) for line in (batch / "batch-summary.env").read_text().splitlines())
+    rows = [line.split("\t") for line in (batch / "comparisons.tsv").read_text().splitlines()[1:]]
+    return summary, rows
+
+
+@pytest.mark.parametrize("count,backends", [(None, None), ("2", "rust core-python"), ("3", "rust")])
+def test_baseline_batch_isolates_sessions_and_retains_evidence(baseline_batch, count, backends):
+    folder, env = baseline_batch
+    if count is not None:
+        env["BASELINE_COMPARISONS"] = count
+    if backends is not None:
+        env["BASELINE_BACKENDS"] = backends
+    result = run_baseline_batch(folder, env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    expected = int(count or 5)
+    engines = (backends or "core-python rust").split()
+    summary, rows = read_baseline_batch(folder)
+    assert summary["requested_comparisons"] == summary["completed_comparisons"] == str(expected)
+    assert summary["passed_comparisons"] == summary["attempted_comparisons"] == str(expected)
+    assert summary["status"] == "passed" and summary["exit_status"] == "0"
+    assert summary["duration_seconds_per_backend"] == "480"
+    assert len(rows) == expected and len({row[1] for row in rows}) == expected
+    assert rows[0][1] == STAMP
+    calls = (folder / "launched.txt").read_text().splitlines()
+    assert len(calls) == expected * len(engines)
+    for index, row in enumerate(rows):
+        number, identifier, _, status, rc = row
+        assert number == str(index + 1) and status == "passed" and rc == "0"
+        session = folder / "prepared-session" if index == 0 else folder / "artifacts" / f"read-baseline-{identifier}"
+        logs = session / f"light-load-baseline-{identifier}"
+        assert (session / "session.env").is_file()
+        assert (logs / "baseline-run.log").is_file()
+        assert (logs / "latency-report.txt").is_file()
+        assert (logs / f"manifest-{identifier}.json").is_file()
+        assert (logs / "expected-workloads.txt").read_text().splitlines() == [
+            f"baseline-read-{engine}-{identifier}" for engine in engines]
+        for offset, engine in enumerate(engines):
+            assert calls[index * len(engines) + offset].startswith(
+                f"{identifier}/{engine}/verified-db/verified-items/42/250/")
+            assert "480s python3 workload.py" in calls[index * len(engines) + offset]
+    assert (folder / "prepared-session" / "preparation-completion.txt").read_text() == "preparation_complete=true\n"
+
+
+@pytest.mark.parametrize("stage,completed", [
+    ("process", 2), ("integrity", 2), ("report", 2), ("create", 1), ("changed", 1), ("ambiguous", 1),
+])
+def test_baseline_batch_stops_after_failure(baseline_batch, stage, completed):
+    folder, env = baseline_batch
+    env["BATCH_FAIL_STAGE"] = stage
+    result = run_baseline_batch(folder, env)
+    assert result.returncode != 0, result.stdout + result.stderr
+    summary, rows = read_baseline_batch(folder)
+    assert summary["requested_comparisons"] == "5"
+    assert summary["attempted_comparisons"] == "2"
+    assert summary["completed_comparisons"] == str(completed)
+    assert summary["passed_comparisons"] == "1" and summary["status"] == "failed"
+    assert len(rows) == 2 and rows[0][3] == "passed"
+    assert rows[1][3] == ("setup_failed" if completed == 1 else "failed")
+    assert len((folder / "launched.txt").read_text().splitlines()) == completed * 2
+    assert "ERROR:" in result.stderr + result.stdout
+
+
+def test_baseline_single_comparison_preserves_original_layout(baseline_batch):
+    folder, env = baseline_batch
+    env["BASELINE_COMPARISONS"] = "1"
+    result = run_baseline_batch(folder, env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    session = folder / "prepared-session"
+    assert (session / f"light-load-baseline-{STAMP}" / "latency-report.txt").is_file()
+    assert not (session / f"baseline-batch-{STAMP}").exists()
+    assert not (folder / "artifacts").exists()
+    assert len((folder / "launched.txt").read_text().splitlines()) == 2
+
+
+def test_baseline_batch_records_interruption(baseline_batch):
+    folder, env = baseline_batch
+    env["BATCH_FAIL_STAGE"] = "interrupt"
+    result = run_baseline_batch(folder, env)
+    assert result.returncode == 143, result.stdout + result.stderr
+    summary, rows = read_baseline_batch(folder)
+    assert summary["status"] == "failed" and summary["passed_comparisons"] == "0"
+    assert summary["attempted_comparisons"] == "1"
+    assert len(rows) == 1 and rows[0][3:] == ["interrupted", "143"]
+
+
+def test_baseline_batch_refuses_existing_evidence(baseline_batch):
+    folder, env = baseline_batch
+    env["BASELINE_COMPARISONS"] = "2"
+    first = run_baseline_batch(folder, env)
+    assert first.returncode == 0, first.stdout + first.stderr
+    batch = folder / "prepared-session" / f"baseline-batch-{STAMP}"
+    before = {path.name: path.read_bytes() for path in batch.iterdir()}
+    calls = (folder / "launched.txt").read_bytes()
+    second = run_baseline_batch(folder, env)
+    assert second.returncode != 0
+    assert before == {path.name: path.read_bytes() for path in batch.iterdir()}
+    assert calls == (folder / "launched.txt").read_bytes()
+
+
+@pytest.mark.parametrize("count", ["", "0", "-1", "1.5", "abc", "05", "1+1", "18446744073709551617"])
+def test_baseline_rejects_invalid_comparison_count_before_setup(tmp_path, count):
+    script = "profiling_run_read_baseline.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    result = subprocess.run(
+        [bash_executable(), script], cwd=tmp_path,
+        env={**os.environ, "BASELINE_COMPARISONS": count},
+        capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2
+    assert "BASELINE_COMPARISONS" in result.stderr
+    assert "profiling_common.sh" not in result.stderr
+
+
 def profiling_config_test_setup(tmp_path):
-    template = (WORKLOADS / "profiling_config.env.example").read_text()
+    template = (WORKLOADS / "profiling_config.env.template").read_text()
     values = {
         "COSMOS_URI": "https://test.invalid/", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
         "RESULTS_COSMOS_URI": "https://results.invalid/",
@@ -708,6 +917,167 @@ def test_profiling_config_is_authoritative(tmp_path, inherited):
     else:
         assert result.returncode == 2
         assert "inherited WORKLOAD_ARRIVAL_RATE conflicts" in result.stderr
+
+
+@pytest.mark.parametrize("current,legacy,expected", [
+    (None, None, True), ("true", None, True), ("false", None, False),
+    (None, "true", False), (None, "false", True),
+    ("true", "false", True), ("false", "true", False),
+    ("true", "true", None), ("false", "false", None),
+    ("invalid", None, None), (None, "invalid", None), ("", None, None),
+])
+def test_lifecycle_python_and_shell_conversion(modules, tmp_path, current, legacy, expected):
+    helper = importlib.import_module("workload_config_helpers")
+    values = {}
+    if current is not None:
+        values["WORKLOAD_MANAGE_CLIENT_LIFECYCLE"] = current
+    if legacy is not None:
+        values["WORKLOAD_SKIP_CLOSE"] = legacy
+    if expected is None:
+        with pytest.raises(ValueError):
+            helper.manage_client_lifecycle(values)
+    else:
+        assert helper.manage_client_lifecycle(values) is expected
+    env = {key: value for key, value in os.environ.items() if key not in (
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE", "WORKLOAD_SKIP_CLOSE")}
+    result = subprocess.run(
+        [bash_executable(), "-c",
+         f'source "{(WORKLOADS / "perf_common.sh").as_posix()}"\n'
+         'perf_resolve_client_lifecycle || exit $?\n'
+         '[[ ! -v WORKLOAD_SKIP_CLOSE ]] || exit 3\n'
+         'printf "%s" "$WORKLOAD_MANAGE_CLIENT_LIFECYCLE"'],
+        cwd=tmp_path, env={**env, **values}, capture_output=True, text=True, timeout=15)
+    assert result.returncode == (2 if expected is None else 0), result.stderr
+    if expected is not None:
+        assert result.stdout == str(expected).lower()
+        assert ("deprecated" in result.stderr) == (legacy is not None)
+
+
+@pytest.mark.parametrize("file_current,file_legacy,inherited_current,inherited_legacy,expected", [
+    ("true", None, None, None, "true"), ("false", None, None, None, "false"),
+    (None, "false", None, None, "true"), (None, "true", None, None, "false"),
+    ("true", "false", None, None, "true"), ("true", "true", None, None, None),
+    ("true", None, None, "false", "true"), ("true", None, None, "true", None),
+    (None, "false", "true", None, "true"), (None, "false", "false", None, None),
+    (None, None, "true", None, None), (None, None, None, "false", None),
+    ("true", None, None, "invalid", None), (None, "", None, None, None),
+])
+def test_lifecycle_config_file_remains_authoritative(
+        tmp_path, file_current, file_legacy, inherited_current, inherited_legacy, expected):
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    text = config.read_text().replace("export WORKLOAD_MANAGE_CLIENT_LIFECYCLE=true\n", "")
+    for name, value in (("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", file_current),
+                        ("WORKLOAD_SKIP_CLOSE", file_legacy)):
+        if value is not None:
+            text += f"\nexport {name}={value}\n"
+    config.write_text(text)
+    for name, value in (("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", inherited_current),
+                        ("WORKLOAD_SKIP_CLOSE", inherited_legacy)):
+        if value is not None:
+            env[name] = value
+    result = subprocess.run(
+        [bash_executable(), "-c", prefix + 'profiling_load_config || exit $?\n'
+         '[[ ! -v WORKLOAD_SKIP_CLOSE ]] || exit 3\n'
+         'printf "%s" "$WORKLOAD_MANAGE_CLIENT_LIFECYCLE"'],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert result.returncode == (2 if expected is None else 0), result.stdout + result.stderr
+    if expected is not None:
+        assert result.stdout == expected
+
+
+@pytest.mark.parametrize("current,legacy", [
+    ("PROFILING_SESSION_DIR", "ARTIFACTS"), ("PROFILING_SESSION_LABEL", "PERF_PHASE"),
+    ("PROFILING_CAPTURE_ID", "PROFILE_STAMP"),
+    ("PROFILING_CHECK_ITEM_ID", "PROFILING_PROOF_ITEM"),
+    ("PROFILING_CHECK_PARTITION_KEY_VALUE", "PROFILING_PROOF_PK"),
+])
+@pytest.mark.parametrize("current_value", [None, "saved-value", "conflicting-value"])
+def test_profiling_deprecated_names_are_explicit(tmp_path, current, legacy, current_value):
+    _, env, _ = profiling_config_test_setup(tmp_path)
+    env.pop("ARTIFACTS", None)
+    env.pop("PROFILE_STAMP", None)
+    env[legacy] = "saved-value"
+    if current_value is not None:
+        env[current] = current_value
+    command = (
+        f'source "{(WORKLOADS / "profiling_common.sh").as_posix()}" || exit $?\n'
+        f'[[ ! -v {legacy} ]] || exit 3\nprintf "%s" "${{{current}}}"'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == (2 if current_value == "conflicting-value" else 0), result.stderr
+    if current_value != "conflicting-value":
+        assert result.stdout == "saved-value"
+        assert "deprecated" in result.stderr
+
+
+@pytest.mark.parametrize("current,legacy,skip_close", [
+    ("true", None, False), ("false", None, True), (None, "false", False), (None, "true", True),
+])
+def test_reporter_preserves_saved_skip_close_semantics(modules, monkeypatch, current, legacy, skip_close):
+    for name, value in (("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", current), ("WORKLOAD_SKIP_CLOSE", legacy)):
+        monkeypatch.delenv(name, raising=False)
+        if value is not None:
+            monkeypatch.setenv(name, value)
+    stats = modules["perf_stats"].Stats()
+    reporter = modules["perf_reporter"].PerfReporter(
+        stats, {"report_interval": 60, "workload_id": "test", "commit_sha": "x", "driver_commit": "y"})
+    reporter._container = Rows()
+    stats.record("ReadItem", 1)
+    reporter.stop()
+    assert reporter._container.rows[0]["config_skip_close"] is skip_close
+
+
+@pytest.mark.parametrize("manage", [True, False])
+@pytest.mark.parametrize("read_fails", [True, False])
+def test_workload_lifecycle_controls_entry_and_exit(modules, monkeypatch, manage, read_fails):
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    workload = importlib.import_module("workload")
+    calls = []
+
+    class Client:
+        def __init__(self, *args, **kwargs):
+            calls.append("construct")
+
+        async def __aenter__(self):
+            calls.append("enter")
+            return self
+
+        async def __aexit__(self, *args):
+            calls.append("exit")
+
+        def get_database_client(self, name):
+            return self
+
+        def get_container_client(self, name):
+            return self
+
+    async def read(*args):
+        calls.append("read")
+        if read_fails:
+            raise RuntimeError("read failed")
+
+    reporter = SimpleNamespace(stop=lambda: calls.append("report"))
+    for name, value in {
+        "AsyncClient": Client, "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": manage,
+        "WORKLOAD_USE_PROXY": False, "WORKLOAD_LOOP_LAG_MONITOR": False,
+        "WORKLOAD_ARRIVAL_RATE": 1, "run_fixed_rate": read,
+        "_start_reporter": lambda: (object(), reporter),
+        "_install_async_stop": lambda event: None,
+        "_wrap_backend_for_counting": lambda *args, **kwargs: None,
+        "_maybe_freeze_gc": lambda logger: None,
+    }.items():
+        monkeypatch.setattr(workload, name, value)
+    monkeypatch.setattr(workload.asyncio, "sleep", AsyncMock())
+    if read_fails:
+        with pytest.raises(RuntimeError, match="read failed"):
+            asyncio.run(workload.run_workload_async("test", None))
+    else:
+        asyncio.run(workload.run_workload_async("test", None))
+    assert calls == (["construct", "enter", "read", "exit", "report"] if manage
+                     else ["construct", "read", "report"])
 
 
 @pytest.mark.parametrize("invalid", [
@@ -760,7 +1130,7 @@ def test_target_confirmation_precedes_service_access(tmp_path, arguments, valid)
 @pytest.mark.parametrize("setting,value", [
     ("WORKLOAD_OPERATIONS", "patch"), ("WORKLOAD_USE_SYNC", "true"),
     ("WORKLOAD_NUM_CLIENTS", "2"), ("WORKLOAD_ARRIVAL_RATE", "0"),
-    ("WORKLOAD_USE_PROXY", "true"), ("WORKLOAD_SKIP_CLOSE", "true"), ("PERF_ENABLED", "false"),
+    ("WORKLOAD_USE_PROXY", "true"), ("WORKLOAD_MANAGE_CLIENT_LIFECYCLE", "false"), ("PERF_ENABLED", "false"),
 ])
 def test_read_workload_does_not_silently_replace_configuration(tmp_path, setting, value):
     config, env, prefix = profiling_config_test_setup(tmp_path)
@@ -830,7 +1200,7 @@ def test_experiment_preparation_records_session_before_items(tmp_path, preparati
         "profiling_load_env() { :; }\n"
         "profiling_confirm_target() { echo confirmed >> order.txt; }\n"
         "profiling_load_session() { echo restored >> order.txt; }\n", encoding="utf-8")
-    (tmp_path / "profiling_start_session.sh").write_text(
+    (tmp_path / "profiling_create_session.sh").write_text(
         'echo created >> order.txt\nmkdir evidence\nprintf "artifacts=%s/evidence\\n" "$PWD"\n',
         encoding="utf-8")
     (tmp_path / "profiling_prepare_test_items.sh").write_text(
@@ -852,10 +1222,10 @@ def test_experiment_preparation_records_session_before_items(tmp_path, preparati
 
 @pytest.mark.parametrize("arguments", ["", "first second", "../other"])
 def test_activation_requires_explicit_session_before_loading_environment(tmp_path, arguments):
-    shutil.copyfile(WORKLOADS / "profiling_activate.sh", tmp_path / "profiling_activate.sh")
+    shutil.copyfile(WORKLOADS / "profiling_load_session.sh", tmp_path / "profiling_load_session.sh")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { echo loaded >> loaded.txt; }\n", encoding="utf-8")
-    result = subprocess.run([bash_executable(), "-c", f"source ./profiling_activate.sh {arguments}"],
+    result = subprocess.run([bash_executable(), "-c", f"source ./profiling_load_session.sh {arguments}"],
                             cwd=tmp_path, capture_output=True, text=True, timeout=15)
     assert result.returncode != 0
     assert "ERROR:" in result.stderr
@@ -868,10 +1238,11 @@ def test_activation_requires_explicit_session_before_loading_environment(tmp_pat
 def test_measurement_scripts_do_not_select_newest_session(tmp_path, script):
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text("", encoding="utf-8")
-    (tmp_path / "profiling_activate.sh").write_text("echo selected >> selected.txt\n", encoding="utf-8")
+    (tmp_path / "profiling_load_session.sh").write_text("echo selected >> selected.txt\n", encoding="utf-8")
     env = {key: value for key, value in os.environ.items()
-           if key != "ARTIFACTS" and not key.startswith("BASELINE_")}
-    result = subprocess.run([bash_executable(), "-c", f"source ./{script}"], cwd=tmp_path, env=env,
+           if key != "PROFILING_SESSION_DIR" and not key.startswith("BASELINE_")}
+    invocation = f"bash ./{script}" if script == "profiling_run_read_baseline.sh" else f"source ./{script}"
+    result = subprocess.run([bash_executable(), "-c", invocation], cwd=tmp_path, env=env,
                             capture_output=True, text=True, timeout=15)
     assert result.returncode == 2, result.stdout + result.stderr
     assert "intended profiling session" in result.stderr
@@ -890,7 +1261,7 @@ def test_captures_preserve_configuration_before_launch(tmp_path, script):
         ' printf "%s/%s/%s/%s/%s\\n" "$WORKLOAD_ARRIVAL_RATE" "$WORKLOAD_MAX_INFLIGHT" '
         '"$PERF_REPORT_INTERVAL" "$WORKLOAD_LOOP_LAG_MONITOR" "$WORKLOAD_GC_FREEZE" > settings.txt\n'
         " return 1\n}\n", encoding="utf-8")
-    env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "WORKLOAD_ARRIVAL_RATE": "123",
+    env = {**os.environ, "PROFILING_SESSION_DIR": tmp_path.as_posix(), "WORKLOAD_ARRIVAL_RATE": "123",
            "WORKLOAD_MAX_INFLIGHT": "7", "PERF_REPORT_INTERVAL": "17",
            "WORKLOAD_LOOP_LAG_MONITOR": "true", "WORKLOAD_GC_FREEZE": "true"}
     env.pop("WORKLOAD_PID", None)
@@ -912,7 +1283,7 @@ def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):
     (baseline / "baseline-target.env").write_text(
         "BASELINE_DATABASE=wrong-db\nBASELINE_CONTAINER=items\nBASELINE_PARTITION_KEY=id\n",
         encoding="utf-8")
-    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
+    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "PROFILING_SESSION_DIR": tmp_path.as_posix(),
            "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items", "COSMOS_PARTITION_KEY": "id"}
     result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
                             capture_output=True, text=True, timeout=15)
@@ -943,6 +1314,32 @@ def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path):
     commands = (tmp_path / "build.txt").read_text().splitlines()
     assert commands[0].startswith("cargo fetch --locked --manifest-path ")
     assert commands[1] == "maturin develop --release --locked"
+
+
+def test_build_finds_common_helpers_after_changing_to_package_directory(tmp_path):
+    _, env, _ = profiling_config_test_setup(tmp_path)
+    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
+    activate.parent.mkdir(parents=True)
+    activate.write_text(
+        'export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n'
+        "git() { printf '%040d\\n' 1; }\n"
+        "cargo() { :; }\nmaturin() { :; }\n"
+        "python3() {\n"
+        ' if [[ "$1" == - ]]; then cat >/dev/null; return 0; fi\n'
+        ' if [[ ! -f "$1" ]]; then echo "ERROR: helper not found: $1" >&2; return 2; fi\n'
+        ' printf "%s\\n" "$1" >> "$HOME/helper-paths.txt"\n'
+        " printf '%040d\\n' 2\n}\n", encoding="utf-8")
+    scripts = tmp_path / "package" / "tests" / "workloads"
+    scripts.mkdir(parents=True)
+    for name in ("profiling_build_extension.sh", "profiling_common.sh", "perf_build_details.py"):
+        shutil.copyfile(WORKLOADS / name, scripts / name)
+    result = subprocess.run(
+        [bash_executable(), "-c", 'export HOME="$TEST_HOME"; bash ./profiling_build_extension.sh'],
+        cwd=scripts, env={**env, "TEST_HOME": tmp_path.as_posix()},
+        capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Extension ready" in result.stdout
+    assert len((tmp_path / "helper-paths.txt").read_text().splitlines()) == 2
 
 
 def test_profiling_config_accepts_fractional_timeout(tmp_path):
@@ -1082,7 +1479,7 @@ def test_rust_transport_check_validates_exit_and_evidence(tmp_path, verdict, pyt
         "tee() { cat > \"$1\"; return \"$TEE_RC\"; }\n",
         encoding="utf-8",
     )
-    env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "PROFILING_SESSION_ID": STAMP,
+    env = {**os.environ, "PROFILING_SESSION_DIR": tmp_path.as_posix(), "PROFILING_SESSION_ID": STAMP,
            "COSMOS_URI": "https://example.invalid", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "container",
            "COSMOS_PARTITION_KEY": "id", "TRANSPORT_TEXT": verdict,
            "PYTHON_RC": str(python_rc), "TEE_RC": str(tee_rc)}
@@ -1099,7 +1496,7 @@ def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, s
     from types import SimpleNamespace
     import azure.cosmos as sdk
     import azure.cosmos.aio as async_sdk
-    from azure.cosmos.aio._backend.rust_backend import AsyncRustBackend
+    from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
 
     calls = []
     counters = [0, 0, 0]
@@ -1108,13 +1505,13 @@ def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, s
         "mixed": "transports=[data_plane/gateway,data_plane/gateway_v2]",
         "missing": "transports=[metadata/gateway]",
     }.get(scenario, "transports=[metadata/gateway,data_plane/gateway_v2]")
-    runtime_class = "AsyncLegacyBackend" if scenario == "legacy" else AsyncRustBackend.__name__
+    runtime_class = "AsyncLegacyBackend" if scenario == "legacy" else AsyncBindingAdapter.__name__
 
     class Client:
         def __init__(self, uri, key, **kwargs):
             assert (uri, key) == ("https://test.invalid", "synthetic-key")
             assert kwargs == {"preferred_locations": ["West US 2"], "_backend": "rust"}
-            self._backend = type(runtime_class, (), {})()
+            self._adapter = type(runtime_class, (), {})()
 
         async def __aenter__(self):
             return self
@@ -1150,7 +1547,7 @@ def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, s
     for name, value in {"COSMOS_URI": "https://test.invalid", "COSMOS_KEY": "synthetic-key",
                         "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
                         "COSMOS_PARTITION_KEY": "id", "COSMOS_PREFERRED_LOCATIONS": "West US 2",
-                        "PROFILING_PROOF_ITEM": "test-42"}.items():
+                        "PROFILING_CHECK_ITEM_ID": "test-42"}.items():
         monkeypatch.setenv(name, value)
     with pytest.raises(SystemExit) as exc:
         exec(compile(embedded_python("profiling_check_rust_transport.sh"), "rust-transport-check", "exec"), {})
@@ -1163,7 +1560,7 @@ def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, s
 def test_throughput_launcher_keeps_earlier_child_failure(tmp_path):
     script = "run_throughput_sweep.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
-    (tmp_path / "perf_env.sh").write_text(
+    (tmp_path / "perf_drill_defaults.sh").write_text(
         "export COSMOS_DATABASE=scale_db COSMOS_CONTAINER=scale_cont PERF_REPORT_INTERVAL=300\n"
         "perf_single_operation_shape() { :; }\n"
         "perf_create_log_dir() { mkdir -p \"$1\"; }\n"
@@ -1206,7 +1603,7 @@ def test_existing_run_directory_is_not_reused(tmp_path):
     marker.write_text("preserve")
     result = subprocess.run(
         [bash_executable(), "-c", 'source "$1"; perf_create_log_dir "$2"', "test",
-         (WORKLOADS / "perf_env.sh").as_posix(), target.as_posix()],
+         (WORKLOADS / "perf_drill_defaults.sh").as_posix(), target.as_posix()],
         env={**os.environ, "COSMOS_KEY": "synthetic-offline-key"},
         capture_output=True, text=True, timeout=15,
     )

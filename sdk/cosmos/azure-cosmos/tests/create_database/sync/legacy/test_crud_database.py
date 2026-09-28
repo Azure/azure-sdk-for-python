@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Selected sync database throughput test pinned to the Rust backend."""
+"""Legacy database assertions using Rust and the retained get_throughput name."""
 import os
 import unittest
 import uuid
@@ -35,7 +35,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
     def test_database_level_offer_throughput(self):
         """Throughput set at the database level can be read back and then changed.
 
-        Creates a database with 1000 request units, confirms ``read_offer``
+        Creates a database with 1000 request units, confirms ``get_throughput``
         reports that figure, then raises it to 2000 through
         ``replace_throughput`` and confirms the new value comes back.
 
@@ -52,7 +52,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         )
         self.assertEqual(created_db.id, database_id)
 
-        offer = created_db.read_offer()
+        offer = created_db.get_throughput()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         new_offer_throughput = 2000

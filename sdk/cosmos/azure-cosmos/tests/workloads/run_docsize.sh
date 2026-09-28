@@ -22,7 +22,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
-source ./perf_env.sh >/dev/null 2>&1
+source ./perf_drill_defaults.sh >/dev/null 2>&1
 source ~/venvs/perfdrill/bin/activate
 perf_single_operation_shape
 
@@ -45,7 +45,7 @@ perf_create_log_dir "$LOG_DIR" || exit 2
 
 # Use the shared probe container. The CREATE leg self-cleans (fresh uuids), so it
 # does not mutate the seeded items -- no dedicated container needed.
-# perf_env.sh exports scale_db/scale_cont, so we must set probe defaults explicitly.
+# perf_drill_defaults.sh exports scale_db/scale_cont, so we must set probe defaults explicitly.
 export COSMOS_DATABASE="${DOCSIZE_COSMOS_DATABASE:-lat_probe_db}"
 export COSMOS_CONTAINER="${DOCSIZE_COSMOS_CONTAINER:-lat_probe_cont}"
 export COSMOS_CONCURRENT_REQUESTS="${COSMOS_CONCURRENT_REQUESTS:-100}"

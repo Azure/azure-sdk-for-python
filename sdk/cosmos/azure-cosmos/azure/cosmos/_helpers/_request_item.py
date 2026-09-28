@@ -100,7 +100,7 @@ def build_delete_item_request(
 def build_read_item_request(
     *,
     container_link: str,
-    item_id: str,
+    item_id: Optional[str],
     partition_key_value: Any,
     container_rid: Optional[str],
     request_options: Mapping[str, Any],

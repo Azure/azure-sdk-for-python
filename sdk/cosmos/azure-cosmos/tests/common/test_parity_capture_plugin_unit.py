@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import importlib.util
 import inspect
+import json
 import pathlib
 import sys
 import unittest
@@ -36,6 +37,26 @@ def _load_plugin():
     sys.modules[mod_name] = mod
     spec.loader.exec_module(mod)
     return mod
+
+
+@pytest.mark.parametrize("op", ["get_latest_session_token", "read_item"])
+@pytest.mark.parametrize("native,fallback", [(0, 0), (1, 0), (0, 1), (None, None)])
+def test_local_token_capture_is_narrow_and_requires_zero_counters(capsys, op, native, fallback):
+    plugin = _load_plugin()
+    payload = {
+        "op": op, "executed_engine": "unknown",
+        "rust_operation_delta": native, "rust_fallback_delta": fallback,
+        "response_headers": {"etag": "earlier-write"},
+    }
+    plugin._emit_block(payload)
+    captured = json.loads(capsys.readouterr().out.strip().splitlines()[1])
+    local = op == "get_latest_session_token"
+    assert captured["executed_engine"] == (
+        "local-python" if local and native == 0 and fallback == 0 else "unknown"
+    )
+    assert captured["response_headers"] == ({} if local else payload["response_headers"])
+    assert payload["response_headers"] == {"etag": "earlier-write"}
+    assert payload["executed_engine"] == "unknown"
 
 
 # These tests guard the parity-capture plugin -- the pytest add-on that records each
@@ -80,6 +101,54 @@ def test_point_error_capture_uses_exception_headers(monkeypatch, surface, server
         assert "later" not in emitted[0]["response_headers"]
 
 
+@pytest.mark.parametrize("surface", ("sync", "aio"))
+@pytest.mark.parametrize("autoscale", (False, True))
+def test_database_throughput_capture_records_values_and_properties(monkeypatch, surface, autoscale):
+    from azure.cosmos import ThroughputProperties
+    from azure.cosmos._cosmos_responses import CosmosDict
+
+    plugin = _load_plugin()
+    emitted = []
+    properties = CosmosDict(
+        {"id": "offer-1", "content": {"customer-visible": 42}},
+        response_headers={"etag": "offer-etag"},
+    )
+    result = ThroughputProperties(
+        offer_throughput=None if autoscale else 4000,
+        auto_scale_max_throughput=10000 if autoscale else None,
+        auto_scale_increment_percent=0 if autoscale else None,
+        properties=properties,
+    )
+    owner = SimpleNamespace(client_connection=SimpleNamespace(last_response_headers={"etag": "stale"}))
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_offer.py::TestOffer::test_read")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: 0)
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    def original(_self, **kwargs):
+        return result
+
+    async def async_original(_self, **kwargs):
+        return result
+
+    if surface == "sync":
+        actual = plugin._build_sync_wrapper("get_database_throughput", surface, original)(owner)
+    else:
+        actual = asyncio.run(
+            plugin._build_aio_wrapper("get_database_throughput", surface, async_original)(owner)
+        )
+    assert actual is result
+    assert emitted[0]["return_value"] == {
+        "offer_throughput": None if autoscale else 4000,
+        "auto_scale_max_throughput": 10000 if autoscale else None,
+        "auto_scale_increment_percent": 0 if autoscale else None,
+        "properties": {"id": "offer-1", "content": {"customer-visible": 42}},
+    }
+    assert emitted[0]["response_headers"]["etag"] == "offer-etag"
+    properties["content"]["customer-visible"] = 99
+    assert emitted[0]["return_value"]["properties"]["content"]["customer-visible"] == 42
+
+
 class PluginRegistryTests(unittest.TestCase):
     """The plugin must stay reusable across migrated CRUD operations."""
 
@@ -95,6 +164,7 @@ class PluginRegistryTests(unittest.TestCase):
             "create_item",
             "delete_item",
             "read_item",
+            "get_latest_session_token",
             "upsert_item",
             "replace_item",
             "patch_item",
@@ -274,6 +344,18 @@ class PluginRegistryTests(unittest.TestCase):
             self.plugin._rust_fallback_count = original_fallback  # noqa: SLF001
         self.assertEqual(evidence["executed_engine"], "rust")
         self.assertEqual(evidence["rust_operation_delta"], 2)
+
+    def test_zero_rust_calls_do_not_prove_legacy_execution(self):
+        from unittest.mock import patch
+
+        with patch.object(self.plugin, "_rust_operation_count", return_value=10), \
+                patch.object(self.plugin, "_rust_fallback_count", return_value=0):
+            evidence = self.plugin._execution_evidence(10, 0, selected_backend="rust")
+        self.assertEqual(evidence, {
+            "executed_engine": "no-rust-operation",
+            "rust_operation_delta": 0,
+            "rust_fallback_delta": 0,
+        })
 
     def test_result_headers_prefer_public_aggregate(self):
         """List/read-many captures must use the result's aggregate headers."""

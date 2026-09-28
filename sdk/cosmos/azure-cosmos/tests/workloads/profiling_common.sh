@@ -19,6 +19,28 @@
 # functions from perf_common.sh. They never inherit sweep defaults.
 # ---------------------------------------------------------------------------
 
+profiling_resolve_name() {
+  local current="$1" legacy="$2"
+  if [[ -v "$legacy" ]]; then
+    if [[ -v "$current" && "${!current}" != "${!legacy}" ]]; then
+      echo "ERROR: $current conflicts with deprecated $legacy." >&2
+      return 2
+    fi
+    echo "WARNING: $legacy is deprecated; use $current." >&2
+    printf -v "$current" '%s' "${!legacy}"
+    export "$current"
+    unset "$legacy"
+  fi
+}
+
+profiling_normalize_names() {
+  profiling_resolve_name PROFILING_SESSION_DIR ARTIFACTS || return 2
+  profiling_resolve_name PROFILING_SESSION_LABEL PERF_PHASE || return 2
+  profiling_resolve_name PROFILING_CAPTURE_ID PROFILE_STAMP || return 2
+  profiling_resolve_name PROFILING_CHECK_ITEM_ID PROFILING_PROOF_ITEM || return 2
+  profiling_resolve_name PROFILING_CHECK_PARTITION_KEY_VALUE PROFILING_PROOF_PK || return 2
+}
+
 # A phase label reaches the filesystem as a directory name and the manifest as
 # a JSON string value. Restricting it up front is cheaper than escaping it in
 # both places: '..' or '/' would move the artifacts directory somewhere
@@ -106,13 +128,15 @@ profiling_load_session() {
   local session_dir="$1" session_env manifest canonical_dir
   # Old session.env files exported RUN_ID; never inherit it from another experiment.
   local RUN_ID=""
-  unset PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
+  unset ARTIFACTS PERF_PHASE
+  unset PROFILING_SESSION_ID PROFILING_SESSION_DIR PROFILING_SESSION_LABEL
   session_dir="${session_dir%/}"
   session_env="${session_dir}/session.env"
   [[ -f "${session_env}" ]] || return 1
 
   # shellcheck disable=SC1090
   source "${session_env}" || return 1
+  profiling_normalize_names || return 1
   if [[ -n "${RUN_ID}" ]]; then
     if [[ -n "${PROFILING_SESSION_ID:-}" && "${PROFILING_SESSION_ID}" != "${RUN_ID}" ]]; then
       echo "ERROR: ${session_env} has conflicting PROFILING_SESSION_ID and historical RUN_ID." >&2
@@ -124,19 +148,19 @@ profiling_load_session() {
     echo "ERROR: ${session_env} has an invalid PROFILING_SESSION_ID." >&2
     return 1
   }
-  profiling_validate_phase "${PERF_PHASE:-}" || return 1
+  profiling_validate_phase "${PROFILING_SESSION_LABEL:-}" || return 1
   canonical_dir="$(cd "${session_dir}" 2>/dev/null && pwd)" || return 1
-  [[ "${ARTIFACTS:-}" == "${canonical_dir}" ]] || {
-    echo "ERROR: ${session_env} points ARTIFACTS outside its session directory." >&2
+  [[ "${PROFILING_SESSION_DIR:-}" == "${canonical_dir}" ]] || {
+    echo "ERROR: ${session_env} points PROFILING_SESSION_DIR outside its session directory." >&2
     return 1
   }
 
-  manifest="${ARTIFACTS}/manifest-${PROFILING_SESSION_ID}.json"
+  manifest="${PROFILING_SESSION_DIR}/manifest-${PROFILING_SESSION_ID}.json"
   [[ -f "${manifest}" ]] || {
     echo "ERROR: session ${session_dir} has no manifest." >&2
     return 1
   }
-  python3 - "${manifest}" "${PROFILING_SESSION_ID}" "${PERF_PHASE}" \
+  python3 - "${manifest}" "${PROFILING_SESSION_ID}" "${PROFILING_SESSION_LABEL}" \
     "${COSMOS_URI}" "${COSMOS_DATABASE}" "${COSMOS_CONTAINER}" <<'PY'
 import json
 import os
@@ -181,7 +205,7 @@ if bad:
 PY
   [[ $? -eq 0 ]] || return 1
   profiling_verify_extension_build || return 1
-  export PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
+  export PROFILING_SESSION_ID PROFILING_SESSION_DIR PROFILING_SESSION_LABEL
 }
 
 profiling_activate_python() {
@@ -198,6 +222,7 @@ profiling_activate_python() {
 
 profiling_load_config() {
   local config="$HOME/profiling_config.env" name
+  local inherited_skip_close="${WORKLOAD_SKIP_CLOSE-}" had_skip_close="${WORKLOAD_SKIP_CLOSE+x}"
   local -a names=(
     COSMOS_URI COSMOS_DATABASE COSMOS_CONTAINER COSMOS_PARTITION_KEY
     COSMOS_MAX_ITEM_INDEX COSMOS_THROUGHPUT COSMOS_PREFERRED_LOCATIONS
@@ -207,12 +232,12 @@ profiling_load_config() {
     WORKLOAD_NUM_CLIENTS COSMOS_CONCURRENT_REQUESTS WORKLOAD_ARRIVAL_RATE
     WORKLOAD_MAX_INFLIGHT WORKLOAD_OPERATIONS COSMOS_REQUEST_TIMEOUT
     WORKLOAD_USE_SYNC WORKLOAD_USE_PROXY WORKLOAD_GC_FREEZE WORKLOAD_LOOP_LAG_MONITOR
-    WORKLOAD_SKIP_CLOSE WORKLOAD_MIX WORKLOAD_DOC_PROFILE COSMOS_LOG_LEVEL
+    WORKLOAD_MANAGE_CLIENT_LIFECYCLE WORKLOAD_MIX WORKLOAD_DOC_PROFILE COSMOS_LOG_LEVEL
     COSMOS_ENABLE_DIAGNOSTICS_LOGGING PERF_ENABLED PERF_REPORT_INTERVAL
   )
   local -A inherited=()
   if [[ ! -f "$config" ]]; then
-    echo "ERROR: ~/profiling_config.env is required. Copy profiling_config.env.example and fill in the target." >&2
+    echo "ERROR: ~/profiling_config.env is required. Copy profiling_config.env.template and fill in the target." >&2
     echo "       ~/perf_target.env and profiling_target.env are no longer loaded." >&2
     return 2
   fi
@@ -220,7 +245,21 @@ profiling_load_config() {
     if [[ -v "$name" ]]; then inherited["$name"]="${!name}"; fi
     unset "$name"
   done
+  unset WORKLOAD_SKIP_CLOSE
   source "$config" || { echo "ERROR: cannot load $config." >&2; return 2; }
+  source "$(dirname "${BASH_SOURCE[0]}")/perf_common.sh" || return 2
+  perf_resolve_client_lifecycle required || return 2
+  if [[ "$had_skip_close" == x ]]; then
+    case "$inherited_skip_close" in
+      true|false) ;;
+      *) echo "ERROR: inherited WORKLOAD_SKIP_CLOSE must be true or false." >&2; return 2 ;;
+    esac
+    if [[ "$inherited_skip_close" == "$WORKLOAD_MANAGE_CLIENT_LIFECYCLE" ]]; then
+      echo "ERROR: inherited WORKLOAD_SKIP_CLOSE conflicts with $config; unset it or use a fresh terminal." >&2
+      return 2
+    fi
+    echo "WARNING: inherited WORKLOAD_SKIP_CLOSE is deprecated; use WORKLOAD_MANAGE_CLIENT_LIFECYCLE." >&2
+  fi
   for name in "${names[@]}"; do
     if [[ ! -v "$name" ]]; then
       echo "ERROR: $config must explicitly set $name; profiling has no fallback defaults." >&2
@@ -260,7 +299,7 @@ profiling_load_config() {
     return 2
   fi
   for name in WORKLOAD_USE_SYNC WORKLOAD_USE_PROXY WORKLOAD_GC_FREEZE WORKLOAD_LOOP_LAG_MONITOR \
-      WORKLOAD_SKIP_CLOSE COSMOS_ENABLE_DIAGNOSTICS_LOGGING COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS PERF_ENABLED; do
+      WORKLOAD_MANAGE_CLIENT_LIFECYCLE COSMOS_ENABLE_DIAGNOSTICS_LOGGING COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS PERF_ENABLED; do
     if [[ "${!name}" != true && "${!name}" != false ]]; then
       echo "ERROR: $name must be true or false in $config." >&2
       return 2
@@ -296,7 +335,7 @@ profiling_confirm_target() {
 profiling_require_read_workload() {
   if [[ "$WORKLOAD_OPERATIONS" != read || "$WORKLOAD_NUM_CLIENTS" != 1 ||
         "$COSMOS_CONCURRENT_REQUESTS" != 1 || "$WORKLOAD_USE_SYNC" != false ||
-        "$WORKLOAD_USE_PROXY" != false || "$WORKLOAD_SKIP_CLOSE" != false ||
+        "$WORKLOAD_USE_PROXY" != false || "$WORKLOAD_MANAGE_CLIENT_LIFECYCLE" != true ||
         "$PERF_ENABLED" != true || -n "$WORKLOAD_MIX" ]]; then
     echo "ERROR: configure one asynchronous read client, concurrency 1, reporting enabled, no proxy/mix/skipped close in ~/profiling_config.env." >&2
     return 2
@@ -345,3 +384,5 @@ profiling_load_env() {
   profiling_load_config || return 2
   source "${here}/perf_common.sh" || return 2
 }
+
+profiling_normalize_names

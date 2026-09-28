@@ -36,7 +36,7 @@ def source_digest():
     ):
         files.update((PACKAGE_ROOT / directory).rglob(pattern))
     for name in ("Cargo.toml", "Cargo.lock", "pyproject.toml", "azure_cosmos_rust/Cargo.toml",
-                 "azure_cosmos_rust/build.rs", "tests/workloads/profiling_config.env.example"):
+                 "azure_cosmos_rust/build.rs", "tests/workloads/profiling_config.env.template"):
         path = PACKAGE_ROOT / name
         if path.is_file():
             files.add(path)

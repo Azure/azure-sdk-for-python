@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import os
 import uuid
+from contextlib import ExitStack
 
 import pytest
 
 from azure.cosmos import CosmosClient, ThroughputProperties, exceptions
 from common._parity_helpers import _observed_backend_name, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+from common.parity_provisioning import create_owned_database
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 
@@ -36,8 +38,10 @@ def _normalize_throughput(throughput_properties):
 
 @pytest.fixture
 def database_per_backend():
-    """One fresh database per engine, so neither engine changes the other's database.
+    """Use separate databases for changes and one shared database for missing offers.
 
+    Neither engine can replace a missing offer, so that case can share a
+    database and compare the complete error message, including its target.
     Setup runs on the sync client on purpose: it is only scaffolding, the call
     under test is the async one inside each test, and a sync fixture avoids
     holding an event loop open across the fixture boundary.
@@ -46,26 +50,30 @@ def database_per_backend():
     created = {}
 
     def _make(offer_throughput):
-        """Create one database per engine and register them for teardown."""
-        for backend_name in ("core-python", "rust"):
+        """Create isolated targets for writes, or a shared target for rejection."""
+        backends = ("core-python",) if offer_throughput is None else ("core-python", "rust")
+        for backend_name in backends:
             database_id = "parity_repl_db_a_{}_{}".format(
                 backend_name.replace("-", ""), uuid.uuid4().hex[:6]
             )
-            if offer_throughput is None:
-                client.create_database(id=database_id)
-            else:
-                client.create_database(id=database_id, offer_throughput=offer_throughput)
             created[backend_name] = database_id
+            create_owned_database(client, id=database_id, offer_throughput=offer_throughput)
+        if offer_throughput is None:
+            created["rust"] = created["core-python"]
         return created
 
     yield _make
 
-    for database_id in created.values():
+    def delete_owned_database(database_id):
         try:
             client.delete_database(database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-    client.close()
+
+    with ExitStack() as cleanup:
+        cleanup.callback(client.close)
+        for database_id in set(created.values()):
+            cleanup.callback(delete_owned_database, database_id)
 
 
 def _database_for(client, created):
@@ -118,8 +126,7 @@ async def test_replace_throughput_autoscale_async(database_per_backend):
 
 
 async def test_replace_throughput_without_provisioned_throughput_async(database_per_backend):
-    """Async: changing throughput on a database that owns none raises a typed 404 on rust."""
-    # Keep the known difference visible until Python also returns the typed 404.
+    """Both async implementations reject replacing a missing offer with a typed 404."""
     created = database_per_backend(None)
 
     async def _do(client):
@@ -138,10 +145,10 @@ async def test_replace_throughput_without_provisioned_throughput_async(database_
         )
     )
     assert comparison.rust.raised.status_code == 404
-    assert isinstance(comparison.core_python.raised, AttributeError), (
-        "core-python is expected to crash in its retry policy for this case; if it now "
-        "raises a Cosmos error, the defect is fixed and this test should require "
-        "matching typed errors on both engines instead. Got {!r}".format(
+    assert isinstance(comparison.core_python.raised, exceptions.CosmosResourceNotFoundError), (
+        "core-python should report a missing offer as a typed 404, got {!r}".format(
             comparison.core_python.raised
         )
     )
+    assert comparison.core_python.raised.status_code == 404
+    comparison.assert_exception_parity()

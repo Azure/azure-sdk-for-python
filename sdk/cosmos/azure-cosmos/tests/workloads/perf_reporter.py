@@ -16,8 +16,9 @@ from azure.cosmos import CosmosClient
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 from azure.identity import DefaultAzureCredential
 
-from perf_config import _safe_int_env
+from perf_reporting_config import _safe_int_env
 from perf_stats import Stats
+from workload_config_helpers import manage_client_lifecycle
 import perf_backend_counters as backend_counters
 
 try:
@@ -301,9 +302,8 @@ class PerfReporter:
         proxy_enabled = (
             os.environ.get("WORKLOAD_USE_PROXY", "false").lower() == "true"
         )
-        skip_close = (
-            os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"
-        )
+        # Preserve the saved field's negative meaning for existing report readers.
+        skip_close = not manage_client_lifecycle()
         workload_mix = os.environ.get("WORKLOAD_MIX", "").strip()
         doc_profile = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
 

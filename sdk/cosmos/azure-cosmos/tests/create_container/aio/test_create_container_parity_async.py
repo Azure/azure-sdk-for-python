@@ -23,6 +23,7 @@ from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.aio import ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
 from common._parity_helpers import _observed_backend_name, run_on_both_backends_async, run_target_operation_async, skip_unless_emulator, skip_unless_rust_binding
+from common.parity_provisioning import create_owned_container, create_owned_database
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 
@@ -56,7 +57,7 @@ def database_id():
     name = "parity_create_container_a_" + uuid.uuid4().hex[:8]
     with _admin_client() as client:
         try:
-            client.create_database(id=name)
+            create_owned_database(client, id=name)
             yield name
         finally:
             try:
@@ -162,11 +163,11 @@ async def test_create_container_return_shapes_async(database_id):
 async def test_create_container_conflict_async(database_id):
     """Creating a container whose id is taken raises the same typed conflict on both engines."""
     taken_id = "already_taken_" + uuid.uuid4().hex[:8]
-    admin = _admin_client()
-    admin.get_database_client(database_id).create_container(
-        id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash")
-    )
-    admin.close()
+    with _admin_client() as admin:
+        create_owned_container(
+            admin.get_database_client(database_id),
+            id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash"),
+        )
 
     async def _do(client):
         """Await a create whose id is taken, expecting a conflict error."""

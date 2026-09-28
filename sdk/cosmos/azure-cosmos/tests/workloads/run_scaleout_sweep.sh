@@ -37,7 +37,7 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 cd "$(dirname "$0")"
-source ./perf_env.sh
+source ./perf_drill_defaults.sh
 perf_single_operation_shape
 export WORKLOAD_ARRIVAL_RATE=0
 

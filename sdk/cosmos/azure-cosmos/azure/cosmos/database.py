@@ -19,7 +19,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Interact with databases in the Azure Cosmos DB SQL API service.
+"""Provide DatabaseProxy, the Python wrapper object for one database.
+
+The customer app obtains this object through
+client.get_database_client("sales"). Here, proxy means a Python object
+representing a service resource, not a network proxy.
+
+The object lets the customer app select containers and perform database
+operations. For example::
+
+    database = client.get_database_client("sales")
+    orders = database.get_container_client("orders")
+
+These calls create local Python objects without reading, creating, or
+checking the resources in the service backend. The returned objects
+retain the existing client context for later operations.
+
+An operation such as database.read() requests the database's properties
+from the service backend; obtaining the DatabaseProxy does not.
 """
 
 from azure.cosmos._backend.capabilities import OperationRouting
@@ -34,7 +51,7 @@ from azure.cosmos.partition_key import PartitionKey
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _build_properties_cache
 from .container import ContainerProxy
-from .offer import Offer, ThroughputProperties
+from .offer import ThroughputProperties
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
@@ -890,7 +907,7 @@ class DatabaseProxy(object):
         *,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """List the containers in the database.
@@ -901,8 +918,10 @@ class DatabaseProxy(object):
             within its duration range; ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A synchronous callable invoked after each successfully fetched page,
-            with a snapshot of that page's response headers. It is not called before iteration.
-        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
+            with that page's response headers and the same results iterator returned by this method.
+            It is not called before iteration. Consume results outside the hook; the iterator is
+            already being advanced when the hook runs.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
@@ -934,10 +953,16 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if response_hook is not None:
-            kwargs["response_hook"] = wrap_page_response_hook(response_hook)
-        return self.client_connection.ReadContainers(
+            hook = response_hook
+
+            def on_page(headers: Mapping[str, Any]) -> None:
+                hook(headers, result)
+
+            kwargs["response_hook"] = wrap_page_response_hook(on_page)
+        result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
         )
+        return result
 
     @distributed_trace
     def query_containers(   # pylint:disable=docstring-missing-param
@@ -947,7 +972,7 @@ class DatabaseProxy(object):
         parameters: Optional[list[dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """Query container properties in the current database, not the items inside them.
@@ -963,8 +988,10 @@ class DatabaseProxy(object):
             ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A synchronous callable invoked after each successfully fetched page,
-            with an independent snapshot of that page's response headers, not before iteration.
-        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
+            with that page's response headers and the same results iterator returned by this method.
+            It is not called before iteration. Consume results outside the hook; the iterator is
+            already being advanced when the hook runs.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
@@ -990,13 +1017,19 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if response_hook is not None:
-            kwargs["response_hook"] = wrap_page_response_hook(response_hook)
-        return self.client_connection.QueryContainers(
+            hook = response_hook
+
+            def on_page(headers: Mapping[str, Any]) -> None:
+                hook(headers, result)
+
+            kwargs["response_hook"] = wrap_page_response_hook(on_page)
+        result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
+        return result
 
     @overload
     def replace_container(  # pylint:disable=docstring-missing-param
@@ -1431,24 +1464,6 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
 
         self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options, **kwargs)
-
-    @distributed_trace
-    def read_offer(self, **kwargs: Any) -> Offer:
-        """Get the ThroughputProperties object for this database.
-
-        If no ThroughputProperties already exist for the database, an exception is raised.
-
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: ThroughputProperties for the database.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
-            the throughput properties could not be retrieved.
-        :rtype: ~azure.cosmos.ThroughputProperties
-        """
-        warnings.warn(
-            "read_offer is a deprecated method name, use get_throughput instead",
-            DeprecationWarning
-        )
-        return self.get_throughput(**kwargs)
 
     @distributed_trace
     def get_throughput(

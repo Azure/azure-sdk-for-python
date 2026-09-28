@@ -5,16 +5,21 @@
 # -------------------------------------------------------------------------
 """Execute synchronous requests through the compiled Python/Rust binding.
 
-A customer app's order read crosses these components::
+A customer app reading database "sales" needs properties held by the service
+backend. BindingAdapter is Python wrapper code: it passes the prepared read
+to azure.cosmos._rust, the Python-callable module exposed by the binding.
 
-    Python wrapper: prepared read of order-42 -> RustBackend
-        -> binding layer: azure.cosmos._rust
-        -> Rust driver: a CosmosDriver object
-        -> service backend: Cosmos DB
+The binding translates the prepared inputs into a Rust driver call. The
+separately owned Rust driver performs the service operation. The binding
+converts its result into Python values, which the Python wrapper uses to
+produce the database properties returned to the customer app.
 
-This module is Python wrapper code. The binding calls the separately owned Rust
-driver, which routes and sends requests. Python response helpers turn the
-backend's result into the customer's item after execution returns.
+The responsibilities are::
+
+    Python wrapper: prepare the read for database "sales"
+        -> binding: translate the prepared inputs into a Rust driver call
+        -> Rust driver: request database properties from the service backend
+        -> service backend: return the database properties
 
 Importing without the compiled binding remains possible for migration checks.
 Construction still requires the binding to validate CosmosDriverRuntime
@@ -40,8 +45,8 @@ from ._binding_conversions import (
     build_container_metadata, metadata_exception_from_binding,
     build_backend_page, page_binding_call_arguments,
 )
-from ._rust_backend_shared import (
-    RustBackendShared,
+from ._binding_adapter_shared import (
+    BindingAdapterShared,
     _binding_error_type,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
@@ -64,7 +69,7 @@ try:
     _rust_module = _rust
 except ImportError:
     _LOGGER.debug(
-        "_rust module not available; RustBackend operations "
+        "_rust module not available; BindingAdapter operations "
         "will raise NotImplementedError until the Rust module is built."
     )
 
@@ -83,7 +88,7 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
     the public method the customer called, but not always: ``get_throughput``
     and ``replace_throughput`` reach the binding as ``read_offer`` and
     ``replace_offer``. ``OP_TO_BINDING_FUNCTION_NAME`` holds the mapping, and
-    ``RustBackend.execute`` is the only caller.
+    ``BindingAdapter.execute`` is the only caller.
 
     ``None`` means the binding cannot run ``op`` in this process, which
     ``execute`` reports as ``NotImplementedError``. It covers four cases: the
@@ -131,7 +136,7 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
     return getattr(_rust_module, binding_function_name, None)
 
 
-class RustBackend(RustBackendShared, CosmosBackend):
+class BindingAdapter(BindingAdapterShared, CosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
     A driver handle is a string identifying a CosmosDriver retained by the
@@ -143,7 +148,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         close -> release this client's acquisition of H
 
     H is an illustration, not an actual handle. Clients with matching account,
-    credential, and configuration can share a CosmosDriver. RustBackendShared
+    credential, and configuration can share a CosmosDriver. BindingAdapterShared
     supplies common setup and cleanup code, not a shared Python settings object.
     """
 
@@ -161,7 +166,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         A customer app's endpoint and region preference follow this path::
 
             endpoint + credential + PreparedClientConfig
-                -> save on this RustBackend
+                -> save on this BindingAdapter
                 -> check any completed CosmosDriverRuntime initialization
 
         The check neither creates CosmosDriverRuntime nor reserves its settings.
@@ -191,7 +196,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             return driver_handle
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend: the compiled azure.cosmos._rust "
+                "BindingAdapter: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it with "
                 "`maturin develop` from the repo root."
             )
@@ -200,7 +205,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             # close() also clears the handle; do not mistake a closed client for
             # one that has not acquired a driver yet.
             if self._closing:
-                raise RuntimeError("RustBackend: the client is closed.")
+                raise RuntimeError("BindingAdapter: the client is closed.")
             if self._driver_handle is None:
                 self._driver_handle = self._initialize_driver(_rust_module)
             return self._driver_handle
@@ -213,7 +218,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             clients A and B use H -> close A -> B still holds its acquisition
             close A again -> no second driver release
 
-        Mark this RustBackend closed and remove its handle before cleanup. Release
+        Mark this BindingAdapter closed and remove its handle before cleanup. Release
         its SDK-owned async credential bridge, if present, but not the customer's
         credential. An operation already in progress can also retain the driver.
         """
@@ -231,12 +236,12 @@ class RustBackend(RustBackendShared, CosmosBackend):
             release_driver_handle(driver_handle)
         except Exception:  # pylint: disable=broad-except
             # The exception can also contain the handle; do not log its text or traceback.
-            _LOGGER.debug("RustBackend.close failed while releasing the driver handle")
+            _LOGGER.debug("BindingAdapter.close failed while releasing the driver handle")
 
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.
 
-        Unclosed RustBackend -> detach its async credential bridge and driver handle
+        Unclosed BindingAdapter -> detach its async credential bridge and driver handle
         -> finalize_backend_resources. Explicit close remains the normal path.
         """
         try:
@@ -271,7 +276,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             raise TypeError("execute requires a PreparedRequest")
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend.execute: the compiled "
+                "BindingAdapter.execute: the compiled "
                 "azure.cosmos._rust module is not present in "
                 "this environment. Build it with `maturin develop` from "
                 "the repo root."
@@ -280,7 +285,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         binding_function = _binding_function_for_op(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
-                "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
+                "BindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
             )
         driver_handle = self._ensure_driver_handle()
         # This records the chosen function, not proof that a request was sent.
@@ -341,7 +346,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         """
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend.get_container_metadata: the compiled "
+                "BindingAdapter.get_container_metadata: the compiled "
                 "azure.cosmos._rust module is not present in this environment."
             )
         binding_function = getattr(_rust_module, "get_container_metadata", None)
@@ -408,7 +413,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         Orders query without feed cursor -> require query_items.
         Missing support raises here instead of after driver acquisition.
         """
-        validate_page_request(prepared, _rust_module, _binding_function_by_name, "RustBackend")
+        validate_page_request(prepared, _rust_module, _binding_function_by_name, "BindingAdapter")
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
         """Create an empty feed cursor retained by one page iterator.

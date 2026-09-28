@@ -8,8 +8,9 @@ from __future__ import annotations
 
 import ast
 import asyncio
+import copy
 import pathlib
-import re
+from types import SimpleNamespace
 
 import pytest
 
@@ -17,29 +18,30 @@ from common import _parity_helpers
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
-def test_header_pushback_references_match_document_headings():
-    document = (
-        pathlib.Path(__file__).resolve().parents[2] / "docs" / "V5" / "api-review" / "RUST_PARITY_PUSHBACKS.md"
-    ).read_text(encoding="utf-8")
-    headings = {
-        int(number): title
-        for number, title in re.findall(r"^## (\d+) - (.+)$", document, re.MULTILINE)
+def test_header_pushback_references_match_reviewed_contract():
+    """Pin report references in tracked code, not an ignored local document."""
+    expected_headers = {
+        "date", "server", "content-type", "content-length", "content-location",
+        "cache-control", "pragma", "strict-transport-security",
+        "transfer-encoding", "x-ms-cosmos-min-throughput",
     }
-    for number, title in set(_parity_helpers.BackendComparison._HEADER_TO_PUSHBACK.values()):
-        assert headings.get(number) == title
+    expected_reference = (26, "The original HTTP response headers are discarded")
+    assert _parity_helpers.BackendComparison._HEADER_TO_PUSHBACK == {
+        header: expected_reference for header in expected_headers
+    }
 
 
 @pytest.mark.parametrize(
-    "header, pushback",
-    [("date", 26), ("x-ms-cosmos-min-throughput", 26)],
+    "header",
+    sorted(_parity_helpers.BackendComparison._HEADER_TO_PUSHBACK),
 )
-def test_header_verdict_references_current_pushbacks(header, pushback):
+def test_header_verdict_references_current_pushbacks(header):
     core = _parity_helpers.CallOutcome(backend="core-python", return_value={}, response_headers={header: "value"})
     rust = _parity_helpers.CallOutcome(backend="rust", return_value={}, response_headers={})
     comparison = _parity_helpers.BackendComparison(
         core_python=core, rust=rust, diffs=_parity_helpers.diff_outcomes(core, rust)
     )
-    assert f"Pushback #{pushback} " in comparison._verdict()
+    assert "Pushback #26 (The original HTTP response headers are discarded):" in comparison._verdict()
     assert not comparison.is_parity
 
 
@@ -113,6 +115,64 @@ def test_unrecorded_headers_remain_visible_without_claiming_a_known_defect(heade
     assert not comparison.is_parity
 
 
+def _without_docstrings(method):
+    """Copy a parsed method, removing only definition-leading docstrings."""
+    result = copy.deepcopy(method)
+    for node in ast.walk(result):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            if ast.get_docstring(node, clean=False) is not None:
+                node.body = node.body[1:]
+    return result
+
+
+@pytest.mark.parametrize("prefix", ["", "async "])
+def test_executable_comparison_ignores_only_docstrings(prefix):
+    source = (
+        f"{prefix}def check(self):\n"
+        '    """Original explanation."""\n'
+        '    value = "order-42"\n'
+        '    assert value == "order-42"\n'
+    )
+    original = ast.parse(source).body[0]
+    revised = ast.parse(source.replace("Original explanation.", "Expanded explanation.")).body[0]
+    undocumented = ast.parse(source.replace('    """Original explanation."""\n', "")).body[0]
+    expected = ast.dump(_without_docstrings(original))
+    assert ast.dump(_without_docstrings(revised)) == expected
+    assert ast.dump(_without_docstrings(undocumented)) == expected
+    assert ast.get_docstring(original) == "Original explanation."
+    assert ast.get_docstring(revised) == "Expanded explanation."
+
+
+@pytest.mark.parametrize("prefix", ["", "async "])
+@pytest.mark.parametrize(
+    "before, after",
+    [
+        ('create(id="sales")', 'create(id="other")'),
+        ('assert value == "order-42"', 'assert value == "wrong-order"'),
+        ('assert value == "order-42"', "pass"),
+        ('delete(id="sales")', 'delete(id="other")'),
+        ('delete(id="sales")', "pass"),
+        ('"keep this later string"', '"different later string"'),
+        ("@marker", "@other_marker"),
+        ("check(self)", "check(self, extra)"),
+    ],
+)
+def test_executable_comparison_preserves_logic_changes(prefix, before, after):
+    source = (
+        f"@marker\n{prefix}def check(self):\n"
+        '    """Explanation."""\n'
+        '    value = create(id="sales")\n'
+        '    try:\n'
+        '        assert value == "order-42"\n'
+        '        "keep this later string"\n'
+        '    finally:\n'
+        '        delete(id="sales")\n'
+    )
+    original = ast.parse(source).body[0]
+    changed = ast.parse(source.replace(before, after)).body[0]
+    assert ast.dump(_without_docstrings(original)) != ast.dump(_without_docstrings(changed))
+
+
 @pytest.mark.parametrize("surface", ["sync", "aio"])
 def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions(surface):
     root = pathlib.Path(__file__).resolve().parents[1]
@@ -132,6 +192,8 @@ def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions(surfa
             n for n in ast.walk(copied)
             if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name
         )
+        original_method = _without_docstrings(original_method)
+        copied_method = _without_docstrings(copied_method)
         assert ast.dump(original_method) == ast.dump(copied_method)
         if "negative" in stem:
             setup_calls = [
@@ -160,7 +222,7 @@ class _Client:
         self.close_count += 1
 
 
-class _RustBackend:
+class _BindingAdapter:
     """Identify a fake request implementation as Rust."""
     name = "rust"
 
@@ -169,7 +231,7 @@ class _RustBackend:
 @pytest.mark.parametrize(
     "scenario", [
         "success", "operation_error", "assertion", "interrupt",
-        "wrong_backend", "close_error", "assertion_and_close_error",
+        "wrong_backend", "close_error", "assertion_and_close_error", "capture_error",
     ]
 )
 def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
@@ -181,8 +243,13 @@ def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
         "interrupt": KeyboardInterrupt(),
         "close_error": RuntimeError("cleanup failed"),
         "assertion_and_close_error": RuntimeError("cleanup failed"),
+        "capture_error": RuntimeError("header capture failed"),
     }.get(scenario)
     assertion_failure = AssertionError("test failed before cleanup")
+
+    class FailingHeaders:
+        def __iter__(self):
+            raise failure
 
     class Client(_Client):
         def close(self):
@@ -199,9 +266,9 @@ def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
 
     def factory(requested):
         assert all(client.close_count == 1 for client in clients)
-        backend = LEGACY_BACKEND if requested == "core-python" else _RustBackend()
+        backend = LEGACY_BACKEND if requested == "core-python" else _BindingAdapter()
         if scenario == "wrong_backend":
-            backend = _RustBackend() if requested == "core-python" else LEGACY_BACKEND
+            backend = _BindingAdapter() if requested == "core-python" else LEGACY_BACKEND
         client = Client(backend)
         clients.append(client)
         return client
@@ -213,6 +280,8 @@ def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
             raise failure
         if scenario == "assertion_and_close_error":
             raise assertion_failure
+        if scenario == "capture_error":
+            client.client_connection.last_response_headers = FailingHeaders()
         return {"value": 1}
 
     async def async_call(client):
@@ -270,7 +339,7 @@ def test_runner_distinguishes_assertions_from_operation_errors(
             return False
 
     def factory(requested):
-        return AsyncClient(LEGACY_BACKEND if requested == "core-python" else _RustBackend())
+        return AsyncClient(LEGACY_BACKEND if requested == "core-python" else _BindingAdapter())
 
     async def async_call(client):
         return call(client)
@@ -301,6 +370,58 @@ def test_runner_distinguishes_assertions_from_operation_errors(
         assert comparison.is_parity == (failing_backend == "both")
 
 
+@pytest.mark.parametrize("surface", ["sync", "aio"])
+@pytest.mark.parametrize("source", ["headers", "empty_headers", "response", "empty_response", "local"])
+def test_runner_captures_failed_response_not_client_state(surface, source, monkeypatch):
+    errors = []
+    expected = {"x-ms-activity-id": "failed-request"} if source in ("headers", "response") else {}
+
+    class Client(_Client):
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *_args):
+            self.close()
+
+    def factory(requested):
+        return Client(LEGACY_BACKEND if requested == "core-python" else _BindingAdapter())
+
+    def call(client):
+        client.client_connection.last_response_headers = {"etag": "earlier-success"}
+        error = ValueError("bad request")
+        if source in ("headers", "empty_headers"):
+            error.headers = dict(expected)
+            error.response = SimpleNamespace(headers={"must-not-override": "explicit headers"})
+        elif source in ("response", "empty_response"):
+            error.response = SimpleNamespace(headers=dict(expected))
+        errors.append(error)
+        raise error
+
+    async def async_call(client):
+        return call(client)
+
+    monkeypatch.setenv(_parity_helpers.ENV_ENDPOINT, "https://unused.invalid")
+    monkeypatch.setenv(_parity_helpers.ENV_KEY, "unused-test-key")
+    monkeypatch.setattr(
+        _parity_helpers, "AioCosmosClient",
+        lambda _endpoint, _key, *, _backend: factory(_backend),
+    )
+    comparison = (
+        _parity_helpers.run_on_both_backends(call, client_factory=factory)
+        if surface == "sync"
+        else asyncio.run(_parity_helpers.run_on_both_backends_async(async_call))
+    )
+    for outcome, error in zip((comparison.core_python, comparison.rust), errors):
+        assert outcome.raised is error
+        assert outcome.response_headers == expected
+        if hasattr(error, "headers"):
+            error.headers["later"] = "not captured"
+        if hasattr(error, "response"):
+            error.response.headers["later"] = "not captured"
+        assert outcome.response_headers == expected
+    comparison.assert_exception_parity()
+
+
 def test_runner_rejects_factory_that_returns_core_python_for_rust():
     """A broken factory must not compare core-python against itself."""
 
@@ -315,7 +436,7 @@ def test_runner_accepts_clients_with_the_requested_backends():
     """The backend identity check accepts one real label per column."""
 
     def factory(requested):
-        return _Client(LEGACY_BACKEND if requested == "core-python" else _RustBackend())
+        return _Client(LEGACY_BACKEND if requested == "core-python" else _BindingAdapter())
 
     comparison = _parity_helpers.run_on_both_backends(
         lambda _client: {"value": 1},
@@ -335,7 +456,7 @@ def test_runner_does_not_swallow_process_control_exceptions():
         _parity_helpers.run_on_both_backends(
             call,
             client_factory=lambda requested: _Client(
-                LEGACY_BACKEND if requested == "core-python" else _RustBackend()
+                LEGACY_BACKEND if requested == "core-python" else _BindingAdapter()
             ),
         )
 
@@ -387,7 +508,7 @@ def test_target_operation_requires_binding_counter_movement(monkeypatch):
 
     with pytest.raises(AssertionError, match="did not enter"):
         _parity_helpers.run_target_operation(
-            _Client(_RustBackend()), lambda: {"value": 1}
+            _Client(_BindingAdapter()), lambda: {"value": 1}
         )
 
 
@@ -399,7 +520,7 @@ def test_target_operation_can_assert_intentional_fallback(monkeypatch):
     )
 
     result = _parity_helpers.run_target_operation(
-        _Client(_RustBackend()), lambda: {"value": 1}, expect_rust=False
+        _Client(_BindingAdapter()), lambda: {"value": 1}, expect_rust=False
     )
 
     assert result == {"value": 1}

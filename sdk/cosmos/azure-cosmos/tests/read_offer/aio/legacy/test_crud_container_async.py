@@ -71,9 +71,8 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         try:
             await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
+        finally:
+            await self.client.close()
 
     def __validate_offer_response_body(self, offer, expected_coll_link, expected_offer_type):
         assert offer.properties['id'] is not None

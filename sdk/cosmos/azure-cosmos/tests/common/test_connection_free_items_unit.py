@@ -724,7 +724,7 @@ def test_public_context_and_compatibility_bridge(monkeypatch, async_mode, compac
 
     def initialize(connection, **kwargs):
         assert len(created_contexts) == 1
-        assert created_contexts[0].backend is backend
+        assert created_contexts[0].adapter is backend
         assert created_contexts[0].defaults.no_response_on_write is True
         assert created_contexts[0].defaults.enable_compact_utf8_item_writes is compact_utf8
         assert kwargs["enable_compact_utf8_item_writes"] is compact_utf8

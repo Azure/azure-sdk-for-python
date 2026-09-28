@@ -30,7 +30,7 @@ and sums their achieved req/s into a per-N throughput curve.
      printed; a mixed-build curve is called out, not silently pooled.
 
 USAGE:
-  source ./perf_env.sh                        # exports RESULTS_COSMOS_* (incl. key)
+  source ./perf_drill_defaults.sh                        # exports RESULTS_COSMOS_* (incl. key)
   python3 scaleout_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix scaleout-] \
       [--warmup 600]
 
@@ -88,7 +88,7 @@ def _connect():
     if not uri or not key:
         print(
             "ERROR: RESULTS_COSMOS_URI / RESULTS_COSMOS_KEY not set. "
-            "`source ./perf_env.sh` (after exporting the key) first.",
+            "`source ./perf_drill_defaults.sh` (after exporting the key) first.",
             file=sys.stderr,
         )
         sys.exit(2)

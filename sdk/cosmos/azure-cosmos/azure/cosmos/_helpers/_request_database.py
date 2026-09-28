@@ -201,7 +201,7 @@ def build_create_database_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the account-level prepared request consumed by RustBackend."""
+    """Build the account-level prepared request consumed by BindingAdapter."""
     validate_resource(database)
     headers, settings = account_request_settings(request_options, kwargs)
     manual = settings.resource.offer_throughput is not None or "x-ms-offer-throughput" in headers

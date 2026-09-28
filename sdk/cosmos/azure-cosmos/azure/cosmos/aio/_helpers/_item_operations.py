@@ -8,7 +8,7 @@
 Preparation uses the same functions as azure.cosmos._helpers._item_operations:
 normalize arguments, reject unsupported options, and build a prepared request.
 For example, an order read becomes PreparedRequest before this helper awaits
-AsyncRustBackend.execute and parses the returned BackendResponse.
+AsyncBindingAdapter.execute and parses the returned BackendResponse.
 
 Patch also completes the customer result here. With a supplied deadline,
 run_with_deadline runs that work in a Python task and waits for the task to

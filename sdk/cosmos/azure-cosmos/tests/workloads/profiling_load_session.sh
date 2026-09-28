@@ -4,7 +4,7 @@
 #
 # SOURCE this file; do not execute it:
 #
-#     source ./profiling_activate.sh <session-directory-name>
+#     source ./profiling_load_session.sh <session-directory-name>
 #
 # Executing it would set everything inside a child process that exits
 # immediately, taking the settings with it. Sourcing runs it in the current
@@ -12,8 +12,8 @@
 #
 # It activates ~/venvs/perfdrill, loads ~/profiling_config.env and
 # ~/perf_secrets.env, supplies shared functions from perf_common.sh,
-# and loads the explicitly selected session opened by profiling_start_session.sh, so
-# PROFILING_SESSION_ID and ARTIFACTS identify saved evidence.
+# and loads the explicitly selected session opened by profiling_create_session.sh, so
+# PROFILING_SESSION_ID and PROFILING_SESSION_DIR identify saved evidence.
 #
 # Use it when opening a second terminal, or coming back to a session later.
 # It does NOT update source, build, seed, or start a workload. To prepare the
@@ -21,18 +21,18 @@
 # explicit --confirm-target arguments. Updating source/building are separate.
 #
 # Usage:
-#   source ./profiling_activate.sh point-read-profile-20260810-180432717
+#   source ./profiling_load_session.sh point-read-profile-20260810-180432717
 # ---------------------------------------------------------------------------
 
 # Guard against being executed rather than sourced: without this the failure is
 # silent and confusing, because the script "succeeds" and nothing is set.
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "ERROR: source this file, do not run it:" >&2
-  echo "    source ./profiling_activate.sh <session-directory-name>" >&2
+  echo "    source ./profiling_load_session.sh <session-directory-name>" >&2
   exit 2
 fi
 
-_profiling_activate() {
+_profiling_load_selected_session() {
   local here session_name session_dir
   if [[ $# -ne 1 || -z "$1" ]]; then
     echo "ERROR: specify one profiling session directory name; automatic newest-session selection is removed." >&2
@@ -64,13 +64,13 @@ _profiling_activate() {
   echo "    target   : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
   echo "    python   : ${VIRTUAL_ENV}"
   echo "    profiling_session_id: ${PROFILING_SESSION_ID}"
-  echo "    artifacts: ${ARTIFACTS}"
+  echo "    artifacts: ${PROFILING_SESSION_DIR}"
 }
 
-_profiling_activate "$@"
+_profiling_load_selected_session "$@"
 # Preserve the function's status: without this the sourced file's status would
 # be that of 'unset -f', which always succeeds, so a failed activation would
 # report success to the caller.
-_profiling_activate_rc=$?
-unset -f _profiling_activate
-return "${_profiling_activate_rc}"
+_profiling_load_selected_session_rc=$?
+unset -f _profiling_load_selected_session
+return "${_profiling_load_selected_session_rc}"

@@ -69,8 +69,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        finally:
+            self.client.close()
 
     def __ValidateOfferResponseBody(self, offer, expected_coll_link, expected_offer_type):
         self.assertIsNotNone(offer.properties['id'], 'Id cannot be null.')

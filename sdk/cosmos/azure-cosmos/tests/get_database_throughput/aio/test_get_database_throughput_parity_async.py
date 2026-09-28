@@ -13,24 +13,28 @@ capacity and cost planning.
 from __future__ import annotations
 
 import os
+from copy import deepcopy
 import uuid
 
 import pytest
 
 from azure.cosmos import CosmosClient, ThroughputProperties, exceptions
-from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+from common._parity_helpers import (
+    run_on_both_backends_async, run_target_operation_async,
+    skip_unless_emulator, skip_unless_rust_binding,
+)
+from common.parity_provisioning import create_owned_database
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 
 
 def _normalize_throughput(throughput_properties):
-    """Return the customer-visible fields so engine-internal fields do not affect equality."""
-    # Reduce the result to the numbers a customer reads, so the two engines
-    # compare equal regardless of server-stamped fields on the raw offer.
+    """Compare the public fields and complete offer properties for the same database."""
     return {
         "offer_throughput": throughput_properties.offer_throughput,
         "auto_scale_max_throughput": throughput_properties.auto_scale_max_throughput,
         "auto_scale_increment_percent": throughput_properties.auto_scale_increment_percent,
+        "properties": throughput_properties.properties,
     }
 
 
@@ -43,18 +47,16 @@ def _database_with_throughput(offer_throughput):
     """
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     database_id = "parity_get_db_tp_a_" + uuid.uuid4().hex[:8]
-    if offer_throughput is None:
-        client.create_database(id=database_id)
-    else:
-        client.create_database(id=database_id, offer_throughput=offer_throughput)
     try:
+        create_owned_database(client, id=database_id, offer_throughput=offer_throughput)
         yield database_id
     finally:
         try:
             client.delete_database(database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        client.close()
+        finally:
+            client.close()
 
 
 @pytest.fixture
@@ -83,7 +85,7 @@ async def test_get_throughput_fixed_async(fixed_throughput_database):
     async def _do(client):
         """Read fixed throughput from one engine."""
         database = client.get_database_client(fixed_throughput_database)
-        return _normalize_throughput(await database.get_throughput())
+        return _normalize_throughput(await run_target_operation_async(client, database.get_throughput))
 
     comparison = await run_on_both_backends_async(
         _do, description="async database get_throughput, fixed RU/s"
@@ -101,7 +103,7 @@ async def test_get_throughput_autoscale_async(autoscale_database):
     async def _do(client):
         """Read autoscale throughput from one engine."""
         database = client.get_database_client(autoscale_database)
-        return _normalize_throughput(await database.get_throughput())
+        return _normalize_throughput(await run_target_operation_async(client, database.get_throughput))
 
     comparison = await run_on_both_backends_async(
         _do, description="async database get_throughput, autoscale"
@@ -109,17 +111,17 @@ async def test_get_throughput_autoscale_async(autoscale_database):
     comparison.print_report()
     comparison.assert_functional_parity()
     assert comparison.core_python.return_value["auto_scale_max_throughput"] == 5000
+    assert comparison.core_python.return_value["auto_scale_increment_percent"] == 2
     assert comparison.core_python.return_value["offer_throughput"] is None
 
 
 async def test_get_throughput_without_provisioned_throughput_async(database_without_throughput):
-    """A database with no throughput: rust raises a typed 404, core-python crashes."""
-    # Keep the known difference visible until Python also returns the typed 404.
+    """Both implementations report a missing database offer as a typed 404."""
 
     async def _do(client):
         """Attempt to read throughput on a database that owns no offer."""
         database = client.get_database_client(database_without_throughput)
-        return _normalize_throughput(await database.get_throughput())
+        return _normalize_throughput(await run_target_operation_async(client, database.get_throughput))
 
     comparison = await run_on_both_backends_async(
         _do, description="async database get_throughput, no throughput"
@@ -130,10 +132,68 @@ async def test_get_throughput_without_provisioned_throughput_async(database_with
         "rust should report a missing offer as a typed 404, got {!r}".format(comparison.rust.raised)
     )
     assert comparison.rust.raised.status_code == 404
-    assert isinstance(comparison.core_python.raised, AttributeError), (
-        "core-python is expected to crash in its retry policy for this case; if it now "
-        "raises a Cosmos error, the defect is fixed and this test should require "
-        "matching typed errors on both engines instead. Got {!r}".format(
-            comparison.core_python.raised
+    assert isinstance(comparison.core_python.raised, exceptions.CosmosResourceNotFoundError)
+    assert comparison.core_python.raised.status_code == 404
+    comparison.assert_functional_parity()
+
+
+@pytest.mark.parametrize("warm", [False, True])
+async def test_get_throughput_preserves_inputs_and_callback_result_async(fixed_throughput_database, warm):
+    async def read(client):
+        database = client.get_database_client(fixed_throughput_database)
+        if warm:
+            await database.read()
+        options = {"initialHeaders": {"x-ms-client-request-id": "database-throughput-parity"}}
+        original = deepcopy(options)
+        callbacks = []
+
+        def hook(headers, offers):
+            callbacks.append((dict(headers), deepcopy(list(offers))))
+            headers.clear()
+            offers[0]["content"]["offerThroughput"] = 999
+
+        result = await run_target_operation_async(
+            client, lambda: database.get_throughput(request_options=options, response_hook=hook)
         )
+        assert options == original
+        assert len(callbacks) == 1
+        assert result.offer_throughput == 1000
+        assert callbacks[0][1][0]["content"]["offerThroughput"] == 1000
+        headers = result.get_response_headers()
+        assert float(headers["x-ms-request-charge"]) > 0
+        assert dict(headers) == callbacks[0][0]
+        await database.read()
+        assert result.get_response_headers() == headers
+        return _normalize_throughput(result)
+
+    comparison = await run_on_both_backends_async(
+        read, description=f"async database throughput ownership, warm properties={warm}",
+        request_kwargs={"request_options": {"initialHeaders": {
+            "x-ms-client-request-id": "database-throughput-parity",
+        }}},
     )
+    comparison.assert_functional_parity()
+
+
+@pytest.mark.parametrize("options", [
+    {"read_timeout": 2},
+    {"availability_strategy": {"type": "hedging"}},
+    {"initial_headers": {"Accept": "unsupported"}},
+])
+async def test_rust_database_read_rejects_unsupported_inputs_async(monkeypatch, options):
+    from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+    async with AsyncCosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
+    ) as client:
+        database = client.get_database_client("not-requested")
+
+        def unexpected_request(*args, **kwargs):
+            pytest.fail("unsupported input must be rejected before metadata or legacy execution")
+
+        monkeypatch.setattr(database, "_get_properties", unexpected_request)
+        monkeypatch.setattr(client.client_connection, "QueryOffers", unexpected_request)
+        with pytest.raises(NotImplementedError, match="legacy Python path"):
+            await run_target_operation_async(
+                client, lambda: database.get_throughput(**options), expect_rust=False,
+            )

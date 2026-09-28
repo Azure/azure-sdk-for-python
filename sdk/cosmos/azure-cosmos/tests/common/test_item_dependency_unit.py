@@ -47,8 +47,8 @@ from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import rust_backend as sync_rust
-from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos.aio._backend import binding_adapter as async_rust
 from common.test_connection_free_items_unit import Backend, AsyncBackend
 from create_item.test_create_item_contract_unit import point_create
 from read_item.test_read_item_contract_unit import point_read
@@ -344,8 +344,8 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once(
     Four operations are covered, with the item given either as an id or as
     something holding an id and its own address. On the legacy path a link is
     built from the container address and the id, or taken from the item's own
-    address when it has one. On the Rust path no link is built at all -- the id
-    and the container address are sent and the driver resolves the rest.
+    address when it has one. Rust reads preserve a mapping's resource address
+    without inspecting its id. String targets retain the item id for the driver.
 
     The fields are counted as they are read, using stand-ins that record each
     access. Reading them more than once is not free and not safe: these may be
@@ -402,11 +402,11 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once(
     capture.assert_called_once()
     assert not hasattr(context.proxy, "_get_document_link")
     if mapping:
-        assert lookups == ["_self", "id"]
+        assert lookups == (["_self"] if operation == "read_item" else ["_self", "id"])
     assert len(formatted) == (0 if context.rust or mapping else 1)
     if context.rust:
         prepared = capture.call_args.args[1]
-        assert prepared.item_id == "target"
+        assert prepared.item_id == (None if mapping and operation == "read_item" else "target")
         assert prepared.container_link == context.proxy.container_link
     else:
         expected = (
@@ -418,19 +418,22 @@ def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once(
 
 
 @pytest.mark.parametrize(
-    "operation", ["read_item", "delete_item", "replace_item", "patch_item"]
-)
-@pytest.mark.parametrize(
-    "item,missing", [({"id": "target"}, "_self"), ({"_self": "opaque"}, "id")]
+    "operation,item,missing",
+    [
+        (operation, item, missing)
+        for operation in ("read_item", "delete_item", "replace_item", "patch_item")
+        for item, missing in (({"id": "target"}, "_self"), ({"_self": "opaque"}, "id"))
+        if operation != "read_item" or missing == "_self"
+    ],
 )
 def test_mapping_validation_still_precedes_item_io(
     point_read, operation, item, missing
 ):
     """An item missing a field the call needs is refused before anything is sent.
 
-    Each of the two required fields is left out in turn, across four operations,
-    and the error names the missing one. Nothing reached the backend and no Rust
-    call was made.
+    The error names the missing required field. Read mappings only require _self;
+    the other operations still require both fields. Nothing reached the backend
+    and no Rust call was made.
 
     Checking first is what makes the message useful. Left until later, the same
     mistake would surface as a request built around an empty address and come
