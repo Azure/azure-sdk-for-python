@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.8 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed prompty-based evaluators failing without retrying when HTTP 424 explicitly identifies a customer-managed downstream HTTP 429. Retries retain the existing budget and delay policy, and structured `insufficient_quota` errors remain terminal, including nested and mixed-case subtypes.
+
 ## 1.18.7 (2026-09-25)
 
 ### Breaking Changes
