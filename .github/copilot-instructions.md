@@ -160,6 +160,11 @@ These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-
 ### CLIENT NAME CONSISTENCY
 - The client class name in `_client.py`, the client name referenced in `README.md`, and the `title` value in `pyproject.toml` must all be the same.
 
+### INITIAL-RELEASE CLIENT NAME
+- For a **confirmed first release** of a management SDK, the synchronous and asynchronous client class names must end with the exact suffix `MgmtClient`.
+- A noncompliant name is a **Blocking** finding. Ask the author to add or update the client-name customization in `client.tsp` to choose a descriptive name ending in `MgmtClient`, then regenerate the SDK.
+- Do not apply this rename requirement to existing releases, or infer a first release from a missing baseline alone. If first-release status or client declarations cannot be verified, report the check as unverified.
+
 ### README CODE SNIPPETS
 - Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
 

@@ -8,21 +8,23 @@ import re
 import tomllib
 from urllib.parse import quote
 
-CHECKS = (
+AUTOMATIC_CHECKS = (
     "Version consistency",
     "Preview version",
     "Changelog date",
     "Stability flags",
+    "Initial client name",
+)
+SEMANTIC_CHECKS = (
     "Client signature",
     "Client name consistency",
     "README snippets",
 )
-AUTOMATIC_CHECKS = CHECKS[:4]
-SEMANTIC_CHECKS = CHECKS[4:]
+CHECKS = AUTOMATIC_CHECKS + SEMANTIC_CHECKS
 MAX_REGISTERED_FILES = 20
 MAX_REGISTERED_BYTES = 1024 * 1024
 MAX_SNAPSHOT_BYTES = 8 * 1024 * 1024
-RULES_SHA256 = "85f9803e18f608cf206bdefce2b8b1d3f2036c7139d35376879b43bccf671b83"
+RULES_SHA256 = "fd2b994f5b3c7cbd4c9848b6bac4dddee131222d37c4d05e30798206e146dfbb"
 
 
 def allowed_sdk_file(relative, check=None):
@@ -30,7 +32,7 @@ def allowed_sdk_file(relative, check=None):
         return False
     if relative.startswith("azure/mgmt/"):
         return relative.endswith("/_client.py") or (
-            relative.endswith("/_version.py") and check in set(AUTOMATIC_CHECKS) - {"Changelog date"}
+            relative.endswith("/_version.py") and check in {"Version consistency", "Preview version", "Stability flags"}
         )
     return True
 
@@ -134,6 +136,48 @@ def deterministic_checks(context, package):
                 days = (datetime.date.fromisoformat(date) - datetime.date.fromisoformat(context["reviewDate"])).days
                 if days > 21:
                     observation = f"Latest changelog date {date} is {days} days in the future (more than 21)."
+            elif name == "Initial client name":
+                breaking = next(item for item in context["breakingChangeContext"] if item["packagePath"] == package)
+                baseline = breaking["releaseBaseline"]
+                if baseline["status"] == "available":
+                    _, _, ref = release()
+                    checks.append(
+                        {
+                            "name": name,
+                            "outcome": "not_applicable",
+                            "reason": "The trusted release baseline confirms a previously released package.",
+                            "sources": [ref],
+                        }
+                    )
+                    continue
+                if baseline["status"] != "not_applicable":
+                    raise ValueError("First-release status is unverified; do not infer it from a missing baseline.")
+                clients = [item for item in records if item["path"].endswith("/_client.py")]
+                synchronous = [item for item in clients if not item["path"].endswith("/aio/_client.py")]
+                if len(synchronous) != 1:
+                    raise ValueError("Expected one pinned synchronous _client.py to verify the initial client name.")
+                invalid = []
+                for record in clients:
+                    if record["path"].endswith("/aio/_client.py") and record["status"] == "missing":
+                        continue
+                    if record["status"] != "available" or not record["lineCount"]:
+                        raise ValueError(f"{record['path']}: {record['status']}: {record['error']}")
+                    classes = [
+                        node
+                        for node in ast.parse(record["content"]).body
+                        if isinstance(node, ast.ClassDef) and not node.name.startswith("_")
+                    ]
+                    if len(classes) != 1:
+                        raise ValueError(f"{record['path']}: expected one public client class declaration.")
+                    client = classes[0]
+                    evidence.append(citation(record, client.lineno, client.lineno))
+                    if not client.name.endswith("MgmtClient"):
+                        invalid.append(client.name)
+                if invalid:
+                    names = ", ".join(sorted(set(invalid)))
+                    observation = (
+                        f"Confirmed first release: client names {names} must end with the exact suffix MgmtClient."
+                    )
             else:
                 value, ref = version()
                 evidence.append(ref)
@@ -184,7 +228,12 @@ def deterministic_checks(context, package):
                         "remediation": (
                             "Verify and update the release date."
                             if name == "Changelog date"
-                            else "Align the package metadata with the management SDK review rule."
+                            else (
+                                "Add or update the client-name customization in client.tsp to choose a descriptive name "
+                                "ending in MgmtClient, then regenerate the SDK."
+                                if name == "Initial client name"
+                                else "Align the package metadata with the management SDK review rule."
+                            )
                         ),
                         "sources": evidence,
                     }

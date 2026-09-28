@@ -228,6 +228,115 @@ class EvidenceAndChecksTests(unittest.TestCase):
             set(evidence.SEMANTIC_CHECKS),
         )
 
+    def initial_client_fixture(self, synchronous="ExampleMgmtClient", asynchronous="ExampleMgmtClient"):
+        draft, trusted = fixture()
+        trusted["breakingChangeContext"][0]["releaseBaseline"] = {
+            "status": "not_applicable",
+            "reason": "Initial release independently confirmed.",
+        }
+        for path, name in (
+            ("azure/mgmt/example/_client.py", synchronous),
+            ("azure/mgmt/example/aio/_client.py", asynchronous),
+        ):
+            trusted["sources"].append(record(path, f"class {name}:\n    pass\n"))
+        return draft, trusted
+
+    def test_initial_client_names_accept_exact_suffix(self):
+        for name in ("ExampleMgmtClient", "MgmtClient"):
+            with self.subTest(name=name):
+                draft, trusted = self.initial_client_fixture(name, name)
+                checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                check = next(item for item in checks if item["name"] == "Initial client name")
+                self.assertEqual("completed", check["outcome"])
+                self.assertEqual(2, len(check["sources"]))
+                self.assertFalse(findings)
+                body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+                self.assertIn("Initial client name", body)
+                self.assertIn("**Findings:** None.", body)
+                self.assertIn("Review completeness: complete", body)
+
+    def test_initial_client_names_block_in_both_sync_and_async_clients(self):
+        for name in ("ExampleManagementClient", "ExampleClient", "ExampleMgmtClientExtra", "ExampleMgmtClient".lower()):
+            for kind in ("synchronous", "asynchronous"):
+                with self.subTest(name=name, kind=kind):
+                    draft, trusted = self.initial_client_fixture(**{kind: name})
+                    _, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                    self.assertEqual(1, len(findings))
+                    self.assertEqual("Initial client name", findings[0]["check"])
+                    self.assertEqual("Blocking", findings[0]["severity"])
+                    self.assertIn(name, findings[0]["observation"])
+                    self.assertIn("client.tsp", findings[0]["remediation"])
+                    self.assertIn("MgmtClient", findings[0]["remediation"])
+                    self.assertIn("regenerate", findings[0]["remediation"])
+                    self.assertEqual([], draft["packages"][0]["findings"])
+                    # Independent publication derives the blocker even when the model submits no findings.
+                    body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+                    self.assertIn("Blocking", body)
+                    self.assertIn(name, body)
+                    self.assertIn("client.tsp", body)
+
+    def test_initial_naming_does_not_force_renames_for_existing_or_ambiguous_releases(self):
+        for status, expected in (("available", "not_applicable"), ("unverified", "unverified")):
+            with self.subTest(status=status):
+                draft, trusted = self.initial_client_fixture("OldManagementClient", "OldManagementClient")
+                trusted["breakingChangeContext"][0]["releaseBaseline"] = {
+                    "status": status,
+                    "revision": "c" * 40,
+                    "error": "Historical package evidence unavailable.",
+                }
+                checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                check = next(item for item in checks if item["name"] == "Initial client name")
+                self.assertEqual(expected, check["outcome"])
+                self.assertFalse(findings)
+                self.assertTrue(check["reason"])
+                if status == "available":
+                    body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+                    self.assertIn("Initial client name ` (not applicable:", body)
+                    self.assertNotIn("client.tsp", body)
+
+    def test_initial_client_name_requires_readable_unambiguous_current_evidence(self):
+        for mutation in ("missing", "truncated", "access_error", "historical", "syntax", "multiple", "absent"):
+            with self.subTest(mutation=mutation):
+                draft, trusted = self.initial_client_fixture()
+                client = next(item for item in trusted["sources"] if item["path"].endswith("example/_client.py"))
+                if mutation in ("missing", "truncated", "access_error"):
+                    client["status"] = mutation
+                elif mutation == "historical":
+                    client["revision"] = trusted["firstRevision"]
+                elif mutation == "syntax":
+                    client["content"] = "class InvalidSyntax(:\n"
+                elif mutation == "multiple":
+                    client["content"] = "class OneMgmtClient: pass\nclass TwoMgmtClient: pass\n"
+                else:
+                    client["content"] = "from somewhere import Client\n"
+                checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+                check = next(item for item in checks if item["name"] == "Initial client name")
+                self.assertEqual("unverified", check["outcome"])
+                self.assertFalse(findings)
+                self.assertTrue(check["reason"])
+                body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+                self.assertIn("Review completeness: partial", body)
+
+    def test_optional_async_client_absence_differs_from_access_failure(self):
+        _, trusted = self.initial_client_fixture()
+        client = next(item for item in trusted["sources"] if item["path"].endswith("aio/_client.py"))
+        for status, expected in (("missing", "completed"), ("access_error", "unverified")):
+            client["status"] = status
+            checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+            check = next(item for item in checks if item["name"] == "Initial client name")
+            self.assertEqual(expected, check["outcome"])
+            self.assertFalse(findings)
+
+    def test_initial_client_ast_check_never_executes_package_code(self):
+        _, trusted = self.initial_client_fixture()
+        client = next(item for item in trusted["sources"] if item["path"].endswith("example/_client.py"))
+        client["content"] = 'raise RuntimeError("must not execute")\nclass ExampleMgmtClient:\n    pass\n'
+        checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
+        check = next(item for item in checks if item["name"] == "Initial client name")
+        self.assertEqual("completed", check["outcome"])
+        self.assertTrue(check["sources"][0]["url"].endswith("#L2"))
+        self.assertFalse(findings)
+
     def test_no_findings_and_partial_are_distinct(self):
         draft, trusted = fixture()
         output = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
@@ -246,7 +355,7 @@ class EvidenceAndChecksTests(unittest.TestCase):
         trusted["mgmtSdkCodeReviewRules"] += "\nNew requirement."
         checks, findings = evidence.deterministic_checks(trusted, PACKAGE)
         self.assertFalse(findings)
-        self.assertEqual(["unverified"] * 4, [item["outcome"] for item in checks])
+        self.assertEqual(["unverified"] * len(evidence.AUTOMATIC_CHECKS), [item["outcome"] for item in checks])
         self.assertIn("rules changed", checks[0]["reason"])
         self.assertIn("partial", contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"])
 
@@ -258,7 +367,7 @@ class EvidenceAndChecksTests(unittest.TestCase):
         self.assertEqual(
             {"Version consistency", "Preview version", "Stability flags"}, {item["check"] for item in findings}
         )
-        self.assertEqual(["completed"] * 4, [item["outcome"] for item in checks])
+        self.assertEqual(["completed"] * 4 + ["not_applicable"], [item["outcome"] for item in checks])
         self.assertTrue(all(item["severity"] == "Blocking" for item in findings))
 
     def test_calendar_boundary_and_malformed_latest_heading(self):
@@ -443,7 +552,9 @@ class ServiceAndPublicationTests(unittest.TestCase):
                     # Explicit fixture migration selects ranges in independently supplied test content.
                     # It neither accepts the legacy payload nor guesses anchors in production.
                     self.assertTrue(contract.preflight(draft, trusted)["ok"])
-                    self.assertEqual(4, len(evidence.deterministic_checks(trusted, PACKAGE)[0]))
+                    self.assertEqual(
+                        len(evidence.AUTOMATIC_CHECKS), len(evidence.deterministic_checks(trusted, PACKAGE)[0])
+                    )
                 elif kind == "unavailable_with_anchor":
                     with self.assertRaisesRegex(contract.ReviewError, "citation_state_conflict"):
                         contract.source_identity(fragment["source"], "historical.source")

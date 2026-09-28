@@ -590,12 +590,9 @@ def collect():
     pr_number = int(os.environ["PR_NUMBER"])
     client = GitHubClient(repository, os.environ["GH_TOKEN"])
 
-    repository_data = client.get(f"/repos/{repository}")
-    default_branch = repository_data.get("default_branch")
-    branch_data = client.get(f"/repos/{repository}/branches/{urllib.parse.quote(default_branch, safe='')}")
-    rules_revision = branch_data.get("commit", {}).get("sha")
+    rules_revision = os.environ.get("REVIEW_TOOLING_SHA")
     if not isinstance(rules_revision, str) or not SHA_PATTERN.fullmatch(rules_revision):
-        raise GitHubApiError("Default branch metadata did not contain an immutable commit SHA")
+        raise GitHubApiError("REVIEW_TOOLING_SHA must pin review rules to the trusted workflow commit.")
     rules_file = client.read_file(".github/copilot-instructions.md", rules_revision)
     if rules_file.get("status") != "available":
         raise GitHubApiError(rules_file.get("error", "Could not load review rules"))

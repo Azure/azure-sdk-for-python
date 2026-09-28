@@ -341,7 +341,15 @@ class CollectionTests(unittest.TestCase):
 
         output = mock.mock_open()
         with (
-            mock.patch.dict(MODULE.os.environ, {"GH_REPOSITORY": "Azure/azure-sdk-for-python", "GH_TOKEN": "test", "PR_NUMBER": "1"}),
+            mock.patch.dict(
+                MODULE.os.environ,
+                {
+                    "GH_REPOSITORY": "Azure/azure-sdk-for-python",
+                    "GH_TOKEN": "test",
+                    "PR_NUMBER": "1",
+                    "REVIEW_TOOLING_SHA": "f" * 40,
+                },
+            ),
             mock.patch.object(MODULE.urllib.request, "urlopen", side_effect=respond) as requests,
             mock.patch("builtins.open", output),
         ):
@@ -357,6 +365,7 @@ class CollectionTests(unittest.TestCase):
     def test_snapshot_matches_event_and_tracks_tooling_separately(self):
         context = self.collect_context(event_head="b" * 40)
         self.assertEqual("9" * 40, context["toolingRevision"])
+        self.assertEqual(".github/copilot-instructions.md@" + "9" * 40, context["rulesSource"])
         self.assertEqual("c" * 40, context["mergeBaseRevision"])
         self.assertEqual("a" * 40, context["firstRevision"])
 
@@ -365,6 +374,30 @@ class CollectionTests(unittest.TestCase):
             self.collect_context(event_head="8" * 40)
         with self.assertRaisesRegex(MODULE.GitHubApiError, "during evidence collection"):
             self.collect_context(event_head="b" * 40, later_head="8" * 40)
+
+    def test_rules_require_the_trusted_tooling_revision_without_default_branch_fallback(self):
+        for revision in ("main", ""):
+            with (
+                self.subTest(revision=revision),
+                mock.patch.dict(
+                    MODULE.os.environ,
+                    {
+                        "GH_REPOSITORY": "Azure/azure-sdk-for-python",
+                        "GH_TOKEN": "test",
+                        "PR_NUMBER": "1",
+                        "REVIEW_TOOLING_SHA": revision,
+                    },
+                ),
+                mock.patch.object(MODULE.GitHubClient, "get") as request,
+            ):
+                with self.assertRaisesRegex(MODULE.GitHubApiError, "trusted workflow commit"):
+                    MODULE.collect()
+                request.assert_not_called()
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "404"):
+            self.collect_context(
+                event_head="b" * 40,
+                file_errors={("9" * 40, ".github/copilot-instructions.md"): 404},
+            )
 
     def collect_initial_release(self, **overrides):
         package = "sdk/contoso/azure-mgmt-contoso0"
@@ -564,17 +597,17 @@ class CollectionTests(unittest.TestCase):
         for package in packages[1:]:
             self.assertEqual([], package["introducedEntries"])
             self.assertIn("Needs human review", package["collectionIssues"][0])
-            self.assertIn("only 9 API requests remain", package["collectionIssues"][0])
+            self.assertIn("only 11 API requests remain", package["collectionIssues"][0])
 
     def test_budget_boundary_allows_full_package_or_explicit_handoff(self):
-        for limit, expected in ((30, "unverified"), (31, "complete")):
+        for limit, expected in ((28, "unverified"), (29, "complete")):
             with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
                 context = self.collect_context(annotated_tag=True)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
                 self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
 
     def test_event_head_budget_reserves_the_final_consistency_request(self):
-        for limit, expected in ((31, "unverified"), (32, "complete")):
+        for limit, expected in ((29, "unverified"), (30, "complete")):
             with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
                 context = self.collect_context(annotated_tag=True, event_head="b" * 40)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])

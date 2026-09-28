@@ -628,7 +628,9 @@ class StructuredReviewTests(unittest.TestCase):
         self.assertEqual(MODULE.text("`name`|value"), MODULE.text("\uff40name\uff40\uff5cvalue"))
 
     def test_publication_link_budget_is_checked_before_rewriting(self):
-        self.package["checks"][0]["sources"] = [reference(f"evidence{index}.md") for index in range(42)]
+        self.package["checks"][0]["sources"] = [
+            reference(f"evidence{index}.md") for index in range(49 - len(MODULE.CHECKS))
+        ]
         self.assertEqual(48, len(re.findall(r"https?://", self.render())))
         self.package["checks"][0]["sources"].append(reference("extra.md"))
         self.reject("48-link budget")
