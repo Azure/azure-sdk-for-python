@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class FileClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class FileClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for FileClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,14 +29,14 @@ class FileClientConfiguration:  # pylint: disable=too-many-instance-attributes
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-10-06" and None. Default value is None. If not set, the operation's default API
+     are "2027-03-07" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype version: str
     """
 
     def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        version: str = kwargs.pop("version", "2026-10-06")
+        version: str = kwargs.pop("version", "2027-03-07")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
