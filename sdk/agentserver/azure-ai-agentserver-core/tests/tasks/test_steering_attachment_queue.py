@@ -194,6 +194,8 @@ async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskM
     assert len(pending_pre) == 2
     assert _ref_key(pending_pre[0]) == "steering_input_0"
     assert _ref_key(pending_pre[1]) == "steering_input_1"
+    ack_ids_pre = info_pre.payload["steering"]["pending_ack_ids"]
+    assert len(ack_ids_pre) == len(set(ack_ids_pre)) == 2
     assert info_pre.attachments["steering_input_0"] == a_value
     assert info_pre.attachments["steering_input_1"] == b_value
 
@@ -207,6 +209,7 @@ async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskM
     pending_mid = info_mid.payload["steering"]["pending_inputs"]
     # Only B left in the queue.
     assert len(pending_mid) == 1
+    assert info_mid.payload["steering"]["pending_ack_ids"] == [ack_ids_pre[1]]
     # B's attachment key MUST still be steering_input_1 (not renamed to _0).
     assert _ref_key(pending_mid[0]) == "steering_input_1"
     # A's attachment is gone; B's is unchanged.
