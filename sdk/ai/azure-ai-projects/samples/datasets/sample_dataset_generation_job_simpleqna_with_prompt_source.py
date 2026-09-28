@@ -9,7 +9,7 @@ DESCRIPTION:
     End-to-end scenario combining `.beta.datasets` data generation with an
     evaluation run. The sample:
 
-      1. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna) that
+      1. Creates an `EvaluationDataGenerationJobInputs` (type=simple_qna) that
          synthesizes question/answer pairs from an inline prompt and writes them
          to a new versioned Dataset. Uses `begin_create_generation_job` and
          reports the standard LRO poller's status until the operation completes.
@@ -60,13 +60,12 @@ from openai.types.responses.response_input_text_param import ResponseInputTextPa
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
     DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
@@ -90,36 +89,33 @@ def main() -> None:
         # ------------------------------------------------------------------
         # 1. Generate a QnA evaluation dataset from an inline prompt.
         # ------------------------------------------------------------------
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name="qna-from-policy-prompt",
-                scenario=DataGenerationJobScenario.EVALUATION,
-                sources=[
-                    PromptDataGenerationJobSource(
-                        description="Contoso refund policy",
-                        prompt=(
-                            "Contoso offers a full refund within 30 days of purchase for any product "
-                            "returned in its original condition. After 30 days, store credit may be "
-                            "issued at the discretion of customer support. Digital goods are "
-                            "non-refundable once downloaded."
-                        ),
+        job_inputs = EvaluationDataGenerationJobInputs(
+            name="qna-from-policy-prompt",
+            sources=[
+                PromptDataGenerationJobSource(
+                    description="Contoso refund policy",
+                    prompt=(
+                        "Contoso offers a full refund within 30 days of purchase for any product "
+                        "returned in its original condition. After 30 days, store credit may be "
+                        "issued at the discretion of customer support. Digital goods are "
+                        "non-refundable once downloaded."
                     ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    model_options=DataGenerationModelOptions(model=model_name),
                 ),
-                output_options=DataGenerationJobOutputOptions(
-                    name=dataset_name,
-                    description="QnA pairs generated from the Contoso refund policy prompt.",
-                    tags={"sample": "dataset-generation-with-evaluation"},
-                ),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                model_options=DataGenerationModelOptions(model=model_name),
+            ),
+            output_configuration=EvaluationDataGenerationJobOutputTarget(
+                name=dataset_name,
+                description="QnA pairs generated from the Contoso refund policy prompt.",
+                tags={"sample": "dataset-generation-with-evaluation"},
             ),
         )
         print("Begin creating a dataset generation job.")
         poller = project_client.beta.datasets.begin_create_generation_job(
-            job=job,
+            job=job_inputs,
             polling_interval=poll_interval_seconds,
         )
 

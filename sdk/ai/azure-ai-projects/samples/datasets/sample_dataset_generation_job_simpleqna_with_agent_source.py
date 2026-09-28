@@ -14,7 +14,7 @@ DESCRIPTION:
 
       1. Creates a `PromptAgentDefinition` agent with domain-specific
          instructions (a small Widgets & Gizmos customer-support persona).
-      2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
+      2. Creates an `EvaluationDataGenerationJobInputs` (type=simple_qna)
          whose source is an `Agent` reference pointing at the new agent. The
          service fetches the agent's instructions / prompt and uses the
          configured LLM to synthesize question / answer pairs from them.
@@ -63,13 +63,11 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentDataGenerationJobSource,
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
     SimpleQnADataGenerationJobOptions,
 )
@@ -139,29 +137,26 @@ with (
         # The service fetches the agent's instructions / prompt and uses
         # `model_options.model` to synthesize QnA pairs from them.
         print(f"Create a SimpleQnA evaluation job sourced from agent `{agent.name}` (version {agent.version}).")
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-agent-{run_id}",
-                scenario=DataGenerationJobScenario.EVALUATION,
-                sources=[
-                    AgentDataGenerationJobSource(
-                        description="Agent definition (instructions / prompt) used to seed QnA generation.",
-                        agent_name=agent.name,
-                        agent_version=agent.version,
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
+        job_inputs = EvaluationDataGenerationJobInputs(
+            name=f"simpleqna-agent-{run_id}",
+            sources=[
+                AgentDataGenerationJobSource(
+                    description="Agent definition (instructions / prompt) used to seed QnA generation.",
+                    agent_name=agent.name,
+                    agent_version=agent.version,
                 ),
-                output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
             ),
+            output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
         )
         print("Begin creating a dataset generation job.")
         poller = project_client.beta.datasets.begin_create_generation_job(
-            job=job,
+            job=job_inputs,
             polling_interval=poll_interval_seconds,
         )
 
