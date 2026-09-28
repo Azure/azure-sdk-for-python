@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -191,9 +192,8 @@ class ReviewTriggerTests(unittest.TestCase):
     def test_compiled_pipeline_uses_one_resolved_target_without_test_bypass(self):
         lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
         source = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("workflow_dispatch:", lock)
         self.assertIn("pull_request_target:", lock)
-        self.assertIn("inputs.pr_number", lock)
+        self.assertIn("github.event.inputs.pr_number", lock)
         self.assertIn("job-discriminator:", source)
         self.assertNotIn("publish:", source)
         self.assertNotIn("staged:", source)
@@ -210,6 +210,101 @@ class ReviewTriggerTests(unittest.TestCase):
             self.assertNotIn("REVIEW_HEAD_SHA: ${{ github.event.pull_request.head.sha }}", job)
         self.assertEqual(1, lock.count("name: Validate and render management SDK review"))
         self.assertEqual(1, lock.count("name: Process Safe Outputs"))
+
+    def test_manual_dispatch_is_commented_out_and_concurrency_stays_active(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+        self.assertIn("  # workflow_dispatch:", source)
+        self.assertIn("  #     pr_number:", source)
+        for content in (source, lock):
+            self.assertNotRegex(content, r"(?m)^  workflow_dispatch:")
+            self.assertIn(
+                "  group: mgmt-sdk-pr-review-${{ github.event.pull_request.number || github.event.inputs.pr_number }}",
+                content,
+            )
+        self.assertIn("Manual dispatch is **disabled by default**", source)
+        self.assertIn("comment the block out again and recompile before merging", source)
+
+    def test_unauthorized_manual_jobs_skip_before_setup_even_on_partial_reruns(self):
+        lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+        guard = (
+            "github.event_name != 'workflow_dispatch' || "
+            "(github.actor == 'msyyc' && github.triggering_actor == 'msyyc')"
+        )
+        for name in (
+            "pre_activation",
+            "activation",
+            "review_context",
+            "agent",
+            "detection",
+            "safe_outputs",
+            "conclusion",
+        ):
+            with self.subTest(job=name):
+                job = re.split(r"\n  [a-z_]+:\n", lock.split(f"\n  {name}:\n", 1)[1])[0]
+                condition = re.search(r"(?m)^    if: (.+?)(?=\n    \S|\Z)", job, re.DOTALL)[1]
+                self.assertIn(guard, " ".join(condition.split()))
+        notice = re.split(r"\n  [a-z_]+:\n", lock.split("\n  manual_access_notice:\n", 1)[1])[0]
+        self.assertIn("permissions: {}", notice)
+        self.assertNotIn("uses:", notice)
+        self.assertNotIn("secrets.", notice)
+        # gh-aw adds this dependency; an explicit status function must bypass its skipped state.
+        self.assertIn("needs: activation", notice)
+        condition = re.search(r"(?m)^    if: (.+?)(?=\n    \S|\Z)", notice, re.DOTALL)[1]
+        self.assertIn(
+            "always() && (github.event_name == 'workflow_dispatch' || github.event.label.name == 'mgmt-review-needed')",
+            " ".join(condition.split()),
+        )
+        self.assertIn(
+            "github.event_name == 'workflow_dispatch' && (github.actor != 'msyyc' || github.triggering_actor != 'msyyc')",
+            notice,
+        )
+        # Keep the condition's allowlist in parity with the independent Python backstop.
+        for actor, triggering_actor, permitted in (
+            ("msyyc", "MSYYC", True),
+            ("other", "msyyc", False),
+            ("msyyc", "other", False),
+        ):
+            with self.subTest(actor=actor, triggering_actor=triggering_actor):
+                if permitted:
+                    collector.authorize_manual_run(
+                        REPO, "workflow_dispatch", actor, triggering_actor, "refs/heads/main"
+                    )
+                else:
+                    with self.assertRaisesRegex(collector.GitHubApiError, "manual_actor_forbidden"):
+                        collector.authorize_manual_run(
+                            REPO, "workflow_dispatch", actor, triggering_actor, "refs/heads/main"
+                        )
+
+    def test_compiled_skip_notice_succeeds_with_clear_log_and_summary(self):
+        lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+        notice = re.split(r"\n  [a-z_]+:\n", lock.split("\n  manual_access_notice:\n", 1)[1])[0]
+        step = notice.split("name: Skip unauthorized manual review\n", 1)[1]
+        script = re.search(r"run: \|\n((?:          .*\n)+)", step)[1]
+        script = "\n".join(line[10:] for line in script.splitlines())
+        bash = shutil.which("bash")
+        if os.name == "nt" and shutil.which("git"):
+            git_bash = Path(shutil.which("git")).parents[1] / "bin" / "bash.exe"
+            if git_bash.is_file():
+                bash = str(git_bash)
+        self.assertTrue(bash, "Bash is required to exercise the compiled GitHub Actions notice step.")
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run(
+                [bash, "-c", script],
+                cwd=directory,
+                env={**os.environ, "GITHUB_STEP_SUMMARY": "summary.md"},
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=10,
+            )
+            self.assertIn(
+                "::notice::Skipping management SDK review: only msyyc may manually trigger or rerun this workflow.",
+                result.stdout,
+            )
+            summary = Path(directory, "summary.md").read_text(encoding="utf-8")
+            self.assertIn("Management SDK review skipped", summary)
+            self.assertIn("no review comment is published or hidden", summary)
 
     @unittest.skipUnless(os.environ.get("GH_AW_RUNTIME"), "Set GH_AW_RUNTIME to pinned gh-aw actions/setup/js")
     def test_pinned_runtime_publishes_manual_and_label_reviews_identically(self):
