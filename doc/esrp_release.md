@@ -12,4 +12,4 @@ Further details on ESRP release methods is available at [docs.opensource.microso
 
 For low priority yank requests, directly contact the `python` team via email @ `python@microsoft.com`. Ensure that the `package name`, the `version`, and the `yank reason` are readily available in the yank request email.
 
-If there is no response on the email, and the request is urgent. escalate to filing a sev 2 ICM. The process is documented [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1035/ESRP-Release-Task?anchor=escalating-to-esrp).
+If an urgent yank or deletion request remains unanswered by email, follow the [ESRP escalation process](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1035/ESRP-Release-Task?anchor=escalating-to-esrp) to file an ICM at severity 3, or severity 2 only if the request addresses a serious security issue.

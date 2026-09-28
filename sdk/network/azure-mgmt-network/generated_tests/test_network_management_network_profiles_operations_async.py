@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.network_profiles.get(
             resource_group_name=resource_group.name,
             network_profile_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -815,6 +815,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -835,6 +838,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1111,6 +1117,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -1135,6 +1144,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -1768,6 +1780,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -3198,6 +3213,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -4158,6 +4176,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4178,6 +4199,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4458,6 +4482,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -4482,6 +4509,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -5127,6 +5157,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -6587,6 +6620,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -6743,7 +6779,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -6756,7 +6792,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             network_profile_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -6769,7 +6805,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             await self.client.network_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 network_profile_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6781,7 +6817,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     async def test_network_profiles_list(self, resource_group):
         response = self.client.network_profiles.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -6791,7 +6827,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_network_profiles_list_all(self, resource_group):
         response = self.client.network_profiles.list_all(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -184,6 +184,12 @@ class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """ENCRYPTED_WITH_CMK."""
     NON_PERSISTED_TPM = "NonPersistedTPM"
     """NON_PERSISTED_TPM."""
+    DATA_DISK_ENCRYPTED_WITH_CMK = "DataDiskEncryptedWithCmk"
+    """Confidential VM Encryption Type which should be used for encrypting the data disks with
+    customer managed keys. This Encryption type should only be used for data disks, and should not
+    be used for OS disk encryption. When this encryption type is used for data disk
+    encryption.Subscriptions need to be enrolled for Confidential VM with data encryption through
+    following AFEC - Microsoft.Compute/ConfidentialVMDataDiskEncryptionPreview."""
 
 
 class ConfidentialVMVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -693,6 +699,16 @@ class GalleryExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class GalleryImageVersionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of a gallery image version, derived from its soft-delete status."""
+
+    ACTIVE = "Active"
+    """The gallery image version is active and available for use."""
+    SOFT_DELETED = "SoftDeleted"
+    """The gallery image version has been soft-deleted. It is available for use only when a specific
+    version is requested, and it will not be resolved as the latest version."""
+
+
 class GalleryProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state, which only appears in the response."""
 
@@ -949,6 +965,15 @@ class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEn
     """MAINTENANCE_ABORTED."""
     MAINTENANCE_COMPLETED = "MaintenanceCompleted"
     """MAINTENANCE_COMPLETED."""
+
+
+class MetadataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of metadata associated with the image."""
+
+    SECRETS_PROVISIONING_IMAGE_METADATA = "SecretsProvisioningImageMetadata"
+    """Metadata related to secrets provisioning for the image."""
+    USER_PROVIDED_SECRETS_PROVISIONING_METADATA = "UserProvidedSecretsProvisioningMetadata"
+    """Metadata related to user-provided secrets provisioning for the image."""
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1559,6 +1584,19 @@ class ScriptShellTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default script shell type."""
     POWERSHELL7 = "Powershell7"
     """Powershell7 script shell type."""
+
+
+class SecretsProvisioningComponentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of a component involved in secrets provisioning."""
+
+    OS = "OS"
+    """The guest operating system."""
+    CLOUD_INIT = "CloudInit"
+    """The cloud-init provisioning agent."""
+    AZURE_GUEST_AGENT = "AzureGuestAgent"
+    """The Azure guest agent."""
+    SECRETS_PROVISIONING_LIBRARY = "SecretsProvisioningLibrary"
+    """The secrets provisioning library."""
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""Collect immutable, non-executable evidence for the management SDK PR reviewer."""
+"""Collect immutable, non-executable evidence for the management SDK PR reviewer.
+
+Confirmed new packages with a single release and no breaking-change sections or
+entries do not require a previous release baseline. Existing or ambiguous packages
+retain missing-evidence diagnostics.
+"""
 
 import base64
 import binascii
+import datetime
 import difflib
 import json
 import os
@@ -422,6 +428,17 @@ def latest_release_version(parsed_changelog):
     return None
 
 
+def is_released_heading(heading):
+    match = re.fullmatch(r"([0-9]+\.[0-9]+\.[0-9]+(?:b[0-9]+)?)\s+\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)", heading)
+    if not match or match[1] == "0.0.0":
+        return False
+    try:
+        datetime.date.fromisoformat(match[2])
+    except ValueError:
+        return False
+    return True
+
+
 def resolve_release_tag(client, package_name, version):
     if not version:
         return {"status": "unverified", "error": "No previous release heading was found at the merge base"}
@@ -501,6 +518,9 @@ def collect():
         raise GitHubApiError("Pull request metadata did not contain a valid changed_files count")
     if not all(isinstance(value, str) and SHA_PATTERN.fullmatch(value) for value in (latest_revision, base_revision)):
         raise GitHubApiError("Pull request metadata did not contain valid base and head SHAs")
+    expected_head = os.environ.get("REVIEW_HEAD_SHA")
+    if expected_head and latest_revision != expected_head:
+        raise GitHubApiError("PR head changed since the triggering event; rerun against the current head")
 
     compare = client.get(f"/repos/{repository}/compare/{base_revision}...{latest_revision}")
     merge_base_revision = compare.get("merge_base_commit", {}).get("sha")
@@ -548,7 +568,7 @@ def collect():
     drift_results = []
     breaking_change_context = []
     for package_path in package_paths:
-        remaining_requests = MAX_API_REQUESTS - client.request_count
+        remaining_requests = MAX_API_REQUESTS - client.request_count - int(bool(expected_head))
         if remaining_requests < MAX_PACKAGE_API_REQUESTS:
             reason = (
                 f"Needs human review: evidence collection for {package_path} was skipped because only "
@@ -578,6 +598,7 @@ def collect():
                     "latestRevision": latest_revision,
                     "status": "unverified",
                     "introducedEntries": [],
+                    "releases": [],
                     "emptyBreakingChangeSections": [],
                     "collectionIssues": [reason],
                     "releaseBaseline": unavailable,
@@ -627,8 +648,66 @@ def collect():
             if baseline_available and new_file.get("status") == "available"
             else []
         )
+        merge_base_provenance = collect_provenance(client, package_path, merge_base_revision)
+        package_changes = [
+            item
+            for item in changed_files
+            if any(
+                isinstance(item.get(field), str) and item[field].startswith(f"{package_path}/")
+                for field in ("filename", "previous_filename")
+            )
+        ]
+        initial_release = False
+        if (
+            package_discovery_complete
+            and changelog_change is not None
+            and changelog_change.get("status") == "added"
+            and old_file.get("status") == "missing"
+            and new_file.get("status") == "available"
+            and len(new_parsed["releases"]) == 1
+            and is_released_heading(new_parsed["releases"][0]["heading"])
+            and not new_parsed["entries"]
+            and not new_parsed["emptySections"]
+            and all(item.get("status") == "added" and not item.get("previous_filename") for item in package_changes)
+            and all(file.get("status") == "missing" for file in merge_base_provenance["files"])
+        ):
+            # File-level 404s alone cannot distinguish a new package from missing provenance.
+            encoded_path = urllib.parse.quote(package_path, safe="/")
+            try:
+                client.get(f"/repos/{repository}/contents/{encoded_path}?ref={merge_base_revision}")
+            except GitHubApiError as error:
+                if error.status == 404:
+                    initial_release = True
+                else:
+                    collection_issues.append(str(error))
+
         previous_version = latest_release_version(old_parsed)
-        release_baseline = resolve_release_tag(client, package_path.rsplit("/", 1)[-1], previous_version)
+        if initial_release:
+            release_baseline = {
+                "status": "not_applicable",
+                "reason": (
+                    f"Initial release: the complete changed-file list adds {package_path}, its directory is "
+                    f"absent at merge base {merge_base_revision}, and its only release has no Breaking Changes "
+                    "entries or empty Breaking Changes sections. No previous release baseline is required."
+                ),
+            }
+            merge_base_provenance.update(
+                status="not_applicable",
+                reason=release_baseline["reason"],
+                issues=[],
+                files=[
+                    {
+                        "path": file["path"],
+                        "revision": file["revision"],
+                        "status": "not_applicable",
+                        "reason": release_baseline["reason"],
+                        "retrieval": file,
+                    }
+                    for file in merge_base_provenance["files"]
+                ],
+            )
+        else:
+            release_baseline = resolve_release_tag(client, package_path.rsplit("/", 1)[-1], previous_version)
         if release_baseline["status"] == "available":
             release_baseline["provenance"] = collect_provenance(
                 client, package_path, release_baseline["revision"]
@@ -638,10 +717,9 @@ def collect():
                 "Inferred from the newest release heading at the merge base; the changelog generator's exact "
                 "comparison target is not recorded by CHANGELOG.md."
             )
-        else:
+        elif release_baseline["status"] == "unverified":
             collection_issues.append(release_baseline.get("error"))
 
-        merge_base_provenance = collect_provenance(client, package_path, merge_base_revision)
         collection_issues.extend(merge_base_provenance["issues"])
         collection_issues.extend(latest_provenance["issues"])
         if release_baseline.get("provenance"):
@@ -656,6 +734,7 @@ def collect():
                 "latestRevision": latest_revision,
                 "status": "unverified" if collection_issues else "complete",
                 "introducedEntries": introduced,
+                "releases": new_parsed["releases"],
                 "emptyBreakingChangeSections": new_parsed["emptySections"],
                 "collectionIssues": [issue for issue in collection_issues if issue],
                 "releaseBaseline": release_baseline,
@@ -664,12 +743,18 @@ def collect():
                     "latest": latest_provenance,
                 },
                 "specificationSources": {
-                    "mergeBase": validated_source_reference(merge_base_provenance),
+                    "mergeBase": (
+                        release_baseline if initial_release else validated_source_reference(merge_base_provenance)
+                    ),
                     "latest": validated_source_reference(latest_provenance),
                     "release": (
-                        validated_source_reference(release_baseline["provenance"])
-                        if release_baseline.get("provenance")
-                        else {"status": "unverified", "error": "Release provenance was unavailable"}
+                        release_baseline
+                        if initial_release
+                        else (
+                            validated_source_reference(release_baseline["provenance"])
+                            if release_baseline.get("provenance")
+                            else {"status": "unverified", "error": "Release provenance was unavailable"}
+                        )
                     ),
                 },
             }
@@ -678,6 +763,7 @@ def collect():
     context = {
         "repository": repository,
         "pullRequestNumber": pr_number,
+        "toolingRevision": os.environ.get("REVIEW_TOOLING_SHA"),
         "rulesSource": f".github/copilot-instructions.md@{rules_revision}",
         "mgmtSdkCodeReviewRules": "\n".join(lines[start:end]).strip(),
         "packageDiscovery": {
@@ -724,6 +810,16 @@ def collect():
             "githubApiRequests": client.request_count,
         },
     }
+    if expected_head:
+        current = client.get(f"/repos/{repository}/pulls/{pr_number}")
+        if (
+            current.get("head", {}).get("sha") != latest_revision
+            or current.get("base", {}).get("sha") != base_revision
+            or current.get("changed_files") != expected_changed_files
+            or current.get("commits") != expected_commits
+        ):
+            raise GitHubApiError("PR changed during evidence collection; rerun to collect a consistent snapshot")
+        context["collectionLimits"]["githubApiRequests"] = client.request_count
     with open("review-context.json", "w", encoding="utf-8") as output:
         json.dump(context, output, indent=2)
         output.write("\n")

@@ -417,6 +417,39 @@ def test_streaming__post_creation_error_yields_response_failed_not_error_event()
     ), f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
 
 
+def test_streaming_failed_terminal_preserves_public_metadata() -> None:
+    async def _failed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, request=request)
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            yield stream.emit_failed(
+                code="budget_exceeded",
+                message="Budget exceeded",
+                metadata={"costControl": '{"x-ms-budget-cause":"budget_exceeded"}'},
+            )
+
+        return _events()
+
+    app = ResponsesAgentServerHost()
+    app.response_handler(_failed_handler)
+    client = TestClient(app)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    failed = next(event for event in events if event["type"] == "response.failed")
+    payload = failed["data"]["response"]
+    assert payload["status"] == "failed"
+    assert payload["error"]["code"] == "budget_exceeded"
+    assert payload["metadata"]["costControl"] == '{"x-ms-budget-cause":"budget_exceeded"}'
+
+
 # ══════════════════════════════════════════════════════════
 # Task 4.1 — _process_handler_events pipeline contract tests
 # ══════════════════════════════════════════════════════════

@@ -249,6 +249,19 @@ async def test_list_records_returns_all() -> None:
     assert ids == {"caresp_iii0000000000000000000000000000", "caresp_jjj0000000000000000000000000000"}
 
 
+@pytest.mark.asyncio
+async def test_begin_draining_rejects_new_pending_work() -> None:
+    state = _RuntimeState()
+    accepted = _make_execution("caresp_pending00000000000000000000000")
+    rejected = _make_execution("caresp_rejected0000000000000000000000")
+
+    assert await state.add_pending(accepted) is True
+    records = await state.begin_draining()
+    assert records == [accepted]
+    assert await state.add_pending(rejected) is False
+    assert await state.list_records() == [accepted]
+
+
 # ---------------------------------------------------------------------------
 # T1 (Task 7.1) – _ExecutionRecord is no longer exported from _runtime_state
 # ---------------------------------------------------------------------------

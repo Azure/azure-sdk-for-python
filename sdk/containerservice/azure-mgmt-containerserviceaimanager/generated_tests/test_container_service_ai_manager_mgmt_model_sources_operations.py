@@ -43,8 +43,9 @@ class TestContainerServiceAIManagerMgmtModelSourcesOperations(AzureMgmtRecordedT
                 "name": "str",
                 "properties": {
                     "sourceType": "str",
-                    "credential": {"inline": {"value": "str"}},
+                    "credential": {"inline": {"value": "str"}, "managedIdentity": {"resourceId": "str"}},
                     "description": "str",
+                    "microsoftFoundry": {"projectResourceId": "str"},
                     "provisioningState": "str",
                 },
                 "systemData": {

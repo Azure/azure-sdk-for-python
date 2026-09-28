@@ -19,6 +19,14 @@ from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from .._realtime import (
+    AsyncBetaRealtime,
+    AsyncBetaRealtimeConnection,
+    AsyncBetaRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -27,7 +35,35 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+    BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
+    BetaVoiceAgentsTelephonyOperations,
 )
+
+
+class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s :attr:`beta` attribute's
+        :attr:`~azure.ai.projects.aio.operations.BetaOperations.voice_agents` attribute.
+    """
+
+    conversations: BetaVoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
+    realtime: AsyncBetaRealtime
+    """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # The generator does not emit realtime operations at all, since azure-core's HTTP
+        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
+        # hand-written client, which manages a real, long-lived connection, in its place.
+        self.realtime = AsyncBetaRealtime(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -64,6 +100,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    voice_agents: BetaVoiceAgentsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -81,6 +119,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        # Replace with patched class that wires up the hand-written realtime client
+        self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -92,6 +132,9 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AsyncBetaRealtime",
+    "AsyncBetaRealtimeConnection",
+    "AsyncBetaRealtimeConnectionManager",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
@@ -105,9 +148,15 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
+    "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
