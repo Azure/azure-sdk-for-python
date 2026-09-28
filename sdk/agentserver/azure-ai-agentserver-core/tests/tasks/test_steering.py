@@ -15,6 +15,7 @@ from azure.ai.agentserver.core.tasks import (
     task,
     EntryMode,
     SteeringQueueFull,
+    TaskCancelled,
     TaskConflictError,
     multi_turn_task,
 )
@@ -139,7 +140,7 @@ class TestSteering:
             accepted = []
             for i in range(_DEFAULT_MAX_PENDING_STEERING):
                 accepted.append(await chat.start(task_id="t1", input={"msg": f"fill-{i}"}))
-            registered = list(manager._pending_steering_futures["t1"])
+            registered = dict(manager._pending_steering_futures["t1"])
             assert len(registered) == _DEFAULT_MAX_PENDING_STEERING
 
             for i in range(3):
@@ -175,12 +176,13 @@ class TestSteering:
 
             first = await chat.start(task_id="t1", input={"msg": "first"})
             accepted = await chat.start(task_id="t1", input={"msg": "accepted"})
-            accepted_future = manager._pending_steering_futures["t1"][0]
+            registered = dict(manager._pending_steering_futures["t1"])
+            accepted_future = next(iter(registered.values()))
             rejected_future: asyncio.Future[Any] | None = None
 
             async def reject_update(task_id: str, _patch: Any) -> Any:
                 nonlocal rejected_future
-                rejected_future = manager._pending_steering_futures[task_id][-1]
+                rejected_future = list(manager._pending_steering_futures[task_id].values())[-1]
                 raise OSError("storage unavailable")
 
             with monkeypatch.context() as patcher:
@@ -190,7 +192,7 @@ class TestSteering:
 
             assert rejected_future is not None
             assert rejected_future.cancelled()
-            assert manager._pending_steering_futures["t1"] == [accepted_future]
+            assert manager._pending_steering_futures["t1"] == registered
             assert not accepted_future.done()
             info = await manager.provider.get("t1")
             assert info is not None
@@ -220,7 +222,7 @@ class TestSteering:
 
             async def blocked_update(task_id: str, _patch: Any) -> Any:
                 nonlocal aborted_future
-                aborted_future = manager._pending_steering_futures[task_id][-1]
+                aborted_future = list(manager._pending_steering_futures[task_id].values())[-1]
                 append_started.set()
                 await asyncio.Event().wait()
 
@@ -246,6 +248,139 @@ class TestSteering:
             gate.set()
             assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first"}
             assert await asyncio.wait_for(accepted.result(), timeout=5.0) == {"msg": "accepted"}
+        finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("cancel_request", [False, True])
+    async def test_committed_append_without_response_preserves_later_ack(self, tmp_path, monkeypatch, cancel_request):
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        persisted = asyncio.Event()
+        seen: list[str] = []
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                seen.append(ctx.input["msg"])
+                return {"msg": ctx.input["msg"], "turn": len(seen)}
+
+            first = await chat.start(task_id="t1", input={"msg": "first"})
+            earlier = await chat.start(task_id="t1", input={"msg": "earlier"})
+            original_update = manager.provider.update
+
+            async def commit_without_response(task_id: str, patch: Any) -> Any:
+                await original_update(task_id, patch)
+                persisted.set()
+                if cancel_request:
+                    await asyncio.Event().wait()
+                raise OSError("response lost after commit")
+
+            with monkeypatch.context() as patcher:
+                patcher.setattr(manager.provider, "update", commit_without_response)
+                if cancel_request:
+                    interrupted = asyncio.create_task(
+                        chat.start(task_id="t1", input={"msg": "duplicate"}, input_id="same-id")
+                    )
+                    try:
+                        await asyncio.wait_for(persisted.wait(), timeout=5.0)
+                    finally:
+                        interrupted.cancel()
+                        with pytest.raises(asyncio.CancelledError):
+                            await interrupted
+                else:
+                    with pytest.raises(OSError, match="response lost after commit"):
+                        await chat.start(task_id="t1", input={"msg": "duplicate"}, input_id="same-id")
+
+            later = await chat.start(task_id="t1", input={"msg": "duplicate"}, input_id="same-id")
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert [entry["msg"] for entry in info.payload["steering"]["pending_inputs"]] == [
+                "earlier",
+                "duplicate",
+                "duplicate",
+            ]
+            ack_ids = info.payload["steering"]["pending_ack_ids"]
+            assert len(ack_ids) == len(set(ack_ids)) == 3
+
+            gate.set()
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first", "turn": 1}
+            assert await asyncio.wait_for(earlier.result(), timeout=5.0) == {"msg": "earlier", "turn": 2}
+            assert await asyncio.wait_for(later.result(), timeout=5.0) == {"msg": "duplicate", "turn": 4}
+            assert seen == ["first", "earlier", "duplicate", "duplicate"]
+        finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_legacy_backlog_does_not_claim_new_steering_ack(self, tmp_path):
+        from azure.ai.agentserver.core.tasks._models import TaskPatchRequest
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        seen: list[str] = []
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                seen.append(ctx.input["msg"])
+                return {"msg": ctx.input["msg"], "turn": len(seen)}
+
+            first = await chat.start(task_id="t1", input={"msg": "first"})
+            existing = await manager.provider.get("t1")
+            assert existing is not None
+            steering = dict(existing.payload.get("steering") or {})
+            steering["pending_inputs"] = [{"msg": "remote"}]
+            steering["cancel_requested"] = True
+            await manager.provider.update("t1", TaskPatchRequest(payload={"steering": steering}, if_match=existing.etag))
+
+            local = await chat.start(task_id="t1", input={"msg": "local"})
+            info = await manager.provider.get("t1")
+            assert info is not None
+            ack_ids = info.payload["steering"]["pending_ack_ids"]
+            assert ack_ids[0] is None
+            assert isinstance(ack_ids[1], str)
+
+            gate.set()
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first", "turn": 1}
+            assert await asyncio.wait_for(local.result(), timeout=5.0) == {"msg": "local", "turn": 3}
+            assert seen == ["first", "remote", "local"]
+        finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_queued_cancel_keeps_identical_input_owned_by_other_handle(self, tmp_path):
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                return {"msg": ctx.input["msg"]}
+
+            first = await chat.start(task_id="t1", input={"msg": "first"})
+            earlier = await chat.start(task_id="t1", input={"msg": "same"}, input_id="shared-id")
+            later = await chat.start(task_id="t1", input={"msg": "same"}, input_id="shared-id")
+            info = await manager.provider.get("t1")
+            assert info is not None
+            earlier_ack_id = info.payload["steering"]["pending_ack_ids"][0]
+
+            await later.cancel()
+            with pytest.raises(TaskCancelled):
+                await later.result()
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert info.payload["steering"]["pending_inputs"] == [{"msg": "same"}]
+            assert info.payload["steering"]["pending_ack_ids"] == [earlier_ack_id]
+
+            gate.set()
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first"}
+            assert await asyncio.wait_for(earlier.result(), timeout=5.0) == {"msg": "same"}
         finally:
             gate.set()
             await self._teardown_manager(manager, mgr_mod)

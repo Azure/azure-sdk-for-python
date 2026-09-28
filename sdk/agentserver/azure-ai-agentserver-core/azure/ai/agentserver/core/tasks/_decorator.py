@@ -798,6 +798,7 @@ class Task(Generic[Input, Output]):
         task_id: str,
         input_val: Any,
         existing: Any,
+        ack_id: str,
         input_id: str | None = None,
         if_last_input_id: str | None = None,
     ) -> None:
@@ -812,6 +813,8 @@ class Task(Generic[Input, Output]):
                 :keyword existing: The previously-fetched task record (used for the
                     first etag attempt; later attempts re-fetch internally).
                 :paramtype existing: Any
+        :keyword ack_id: Internal identifier binding this queue slot to its acknowledgment.
+        :paramtype ack_id: str
         :keyword input_id:  When set, the new input's identity.
                     Used to advance ``payload["last_input_id"]``
                     atomically with the queue append.
@@ -867,8 +870,10 @@ class Task(Generic[Input, Output]):
                 _STEERING_INPUT_KEY_PREFIX,
                 _STEERING_THRESHOLD_BYTES,
                 _resolve_input_storage,
+                _steering_pending_ack_ids,
             )
 
+            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
             next_seq = int(steering.get("next_input_seq", 0))
             steering_key = f"{_STEERING_INPUT_KEY_PREFIX}{next_seq}"
             store_mode, queue_entry = _resolve_input_storage(
@@ -883,7 +888,9 @@ class Task(Generic[Input, Output]):
                 steering["next_input_seq"] = next_seq + 1
 
             pending.append(queue_entry)
+            pending_ack_ids.append(ack_id)
             steering["pending_inputs"] = pending
+            steering["pending_ack_ids"] = pending_ack_ids
             steering["cancel_requested"] = True
             #   SOT: the
             # internal _steering["generation"] payload field is removed
@@ -949,8 +956,8 @@ class Task(Generic[Input, Output]):
         manager: Any,
         task_id: str,
         future: Any,
+        ack_id: str,
         input_id: str | None = None,
-        input_val: Any = None,
     ) -> TaskRun[Output]:
         """Create a TaskRun for a queued steering input.
 
@@ -960,11 +967,10 @@ class Task(Generic[Input, Output]):
         :type task_id: str
         :param future: Future that will resolve with the next-turn outcome.
         :type future: Any
+        :param ack_id: Internal identifier of the queued steering slot.
+        :type ack_id: str
         :param input_id: The input_id stamped on the queued input (if any).
         :type input_id: str | None
-        :param input_val: The raw queued input value (used to identify the
-            slot when ``cancel()`` is invoked on the returned handle).
-        :type input_val: Any
         :return: A :class:`TaskRun` whose result resolves with the queued turn.
         :rtype: TaskRun[Output]
         """
@@ -973,8 +979,7 @@ class Task(Generic[Input, Output]):
             await manager._cancel_queued_steering_input(  # pylint: disable=protected-access
                 task_id=task_id,
                 future=future,
-                input_id=input_id,
-                input_val=input_val,
+                ack_id=ack_id,
             )
 
         return TaskRun(
@@ -1308,7 +1313,8 @@ class Task(Generic[Input, Output]):
                 # pylint: disable=protected-access
                 # Keep drain from binding a future before its append is accepted.
                 async with manager._get_task_write_lock(task_id):
-                    ack_future = manager._register_steering_future(task_id)
+                    ack_id = _generate_input_id()
+                    ack_future = manager._register_steering_future(task_id, ack_id)
                     appended = False
                     try:
                         await self._append_steering_input(
@@ -1316,19 +1322,20 @@ class Task(Generic[Input, Output]):
                             task_id=task_id,
                             input_val=input,
                             existing=existing,
+                            ack_id=ack_id,
                             input_id=input_id,
                             if_last_input_id=if_last_input_id,
                         )
                         appended = True
                     finally:
                         if not appended:
-                            manager._unregister_steering_future(task_id, ack_future)
+                            manager._unregister_steering_future(task_id, ack_id, ack_future)
                 # Set cancel on in-memory context if task runs in this process
                 active = manager._active_tasks.get(task_id)
                 # pylint: enable=protected-access
                 if active:
                     active.context.cancel.set()
-                return self._create_steering_ack_run(manager, task_id, ack_future, input_id=input_id, input_val=input)
+                return self._create_steering_ack_run(manager, task_id, ack_future, ack_id, input_id=input_id)
             raise TaskConflictError(task_id, "in_progress")
 
         # completed (or any other terminal status)
@@ -1756,8 +1763,8 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
                 exec_task.cancel()
 
         # 2. Resolve all queued steerer futures with TaskCancelled.
-        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
-        for queued_fut in pending:
+        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, {})
+        for queued_fut in pending.values():
             if not queued_fut.done():
                 queued_fut.set_exception(TaskCancelled())
 
