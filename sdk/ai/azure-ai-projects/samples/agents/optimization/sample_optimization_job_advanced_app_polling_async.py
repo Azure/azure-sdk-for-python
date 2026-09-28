@@ -28,7 +28,8 @@ USAGE:
     4) EVALUATOR_NAME           - Required. The name of a registered project evaluator.
     5) DATASET_VERSION          - Optional. Version of the training dataset. Defaults to "1".
     6) POLL_INTERVAL_SECONDS    - Optional. Seconds between status polls. Defaults to 10.
-    7) EVAL_MODEL               - Optional. The model used for evaluation. Defaults to "gpt-4o".
+    7) EVAL_MODEL               - Required. The evaluation model deployment in
+                                  "{connectionName}/{deploymentName}" format.
     8) OPTIMIZATION_MODEL       - Optional. The model used for optimization. Defaults to "gpt-5.1".
 """
 
@@ -40,13 +41,18 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentOptimizationEvaluatorRef,
+    AgentOptimizationCandidateSearchConfiguration,
+    AgentOptimizationConfiguration,
+    AgentOptimizationEvaluationConfiguration,
+    AgentOptimizationEvaluator,
+    AgentOptimizationFoundryAgentTargetConfiguration,
     AgentOptimizationJob,
-    AgentOptimizationJobInputs,
-    AgentOptimizationOptions,
-    AgentOptimizationReferenceDatasetInput,
+    AgentOptimizationModelConfiguration,
+    AgentOptimizationSpace,
+    AgentOptimizationTargetCompletionDatasetReferenceDataSource,
+    AgentOptimizationTargetCompletionEvaluationSet,
+    EvaluationModelConfiguration,
     JobStatus,
-    OptimizedAgentIdentifier,
 )
 
 load_dotenv()
@@ -57,7 +63,7 @@ dataset_name = os.environ["DATASET_NAME"]
 evaluator_name = os.environ["EVALUATOR_NAME"]
 dataset_version = os.environ.get("DATASET_VERSION", "1")
 poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
+eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
@@ -75,29 +81,32 @@ async def main() -> None:
         print("Creating optimization job...")
 
         job = AgentOptimizationJob(
-            inputs=AgentOptimizationJobInputs(
-                agent=OptimizedAgentIdentifier(agent_name=agent_name),
-                train_dataset=AgentOptimizationReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
+            target_configuration=AgentOptimizationFoundryAgentTargetConfiguration(name=agent_name),
+            optimization_model_configuration=AgentOptimizationModelConfiguration(model=optimization_model),
+            optimization_configuration=AgentOptimizationConfiguration(
+                evaluation_configuration=AgentOptimizationEvaluationConfiguration(
+                    training_set=AgentOptimizationTargetCompletionEvaluationSet(
+                        source=AgentOptimizationTargetCompletionDatasetReferenceDataSource(
+                            name=dataset_name,
+                            version=dataset_version,
+                        )
+                    ),
+                    evaluators=[AgentOptimizationEvaluator(name=evaluator_name)],
+                    evaluation_model=EvaluationModelConfiguration(model=eval_model),
                 ),
-                evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
-                options=AgentOptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
-            )
+                candidate_search_configuration=AgentOptimizationCandidateSearchConfiguration(max_candidates=3),
+                agent_optimization_space=AgentOptimizationSpace(),
+            ),
         )
 
-        poller = await project_client.beta.agents.begin_create_optimization_job(
+        poller = await project_client.agents.begin_create_optimization_job(
             job=job,
             polling=False,
         )
         job_id = poller.details["job_id"]
         if not job_id:
             raise RuntimeError("The create operation did not return an optimization job ID.")
-        job = await project_client.beta.agents.get_optimization_job(job_id=job_id)
+        job = await project_client.agents.get_optimization_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
@@ -106,7 +115,7 @@ async def main() -> None:
         print(f"Polling job `{job.id}` to completion...", end="", flush=True)
         while job.status not in TERMINAL_STATUSES:
             await asyncio.sleep(poll_interval)
-            job = await project_client.beta.agents.get_optimization_job(job_id=job.id)
+            job = await project_client.agents.get_optimization_job(job_id=job.id)
             print(".", end="", flush=True)
         print()
         print(f"Final job status: `{job.status}`.")
@@ -128,17 +137,16 @@ async def main() -> None:
             raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
 
         result = job.result
-        print(f"\nBaseline candidate: {result.baseline}")
-        print(f"Best candidate:     {result.best}")
-        print(f"Candidates ({len(result.candidates or [])}):")
-        for candidate in result.candidates or []:
-            print(
-                f"  - {candidate.name}"
-                f" | avg_score={candidate.avg_score:.4f}"
-                f" | avg_tokens={candidate.avg_tokens:.0f}"
-            )
-            if candidate.eval_id:
-                print(f"      eval_id={candidate.eval_id}")
+        summary = result.candidate_summary
+        if summary:
+            print(f"\nBaseline candidate: {summary.baseline_id} (score={summary.baseline_score})")
+            print(f"Best candidate:     {summary.best_id} (score={summary.best_score})")
+            print(f"Completed candidates: {summary.completed_candidate_count}")
+
+        print("Candidates:")
+        async for candidate in project_client.agents.list_optimization_candidates(job_id=job.id):
+            score = candidate.evaluation.score if candidate.evaluation else None
+            print(f"  - {candidate.name} | status={candidate.status} | score={score}")
 
 
 if __name__ == "__main__":

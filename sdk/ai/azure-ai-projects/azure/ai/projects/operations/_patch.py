@@ -187,7 +187,7 @@ class BetaOperations(GeneratedBetaOperations):
         super().__init__(*args, **kwargs)
         # Replace with patched class that returns EvaluatorGenerationLROPoller
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that returns AgentOptimizationLROPoller
+        # Replace with patched beta agents operations
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
