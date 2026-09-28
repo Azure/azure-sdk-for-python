@@ -2,7 +2,9 @@
 
 ## 1.0.0 (2026-09-28)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - First GA
 
 ## 1.0.0b1 (2026-02-04)
 
