@@ -14,7 +14,7 @@ import re
 import sys
 
 import mgmt_sdk_review_contract as contract
-from mgmt_sdk_review_context import GitHubClient, MAX_TEXT_FILE_BYTES
+from mgmt_sdk_review_context import GitHubClient, MAX_TEXT_FILE_BYTES, authorize_current_run
 from mgmt_sdk_review_evidence import (
     MAX_REGISTERED_BYTES,
     MAX_REGISTERED_FILES,
@@ -220,6 +220,7 @@ def main():
     parser.add_argument("--context", required=True)
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
+    authorize_current_run()
     context = contract.load_json(args.context, 64 * 1024 * 1024)
     contract.validate_context(
         context,

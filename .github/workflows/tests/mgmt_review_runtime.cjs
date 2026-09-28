@@ -43,9 +43,9 @@ async function main() {
   }
   let comment, writes = 0, hides = 0;
   global.context = {
-    eventName: "pull_request_target", runId: 1, serverUrl: "https://github.com",
+    eventName: request.eventName || "pull_request_target", runId: 1, serverUrl: "https://github.com",
     repo: { owner: "Azure", repo: "azure-sdk-for-python" },
-    payload: { pull_request: { number: 49107 } },
+    payload: request.eventName === "workflow_dispatch" ? { inputs: { pr_number: "49107" } } : { pull_request: { number: 49107 } },
   };
   global.github = {
     graphql: async () => {
@@ -67,7 +67,7 @@ async function main() {
   process.env.GH_AW_WORKFLOW_NAME = "Management SDK PR Review";
   process.env.GH_AW_PROMPTS_DIR = path.join(root, "..", "md");
   const { main: createHandler } = require(path.join(root, "add_comment.cjs"));
-  const handler = await createHandler({ target: "49107", max: 1, hide_older_comments: true, footer: false, discussions: false });
+  const handler = await createHandler(request.handlerConfig || { target: "49107", max: 1, hide_older_comments: true, footer: false, discussions: false });
   const result = request.payload.items.length ? await handler(request.payload.items[0]) : null;
   return { result, comment, writes, hides };
 }

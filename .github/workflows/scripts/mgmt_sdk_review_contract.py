@@ -16,6 +16,7 @@ import re
 import unicodedata
 from urllib.parse import quote, unquote, urlsplit
 
+from mgmt_sdk_review_context import GitHubApiError, authorize_current_run
 from mgmt_sdk_review_evidence import (
     CHECKS,
     SEMANTIC_CHECKS,
@@ -1125,6 +1126,7 @@ def main():
         print(json.dumps(SCHEMA, separators=(",", ":")))
         return
     try:
+        authorize_current_run()
         context = load_json(os.environ["REVIEW_CONTEXT"], 64 * 1024 * 1024)
         validate_context(
             context,
@@ -1152,7 +1154,7 @@ def main():
                 }
             )
         )
-    except (OSError, ValueError, KeyError, TypeError) as error:
+    except (OSError, ValueError, KeyError, TypeError, GitHubApiError) as error:
         message = str(error).replace("\r", " ").replace("\n", " ")
         raise SystemExit(
             f"Management SDK review rejected: {message}. No review will be published or hidden. "
