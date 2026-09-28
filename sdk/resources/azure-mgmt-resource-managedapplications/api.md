@@ -365,6 +365,10 @@ namespace azure.mgmt.resource.managedapplications.aio.operations
 
 namespace azure.mgmt.resource.managedapplications.models
 
+    class azure.mgmt.resource.managedapplications.models.ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INTERNAL = "Internal"
+
+
     class azure.mgmt.resource.managedapplications.models.Application(GenericResource):
         application_definition_id: str
         artifacts: list[ApplicationArtifact]
@@ -697,7 +701,6 @@ namespace azure.mgmt.resource.managedapplications.models
         package_file_uri: str
         policies: list[ApplicationPolicy]
         sku: Sku
-        storage_account_id: str
         tags: dict[str, str]
         type: str
 
@@ -723,7 +726,6 @@ namespace azure.mgmt.resource.managedapplications.models
                 package_file_uri: Optional[str] = ..., 
                 policies: Optional[list[ApplicationPolicy]] = ..., 
                 sku: Optional[Sku] = ..., 
-                storage_account_id: Optional[str] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -1619,16 +1621,67 @@ namespace azure.mgmt.resource.managedapplications.models
             ) -> JSON: ...
 
 
-    class azure.mgmt.resource.managedapplications.models.ErrorResponse(Model):
+    class azure.mgmt.resource.managedapplications.models.ErrorDetail(Model):
         additional_info: list[ErrorAdditionalInfo]
         code: str
-        details: list[ErrorResponse]
+        details: list[ErrorDetail]
         message: str
         target: str
 
         def __eq__(self, other: Any) -> bool: ...
 
         def __init__(self, **kwargs: Any) -> None: ...
+
+        def __ne__(self, other: Any) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+        @classmethod
+        def deserialize(
+                cls, 
+                data: Any, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def enable_additional_properties_sending(cls) -> None: ...
+
+        @classmethod
+        def from_dict(
+                cls, 
+                data: Any, 
+                key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def is_xml_model(cls) -> bool: ...
+
+        def as_dict(
+                self, 
+                keep_readonly: bool = True, 
+                key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+        def serialize(
+                self, 
+                keep_readonly: bool = False, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+
+    class azure.mgmt.resource.managedapplications.models.ErrorResponse(Model):
+        error: ErrorDetail
+
+        def __eq__(self, other: Any) -> bool: ...
+
+        def __init__(
+                self, 
+                *, 
+                error: Optional[ErrorDetail] = ..., 
+                **kwargs: Any
+            ) -> None: ...
 
         def __ne__(self, other: Any) -> bool: ...
 
@@ -2146,9 +2199,11 @@ namespace azure.mgmt.resource.managedapplications.models
 
 
     class azure.mgmt.resource.managedapplications.models.Operation(Model):
+        action_type: Union[str, ActionType]
         display: OperationDisplay
         is_data_action: bool
         name: str
+        origin: Union[str, Origin]
 
         def __eq__(self, other: Any) -> bool: ...
 
@@ -2156,7 +2211,58 @@ namespace azure.mgmt.resource.managedapplications.models
                 self, 
                 *, 
                 display: Optional[OperationDisplay] = ..., 
-                is_data_action: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def __ne__(self, other: Any) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+        @classmethod
+        def deserialize(
+                cls, 
+                data: Any, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def enable_additional_properties_sending(cls) -> None: ...
+
+        @classmethod
+        def from_dict(
+                cls, 
+                data: Any, 
+                key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def is_xml_model(cls) -> bool: ...
+
+        def as_dict(
+                self, 
+                keep_readonly: bool = True, 
+                key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+        def serialize(
+                self, 
+                keep_readonly: bool = False, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+
+    class azure.mgmt.resource.managedapplications.models.OperationAutoGenerated(Model):
+        display: OperationDisplayAutoGenerated
+        name: str
+
+        def __eq__(self, other: Any) -> bool: ...
+
+        def __init__(
+                self, 
+                *, 
+                display: Optional[OperationDisplayAutoGenerated] = ..., 
                 name: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -2202,6 +2308,54 @@ namespace azure.mgmt.resource.managedapplications.models
 
     class azure.mgmt.resource.managedapplications.models.OperationDisplay(Model):
         description: str
+        operation: str
+        provider: str
+        resource: str
+
+        def __eq__(self, other: Any) -> bool: ...
+
+        def __init__(self, **kwargs: Any) -> None: ...
+
+        def __ne__(self, other: Any) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+        @classmethod
+        def deserialize(
+                cls, 
+                data: Any, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def enable_additional_properties_sending(cls) -> None: ...
+
+        @classmethod
+        def from_dict(
+                cls, 
+                data: Any, 
+                key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None, 
+                content_type: Optional[str] = None
+            ) -> Self: ...
+
+        @classmethod
+        def is_xml_model(cls) -> bool: ...
+
+        def as_dict(
+                self, 
+                keep_readonly: bool = True, 
+                key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+        def serialize(
+                self, 
+                keep_readonly: bool = False, 
+                **kwargs: Any
+            ) -> JSON: ...
+
+
+    class azure.mgmt.resource.managedapplications.models.OperationDisplayAutoGenerated(Model):
         operation: str
         provider: str
         resource: str
@@ -2262,13 +2416,7 @@ namespace azure.mgmt.resource.managedapplications.models
 
         def __eq__(self, other: Any) -> bool: ...
 
-        def __init__(
-                self, 
-                *, 
-                next_link: Optional[str] = ..., 
-                value: Optional[list[Operation]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
+        def __init__(self, **kwargs: Any) -> None: ...
 
         def __ne__(self, other: Any) -> bool: ...
 
@@ -2307,6 +2455,12 @@ namespace azure.mgmt.resource.managedapplications.models
                 keep_readonly: bool = False, 
                 **kwargs: Any
             ) -> JSON: ...
+
+
+    class azure.mgmt.resource.managedapplications.models.Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SYSTEM = "system"
+        USER = "user"
+        USER_SYSTEM = "user,system"
 
 
     class azure.mgmt.resource.managedapplications.models.Plan(Model):
