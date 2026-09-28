@@ -1,5 +1,17 @@
 # Release History
 
+## 2.3.0b1 (2026-09-28)
+
+### Features Added
+
+  - Model `AzureBackupDiscreteRecoveryPoint` added property `immutability_properties`
+  - Model `ImmutabilitySettings` added property `configuration`
+  - Added enum `BackupSolutionType`
+  - Added model `ImmutabilityConfiguration`
+  - Added enum `ImmutabilityType`
+  - Added model `PostgreSqlFlexibleServerBackupDatasourceParameters`
+  - Added model `RecoveryPointImmutabilityProperties`
+
 ## 2.2.0 (2026-09-04)
 
 ### Features Added
