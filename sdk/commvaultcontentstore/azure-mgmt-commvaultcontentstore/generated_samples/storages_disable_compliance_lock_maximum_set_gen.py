@@ -15,7 +15,7 @@ from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
     pip install azure-identity
     pip install azure-mgmt-commvaultcontentstore
 # USAGE
-    python cloud_accounts_list_by_subscription_minimum_set_gen.py
+    python storages_disable_compliance_lock_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cloud_accounts.list_by_subscription()
-    for item in response:
-        print(item)
+    response = client.storages.disable_compliance_lock(
+        resource_group_name="rgcommvault",
+        cloud_account_name="myCloudAccount",
+        storage_name="myStorage",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/CloudAccounts_ListBySubscription_MinimumSet_Gen.json
+# x-ms-original-file: 2026-08-01-preview/Storages_DisableComplianceLock_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -36,6 +36,16 @@ def main():
         properties={
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "properties": {
+                "company": {
+                    "city": "Redmond",
+                    "companyName": "Contoso",
+                    "country": "USA",
+                    "jobTitle": "Backup Operator",
+                    "postalCode": "98052",
+                    "state": "WA",
+                    "street": "1 Microsoft Way",
+                    "website": "https://www.contoso.com",
+                },
                 "marketplace": {
                     "offerDetails": {
                         "offerId": "ysmwsuakhwvkosz",
@@ -61,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/CloudAccounts_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-01-preview/CloudAccounts_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
