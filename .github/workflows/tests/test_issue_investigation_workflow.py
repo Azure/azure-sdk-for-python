@@ -82,6 +82,8 @@ class InvestigationWorkflowTests(unittest.TestCase):
                 self.assertIn(condition, handoff)
         self.assertIn("case-insensitively", handoff)
         self.assertIn("instead of repeating the comment or assignment", handoff)
+        self.assertIn("perPage: 100", handoff)
+        self.assertIn("paginating through all pages", handoff)
         self.assertIn("`report_incomplete`", handoff)
 
     def test_version_prompt_preserves_supported_and_preview_reports(self):
@@ -215,6 +217,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertIn("needs.safe_outputs.outputs.comment_id != ''", assignment)
         self.assertIn("ref: ${{ github.workflow_sha }}", assignment)
         self.assertIn("process_safe_outputs.cjs", assignment)
+        self.assertIn("completed_with_skips", assignment)
         result = subprocess.run(
             ["node", str(WORKFLOWS / "tests" / "copilot_assignment.cjs")],
             text=True,

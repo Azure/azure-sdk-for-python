@@ -31,6 +31,7 @@ async function run(changes = {}, comment = analysis, event = context, inputs = {
     }]);
     assert.equal(result.config.assign_to_agent.max, 1);
     assert.deepEqual(result.config.assign_to_agent.allowed, ["copilot"]);
+    assert.equal(result.config.assign_to_agent["ignore-if-error"], true);
   }
   cases++;
   return result;

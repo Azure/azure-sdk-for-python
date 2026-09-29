@@ -83,7 +83,7 @@ async function prepareAssignment({ github, context, issueNumber, appliedItems, a
     config: {
       assign_to_agent: {
         allowed: ["copilot"],
-        ignore_if_error: true,
+        "ignore-if-error": true,
         max: 1,
         name: "copilot",
         target: String(number),

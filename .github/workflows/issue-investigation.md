@@ -171,10 +171,13 @@ jobs:
       - name: Confirm Copilot assignment succeeded
         if: >-
           steps.assignment.outputs.assignment_requested == 'true' &&
-          (steps.assignment.outputs.status != 'success' || steps.assignment.outputs.items_applied != '1')
+          !(
+            (steps.assignment.outputs.status == 'success' && steps.assignment.outputs.items_applied == '1') ||
+            (steps.assignment.outputs.status == 'completed_with_skips' && steps.assignment.outputs.items_skipped == '1')
+          )
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
-          script: core.setFailed('The native safe-output processor did not apply the Copilot assignment');
+          script: core.setFailed('The native safe-output processor did not apply or safely skip the Copilot assignment');
 
 tools:
   # With github.min-integrity none, strict mode requires bash to be explicit.
@@ -218,7 +221,7 @@ Continue only if all of these are true:
 
 If any condition fails, call `noop` with a short message explaining the failed precondition. Do not comment, label, close, or assign.
 
-Read the issue comments with `issue_read` (method `get_comments`) for the triage analysis and previous investigation results. If an existing investigation already supplies the same decision and next step, and no new evidence changes them, call `noop` instead of repeating the comment or assignment.
+Read the issue comments with `issue_read` (method `get_comments`, setting `perPage: 100` and paginating through all pages until the final page) to examine the triage analysis and any previous investigation results. Because comments are returned oldest-first, always inspect through the newest comments before deciding whether a prior investigation exists. If an existing investigation already supplies the same decision and next step, and no new evidence changes them, call `noop` instead of repeating the comment or assignment.
 
 Immediately before requesting any comment, closure, or assignment, retrieve the issue again and recheck all handoff conditions. A queued investigation must not act on an issue that has since been closed, locked, or returned to manual triage. If required tools or repository data are unavailable and the investigation cannot be completed, call `report_incomplete` with the concrete blocker; do not disguise an incomplete investigation as `noop` or ask the author to supply information already present.
 
