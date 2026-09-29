@@ -12,7 +12,7 @@ import functools
 from itertools import product
 import os
 import time
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -21,11 +21,12 @@ from devtools_testutils import recorded_by_proxy
 import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineContext, PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared.async_challenge_auth_policy import AsyncChallengeAuthPolicy, await_result
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
 from _shared.helpers import Request, mock_response, validating_transport
@@ -36,6 +37,277 @@ from _keys_test_case import KeysTestCase
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+
+
+@pytest.fixture
+def isolated_challenge_cache():
+    HttpChallengeCache.clear()
+    yield
+    HttpChallengeCache.clear()
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("producer_async,consumer_async", product([False, True], repeat=2))
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+@pytest.mark.parametrize("parameter", ["resource", "scope"])
+@pytest.mark.parametrize("producer_fails", [False, True])
+@pytest.mark.parametrize("verify", [None, True, False])
+@pytest.mark.parametrize("resource", ["https://other.test", "https://example.test"])
+async def test_cached_challenge_respects_consumer_verification(
+    producer_async, consumer_async, token_type, parameter, producer_fails, verify, resource
+):
+    url = "https://cache.example.test/items"
+    scope = resource + "/.default"
+    value = resource if parameter == "resource" else scope
+    header = f'Bearer authorization="https://authority.test/tenant", {parameter}="{value}"'
+    method = "get_token" if token_type is AccessToken else "get_token_info"
+    producer_token = (AsyncMock if producer_async else Mock)(
+        return_value=token_type("producer-token", time.time() + 3600),
+        side_effect=ValueError("producer credential failed") if producer_fails else None,
+    )
+    producer = (AsyncChallengeAuthPolicy if producer_async else ChallengeAuthPolicy)(
+        Mock(spec_set=[method], **{method: producer_token}), verify_challenge_resource=False
+    )
+    producer_send = (AsyncMock if producer_async else Mock)(
+        side_effect=[
+            Mock(status_code=401, headers={"WWW-Authenticate": header}),
+            Mock(status_code=200),
+        ]
+    )
+    producer_pipeline = (AsyncPipeline if producer_async else Pipeline)(
+        policies=[producer], transport=Mock(send=producer_send)
+    )
+    if producer_fails:
+        with pytest.raises(ValueError, match="producer credential failed"):
+            await await_result(producer_pipeline.run, HttpRequest("GET", url))
+    else:
+        await await_result(producer_pipeline.run, HttpRequest("GET", url))
+    assert producer_token.call_count == 1
+    assert HttpChallengeCache.get_challenge_for_url(url) is not None
+
+    consumer_token = (AsyncMock if consumer_async else Mock)(
+        return_value=token_type("consumer-token", time.time() + 3600)
+    )
+    options = {} if verify is None else {"verify_challenge_resource": verify}
+    consumer = (AsyncChallengeAuthPolicy if consumer_async else ChallengeAuthPolicy)(
+        Mock(spec_set=[method], **{method: consumer_token}), **options
+    )
+    consumer_send = (AsyncMock if consumer_async else Mock)(return_value=Mock(status_code=200))
+    consumer_pipeline = (AsyncPipeline if consumer_async else Pipeline)(
+        policies=[consumer], transport=Mock(send=consumer_send)
+    )
+    request = HttpRequest("GET", url)
+    if verify is False or resource == "https://example.test":
+        await await_result(consumer_pipeline.run, request)
+        assert consumer_token.call_args.args == (scope,)
+        assert request.headers["Authorization"] == "Bearer consumer-token"
+        assert consumer_send.call_count == 1
+        assert HttpChallengeCache.get_challenge_for_url(url) is not None
+    else:
+        with pytest.raises(ValueError, match="does not match the requested domain"):
+            await await_result(consumer_pipeline.run, request)
+        consumer_token.assert_not_called()
+        consumer_send.assert_not_called()
+        assert "Authorization" not in request.headers
+        assert HttpChallengeCache.get_challenge_for_url(url) is None
+        assert consumer._token is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("token_state", ["cold", "expired", "refresh_due", "warm"])
+@pytest.mark.parametrize("scope", ["https://other.test/.default", "invalid", "https://[/"])
+@pytest.mark.parametrize("replacement", ["none", "removed", "valid"])
+async def test_cached_challenge_rejection_clears_token(is_async, token_state, scope, replacement):
+    url = "https://cache.example.test/items"
+    challenge = HttpChallenge(
+        url, f'Bearer authorization="https://authority.test/tenant", resource="https://example.test", scope="{scope}"'
+    )
+    valid = HttpChallenge(url, 'Bearer authorization="https://authority.test/tenant", resource="https://example.test"')
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    get_token = (AsyncMock if is_async else Mock)(return_value=AccessTokenInfo("new-token", time.time() + 3600))
+    policy = (AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy)(
+        Mock(spec_set=["get_token_info"], get_token_info=get_token)
+    )
+    if token_state != "cold":
+        policy._token = AccessTokenInfo(
+            "cached-token",
+            time.time() + (-1 if token_state == "expired" else 3600),
+            refresh_on=time.time() - 1 if token_state == "refresh_due" else None,
+        )
+    send = (AsyncMock if is_async else Mock)(return_value=Mock(status_code=200))
+    pipeline = (AsyncPipeline if is_async else Pipeline)(policies=[policy], transport=Mock(send=send))
+    original_get_scope = challenge.get_scope
+
+    def get_scope():
+        if replacement == "removed":
+            HttpChallengeCache.remove_challenge_for_url(url)
+        elif replacement == "valid":
+            HttpChallengeCache.set_challenge_for_url(url, valid)
+        return original_get_scope()
+
+    request = HttpRequest("GET", url)
+    with patch.object(challenge, "get_scope", side_effect=get_scope):
+        with pytest.raises(ValueError):
+            await await_result(pipeline.run, request)
+    assert policy._token is None
+    get_token.assert_not_called()
+    send.assert_not_called()
+    assert "Authorization" not in request.headers
+    assert HttpChallengeCache.get_challenge_for_url(url) is (valid if replacement == "valid" else None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("replacement", ["none", "removed", "valid"])
+@pytest.mark.parametrize("failure", ["resource", "claims", "parse", "scope"])
+async def test_rejected_response_evicts_only_cached_snapshot(is_async, replacement, failure):
+    url = "https://cache.example.test/items"
+    invalid = 'Bearer authorization="https://authority.test/tenant", resource="https://other.test"'
+    valid_header = 'Bearer authorization="https://authority.test/tenant", resource="https://example.test"'
+    cached = HttpChallenge(url, invalid if failure == "claims" else valid_header)
+    valid = HttpChallenge(url, valid_header)
+    HttpChallengeCache.set_challenge_for_url(url, cached)
+    headers = {
+        "resource": invalid,
+        "claims": 'Bearer authorization="https://authority.test/", claims="e30="',
+        "parse": 'Bearer resource="https://example.test"',
+        "scope": 'Bearer authorization="https://authority.test/tenant", scope="https://[/"',
+    }
+    get_token = (AsyncMock if is_async else Mock)()
+    policy = (AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy)(
+        Mock(spec_set=["get_token"], get_token=get_token)
+    )
+    policy._token = AccessToken("old-token", time.time() + 3600)
+    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+    response = PipelineResponse(
+        request.http_request, Mock(status_code=401, headers={"WWW-Authenticate": headers[failure]}), request.context
+    )
+    original_get_scope = cached.get_scope
+
+    def get_scope():
+        if replacement == "valid":
+            HttpChallengeCache.set_challenge_for_url(url, valid)
+        elif replacement == "removed":
+            HttpChallengeCache.remove_challenge_for_url(url)
+        return original_get_scope()
+
+    with patch.object(cached, "get_scope", side_effect=get_scope):
+        if failure == "parse":
+            assert await await_result(policy.on_challenge, request, response) is False
+        else:
+            with pytest.raises(ValueError):
+                await await_result(policy.on_challenge, request, response)
+    assert HttpChallengeCache.get_challenge_for_url(url) is (valid if replacement == "valid" else None)
+    assert policy._token is None
+    get_token.assert_not_called()
+    assert "Authorization" not in request.http_request.headers
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("producer_async,consumer_async", product([False, True], repeat=2))
+@pytest.mark.parametrize(
+    "resource",
+    [
+        "https://vault.azure.net",
+        "https://vault.azure.cn",
+        "https://vault.usgovcloudapi.net",
+        "https://managedhsm.azure.net",
+        "https://custom.stack.test",
+        "http://custom.stack.test",
+        "http://custom.stack.test:443",
+        "//custom.stack.test",
+        "custom://custom.stack.test",
+        "HTTPS://CUSTOM.STACK.TEST",
+        "https://custom.stack.test:8443",
+        "https://custom.stack.test:443",
+    ],
+)
+@pytest.mark.parametrize("explicit_producer_port", [False, True])
+async def test_cached_challenge_authority_compatibility(
+    producer_async, consumer_async, resource, explicit_producer_port
+):
+    authority = urlparse(resource).netloc
+    if resource.lower().startswith("https://") and authority.endswith(":443"):
+        authority = authority[:-4]
+    if ":" in authority:
+        producer_url = f"https://vault.{authority}/first"
+        consumer_url = f"https://VAULT.{authority.upper()}/next?api-version=test"
+    else:
+        producer_port, consumer_port = (":443", "") if explicit_producer_port else ("", ":443")
+        producer_url = f"https://vault.{authority}{producer_port}/first"
+        consumer_url = f"https://VAULT.{authority.upper()}{consumer_port}/next?api-version=test"
+    scope = resource + "/.default"
+    header = f'Bearer authorization="https://authority.test/adfs", resource="https://ignored.test", scope="{scope}"'
+    for is_async, url, responses in [
+        (
+            producer_async,
+            producer_url,
+            [Mock(status_code=401, headers={"WWW-Authenticate": header}), Mock(status_code=200)],
+        ),
+        (consumer_async, consumer_url, [Mock(status_code=200)]),
+    ]:
+        get_token = (AsyncMock if is_async else Mock)(return_value=AccessToken("token", time.time() + 3600))
+        policy = (AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy)(
+            Mock(spec_set=["get_token"], get_token=get_token)
+        )
+        send = (AsyncMock if is_async else Mock)(side_effect=responses)
+        pipeline = (AsyncPipeline if is_async else Pipeline)(policies=[policy], transport=Mock(send=send))
+        request = HttpRequest("GET", url)
+        await await_result(pipeline.run, request)
+        assert send.call_count == len(responses)
+        assert get_token.call_args.args == (scope,)
+        assert not get_token.call_args.kwargs.get("tenant_id")
+        assert request.headers["Authorization"] == "Bearer token"
+    if ":8443" in authority:
+        assert HttpChallengeCache.get_challenge_for_url(consumer_url.replace(":8443", "")) is None
+        assert HttpChallengeCache.get_challenge_for_url(consumer_url.replace(":8443", ":8444")) is None
+
+
+@pytest.mark.usefixtures("isolated_challenge_cache")
+def test_cache_removal_matches_snapshot():
+    url = "https://cache.example.test/items"
+    header = 'Bearer authorization="https://authority.test/tenant", resource="https://example.test"'
+    first = HttpChallenge(url, header)
+    replacement = HttpChallenge(url, header)
+    HttpChallengeCache.set_challenge_for_url(url, first)
+    HttpChallengeCache.remove_challenge_for_url(url, first)
+    HttpChallengeCache.remove_challenge_for_url(url, first)
+    HttpChallengeCache.set_challenge_for_url(url, replacement)
+    HttpChallengeCache.remove_challenge_for_url(url, first)
+    assert HttpChallengeCache.get_challenge_for_url(url) is replacement
+    HttpChallengeCache.remove_challenge_for_url(url)
+    HttpChallengeCache.remove_challenge_for_url(url)
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("resource_port,request_port", [("", ":8443"), (":8443", ""), (":8443", ":8444")])
+async def test_cached_challenge_nondefault_port_mismatch(is_async, resource_port, request_port):
+    url = f"https://cache.example.test{request_port}/items"
+    challenge = HttpChallenge(
+        url, f'Bearer authorization="https://authority.test/tenant", resource="https://example.test{resource_port}"'
+    )
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    get_token = (AsyncMock if is_async else Mock)(return_value=AccessToken("token", time.time() + 3600))
+    policy = (AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy)(
+        Mock(spec_set=["get_token"], get_token=get_token)
+    )
+    send = (AsyncMock if is_async else Mock)(return_value=Mock(status_code=200))
+    pipeline = (AsyncPipeline if is_async else Pipeline)(policies=[policy], transport=Mock(send=send))
+    request = HttpRequest("GET", url)
+    with pytest.raises(ValueError, match="does not match the requested domain"):
+        await await_result(pipeline.run, request)
+    get_token.assert_not_called()
+    send.assert_not_called()
+    assert "Authorization" not in request.headers
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
 
 
 class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
@@ -111,7 +383,8 @@ KV_CHALLENGE_RESPONSE = Mock(
 
 
 @empty_challenge_cache
-def test_rejected_challenge_is_not_cached():
+@pytest.mark.parametrize("reuse_policy", [False, True])
+def test_rejected_challenge_is_not_cached(reuse_policy):
     url = "https://example.net/keys/canary"
     challenge = Mock(
         status_code=401,
@@ -132,6 +405,8 @@ def test_rejected_challenge_is_not_cached():
     pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
 
     for _ in range(2):
+        if not reuse_policy:
+            pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", url)
         request.set_bytes_body(b"secret")
         with pytest.raises(ValueError):

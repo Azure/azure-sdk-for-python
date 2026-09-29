@@ -83,6 +83,26 @@ def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) ->
     return challenge
 
 
+def _validate_challenge_resource(scope: str, request_url: str) -> None:
+    resource_domain = urlparse(scope).netloc
+    if not resource_domain:
+        raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+
+    request_domain = urlparse(request_url).netloc
+    if request_domain.lower().endswith(f".{resource_domain.lower()}"):
+        return
+
+    # Preserve existing authority matches and the cache's HTTPS default-port equivalence.
+    request_domain = ChallengeCache._get_cache_key(request_url)  # pylint:disable=protected-access
+    resource_authority = ChallengeCache._get_cache_key(scope)  # pylint:disable=protected-access
+    if not request_domain.lower().endswith(f".{resource_authority.lower()}"):
+        raise ValueError(
+            f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
+            "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
+            "See https://aka.ms/azsdk/blog/vault-uri for more information."
+        )
+
+
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
     """Policy for handling HTTP authentication challenges.
 
@@ -174,10 +194,18 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
-            # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            if self._need_new_token:
+            try:
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+                if self._verify_challenge_resource:
+                    _validate_challenge_resource(scope, request.http_request.url)
+            except ValueError:
+                self._token = None
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, challenge)
+                raise
+
+            # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
+            if self._need_new_token:
                 self._request_kv_token(scope, challenge)
 
             bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
@@ -201,6 +229,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        cached_challenge: Optional[HttpChallenge] = None
         try:
             # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
             old_scope: Optional[str] = None
@@ -218,20 +247,19 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
+            self._token = None
+            if cached_challenge:
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
             return False
 
-        if self._verify_challenge_resource:
-            resource_domain = urlparse(scope).netloc
-            if not resource_domain:
-                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
-
-            request_domain = urlparse(request.http_request.url).netloc
-            if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
-                raise ValueError(
-                    f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
-                    "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
-                    "See https://aka.ms/azsdk/blog/vault-uri for more information."
-                )
+        try:
+            if self._verify_challenge_resource:
+                _validate_challenge_resource(scope, request.http_request.url)
+        except ValueError:
+            self._token = None
+            if cached_challenge:
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
+            raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
 

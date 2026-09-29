@@ -95,7 +95,8 @@ def empty_challenge_cache(fn):
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_rejected_challenge_is_not_cached():
+@pytest.mark.parametrize("reuse_policy", [False, True])
+async def test_rejected_challenge_is_not_cached(reuse_policy):
     url = "https://example.net/keys/canary"
     challenge = Mock(
         status_code=401,
@@ -116,6 +117,10 @@ async def test_rejected_challenge_is_not_cached():
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
 
     for _ in range(2):
+        if not reuse_policy:
+            pipeline = AsyncPipeline(
+                policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
+            )
         request = HttpRequest("POST", url)
         request.set_bytes_body(b"secret")
         with pytest.raises(ValueError):

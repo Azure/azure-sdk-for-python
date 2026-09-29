@@ -8,17 +8,94 @@ the challenge cache is global to the process.
 """
 
 import functools
+from itertools import product
 import time
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 from uuid import uuid4
 
 import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.rest import HttpRequest
 from azure.keyvault.securitydomain._internal import ChallengeAuthPolicy, HttpChallengeCache
+from azure.keyvault.securitydomain._internal.async_challenge_auth_policy import AsyncChallengeAuthPolicy, await_result
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+
+
+@pytest.fixture
+def isolated_challenge_cache():
+    HttpChallengeCache.clear()
+    yield
+    HttpChallengeCache.clear()
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("isolated_challenge_cache")
+@pytest.mark.parametrize("producer_async,consumer_async", product([False, True], repeat=2))
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+@pytest.mark.parametrize("parameter", ["resource", "scope"])
+@pytest.mark.parametrize("producer_fails", [False, True])
+@pytest.mark.parametrize("verify", [None, True, False])
+@pytest.mark.parametrize("resource", ["https://other.test", "https://example.test"])
+async def test_cached_challenge_respects_consumer_verification(
+    producer_async, consumer_async, token_type, parameter, producer_fails, verify, resource
+):
+    url = "https://cache.example.test/items"
+    scope = resource + "/.default"
+    value = resource if parameter == "resource" else scope
+    header = f'Bearer authorization="https://authority.test/tenant", {parameter}="{value}"'
+    method = "get_token" if token_type is AccessToken else "get_token_info"
+    producer_token = (AsyncMock if producer_async else Mock)(
+        return_value=token_type("producer-token", time.time() + 3600),
+        side_effect=ValueError("producer credential failed") if producer_fails else None,
+    )
+    producer = (AsyncChallengeAuthPolicy if producer_async else ChallengeAuthPolicy)(
+        Mock(spec_set=[method], **{method: producer_token}), verify_challenge_resource=False
+    )
+    producer_send = (AsyncMock if producer_async else Mock)(
+        side_effect=[
+            Mock(status_code=401, headers={"WWW-Authenticate": header}),
+            Mock(status_code=200),
+        ]
+    )
+    producer_pipeline = (AsyncPipeline if producer_async else Pipeline)(
+        policies=[producer], transport=Mock(send=producer_send)
+    )
+    if producer_fails:
+        with pytest.raises(ValueError, match="producer credential failed"):
+            await await_result(producer_pipeline.run, HttpRequest("GET", url))
+    else:
+        await await_result(producer_pipeline.run, HttpRequest("GET", url))
+    assert producer_token.call_count == 1
+    assert HttpChallengeCache.get_challenge_for_url(url) is not None
+
+    consumer_token = (AsyncMock if consumer_async else Mock)(
+        return_value=token_type("consumer-token", time.time() + 3600)
+    )
+    options = {} if verify is None else {"verify_challenge_resource": verify}
+    consumer = (AsyncChallengeAuthPolicy if consumer_async else ChallengeAuthPolicy)(
+        Mock(spec_set=[method], **{method: consumer_token}), **options
+    )
+    consumer_send = (AsyncMock if consumer_async else Mock)(return_value=Mock(status_code=200))
+    consumer_pipeline = (AsyncPipeline if consumer_async else Pipeline)(
+        policies=[consumer], transport=Mock(send=consumer_send)
+    )
+    request = HttpRequest("GET", url)
+    if verify is False or resource == "https://example.test":
+        await await_result(consumer_pipeline.run, request)
+        assert consumer_token.call_args.args == (scope,)
+        assert request.headers["Authorization"] == "Bearer consumer-token"
+        assert consumer_send.call_count == 1
+        assert HttpChallengeCache.get_challenge_for_url(url) is not None
+    else:
+        with pytest.raises(ValueError, match="does not match the requested domain"):
+            await await_result(consumer_pipeline.run, request)
+        consumer_token.assert_not_called()
+        consumer_send.assert_not_called()
+        assert "Authorization" not in request.headers
+        assert HttpChallengeCache.get_challenge_for_url(url) is None
+        assert consumer._token is None
 
 
 def empty_challenge_cache(fn):
