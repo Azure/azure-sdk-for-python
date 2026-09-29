@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
+from functools import partial
 from typing import Dict, TYPE_CHECKING
 
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
@@ -24,19 +25,37 @@ def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ign
     _sdkstats_debug("collection initialization requested")
     config = StatsbeatConfig.from_exporter(exporter)
     if config:
-        manager = get_statsbeat_manager()
+        config_manager = get_configuration_manager()
+        if config_manager and config_manager.is_initialized():
+            config_manager.register_callback(get_statsbeat_configuration_callback)
+            config_manager.register_initial_configuration_callback(
+                partial(_initialize_statsbeat_from_initial_configuration, config)
+            )
+            _sdkstats_debug("OneSettings callback registration result=deferred-initialization")
+        else:
+            initialized = get_statsbeat_manager().initialize(config)
+            _sdkstats_debug(f"collection initialization result={initialized} source=built-in-fallback")
+
+
+def _initialize_statsbeat_from_initial_configuration(
+    base_config: StatsbeatConfig, settings: Dict[str, str]
+) -> None:
+    """Initialize SDK Stats after the first OneSettings request attempt."""
+    manager = get_statsbeat_manager()
+    if settings:
+        sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)
+        if sdk_stats_enabled is False:
+            _sdkstats_debug("initial OneSettings action=disabled")
+            return
+        config = StatsbeatConfig.from_config(base_config, settings)
+        source = "onesettings"
+    else:
+        config = base_config
+        source = "built-in-fallback"
+
+    if config:
         initialized = manager.initialize(config)
-        _sdkstats_debug(f"collection initialization result={initialized}")
-        if initialized:
-            # Register the callback that will be invoked on configuration changes to statsbeat
-            # Is a NoOp if _ConfigurationManager not initialized
-            config_manager = get_configuration_manager()
-            # config_manager would be `None` if control plane is disabled
-            if config_manager:
-                config_manager.register_callback(get_statsbeat_configuration_callback)
-                _sdkstats_debug("OneSettings callback registration result=registered")
-            else:
-                _sdkstats_debug("OneSettings callback registration result=control-plane-disabled")
+        _sdkstats_debug(f"collection initialization result={initialized} source={source}")
 
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
@@ -48,11 +67,6 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     :param settings: Configuration settings from onesettings
     :type settings: Dict[str, str]
     """
-    from azure.monitor.opentelemetry.exporter._constants import (
-        _ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY,
-    )
-    settings[_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY] = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://tst-data.stats.monitor.azure.com/"
-
     manager = get_statsbeat_manager()
 
     # Check if SDK stats should be enabled based on configuration
