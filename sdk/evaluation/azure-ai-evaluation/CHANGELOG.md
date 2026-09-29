@@ -1,5 +1,12 @@
 # Release History
 
+## 1.18.8 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
+- Fixed multi-turn evaluations failing during Azure OpenAI result conversion when per-turn token-count lists were routed into scalar token-usage fields. Per-turn breakdowns are now excluded from scalar result-field routing, preserving aggregate token counts and scores. ([#49242](https://github.com/Azure/azure-sdk-for-python/pull/49242))
+
 ## 1.18.7 (2026-09-25)
 
 ### Breaking Changes
