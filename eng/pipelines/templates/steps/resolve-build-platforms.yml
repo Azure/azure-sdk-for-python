@@ -4,15 +4,32 @@ parameters:
     default: ''
 
 steps:
-    # when we merge pipeline v3, this check will change to examining the targeting string $(TargetingString)
-    # as the generate-pr-diff call + resolution will be present in resolve-package-targeting.yml.
-    # until then, we simply check to see if we're targeting storage service directory
+    # Packages that ship compiled binaries opt in with `signBinaries: true` on their artifact entry in
+    # the service ci.yml. Save-Package-Properties copies that artifact entry verbatim into each package
+    # info file as `ArtifactDetails`, so the opt-in is readable here without threading the artifact list
+    # through every caller.
+    #
+    # resolve-package-targeting.yml runs immediately before this and deletes the package info files that
+    # this run is not targeting, so the folder is already narrowed to the packages being built; on 'auto'
+    # pull request builds save-package-properties.yml narrows it to the PR diff first. This deliberately
+    # keeps reading the folder rather than the $(TargetingString) those steps also set, because that
+    # variable carries only package names and the decision below needs an artifact property.
     - pwsh: |
-        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
-          | ForEach-Object { $_.Name.Replace(".json", "") }
+        $binaryPackages = @()
 
-        if ($packageProperties -contains "azure-storage-extensions") {
-          Write-Host "Targeting storage, enabling extension build."
+        foreach ($packageInfoPath in (Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json")) {
+          $packageInfo = Get-Content -Raw -Path $packageInfoPath.FullName | ConvertFrom-Json
+
+          if ($packageInfo.ArtifactDetails.signBinaries -eq $true) {
+            $binaryPackages += $packageInfo.Name
+          }
+        }
+
+        if ($binaryPackages) {
+          Write-Host "Targeting package(s) with compiled binaries ($($binaryPackages -join ', ')), enabling extension build."
           Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
+        }
+        else {
+          Write-Host "No targeted package declares compiled binaries, building on linux only."
         }
       displayName: Check extension package presence
