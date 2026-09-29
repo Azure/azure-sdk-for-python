@@ -142,7 +142,7 @@ def main() -> None:
             print("Filter strategy: smart_filtering")
 
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": trace_source,
         }
 

@@ -109,7 +109,7 @@ with (
         trace_ids = [tid.strip() for tid in trace_ids_str.split(",") if tid.strip()]
         print(f"Using {len(trace_ids)} trace IDs")
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": {
                 "type": "trace_id_source",
                 "trace_ids": trace_ids,
@@ -125,7 +125,7 @@ with (
             )
         print(f"Using {len(conversation_ids)} conversation IDs")
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": {
                 "type": "conversation_id_source",
                 "conversation_ids": conversation_ids,
