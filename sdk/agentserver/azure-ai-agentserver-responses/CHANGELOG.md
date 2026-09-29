@@ -2,6 +2,12 @@
 
 ## 2.3.0b1 (Unreleased)
 
+### Bugs Fixed
+
+- Preserved the canonical request `agent_reference` on lifecycle snapshots when
+  handlers emit a partial reference, preventing stored response updates from
+  losing the agent name or version.
+
 ### Other Changes
 
 - Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
