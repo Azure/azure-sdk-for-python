@@ -131,6 +131,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
 
     # default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
     default_connection_string = "InstrumentationKey=00000000-0000-0000-0000-000000000123;IngestionEndpoint=https://tst-data.stats.monitor.azure.com/"
+    # coming from c4a29126-a7cb-47e5-b348-11414998b11e somhow
 
     try:
         # Get supported data boundaries
