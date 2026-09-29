@@ -161,6 +161,7 @@ azpysdk mypy .
 ⚠️ Changing API signatures (requires design review)  
 ⚠️ Disabling or removing tests (requires explanation)  
 ⚠️ Large-scale refactoring (requires approval)  
+⚠️ Modifying CI/CD pipeline definitions (requires explicit human prompting)
 
 #### Prohibited Operations
 ❌ Merging PRs without human review  
