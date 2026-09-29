@@ -103,5 +103,5 @@
         "azure.keyvault.administration._generated.KeyVaultClient.list_ekm_private_endpoints": "KeyVault.listEkmPrivateEndpoints",
         "azure.keyvault.administration._generated.aio.KeyVaultClient.list_ekm_private_endpoints": "KeyVault.listEkmPrivateEndpoints"
     },
-    "CrossLanguageVersion": "7c52c44e1bdf"
+    "CrossLanguageVersion": "ad0ccb9be8ef"
 }

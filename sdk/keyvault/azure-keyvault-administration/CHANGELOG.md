@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.0b3 (Unreleased)
+## 4.8.0b3 (2026-09-30)
 
 ### Features Added
 
@@ -16,8 +16,6 @@
 - Added a `connectivity_mode` keyword argument and attribute to `KeyVaultEkmConnection`. Set this to
   `KeyVaultEkmConnectivityMode.PRIVATE_ENDPOINT` to reach the EKM proxy through an EKM proxy private endpoint, in which
   case `host` is the name of the private endpoint instead of a DNS name or IP address.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
