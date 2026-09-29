@@ -1,5 +1,14 @@
 # Release History
 
+## 41.7.0 (2026-09-29)
+
+### Features Added
+
+  - Model `ManagedClusterProperties` added property `enable_fips`
+  - Model `ManagedClusterSecurityProfile` added property `kubernetes_resource_object_encryption_profile`
+  - Added enum `InfrastructureEncryption`
+  - Added model `KubernetesResourceObjectEncryptionProfile`
+
 ## 41.7.0b1 (2026-09-02)
 
 ### Features Added

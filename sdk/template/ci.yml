@@ -61,3 +61,15 @@ extends:
     Artifacts:
     - name: azure-template
       safeName: azuretemplate
+    # Ships compiled binaries, so its wheels are routed through a dedicated
+    # Sign_azuretemplatetwo stage before release and dev feed publishing. Paired
+    # with the pure Python azure-template above, this service covers both kinds
+    # of package in one release.
+    - name: azure-template-two
+      safeName: azuretemplatetwo
+      signBinaries: true
+      # Pure C-based package, not generating docs at this moment. Doc publishing
+      # resolves a single wheel per package, which does not hold for a package
+      # that ships one wheel per platform.
+      skipPublishDocGithubIo: true
+      skipPublishDocMs: true
