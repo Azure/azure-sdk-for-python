@@ -17,6 +17,7 @@ parameters:
   UseFederatedAuth: false
   ServiceConnection: ''
   TestPipeline: false
+  Artifacts: []
 
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -36,8 +37,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: set-dev-build.yml

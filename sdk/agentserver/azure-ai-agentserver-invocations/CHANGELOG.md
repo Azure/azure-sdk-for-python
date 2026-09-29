@@ -1,10 +1,6 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.2.1 (Unreleased)
 
 ### Bugs Fixed
 
@@ -12,7 +8,13 @@
 
 ### Other Changes
 
-- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.1`.
+
+## 1.2.0 (2026-09-29)
+
+### Other Changes
+
+- Stable release of the 1.2.0 preview series.
 - Generate fallback invocation and session IDs only when no valid supplied ID is available.
 
 ## 1.2.0b1 (2026-09-03)

@@ -281,7 +281,7 @@ try:
         async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
             """
             No-op for uamqp: drain-on-close is only implemented for the pyamqp
-            transport (the default). uamqp is deprecated.
+            transport (the default).
             :param ReceiveClientAsync handler: The handler.
             :rtype: None
             """

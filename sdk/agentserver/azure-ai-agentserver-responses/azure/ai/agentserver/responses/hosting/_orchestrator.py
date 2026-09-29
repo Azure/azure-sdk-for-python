@@ -1120,7 +1120,7 @@ async def _run_background_non_stream(
     store: bool = True,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
-    history_limit: int = 100,
+    history_limit: int = -1,
     runtime_state: _RuntimeState | None = None,
     runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
@@ -3151,7 +3151,7 @@ class _ResponseOrchestrator:
             keep_alive_task.cancel()
             events_task.cancel()
 
-    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:
+    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:  # pylint: disable=too-many-statements
         """Drive the SSE streaming pipeline using the shared event pipeline.
 
         Delegates all event processing (first-event handling, normalisation,
@@ -3189,8 +3189,6 @@ class _ResponseOrchestrator:
             store=ctx.store,
         )
 
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
-
         # Stored responses (background / resilient) ALWAYS run via the resilient
         # task + per-response wire stream, regardless of SSE keep-alive. The
         # resilient body runs in its own task, independent of the client
@@ -3225,12 +3223,20 @@ class _ResponseOrchestrator:
                 # prevents the shutdown wait loop from returning before the
                 # deferred terminal write below completes.
                 state.execution_task = asyncio.current_task()
-                # Track shutdown work before the first event without making a
-                # response publicly visible before response.created.
                 start_record.execution_task = state.execution_task
                 state.bg_record = start_record
-                await self._runtime_state.add_pending(start_record)
                 try:
+                    try:
+                        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        logger.error(
+                            "Handler raised before response.created (response_id=%s)",
+                            ctx.response_id,
+                            exc_info=exc,
+                        )
+                        state.captured_error = exc
+                        await self._emit_standalone_error(ctx)
+                        return
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
                     if state.pending_terminal is not None:
@@ -3277,6 +3283,16 @@ class _ResponseOrchestrator:
                 initial_agent_reference=ctx.agent_reference,
             )
             start_record.subject = wire_stream
+            # Close the admission race with graceful shutdown. The current
+            # request task is a temporary drain handle until resilient startup
+            # attaches the actual execution task to this same record.
+            request_task = asyncio.current_task()
+            assert request_task is not None
+            start_record.execution_task = request_task
+            if not await self._runtime_state.add_pending(start_record):
+                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
+                await self._safe_close(wire_stream)
+                return
 
             try:
                 await self._start_resilient_background(
@@ -3285,7 +3301,11 @@ class _ResponseOrchestrator:
                     _resilient_stream_fallback,
                     disposition=_unified_disposition,
                 )
+            except asyncio.CancelledError:
+                await self._runtime_state.discard_pending(ctx.response_id)
+                raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
+                await self._runtime_state.discard_pending(ctx.response_id)
                 if not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.
@@ -3311,6 +3331,7 @@ class _ResponseOrchestrator:
         # --- Ephemeral (non-stored) responses: no resilient task ---
         # The request owns this producer even without keep-alives. Keeping handler
         # iteration in one task lets cleanup finish outside the ASGI cancel scope.
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
             async for chunk in ephemeral_stream:
                 yield chunk

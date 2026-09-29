@@ -1,6 +1,29 @@
 # Release History
 
-## 2.2.0b2 (Unreleased)
+## 2.3.0b1 (2026-09-29)
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
+## 2.2.0 (2026-09-28)
+
+### Other Changes
+
+- Stable release promoting the 2.2.0 preview series. No functional changes
+  since 2.2.0b2.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.2.0` release.
+
+## 2.2.0b2 (2026-09-24)
 
 ### Features Added
 
@@ -9,6 +32,13 @@
 
 ### Bugs Fixed
 
+- Closed a graceful-shutdown admission race for stored streams and bounded
+  DELETE waits when deferred terminal persistence is stalled.
+
+- Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
+  automatic truncation of conversation history. Positive limits remain supported.
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the

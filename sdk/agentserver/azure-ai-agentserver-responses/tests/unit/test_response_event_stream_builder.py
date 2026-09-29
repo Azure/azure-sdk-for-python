@@ -170,6 +170,23 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     assert completed["response"]["completed_at"] is not None
 
 
+def test_event_stream_builder__emit_completed_accepts_usage_without_cache_write_tokens() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_completed_optional_cache_write")
+    stream.emit_created(status="in_progress")
+
+    usage = ResponseUsage(
+        input_tokens=1,
+        input_tokens_details={"cached_tokens": 0},
+        output_tokens=2,
+        output_tokens_details={"reasoning_tokens": 0},
+        total_tokens=3,
+    )
+
+    completed = stream.emit_completed(usage=usage)
+
+    assert completed["response"]["usage"]["input_tokens_details"] == {"cached_tokens": 0}
+
+
 def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     stream = ResponseEventStream(
         response_id="resp_builder_failed_params",

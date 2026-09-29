@@ -240,7 +240,7 @@ _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming"
 
 
 _FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
-_DEFAULT_FLUSH_MODE = "async"
+_DEFAULT_FLUSH_MODE = "background"
 _FLUSH_MODES = frozenset({"async", "background", "sync"})
 _invalid_flush_modes_warned: set[str] = set()
 _flush_mode_lock = threading.Lock()
@@ -278,15 +278,15 @@ async def _flush_spans_for_mode(mode: str) -> None:
     that inline on this ``async`` handler blocks the event loop and serialises
     concurrent requests behind one export.  The mode selects the strategy:
 
-    * ``"async"`` (default) -> :func:`flush_spans_async`: off the event loop;
+    * ``"async"`` -> :func:`flush_spans_async`: off the event loop;
       same durability, no head-of-line blocking under concurrency.
-    * ``"background"`` -> :func:`schedule_flush_spans`: return the response
-      first and flush in the background (lowest latency, but needs the platform
-      to grant a brief drain window before freezing).
+    * ``"background"`` (default) -> :func:`schedule_flush_spans`: schedule
+      flushing without awaiting export (lowest latency, but needs the platform
+      to grant a drain window before freezing).
     * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
 
-    Any unrecognised value falls back to the ``"async"`` default (fail safe:
-    never silently drop telemetry).
+    Empty or unrecognised values fall back to the ``"background"`` default.
+    Background export requires a platform drain window to preserve telemetry.
 
     :param mode: The flush mode; matched case-insensitively.
     :type mode: str
@@ -1545,7 +1545,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         execution_task = record.execution_task
         if execution_task is not None:
             if not execution_task.done():
-                await asyncio.wait({execution_task})
+                done, _ = await asyncio.wait(
+                    {execution_task},
+                    timeout=float(self._runtime_options.shutdown_grace_period_seconds),
+                )
+                if execution_task not in done:
+                    return _invalid_request(
+                        "Response persistence is still in progress. Retry deletion.",
+                        _hdrs,
+                        param="response_id",
+                    )
             if not execution_task.cancelled():
                 error = execution_task.exception()
                 if error is not None:
@@ -1947,7 +1956,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         is_resilient_server = self._runtime_options.resilient_background
 
-        records = await self._runtime_state.list_records()
+        records = await self._runtime_state.begin_draining()
         for record in records:
             if record.response_context is not None:
                 # Fire ``context.shutdown`` so handlers awaiting it (or
