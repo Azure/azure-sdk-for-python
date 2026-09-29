@@ -1,5 +1,18 @@
 # Release History
 
+## 2.3.0b1 (Unreleased)
+
+### Other Changes
+
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
 ## 2.2.0 (2026-09-28)
 
 ### Other Changes
