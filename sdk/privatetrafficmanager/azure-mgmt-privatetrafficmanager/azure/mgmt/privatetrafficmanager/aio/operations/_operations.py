@@ -70,7 +70,7 @@ from ...operations._operations import (
     build_topology_maps_list_by_subscription_request,
     build_topology_maps_update_request,
 )
-from .._configuration import NetworkClientConfiguration
+from .._configuration import PrivateTrafficManagerMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -83,14 +83,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -194,14 +196,16 @@ class EndpointsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1027,14 +1031,16 @@ class HealthPoliciesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`health_policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1625,14 +1631,16 @@ class ProfilesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2527,14 +2535,16 @@ class ProfileProbingGatewaysOperations:  # pylint: disable=docstring-missing-par
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`profile_probing_gateways` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3391,14 +3401,16 @@ class SitesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`sites` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4212,14 +4224,16 @@ class TopologyMapsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.privatetrafficmanager.aio.NetworkClient`'s
+        :class:`~azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient`'s
         :attr:`topology_maps` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PrivateTrafficManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

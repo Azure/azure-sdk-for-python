@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Network": "2026-02-09-preview"
   },
-  "commit": "b98dacf48388cade75dfa307cdb7fe64dcab0a2f",
+  "commit": "7bfd5c2abf4c7c9b9ed3698bfae75a7e3cefb024",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/privatetrafficmanager/resource-manager/Microsoft.Network/PrivateTrafficManager",
   "emitterVersion": "0.63.8",

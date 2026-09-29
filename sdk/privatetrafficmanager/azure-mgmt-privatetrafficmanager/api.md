@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.privatetrafficmanager
 
-    class azure.mgmt.privatetrafficmanager.NetworkClient: implements ContextManager 
+    class azure.mgmt.privatetrafficmanager.PrivateTrafficManagerMgmtClient: implements ContextManager 
         endpoints: EndpointsOperations
         health_policies: HealthPoliciesOperations
         operations: Operations
@@ -35,7 +35,7 @@ namespace azure.mgmt.privatetrafficmanager
 
 namespace azure.mgmt.privatetrafficmanager.aio
 
-    class azure.mgmt.privatetrafficmanager.aio.NetworkClient: implements AsyncContextManager 
+    class azure.mgmt.privatetrafficmanager.aio.PrivateTrafficManagerMgmtClient: implements AsyncContextManager 
         endpoints: EndpointsOperations
         health_policies: HealthPoliciesOperations
         operations: Operations

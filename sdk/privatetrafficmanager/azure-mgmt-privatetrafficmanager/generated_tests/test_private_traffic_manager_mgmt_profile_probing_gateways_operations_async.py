@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatetrafficmanager.aio import NetworkClient
+from azure.mgmt.privatetrafficmanager.aio import PrivateTrafficManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkHealthPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPrivateTrafficManagerMgmtProfileProbingGatewaysOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient, is_async=True)
+        self.client = self.create_mgmt_client(PrivateTrafficManagerMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_health_policies_get(self, resource_group):
-        response = await self.client.health_policies.get(
+    async def test_profile_probing_gateways_get(self, resource_group):
+        response = await self.client.profile_probing_gateways.get(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
-            health_policy_name="str",
+            profile_probing_gateway_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,29 +33,16 @@ class TestNetworkHealthPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_health_policies_begin_create_or_update(self, resource_group):
+    async def test_profile_probing_gateways_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.health_policies.begin_create_or_update(
+            await self.client.profile_probing_gateways.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 private_traffic_manager_profile_name="str",
-                health_policy_name="str",
+                profile_probing_gateway_name="str",
                 resource={
-                    "kind": "Probe",
                     "id": "str",
                     "name": "str",
-                    "properties": {
-                        "probeConfig": {
-                            "customHeaders": [{"name": "str", "value": "str"}],
-                            "expectedStatusCodeRanges": [{"max": 0, "min": 0}],
-                            "intervalInSeconds": 0,
-                            "path": "str",
-                            "port": 0,
-                            "protocol": "str",
-                            "timeoutInSeconds": 0,
-                            "toleratedNumberOfFailures": 0,
-                        },
-                        "provisioningState": "str",
-                    },
+                    "properties": {"probingGatewayId": "str", "provisioningState": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -74,12 +61,13 @@ class TestNetworkHealthPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_health_policies_begin_delete(self, resource_group):
+    async def test_profile_probing_gateways_begin_update(self, resource_group):
         response = await (
-            await self.client.health_policies.begin_delete(
+            await self.client.profile_probing_gateways.begin_update(
                 resource_group_name=resource_group.name,
                 private_traffic_manager_profile_name="str",
-                health_policy_name="str",
+                profile_probing_gateway_name="str",
+                properties={"properties": {"probingGatewayId": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,8 +76,22 @@ class TestNetworkHealthPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_health_policies_list_by_parent(self, resource_group):
-        response = self.client.health_policies.list_by_parent(
+    async def test_profile_probing_gateways_begin_delete(self, resource_group):
+        response = await (
+            await self.client.profile_probing_gateways.begin_delete(
+                resource_group_name=resource_group.name,
+                private_traffic_manager_profile_name="str",
+                profile_probing_gateway_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_profile_probing_gateways_list_by_parent(self, resource_group):
+        response = self.client.profile_probing_gateways.list_by_parent(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
         )

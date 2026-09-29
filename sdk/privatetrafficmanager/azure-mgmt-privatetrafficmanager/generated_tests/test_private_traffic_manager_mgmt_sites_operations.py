@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatetrafficmanager import NetworkClient
+from azure.mgmt.privatetrafficmanager import PrivateTrafficManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkProfileProbingGatewaysOperations(AzureMgmtRecordedTestCase):
+class TestPrivateTrafficManagerMgmtSitesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(PrivateTrafficManagerMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profile_probing_gateways_get(self, resource_group):
-        response = self.client.profile_probing_gateways.get(
+    def test_sites_get(self, resource_group):
+        response = self.client.sites.get(
             resource_group_name=resource_group.name,
-            private_traffic_manager_profile_name="str",
-            profile_probing_gateway_name="str",
+            topology_map_name="str",
+            site_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,15 +32,15 @@ class TestNetworkProfileProbingGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profile_probing_gateways_begin_create_or_update(self, resource_group):
-        response = self.client.profile_probing_gateways.begin_create_or_update(
+    def test_sites_begin_create_or_update(self, resource_group):
+        response = self.client.sites.begin_create_or_update(
             resource_group_name=resource_group.name,
-            private_traffic_manager_profile_name="str",
-            profile_probing_gateway_name="str",
+            topology_map_name="str",
+            site_name="str",
             resource={
                 "id": "str",
                 "name": "str",
-                "properties": {"probingGatewayId": "str", "provisioningState": "str"},
+                "properties": {"probingGatewayIds": ["str"], "provisioningState": "str", "virtualNetworkIds": ["str"]},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -58,12 +58,12 @@ class TestNetworkProfileProbingGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profile_probing_gateways_begin_update(self, resource_group):
-        response = self.client.profile_probing_gateways.begin_update(
+    def test_sites_begin_update(self, resource_group):
+        response = self.client.sites.begin_update(
             resource_group_name=resource_group.name,
-            private_traffic_manager_profile_name="str",
-            profile_probing_gateway_name="str",
-            properties={"properties": {"probingGatewayId": "str"}},
+            topology_map_name="str",
+            site_name="str",
+            properties={"properties": {"probingGatewayIds": ["str"], "virtualNetworkIds": ["str"]}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,11 +71,11 @@ class TestNetworkProfileProbingGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profile_probing_gateways_begin_delete(self, resource_group):
-        response = self.client.profile_probing_gateways.begin_delete(
+    def test_sites_begin_delete(self, resource_group):
+        response = self.client.sites.begin_delete(
             resource_group_name=resource_group.name,
-            private_traffic_manager_profile_name="str",
-            profile_probing_gateway_name="str",
+            topology_map_name="str",
+            site_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -83,10 +83,10 @@ class TestNetworkProfileProbingGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profile_probing_gateways_list_by_parent(self, resource_group):
-        response = self.client.profile_probing_gateways.list_by_parent(
+    def test_sites_list_by_parent(self, resource_group):
+        response = self.client.sites.list_by_parent(
             resource_group_name=resource_group.name,
-            private_traffic_manager_profile_name="str",
+            topology_map_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

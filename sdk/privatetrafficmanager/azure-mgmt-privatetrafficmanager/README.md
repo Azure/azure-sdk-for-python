@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.privatetrafficmanager import NetworkClient
+from azure.mgmt.privatetrafficmanager import PrivateTrafficManagerMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = NetworkClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = PrivateTrafficManagerMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatetrafficmanager.aio import NetworkClient
+from azure.mgmt.privatetrafficmanager.aio import PrivateTrafficManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSitesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPrivateTrafficManagerMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient, is_async=True)
+        self.client = self.create_mgmt_client(PrivateTrafficManagerMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sites_get(self, resource_group):
-        response = await self.client.sites.get(
+    async def test_endpoints_get(self, resource_group):
+        response = await self.client.endpoints.get(
             resource_group_name=resource_group.name,
-            topology_map_name="str",
-            site_name="str",
+            private_traffic_manager_profile_name="str",
+            endpoint_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,19 +33,25 @@ class TestNetworkSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sites_begin_create_or_update(self, resource_group):
+    async def test_endpoints_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.sites.begin_create_or_update(
+            await self.client.endpoints.begin_create_or_update(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
-                site_name="str",
+                private_traffic_manager_profile_name="str",
+                endpoint_name="str",
                 resource={
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "probingGatewayIds": ["str"],
+                        "target": "str",
+                        "alwaysServe": "str",
+                        "endpointStatus": "str",
+                        "healthPolicyId": "str",
+                        "kind": "str",
+                        "monitoringTarget": "str",
+                        "priority": 0,
                         "provisioningState": "str",
-                        "virtualNetworkIds": ["str"],
+                        "weight": 0,
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -65,13 +71,23 @@ class TestNetworkSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sites_begin_update(self, resource_group):
+    async def test_endpoints_begin_update(self, resource_group):
         response = await (
-            await self.client.sites.begin_update(
+            await self.client.endpoints.begin_update(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
-                site_name="str",
-                properties={"properties": {"probingGatewayIds": ["str"], "virtualNetworkIds": ["str"]}},
+                private_traffic_manager_profile_name="str",
+                endpoint_name="str",
+                properties={
+                    "properties": {
+                        "alwaysServe": "str",
+                        "endpointStatus": "str",
+                        "healthPolicyId": "str",
+                        "monitoringTarget": "str",
+                        "priority": 0,
+                        "target": "str",
+                        "weight": 0,
+                    }
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,12 +96,12 @@ class TestNetworkSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sites_begin_delete(self, resource_group):
+    async def test_endpoints_begin_delete(self, resource_group):
         response = await (
-            await self.client.sites.begin_delete(
+            await self.client.endpoints.begin_delete(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
-                site_name="str",
+                private_traffic_manager_profile_name="str",
+                endpoint_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -94,10 +110,10 @@ class TestNetworkSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sites_list_by_parent(self, resource_group):
-        response = self.client.sites.list_by_parent(
+    async def test_endpoints_list_by_parent(self, resource_group):
+        response = self.client.endpoints.list_by_parent(
             resource_group_name=resource_group.name,
-            topology_map_name="str",
+            private_traffic_manager_profile_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatetrafficmanager.aio import NetworkClient
+from azure.mgmt.privatetrafficmanager.aio import PrivateTrafficManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,16 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPrivateTrafficManagerMgmtProfilesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient, is_async=True)
+        self.client = self.create_mgmt_client(PrivateTrafficManagerMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_get(self, resource_group):
-        response = await self.client.topology_maps.get(
+    async def test_profiles_get(self, resource_group):
+        response = await self.client.profiles.get(
             resource_group_name=resource_group.name,
-            topology_map_name="str",
+            private_traffic_manager_profile_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,28 +32,36 @@ class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_begin_create_or_update(self, resource_group):
+    async def test_profiles_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.topology_maps.begin_create_or_update(
+            await self.client.profiles.begin_create_or_update(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
+                private_traffic_manager_profile_name="str",
                 resource={
                     "location": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "catchAllSiteName": "str",
-                        "provisioningState": "str",
-                        "sites": [
+                        "customTopologyMapMode": "str",
+                        "dnsConfig": {"recordType": "str", "ttl": 0},
+                        "endpoints": [
                             {
                                 "name": "str",
-                                "properties": {
-                                    "probingGatewayIds": ["str"],
-                                    "provisioningState": "str",
-                                    "virtualNetworkIds": ["str"],
-                                },
+                                "target": "str",
+                                "alwaysServe": "str",
+                                "endpointStatus": "str",
+                                "healthPolicyId": "str",
+                                "kind": "str",
+                                "monitoringTarget": "str",
+                                "priority": 0,
+                                "provisioningState": "str",
+                                "weight": 0,
                             }
                         ],
+                        "profileStatus": "str",
+                        "provisioningState": "str",
+                        "topologyMapId": "str",
+                        "trafficRoutingMethod": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -74,12 +82,11 @@ class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_begin_update(self, resource_group):
+    async def test_profiles_begin_delete(self, resource_group):
         response = await (
-            await self.client.topology_maps.begin_update(
+            await self.client.profiles.begin_delete(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
-                properties={"properties": {"catchAllSiteName": "str"}, "tags": {"str": "str"}},
+                private_traffic_manager_profile_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,11 +95,35 @@ class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_begin_delete(self, resource_group):
+    async def test_profiles_begin_update(self, resource_group):
         response = await (
-            await self.client.topology_maps.begin_delete(
+            await self.client.profiles.begin_update(
                 resource_group_name=resource_group.name,
-                topology_map_name="str",
+                private_traffic_manager_profile_name="str",
+                properties={
+                    "properties": {
+                        "customTopologyMapMode": "str",
+                        "dnsConfig": {"recordType": "str", "ttl": 0},
+                        "endpoints": [
+                            {
+                                "name": "str",
+                                "target": "str",
+                                "alwaysServe": "str",
+                                "endpointStatus": "str",
+                                "healthPolicyId": "str",
+                                "kind": "str",
+                                "monitoringTarget": "str",
+                                "priority": 0,
+                                "provisioningState": "str",
+                                "weight": 0,
+                            }
+                        ],
+                        "profileStatus": "str",
+                        "topologyMapId": "str",
+                        "trafficRoutingMethod": "str",
+                    },
+                    "tags": {"str": "str"},
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,8 +132,8 @@ class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_list_by_resource_group(self, resource_group):
-        response = self.client.topology_maps.list_by_resource_group(
+    async def test_profiles_list_by_resource_group(self, resource_group):
+        response = self.client.profiles.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -111,8 +142,8 @@ class TestNetworkTopologyMapsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_topology_maps_list_by_subscription(self, resource_group):
-        response = self.client.topology_maps.list_by_subscription()
+    async def test_profiles_list_by_subscription(self, resource_group):
+        response = self.client.profiles.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

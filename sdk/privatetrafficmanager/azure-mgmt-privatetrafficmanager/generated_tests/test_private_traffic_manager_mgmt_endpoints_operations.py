@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatetrafficmanager import NetworkClient
+from azure.mgmt.privatetrafficmanager import PrivateTrafficManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkHealthPoliciesOperations(AzureMgmtRecordedTestCase):
+class TestPrivateTrafficManagerMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(PrivateTrafficManagerMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_health_policies_get(self, resource_group):
-        response = self.client.health_policies.get(
+    def test_endpoints_get(self, resource_group):
+        response = self.client.endpoints.get(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
-            health_policy_name="str",
+            endpoint_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,27 +32,24 @@ class TestNetworkHealthPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_health_policies_begin_create_or_update(self, resource_group):
-        response = self.client.health_policies.begin_create_or_update(
+    def test_endpoints_begin_create_or_update(self, resource_group):
+        response = self.client.endpoints.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
-            health_policy_name="str",
+            endpoint_name="str",
             resource={
-                "kind": "Probe",
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "probeConfig": {
-                        "customHeaders": [{"name": "str", "value": "str"}],
-                        "expectedStatusCodeRanges": [{"max": 0, "min": 0}],
-                        "intervalInSeconds": 0,
-                        "path": "str",
-                        "port": 0,
-                        "protocol": "str",
-                        "timeoutInSeconds": 0,
-                        "toleratedNumberOfFailures": 0,
-                    },
+                    "target": "str",
+                    "alwaysServe": "str",
+                    "endpointStatus": "str",
+                    "healthPolicyId": "str",
+                    "kind": "str",
+                    "monitoringTarget": "str",
+                    "priority": 0,
                     "provisioningState": "str",
+                    "weight": 0,
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -71,11 +68,22 @@ class TestNetworkHealthPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_health_policies_begin_delete(self, resource_group):
-        response = self.client.health_policies.begin_delete(
+    def test_endpoints_begin_update(self, resource_group):
+        response = self.client.endpoints.begin_update(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
-            health_policy_name="str",
+            endpoint_name="str",
+            properties={
+                "properties": {
+                    "alwaysServe": "str",
+                    "endpointStatus": "str",
+                    "healthPolicyId": "str",
+                    "monitoringTarget": "str",
+                    "priority": 0,
+                    "target": "str",
+                    "weight": 0,
+                }
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -83,8 +91,20 @@ class TestNetworkHealthPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_health_policies_list_by_parent(self, resource_group):
-        response = self.client.health_policies.list_by_parent(
+    def test_endpoints_begin_delete(self, resource_group):
+        response = self.client.endpoints.begin_delete(
+            resource_group_name=resource_group.name,
+            private_traffic_manager_profile_name="str",
+            endpoint_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_endpoints_list_by_parent(self, resource_group):
+        response = self.client.endpoints.list_by_parent(
             resource_group_name=resource_group.name,
             private_traffic_manager_profile_name="str",
         )

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import NetworkClientConfiguration
+from ._configuration import PrivateTrafficManagerMgmtClientConfiguration
 from .operations import (
     EndpointsOperations,
     HealthPoliciesOperations,
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NetworkClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+class PrivateTrafficManagerMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Microsoft.Network Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -91,7 +92,7 @@ class NetworkClient:  # pylint: disable=too-many-instance-attributes,docstring-k
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = NetworkClientConfiguration(
+        self._config = PrivateTrafficManagerMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

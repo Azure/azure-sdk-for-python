@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.privatetrafficmanager import NetworkClient
+from azure.mgmt.privatetrafficmanager import PrivateTrafficManagerMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.privatetrafficmanager import NetworkClient
 
 
 def main():
-    client = NetworkClient(
+    client = PrivateTrafficManagerMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
