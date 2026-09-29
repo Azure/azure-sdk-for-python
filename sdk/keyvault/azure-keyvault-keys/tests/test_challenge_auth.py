@@ -19,10 +19,12 @@ from uuid import uuid4
 from devtools_testutils import recorded_by_proxy
 
 import pytest
+import requests
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline, PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
@@ -198,9 +200,11 @@ def test_enforces_tls():
 @pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
 @pytest.mark.parametrize("cache_state", ["empty", "challenge", "token"])
 @pytest.mark.parametrize("verify_challenge_resource", [True, False])
-def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource):
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource, token_type):
     url = f"https://{authority}"
-    credential = Mock(spec_set=["get_token"])
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method])
     transport = Mock()
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
     if cache_state != "empty":
@@ -208,13 +212,13 @@ def test_rejects_backslash_authority(authority, cache_state, verify_challenge_re
             url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"])
         )
     if cache_state == "token":
-        client._client._config.authentication_policy._token = AccessToken("cached-token", time.time() + 3600)
+        client._client._config.authentication_policy._token = token_type("cached-token", time.time() + 3600)
 
     for _ in range(2):
         with pytest.raises(ValueError, match="backslash"):
             client.get_key("key")
 
-    credential.get_token.assert_not_called()
+    getattr(credential, token_method).assert_not_called()
     transport.send.assert_not_called()
     assert bool(HttpChallengeCache.get_challenge_for_url(url)) == (cache_state != "empty")
 
@@ -222,9 +226,11 @@ def test_rejects_backslash_authority(authority, cache_state, verify_challenge_re
 @empty_challenge_cache
 @pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
 @pytest.mark.parametrize("verify_challenge_resource", [True, False])
-def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource):
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource, token_type):
     url = f"https://{authority}/keys/key"
-    credential = Mock(spec_set=["get_token"])
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method])
     policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
     request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
     response = Mock(http_response=KV_CHALLENGE_RESPONSE)
@@ -232,8 +238,35 @@ def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_re
     with pytest.raises(ValueError, match="backslash"):
         policy.on_challenge(request, response)
 
-    credential.get_token.assert_not_called()
+    getattr(credential, token_method).assert_not_called()
     assert "Authorization" not in request.http_request.headers
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority_with_requests_transport(authority, verify_challenge_resource):
+    url = f"https://{authority}"
+    prepared = requests.Request("GET", url).prepare()
+    assert urlparse(url).netloc.endswith(".vault.azure.net")
+    assert urlparse(prepared.url).hostname == "example.net"
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    with requests.Session() as session:
+        session.trust_env = False
+        session.send = Mock(side_effect=AssertionError("unexpected network send"))
+        with KeyClient(
+            url,
+            credential,
+            transport=RequestsTransport(session=session, session_owner=False),
+            verify_challenge_resource=verify_challenge_resource,
+        ) as client:
+            with pytest.raises(ValueError, match="backslash"):
+                client.get_key("key")
+        session.send.assert_not_called()
+
+    credential.get_token.assert_not_called()
     assert not HttpChallengeCache.get_challenge_for_url(url)
 
 

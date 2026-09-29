@@ -147,9 +147,11 @@ async def test_enforces_tls():
 @pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
 @pytest.mark.parametrize("cache_state", ["empty", "challenge", "token"])
 @pytest.mark.parametrize("verify_challenge_resource", [True, False])
-async def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource):
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource, token_type):
     url = f"https://{authority}"
-    credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method], **{token_method: AsyncMock()})
     transport = Mock(send=AsyncMock())
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
     if cache_state != "empty":
@@ -157,13 +159,13 @@ async def test_rejects_backslash_authority(authority, cache_state, verify_challe
             url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"])
         )
     if cache_state == "token":
-        client._client._config.authentication_policy._token = AccessToken("cached-token", time.time() + 3600)
+        client._client._config.authentication_policy._token = token_type("cached-token", time.time() + 3600)
 
     for _ in range(2):
         with pytest.raises(ValueError, match="backslash"):
             await client.get_key("key")
 
-    credential.get_token.assert_not_called()
+    getattr(credential, token_method).assert_not_called()
     transport.send.assert_not_called()
     assert bool(HttpChallengeCache.get_challenge_for_url(url)) == (cache_state != "empty")
 
@@ -172,9 +174,11 @@ async def test_rejects_backslash_authority(authority, cache_state, verify_challe
 @empty_challenge_cache
 @pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
 @pytest.mark.parametrize("verify_challenge_resource", [True, False])
-async def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource):
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource, token_type):
     url = f"https://{authority}/keys/key"
-    credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method], **{token_method: AsyncMock()})
     policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
     request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
     response = Mock(http_response=KV_CHALLENGE_RESPONSE)
@@ -182,7 +186,7 @@ async def test_rejects_backslash_authority_on_challenge(authority, verify_challe
     with pytest.raises(ValueError, match="backslash"):
         await policy.on_challenge(request, response)
 
-    credential.get_token.assert_not_called()
+    getattr(credential, token_method).assert_not_called()
     assert "Authorization" not in request.http_request.headers
     assert not HttpChallengeCache.get_challenge_for_url(url)
 
