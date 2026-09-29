@@ -88,6 +88,43 @@ def main() -> None:
         testing_criteria = [
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
+                name="tool_use_quality",
+                evaluator_name="builtin.tool_use_quality",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="output_quality",
+                evaluator_name="builtin.output_quality",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="deflection_rate",
+                evaluator_name="builtin.deflection_rate",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="customer_satisfaction",
+                evaluator_name="builtin.customer_satisfaction",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
                 name="task_completion",
                 evaluator_name="builtin.task_completion",
                 initialization_parameters={"model": model_deployment_name},
@@ -95,8 +132,15 @@ def main() -> None:
             ),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
-                name="customer_satisfaction",
-                evaluator_name="builtin.customer_satisfaction",
+                name="coherence",
+                evaluator_name="builtin.coherence",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="groundedness",
+                evaluator_name="builtin.groundedness",
                 initialization_parameters={"model": model_deployment_name},
                 data_mapping={"messages": "{{item.messages}}"},
             ),
