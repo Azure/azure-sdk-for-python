@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import WorkloadManagerClientConfiguration
+from ._configuration import ComputeWorkloadManagerMgmtClientConfiguration
 from .operations import (
     CapabilitiesOperations,
     RuntimeBindingsOperations,
@@ -36,8 +36,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WorkloadManagerClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """WorkloadManagerClient.
+class ComputeWorkloadManagerMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputeWorkloadManagerMgmtClient.
 
     :ivar workload_spaces: WorkloadSpacesOperations operations
     :vartype workload_spaces:
@@ -82,7 +82,7 @@ class WorkloadManagerClient:  # pylint: disable=docstring-keyword-should-match-k
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = WorkloadManagerClientConfiguration(
+        self._config = ComputeWorkloadManagerMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
