@@ -73,6 +73,7 @@ def update_knowledge_base():
     # [START update_knowledge_base]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
+
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     knowledge_base = index_client.get_knowledge_base(knowledge_base_name)
     knowledge_base.tags = {"environment": "sample", "owner": "retrieval-team"}

@@ -1,12 +1,17 @@
 {
     "CrossLanguagePackageId": null,
     "CrossLanguageDefinitionId": {
+        "azure.mgmt.resource.locks.models.ErrorAdditionalInfo": null,
+        "azure.mgmt.resource.locks.models.ErrorDetail": null,
+        "azure.mgmt.resource.locks.models.ErrorResponse": null,
         "azure.mgmt.resource.locks.models.ManagementLockListResult": null,
         "azure.mgmt.resource.locks.models.ManagementLockObject": null,
         "azure.mgmt.resource.locks.models.ManagementLockOwner": null,
         "azure.mgmt.resource.locks.models.Operation": null,
         "azure.mgmt.resource.locks.models.OperationDisplay": null,
         "azure.mgmt.resource.locks.models.OperationListResult": null,
+        "azure.mgmt.resource.locks.models.SystemData": null,
+        "azure.mgmt.resource.locks.models.CreatedByType": null,
         "azure.mgmt.resource.locks.models.LockLevel": null,
         "azure.mgmt.resource.locks.operations.AuthorizationOperationsOperations.list": null,
         "azure.mgmt.resource.locks.aio.operations.AuthorizationOperationsOperations.list": null,

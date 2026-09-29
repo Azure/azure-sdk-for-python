@@ -1997,6 +1997,34 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
+    def test_sas_access_blob_name_with_backslash(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = "dir\\file"
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True)
+
+        token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        service = BlobClient.from_blob_url(blob.url, credential=token)
+        content = service.download_blob().readall()
+
+        # Assert
+        assert self.byte_data == content
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
     def test_sas_access_blob_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

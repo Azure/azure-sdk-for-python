@@ -71,6 +71,32 @@ class AutoUpgradeProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEn
     """Resource creation was canceled."""
 
 
+class ClusterMeshProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the cluster mesh profile resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
+class ClusterMeshState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster mesh state."""
+
+    NOT_CONNECTED = "NotConnected"
+    """The mesh is not connected."""
+    APPLYING = "Applying"
+    """The mesh is applying."""
+    CONNECTED = "Connected"
+    """The mesh is connected."""
+    DEGRADED = "Degraded"
+    """The mesh is degraded."""
+    FAILED = "Failed"
+    """The mesh failed to connect."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -82,6 +108,25 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The days of a week."""
+
+    MONDAY = "Monday"
+    """The day Monday."""
+    TUESDAY = "Tuesday"
+    """The day Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """The day Wednesday."""
+    THURSDAY = "Thursday"
+    """The day Thursday."""
+    FRIDAY = "Friday"
+    """The day Friday."""
+    SATURDAY = "Saturday"
+    """The day Saturday."""
+    SUNDAY = "Sunday"
+    """The day Sunday."""
 
 
 class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -182,6 +227,8 @@ class GateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     APPROVAL = "Approval"
     """An approval gate is completed by setting its state to be Completed."""
+    SCHEDULED_START = "ScheduledStart"
+    """A scheduled start gate is automatically completed when the scheduled time is reached."""
 
 
 class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -225,6 +272,19 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     """System and user assigned managed identity."""
+
+
+class MeshMemberState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mesh member state."""
+
+    CONNECTING = "Connecting"
+    """The member is connecting to the mesh."""
+    CONNECTED = "Connected"
+    """The member is connected to the mesh."""
+    DISCONNECTING = "Disconnecting"
+    """The member is disconnecting from the mesh."""
+    FAILED = "Failed"
+    """The member failed to connect due to an error."""
 
 
 class NodeImageSelectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -310,6 +370,15 @@ class PropertySelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LE = "Le"
     """Le dictates Fleet to select cluster if its observed value of a given property is less than or
     equal to the value specified in the requirement."""
+
+
+class RolloutStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The possible rollout strategy types."""
+
+    ROLLING_UPDATE = "RollingUpdate"
+    """Use rolling update strategy for rollout."""
+    EXTERNAL = "External"
+    """Use external rollout strategy via Staged Update Run."""
 
 
 class TaintEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -401,6 +470,12 @@ class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """  Upgrades the clusters Kubernetes version to the latest supported patch version of the
     specified target Kubernetes version.
       For information on the behavior of update run for Kubernetes version upgrade,
+      see
+    `https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal
+    <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_."""
+    SECURITY_PATCH = "SecurityPatch"
+    """  Applies security patches to the nodes of the target clusters.
+      For information on the behavior of update run for security patch upgrade,
       see
     `https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal
     <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_."""

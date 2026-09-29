@@ -276,6 +276,19 @@ class IdentityBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """The identity binding is being deleted."""
 
 
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
+    More information on this can be found under
+    `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+    """
+
+    ENABLED = "Enabled"
+    """Encryption at rest of Kubernetes resource objects using service-managed keys is enabled. More
+    information on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
+
+
 class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """To determine if address belongs IPv4 or IPv6 family."""
 

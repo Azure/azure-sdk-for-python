@@ -223,9 +223,7 @@ async def create_private_blob_knowledge_source_async():  # pylint: disable=too-m
             assert (await indexer_client.get_indexer_status(indexer_name)).status is not None
             generated_index = await index_client.get_index(generated_index_name)
             analyzers = {
-                str(field.analyzer_name)
-                for field in generated_index.fields
-                if field.analyzer_name is not None
+                str(field.analyzer_name) for field in generated_index.fields if field.analyzer_name is not None
             }
             assert os.environ["AZURE_SEARCH_EXPECTED_ANALYZER"] in analyzers
             assert os.environ["AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER"] in analyzers

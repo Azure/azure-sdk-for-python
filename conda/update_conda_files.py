@@ -122,6 +122,35 @@ def get_existing_conda_client_packages() -> set[str]:
     return set(build_package_index(conda_artifacts).keys())
 
 
+def get_conda_client_package_versions(
+    artifact_name: Optional[str] = None,
+) -> dict[str, str]:
+    """Return package versions configured in conda-sdk-client.yml.
+
+    :param artifact_name: Limit results to one Conda artifact.
+    :type artifact_name: str or None
+    :return: Mapping of package names to configured versions.
+    :rtype: dict[str, str]
+    """
+    with open(CONDA_CLIENT_YAML_PATH, "r") as file:
+        conda_client_data = yaml.safe_load(file)
+
+    conda_artifacts = conda_client_data["extends"]["parameters"]["stages"][0]["jobs"][
+        0
+    ]["steps"][0]["parameters"]["CondaArtifacts"]
+
+    package_versions = {}
+    for artifact in conda_artifacts:
+        if artifact_name and artifact.get("name") != artifact_name:
+            continue
+        for checkout_item in artifact.get("checkout", []):
+            package_name = checkout_item.get("package")
+            version = checkout_item.get("version")
+            if package_name and version:
+                package_versions[package_name] = version
+    return package_versions
+
+
 def update_conda_sdk_client_yml(
     package_dict: dict[str, dict[str, str]],
     packages_to_update: list[str],
@@ -150,14 +179,37 @@ def update_conda_sdk_client_yml(
 
     # === Update outdated package versions ===
 
-    logger.info(
-        f"Detected {len(packages_to_update)} outdated package versions to update in conda-sdk-client.yml"
-    )
     package_index = build_package_index(conda_artifacts)
+
+    # Date-based detection can miss releases published after a Conda update PR is
+    # generated but before its release date. Always reconcile existing pins with
+    # the current GA versions from the release CSV.
+    packages_to_update = list(dict.fromkeys(packages_to_update))
+    packages_to_update_set = set(packages_to_update)
+    for pkg_name, (artifact_idx, checkout_idx) in package_index.items():
+        checkout_item = conda_artifacts[artifact_idx]["checkout"][checkout_idx]
+        current_version = checkout_item.get("version")
+        latest_version = package_dict.get(pkg_name, {}).get(VERSION_GA_COL)
+        if (
+            current_version
+            and latest_version
+            and current_version != latest_version
+            and pkg_name not in packages_to_update_set
+        ):
+            packages_to_update.append(pkg_name)
+            packages_to_update_set.add(pkg_name)
+
+    logger.info(
+        f"Detected {len(packages_to_update)} package versions to reconcile in conda-sdk-client.yml"
+    )
 
     for pkg_name in packages_to_update:
         pkg = package_dict.get(pkg_name, {})
         new_version = pkg.get(VERSION_GA_COL)
+        if not new_version:
+            logger.error(f"Package {pkg_name} is missing a GA version, skipping update")
+            result.append(pkg_name)
+            continue
         if pkg_name in package_index:
             artifact_idx, checkout_idx = package_index[pkg_name]
             checkout_item = conda_artifacts[artifact_idx]["checkout"][checkout_idx]
@@ -636,13 +688,43 @@ def add_new_data_plane_packages(
     return result
 
 
+def filter_packages_with_parseable_setup(
+    packages: list[dict[str, str]],
+) -> tuple[list[dict[str, str]], list[str]]:
+    """Exclude packages whose repository metadata cannot be parsed."""
+    result = []
+    filtered = []
+    for package in packages:
+        package_name = package.get(PACKAGE_COL, "")
+        package_path = get_package_path(package_name)
+        try:
+            if not package_path:
+                raise ValueError("package source path was not found")
+            ParsedSetup.from_path(package_path)
+        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
+            logger.warning(
+                f"Excluding {package_name} from the Conda update because its package metadata "
+                f"could not be parsed: {error}"
+            )
+            result.append(package_name)
+            continue
+        filtered.append(package)
+    return filtered, result
+
+
 # =====================================
 # Helpers for adding new mgmt plane packages to azure-mgmt/meta.yaml
 # =====================================
 
 
 def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
-    """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
+    """Update azure-mgmt/meta.yaml with new management libraries and import tests.
+
+    :param new_mgmt_plane_names: New management package names to add.
+    :type new_mgmt_plane_names: list[str]
+    :return: Package names that could not be added.
+    :rtype: list[str]
+    """
     if len(new_mgmt_plane_names) == 0:
         return []
     logger.info(f"Adding {len(new_mgmt_plane_names)} new management plane packages")
@@ -666,21 +748,14 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
         for line in existing_imports_text.strip().split("\n")
         if line.strip().startswith("-")
     ]
-
     new_imports = []
     for package_name in new_mgmt_plane_names:
-        if not package_name:
-            logger.warning("Skipping package with missing name")
-            continue
         try:
             imports = get_valid_package_imports(package_name)
-        except Exception as e:
-            logger.error(
-                f"Failed to get valid imports for {package_name}, skipping addition: {e}"
-            )
+        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
+            logger.error(f"Failed to get valid imports for {package_name}: {error}")
             result.append(package_name)
             continue
-        # Format imports for YAML with "- " prefix
         formatted = [f"- {imp}" for imp in imports]
         new_imports.extend(formatted)
         logger.info(
@@ -688,14 +763,9 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
         )
 
     all_imports = list(set(existing_imports + new_imports))
-
-    # sort alphabetically
     all_imports.sort()
-
-    # format imports with proper indentation
     formatted_imports = "\n".join(f"    {imp}" for imp in all_imports)
 
-    # replace the imports section
     new_imports_section = f"test:\n  imports:\n{formatted_imports}\n\n"
     updated_content = re.sub(
         r"^test:\s*\n\s*imports:.*?^(?=\w)",
@@ -709,10 +779,11 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
             file.write(updated_content)
     except Exception as e:
         logger.error(f"Failed to update {CONDA_MGMT_META_YAML_PATH}: {e}")
-        result.extend(new_mgmt_plane_names)
+        return list(dict.fromkeys(new_mgmt_plane_names))
 
+    result = list(dict.fromkeys(result))
     logger.info(
-        f"Added {len(new_mgmt_plane_names)} new management plane packages to meta.yaml"
+        f"Added {len(set(new_mgmt_plane_names)) - len(result)} new management plane packages to meta.yaml"
     )
     return result
 
@@ -723,15 +794,30 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
 
 
 def update_data_plane_release_logs(
-    package_dict: dict,
+    package_versions: dict[str, str],
     bundle_map: dict[str, list[str]],
-    new_data_plane_names: list[str],
+    data_plane_names: list[str],
     release_date: str,
 ) -> list[str]:
-    """
-    Add and update release logs for data plane conda packages. Release log includes versions of all packages for the release
+    """Add and update release logs for data plane Conda packages.
+
+    :param package_versions: Versions selected in conda-sdk-client.yml.
+    :type package_versions: dict[str, str]
+    :param bundle_map: Mapping of Conda bundle names to package names.
+    :type bundle_map: dict[str, list[str]]
+    :param data_plane_names: Shipped data plane package names.
+    :type data_plane_names: list[str]
+    :param release_date: Conda release date.
+    :type release_date: str
+    :return: Package names whose release logs could not be updated.
+    :rtype: list[str]
     """
     result = []
+    package_bundles = {
+        package_name: bundle_name
+        for bundle_name, package_names in bundle_map.items()
+        for package_name in package_names
+    }
 
     # Update all existing data plane release logs by file
 
@@ -742,7 +828,7 @@ def update_data_plane_release_logs(
         if curr_service_name == "azure-mgmt":
             continue
         if (
-            curr_service_name not in package_dict
+            curr_service_name not in package_versions
             and curr_service_name not in bundle_map
             and curr_service_name not in PACKAGES_WITH_DOWNLOAD_URI
         ):
@@ -757,8 +843,7 @@ def update_data_plane_release_logs(
             # handle grouped packages
             pkg_names_in_bundle = bundle_map[curr_service_name]
             for pkg_name in pkg_names_in_bundle:
-                pkg = package_dict.get(pkg_name, {})
-                version = pkg.get(VERSION_GA_COL)
+                version = package_versions.get(pkg_name)
                 if version:
                     pkg_updates.append(f"- {pkg_name}-{version}")
                 else:
@@ -778,8 +863,7 @@ def update_data_plane_release_logs(
                     result.append(curr_service_name)
                     continue
             else:
-                pkg = package_dict.get(curr_service_name, {})
-                version = pkg.get(VERSION_GA_COL)
+                version = package_versions.get(curr_service_name)
 
             if version:
                 pkg_updates.append(f"- {curr_service_name}-{version}")
@@ -831,17 +915,17 @@ def update_data_plane_release_logs(
             )
             result.append(curr_service_name)
 
-    # Handle brand new packages
-    for package_name in new_data_plane_names:
-        pkg = package_dict.get(package_name, {})
-        version = pkg.get(VERSION_GA_COL)
+    # Ensure every shipped data plane package has a release log, including
+    # packages that predate the generator.
+    for package_name in data_plane_names:
+        version = package_versions.get(package_name)
 
         if not version:
             logger.warning(f"Skipping {package_name} with missing version")
             result.append(package_name)
             continue
 
-        bundle_name = get_bundle_name(package_name)
+        bundle_name = package_bundles.get(package_name)
         # check for bundle
         if bundle_name:
             display_name = bundle_name
@@ -855,7 +939,10 @@ def update_data_plane_release_logs(
             logger.info(f"Creating new release log for: {display_name}")
 
             title_parts = display_name.replace("azure-", "").split("-")
-            title = " ".join(word.title() for word in title_parts)
+            title = " ".join(
+                word.upper() if word.lower() == "ai" else word.title()
+                for word in title_parts
+            )
 
             content = f"# Azure {title} client library for Python (conda)\n\n"
             content += f"## {release_date}\n\n"
@@ -865,12 +952,10 @@ def update_data_plane_release_logs(
             if bundle_name:
                 pkg_names_in_log = bundle_map.get(bundle_name, [])
                 for pkg_name in pkg_names_in_log:
-                    pkg = package_dict.get(pkg_name, {})
-                    version = pkg.get(VERSION_GA_COL)
-                    pkg_updates.append(f"- {pkg_name}-{version}")
+                    pkg_version = package_versions.get(pkg_name)
+                    if pkg_version:
+                        pkg_updates.append(f"- {pkg_name}-{pkg_version}")
             else:
-                pkg = package_dict.get(package_name, {})
-                version = pkg.get(VERSION_GA_COL)
                 pkg_updates.append(f"- {package_name}-{version}")
             content += "\n".join(pkg_updates)
 
@@ -882,21 +967,24 @@ def update_data_plane_release_logs(
                 logger.error(f"Failed to create release log for {display_name}: {e}")
                 result.append(display_name)
 
-        else:
-            logger.info(
-                f"Release log for {display_name} already exists, check that new package {package_name} is included"
-            )
-
     return result
 
 
 def update_mgmt_plane_release_log(
-    package_dict: dict,
+    package_versions: dict[str, str],
     all_mgmt_plane_names: list[str],
     release_date: str,
 ) -> list[str]:
-    """
-    Update azure-mgmt release log.
+    """Update the azure-mgmt release log.
+
+    :param package_versions: Versions selected in conda-sdk-client.yml.
+    :type package_versions: dict[str, str]
+    :param all_mgmt_plane_names: Shipped management package names.
+    :type all_mgmt_plane_names: list[str]
+    :param release_date: Conda release date.
+    :type release_date: str
+    :return: Package names that could not be included in the release log.
+    :rtype: list[str]
     """
     result = []
 
@@ -907,8 +995,7 @@ def update_mgmt_plane_release_log(
 
     pkg_updates = []
     for package_name in all_mgmt_plane_names:
-        pkg = package_dict.get(package_name, {})
-        version = pkg.get(VERSION_GA_COL)
+        version = package_versions.get(package_name)
 
         if not version:
             logger.warning(
@@ -1027,6 +1114,9 @@ if __name__ == "__main__":
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
+    packages, pkgs_without_metadata = filter_packages_with_parseable_setup(packages)
+    logger.info(f"Filtered to {len(packages)} packages with parseable metadata")
+
     data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
 
     outdated_data_plane_names = [
@@ -1129,17 +1219,39 @@ if __name__ == "__main__":
     new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_names)
 
     # add/update release logs
+    conda_package_versions = get_conda_client_package_versions()
+    conda_package_versions.update(
+        {
+            package_name: version
+            for package_name, version in PACKAGES_WITH_DOWNLOAD_URI.items()
+            if version
+        }
+    )
+    all_data_plane_names = [
+        pkg.get(PACKAGE_COL, "")
+        for pkg in data_pkgs
+        if pkg.get(PACKAGE_COL, "") in conda_package_versions
+    ]
     data_plane_release_log_results = update_data_plane_release_logs(
-        package_dict, bundle_map, new_data_plane_names, new_version
+        conda_package_versions, bundle_map, all_data_plane_names, new_version
     )
 
-    all_mgmt_plane_names = [pkg.get(PACKAGE_COL, "") for pkg in mgmt_pkgs]
+    all_mgmt_plane_names = list(
+        get_conda_client_package_versions(artifact_name="azure-mgmt")
+    )
 
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
-        package_dict, all_mgmt_plane_names, new_version
+        conda_package_versions, all_mgmt_plane_names, new_version
     )
 
     print("=== REPORT ===")
+
+    if pkgs_without_metadata:
+        print(
+            "The following packages were excluded from processing because their repository metadata could not be parsed, they may be deprecated:"
+        )
+        for pkg_name in pkgs_without_metadata:
+            print(f"- {pkg_name}")
 
     if conda_sdk_client_pkgs_result:
         print(

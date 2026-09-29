@@ -11,7 +11,7 @@ Previously no bound was sent at all, so a stalled service could hold a managemen
 the AMQP link itself failed. Matches the .NET, Java and Go SDKs.
 """
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import struct
 
@@ -24,9 +24,28 @@ from azure.servicebus._common.constants import (
     MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
     REQUEST_RESPONSE_TIMEOUT,
 )
+import azure.servicebus._base_handler as sync_handler_module
+import azure.servicebus.aio._base_handler_async as async_handler_module
+import azure.servicebus._common.utils as utils_module
 from azure.servicebus._common.utils import get_server_timeout_ms
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.exceptions import OperationTimeoutError
+
+
+class FakeClock:
+    """Virtual clock so link-acquisition cost is exact rather than CI-dependent."""
+
+    def __init__(self):
+        self.now = 1000.0
+
+    def advance(self, seconds):
+        self.now += seconds
+
+    def monotonic(self):
+        return self.now
+
+    def time(self):
+        return self.now
 
 
 class TestServerTimeoutMillis:
@@ -87,7 +106,7 @@ class TestManagementRequestSetsServerTimeout:
         handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
         handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
         handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
-        handler._open = lambda: None
+        handler._open = lambda timeout=None: None
         handler._handler = MagicMock()
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
@@ -101,8 +120,11 @@ class TestManagementRequestSetsServerTimeout:
 
     def test_remaining_time_less_buffer_sent(self):
         handler, captured = self._make_handler()
-        handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 9000}
+        clock = FakeClock()
+        handler._open = lambda timeout=None: clock.advance(2.0)
+        with patch.object(sync_handler_module, "time", clock), patch.object(utils_module, "time", clock):
+            handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
+        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 7000}
 
     def test_clamped_below_buffer(self):
         handler, captured = self._make_handler()
@@ -184,7 +206,7 @@ class TestUamqpValueType:
         handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
         handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
         handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
-        handler._open = lambda: None
+        handler._open = lambda timeout=None: None
         handler._handler = MagicMock()
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
@@ -226,7 +248,7 @@ class TestAsyncParity:
         async def fake_request(*args, **kwargs):
             return "response"
 
-        async def fake_open():
+        async def fake_open(timeout=None):
             return None
 
         handler = AsyncBaseHandler.__new__(AsyncBaseHandler)
@@ -244,5 +266,12 @@ class TestAsyncParity:
         await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=None)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 60000}
 
-        await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 9000}
+        clock = FakeClock()
+
+        async def costly_open(timeout=None):
+            clock.advance(2.0)
+
+        handler._open = costly_open
+        with patch.object(async_handler_module, "time", clock), patch.object(utils_module, "time", clock):
+            await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
+        assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 7000}

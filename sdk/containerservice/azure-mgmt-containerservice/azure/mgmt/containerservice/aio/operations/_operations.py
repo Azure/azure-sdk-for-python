@@ -8043,7 +8043,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8132,7 +8132,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -8321,7 +8321,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def begin_create_or_update(
         self,
@@ -8413,7 +8413,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8492,7 +8492,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8561,7 +8561,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any

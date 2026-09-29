@@ -246,6 +246,7 @@ def main(generate_input, generate_output):
             try:
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
+                package_path = Path(folder_name, package_name).as_posix()
                 # Sanitize invalid Python escape sequences (e.g. `\W`) in
                 # generated docstrings to avoid SyntaxWarning on Python 3.12+.
                 # See https://github.com/Azure/azure-sdk-for-python/issues/47011
@@ -257,7 +258,7 @@ def main(generate_input, generate_output):
                 if package_name not in result:
                     package_entry = {}
                     package_entry["packageName"] = package_name
-                    package_entry["path"] = [folder_name]
+                    package_entry["path"] = [package_path]
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = (
                         sdk_release_type == "stable"
@@ -267,7 +268,7 @@ def main(generate_input, generate_output):
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
                 else:
-                    result[package_name]["path"].append(folder_name)
+                    result[package_name]["path"].append(package_path)
                     result[package_name][spec_word].append(readme_or_tsp)
             except Exception as e:
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
@@ -364,7 +365,7 @@ def main(generate_input, generate_output):
 
             # Build artifacts for package
             try:
-                create_package(result[package_name]["path"][0], package_name)
+                create_package(folder_name, package_name)
                 dist_path = Path(sdk_folder, folder_name, package_name, "dist")
                 result[package_name]["artifacts"] = [
                     str(dist_path / package_file) for package_file in os.listdir(dist_path)
@@ -383,7 +384,7 @@ def main(generate_input, generate_output):
                 "lite": f"pip install {package_name}",
             }
             result[package_name]["result"] = "succeeded"
-            result[package_name]["packageFolder"] = result[package_name]["path"][0]
+            result[package_name]["packageFolder"] = folder_name
 
     # remove duplicates
     try:

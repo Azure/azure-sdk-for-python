@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-12-03/sharedGalleryInviteExamples/SharedGalleryInvite_Reject.json
+# x-ms-original-file: 2026-03-03/sharedGalleryInviteExamples/SharedGalleryInvite_Reject.json
 if __name__ == "__main__":
     main()

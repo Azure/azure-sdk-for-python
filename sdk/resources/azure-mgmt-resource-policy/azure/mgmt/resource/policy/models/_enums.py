@@ -60,16 +60,6 @@ class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Alias value is secret."""
 
 
-class AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The option to validate whether the exemption or enrollment is at or under the assignment scope."""
-
-    DEFAULT = "Default"
-    """This option will validate the exemption is at or under the assignment scope."""
-    DO_NOT_VALIDATE = "DoNotValidate"
-    """This option will bypass the validation the exemption scope is at or under the policy assignment
-    scope."""
-
-
 class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy assignment. Possible values are NotSpecified, System, SystemHidden, and
     Custom. Immutable.
@@ -109,16 +99,6 @@ class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy effect is not enforced during resource creation or update until the resource or
     scope of the resource is enrolled to the assignment instance. Enrollment occurs upon deployment
     of the policy enrollment resource."""
-
-
-class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy exemption category. Possible values are Waiver and Mitigated."""
-
-    WAIVER = "Waiver"
-    """This category of exemptions usually means the scope is not applicable for the policy."""
-    MITIGATED = "Mitigated"
-    """This category of exemptions usually means the mitigation actions have been applied to the
-    scope."""
 
 
 class ExternalEndpointResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,7 +187,7 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     """Indicates that a system assigned identity is associated with the resource."""
     USER_ASSIGNED = "UserAssigned"
-    """Indicates that a system assigned identity is associated with the resource."""
+    """Indicates that a user assigned identity is associated with the resource."""
     NONE = "None"
     """Indicates that no identity is associated with the resource or that the existing identity should
     be removed."""
@@ -224,6 +204,8 @@ class SelectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The selector kind to filter policies by the resource without location."""
     POLICY_DEFINITION_REFERENCE_ID = "policyDefinitionReferenceId"
     """The selector kind to filter policies by the policy definition reference ID."""
+    RESOURCE_ROLLOUT_PERCENTAGE = "resourceRolloutPercentage"
+    """The selector kind to filter policies by the resource rollout percentage."""
     USER_PRINCIPAL_ID = "userPrincipalId"
     """The selector kind to filter policies by the user principal ID."""
     GROUP_PRINCIPAL_ID = "groupPrincipalId"

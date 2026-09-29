@@ -15,7 +15,12 @@ from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, ca
 from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
-from ._common.utils import create_authentication
+from ._common.utils import (
+    create_authentication,
+    get_attempt_timeout,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from ._common.tracing import (
     get_receive_links,
     receive_trace_context_manager,
@@ -26,6 +31,7 @@ from ._common.tracing import (
 )
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
+    DEFAULT_RECEIVE_WAIT_TIME_SECS,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -102,8 +108,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+     while `receive_messages()` falls back to a 60 second bound. On a sessionful
      queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
      to a session. If connection errors are occurring due to write timing out,the connection timeout
      value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -272,8 +278,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
          to a session. If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -350,22 +356,34 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial(self._amqp_transport.enhanced_message_received, self)
 
-    def _open(self) -> None:
+    def _open(self, timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler and not self._handler._shutdown:
+            check_link_ready_deadline(deadline)
             self._handler.close()
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
+            # The token fetch can use the budget, and open() cannot be cancelled once entered.
+            check_link_ready_deadline(deadline)
             self._handler.open(connection=self._connection)
-            while not self._handler.client_ready():
+            while True:
+                check_link_ready_deadline(deadline)
+                if self._handler.client_ready():
+                    break
                 time.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
-            self._close_handler()
+            try:
+                self._close_handler()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
             raise
 
         if self._auto_lock_renewer and self._session:
@@ -377,19 +395,29 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            self._open()
+            # Explicit None checks: a zero wait is an expired budget, not an absent one,
+            # so it must not fall through to the default.
+            if timeout is not None:
+                wait_time = timeout
+            elif self._max_wait_time is not None:
+                wait_time = self._max_wait_time
+            else:
+                wait_time = DEFAULT_RECEIVE_WAIT_TIME_SECS
+
+            receive_started = time.monotonic()
+            # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
+            self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_time = (
-                self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
-                if (timeout or self._max_wait_time)
-                else 0
-            )
-            abs_timeout = (
-                self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time if (timeout_time) else 0
-            )
+            # Poll with what is left of the one budget, not a fresh copy of it.
+            remaining = wait_time - (time.monotonic() - receive_started)
+            if remaining <= 0 and received_messages_queue.empty():
+                return []
+            timeout_time = self._amqp_transport.TIMEOUT_FACTOR * remaining
+            abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time
+            receive_deadline = abs_timeout
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
             while not received_messages_queue.empty() and len(batch) < max_message_count:
@@ -398,12 +426,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
-            if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0.
+            # Skip it once the budget is gone: the broker would lock messages this call can no longer return.
+            expired = remaining <= 0
+            if not expired and max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
-            first_message_received = expired = False
+            first_message_received = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
@@ -416,9 +446,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                     if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = (
+                        abs_timeout = min(
                             self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
+                            + self._further_pull_receive_timeout,
+                            receive_deadline,
                         )
                 while not received_messages_queue.empty() and len(batch) < max_message_count:
                     batch.append(received_messages_queue.get())
@@ -631,11 +662,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
          and returns an empty list without waiting, even when `max_wait_time` is set. The default
          value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If messages are requested, no messages arrive, and no timeout is specified, this call will not
-         return until the connection is closed. If specified, and no messages arrive within the
+         If messages are requested, no messages arrive, and no timeout is specified, this call will
+         return an empty list after 60 seconds. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
-         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
-         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session
+         on a receiver that is already open. Please use max_wait_time on the constructor to set the timeout
+         for connecting to a session. On a receiver that has not been opened yet, the first call's wait also
+         bounds that initial link acquisition.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
@@ -654,6 +687,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
+        if max_wait_time is None:
+            max_wait_time = self._max_wait_time if self._max_wait_time is not None else DEFAULT_RECEIVE_WAIT_TIME_SECS
         start_time = time.time_ns()
         messages: List[ServiceBusReceivedMessage] = self._do_retryable_operation(
             self._receive,
@@ -711,7 +746,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
-        self._open()
         amqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
             receive_mode = cast(Enum, amqp_receive_mode).value
@@ -797,7 +831,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
-        self._open()
         message = {
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: self._amqp_transport.AMQP_LONG_VALUE(sequence_number),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,

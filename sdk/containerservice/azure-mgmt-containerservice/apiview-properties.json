@@ -63,6 +63,7 @@
         "azure.mgmt.containerservice.models.IstioServiceMesh": "Microsoft.ContainerService.IstioServiceMesh",
         "azure.mgmt.containerservice.models.KubeletConfig": "Microsoft.ContainerService.KubeletConfig",
         "azure.mgmt.containerservice.models.KubernetesPatchVersion": "Microsoft.ContainerService.KubernetesPatchVersion",
+        "azure.mgmt.containerservice.models.KubernetesResourceObjectEncryptionProfile": "Microsoft.ContainerService.KubernetesResourceObjectEncryptionProfile",
         "azure.mgmt.containerservice.models.KubernetesVersion": "Microsoft.ContainerService.KubernetesVersion",
         "azure.mgmt.containerservice.models.KubernetesVersionCapabilities": "Microsoft.ContainerService.KubernetesVersionCapabilities",
         "azure.mgmt.containerservice.models.KubernetesVersionListResult": "Microsoft.ContainerService.KubernetesVersionListResult",
@@ -247,6 +248,7 @@
         "azure.mgmt.containerservice.models.NodeOSUpgradeChannel": "Microsoft.ContainerService.NodeOSUpgradeChannel",
         "azure.mgmt.containerservice.models.Expander": "Microsoft.ContainerService.Expander",
         "azure.mgmt.containerservice.models.KeyVaultNetworkAccessTypes": "Microsoft.ContainerService.KeyVaultNetworkAccessTypes",
+        "azure.mgmt.containerservice.models.InfrastructureEncryption": "Microsoft.ContainerService.InfrastructureEncryption",
         "azure.mgmt.containerservice.models.GatewayAPIIstioEnabled": "Microsoft.ContainerService.GatewayAPIIstioEnabled",
         "azure.mgmt.containerservice.models.NginxIngressControllerType": "Microsoft.ContainerService.NginxIngressControllerType",
         "azure.mgmt.containerservice.models.ManagedGatewayType": "Microsoft.ContainerService.ManagedGatewayType",
@@ -414,5 +416,5 @@
         "azure.mgmt.containerservice.operations.TrustedAccessRolesOperations.list": "Microsoft.ContainerService.TrustedAccessRolesOperationGroup.list",
         "azure.mgmt.containerservice.aio.operations.TrustedAccessRolesOperations.list": "Microsoft.ContainerService.TrustedAccessRolesOperationGroup.list"
     },
-    "CrossLanguageVersion": "021be9d50d23"
+    "CrossLanguageVersion": "f5b5a0dac83d"
 }

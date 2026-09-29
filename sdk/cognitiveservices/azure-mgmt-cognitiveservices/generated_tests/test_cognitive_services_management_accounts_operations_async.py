@@ -50,11 +50,13 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "location": "str",
                     "name": "str",
                     "properties": {
+                        "a365LoggingEnabled": bool,
                         "abusePenalty": {
                             "action": "str",
                             "expiration": "2020-02-20 00:00:00",
                             "rateLimitPercentage": 0.0,
                         },
+                        "agentHostingConfigurations": ["agent_hosting_configuration"],
                         "allowProjectManagement": bool,
                         "allowedFqdnList": ["str"],
                         "amlWorkspace": {"identityClientId": "str", "resourceId": "str"},
@@ -86,6 +88,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                             ],
                         },
                         "capabilities": [{"name": "str", "value": "str"}],
+                        "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                         "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
                         "customSubDomainName": "str",
                         "dateCreated": "str",
@@ -221,11 +224,13 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "location": "str",
                     "name": "str",
                     "properties": {
+                        "a365LoggingEnabled": bool,
                         "abusePenalty": {
                             "action": "str",
                             "expiration": "2020-02-20 00:00:00",
                             "rateLimitPercentage": 0.0,
                         },
+                        "agentHostingConfigurations": ["agent_hosting_configuration"],
                         "allowProjectManagement": bool,
                         "allowedFqdnList": ["str"],
                         "amlWorkspace": {"identityClientId": "str", "resourceId": "str"},
@@ -257,6 +262,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                             ],
                         },
                         "capabilities": [{"name": "str", "value": "str"}],
+                        "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                         "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
                         "customSubDomainName": "str",
                         "dateCreated": "str",

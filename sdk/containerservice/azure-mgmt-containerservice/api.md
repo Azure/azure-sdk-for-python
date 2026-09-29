@@ -278,7 +278,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -288,7 +288,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -298,7 +298,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -2272,6 +2272,10 @@ namespace azure.mgmt.containerservice.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.containerservice.models.InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENABLED = "Enabled"
+
+
     class azure.mgmt.containerservice.models.IstioCertificateAuthority(_Model):
         plugin: Optional[IstioPluginCertificateAuthority]
 
@@ -2437,6 +2441,20 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 upgrades: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.KubernetesResourceObjectEncryptionProfile(_Model):
+        infrastructure_encryption: Optional[Union[str, InfrastructureEncryption]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                infrastructure_encryption: Optional[Union[str, InfrastructureEncryption]] = ...
             ) -> None: ...
 
         @overload
@@ -3835,6 +3853,7 @@ namespace azure.mgmt.containerservice.models
         disable_local_accounts: Optional[bool]
         disk_encryption_set_id: Optional[str]
         dns_prefix: Optional[str]
+        enable_fips: Optional[bool]
         enable_rbac: Optional[bool]
         fqdn: Optional[str]
         fqdn_subdomain: Optional[str]
@@ -3885,6 +3904,7 @@ namespace azure.mgmt.containerservice.models
                 disable_local_accounts: Optional[bool] = ..., 
                 disk_encryption_set_id: Optional[str] = ..., 
                 dns_prefix: Optional[str] = ..., 
+                enable_fips: Optional[bool] = ..., 
                 enable_rbac: Optional[bool] = ..., 
                 fqdn_subdomain: Optional[str] = ..., 
                 hosted_system_profile: Optional[ManagedClusterHostedSystemProfile] = ..., 
@@ -4002,6 +4022,7 @@ namespace azure.mgmt.containerservice.models
         custom_ca_trust_certificates: Optional[list[bytes]]
         defender: Optional[ManagedClusterSecurityProfileDefender]
         image_cleaner: Optional[ManagedClusterSecurityProfileImageCleaner]
+        kubernetes_resource_object_encryption_profile: Optional[KubernetesResourceObjectEncryptionProfile]
         workload_identity: Optional[ManagedClusterSecurityProfileWorkloadIdentity]
 
         @overload
@@ -4012,6 +4033,7 @@ namespace azure.mgmt.containerservice.models
                 custom_ca_trust_certificates: Optional[list[bytes]] = ..., 
                 defender: Optional[ManagedClusterSecurityProfileDefender] = ..., 
                 image_cleaner: Optional[ManagedClusterSecurityProfileImageCleaner] = ..., 
+                kubernetes_resource_object_encryption_profile: Optional[KubernetesResourceObjectEncryptionProfile] = ..., 
                 workload_identity: Optional[ManagedClusterSecurityProfileWorkloadIdentity] = ...
             ) -> None: ...
 
@@ -5693,7 +5715,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5703,7 +5725,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5713,7 +5735,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -7107,6 +7129,11 @@ namespace azure.mgmt.containerservice.types
         topologyManagerPolicy: str
 
 
+    class azure.mgmt.containerservice.types.KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):
+        key "infrastructureEncryption": Union[str, InfrastructureEncryption]
+        infrastructureEncryption: Union[str, InfrastructureEncryption]
+
+
     class azure.mgmt.containerservice.types.LinuxOSConfig(TypedDict, total=False):
         key "swapFileSizeMB": int
         key "sysctls": ForwardRef('SysctlConfig', module='types')
@@ -7790,6 +7817,7 @@ namespace azure.mgmt.containerservice.types
         key "disableLocalAccounts": bool
         key "diskEncryptionSetID": str
         key "dnsPrefix": str
+        key "enableFIPS": bool
         key "enableRBAC": bool
         key "fqdn": str
         key "fqdnSubdomain": str
@@ -7835,6 +7863,7 @@ namespace azure.mgmt.containerservice.types
         disableLocalAccounts: bool
         diskEncryptionSetID: str
         dnsPrefix: str
+        enableFIPS: bool
         enableRBAC: bool
         fqdn: str
         fqdnSubdomain: str
@@ -7924,11 +7953,13 @@ namespace azure.mgmt.containerservice.types
         key "azureKeyVaultKms": ForwardRef('AzureKeyVaultKms', module='types')
         key "defender": ForwardRef('ManagedClusterSecurityProfileDefender', module='types')
         key "imageCleaner": ForwardRef('ManagedClusterSecurityProfileImageCleaner', module='types')
+        key "kubernetesResourceObjectEncryptionProfile": ForwardRef('KubernetesResourceObjectEncryptionProfile', module='types')
         key "workloadIdentity": ForwardRef('ManagedClusterSecurityProfileWorkloadIdentity', module='types')
         azureKeyVaultKms: AzureKeyVaultKms
         customCATrustCertificates: list[str]
         defender: ManagedClusterSecurityProfileDefender
         imageCleaner: ManagedClusterSecurityProfileImageCleaner
+        kubernetesResourceObjectEncryptionProfile: KubernetesResourceObjectEncryptionProfile
         workloadIdentity: ManagedClusterSecurityProfileWorkloadIdentity
 
 

@@ -92,7 +92,7 @@ REPLACEMENTS = (
         (
             "class SearchIndexerKnowledgeStoreTableProjectionSelector(TypedDict, total=False):  "
             "# pylint: disable=name-too-long\n"
-                """    \"\"\"Description for what data to store in Azure Tables.
+            """    \"\"\"Description for what data to store in Azure Tables.
 
     :ivar referenceKeyName: Name of reference key to different projection.
     :vartype referenceKeyName: str

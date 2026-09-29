@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,7 +48,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ServiceFabricManagedClustersManagementClient:  # pylint: disable=too-many-instance-attributes,name-too-long
+class ServiceFabricManagedClustersManagementClient:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """Service Fabric Managed Clusters Management Client.
 
     :ivar operations: Operations operations

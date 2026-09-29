@@ -23,25 +23,25 @@ namespace azure.search.documents
 
         def add_delete_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_merge_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_merge_or_upload_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_upload_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
@@ -13750,25 +13750,25 @@ namespace azure.search.documents.models
 
         def add_delete_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_merge_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_merge_or_upload_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
         def add_upload_actions(
                 self, 
-                *documents: Union[List[Dict], List[List[Dict]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 

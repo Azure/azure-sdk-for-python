@@ -293,6 +293,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "disableLocalAccounts": bool,
                         "diskEncryptionSetID": "str",
                         "dnsPrefix": "str",
+                        "enableFIPS": bool,
                         "enableRBAC": bool,
                         "fqdn": "str",
                         "fqdnSubdomain": "str",
@@ -432,6 +433,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "securityMonitoring": {"enabled": bool},
                             },
                             "imageCleaner": {"enabled": bool, "intervalHours": 0},
+                            "kubernetesResourceObjectEncryptionProfile": {"infrastructureEncryption": "str"},
                             "workloadIdentity": {"enabled": bool},
                         },
                         "serviceMeshProfile": {

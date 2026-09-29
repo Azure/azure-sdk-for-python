@@ -13,6 +13,7 @@
         "azure.mgmt.computerecommender.models.PlacementScore": "Microsoft.Compute.PlacementScore",
         "azure.mgmt.computerecommender.models.ResourceSize": "Microsoft.Compute.ResourceSize",
         "azure.mgmt.computerecommender.models.SkuMixPlacementBase": "Microsoft.Compute.SkuMixPlacementBase",
+        "azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimit": "Microsoft.Compute.SkuMixPlacementCapacityLimit",
         "azure.mgmt.computerecommender.models.SkuMixPlacementCapacityProfile": "Microsoft.Compute.SkuMixPlacementCapacityProfile",
         "azure.mgmt.computerecommender.models.SkuMixPlacementDeploymentChoice": "Microsoft.Compute.SkuMixPlacementDeploymentChoice",
         "azure.mgmt.computerecommender.models.SkuMixPlacementInstanceDescription": "Microsoft.Compute.SkuMixPlacementInstanceDescription",
@@ -32,6 +33,7 @@
         "azure.mgmt.computerecommender.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.computerecommender.models.SkuMixPlacementPriority": "Microsoft.Compute.SkuMixPlacementPriority",
         "azure.mgmt.computerecommender.models.SkuMixPlacementPartialFulfillmentReason": "Microsoft.Compute.SkuMixPlacementPartialFulfillmentReason",
+        "azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimitReason": "Microsoft.Compute.SkuMixPlacementCapacityLimitReason",
         "azure.mgmt.computerecommender.models.SkuMixPlacementCapacityType": "Microsoft.Compute.SkuMixPlacementCapacityType",
         "azure.mgmt.computerecommender.models.SkuMixPlacementAllocationStrategy": "Microsoft.Compute.SkuMixPlacementAllocationStrategy",
         "azure.mgmt.computerecommender.models.SkuMixPlacementOSType": "Microsoft.Compute.SkuMixPlacementOSType",
@@ -47,5 +49,5 @@
         "azure.mgmt.computerecommender.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post",
         "azure.mgmt.computerecommender.aio.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post"
     },
-    "CrossLanguageVersion": "51800132f656"
+    "CrossLanguageVersion": "6abdb790f35f"
 }

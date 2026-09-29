@@ -33,6 +33,7 @@ if TYPE_CHECKING:
         GatewayAPIIstioEnabled,
         IPFamily,
         IdentityBindingProvisioningState,
+        InfrastructureEncryption,
         IstioIngressGatewayMode,
         KeyVaultNetworkAccessTypes,
         KubeletDiskType,
@@ -917,11 +918,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar keyId: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar keyId: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype keyId: str
     :ivar keyVaultNetworkAccess: Network access of the key vault. Network access of key vault. The
      possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows public
@@ -937,11 +942,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
     enabled: bool
     """Whether to enable Azure Key Vault key management service. The default is false."""
     keyId: str
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     keyVaultNetworkAccess: Union[str, "KeyVaultNetworkAccessTypes"]
     """Network access of the key vault. Network access of key vault. The possible values are
      ``Public`` and ``Private``. ``Public`` means the key vault allows public access from all
@@ -1574,6 +1583,25 @@ class KubeletConfig(TypedDict, total=False):
      be ≥ 2."""
     podMaxPids: int
     """The maximum number of processes per pod."""
+
+
+class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Encryption at rest of Kubernetes resource objects using service-managed keys. More information
+    on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+
+    :ivar infrastructureEncryption: Whether to enable encryption at rest of Kubernetes resource
+     objects using service-managed keys. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
+    :vartype infrastructureEncryption: Union[str, "InfrastructureEncryption"]
+    """
+
+    infrastructureEncryption: Union[str, "InfrastructureEncryption"]
+    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
+     More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
 
 class LinuxOSConfig(TypedDict, total=False):
@@ -3664,6 +3692,15 @@ class ManagedClusterProperties(TypedDict, total=False):
     :ivar supportPlan: The support plan for the Managed Cluster. If unspecified, the default is
      'KubernetesOfficial'. Known values are: "KubernetesOfficial" and "AKSLongTermSupport".
     :vartype supportPlan: Union[str, "KubernetesSupportPlan"]
+    :ivar enableFIPS: Whether to enable FIPS mode at the cluster level. When enabled, this setting
+     enforces FIPS compliance for all AKS-managed components, such as the node operating system,
+     addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
+     `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
+    :vartype enableFIPS: bool
     :ivar networkProfile: The network configuration profile.
     :vartype networkProfile: "ContainerServiceNetworkProfile"
     :ivar aadProfile: The Azure Active Directory configuration.
@@ -3796,6 +3833,15 @@ class ManagedClusterProperties(TypedDict, total=False):
     supportPlan: Union[str, "KubernetesSupportPlan"]
     """The support plan for the Managed Cluster. If unspecified, the default is 'KubernetesOfficial'.
      Known values are: \"KubernetesOfficial\" and \"AKSLongTermSupport\"."""
+    enableFIPS: bool
+    """Whether to enable FIPS mode at the cluster level. When enabled, this setting enforces FIPS
+     compliance for all AKS-managed components, such as the node operating system, addons, and
+     `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
+     cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     networkProfile: "ContainerServiceNetworkProfile"
     """The network configuration profile."""
     aadProfile: "ManagedClusterAADProfile"
@@ -3983,6 +4029,11 @@ class ManagedClusterSecurityProfile(TypedDict, total=False):
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile.
     :vartype azureKeyVaultKms: "AzureKeyVaultKms"
+    :ivar kubernetesResourceObjectEncryptionProfile: Encryption at rest of Kubernetes resource
+     objects. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+    :vartype kubernetesResourceObjectEncryptionProfile: "KubernetesResourceObjectEncryptionProfile"
     :ivar workloadIdentity: Workload identity settings for the security profile. Workload identity
      enables Kubernetes applications to access Azure cloud resources securely with Azure AD. See
      `https://aka.ms/aks/wi <https://aka.ms/aks/wi>`_ for more details.
@@ -4001,6 +4052,10 @@ class ManagedClusterSecurityProfile(TypedDict, total=False):
     """Azure Key Vault `key management service
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile."""
+    kubernetesResourceObjectEncryptionProfile: "KubernetesResourceObjectEncryptionProfile"
+    """Encryption at rest of Kubernetes resource objects. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
     workloadIdentity: "ManagedClusterSecurityProfileWorkloadIdentity"
     """Workload identity settings for the security profile. Workload identity enables Kubernetes
      applications to access Azure cloud resources securely with Azure AD. See `https://aka.ms/aks/wi

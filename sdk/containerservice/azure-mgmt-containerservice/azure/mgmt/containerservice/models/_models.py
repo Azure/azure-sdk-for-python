@@ -1783,11 +1783,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar key_id: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar key_id: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype key_id: str
     :ivar key_vault_network_access: Network access of the key vault. Network access of key vault.
      The possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows
@@ -1805,11 +1809,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable Azure Key Vault key management service. The default is false."""
     key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     key_vault_network_access: Optional[Union[str, "_models.KeyVaultNetworkAccessTypes"]] = rest_field(
         name="keyVaultNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3246,6 +3254,47 @@ class KubernetesPatchVersion(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
+class KubernetesResourceObjectEncryptionProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Encryption at rest of Kubernetes resource objects using service-managed keys. More information
+    on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+
+    :ivar infrastructure_encryption: Whether to enable encryption at rest of Kubernetes resource
+     objects using service-managed keys. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.containerservice.models.InfrastructureEncryption
+    """
+
+    infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = rest_field(
+        name="infrastructureEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
+     More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KubernetesVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes version profile for given major.minor release.
 
@@ -3975,6 +4024,7 @@ class ManagedCluster(TrackedResource):  # pylint: disable=docstring-keyword-shou
         "node_resource_group_profile",
         "enable_rbac",
         "support_plan",
+        "enable_fips",
         "network_profile",
         "aad_profile",
         "auto_upgrade_profile",
@@ -7271,6 +7321,15 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar support_plan: The support plan for the Managed Cluster. If unspecified, the default is
      'KubernetesOfficial'. Known values are: "KubernetesOfficial" and "AKSLongTermSupport".
     :vartype support_plan: str or ~azure.mgmt.containerservice.models.KubernetesSupportPlan
+    :ivar enable_fips: Whether to enable FIPS mode at the cluster level. When enabled, this setting
+     enforces FIPS compliance for all AKS-managed components, such as the node operating system,
+     addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
+     `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
+    :vartype enable_fips: bool
     :ivar network_profile: The network configuration profile.
     :vartype network_profile: ~azure.mgmt.containerservice.models.ContainerServiceNetworkProfile
     :ivar aad_profile: The Azure Active Directory configuration.
@@ -7437,6 +7496,17 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     )
     """The support plan for the Managed Cluster. If unspecified, the default is 'KubernetesOfficial'.
      Known values are: \"KubernetesOfficial\" and \"AKSLongTermSupport\"."""
+    enable_fips: Optional[bool] = rest_field(
+        name="enableFIPS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to enable FIPS mode at the cluster level. When enabled, this setting enforces FIPS
+     compliance for all AKS-managed components, such as the node operating system, addons, and
+     `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
+     cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     network_profile: Optional["_models.ContainerServiceNetworkProfile"] = rest_field(
         name="networkProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7571,6 +7641,7 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         node_resource_group_profile: Optional["_models.ManagedClusterNodeResourceGroupProfile"] = None,
         enable_rbac: Optional[bool] = None,
         support_plan: Optional[Union[str, "_models.KubernetesSupportPlan"]] = None,
+        enable_fips: Optional[bool] = None,
         network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
         aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
         auto_upgrade_profile: Optional["_models.ManagedClusterAutoUpgradeProfile"] = None,
@@ -7859,6 +7930,12 @@ class ManagedClusterSecurityProfile(_Model):  # pylint: disable=docstring-keywor
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile.
     :vartype azure_key_vault_kms: ~azure.mgmt.containerservice.models.AzureKeyVaultKms
+    :ivar kubernetes_resource_object_encryption_profile: Encryption at rest of Kubernetes resource
+     objects. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+    :vartype kubernetes_resource_object_encryption_profile:
+     ~azure.mgmt.containerservice.models.KubernetesResourceObjectEncryptionProfile
     :ivar workload_identity: Workload identity settings for the security profile. Workload identity
      enables Kubernetes applications to access Azure cloud resources securely with Azure AD. See
      `https://aka.ms/aks/wi <https://aka.ms/aks/wi>`_ for more details.
@@ -7883,6 +7960,14 @@ class ManagedClusterSecurityProfile(_Model):  # pylint: disable=docstring-keywor
     """Azure Key Vault `key management service
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile."""
+    kubernetes_resource_object_encryption_profile: Optional["_models.KubernetesResourceObjectEncryptionProfile"] = (
+        rest_field(
+            name="kubernetesResourceObjectEncryptionProfile", visibility=["read", "create", "update", "delete", "query"]
+        )
+    )
+    """Encryption at rest of Kubernetes resource objects. More information on this can be found under
+     `https://aka.ms/aks/kubernetesResourceObjectEncryption
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
     workload_identity: Optional["_models.ManagedClusterSecurityProfileWorkloadIdentity"] = rest_field(
         name="workloadIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7906,6 +7991,9 @@ class ManagedClusterSecurityProfile(_Model):  # pylint: disable=docstring-keywor
         *,
         defender: Optional["_models.ManagedClusterSecurityProfileDefender"] = None,
         azure_key_vault_kms: Optional["_models.AzureKeyVaultKms"] = None,
+        kubernetes_resource_object_encryption_profile: Optional[
+            "_models.KubernetesResourceObjectEncryptionProfile"
+        ] = None,
         workload_identity: Optional["_models.ManagedClusterSecurityProfileWorkloadIdentity"] = None,
         image_cleaner: Optional["_models.ManagedClusterSecurityProfileImageCleaner"] = None,
         custom_ca_trust_certificates: Optional[list[bytes]] = None,
