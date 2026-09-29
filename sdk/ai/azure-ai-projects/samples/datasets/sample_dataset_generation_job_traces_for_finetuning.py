@@ -138,7 +138,7 @@ with (
             )
             try:
                 print("Begin creating a dataset generation job.")
-                poller = project_client.beta.datasets.begin_create_generation_job(
+                poller = project_client.datasets.begin_create_generation_job(
                     job=SupervisedFineTuningDataGenerationJobInputs(
                         name=f"traces-ft-{run_id}-a{attempt}",
                         sources=[

@@ -9,8 +9,8 @@ This document lists all public methods available on `AIProjectClient` and its su
 There are a total of 192 unique public methods:
 
 - 5 stable methods on the client
-- 68 stable methods on top-level sub-clients
-- 119 beta methods on nested beta sub-clients
+- 84 stable methods on top-level sub-clients
+- 103 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -18,9 +18,10 @@ There are a total of 192 unique public methods:
 | --- | --- | --- |
 | `agents` | AgentsOperations | 35 |
 | `connections` | ConnectionsOperations | 3 |
-| `datasets` | DatasetsOperations | 9 |
+| `datasets` | DatasetsOperations | 14 |
 | `deployments` | DeploymentsOperations | 2 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
+| `evaluators` | EvaluatorsOperations | 11 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
@@ -31,9 +32,8 @@ There are a total of 192 unique public methods:
 | --- | --- | --- |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
 | `beta.agents` | BetaAgentsOperations | 1 |
-| `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
-| `beta.evaluators` | BetaEvaluatorsOperations | 13 |
+| `beta.evaluators` | BetaEvaluatorsOperations | 2 |
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
 | `beta.models` | BetaModelsOperations | 9 |
@@ -102,11 +102,16 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .connections.get_default*
 .connections.list
 
+.datasets.begin_create_generation_job*
+.datasets.cancel_generation_job
 .datasets.create_or_update
 .datasets.delete
+.datasets.delete_generation_job
 .datasets.get
 .datasets.get_credentials
+.datasets.get_generation_job
 .datasets.list
+.datasets.list_generation_jobs
 .datasets.list_versions
 .datasets.pending_upload
 .datasets.upload_file*
@@ -119,6 +124,18 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .evaluation_rules.delete
 .evaluation_rules.get
 .evaluation_rules.list
+
+.evaluators.begin_create_generation_job*
+.evaluators.cancel_generation_job
+.evaluators.create_version
+.evaluators.delete_generation_job
+.evaluators.delete_version
+.evaluators.get_generation_job
+.evaluators.get_version
+.evaluators.list
+.evaluators.list_generation_jobs
+.evaluators.list_versions
+.evaluators.update_version
 
 .indexes.create_or_update
 .indexes.delete
@@ -160,31 +177,14 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 
 .beta.agents.create_from_prompt
 
-.beta.datasets.begin_create_generation_job*
-.beta.datasets.cancel_generation_job
-.beta.datasets.delete_generation_job
-.beta.datasets.get_generation_job
-.beta.datasets.list_generation_jobs
-
 .beta.evaluation_taxonomies.create
 .beta.evaluation_taxonomies.delete
 .beta.evaluation_taxonomies.get
 .beta.evaluation_taxonomies.list
 .beta.evaluation_taxonomies.update
 
-.beta.evaluators.begin_create_generation_job*
-.beta.evaluators.cancel_generation_job
-.beta.evaluators.create_version
-.beta.evaluators.delete_generation_job
-.beta.evaluators.delete_version
 .beta.evaluators.get_credentials
-.beta.evaluators.get_generation_job
-.beta.evaluators.get_version
-.beta.evaluators.list
-.beta.evaluators.list_generation_jobs
-.beta.evaluators.list_versions
 .beta.evaluators.pending_upload
-.beta.evaluators.update_version
 
 .beta.insights.generate
 .beta.insights.get

@@ -21,10 +21,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import (
-    BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
-    DatasetsOperations as DatasetsOperationsGenerated,
-)
+from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
 from ...models import AsyncDatasetGenerationLROPoller
@@ -41,8 +38,8 @@ logger = logging.getLogger(__name__)
 JSON = MutableMapping[str, Any]
 
 
-class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
-    """Custom async operations for beta data generation jobs."""
+class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
+    """Custom async operations for data generation jobs."""
 
     @overload
     async def begin_create_generation_job(
@@ -154,7 +151,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         )
 
 
-class DatasetsOperations(DatasetsOperationsGenerated):
+class DatasetsOperations(_DatasetsOperationsWithGeneration):
     """
     .. warning::
         **DO NOT** instantiate this class directly.

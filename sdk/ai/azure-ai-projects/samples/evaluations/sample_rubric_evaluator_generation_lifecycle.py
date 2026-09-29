@@ -94,7 +94,7 @@ with (
 ):
     # 1. Create the generation job. `operation_id` makes the call idempotent.
     print("Begin creating an evaluator generation job.")
-    poller = project_client.beta.evaluators.begin_create_generation_job(
+    poller = project_client.evaluators.begin_create_generation_job(
         job=job_body,
         operation_id=operation_id,
         polling_interval=poll_interval_seconds,
@@ -118,26 +118,24 @@ with (
 
     # Retrieve the persisted generation job using the id returned in the LRO result.
     assert evaluator.generation_job_id is not None, "Expected the generated evaluator to include a generation job id."
-    replay_job = project_client.beta.evaluators.get_generation_job(evaluator.generation_job_id)
+    replay_job = project_client.evaluators.get_generation_job(evaluator.generation_job_id)
     assert replay_job.id == evaluator.generation_job_id
 
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(
-        project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
-    ):
+    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
         entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
     # 3. Cancel a running job (not exercised here; the job above already completed).
-    # cancelled = project_client.beta.evaluators.cancel_generation_job(some_running_job_id)
+    # cancelled = project_client.evaluators.cancel_generation_job(some_running_job_id)
 
     # 4. Clean up. `delete_version` cascades to the generation job record, so
     # the explicit delete below may return 404.
     print("Cleaning up.")
-    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
-        project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
+        project_client.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:
         pass  # already removed by the delete_version cascade

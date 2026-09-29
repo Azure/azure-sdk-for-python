@@ -1143,84 +1143,6 @@ def build_evaluation_rules_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_connections_get_with_credentials_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections/{name}/getConnectionWithCredentials"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_connections_list_request(
-    *,
-    connection_type: Optional[Union[str, _models.ConnectionType]] = None,
-    default_connection: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if connection_type is not None:
-        _params["connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
-    if default_connection is not None:
-        _params["defaultConnection"] = _SERIALIZER.query("default_connection", default_connection, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1387,6 +1309,216 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_get_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/data_generation_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_list_generation_jobs_request(  # pylint: disable=name-too-long
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/data_generation_jobs"
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_create_generation_job_request(  # pylint: disable=name-too-long
+    *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/data_generation_jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_cancel_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/data_generation_jobs/{jobId}:cancel"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_delete_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/data_generation_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/connections/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_connections_get_with_credentials_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/connections/{name}/getConnectionWithCredentials"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_connections_list_request(
+    *,
+    connection_type: Optional[Union[str, _models.ConnectionType]] = None,
+    default_connection: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/connections"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if connection_type is not None:
+        _params["connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
+    if default_connection is not None:
+        _params["defaultConnection"] = _SERIALIZER.query("default_connection", default_connection, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
@@ -1557,6 +1689,299 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_list_versions_request(
+    name: str,
+    *,
+    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+    limit: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_list_request(
+    *,
+    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+    limit: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/evaluators/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_update_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_create_generation_job_request(  # pylint: disable=name-too-long
+    *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluator_generation_jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_get_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluator_generation_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_list_generation_jobs_request(  # pylint: disable=name-too-long
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluator_generation_jobs"
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_cancel_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluator_generation_jobs/{jobId}:cancel"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluators_delete_generation_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/evaluator_generation_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_toolboxes_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
@@ -2347,175 +2772,6 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-    limit: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_list_request(
-    *,
-    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-    limit: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-long
     name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
@@ -2574,138 +2830,6 @@ def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-l
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_create_generation_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluator_generation_jobs"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if operation_id is not None:
-        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_get_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluator_generation_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_list_generation_jobs_request(  # pylint: disable=name-too-long
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluator_generation_jobs"
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_cancel_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluator_generation_jobs/{jobId}:cancel"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_delete_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/evaluator_generation_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
@@ -4121,138 +4245,6 @@ def build_beta_skills_delete_version_request(name: str, version: str, **kwargs: 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_datasets_get_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data_generation_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_datasets_list_generation_jobs_request(  # pylint: disable=name-too-long
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data_generation_jobs"
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_datasets_create_generation_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data_generation_jobs"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if operation_id is not None:
-        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_datasets_cancel_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data_generation_jobs/{jobId}:cancel"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_datasets_delete_generation_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/data_generation_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
 def build_beta_voice_agents_conversations_list_request(  # pylint: disable=name-too-long
     agent_name: str,
     *,
@@ -5187,7 +5179,6 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
         self.routines = BetaRoutinesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
@@ -9650,268 +9641,6 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class ConnectionsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`connections` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def _get(self, name: str, **kwargs: Any) -> _models.Connection:
-        """Get a connection.
-
-        Retrieves the specified connection and its configuration details without including credential
-        values.
-
-        :param name: The friendly name of the connection, provided by the user. Required.
-        :type name: str
-        :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Connection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
-
-        _request = build_connections_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Connection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
-        """Get a connection with credentials.
-
-        Retrieves the specified connection together with its credential values.
-
-        :param name: The friendly name of the connection, provided by the user. Required.
-        :type name: str
-        :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Connection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
-
-        _request = build_connections_get_with_credentials_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Connection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        connection_type: Optional[Union[str, _models.ConnectionType]] = None,
-        default_connection: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.Connection"]:
-        """List connections.
-
-        Returns the connections available in the current project, optionally filtered by type or
-        default status.
-
-        :keyword connection_type: Lists connections of this specific type. Known values are:
-         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
-         Default value is None.
-        :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
-        :keyword default_connection: Lists connections that are default connections. Default value is
-         None.
-        :paramtype default_connection: bool
-        :return: An iterator like instance of Connection
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Connection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_connections_list_request(
-                    connection_type=connection_type,
-                    default_connection=default_connection,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Connection],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
 class DatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -10634,6 +10363,781 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
+    @distributed_trace
+    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
+        """Get a data generation job.
+
+        Retrieves the specified data generation job and its current status.
+
+        :param job_id: The ID of the job. Required.
+        :type job_id: str
+        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DataGenerationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+
+        _request = build_datasets_get_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_generation_jobs(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.DataGenerationJob"]:
+        """List data generation jobs.
+
+        Returns a list of data generation jobs.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of DataGenerationJob
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DataGenerationJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DataGenerationJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_datasets_list_generation_jobs_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DataGenerationJob],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    def _create_generation_job_initial(
+        self,
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
+        else:
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_datasets_create_generation_job_request(
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_generation_job(
+        self,
+        job: _models.DataGenerationJobInputs,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The data generation job inputs to create. Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_generation_job(
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The data generation job inputs to create. Required.
+        :type job: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_generation_job(
+        self,
+        job: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The data generation job inputs to create. Required.
+        :type job: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_generation_job(
+        self,
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The data generation job inputs to create. Is one of the following types:
+         DataGenerationJobInputs, JSON, IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataGenerationJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_generation_job_initial(
+                job=job,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.DataGenerationJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.DataGenerationJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.DataGenerationJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
+        """Cancel a data generation job.
+
+        Cancels the specified data generation job if it is still in progress.
+
+        :param job_id: The ID of the job to cancel. Required.
+        :type job_id: str
+        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DataGenerationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+
+        _request = build_datasets_cancel_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_generation_job(  # pylint: disable=inconsistent-return-statements
+        self, job_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a data generation job.
+
+        Removes the specified data generation job and its associated output.
+
+        :param job_id: The ID of the job to delete. Required.
+        :type job_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_datasets_delete_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def _get(self, name: str, **kwargs: Any) -> _models.Connection:
+        """Get a connection.
+
+        Retrieves the specified connection and its configuration details without including credential
+        values.
+
+        :param name: The friendly name of the connection, provided by the user. Required.
+        :type name: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+
+        _request = build_connections_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Connection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
+        """Get a connection with credentials.
+
+        Retrieves the specified connection together with its credential values.
+
+        :param name: The friendly name of the connection, provided by the user. Required.
+        :type name: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+
+        _request = build_connections_get_with_credentials_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Connection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        connection_type: Optional[Union[str, _models.ConnectionType]] = None,
+        default_connection: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Connection"]:
+        """List connections.
+
+        Returns the connections available in the current project, optionally filtered by type or
+        default status.
+
+        :keyword connection_type: Lists connections of this specific type. Known values are:
+         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
+         "AppConfig", "AppInsights", "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
+         Default value is None.
+        :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
+        :keyword default_connection: Lists connections that are default connections. Default value is
+         None.
+        :paramtype default_connection: bool
+        :return: An iterator like instance of Connection
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Connection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_connections_list_request(
+                    connection_type=connection_type,
+                    default_connection=default_connection,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Connection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
 
 class DeploymentsOperations:  # pylint: disable=docstring-missing-param
     """
@@ -11309,6 +11813,1185 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`evaluators` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_versions(
+        self,
+        name: str,
+        *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluatorVersion"]:
+        """List evaluator versions.
+
+        Returns the available versions for the specified evaluator.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluators_list_versions_request(
+                    name=name,
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluatorVersion"]:
+        """List latest evaluator versions.
+
+        Lists the latest version of each evaluator.
+
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluators_list_request(
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
+        """Get an evaluator version.
+
+        Retrieves the specified evaluator version, returning 404 if it does not exist.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
+        :type version: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_get_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_version(  # pylint: disable=inconsistent-return-statements
+        self, name: str, version: str, **kwargs: Any
+    ) -> None:
+        """Delete an evaluator version.
+
+        Removes the specified evaluator version. Returns 204 whether the version existed or not.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to delete. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_delete_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def create_version(
+        self,
+        name: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Required.
+        :type evaluator_version: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Required.
+        :type evaluator_version: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_version(
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
+         Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluator_version, (IOBase, bytes)):
+            _content = evaluator_version
+        else:
+            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluators_create_version_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_version(
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
+         JSON, IO[bytes] Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluator_version, (IOBase, bytes)):
+            _content = evaluator_version
+        else:
+            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluators_update_version_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _create_generation_job_initial(
+        self,
+        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
+        else:
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluators_create_generation_job_request(
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_generation_job(
+        self,
+        job: _models.EvaluatorGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_generation_job(
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_generation_job(
+        self,
+        job: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_generation_job(
+        self,
+        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_generation_job_initial(
+                job=job,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.EvaluatorVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.EvaluatorVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
+        """Get an evaluator generation job.
+
+        Gets the details of an evaluator generation job by its ID.
+
+        :param job_id: The ID of the job. Required.
+        :type job_id: str
+        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_get_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_generation_jobs(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluatorGenerationJob"]:
+        """List evaluator generation jobs.
+
+        Returns a list of evaluator generation jobs. The List API has up to a few seconds of
+        propagation delay, so a recently created job may not appear immediately; use the Get evaluator
+        generation job API with the job ID to retrieve a specific job without delay.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of EvaluatorGenerationJob
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorGenerationJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorGenerationJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_evaluators_list_generation_jobs_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorGenerationJob],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
+        """Cancel an evaluator generation job.
+
+        Cancels an evaluator generation job by its ID.
+
+        :param job_id: The ID of the job to cancel. Required.
+        :type job_id: str
+        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_cancel_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_generation_job(  # pylint: disable=inconsistent-return-statements
+        self, job_id: str, **kwargs: Any
+    ) -> None:
+        """Delete an evaluator generation job.
+
+        Deletes an evaluator generation job by its ID. Deletes the job record only; the generated
+        evaluator (if any) is preserved.
+
+        :param job_id: The ID of the job to delete. Required.
+        :type job_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_delete_generation_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class ToolboxesOperations:  # pylint: disable=docstring-missing-param
@@ -14196,647 +15879,6 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def list_versions(
-        self,
-        name: str,
-        *,
-        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-        limit: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorVersion"]:
-        """List evaluator versions.
-
-        Returns the available versions for the specified evaluator.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
-         value is None.
-        :paramtype type: str or str or str or str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_evaluators_list_versions_request(
-                    name=name,
-                    type=type,
-                    limit=limit,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorVersion],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-        limit: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorVersion"]:
-        """List latest evaluator versions.
-
-        Lists the latest version of each evaluator.
-
-        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
-         value is None.
-        :paramtype type: str or str or str or str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_evaluators_list_request(
-                    type=type,
-                    limit=limit,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorVersion],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
-        """Get an evaluator version.
-
-        Retrieves the specified evaluator version, returning 404 if it does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
-        :type version: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_get_version_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_version(  # pylint: disable=inconsistent-return-statements
-        self, name: str, version: str, **kwargs: Any
-    ) -> None:
-        """Delete an evaluator version.
-
-        Removes the specified evaluator version. Returns 204 whether the version existed or not.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to delete. Required.
-        :type version: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_delete_version_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create_version(
-        self,
-        name: str,
-        evaluator_version: _models.EvaluatorVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_version(
-        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_version(
-        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create_version(
-        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
-         Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_evaluators_create_version_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: _models.EvaluatorVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_version(
-        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
-         JSON, IO[bytes] Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_evaluators_update_version_request(
-            name=name,
-            version=version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     def pending_upload(
         self,
@@ -15192,526 +16234,6 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    def _create_generation_job_initial(
-        self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_evaluators_create_generation_job_request(
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_generation_job(
-        self,
-        job: _models.EvaluatorGenerationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.EvaluatorVersion]:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.EvaluatorVersion]:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.EvaluatorVersion]:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_generation_job(
-        self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.EvaluatorVersion]:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_generation_job_initial(
-                job=job,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.EvaluatorVersion].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.EvaluatorVersion](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
-        """Get an evaluator generation job.
-
-        Gets the details of an evaluator generation job by its ID.
-
-        :param job_id: The ID of the job. Required.
-        :type job_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_get_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_generation_jobs(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorGenerationJob"]:
-        """List evaluator generation jobs.
-
-        Returns a list of evaluator generation jobs. The List API has up to a few seconds of
-        propagation delay, so a recently created job may not appear immediately; use the Get evaluator
-        generation job API with the job ID to retrieve a specific job without delay.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of EvaluatorGenerationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorGenerationJob]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.EvaluatorGenerationJob]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_evaluators_list_generation_jobs_request(
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorGenerationJob],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
-        """Cancel an evaluator generation job.
-
-        Cancels an evaluator generation job by its ID.
-
-        :param job_id: The ID of the job to cancel. Required.
-        :type job_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_cancel_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_generation_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, **kwargs: Any
-    ) -> None:
-        """Delete an evaluator generation job.
-
-        Deletes an evaluator generation job by its ID. Deletes the job record only; the generated
-        evaluator (if any) is preserved.
-
-        :param job_id: The ID of the job to delete. Required.
-        :type job_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_delete_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
@@ -21600,537 +22122,6 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`datasets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Get a data generation job.
-
-        Retrieves the specified data generation job and its current status.
-
-        :param job_id: The ID of the job. Required.
-        :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_datasets_get_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_generation_jobs(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.DataGenerationJob"]:
-        """List data generation jobs.
-
-        Returns a list of data generation jobs.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of DataGenerationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DataGenerationJob]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DataGenerationJob]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_datasets_list_generation_jobs_request(
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.DataGenerationJob],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    def _create_generation_job_initial(
-        self,
-        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_datasets_create_generation_job_request(
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_generation_job(
-        self,
-        job: _models.DataGenerationJobInputs,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DataGenerationJobResult]:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The data generation job inputs to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJobInputs
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DataGenerationJobResult. The
-         DataGenerationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.DataGenerationJobResult]:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The data generation job inputs to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DataGenerationJobResult. The
-         DataGenerationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DataGenerationJobResult]:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The data generation job inputs to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DataGenerationJobResult. The
-         DataGenerationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_generation_job(
-        self,
-        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.DataGenerationJobResult]:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The data generation job inputs to create. Is one of the following types:
-         DataGenerationJobInputs, JSON, IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: An instance of LROPoller that returns DataGenerationJobResult. The
-         DataGenerationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.DataGenerationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DataGenerationJobResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_generation_job_initial(
-                job=job,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.DataGenerationJobResult, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DataGenerationJobResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DataGenerationJobResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Cancel a data generation job.
-
-        Cancels the specified data generation job if it is still in progress.
-
-        :param job_id: The ID of the job to cancel. Required.
-        :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_datasets_cancel_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_generation_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, **kwargs: Any
-    ) -> None:
-        """Delete a data generation job.
-
-        Removes the specified data generation job and its associated output.
-
-        :param job_id: The ID of the job to delete. Required.
-        :type job_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_datasets_delete_generation_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missing-param

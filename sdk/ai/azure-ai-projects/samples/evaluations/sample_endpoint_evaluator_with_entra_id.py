@@ -152,7 +152,7 @@ with (
     # token to your endpoint.
     print("[2/5] Registering endpoint-based evaluator with Entra ID auth...")
 
-    evaluator = project_client.beta.evaluators.create_version(
+    evaluator = project_client.evaluators.create_version(
         name="my-endpoint-evaluator-entra",
         evaluator_version=EvaluatorVersion(
             categories=[EvaluatorCategory.QUALITY],
@@ -283,7 +283,7 @@ with (
     #     connection_name=connection_name,
     # )
     # print(f"  Connection deleted: {connection_name}")
-    # project_client.beta.evaluators.delete(name="my-endpoint-evaluator-entra")
+    # project_client.evaluators.delete(name="my-endpoint-evaluator-entra")
     # print("  Evaluator deleted: my-endpoint-evaluator-entra")
     # client.evals.delete(eval_id=eval_object.id)
     # print(f"  Evaluation deleted: {eval_object.id}")

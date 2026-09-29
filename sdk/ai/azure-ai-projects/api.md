@@ -938,76 +938,6 @@ namespace azure.ai.projects.aio.operations
             ) -> AgentDetails: ...
 
 
-    class azure.ai.projects.aio.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: DataGenerationJobInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
-
-        @distributed_trace_async
-        async def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
-        @distributed_trace_async
-        async def delete_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
-        @distributed_trace
-        def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[DataGenerationJob]: ...
-
-
     class azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations:
 
         def __init__(
@@ -1098,240 +1028,6 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
-
-
-    class azure.ai.projects.aio.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: EvaluatorGenerationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
-
-        @overload
-        async def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
-
-        @distributed_trace_async
-        async def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
-        @overload
-        async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @distributed_trace_async
-        async def delete_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: EvaluatorCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @distributed_trace_async
-        async def get_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
-        @distributed_trace_async
-        async def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[EvaluatorVersion]: ...
-
-        @distributed_trace
-        def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[EvaluatorGenerationJob]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[EvaluatorVersion]: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: PendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
 
 
     class azure.ai.projects.aio.operations.BetaInsightsOperations:
@@ -1908,9 +1604,7 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
-        datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
-        evaluators: BetaEvaluatorsOperations
         insights: BetaInsightsOperations
         memory_stores: BetaMemoryStoresOperations
         models: BetaModelsOperations
@@ -2788,13 +2482,50 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[Connection]: ...
 
 
-    class azure.ai.projects.aio.operations.DatasetsOperations(DatasetsOperationsGenerated):
+    class azure.ai.projects.aio.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
 
         def __init__(
                 self, 
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: DataGenerationJobInputs, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncDatasetGenerationLROPoller: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncDatasetGenerationLROPoller: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncDatasetGenerationLROPoller: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
 
         @overload
         async def create_or_update(
@@ -2838,6 +2569,13 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        async def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
         async def get(
                 self, 
                 name: str, 
@@ -2853,8 +2591,25 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
+        @distributed_trace_async
+        async def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
         @distributed_trace
         def list(self, **kwargs: Any) -> AsyncItemPaged[DatasetVersion]: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DataGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
@@ -3007,6 +2762,174 @@ namespace azure.ai.projects.aio.operations
                 enabled: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluationRule]: ...
+
+
+    class azure.ai.projects.aio.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: EvaluatorGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
+
+        @overload
+        async def begin_create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncEvaluatorGenerationLROPoller: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        async def create_version(
+                self, 
+                name: str, 
+                evaluator_version: EvaluatorVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        async def create_version(
+                self, 
+                name: str, 
+                evaluator_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        async def create_version(
+                self, 
+                name: str, 
+                evaluator_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @distributed_trace_async
+        async def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @distributed_trace_async
+        async def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                limit: Optional[int] = ..., 
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EvaluatorVersion]: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EvaluatorGenerationJob]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                limit: Optional[int] = ..., 
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EvaluatorVersion]: ...
+
+        @overload
+        async def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: EvaluatorVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        async def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        async def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
 
 
     class azure.ai.projects.aio.operations.IndexesOperations:
@@ -18232,76 +18155,6 @@ namespace azure.ai.projects.operations
             ) -> AgentDetails: ...
 
 
-    class azure.ai.projects.operations.BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: DataGenerationJobInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
-
-        @distributed_trace
-        def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
-        @distributed_trace
-        def delete_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
-        @distributed_trace
-        def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[DataGenerationJob]: ...
-
-
     class azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations:
 
         def __init__(
@@ -18392,240 +18245,6 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
-
-
-    class azure.ai.projects.operations.BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: EvaluatorGenerationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
-
-        @overload
-        def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
-
-        @distributed_trace
-        def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
-        @overload
-        def create_version(
-                self, 
-                name: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        def create_version(
-                self, 
-                name: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        def create_version(
-                self, 
-                name: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @distributed_trace
-        def delete_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: EvaluatorCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @distributed_trace
-        def get_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
-        @distributed_trace
-        def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[EvaluatorVersion]: ...
-
-        @distributed_trace
-        def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[EvaluatorGenerationJob]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[EvaluatorVersion]: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: PendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PendingUploadResponse: ...
-
-        @overload
-        def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
-
-        @overload
-        def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluatorVersion: ...
 
 
     class azure.ai.projects.operations.BetaInsightsOperations:
@@ -19204,9 +18823,7 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
-        datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
-        evaluators: BetaEvaluatorsOperations
         insights: BetaInsightsOperations
         memory_stores: BetaMemoryStoresOperations
         models: BetaModelsOperations
@@ -20153,13 +19770,50 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Connection]: ...
 
 
-    class azure.ai.projects.operations.DatasetsOperations(DatasetsOperationsGenerated):
+    class azure.ai.projects.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
 
         def __init__(
                 self, 
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: DataGenerationJobInputs, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DatasetGenerationLROPoller: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DatasetGenerationLROPoller: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DatasetGenerationLROPoller: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
 
         @overload
         def create_or_update(
@@ -20203,6 +19857,13 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
+        def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
         def get(
                 self, 
                 name: str, 
@@ -20219,7 +19880,24 @@ namespace azure.ai.projects.operations
             ) -> DatasetCredential: ...
 
         @distributed_trace
+        def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @distributed_trace
         def list(self, **kwargs: Any) -> ItemPaged[DatasetVersion]: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[DataGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
@@ -20372,6 +20050,174 @@ namespace azure.ai.projects.operations
                 enabled: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[EvaluationRule]: ...
+
+
+    class azure.ai.projects.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: EvaluatorGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationLROPoller: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationLROPoller: ...
+
+        @overload
+        def begin_create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationLROPoller: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        def create_version(
+                self, 
+                name: str, 
+                evaluator_version: EvaluatorVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        def create_version(
+                self, 
+                name: str, 
+                evaluator_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        def create_version(
+                self, 
+                name: str, 
+                evaluator_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @distributed_trace
+        def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @distributed_trace
+        def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                limit: Optional[int] = ..., 
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[EvaluatorVersion]: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[EvaluatorGenerationJob]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                limit: Optional[int] = ..., 
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[EvaluatorVersion]: ...
+
+        @overload
+        def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: EvaluatorVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
+
+        @overload
+        def update_version(
+                self, 
+                name: str, 
+                version: str, 
+                evaluator_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> EvaluatorVersion: ...
 
 
     class azure.ai.projects.operations.IndexesOperations:

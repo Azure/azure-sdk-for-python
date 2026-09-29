@@ -167,7 +167,7 @@ async def main() -> None:
         )
 
         print("Begin creating a dataset generation job.")
-        poller = await project_client.beta.datasets.begin_create_generation_job(
+        poller = await project_client.datasets.begin_create_generation_job(
             job=job,
             polling_interval=poll_interval_seconds,
         )

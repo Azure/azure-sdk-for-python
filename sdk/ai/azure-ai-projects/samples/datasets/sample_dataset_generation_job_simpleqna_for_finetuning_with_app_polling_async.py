@@ -167,14 +167,14 @@ async def main() -> None:
         )
 
         print("Create a dataset generation job without SDK polling.")
-        poller = await project_client.beta.datasets.begin_create_generation_job(
+        poller = await project_client.datasets.begin_create_generation_job(
             job=job_inputs,
             polling=False,
         )
         job_id = poller.details["job_id"]
         if not job_id:
             raise RuntimeError("The create operation did not return a data generation job ID.")
-        job = await project_client.beta.datasets.get_generation_job(job_id=job_id)
+        job = await project_client.datasets.get_generation_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
@@ -183,7 +183,7 @@ async def main() -> None:
         print(f"Polling job `{job.id}` to completion...", end="", flush=True)
         while job.status not in TERMINAL_STATUSES:
             await asyncio.sleep(poll_interval_seconds)
-            job = await project_client.beta.datasets.get_generation_job(job_id=job.id)
+            job = await project_client.datasets.get_generation_job(job_id=job.id)
             print(".", end="", flush=True)
         print()
         print(f"Final job status: `{job.status}`.")

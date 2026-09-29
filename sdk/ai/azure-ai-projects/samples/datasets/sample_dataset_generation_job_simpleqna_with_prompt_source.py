@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    End-to-end scenario combining `.beta.datasets` data generation with an
+    End-to-end scenario combining `.datasets` data generation with an
     evaluation run. The sample:
 
       1. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna) that
@@ -113,7 +113,7 @@ def main() -> None:
             ),
         )
         print("Begin creating a dataset generation job.")
-        poller = project_client.beta.datasets.begin_create_generation_job(
+        poller = project_client.datasets.begin_create_generation_job(
             job=job,
             polling_interval=poll_interval_seconds,
         )

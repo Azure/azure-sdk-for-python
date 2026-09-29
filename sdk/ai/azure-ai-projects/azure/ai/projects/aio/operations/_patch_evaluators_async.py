@@ -13,7 +13,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated
+from ._operations import EvaluatorsOperations as EvaluatorsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
 from ...models import AsyncEvaluatorGenerationLROPoller
@@ -21,8 +21,8 @@ from ...models import AsyncEvaluatorGenerationLROPoller
 JSON = MutableMapping[str, Any]
 
 
-class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
-    """Custom async operations for beta evaluator generation jobs."""
+class EvaluatorsOperations(EvaluatorsOperationsGenerated):
+    """Custom async operations for evaluator generation jobs."""
 
     @overload
     async def begin_create_generation_job(
