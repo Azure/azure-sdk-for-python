@@ -490,6 +490,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
             operation_type=operation_type,
             timeout=_get_mgmt_request_remaining_timeout(timeout, started),
         )
+        _get_mgmt_request_remaining_timeout(timeout, started)
         return status, description, response
 
 

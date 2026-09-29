@@ -907,6 +907,66 @@ class TestPyamqpManagementRequestReadiness:
 
         assert client._connection.listen.call_count == 3
 
+    def test_sync_management_request_rejects_response_after_deadline(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        clock = VirtualClock()
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = True
+
+        def execute(*args, **kwargs):
+            clock.sleep(0.06)
+            return (200, "OK", "late response")
+
+        mgmt_link.execute = execute
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                client.mgmt_request(MagicMock(), timeout=0.05)
+
+    @pytest.mark.asyncio
+    async def test_cancelled_async_management_request_cleans_operation_state(self):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.aio._management_operation_async import ManagementOperation
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        listening = asyncio.Event()
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+
+        async def execute_operation(message, callback, **kwargs):
+            pending_operation = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending_operation)
+            return pending_operation
+
+        async def listen():
+            listening.set()
+            await asyncio.Event().wait()
+
+        mgmt_link.execute_operation = execute_operation
+        operation = ManagementOperation.__new__(ManagementOperation)
+        operation._mgmt_link = mgmt_link
+        operation._responses = {}
+        operation._mgmt_error = None
+        operation._connection = MagicMock()
+        operation._connection.listen = listen
+
+        task = asyncio.create_task(operation.execute(MagicMock(), timeout=5))
+        await listening.wait()
+        task.cancel()
+
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
     @pytest.mark.asyncio
     async def test_async_management_request_skips_broken_primary_link(self):
         from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
