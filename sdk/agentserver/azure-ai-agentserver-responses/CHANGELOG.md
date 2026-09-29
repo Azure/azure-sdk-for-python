@@ -1,5 +1,18 @@
 # Release History
 
+## 2.2.1 (Unreleased)
+
+### Other Changes
+
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
 ## 2.2.0 (2026-09-28)
 
 ### Other Changes
@@ -29,14 +42,11 @@
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the
   event loop until the exporter drains and serialises concurrent requests
-  behind a single export (head-of-line blocking). It now schedules a
-  background flush by default without awaiting export. A new `AGENTSERVER_FLUSH_MODE`
-  environment variable selects the strategy: `background` (default; requires
-  a platform drain window before suspension or shutdown), `async` (await
-  export off the event loop), or `sync` (legacy blocking behaviour).
-  Unset, empty, and invalid values use `background`; invalid values log a warning.
-  Set `async` to retain request-awaited flushing on platforms that cannot
-  provide a background drain window.
+  behind a single export (head-of-line blocking). It now awaits the
+  non-blocking `flush_spans_async()` by default. A new `AGENTSERVER_FLUSH_MODE`
+  environment variable selects the strategy: `async` (default, off the event
+  loop), `background` (return the response first, flush in the background --
+  requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
   cleanup, without an additional pre-stream flush.
 
