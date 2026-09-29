@@ -21,7 +21,7 @@ from devtools_testutils import recorded_by_proxy
 import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import Pipeline, PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import KeyClient
@@ -36,6 +36,41 @@ from _keys_test_case import KeysTestCase
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+BACKSLASH_AUTHORITIES = [
+    r"example.net\.vault.azure.net",
+    r"example.net\\.vault.azure.net",
+    r"example.net\@test.vault.azure.net",
+    r"example.net\\@test.vault.azure.net",
+]
+VALID_REQUEST_URLS = [
+    "https://test.vault.azure.net/keys/key",
+    "https://TEST.VAULT.AZURE.NET/keys/key",
+    "https://test.vault.azure.net:443/keys/key",
+    "https://test.managedhsm.azure.net:8443/keys/key",
+    "https://test.vault.usgovcloudapi.net/keys/key",
+    "https://test.managedhsm.usgovcloudapi.net/keys/key",
+    "https://test.vault.azure.cn/keys/key",
+    "https://test.managedhsm.azure.cn/keys/key",
+    "https://test.vault.microsoftazure.de/keys/key",
+    "https://test.vault.custom.example/keys/key",
+    "https://test.vault.azure.net./keys/key",
+    "https://xn--bcher-kva.example/keys/key",
+    "https://[::1]:8443/keys/key",
+    "https://user%5Cname@test.vault.azure.net/keys/key",
+    r"https://test.vault.azure.net/keys/a\b",
+    r"https://test.vault.azure.net/keys/key?value=a\b",
+    r"https://test.vault.azure.net/keys/key#value=a\b",
+]
+CHALLENGE_RESOURCE_DOMAINS = [
+    "vault.azure.net",
+    "managedhsm.azure.net",
+    "vault.usgovcloudapi.net",
+    "managedhsm.usgovcloudapi.net",
+    "vault.azure.cn",
+    "managedhsm.azure.cn",
+    "vault.microsoftazure.de",
+    "vault.custom.example",
+]
 
 
 class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
@@ -157,6 +192,94 @@ def test_enforces_tls():
     pipeline = Pipeline(transport=Mock(), policies=[ChallengeAuthPolicy(credential)])
     with pytest.raises(ServiceRequestError):
         pipeline.run(HttpRequest("GET", url))
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("cache_state", ["empty", "challenge", "token"])
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource):
+    url = f"https://{authority}"
+    credential = Mock(spec_set=["get_token"])
+    transport = Mock()
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+    if cache_state != "empty":
+        HttpChallengeCache.set_challenge_for_url(
+            url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"])
+        )
+    if cache_state == "token":
+        client._client._config.authentication_policy._token = AccessToken("cached-token", time.time() + 3600)
+
+    for _ in range(2):
+        with pytest.raises(ValueError, match="backslash"):
+            client.get_key("key")
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+    assert bool(HttpChallengeCache.get_challenge_for_url(url)) == (cache_state != "empty")
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource):
+    url = f"https://{authority}/keys/key"
+    credential = Mock(spec_set=["get_token"])
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+    response = Mock(http_response=KV_CHALLENGE_RESPONSE)
+
+    with pytest.raises(ValueError, match="backslash"):
+        policy.on_challenge(request, response)
+
+    credential.get_token.assert_not_called()
+    assert "Authorization" not in request.http_request.headers
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("url", VALID_REQUEST_URLS)
+def test_request_url_validation_preserves_valid_urls(url):
+    HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"]))
+    credential = Mock(spec_set=["get_token"])
+    policy = ChallengeAuthPolicy(credential)
+    policy._token = AccessToken("cached-token", time.time() + 3600)
+    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+
+    policy.on_request(request)
+
+    assert request.http_request.url == url
+    assert "cached-token" in request.http_request.headers["Authorization"]
+    credential.get_token.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("resource_domain", CHALLENGE_RESOURCE_DOMAINS)
+def test_request_url_validation_preserves_challenge_flow(resource_domain):
+    url = f"https://test.{resource_domain}/keys/key"
+    scope = f"https://{resource_domain}/.default"
+    challenge_header = f'Bearer authorization="{ENDPOINT}", resource="https://{resource_domain}"'
+    token = AccessToken("expected-token", time.time() + 3600)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    transport = validating_transport(
+        requests=(
+            Request(url),
+            Request(url, required_headers={"Authorization": "Bearer expected-token"}),
+            Request(url, required_headers={"Authorization": "Bearer expected-token"}),
+        ),
+        responses=(
+            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_header}),
+            mock_response(status_code=200),
+            mock_response(status_code=200),
+        ),
+    )
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential)], transport=transport)
+
+    for _ in range(2):
+        pipeline.run(HttpRequest("GET", url))
+
+    assert HttpChallengeCache.get_challenge_for_url(url).get_resource() == f"https://{resource_domain}"
+    credential.get_token.assert_called_once_with(scope, claims=None, tenant_id=KV_CHALLENGE_TENANT, enable_cae=True)
 
 
 def test_challenge_cache():
