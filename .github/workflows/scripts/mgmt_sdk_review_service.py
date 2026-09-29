@@ -7,6 +7,7 @@ memory for this job; a restart loses corrections rather than authorizing output.
 
 import argparse
 import copy
+import http.client
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
@@ -49,9 +50,10 @@ def read_public_specification_file(repository, revision, path):
         opener = urllib.request.build_opener(NoSpecificationRedirects())
         with opener.open(request, timeout=API_TIMEOUT_SECONDS) as response:
             declared_size = response.headers.get("Content-Length")
-            if declared_size is not None and int(declared_size) < 0:
+            declared_size = int(declared_size) if declared_size is not None else None
+            if declared_size is not None and declared_size < 0:
                 raise ValueError("negative Content-Length")
-            if declared_size is not None and int(declared_size) > MAX_TEXT_FILE_BYTES:
+            if declared_size is not None and declared_size > MAX_TEXT_FILE_BYTES:
                 return {
                     **record,
                     "status": "truncated",
@@ -64,6 +66,8 @@ def read_public_specification_file(repository, revision, path):
                     "status": "truncated",
                     "error": f"Public specification exceeded the {MAX_TEXT_FILE_BYTES}-byte evidence limit.",
                 }
+            if declared_size is not None and len(content) != declared_size:
+                raise ValueError("Content-Length does not match received content")
             return {**record, "status": "available", "content": content.decode("utf-8"), "error": ""}
     except urllib.error.HTTPError as error:
         error.close()
@@ -76,7 +80,7 @@ def read_public_specification_file(repository, revision, path):
                 "Only public, immutable GitHub content is supported; no authenticated fallback is attempted."
             ),
         }
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, http.client.HTTPException) as error:
         return {
             **record,
             "error": f"Could not read public specification {path} at {revision}: {error}",

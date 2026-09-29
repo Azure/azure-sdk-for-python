@@ -943,8 +943,10 @@ class PublicSpecificationReadsTests(unittest.TestCase):
             (None, b"\xff", None),
             ("invalid", b"model Widget {}", None),
             ("-1", b"model Widget {}", None),
+            ("30", b"model Widget {}", None),
             (None, b"", TimeoutError("Read timed out")),
             (None, b"", urllib.error.URLError("Connection unavailable")),
+            (None, b"", service.http.client.IncompleteRead(b"partial", 20)),
         ):
             with self.subTest(header=header, error=error), mock.patch.object(
                 service.urllib.request, "build_opener"
