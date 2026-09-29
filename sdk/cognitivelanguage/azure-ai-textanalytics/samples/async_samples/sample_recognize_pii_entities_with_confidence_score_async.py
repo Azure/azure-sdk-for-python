@@ -58,8 +58,8 @@ async def sample_pii_with_confidence_score_async():
         threshold = ConfidenceScoreThreshold(
             default=0.3,
             overrides=[
-                ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber"),
-                ConfidenceScoreThresholdOverride(value=0.9, entity="Email"),
+                ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber", language="en"),
+                ConfidenceScoreThresholdOverride(value=0.9, entity="Email", language="en"),
             ],
         )
 
