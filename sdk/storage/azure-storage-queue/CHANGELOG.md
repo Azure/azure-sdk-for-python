@@ -1,6 +1,6 @@
 # Release History
 
-## 12.18.0 (Unreleased)
+## 12.18.0 (2026-09-29)
 
 This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
 
