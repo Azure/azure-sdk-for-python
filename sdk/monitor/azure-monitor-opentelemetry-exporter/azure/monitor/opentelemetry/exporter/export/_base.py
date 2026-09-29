@@ -376,7 +376,9 @@ class BaseExporter:
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
+        self._debug_sdkstats("_transmit")
         if len(envelopes) > 0:
+            self._debug_sdkstats("_transmit >0 envelopes")
             self._debug_sdkstats(
                 f"send entry batch_size={len(envelopes)} "
                 f"host={_safe_diagnostic_url(self.client._config.host)} redirected_retry={_skip_rate_limit}"
@@ -431,6 +433,8 @@ class BaseExporter:
             retry_after_delay_seconds = None
             failure_details = None
             try:
+                for envelope in envelopes:
+                    self._debug_sdkstats(f"Preparing to send envelope: {envelope}")
                 track_result = self.client.track(
                     envelopes,
                     cls=lambda pipeline_response, deserialized, _: (
