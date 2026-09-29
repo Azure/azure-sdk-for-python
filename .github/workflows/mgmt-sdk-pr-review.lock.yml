@@ -63,17 +63,17 @@ on:
   # mgmt-sdk-pr-review.md, compile with gh-aw v0.88.8, then push and dispatch --ref.
   # Recompile with that source block commented again before merging.
   # The compiler regenerates aw_context and drops this non-executable reminder.
-  workflow_dispatch:
-    inputs:
-      aw_context:
-        default: ""
-        description: "Agent caller context (used internally by Agentic Workflows)."
-        required: false
-        type: string
-      pr_number:
-        description: Azure-owned-source SDK PR number to review and publish to
-        required: true
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     aw_context:
+  #       default: ""
+  #       description: "Agent caller context (used internally by Agentic Workflows)."
+  #       required: false
+  #       type: string
+  #     pr_number:
+  #       description: Azure-owned-source SDK PR number to review and publish to
+  #       required: true
+  #       type: string
 
 permissions: {}
 
