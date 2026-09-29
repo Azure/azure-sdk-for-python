@@ -28,8 +28,8 @@ class AzureMonitorClientConfiguration:  # pylint: disable=too-many-instance-attr
     :param credential: Credential used to authenticate requests to the service. Default value is
      None.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The service API version. Known values are "v2" and None. Default value
-     is "v2". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The service API version. Known values are "v2.1" and None. Default value
+     is "v2.1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~exporter.models.Versions
     """
 
@@ -39,7 +39,7 @@ class AzureMonitorClientConfiguration:  # pylint: disable=too-many-instance-attr
         credential: Optional["TokenCredential"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "v2")
+        api_version: str = kwargs.pop("api_version", "v2.1")
 
         self.host = host
         self.credential = credential
