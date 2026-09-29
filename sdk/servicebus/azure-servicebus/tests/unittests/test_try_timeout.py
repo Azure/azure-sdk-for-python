@@ -23,7 +23,7 @@ Java (`AmqpRetryOptions.tryTimeout`) SDKs, which default it on at 60 seconds.
 import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import azure.servicebus._common.utils as utils_module
 import azure.servicebus._servicebus_receiver as sync_receiver_module
@@ -1056,6 +1056,29 @@ class TestPyamqpManagementRequestReadiness:
                 await client.mgmt_request_async(MagicMock(), timeout=0.05)
 
         assert listen_calls == 3
+
+    @pytest.mark.asyncio
+    async def test_cancelled_async_management_link_open_is_not_cached(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        client._mgmt_links = {}
+        client._session = MagicMock()
+        client.auth_complete_async = AsyncMock(return_value=True)
+        first, second = MagicMock(), MagicMock()
+        first.open = AsyncMock(side_effect=asyncio.CancelledError)
+        second.open = AsyncMock()
+        second.ready = AsyncMock(return_value=True)
+        second.execute = AsyncMock(return_value=(200, "OK", "response"))
+
+        with patch.object(pyamqp_async_client_module, "ManagementOperation", side_effect=[first, second]):
+            with pytest.raises(asyncio.CancelledError):
+                await client.mgmt_request_async(MagicMock(), timeout=5)
+            result = await client.mgmt_request_async(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        assert client._mgmt_links == {"$management": second}
 
 
 class TestAsyncLinkAcquisitionIsBounded:

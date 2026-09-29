@@ -378,8 +378,8 @@ class AMQPClientAsync(AMQPClientSync):
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
+                self._mgmt_links[node] = mgmt_link
 
         while not await self.auth_complete_async():
             remaining = _get_mgmt_request_remaining_timeout(timeout, started)

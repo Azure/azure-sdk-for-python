@@ -19,7 +19,8 @@ import os
 import asyncio
 import uuid
 import datetime
-from azure.servicebus.aio.management import ApiVersion, ServiceBusAdministrationClient
+from azure.servicebus.aio.management import ServiceBusAdministrationClient
+from azure.servicebus.management import ApiVersion
 from azure.identity.aio import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
