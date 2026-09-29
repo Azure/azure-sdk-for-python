@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Generated API behavior, including native configuration and protocol overloads."""
+"""Generated API behavior for the synchronous client."""
 
 from datetime import timedelta
 from copy import deepcopy
@@ -16,7 +16,6 @@ from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.rest import HttpRequest
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
 from azure.data.ai.models import (
     InferenceErrorResult,
     InnerError,
@@ -30,28 +29,28 @@ from azure.data.ai.models import (
 )
 
 
-@pytest.mark.asyncio
-async def test_renamed_document_type_and_metadata(
-    open_client, invoke, respond, transport, request_payload, result_payload, document_type
-):
+def test_renamed_document_type_and_metadata(respond, transport, request_payload, result_payload, document_type):
     request = SemanticRerankingInferenceContent(request_payload)
     request.document_type = SemanticRerankingDocumentType(document_type)
     respond((200, result_payload, {}))
-    async with open_client() as client:
-        result = await invoke(client, request)
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
+        result = client.semantic_rerank(request)
     assert isinstance(result.meta, SemanticRerankingMetaResult)
     assert result.meta.token_usage.total_tokens == result_payload["meta"]["tokenUsage"]["totalTokens"]
     assert json.loads(transport.send.call_args.args[0].content) == request_payload
     assert result.as_dict() == result_payload
 
 
-@pytest.mark.asyncio
-async def test_latency_deserializes_millisecond_durations(open_client, invoke, respond, request_payload):
+def test_latency_deserializes_millisecond_durations(transport, respond, request_payload):
     latency = {"dataPreprocessTime": 1.25, "inferenceTime": 0.125, "postProcessTime": 1500.5}
     respond((200, {"scores": [], "meta": {"latency": latency}}, {}))
 
-    async with open_client() as client:
-        result = await invoke(client, request_payload)
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
+        result = client.semantic_rerank(request_payload)
 
     assert isinstance(result.meta.latency, LatencyResult)
     assert result.meta.latency.data_preprocess_duration == timedelta(milliseconds=1.25)
@@ -77,7 +76,6 @@ def test_latency_serializes_durations_as_numeric_milliseconds(milliseconds):
     )
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "status,error_code,response_type",
     [
@@ -86,9 +84,7 @@ def test_latency_serializes_durations_as_numeric_milliseconds(milliseconds):
         (500, "InternalServerError", InferenceErrorResult),
     ],
 )
-async def test_azure_error_envelope_preserves_details(
-    open_client, invoke, respond, request_payload, status, error_code, response_type
-):
+def test_azure_error_envelope_preserves_details(transport, respond, request_payload, status, error_code, response_type):
     problem = {
         "code": error_code,
         "message": "The request could not be completed.",
@@ -120,9 +116,11 @@ async def test_azure_error_envelope_preserves_details(
         headers["Retry-After"] = "3"
     respond((status, body, headers))
 
-    async with open_client() as client:
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
         with pytest.raises(HttpResponseError) as caught:
-            await invoke(client, request_payload)
+            client.semantic_rerank(request_payload)
 
     error = caught.value
     serialized_before_access = json.dumps(error.model.as_dict(), sort_keys=True)
@@ -230,55 +228,54 @@ def test_error_details_accept_core_objects_and_reassignment():
     assert "details" not in model.as_dict()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("kind", ["model", "bytes", "stream"])
-async def test_generated_request_forms(open_client, invoke, respond, transport, request_payload, result_payload, kind):
+def test_generated_request_forms(respond, transport, request_payload, result_payload, kind):
     if kind == "model":
         request = SemanticRerankingInferenceContent(request_payload)
     else:
         encoded = json.dumps(request_payload).encode()
         request = encoded if kind == "bytes" else BytesIO(encoded)
     respond((200, result_payload, {}))
-    async with open_client() as client:
-        result = await invoke(client, request)
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
+        result = client.semantic_rerank(request)
     assert isinstance(result, SemanticRerankingInferenceResult)
     assert result.as_dict() == result_payload
     sent = transport.send.call_args.args[0].content
     assert json.loads(sent.getvalue() if isinstance(sent, BytesIO) else sent) == request_payload
 
 
-@pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
-def test_binary_request_annotation_accepts_bytes(client_type):
-    request_type = get_type_hints(inspect.unwrap(client_type.semantic_rerank))["request"]
+def test_binary_request_annotation_accepts_bytes():
+    request_type = get_type_hints(inspect.unwrap(InferenceClient.semantic_rerank))["request"]
     assert bytes in get_args(request_type)
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("status", [201, 204])
-async def test_only_declared_200_is_success(open_client, invoke, respond, request_payload, status):
+def test_only_declared_200_is_success(transport, respond, request_payload, status):
     respond((status, {}, {}))
-    async with open_client() as client:
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
         with pytest.raises(HttpResponseError) as error:
-            await invoke(client, request_payload)
+            client.semantic_rerank(request_payload)
     assert error.value.status_code == status
 
 
-@pytest.mark.asyncio
-async def test_protocol_send_request_preserves_raw_response(open_client, respond, transport, asynchronous):
+def test_protocol_send_request_preserves_raw_response(respond, transport):
     respond((400, {"status": 400}, {}))
     request = HttpRequest("POST", "/inference/semanticReranking", json={})
-    async with open_client() as client:
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
         response = client.send_request(request)
-        if asynchronous:
-            response = await response
     assert response.status_code == 400
     assert response.json() == {"status": 400}
     assert transport.send.call_args.args[0].url == "https://example.inference.azure.com/inference/semanticReranking"
     assert request.url == "/inference/semanticReranking"
 
 
-@pytest.mark.asyncio
-async def test_response_callback(open_client, invoke, respond, request_payload, result_payload):
+def test_response_callback(transport, respond, request_payload, result_payload):
     respond((200, result_payload, {}))
     captured = []
 
@@ -286,32 +283,35 @@ async def test_response_callback(open_client, invoke, respond, request_payload, 
         captured.append((response.http_response.status_code, headers))
         return result
 
-    async with open_client() as client:
-        result = await invoke(client, request_payload, cls=capture)
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("test-key"), transport=transport, retry_total=0
+    ) as client:
+        result = client.semantic_rerank(request_payload, cls=capture)
     assert isinstance(result, SemanticRerankingInferenceResult)
     assert captured == [(200, {"X-Correlation-ID": "test-correlation-id"})]
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("status", [429, 502])
-async def test_explicit_retry_settings_remain_available(
-    open_client, invoke, respond, transport, request_payload, result_payload, status
-):
+def test_explicit_retry_settings_remain_available(respond, transport, request_payload, result_payload, status):
     problem = {"error": {"code": "ServiceError", "message": "Retry the request.", "status": status}}
     respond(
         *[(status, problem, {"x-ms-error-code": "ServiceError"}) for _ in range(3)],
         (200, result_payload, {}),
     )
-    async with open_client(retry_total=3, retry_backoff_max=60) as client:
-        result = await invoke(client, request_payload, retry_on_methods=["POST"])
+    with InferenceClient(
+        "https://example.inference.azure.com",
+        AzureKeyCredential("test-key"),
+        transport=transport,
+        retry_total=3,
+        retry_backoff_max=60,
+    ) as client:
+        result = client.semantic_rerank(request_payload, retry_on_methods=["POST"])
     assert result.as_dict() == result_payload
     assert transport.send.call_count == 4
 
 
-@pytest.mark.asyncio
-async def test_explicit_transport_timeouts(asynchronous):
-    client_type = AsyncInferenceClient if asynchronous else InferenceClient
-    client = client_type(
+def test_explicit_transport_timeouts():
+    client = InferenceClient(
         "https://example.inference.azure.com",
         AzureKeyCredential("test-key"),
         connection_timeout=100,
@@ -322,7 +322,4 @@ async def test_explicit_transport_timeouts(asynchronous):
         assert config.timeout == 100
         assert config.read_timeout == 100
     finally:
-        if asynchronous:
-            await client.close()
-        else:
-            client.close()
+        client.close()

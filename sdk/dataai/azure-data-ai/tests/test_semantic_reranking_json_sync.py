@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""JSON-document wire coverage using real SDK policies and mocked transport."""
+"""JSON-document wire coverage for the synchronous client."""
 
 from copy import deepcopy
 import json
@@ -10,8 +10,8 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.ai import InferenceClient
 from azure.data.ai.models import SemanticRerankingInferenceContent, SemanticRerankingInferenceResult
+from azure.data.ai import InferenceClient
 
 
 @pytest.fixture
@@ -34,14 +34,11 @@ def json_credential(request, token_credential):
     return AzureKeyCredential("json-test-key")
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("target_paths", [None, "description", "title,description"])
 @pytest.mark.parametrize("return_documents", [False, True])
 @pytest.mark.parametrize("return_sentence_score", [False, True])
 @pytest.mark.parametrize("request_kind", ["dictionary", "model"])
-async def test_json_round_trip_all_clients_and_credentials(
-    open_client,
-    invoke,
+def test_json_round_trip_with_credentials(
     respond,
     transport,
     json_documents,
@@ -77,9 +74,11 @@ async def test_json_round_trip_all_clients_and_credentials(
     response = {"scores": scores, "meta": {"tokenUsage": {"totalTokens": 20}, "modelName": "test-model"}}
     respond((200, response, {}))
 
-    async with open_client(json_credential) as client:
+    with InferenceClient(
+        "https://example.inference.azure.com", json_credential, transport=transport, retry_total=0
+    ) as client:
         request = SemanticRerankingInferenceContent(payload) if request_kind == "model" else payload
-        result = await invoke(client, request)
+        result = client.semantic_rerank(request)
 
     sent = transport.send.call_args.args[0]
     wire = json.loads(sent.content)
@@ -105,17 +104,16 @@ async def test_json_round_trip_all_clients_and_credentials(
             assert json.loads(item["document"]) == json_documents[item["index"]]
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("documents", [['{"description":'], [{"description": "not a JSON-encoded string"}]])
-async def test_invalid_json_document_errors_are_service_errors(
-    open_client, invoke, respond, transport, json_credential, documents
-):
+def test_invalid_json_document_errors_are_service_errors(respond, transport, json_credential, documents):
     payload = {"query": "text", "documents": documents, "documentType": "json", "targetPaths": "description"}
     problem = {"code": "InvalidRequestBody", "message": "Invalid JSON document"}
     respond((400, {"error": problem}, {"x-ms-error-code": "InvalidRequestBody"}))
-    async with open_client(json_credential) as client:
+    with InferenceClient(
+        "https://example.inference.azure.com", json_credential, transport=transport, retry_total=0
+    ) as client:
         with pytest.raises(HttpResponseError) as caught:
-            await invoke(client, payload)
+            client.semantic_rerank(payload)
     assert caught.value.status_code == 400
     assert caught.value.response.json() == {"error": problem}
     assert caught.value.model.error.code == "InvalidRequestBody"

@@ -4,17 +4,7 @@
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
-The Python API accepts generated request models or ordinary dictionaries and returns
-generated response models that also support dictionary-style access. This package does not depend on
-`azure-cosmos`, `openai`, or another database SDK. Embedding APIs are not included
-in this preview.
-
 The package uses the `2026-09-01-preview` service API.
-
-The runtime is generated from TypeSpec with `@azure-tools/typespec-python`.
-It includes client configuration, operation implementations, request/response models,
-TypedDict definitions, and serialization helpers. Azure Core supplies the HTTP
-transport, authentication, retry, and diagnostic policies.
 
 ## Getting started
 
@@ -131,18 +121,18 @@ for score in result.scores or []:
     print(score.index, score.score, score.document)
 ```
 
-| Request key | Type | Meaning |
-| --- | --- | --- |
-| `query` | `str` | Required nonempty query string. |
-| `documents` | `list[str]` | Required nonempty list of strings to rank. |
-| `model` | `str` | Optional model name supported by the endpoint. Omit it to use the service's default model. |
-| `returnDocuments` | `bool` | Optional. Include document text in the response. |
-| `topK` | `int` | Optional. Maximum number of results to return, from 1 to 2147483647. |
-| `batchSize` | `int` | Optional. Number of documents processed per batch, from 1 to 2147483647. |
-| `sort` | `bool` | Optional. Return scores sorted by relevance. |
-| `documentType` | `str` | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings. |
-| `targetPaths` | `str` | Required for JSON documents. Use dot notation for nested properties, such as `meta.content`, and commas for multiple paths, such as `meta.content,id`. |
-| `returnSentenceScore` | `bool` | Optional. Include sentence-level scores. |
+| Request key           | Type        | Meaning                                                                                                                                                |
+|-----------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `query`               | `str`       | Required nonempty query string.                                                                                                                        |
+| `documents`           | `list[str]` | Required nonempty list of strings to rank.                                                                                                             |
+| `model`               | `str`       | Optional model name supported by the endpoint. Omit it to use the service's default model.                                                             |
+| `returnDocuments`     | `bool`      | Optional. Include document text in the response.                                                                                                       |
+| `topK`                | `int`       | Optional. Maximum number of results to return, from 1 to 2147483647.                                                                                   |
+| `batchSize`           | `int`       | Optional. Number of documents processed per batch, from 1 to 2147483647.                                                                               |
+| `sort`                | `bool`      | Optional. Return scores sorted by relevance.                                                                                                           |
+| `documentType`        | `str`       | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings.                                                           |
+| `targetPaths`         | `str`       | Required for JSON documents. Use dot notation for nested properties, such as `meta.content`, and commas for multiple paths, such as `meta.content,id`. |
+| `returnSentenceScore` | `bool`      | Optional. Include sentence-level scores.                                                                                                               |
 
 Put these options inside the request dictionary, not in method keyword arguments.
 Omitted options use service-defined defaults. The SDK does not restrict model names
@@ -162,12 +152,6 @@ and `as_dict()` retain the numeric millisecond representation.
 
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
 inclusive range 0–1. Sentence indices are not capped at 2.
-
-The SDK follows the pinned TypeSpec contract without renaming response keys or
-normalizing legacy payloads. Use an endpoint implementing the
-`2026-09-01-preview` contract. The samples set `model` in their request dictionaries.
-Choose a model supported by your endpoint, or remove that field to use the service's
-default model.
 
 ## Examples
 
