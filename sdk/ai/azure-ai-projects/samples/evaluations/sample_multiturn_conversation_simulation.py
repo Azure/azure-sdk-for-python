@@ -18,11 +18,13 @@ DESCRIPTION:
     conversations are then scored by conversation-level evaluators.
 
     Key concepts:
-      - data_source type is "azure_ai_target_completions" with
-        item_generation_params.type = "conversation_gen_preview"
-      - num_conversations is per seed scenario (e.g., 2 conversations × 3 scenarios = 6 total)
-      - max_turns controls the maximum exchanges per conversation
-      - The seed scenarios source is at the data_source root level
+      - data_source type is "azure_ai_user_conversation_simulation" with a
+        seed-scenarios source, a model_configuration, and a target agent
+      - default_simulation_configuration.conversation_repetitions is per seed
+        scenario (e.g., 2 repetitions × 3 scenarios = 6 conversations total)
+      - default_simulation_configuration.max_num_turns controls the maximum
+        exchanges per conversation
+      - data_mapping binds seed-dataset columns to simulation inputs
 
 USAGE:
     python sample_multiturn_conversation_simulation.py
@@ -144,40 +146,44 @@ with (
 
     # Create a simulation run
     # - source: the seed scenarios dataset (each row is a test case)
+    # - model_configuration: the model that drives the simulated user
+    # - default_simulation_configuration: controls conversation generation
+    #   - conversation_repetitions: conversations to generate per seed scenario
+    #   - max_num_turns: maximum exchanges per conversation
+    # - data_mapping: maps seed-dataset field names to simulation inputs
     # - target: the agent to simulate against
-    # - item_generation_params: controls conversation generation
-    #   - num_conversations: conversations to generate per seed scenario
-    #   - max_turns: maximum exchanges per conversation
-    #   - data_mapping: maps JSONL field names to simulation parameters
     eval_run = client.evals.runs.create(
         eval_id=eval_object.id,
         name="conversation-simulation-run",
         data_source={
-            "type": "azure_ai_target_completions",
+            "type": "azure_ai_user_conversation_simulation",
             "source": {
                 "type": "file_id",
                 "id": scenarios_id,
             },
-            "target": {
-                "type": "azure_ai_agent",
-                "name": agent.name,
-                "version": agent.version,
-            },
-            "item_generation_params": {
-                "type": "conversation_gen_preview",
+            "model_configuration": {
                 "model": model_deployment_name,
-                "num_conversations": 2,
-                "max_turns": 5,
                 "sampling_params": {
                     "temperature": 0.7,
                     "top_p": 1.0,
                     "max_completion_tokens": 800,
                 },
-                "data_mapping": {
-                    "test_case_description": "test_case_description",
-                    "id": "id",
-                    "desired_num_turns": "desired_num_turns",
-                },
+            },
+            "default_simulation_configuration": {
+                "max_num_turns": 2,
+                "conversation_repetitions": 1,
+                "desired_num_turns": 1,
+                "enable_conversation_dataset_generation": True,
+                "output_conversation_dataset_name": "conversation-simulation-output",
+            },
+            "data_mapping": {
+                "test_case_description": "test_case_description",
+                "id": "id",
+            },
+            "target": {
+                "type": "azure_ai_agent",
+                "name": agent.name,
+                "version": agent.version,
             },
         },  # type: ignore
         extra_body={"evaluation_level": "conversation"},
@@ -195,8 +201,8 @@ with (
     if run.status == "completed":
         print("\n✓ Simulation run completed successfully!")
         print(f"Result Counts: {run.result_counts}")
-        # With 3 seed scenarios and num_conversations=2, expect 6 total conversations
-        print(f"Expected: {3 * 2} conversations (3 scenarios × 2 per scenario)")
+        # conversation_repetitions=1 generates one conversation per seed scenario
+        print("Expected: one conversation per seed scenario (conversation_repetitions=1)")
 
         output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
         print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")

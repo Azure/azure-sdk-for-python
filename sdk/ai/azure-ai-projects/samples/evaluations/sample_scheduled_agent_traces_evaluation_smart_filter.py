@@ -298,7 +298,7 @@ def schedule_trace_evaluation():
             print(f"Using agent filter: {agent_name} v{agent_version or '(latest)'}")
 
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": trace_source,
         }
 
