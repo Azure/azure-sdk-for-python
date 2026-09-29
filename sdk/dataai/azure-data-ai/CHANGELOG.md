@@ -1,6 +1,6 @@
 # Release History
 
-## 0.1.0b1 (Unreleased)
+## 1.0.0b1 (2026-09-29)
 
 ### Features Added
 
@@ -14,6 +14,3 @@
 - Document and sentence-level scoring, response metadata, and standard Azure
   Core error handling and retry policies.
 
-### Breaking Changes
-
-### Other Changes
