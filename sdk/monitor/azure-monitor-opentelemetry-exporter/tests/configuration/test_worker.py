@@ -124,6 +124,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 self.mock_configuration_manager.get_configuration_and_refresh_interval.assert_called_with(
                     _ONE_SETTINGS_PYTHON_TARGETING
                 )
+                self.mock_configuration_manager.complete_initial_configuration.assert_called_once_with()
 
             finally:
                 worker.shutdown()
@@ -184,6 +185,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 debug_call = mock_logger.debug.call_args[0]
                 self.assertIn("Configuration refresh failed", debug_call[0])
                 self.assertIn("Test error", str(debug_call[1]))
+                self.mock_configuration_manager.complete_initial_configuration.assert_called_once_with()
 
             finally:
                 worker.shutdown()

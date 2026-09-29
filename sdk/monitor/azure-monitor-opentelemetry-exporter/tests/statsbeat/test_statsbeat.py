@@ -172,13 +172,44 @@ class TestStatsbeat(unittest.TestCase):
 
         # Assert - verify manager is initialized
         self.assertTrue(manager._initialized)
+        manager.initialize.assert_not_called()
 
         # Verify that the configuration manager callback was registered
         mock_config_manager_instance.register_callback.assert_called_once()
+        mock_config_manager_instance.register_initial_configuration_callback.assert_called_once()
 
         # Verify the callback function passed is the expected one
         registered_callback = mock_config_manager_instance.register_callback.call_args[0][0]
         self.assertEqual(registered_callback, _statsbeat.get_statsbeat_configuration_callback)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig.from_config")
+    def test_initial_configuration_uses_onesettings(
+        self, mock_from_config, mock_get_manager, mock_evaluate_feature
+    ):
+        base_config = mock.Mock()
+        updated_config = mock.Mock()
+        manager = mock.Mock()
+        settings = {"DEFAULT_STATS_CONNECTION_STRING": "test"}
+        mock_from_config.return_value = updated_config
+        mock_get_manager.return_value = manager
+        mock_evaluate_feature.return_value = True
+
+        _statsbeat._initialize_statsbeat_from_initial_configuration(base_config, settings)
+
+        mock_from_config.assert_called_once_with(base_config, settings)
+        manager.initialize.assert_called_once_with(updated_config)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    def test_initial_configuration_failure_uses_built_in_fallback(self, mock_get_manager):
+        base_config = mock.Mock()
+        manager = mock.Mock()
+        mock_get_manager.return_value = manager
+
+        _statsbeat._initialize_statsbeat_from_initial_configuration(base_config, {})
+
+        manager.initialize.assert_called_once_with(base_config)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")

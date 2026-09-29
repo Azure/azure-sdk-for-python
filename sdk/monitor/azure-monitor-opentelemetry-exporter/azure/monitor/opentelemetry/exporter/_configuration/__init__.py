@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional
 import inspect
 import logging
 import weakref
@@ -51,6 +51,8 @@ class _ConfigurationManager(metaclass=Singleton):
         # Consecutive transient-error count for exponential backoff on change-detection (e2) calls
         self._backoff_attempts = 0
         self._callbacks = []
+        self._initial_configuration_callbacks: List[Callable[[Dict[str, str]], None]] = []
+        self._initial_configuration_complete = False
         self._initialized = False
 
     def initialize(self, **kwargs):
@@ -74,6 +76,11 @@ class _ConfigurationManager(metaclass=Singleton):
 
             self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
             self._initialized = True
+
+    def is_initialized(self) -> bool:
+        """Return whether the OneSettings worker has been started."""
+        with self._state_lock:
+            return self._initialized
 
     def register_callback(self, callback):
         # Register a callback to be invoked when configuration changes. Registration is independent of
@@ -99,6 +106,33 @@ class _ConfigurationManager(metaclass=Singleton):
         cached_settings = self.get_settings()
         if cached_settings:
             self._invoke_callback(stored, cached_settings)
+
+    def register_initial_configuration_callback(self, callback: Callable[[Dict[str, str]], None]) -> None:
+        """Invoke a callback after the first OneSettings request attempt completes.
+
+        The callback receives the fetched settings, or an empty dictionary when the first attempt
+        could not produce configuration. Registration after completion immediately replays the result.
+        """
+        with self._state_lock:
+            if not self._initial_configuration_complete:
+                self._initial_configuration_callbacks.append(callback)
+                return
+            settings = self._current_state.settings_cache.copy()
+
+        self._invoke_callback(callback, settings)
+
+    def complete_initial_configuration(self) -> None:
+        """Complete and notify the one-time initial configuration callbacks."""
+        with self._state_lock:
+            if self._initial_configuration_complete:
+                return
+            self._initial_configuration_complete = True
+            callbacks = list(self._initial_configuration_callbacks)
+            self._initial_configuration_callbacks.clear()
+            settings = self._current_state.settings_cache.copy()
+
+        for callback in callbacks:
+            self._invoke_callback(callback, settings)
 
     def _invoke_callback(self, callback, settings: Dict[str, str]) -> bool:
         # Resolve a stored callback (a plain function or a weakref.WeakMethod) and invoke it with the
@@ -286,3 +320,4 @@ class _ConfigurationManager(metaclass=Singleton):
         # subsequent initialize()/re-registration does not accumulate duplicates.
         self._initialized = False
         self._callbacks.clear()
+        self._initial_configuration_callbacks.clear()

@@ -71,6 +71,7 @@ class StatsbeatConfig:
                 logger.error("Invalid connection string obtained from config. Reverting to default.")
                 self.connection_string = _get_stats_connection_string(endpoint)
         else:
+            _sdkstats_debug("no connection string provided; using fallback")
             self.connection_string = _get_stats_connection_string(endpoint)
 
     @classmethod
@@ -141,8 +142,7 @@ class StatsbeatConfig:
             _debug_connection_string_selection("existing-config-fallback", connection_string)
 
         return cls(
-            # endpoint=base_config.endpoint,
-            endpoint="https://tst-data.stats.monitor.azure.com/",
+            endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
             # Preserve the customer's setting across reconfigures (used only for DISK_RETRY reporting).
@@ -304,8 +304,7 @@ class StatsbeatManager(metaclass=Singleton):
             self._metrics = _StatsbeatMetrics(
                 self._meter_provider,
                 config.instrumentation_key,
-                # config.endpoint,
-                "https://tst-data.stats.monitor.azure.com/",
+                config.endpoint,
                 config.disable_offline_storage,
                 long_interval_threshold,
                 config.credential is not None,
@@ -389,18 +388,13 @@ class StatsbeatManager(metaclass=Singleton):
     def _reconfigure(self, new_config: StatsbeatConfig) -> bool:
         # Internal reconfiguration method.
         _debug_connection_string_selection("manager-reconfigure", new_config.connection_string)
-        # Shutdown current instance with timeout
-        if self._meter_provider:
-            try:
-                # Force flush before shutdown to ensure data is sent
-                _sdkstats_debug("reconfigure action=force_flush")
-                self._meter_provider.force_flush(timeout_millis=5000)
-            except Exception as e:  # pylint: disable=broad-except
-                _sdkstats_debug(f"reconfigure force_flush failed exception={e.__class__.__name__}")
-                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                    "Failed to flush meter provider during reconfiguration: %s", e
-                )
+        if self._warmup_timer:
+            self._warmup_timer.cancel()
+            self._warmup_timer = None
 
+        # Shut down the old pipeline without flushing it. A destination change must not send
+        # accumulated SDK Stats to the previous destination immediately before switching.
+        if self._meter_provider:
             try:
                 _sdkstats_debug("reconfigure action=shutdown-old-provider")
                 self._meter_provider.shutdown(timeout_millis=5000)
@@ -439,8 +433,7 @@ class StatsbeatManager(metaclass=Singleton):
                 return None
             # Return a copy to prevent external modification
             return StatsbeatConfig(
-                # endpoint=self._config.endpoint,
-                endpoint="https://tst-data.stats.monitor.azure.com/",
+                endpoint=self._config.endpoint,
                 region=self._config.region,
                 instrumentation_key=self._config.instrumentation_key,
                 disable_offline_storage=self._config.disable_offline_storage,
