@@ -7,7 +7,7 @@ This folder contains samples demonstrating how to use Azure AI Foundry's evaluat
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.0.0" python-dotenv
+pip install "azure-ai-projects>=2.8.0" python-dotenv
 ```
 
 To run asynchronous samples, you will also need to install `aiohttp`.
