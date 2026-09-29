@@ -1,9 +1,10 @@
 # Release History
 
-## 2.3.0b1 (Unreleased)
+## 2.3.0b1 (2026-09-29)
 
 ### Other Changes
 
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
 - Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
   so Responses request completion no longer awaits telemetry export.
   Unset, empty, whitespace-only, and invalid values use `background`;
