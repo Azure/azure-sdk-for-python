@@ -14,7 +14,7 @@
   - Added enum `FleetMode`
   - Added enum `VMOperationStatus`
   - Added model `VirtualMachine`
-  - Model `FleetsOperations` added method `list_virtual_machines`
+  - Operation group `FleetsOperations` added method `list_virtual_machines`
 
 ### Breaking Changes
 
