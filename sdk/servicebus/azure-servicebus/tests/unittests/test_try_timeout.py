@@ -930,6 +930,35 @@ class TestPyamqpManagementRequestReadiness:
             with pytest.raises(TimeoutError):
                 client.mgmt_request(MagicMock(), timeout=0.05)
 
+    def test_timed_out_sync_management_request_cleans_operation_state(self):
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+        mgmt_link.lock = MagicMock()
+        mgmt_link.lock.__enter__.return_value = None
+        mgmt_link.lock.__exit__.return_value = None
+
+        def execute_operation(message, callback, **kwargs):
+            pending_operation = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending_operation)
+            return pending_operation
+
+        mgmt_link.execute_operation = execute_operation
+        operation = ManagementOperation.__new__(ManagementOperation)
+        operation._mgmt_link = mgmt_link
+        operation._responses = {}
+        operation._mgmt_error = None
+        operation._connection = MagicMock()
+        operation._connection.listen.side_effect = TimeoutError("transport timed out")
+
+        with pytest.raises(TimeoutError):
+            operation.execute(MagicMock(), timeout=5)
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
     @pytest.mark.asyncio
     async def test_cancelled_async_management_request_cleans_operation_state(self):
         from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
