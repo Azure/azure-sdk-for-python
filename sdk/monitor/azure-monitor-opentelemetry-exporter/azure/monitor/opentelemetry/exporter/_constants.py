@@ -80,7 +80,7 @@ _REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
 
 # Envelope constants
 
-_METRIC_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Metric"
+_METRIC_ENVELOPE_NAME = "Metric"
 _EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
 _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
