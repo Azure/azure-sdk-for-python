@@ -121,5 +121,5 @@ class SeverityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of Versions."""
 
-    V2_1 = "v2.1"
-    """The V2.1 API version."""
+    V2_1 = "v2"
+    """The v2 API version."""

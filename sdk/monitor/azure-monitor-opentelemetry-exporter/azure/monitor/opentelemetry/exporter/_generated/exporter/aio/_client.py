@@ -31,8 +31,8 @@ class AzureMonitorClient(_AzureMonitorClientOperationsMixin):
     :keyword host: Application Insights' Breeze host. Default value is
      "https://dc.services.visualstudio.com".
     :paramtype host: str
-    :keyword api_version: The service API version. Known values are "v2.1" and None. Default value
-     is "v2.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The service API version. Known values are "v2" and None. Default value
+     is "v2". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~exporter.models.Versions
     """
 
