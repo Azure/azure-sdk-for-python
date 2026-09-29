@@ -196,6 +196,34 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Handoff runtime cases passed", result.stdout)
 
+    def test_close_issue_uses_body(self):
+        source = read_workflow("issue-investigation")
+        self.assertIn("Supply this explanation directly in the `body` parameter of `close_issue`.", source)
+        self.assertIn("The `close_issue` handler posts the explanation comment first and aborts closure if comment posting fails", source)
+        self.assertIn("Do not call `add_comment` separately when closing an issue.", source)
+
+    def test_copilot_assignment_job_and_runtime(self):
+        source = read_workflow("issue-investigation")
+        self.assertIn("Defer Copilot assignment until investigation comment is applied", source)
+        lock = read_workflow("issue-investigation", ".lock.yml")
+        assignment = job(lock, "copilot_assignment")
+        for dependency in ("agent", "detection", "safe_outputs"):
+            self.assertIn(f"- {dependency}", assignment)
+            self.assertIn(f"needs.{dependency}.result == 'success'", assignment)
+        self.assertIn("process_safe_outputs_status == 'success'", assignment)
+        self.assertIn("process_safe_outputs_items_applied", assignment)
+        self.assertIn("needs.safe_outputs.outputs.comment_id != ''", assignment)
+        self.assertIn("ref: ${{ github.workflow_sha }}", assignment)
+        self.assertIn("process_safe_outputs.cjs", assignment)
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "copilot_assignment.cjs")],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Copilot assignment cases passed", result.stdout)
+
     def test_concurrency_is_partitioned_by_issue(self):
         for name in ("issue-investigation", "issue-triage"):
             with self.subTest(workflow=name):

@@ -6,6 +6,10 @@ description: |
   analysis notes including debugging strategies and resource links
   Implements the initial issue triage rules for the Azure SDK repository
 
+engine:
+  id: copilot
+  version: "1.0.80"
+
 on:
   issues:
     types: [opened]

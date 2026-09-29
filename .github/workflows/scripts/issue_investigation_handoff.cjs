@@ -72,13 +72,20 @@ async function prepareHandoff({
       throw new Error("Requested owner notification did not succeed");
     }
   } else {
-    const requestedOwners = agentOutput.items.filter(item => item.type === "assign_to_user")
-      .map(normalizeAssignment)
-      .filter(item => item.success && item.issueNumber === number)
-      .flatMap(item => item.assignees).map(login => login.toLowerCase());
+    const assignRequests = agentOutput.items.filter(item => item.type === "assign_to_user");
+    if (assignRequests.length !== 1) {
+      throw new Error("Expected exactly one assignment request for single-owner routing");
+    }
+    const normalized = normalizeAssignment(assignRequests[0]);
+    if (!normalized.success || normalized.issueNumber !== number ||
+        !Array.isArray(normalized.assignees) || normalized.assignees.length !== 1) {
+      throw new Error("The assignment request is not a single valid assignment for this issue");
+    }
+    const requestedOwner = normalized.assignees[0].toLowerCase();
+    const appliedAssignments = appliedItems.filter(item => item.type === "assign_to_user" && item.number === number);
     if (ownerNotification !== "skipped" ||
-        !appliedItems.some(item => item.type === "assign_to_user") ||
-        !issue.assignees?.some(assignee => requestedOwners.includes(assignee.login.toLowerCase()))) {
+        appliedAssignments.length !== 1 ||
+        !issue.assignees?.some(assignee => assignee.login.toLowerCase() === requestedOwner)) {
       throw new Error("The single-owner assignment route was not completed");
     }
   }

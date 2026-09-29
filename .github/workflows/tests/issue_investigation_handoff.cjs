@@ -105,7 +105,7 @@ async function main() {
 
   const singleOwner = {
     appliedItems: [
-      { type: "assign_to_user" },
+      { type: "assign_to_user", number: 42 },
       receipt,
       { ...receipt, url: "https://github.com/example/sdk/issues/42#issuecomment-100" },
     ],
@@ -123,8 +123,14 @@ async function main() {
     ...singleOwner, appliedItems: singleOwner.appliedItems.filter(item => item.type !== "assign_to_user"),
   }), /assignment route/);
   await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
-    ...singleOwner, agentOutput: { items: [{ type: "assign_to_user", issue_number: 43, assignees: ["owner"] }] },
+    ...singleOwner, appliedItems: [{ type: "assign_to_user", number: 43 }, singleOwner.appliedItems[1], singleOwner.appliedItems[2]],
   }), /assignment route/);
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, agentOutput: { items: [{ type: "assign_to_user", issue_number: 42, assignees: ["Owner"] }, { type: "assign_to_user", issue_number: 42, assignees: ["Owner2"] }] },
+  }), /exactly one assignment request/);
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, agentOutput: { items: [{ type: "assign_to_user", issue_number: 43, assignees: ["owner"] }] },
+  }), /assignment request is not a single valid assignment/);
   await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
     ...singleOwner, appliedItems: singleOwner.appliedItems.slice(0, 2),
   }), /No applied triage analysis/);
@@ -136,7 +142,7 @@ async function main() {
   }
   await assert.rejects(run({}, analysis, context, { appliedItems: [] }), /No applied triage analysis/);
   await assert.rejects(run({}, analysis, context, { agentOutput: { items: [], errors: ["failure"] } }), /Invalid triage/);
-  cases += 13;
+  cases += 15;
 
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "investigation-handoff-"));
   const file = path.join(directory, "output.json");

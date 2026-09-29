@@ -5,6 +5,10 @@ description: |
   is actionable for Copilot, and either comments, closes clear service-side issues, or assigns
   Copilot to implementation work.
 
+engine:
+  id: copilot
+  version: "1.0.80"
+
 on:
   workflow_dispatch:
     inputs:
@@ -59,6 +63,118 @@ safe-outputs:
     ignore-if-error: true
   noop:
     report-as-issue: false
+
+  steps:
+    - name: Defer Copilot assignment until investigation comment is applied
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
+      with:
+        script: |
+          const fs = require('node:fs');
+          const file = process.env.GH_AW_AGENT_OUTPUT;
+          const output = JSON.parse(fs.readFileSync(file, 'utf8'));
+          if (!Array.isArray(output.items)) {
+            throw new Error('Agent output is missing the items array');
+          }
+          const count = output.items.length;
+          output.items = output.items.filter(item =>
+            item.type !== 'assign_to_agent'
+          );
+          fs.writeFileSync(file, JSON.stringify(output));
+          core.info(`Deferred ${count - output.items.length} buffered Copilot assignments`);
+
+jobs:
+  copilot_assignment:
+    needs: [agent, detection, safe_outputs]
+    if: >-
+      !cancelled() &&
+      needs.agent.result == 'success' &&
+      needs.detection.result == 'success' &&
+      needs.detection.outputs.detection_conclusion == 'success' &&
+      needs.safe_outputs.result == 'success' &&
+      needs.safe_outputs.outputs.process_safe_outputs_status == 'success' &&
+      fromJSON(needs.safe_outputs.outputs.process_safe_outputs_items_applied || '0') > 0 &&
+      needs.safe_outputs.outputs.comment_id != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout trusted assignment helper
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/workflows/scripts
+          path: assignment-helper
+      - name: Setup native safe-output processor
+        uses: github/gh-aw-actions/setup@v0.88.8
+        with:
+          destination: ${{ runner.temp }}/gh-aw/actions
+      - name: Download applied investigation receipts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: safe-outputs-items
+          path: ${{ runner.temp }}/investigation-receipts
+      - name: Download investigation requests
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: "{agent,agent-output-fallback}"
+          merge-multiple: true
+          path: ${{ runner.temp }}/investigation-requests
+      - name: Validate applied investigation comment and assign Copilot
+        id: assignment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INVESTIGATION_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+          GH_AW_DETECTION_CONCLUSION: ${{ needs.detection.outputs.detection_conclusion }}
+          GH_AW_WORKFLOW_ID: issue-investigation
+          GH_AW_WORKFLOW_NAME: Agentic Issue Investigation
+          GH_AW_CALLER_WORKFLOW_ID: ${{ github.repository }}/issue-investigation
+        with:
+          github-token: ${{ secrets.GH_AW_AGENT_TOKEN || secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const actionsDir = path.join(process.env.RUNNER_TEMP, 'gh-aw', 'actions');
+            require(path.join(actionsDir, 'setup_globals.cjs'))
+              .setupGlobals(core, github, context, exec, io, getOctokit);
+            const appliedItems = fs.readFileSync(
+              path.join(process.env.RUNNER_TEMP, 'investigation-receipts', 'safe-output-items.jsonl'), 'utf8'
+            ).split(/\r?\n/).filter(line => line.trim()).map(line => JSON.parse(line));
+            const agentOutput = JSON.parse(fs.readFileSync(
+              path.join(process.env.RUNNER_TEMP, 'investigation-requests', 'agent_output.json'), 'utf8'
+            ));
+            const helper = require(path.join(
+              process.env.GITHUB_WORKSPACE, 'assignment-helper',
+              '.github', 'workflows', 'scripts', 'copilot_assignment.cjs'
+            ));
+            const assignment = await helper.prepareAssignment({
+              github, context,
+              issueNumber: process.env.INVESTIGATION_ISSUE_NUMBER,
+              appliedItems, agentOutput
+            });
+            if (!assignment.output) {
+              core.notice(`Copilot assignment skipped: ${assignment.reason}`);
+              return;
+            }
+            const file = path.join(process.env.RUNNER_TEMP, 'copilot-assignment.json');
+            fs.writeFileSync(file, JSON.stringify(assignment.output));
+            core.setOutput('assignment_requested', 'true');
+            process.env.GH_AW_AGENT_OUTPUT = file;
+            process.env.GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG = JSON.stringify(assignment.config);
+            const { MANIFEST_FILE_PATH } = require(path.join(actionsDir, 'constants.cjs'));
+            fs.mkdirSync(path.dirname(MANIFEST_FILE_PATH), { recursive: true });
+            await require(path.join(actionsDir, 'process_safe_outputs.cjs')).main();
+      - name: Confirm Copilot assignment succeeded
+        if: >-
+          steps.assignment.outputs.assignment_requested == 'true' &&
+          (steps.assignment.outputs.status != 'success' || steps.assignment.outputs.items_applied != '1')
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: core.setFailed('The native safe-output processor did not apply the Copilot assignment');
 
 tools:
   # With github.min-integrity none, strict mode requires bash to be explicit.
@@ -196,9 +312,9 @@ When either is true, add one comment using this style and close the issue as not
 >
 > I'm going to close this out; if I've misunderstood what you're describing, please let us know in a comment and we'd be happy to assist as we're able.
 
-The comment must make clear that the SDK cannot change the behavior, include the relevant documentation link when the behavior is a documented known behavior from service/package context, and direct the customer to the approved support/Q&A/Feedback paths before closing.
+The explanation must make clear that the SDK cannot change the behavior, include the relevant documentation link when the behavior is a documented known behavior from service/package context, and direct the customer to the approved support/Q&A/Feedback paths.
 
-Use `add_comment` for that single explanation, then call `close_issue` without a comment body so closure does not produce a second comment.
+Supply this explanation directly in the `body` parameter of `close_issue`. The `close_issue` handler posts the explanation comment first and aborts closure if comment posting fails, ensuring the issue is never closed without its explanation. Do not call `add_comment` separately when closing an issue.
 
 Use exactly these service-support links in the service-side comment as plain URLs, not Markdown links:
 - Azure support request: `https://learn.microsoft.com/services-hub/unified/support/open-support-requests?pivots=existing`
@@ -236,7 +352,7 @@ Before assigning Copilot, add one comment that follows the Comment Format sectio
 - The likely fix area.
 - Any constraints for the coding agent.
 
-Then call `assign_to_agent` for the issue number with agent `copilot`. This assignment is best effort: the default Actions token cannot assign the coding agent, and a suitable user-to-server credential may not be configured. The comment recommends Copilot rather than claiming assignment; a maintainer can complete the assignment if it is skipped.
+Then call `assign_to_agent` for the issue number with agent `copilot`. Copilot assignment is gated in trusted post-processing on the applied analysis-comment receipt: if comment posting fails, assignment is aborted so the coding agent is never assigned without the vetted analysis and constraints. This assignment is best effort: the default Actions token cannot assign the coding agent, and a suitable user-to-server credential may not be configured. The comment recommends Copilot rather than claiming assignment; a maintainer can complete the assignment if it is skipped.
 
 ### No Action
 
