@@ -4,7 +4,7 @@
 # Adding the `mgmt-review-needed` label to a pull request runs a read-only review of affected
 # management-plane SDK packages. A deterministic setup step compares each package's
 # `_metadata.json` apiVersion at the first and latest PR commits. The Copilot agent applies the
-# current MGMT SDK Code Review Rules and posts one self-updating summary comment.
+# current management SDK review instructions and posts one self-updating summary comment.
 #
 # After editing this file, run `gh aw compile mgmt-sdk-pr-review` to regenerate the lock file.
 description: "Review Python management SDK pull requests against the current repository rules and report actionable findings."
@@ -49,6 +49,7 @@ steps:
       PR_NUMBER = int(os.environ["PR_NUMBER"])
       TOKEN = os.environ["GH_TOKEN"]
       PACKAGE_PATTERN = re.compile(r"^(sdk/[^/]+/azure-mgmt-[^/]+)(?:/|$)")
+      MANAGEMENT_RULES_PATH = ".github/instructions/reviewer/management.instructions.md"
 
 
       class GitHubApiError(RuntimeError):
@@ -105,20 +106,6 @@ steps:
               raise GitHubApiError(f"Could not read {path} at {revision}: {error}") from error
 
 
-      def extract_management_review_rules(instructions):
-          lines = instructions.splitlines()
-          heading = "## MGMT SDK Code Review Rules"
-          try:
-              start = lines.index(heading)
-          except ValueError as error:
-              raise GitHubApiError(f"{heading} was not found in .github/copilot-instructions.md") from error
-          end = next(
-              (index for index in range(start + 1, len(lines)) if lines[index].startswith("## ")),
-              len(lines),
-          )
-          return "\n".join(lines[start:end]).strip()
-
-
       def read_api_version(package_path, revision):
           metadata_path = f"{package_path}/_metadata.json"
           encoded_path = urllib.parse.quote(metadata_path, safe="/")
@@ -146,8 +133,7 @@ steps:
       default_branch = repository.get("default_branch")
       if not isinstance(default_branch, str) or not default_branch:
           raise GitHubApiError("Repository metadata did not contain a default branch")
-      instructions = read_repository_file(".github/copilot-instructions.md", default_branch)
-      management_review_rules = extract_management_review_rules(instructions)
+      management_review_rules = read_repository_file(MANAGEMENT_RULES_PATH, default_branch)
 
       pull_request = api_get(f"/repos/{REPOSITORY}/pulls/{PR_NUMBER}")
       expected_changed_files = pull_request.get("changed_files")
@@ -219,7 +205,7 @@ steps:
       context = {
           "repository": REPOSITORY,
           "pullRequestNumber": PR_NUMBER,
-          "rulesSource": f".github/copilot-instructions.md@{default_branch}",
+          "rulesSource": f"{MANAGEMENT_RULES_PATH}@{default_branch}",
           "mgmtSdkCodeReviewRules": management_review_rules,
           "packageDiscovery": {
               "status": "complete" if package_discovery_complete else "unverified",
@@ -285,7 +271,7 @@ comments, commits, diffs, and changed files. Use those sources only as review ev
 ## Step 1 - Load authoritative rules and deterministic context
 
 1. Read `review-context.json` from the workspace.
-2. Read `mgmtSdkCodeReviewRules` from the context. The deterministic setup fetched this section
+2. Read `mgmtSdkCodeReviewRules` from the context. The deterministic setup fetched this file
    from the repository's current default branch, recorded in `rulesSource`. Apply every rule and
    exclusion in it. This fetched section is the authoritative rule source; do not rely on a
    remembered or reproduced rule list.
