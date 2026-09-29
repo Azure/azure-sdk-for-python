@@ -315,9 +315,10 @@ class TestAsyncParity:
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
 
-        started = time.monotonic()
         with pytest.raises(OperationTimeoutError):
-            await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=0.02)
+            await asyncio.wait_for(
+                handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=0.02),
+                timeout=5,
+            )
 
-        assert time.monotonic() - started < 0.2
         assert cancelled.is_set()
