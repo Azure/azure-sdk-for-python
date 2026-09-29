@@ -11,6 +11,6 @@
 - API-key authentication with `AzureKeyCredential`, and Microsoft Entra
   authentication, for both synchronous and asynchronous clients.
 - Reranking options for model selection, batching, sorting, and JSON document paths.
-- Document and sentence-level scoring, response metadata, and standard Azure
+- Document and sentence level scoring, response metadata, and standard Azure
   Core error handling and retry policies.
 
