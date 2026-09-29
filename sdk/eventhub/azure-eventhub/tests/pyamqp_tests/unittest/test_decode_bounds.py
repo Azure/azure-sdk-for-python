@@ -7,6 +7,8 @@ from azure.eventhub._pyamqp._decode import (
     _decode_map_small,
     decode_frame,
     _MAX_COMPOUND_COUNT,
+    _MAX_NESTING_DEPTH,
+    _DECODE_BY_CONSTRUCTOR,
 )
 
 
@@ -98,3 +100,34 @@ def test_decode_map_small_rejects_odd_count():
     buffer = memoryview(b"\x00\x03")
     with pytest.raises(ValueError, match="must be even"):
         _decode_map_small(buffer)
+
+
+def _nested_list(levels: int) -> bytes:
+    # `levels` nested list8 values, each holding one element; innermost is null.
+    return b"\xc0\x02\x01" * levels + b"\x40"
+
+
+def _nested_described(levels: int) -> bytes:
+    # `levels` nested described types (smallulong descriptor 0); innermost value null.
+    return b"\x00\x53\x00" * levels + b"\x40"
+
+
+def _decode(payload: bytes):
+    return _DECODE_BY_CONSTRUCTOR[payload[0]](memoryview(payload)[1:])
+
+
+@pytest.mark.parametrize("bomb", [_nested_list, _nested_described])
+def test_decode_rejects_excessive_nesting(bomb):
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(bomb(_MAX_NESTING_DEPTH + 1))
+
+
+@pytest.mark.parametrize("bomb", [_nested_list, _nested_described])
+def test_decode_accepts_nesting_at_limit(bomb):
+    _decode(bomb(_MAX_NESTING_DEPTH))
+
+
+def test_decode_shallow_value_unchanged():
+    remaining, value = _decode(_nested_list(2))
+    assert value == [[None]]
+    assert bytes(remaining) == b""
