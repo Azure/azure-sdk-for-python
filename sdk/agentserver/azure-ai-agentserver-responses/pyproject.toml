@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "azure-ai-agentserver-core>=2.2.0,<2.3.0",
+    "azure-ai-agentserver-core>=2.2.0,<3.0.0",
     "azure-core>=1.37.0,<2.0.0",
     "isodate>=0.6.1,<1.0.0",
     "aiohttp>=3.10.0,<4.0.0a0",

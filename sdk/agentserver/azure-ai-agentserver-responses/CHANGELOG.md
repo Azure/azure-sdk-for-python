@@ -1,5 +1,11 @@
 # Release History
 
+## 2.2.1 (Unreleased)
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+
 ## 2.2.0 (2026-09-28)
 
 ### Other Changes
