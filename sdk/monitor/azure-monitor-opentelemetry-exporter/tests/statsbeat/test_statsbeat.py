@@ -15,6 +15,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
 )
+from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration import _state as _configuration_state
+from azure.monitor.opentelemetry.exporter._utils import Singleton
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -36,6 +39,12 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+        # Reset the _ConfigurationManager singleton too, so a real (unmocked) instance left
+        # initialized by another test module doesn't cause collect_statsbeat_metrics to think
+        # OneSettings is already running and skip direct manager.initialize().
+        if _ConfigurationManager in Singleton._instances:
+            del Singleton._instances[_ConfigurationManager]
+        _configuration_state._configuration_manager = None
         with _STATSBEAT_STATE_LOCK:
             _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
             _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
@@ -55,6 +64,10 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+        # Reset the _ConfigurationManager singleton to avoid leaking state into other test modules.
+        if _ConfigurationManager in Singleton._instances:
+            del Singleton._instances[_ConfigurationManager]
+        _configuration_state._configuration_manager = None
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
@@ -185,9 +198,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig.from_config")
-    def test_initial_configuration_uses_onesettings(
-        self, mock_from_config, mock_get_manager, mock_evaluate_feature
-    ):
+    def test_initial_configuration_uses_onesettings(self, mock_from_config, mock_get_manager, mock_evaluate_feature):
         base_config = mock.Mock()
         updated_config = mock.Mock()
         manager = mock.Mock()
