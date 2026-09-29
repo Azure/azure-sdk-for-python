@@ -1162,7 +1162,7 @@ def main():
         output = Path(os.environ["GH_AW_AGENT_OUTPUT"])
         from mgmt_sdk_review_service import EvidenceRegistry
 
-        registry = EvidenceRegistry(context, os.environ.get("GH_TOKEN", ""))
+        registry = EvidenceRegistry(context)
         prepared = prepare_output(load_json(output), context, registry.resolve)
         # Leave the original artifact untouched on any validation/rendering failure.
         temporary = output.with_suffix(".validated.json")

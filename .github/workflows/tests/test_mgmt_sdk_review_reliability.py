@@ -5,6 +5,7 @@
 import copy
 import datetime
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -17,6 +18,7 @@ import time
 import unittest
 from unittest import mock
 import urllib.parse
+import urllib.error
 import urllib.request
 
 from test_mgmt_sdk_review_comment import (
@@ -860,6 +862,133 @@ class EvidenceAndChecksTests(unittest.TestCase):
             contract.prepare_output(envelope(final), trusted)
 
 
+class PublicSpecificationReadsTests(unittest.TestCase):
+    def read(self):
+        return service.read_public_specification_file(
+            "Azure/azure-rest-api-specs", NEW_SPEC, "specification/example/@Widget (preview).tsp"
+        )
+
+    def test_public_reads_never_use_tokens_or_global_authenticated_opener(self):
+        with mock.patch.dict(
+            os.environ, {"GH_TOKEN": "repository-token", "GITHUB_TOKEN": "publisher-token"}
+        ), mock.patch.object(service.urllib.request, "build_opener") as build, mock.patch.object(
+            service.urllib.request, "urlopen"
+        ) as global_open:
+            response = build.return_value.open.return_value.__enter__.return_value
+            response.headers = {"Content-Length": "15"}
+            response.read.return_value = b"model Widget {}"
+            result = self.read()
+            self.assertEqual("available", result["status"])
+            self.assertEqual("model Widget {}", result["content"])
+            request = build.return_value.open.call_args.args[0]
+            self.assertEqual(
+                f"https://raw.githubusercontent.com/Azure/azure-rest-api-specs/{NEW_SPEC}/"
+                "specification/example/%40Widget%20%28preview%29.tsp",
+                request.full_url,
+            )
+            self.assertEqual("GET", request.get_method())
+            self.assertEqual({"User-agent": "azure-sdk-python-mgmt-review"}, dict(request.header_items()))
+            self.assertIsInstance(build.call_args.args[0], service.NoSpecificationRedirects)
+            self.assertEqual(service.API_TIMEOUT_SECONDS, build.return_value.open.call_args.kwargs["timeout"])
+            response.read.assert_called_once_with(service.MAX_TEXT_FILE_BYTES + 1)
+            global_open.assert_not_called()
+
+    def test_size_limit_applies_with_absent_or_misleading_headers(self):
+        limit = service.MAX_TEXT_FILE_BYTES
+        for header, payload, expected, reads in (
+            (str(limit + 1), b"", "truncated", 0),
+            (None, b"x" * (limit + 1), "truncated", 1),
+            ("1", b"x" * (limit + 1), "truncated", 1),
+            (str(limit), b"x" * limit, "available", 1),
+        ):
+            with self.subTest(header=header), mock.patch.object(service.urllib.request, "build_opener") as build:
+                response = build.return_value.open.return_value.__enter__.return_value
+                response.headers = {} if header is None else {"Content-Length": header}
+                response.read.return_value = payload
+                result = self.read()
+                self.assertEqual(expected, result["status"])
+                self.assertEqual(reads, response.read.call_count)
+                if expected == "truncated":
+                    self.assertNotIn("content", result)
+                else:
+                    self.assertEqual(limit, len(result["content"]))
+
+    def test_http_errors_are_explicit_without_authenticated_retry(self):
+        for code in (301, 302, 307, 308, 401, 403, 404, 429, 500):
+            with self.subTest(code=code), mock.patch.object(service.urllib.request, "build_opener") as build:
+                error = urllib.error.HTTPError(
+                    "https://raw.githubusercontent.com/", code, "Unavailable", {}, io.BytesIO()
+                )
+                build.return_value.open.side_effect = error
+                result = self.read()
+                record = evidence.source_record("Azure/azure-rest-api-specs", result, PACKAGE, "specification")
+                self.assertEqual("missing" if code == 404 else "access_error", record["status"])
+                self.assertIsNone(record["sha256"])
+                self.assertEqual(0, record["lineCount"])
+                self.assertIn(f"HTTP {code}", record["error"])
+                self.assertIn("no authenticated fallback", record["error"])
+                self.assertEqual(1, build.return_value.open.call_count)
+
+    def test_redirect_handler_rejects_changed_hosts_and_mutable_revisions(self):
+        handler = service.NoSpecificationRedirects()
+        for target in (
+            "https://evil.invalid/content",
+            "http://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/file",
+            "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/file",
+        ):
+            self.assertIsNone(handler.redirect_request(None, None, 302, "Redirect", {}, target))
+
+    def test_invalid_content_headers_and_network_errors_remain_unverified(self):
+        for header, content, error in (
+            (None, b"\xff", None),
+            ("invalid", b"model Widget {}", None),
+            ("-1", b"model Widget {}", None),
+            (None, b"", TimeoutError("Read timed out")),
+            (None, b"", urllib.error.URLError("Connection unavailable")),
+        ):
+            with self.subTest(header=header, error=error), mock.patch.object(
+                service.urllib.request, "build_opener"
+            ) as build:
+                response = build.return_value.open.return_value.__enter__.return_value
+                response.headers = {} if header is None else {"Content-Length": header}
+                response.read.return_value = content
+                response.read.side_effect = error
+                result = self.read()
+                self.assertEqual("unverified", result["status"])
+                self.assertNotIn("content", result)
+                self.assertIn("Could not read public specification", result["error"])
+                self.assertEqual(1, build.return_value.open.call_count)
+
+    def test_untrusted_identities_never_reach_public_reader(self):
+        for repository, revision in (
+            ("Azure/azure-rest-api-specs", "main"),
+            ("evil.invalid/path/extra", NEW_SPEC),
+            ("Azure/azure-rest-api-specs?query", NEW_SPEC),
+        ):
+            _, trusted = fixture()
+            trusted["breakingChangeContext"][0]["specificationSources"]["latest"].update(
+                repository=repository, revision=revision
+            )
+            with mock.patch.object(service, "read_public_specification_file") as read:
+                with self.assertRaisesRegex(contract.ReviewError, "wrong_revision"):
+                    service.EvidenceRegistry(trusted).register(
+                        PACKAGE, repository, revision, "specification/example/main.tsp"
+                    )
+                read.assert_not_called()
+
+    def test_only_sdk_collection_receives_repository_credentials(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        collector_job = source.split("  review_context:\n", 1)[1].split("\n  safe_outputs:", 1)[0]
+        self.assertIn("GH_TOKEN: ${{ github.token }}", collector_job)
+        for label in ("Validate and render management SDK review", "Start read-only evidence and preflight service"):
+            env = source.split("name: " + label, 1)[0].rsplit("- env:", 1)[1]
+            self.assertNotIn("GH_TOKEN", env)
+        lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+        publisher = lock.split("\n  safe_outputs:\n", 1)[1].split("\n    timeout-minutes:", 1)[0]
+        self.assertIn("permissions:\n      pull-requests: write", publisher)
+        self.assertNotIn("contents: read", publisher)
+
+
 class ServiceAndPublicationTests(unittest.TestCase):
     def test_retained_production_shapes_require_explicit_new_contract(self):
         corpus = json.loads(
@@ -992,16 +1121,11 @@ class ServiceAndPublicationTests(unittest.TestCase):
         draft = {key: value for key, value in final.items() if key not in {"preflight", "registrations"}}
         trusted["sources"] = [item for item in trusted["sources"] if "specification" not in item["roles"]]
         host = service.ReviewService(trusted)
-        with mock.patch.object(
-            service.GitHubClient,
-            "read_file",
-            return_value={
-                "path": "specification/example/main.tsp",
-                "revision": NEW_SPEC,
-                "status": "available",
-                "content": '// Definition\n@renamedFrom(Versions.v1, "Widget")\nmodel NewWidget {}\n',
-            },
-        ) as fetch:
+        with mock.patch.object(service.urllib.request, "build_opener") as build:
+            response = build.return_value.open.return_value.__enter__.return_value
+            response.headers = {}
+            response.read.return_value = b'// Definition\n@renamedFrom(Versions.v1, "Widget")\nmodel NewWidget {}\n'
+            fetch = build.return_value.open
             registered = host.call(
                 {
                     "operation": "register",
@@ -1017,13 +1141,28 @@ class ServiceAndPublicationTests(unittest.TestCase):
             entry["sdk_context"] = [draft["packages"][0]["checks"]["README snippets"]["sources"][0]]
             result = host.call({"operation": "preflight", "draft": draft})
             self.assertTrue(result["ok"], result)
-            resolver = service.EvidenceRegistry(trusted, "")
+            resolver = service.EvidenceRegistry(trusted)
             body = contract.prepare_output(envelope(result["submission"]["data"]), trusted, resolver.resolve)["items"][
                 0
             ]["body"]
             self.assertIn("TypeSpec/API", body)
             self.assertIn("README.md", body)
             self.assertEqual(2, fetch.call_count)
+            for call in fetch.call_args_list:
+                request = call.args[0]
+                self.assertEqual(
+                    f"https://raw.githubusercontent.com/Azure/azure-rest-api-specs/{NEW_SPEC}/specification/example/main.tsp",
+                    request.full_url,
+                )
+                self.assertIsNone(request.get_header("Authorization"))
+            fetch.side_effect = urllib.error.HTTPError(
+                "https://raw.githubusercontent.com/", 403, "Forbidden", {}, io.BytesIO()
+            )
+            with self.assertRaisesRegex(contract.ReviewError, "evidence_changed"):
+                contract.prepare_output(
+                    envelope(result["submission"]["data"]), trusted, service.EvidenceRegistry(trusted).resolve
+                )
+            fetch.side_effect = None
             changed = copy.deepcopy(result["submission"]["data"])
             changed["registrations"][0]["sha256"] = "0" * 64
             changed["preflight"]["digest"] = contract.digest(
@@ -1071,9 +1210,9 @@ class ServiceAndPublicationTests(unittest.TestCase):
             with self.assertRaisesRegex(contract.ReviewError, "invalid_source_path"):
                 host.call({**request, "path": path})
         with mock.patch.object(
-            service.GitHubClient,
-            "read_file",
-            side_effect=lambda path, revision: {
+            service,
+            "read_public_specification_file",
+            side_effect=lambda repository, revision, path: {
                 "path": path,
                 "revision": revision,
                 "status": "available",

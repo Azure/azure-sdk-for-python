@@ -12,9 +12,18 @@ import json
 import os
 import re
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import mgmt_sdk_review_contract as contract
-from mgmt_sdk_review_context import GitHubClient, MAX_TEXT_FILE_BYTES, authorize_current_run
+from mgmt_sdk_review_context import (
+    API_TIMEOUT_SECONDS,
+    MAX_TEXT_FILE_BYTES,
+    REPOSITORY_PATTERN,
+    SHA_PATTERN,
+    authorize_current_run,
+)
 from mgmt_sdk_review_evidence import (
     MAX_REGISTERED_BYTES,
     MAX_REGISTERED_FILES,
@@ -24,10 +33,59 @@ from mgmt_sdk_review_evidence import (
 )
 
 
+class NoSpecificationRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def read_public_specification_file(repository, revision, path):
+    """Read pinned public content without credentials or REST API rate-limit usage."""
+    url = f"https://raw.githubusercontent.com/{repository}/{revision}/" + urllib.parse.quote(path, safe="/")
+    request = urllib.request.Request(url, headers={"User-Agent": "azure-sdk-python-mgmt-review"})
+    record = {"path": path, "revision": revision, "status": "unverified"}
+    try:
+        # A fresh opener cannot inherit a global authenticated opener. Redirects
+        # are rejected rather than following a new host or mutable destination.
+        opener = urllib.request.build_opener(NoSpecificationRedirects())
+        with opener.open(request, timeout=API_TIMEOUT_SECONDS) as response:
+            declared_size = response.headers.get("Content-Length")
+            if declared_size is not None and int(declared_size) < 0:
+                raise ValueError("negative Content-Length")
+            if declared_size is not None and int(declared_size) > MAX_TEXT_FILE_BYTES:
+                return {
+                    **record,
+                    "status": "truncated",
+                    "error": f"Public specification exceeded the {MAX_TEXT_FILE_BYTES}-byte evidence limit.",
+                }
+            content = response.read(MAX_TEXT_FILE_BYTES + 1)
+            if len(content) > MAX_TEXT_FILE_BYTES:
+                return {
+                    **record,
+                    "status": "truncated",
+                    "error": f"Public specification exceeded the {MAX_TEXT_FILE_BYTES}-byte evidence limit.",
+                }
+            return {**record, "status": "available", "content": content.decode("utf-8"), "error": ""}
+    except urllib.error.HTTPError as error:
+        error.close()
+        return {
+            **record,
+            "status": "missing" if error.code == 404 else "unverified",
+            "httpStatus": error.code,
+            "error": (
+                f"Public specification read returned HTTP {error.code} for {path} at {revision}. "
+                "Only public, immutable GitHub content is supported; no authenticated fallback is attempted."
+            ),
+        }
+    except (OSError, ValueError) as error:
+        return {
+            **record,
+            "error": f"Could not read public specification {path} at {revision}: {error}",
+        }
+
+
 class EvidenceRegistry:
-    def __init__(self, context, token):
+    def __init__(self, context):
         self.context = context
-        self.token = token
         self.records = {}
         self.requests = {}
         self.bytes = {}
@@ -49,6 +107,15 @@ class EvidenceRegistry:
             (repository, revision) in permitted,
             field + ".revision",
             "Use a pinned specification repository/revision.",
+            "wrong_revision",
+        )
+        contract.require(
+            isinstance(repository, str)
+            and REPOSITORY_PATTERN.fullmatch(repository)
+            and isinstance(revision, str)
+            and SHA_PATTERN.fullmatch(revision),
+            field + ".revision",
+            "Use a GitHub owner/repository and immutable commit SHA.",
             "wrong_revision",
         )
         contract.require(
@@ -85,7 +152,7 @@ class EvidenceRegistry:
             self.records[key] = record
             return record
         record = source_record(
-            repository, GitHubClient(repository, self.token).read_file(path, revision), package, "specification"
+            repository, read_public_specification_file(repository, revision, path), package, "specification"
         )
         size = len(record["content"].encode())
         if self.bytes.get(package, 0) + size > MAX_REGISTERED_BYTES:
@@ -120,9 +187,9 @@ class EvidenceRegistry:
 
 
 class ReviewService:
-    def __init__(self, context, token=""):
+    def __init__(self, context):
         self.context = copy.deepcopy(context)
-        self.registry = EvidenceRegistry(self.context, token)
+        self.registry = EvidenceRegistry(self.context)
         self.attempts = 0
         self.accepted = False
 
@@ -229,7 +296,7 @@ def main():
         os.environ["REVIEW_HEAD_SHA"],
         os.environ["REVIEW_TOOLING_SHA"],
     )
-    service = ReviewService(context, os.environ["GH_TOKEN"])
+    service = ReviewService(context)
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format, *args):

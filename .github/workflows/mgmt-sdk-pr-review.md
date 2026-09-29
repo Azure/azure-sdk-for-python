@@ -478,7 +478,6 @@ safe-outputs:
     - env:
         GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
         GH_REPOSITORY: ${{ github.repository }}
-        GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ needs.review_context.outputs.pr_number }}
         REVIEW_CONTEXT: ${{ runner.temp }}/mgmt-review-trusted/review-context.json
         REVIEW_HEAD_SHA: ${{ needs.review_context.outputs.head_sha }}
@@ -495,7 +494,6 @@ steps:
       path: ${{ runner.temp }}/mgmt-review-service
   - env:
       GH_REPOSITORY: ${{ github.repository }}
-      GH_TOKEN: ${{ github.token }}
       PR_NUMBER: ${{ needs.review_context.outputs.pr_number }}
       REVIEW_HEAD_SHA: ${{ needs.review_context.outputs.head_sha }}
       REVIEW_TOOLING_SHA: ${{ github.workflow_sha }}
@@ -727,6 +725,15 @@ remain unverified instead of executing packaging code. Collection preserves the 
 256-KiB-per-file limits, with an 8-MiB source-catalog text cap; specification registration has
 separate 20-file/1-MiB per-package caps. Retrieval stops when the remaining text budget cannot
 cover one bounded file request. The collector's initial-release safeguards remain unchanged.
+Specification registration and the publisher's independent reread use the same anonymous
+`raw.githubusercontent.com` reader at immutable commit SHAs. They never send `GITHUB_TOKEN`,
+use a PAT, or fall back to authenticated access. This avoids repository-token scope differences
+and the REST API's anonymous rate limit without granting more permissions. Raw content can
+still be throttled or unavailable: HTTP errors, timeouts, invalid UTF-8 and size limits remain
+explicit evidence failures. Redirects are rejected, and private specifications are unsupported.
+The existing repository/revision allowlist, path restrictions, timeout, retrieval budgets
+and independent content-hash comparison still apply. SDK collection and comment publication
+continue using their existing repository-scoped credentials.
 Source discovery fetches the pinned `pyproject.toml` before deriving version/client paths,
 including for packages handed off by the earlier per-package request-budget check. The
 fetch shares the source reader's cache and budget guard, preserving the last request for
@@ -741,6 +748,15 @@ Compile only this workflow with **gh-aw v0.88.8**, using `gh aw compile mgmt-sdk
 dynamic schema expressions are not supported by that pinned runtime.
 
 Run `python -m unittest discover -s .github/workflows/tests -p "test_mgmt_sdk_review*.py"`.
+For an opt-in live public-access smoke, run
+`python .github/workflows/tests/mgmt_review_public_evidence_smoke.py register <temporary-directory>`,
+then run the same command with `publish` instead of `register`. The first phase registers
+one real pinned specification file and preflights a synthetic draft; the second invokes the
+independent publisher CLI against the original fixture context and independently fetches the
+file again. It validates matching content hashes, never invokes the built-in comment publisher,
+and is not a semantic SDK review or deployment canary. To verify job-permission independence,
+run the phases in separate GitHub Actions jobs with `contents: read` and `pull-requests: write`,
+respectively, passing the trusted fixture artifacts between jobs.
 The trusted tools require Python 3.11+ (`tomllib`); the compiled Python MCP runtime supplies it.
 Set `GH_AW_RUNTIME` to v0.88.8's `actions/setup/js` and install Node and jq (or set `JQ`).
 Runtime tests must run, not skip, for a release. They mock GitHub writes and exercise the
