@@ -15,16 +15,10 @@
   - Model `BulkCreateProperties` deleted or renamed its instance variable `vm_sizes_profile`
   - Model `BulkCreateProperties` deleted or renamed its instance variable `zone_allocation_policy`
   - Model `PriorityProfile` deleted or renamed its instance variable `allocation_strategy`
-  - Deleted or renamed model `AllocationStrategy`
-  - Deleted or renamed model `BulkCreateCustomAllocationStrategy`
-  - Deleted or renamed model `BulkCreateCustomDistributionStrategy`
-  - Deleted or renamed model `BulkCreateCustomOverrideBase`
-  - Deleted or renamed model `BulkCreateCustomVmSizeProfile`
-  - Deleted or renamed model `BulkCreateCustomZoneAllocationPolicy`
-  - Deleted or renamed model `BulkCreateVmSizeProfile`
-  - Deleted or renamed model `DistributionStrategy`
-  - Deleted or renamed model `ZoneAllocationPolicy`
-  - Deleted or renamed model `ZonePreference`
+
+### Other Changes
+
+  - Deleted model `AllocationStrategy`/`BulkCreateCustomAllocationStrategy`/`BulkCreateCustomDistributionStrategy`/`BulkCreateCustomOverrideBase`/`BulkCreateCustomVmSizeProfile`/`BulkCreateCustomZoneAllocationPolicy`/`BulkCreateVmSizeProfile`/`DistributionStrategy`/`ZoneAllocationPolicy`/`ZonePreference` which actually were not used by SDK users
 
 ## 1.0.0b4 (2026-09-11)
 
