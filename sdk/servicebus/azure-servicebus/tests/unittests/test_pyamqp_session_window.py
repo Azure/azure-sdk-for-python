@@ -5,13 +5,14 @@
 
 """Regression tests for pyAMQP session window accounting (azure-sdk-for-python#49232)."""
 
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from azure.servicebus._pyamqp._encode import encode_uint, encode_ulong
 from azure.servicebus._pyamqp.constants import SessionState
 from azure.servicebus._pyamqp.session import Session
+from azure.servicebus._pyamqp.aio._session_async import Session as AsyncSession
 
 
 def _session(*, incoming_window=4, outgoing_window=4):
@@ -55,24 +56,47 @@ def test_outgoing_transfer_does_not_exhaust_local_outgoing_window():
     assert connection._process_outgoing_frame.call_count == 1
 
 
-def test_incoming_window_recovers_after_transfer_handler_exception():
+def test_incoming_window_recovers_before_transfer_handler_exception():
     session, connection = _session(incoming_window=1)
     session.next_incoming_id = 0
     session.remote_outgoing_window = 2
 
     link = MagicMock(name="link")
-    link._incoming_transfer.side_effect = [RuntimeError("handler failed"), None]
+    link._incoming_transfer.side_effect = RuntimeError("handler failed")
     session._input_handles[0] = link
 
     with pytest.raises(RuntimeError, match="handler failed"):
         session._incoming_transfer((0,))
 
-    assert session.incoming_window == 0
-
-    session._incoming_transfer((0,))
-
     assert session.incoming_window == session.target_incoming_window == 1
     assert connection._process_outgoing_frame.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_async_incoming_window_recovers_before_transfer_handler_exception():
+    connection = MagicMock(name="connection")
+    connection._process_outgoing_frame = AsyncMock(name="_process_outgoing_frame")
+    session = AsyncSession(
+        connection,
+        channel=0,
+        incoming_window=1,
+        outgoing_window=4,
+        network_trace=False,
+        network_trace_params={},
+    )
+    session.state = SessionState.MAPPED
+    session.next_incoming_id = 0
+    session.remote_outgoing_window = 2
+
+    link = MagicMock(name="link")
+    link._incoming_transfer = AsyncMock(side_effect=RuntimeError("handler failed"))
+    session._input_handles[0] = link
+
+    with pytest.raises(RuntimeError, match="handler failed"):
+        await session._incoming_transfer((0,))
+
+    assert session.incoming_window == session.target_incoming_window == 1
+    connection._process_outgoing_frame.assert_awaited_once()
 
 
 @pytest.mark.parametrize("encoder", [encode_uint, encode_ulong])
