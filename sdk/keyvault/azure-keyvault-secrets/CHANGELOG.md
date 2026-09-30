@@ -1,5 +1,19 @@
 # Release History
 
+## 4.11.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Hardened challenge cache reuse as a follow-up to [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+  Cached challenges are now verified before token use, and stale entries are cleared when challenge parsing or resource verification fails.
+  Request replay and existing CAE scope/tenant precedence are preserved when concurrent requests invalidate the shared cache.
+
+### Other Changes
+
 ## 4.11.2 (2026-08-25)
 
 ### Bugs Fixed
