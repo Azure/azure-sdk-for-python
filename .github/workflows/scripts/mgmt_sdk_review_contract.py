@@ -787,6 +787,19 @@ def load_json(path, max_bytes=MAX_BYTES):
     return json.loads(raw.decode("utf-8"), object_pairs_hook=strict_object)
 
 
+def validate_submission_target(item, context):
+    if "item_number" not in item:
+        return
+    number = item["item_number"]
+    expected = context["pullRequestNumber"]
+    require(
+        (type(number) is int and number == expected) or (isinstance(number, str) and number == str(expected)),
+        "output.items[0].item_number",
+        "must exactly match the trusted PR number as an integer or canonical decimal string",
+        "conflicting_target",
+    )
+
+
 def prepare_rendered_output(payload, context):
     require(isinstance(payload, dict), "output", "expected an agent output object")
     require(
@@ -812,13 +825,7 @@ def prepare_rendered_output(payload, context):
         "unexpected target or publication fields",
         "unsupported_publication_field",
     )
-    if "item_number" in item:
-        require(
-            type(item["item_number"]) is int and item["item_number"] == context["pullRequestNumber"],
-            "output.items[0].item_number",
-            "must match the triggering pull request",
-            "conflicting_target",
-        )
+    validate_submission_target(item, context)
     # v0.88.8 appends a pretty-printed data block during ingestion. It is not review Markdown.
     data = item.get("data")
     expected = SUBMISSION + "\n\nStructured data:\n```json\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n```"
@@ -1145,13 +1152,7 @@ def prepare_output(payload, context, resolver=None):
         "unsupported publication fields",
         "unsupported_publication_field",
     )
-    if "item_number" in item:
-        require(
-            type(item["item_number"]) is int and item["item_number"] == context["pullRequestNumber"],
-            "output.items[0].item_number",
-            "must match the triggering PR",
-            "conflicting_target",
-        )
+    validate_submission_target(item, context)
     data = item.get("data")
     validate_schema(data)
     expected = SUBMISSION + "\n\nStructured data:\n```json\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n```"

@@ -649,8 +649,12 @@ jq '.submission' /tmp/gh-aw/agent/preflight-result.json | safeoutputs add_commen
 
 The final `.` reads a JSON object from stdin. Never use `--body -`, a placeholder or handwritten
 Markdown. Never write through GitHub tools or direct APIs. Do not change the submission after
-preflight. A matching redundant `item_number` is tolerated and removed; all other targets and
-unsupported publication fields are rejected. Budgets are 48 links and 60,000 UTF-8 body bytes.
+preflight. The trusted submission includes `item_number` for the resolved PR, including on manual
+runs: the agent-side tool cannot resolve the publisher's job-output target and manual events have
+no triggering PR. Pass the supplied target unchanged; do not add or guess one. The publisher accepts
+only the exact trusted PR number, as an integer or canonical decimal string, and removes this
+redundant field before the fixed-target handler. Different targets and noncanonical values remain
+rejected. Budgets are 48 links and 60,000 UTF-8 body bytes.
 Multi-package reviews use shared evidence references (`E1`, `E2`, etc.) so an identical
 URL is linked only once across checks, findings and attribution. Each use retains its label
 and any unavailable-line explanation; different revisions or line ranges remain distinct.

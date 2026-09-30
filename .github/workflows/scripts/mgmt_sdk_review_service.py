@@ -308,7 +308,11 @@ class ReviewService:
                     "publication_size_budget",
                 )
                 self.accepted = True
-                result["submission"] = {"body": contract.SUBMISSION, "data": data}
+                result["submission"] = {
+                    "body": contract.SUBMISSION,
+                    "data": data,
+                    "item_number": str(self.context["pullRequestNumber"]),
+                }
             except contract.ReviewError as error:
                 result.update(ok=False, errors=[error.diagnostic])
         print(

@@ -116,7 +116,9 @@ def submit(data, trusted):
     result = service.ReviewService(trusted).call({"operation": "preflight", "draft": data})
     if not result["ok"]:
         raise AssertionError(result)
-    return envelope(result["submission"]["data"])
+    payload = envelope(result["submission"]["data"])
+    payload["items"][0]["item_number"] = result["submission"]["item_number"]
+    return payload
 
 
 class EvidenceAndChecksTests(unittest.TestCase):
@@ -1208,10 +1210,31 @@ class ServiceAndPublicationTests(unittest.TestCase):
     def test_target_is_checked_and_removed(self):
         draft, trusted = fixture()
         payload = submit(draft, trusted)
-        payload["items"][0]["item_number"] = trusted["pullRequestNumber"]
-        output = contract.prepare_output(payload, trusted)
-        self.assertEqual({"type", "body"}, set(output["items"][0]))
-        for number in (False, str(trusted["pullRequestNumber"]), trusted["pullRequestNumber"] + 1):
+        expected = trusted["pullRequestNumber"]
+        self.assertEqual(str(expected), payload["items"][0]["item_number"])
+        for number in (expected, str(expected)):
+            payload["items"][0]["item_number"] = number
+            output = contract.prepare_output(payload, trusted)
+            self.assertEqual({"type", "body"}, set(output["items"][0]))
+        for number in (
+            False,
+            True,
+            float(expected),
+            None,
+            expected + 1,
+            str(expected + 1),
+            f"0{expected}",
+            f"+{expected}",
+            f" {expected}",
+            f"{expected} ",
+            f"{expected}.0",
+            f"{expected}e0",
+            "４９１０７",
+            "#aw_example",
+            "",
+            [],
+            {},
+        ):
             payload["items"][0]["item_number"] = number
             with self.assertRaisesRegex(contract.ReviewError, "conflicting_target"):
                 contract.prepare_output(payload, trusted)
@@ -1366,6 +1389,81 @@ class ServiceAndPublicationTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("GH_AW_RUNTIME"), "Set GH_AW_RUNTIME to v0.88.8 runtime; required for release.")
 class PinnedPreflightRuntimeTests(unittest.TestCase):
+    def test_live_manual_targets_survive_tool_ingestion_and_publication(self):
+        harness = Path(__file__).with_name("mgmt_review_runtime.cjs")
+        tool_config = lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"]
+        # Activation cannot resolve needs.review_context.outputs.pr_number yet.
+        self.assertEqual("", tool_config["target"])
+        for pr in (49229, 49247):
+            for event in ("workflow_dispatch", "pull_request_target"):
+                for as_integer in (False, True):
+                    with self.subTest(pr=pr, event=event, as_integer=as_integer):
+                        draft, trusted = fixture()
+                        trusted["pullRequestNumber"] = pr
+                        result = service.ReviewService(trusted).call({"operation": "preflight", "draft": draft})
+                        submission = result["submission"]
+                        self.assertEqual(str(pr), submission["item_number"])
+                        if as_integer:
+                            submission["item_number"] = pr
+                        submissions = [submission]
+                        if event == "workflow_dispatch":
+                            submissions.insert(
+                                0, {key: value for key, value in submission.items() if key != "item_number"}
+                            )
+                        response = subprocess.run(
+                            ["node", str(harness)],
+                            input=json.dumps(
+                                {
+                                    "mode": "submit",
+                                    "eventName": event,
+                                    "prNumber": pr,
+                                    "submissions": submissions,
+                                    "toolConfig": tool_config,
+                                    "validation": lock_json("GH_AW_VALIDATION_JSON"),
+                                }
+                            ),
+                            capture_output=True,
+                            text=True,
+                            check=True,
+                            timeout=30,
+                        )
+                        transport = json.loads(response.stdout)
+                        if event == "workflow_dispatch":
+                            self.assertTrue(transport["responses"][0]["isError"], transport)
+                        self.assertEqual(1, len(transport["appended"]), transport)
+                        ingested = transport["ingestion"][0]
+                        self.assertTrue(ingested["isValid"], ingested)
+                        self.assertEqual(submission["item_number"], ingested["normalizedItem"]["item_number"])
+                        prepared = contract.prepare_output(
+                            {"items": [ingested["normalizedItem"]], "errors": []}, trusted
+                        )
+                        self.assertNotIn("item_number", prepared["items"][0])
+                        config = lock_json("GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG")["add_comment"]
+                        self.assertEqual("${{ needs.review_context.outputs.pr_number }}", config["target"])
+                        config["target"] = str(pr)
+                        response = subprocess.run(
+                            ["node", str(harness)],
+                            input=json.dumps(
+                                {
+                                    "mode": "publish",
+                                    "eventName": event,
+                                    "prNumber": pr,
+                                    "payload": prepared,
+                                    "handlerConfig": config,
+                                    "existing": True,
+                                }
+                            ),
+                            capture_output=True,
+                            text=True,
+                            check=True,
+                            timeout=30,
+                        )
+                        published = json.loads(response.stdout)
+                        self.assertTrue(published["result"]["success"], published)
+                        self.assertEqual(pr, published["comment"]["issue_number"])
+                        self.assertEqual(1, published["writes"])
+                        self.assertEqual(1, published["hides"])
+
     def publish_multi_package(self, draft, trusted):
         payload = submit(draft, trusted)
         payload["items"][0]["body"] = contract.SUBMISSION
@@ -1551,7 +1649,7 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                         {
                             "mode": "submit",
                             "submissions": [json.loads(submission.stdout)] * 2,
-                            "schema": contract.SCHEMA,
+                            "toolConfig": lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"],
                             "validation": lock_json("GH_AW_VALIDATION_JSON"),
                         }
                     ),
@@ -1596,7 +1694,7 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                 {
                     "mode": "submit",
                     "submissions": submissions,
-                    "schema": contract.SCHEMA,
+                    "toolConfig": lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"],
                     "validation": lock_json("GH_AW_VALIDATION_JSON"),
                 }
             ),

@@ -152,6 +152,9 @@ def add_entry(data, trusted, *, direct=False, release="2.0.0 (2026-09-22)"):
 
 def lock_json(name):
     lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+    scalar = re.search(rf'(?m)^\s+{re.escape(name)}: (".*")$', lock)
+    if scalar:
+        return json.loads(json.loads(scalar[1]))
     block = lock.split(name + ": |\n", 1)[1]
     return json.JSONDecoder().raw_decode(textwrap.dedent(block).lstrip())[0]
 
