@@ -327,7 +327,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status in ("completed", "failed"):
+            if run.status in ("completed", "failed", "canceled", "cancelled"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")
@@ -335,6 +335,10 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+        if run.status != "completed" or run.result_counts.errored:
+            raise RuntimeError(f"Evaluation {run.status}, {run.result_counts.errored} errored item(s): {run.error}")
 
         # Single-turn, messages input
         messages = [
@@ -401,12 +405,17 @@ def main() -> None:
                     ),
                 ),
             )
-            while messages_run.status not in ("completed", "failed", "cancelled"):
+            while messages_run.status not in ("completed", "failed", "canceled", "cancelled"):
                 time.sleep(5)
                 messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
             print(f"Messages eval run status: {messages_run.status}")
             print(f"Messages eval run report: {messages_run.report_url}")
             pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
+            if messages_run.status != "completed" or messages_run.result_counts.errored:
+                raise RuntimeError(
+                    f"Messages evaluation {messages_run.status}, "
+                    f"{messages_run.result_counts.errored} errored item(s): {messages_run.error}"
+                )
         finally:
             client.evals.delete(eval_id=messages_eval.id)
 

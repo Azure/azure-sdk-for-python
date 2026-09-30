@@ -185,13 +185,16 @@ def main() -> None:
                         ),
                     ),
                 )
-                while run.status not in ("completed", "failed", "cancelled"):
+                while run.status not in ("completed", "failed", "canceled", "cancelled"):
                     time.sleep(5)
                     run = client.evals.runs.retrieve(run_id=run.id, eval_id=evaluation.id)
-                if run.status != "completed":
-                    raise RuntimeError(f"{evaluation_level} tool use quality evaluation {run.status}: {run.error}")
                 print(f"{evaluation_level} tool use quality results:")
                 pprint(list(client.evals.runs.output_items.list(run_id=run.id, eval_id=evaluation.id)))
+                if run.status != "completed" or run.result_counts.errored:
+                    raise RuntimeError(
+                        f"{evaluation_level} tool use quality evaluation {run.status}, "
+                        f"{run.result_counts.errored} errored item(s): {run.error}"
+                    )
             finally:
                 client.evals.delete(eval_id=evaluation.id)
 
