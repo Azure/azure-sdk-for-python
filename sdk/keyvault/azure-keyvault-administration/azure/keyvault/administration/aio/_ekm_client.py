@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Any, cast, Optional, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.polling import AsyncLROPoller
+from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling.base_polling import OperationResourcePolling
 from azure.core.tracing.decorator import distributed_trace
@@ -42,7 +42,10 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def _get_polling_method(self, kwargs: Any) -> AsyncLROBasePolling:
+    def _get_polling_method(self, kwargs: Any) -> Union[bool, AsyncPollingMethod]:
+        polling = kwargs.pop("polling", True)
+        if polling is not True:
+            return polling
         # The service reports private endpoint operation status via the `azure-asyncoperation` header, but Core's
         # default algorithm looks for `operation-location` and would otherwise stop polling immediately
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
@@ -155,12 +158,15 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
         parameters = EkmPrivateEndpointCreateParameters(
             private_link_service_id=private_link_service_id, request_message=request_message
         )
-        return await self._client.begin_create_ekm_private_endpoint(
-            pe_name=name,
-            parameters=parameters,
-            cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
-            polling=self._get_polling_method(kwargs),
-            **kwargs,
+        return cast(
+            AsyncLROPoller[KeyVaultEkmPrivateEndpointOperation],
+            await self._client.begin_create_ekm_private_endpoint(
+                pe_name=name,
+                parameters=parameters,
+                cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
+                polling=self._get_polling_method(kwargs),
+                **kwargs,
+            ),
         )
 
     @distributed_trace_async
@@ -179,11 +185,14 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
             ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultEkmPrivateEndpointOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._client.begin_delete_ekm_private_endpoint(
-            pe_name=name,
-            cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
-            polling=self._get_polling_method(kwargs),
-            **kwargs,
+        return cast(
+            AsyncLROPoller[KeyVaultEkmPrivateEndpointOperation],
+            await self._client.begin_delete_ekm_private_endpoint(
+                pe_name=name,
+                cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
+                polling=self._get_polling_method(kwargs),
+                **kwargs,
+            ),
         )
 
     @distributed_trace_async
