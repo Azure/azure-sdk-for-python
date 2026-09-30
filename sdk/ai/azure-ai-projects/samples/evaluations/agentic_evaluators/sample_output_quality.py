@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python sample_output_quality.py
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT - The Foundry project endpoint.
