@@ -7,6 +7,7 @@
 import time
 import uuid
 import logging
+import struct
 from typing import Any, Dict, List, Optional, Union
 
 from .._decode import decode_payload
@@ -82,7 +83,7 @@ class ReceiverLink(Link):
                     self._received_payload = bytearray()
                 else:
                     message = decode_payload(frame[11])
-            except Exception as e:  # pylint: disable=broad-except
+            except (ValueError, KeyError, IndexError, TypeError, EOFError, struct.error) as e:
                 # A malformed payload must not tear down the receive loop; reject the delivery.
                 self._received_payload = bytearray()
                 _LOGGER.error(
