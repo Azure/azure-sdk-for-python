@@ -11,8 +11,8 @@ DESCRIPTION:
 
       1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
-         type=simple_qna) without SDK polling.
+      2. Creates a `SupervisedFineTuningDataGenerationJobInputs`
+         (type=simple_qna) without SDK polling.
       3. Polls the job asynchronously from application code until it reaches a
          terminal state, then prints every generated file output.
       4. Cleans up the generated fine-tuning files and the Azure OpenAI input file.
@@ -52,16 +52,14 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
     JobStatus,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
+    SupervisedFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobOutputTarget,
 )
 
 load_dotenv()
@@ -144,36 +142,33 @@ async def main() -> None:
         # ------------------------------------------------------------------
         # 2. Submit a fine-tuning data generation job without SDK polling.
         # ------------------------------------------------------------------
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-finetuning-{run_id}",
-                scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-                sources=[
-                    FileDataGenerationJobSource(
-                        description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                        id=seed_file.id,
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
-                    # Split generated samples 80% training / 20% validation.
-                    train_split=0.8,
-                    # Ask for both short-answer and long-answer questions.
-                    question_types=[
-                        SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
-                        SimpleQnAFineTuningQuestionType.LONG_ANSWER,
-                    ],
+        job_inputs = SupervisedFineTuningDataGenerationJobInputs(
+            name=f"simpleqna-finetuning-{run_id}",
+            sources=[
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
                 ),
-                output_options=DataGenerationJobOutputOptions(name=output_name),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
+                # Split generated samples 80% training / 20% validation.
+                train_split=0.8,
+                # Ask for both short-answer and long-answer questions.
+                question_types=[
+                    SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
+                    SimpleQnAFineTuningQuestionType.LONG_ANSWER,
+                ],
             ),
+            output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
         )
 
         print("Create a dataset generation job without SDK polling.")
         poller = await project_client.beta.datasets.begin_create_generation_job(
-            job=job,
+            job=job_inputs,
             polling=False,
         )
         job_id = poller.details["job_id"]

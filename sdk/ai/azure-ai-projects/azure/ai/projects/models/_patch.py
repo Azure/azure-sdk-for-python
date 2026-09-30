@@ -61,7 +61,6 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
         _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.GITHUB_COPILOT_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.SKILLS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
         _FoundryFeaturesOptInKeys.MODEL_ROUTER_CONTROLS_V1_PREVIEW.value,
     ]
 )

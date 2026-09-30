@@ -6,17 +6,17 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 188 unique public methods:
+There are a total of 192 unique public methods:
 
 - 5 stable methods on the client
-- 59 stable methods on top-level sub-clients
-- 124 beta methods on nested beta sub-clients
+- 68 stable methods on top-level sub-clients
+- 119 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `agents` | AgentsOperations | 26 |
+| `agents` | AgentsOperations | 35 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
@@ -30,7 +30,7 @@ There are a total of 188 unique public methods:
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
-| `beta.agents` | BetaAgentsOperations | 6 |
+| `beta.agents` | BetaAgentsOperations | 1 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -62,11 +62,14 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
+.agents.begin_create_optimization_job*
+.agents.cancel_optimization_job
 .agents.create_session
 .agents.create_version*
 .agents.create_version_from_code*
 .agents.create_version_from_manifest
 .agents.delete
+.agents.delete_optimization_job
 .agents.delete_session
 .agents.delete_session_file
 .agents.delete_version
@@ -74,16 +77,22 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .agents.download_code
 .agents.download_session_file
 .agents.enable
+.agents.estimate_optimization_job
 .agents.get
 .agents.get_microsoft365_package
 .agents.get_microsoft365_publish_defaults
+.agents.get_optimization_candidate
+.agents.get_optimization_job
 .agents.get_session
 .agents.get_session_log_stream
 .agents.get_version
 .agents.list
+.agents.list_optimization_candidates
+.agents.list_optimization_jobs
 .agents.list_session_files
 .agents.list_sessions
 .agents.list_versions
+.agents.promote_optimization_candidate
 .agents.publish_to_microsoft365
 .agents.stop_session
 .agents.update_details
@@ -149,12 +158,7 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
-.beta.agents.begin_create_optimization_job*
-.beta.agents.cancel_optimization_job
 .beta.agents.create_from_prompt
-.beta.agents.delete_optimization_job
-.beta.agents.get_optimization_job
-.beta.agents.list_optimization_jobs
 
 .beta.datasets.begin_create_generation_job*
 .beta.datasets.cancel_generation_job

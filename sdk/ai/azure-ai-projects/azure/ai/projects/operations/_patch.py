@@ -20,7 +20,7 @@ from .._realtime import (
     ConversationItem,
     ServerEvent,
 )
-from ._patch_agents import AgentsOperations, BetaAgentsOperations
+from ._patch_agents import AgentsOperations
 from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluators import BetaEvaluatorsOperations
@@ -30,6 +30,7 @@ from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._operations import (
+    BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,

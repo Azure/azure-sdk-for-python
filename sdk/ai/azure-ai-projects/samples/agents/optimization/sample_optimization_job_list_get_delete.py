@@ -29,7 +29,11 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus
+from azure.ai.projects.models import (
+    AgentOptimizationCandidateExpand,
+    AgentOptimizationFoundryAgentTargetConfiguration,
+    JobStatus,
+)
 
 load_dotenv()
 
@@ -47,8 +51,9 @@ with (
     # ------------------------------------------------------------------
     print("Listing optimization jobs (limit=10):")
     count = 0
-    for job_list_item in project_client.beta.agents.list_optimization_jobs(limit=10):
-        agent_str = job_list_item.agent.agent_name if job_list_item.agent else "?"
+    for job_list_item in project_client.agents.list_optimization_jobs(limit=10):
+        target = job_list_item.target_configuration
+        agent_str = target.name if isinstance(target, AgentOptimizationFoundryAgentTargetConfiguration) else "?"
         print(f"  {job_list_item.id} | status={job_list_item.status} | agent={agent_str}")
         count += 1
     print(f"  ({count} jobs listed)\n")
@@ -59,7 +64,7 @@ with (
     if agent_name:
         print(f"Listing jobs for agent '{agent_name}' (limit=10):")
         count = 0
-        for job_list_item in project_client.beta.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
+        for job_list_item in project_client.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
             print(f"  {job_list_item.id} | status={job_list_item.status}")
             count += 1
         print(f"  ({count} jobs)\n")
@@ -69,7 +74,7 @@ with (
     # ------------------------------------------------------------------
     print(f"Listing succeeded jobs (limit=5):")
     count = 0
-    for job_list_item in project_client.beta.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
+    for job_list_item in project_client.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
         print(f"  {job_list_item.id}")
         count += 1
     print(f"  ({count} succeeded jobs)\n")
@@ -79,13 +84,26 @@ with (
     # ------------------------------------------------------------------
     if job_id:
         print(f"Getting job {job_id}...")
-        job = project_client.beta.agents.get_optimization_job(job_id=job_id)
+        job = project_client.agents.get_optimization_job(job_id=job_id)
         print(f"  status={job.status}")
-        if job.inputs:
-            print(f"  agent={job.inputs.agent.agent_name if job.inputs.agent else '?'}")
+        target = job.target_configuration
+        if isinstance(target, AgentOptimizationFoundryAgentTargetConfiguration):
+            print(f"  agent={target.name}")
         if job.result:
-            print(f"  baseline={job.result.baseline}, best={job.result.best}")
-            print(f"  candidates: {len(job.result.candidates or [])}")
+            summary = job.result.candidate_summary
+            if summary:
+                print(f"  baseline={summary.baseline_id}, best={summary.best_id}")
+                print(f"  completed candidates={summary.completed_candidate_count}")
+        print("  candidates:")
+        count = 0
+        for candidate in project_client.agents.list_optimization_candidates(
+            job_id=job_id,
+            expand=[AgentOptimizationCandidateExpand.MUTATIONS],
+            limit=10,
+        ):
+            print(f"    {candidate.candidate_id} | name={candidate.name} | status={candidate.status}")
+            count += 1
+        print(f"  ({count} candidates listed)")
         if job.warnings:
             for w in job.warnings:
                 print(f"  [WARNING] {w}")
@@ -94,5 +112,5 @@ with (
         # 5. Delete the job.
         # ------------------------------------------------------------------
         print(f"\nDeleting job {job_id}...")
-        project_client.beta.agents.delete_optimization_job(job_id=job_id)
+        project_client.agents.delete_optimization_job(job_id=job_id)
         print("  Deleted.")
