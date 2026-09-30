@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# cspell:ignore apng, retriable
+# cspell:ignore apng, retriable, RDONLY, osfhandle
 
 import copy
 import logging
