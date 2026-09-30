@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ServiceGatewayFullUpdateAddressLocationsRequest.json
+# x-ms-original-file: 2026-01-01/ServiceGatewayFullUpdateAddressLocationsRequest.json
 if __name__ == "__main__":
     main()

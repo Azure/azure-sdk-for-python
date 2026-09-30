@@ -46,7 +46,6 @@ class TestContainerServiceAIManagerMgmtAIModelsOperationsAsync(AzureMgmtRecorded
         response = await self.client.ai_models.calculate_cost(
             location="str",
             ai_model_name="str",
-            body={},
         )
 
         # please add some check logic here by yourself

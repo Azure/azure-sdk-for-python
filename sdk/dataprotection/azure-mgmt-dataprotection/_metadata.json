@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-03-01",
+  "apiVersion": "2026-06-01",
   "apiVersions": {
-    "Microsoft.DataProtection": "2026-03-01"
+    "Microsoft.DataProtection": "2026-06-01"
   },
-  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
+  "commit": "4f774bdae44fac19491a1caa4ec91760d9bf9b1b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/dataprotection/resource-manager/Microsoft.DataProtection/DataProtection",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

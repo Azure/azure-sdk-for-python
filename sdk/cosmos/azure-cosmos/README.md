@@ -81,6 +81,30 @@ KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
 
+### Compact UTF-8 item writes
+
+By default, the client escapes non-ASCII characters in JSON item bodies, so each such character is sent as a
+`\uXXXX` escape sequence. A CJK character that occupies 3 bytes as UTF-8 therefore occupies 6 bytes on the wire, and
+a 4-byte emoji occupies 12. For Unicode-heavy items this expansion increases the size of the request sent over the
+network and can push a request past the 2 MiB request size limit. Applications writing such items can opt in to
+compact UTF-8 serialization when creating the client:
+
+```python
+client = CosmosClient(
+    URL,
+    credential=KEY,
+    enable_compact_utf8_item_writes=True,
+)
+```
+
+The option is disabled by default and applies to create, upsert, replace, patch, and transactional batch item
+bodies. Queries, control-plane requests, and responses are unchanged. Semantic request headers - including the
+partition-key header - are also unchanged; body-derived headers such as `Content-Length` necessarily reflect the
+compact byte count and are recalculated accordingly. Both representations describe the
+same JSON document, so the values stored in the service and returned on reads are identical - only the encoding of
+the outgoing request body differs. See the [synchronous][sample_compact_utf8_item_writes] and
+[asynchronous][sample_compact_utf8_item_writes_async] samples for complete examples.
+
 ### AAD Authentication
 
 You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
@@ -1268,6 +1292,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_database]: https://aka.ms/azsdk-python-cosmos-ref-database
 [ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
+[sample_compact_utf8_item_writes]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes.py
+[sample_compact_utf8_item_writes_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes_async.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
 [sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py

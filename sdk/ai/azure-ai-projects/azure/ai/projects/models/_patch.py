@@ -57,6 +57,10 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.GITHUB_COPILOT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.SKILLS_V1_PREVIEW.value,
         _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
         _FoundryFeaturesOptInKeys.MODEL_ROUTER_CONTROLS_V1_PREVIEW.value,
     ]
@@ -73,6 +77,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "routines": _FoundryFeaturesOptInKeys.ROUTINES_V2_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
+    "voice_agents": _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
@@ -634,6 +639,15 @@ class AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
         super().__init__(client, initial_response, deserialization_callback, polling_method)
 
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
     @property
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the Agent Insights run operation.
@@ -671,6 +685,15 @@ class AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         super().__init__(client, initial_response, deserialization_callback, polling_method)
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
 
     @property
     def details(self) -> Mapping[str, Any]:

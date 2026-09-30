@@ -79,9 +79,9 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=[
-        "azure-core<2.0.0,>=1.28.0",
+        "azure-core<2.0.0,>=1.38.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
         "azure-monitor-opentelemetry-exporter~=1.0.0b57",
         "opentelemetry-sdk~=1.44.0",

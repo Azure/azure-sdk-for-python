@@ -16,6 +16,16 @@
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
 
+## 12.30.3 (2026-09-22)
+
+### Bugs Fixed
+- Async clients now reject header names and values containing a `\r` or `\n` when sending a batch request, matching the behavior of the sync clients.
+
+## 12.30.2 (2026-09-16)
+
+### Bugs Fixed
+- Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
+
 ## 12.30.1 (2026-08-27)
 
 ### Bugs Fixed

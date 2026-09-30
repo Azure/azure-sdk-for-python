@@ -30,7 +30,9 @@ from ._tracing import (
     detach_context,
     end_span,
     flush_spans,
+    flush_spans_async,
     record_error,
+    schedule_flush_spans,
     set_current_span,
     trace_stream,
 )
@@ -52,6 +54,8 @@ __all__ = [
     "end_span",
     "experimental",
     "flush_spans",
+    "flush_spans_async",
+    "schedule_flush_spans",
     "get_request_context",
     "record_error",
     "read_request_id",

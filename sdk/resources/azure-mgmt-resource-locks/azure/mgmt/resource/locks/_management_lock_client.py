@@ -44,7 +44,7 @@ class ManagementLockClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2016-09-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2020-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
