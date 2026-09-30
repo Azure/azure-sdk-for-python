@@ -10,8 +10,7 @@ from time import sleep
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
 import pandas as pd
-from openai import APIConnectionError, APIStatusError, APITimeoutError, AzureOpenAI, OpenAI
-from openai._models import FinalRequestOptions
+from openai import AzureOpenAI, OpenAI
 
 # import aoai_mapping
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -23,9 +22,6 @@ from ._batch_run import CodeClient, ProxyClient
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
-_DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
-_MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
-_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS = 3
 
 # Precompiled regex for extracting data paths from mapping expressions of the form
 # ${data.some.dotted.path}. Compiled once at import time to avoid repeated
@@ -183,11 +179,12 @@ def _begin_single_aoai_evaluation(
     data_source_config: Dict[str, Any] = {}
 
     if kwargs.get("data_source_config") is not None:
-        data_source_config = kwargs.get("data_source_config", {})
+        data_source_config = deepcopy(kwargs.get("data_source_config", {}))
 
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source", {})
 
+    explicit_item_schema = data_source_config.get("item_schema")
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
     client = list(graders.values())[0].get_client()
@@ -206,6 +203,10 @@ def _begin_single_aoai_evaluation(
 
     # Combine with the item schema with generated data outside Eval SDK
     _combine_item_schemas(data_source_config, kwargs)
+    if explicit_item_schema is not None:
+        explicit_item_schema = data_source_config.get("item_schema")
+    elif isinstance(kwargs.get("item_schema"), dict):
+        explicit_item_schema = deepcopy(kwargs["item_schema"])
 
     eval_group_info = client.evals.create(
         data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
@@ -228,7 +229,15 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
+    eval_run_id = _begin_eval_run(
+        client,
+        eval_group_info.id,
+        run_name,
+        data,
+        effective_column_mapping,
+        data_source,
+        item_schema=explicit_item_schema,
+    )
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -248,24 +257,36 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
         not kwargs
         or not kwargs.get("item_schema")
         or not isinstance(kwargs["item_schema"], dict)
-        or "properties" not in kwargs["item_schema"]
+        or (
+            "properties" not in kwargs["item_schema"]
+            and not isinstance(kwargs["item_schema"].get("additionalProperties"), dict)
+        )
     ):
         return
 
     if "item_schema" in data_source_config:
-        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
-        for key in kwargs["item_schema"]["properties"]:
-            if key not in data_source_config["item_schema"]["properties"]:
-                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
+        explicit_schema = deepcopy(kwargs["item_schema"])
+        explicit_properties = explicit_schema.get("properties", {})
+        combined = deepcopy(data_source_config["item_schema"])
+        properties = combined.setdefault("properties", {})
+        inherited_required = combined.get("required", [])
+        if explicit_schema.get("additionalProperties", True) is not True:
+            # Inferred properties would bypass an explicit restriction on additional properties.
+            properties = {}
+            inherited_required = []
+        properties.update(explicit_properties)
+        # Explicit subtrees are authoritative, including optional properties and constraints.
+        required = [name for name in inherited_required if name not in explicit_properties]
+        for name in explicit_schema.get("required", []):
+            if name not in required:
+                required.append(name)
+        combined.update(explicit_schema)
+        combined["properties"] = properties
+        combined["required"] = required
+        data_source_config["item_schema"] = combined
 
-                if key in item_schema:
-                    data_source_config["item_schema"]["required"].append(key)
 
-
-def _get_evaluation_run_results(
-    all_run_info: List[OAIEvalRunCreationInfo],
-    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
-) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume. This method accepts a list of eval run information, and will combine the
@@ -274,8 +295,6 @@ def _get_evaluation_run_results(
     :param all_run_info: A list of evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type all_run_info: List[OAIEvalRunCreationInfo]
-    :param aoai_output_items_page_size: The maximum number of output items to request per page.
-    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -287,7 +306,7 @@ def _get_evaluation_run_results(
     output_df = pd.DataFrame()
     for idx, run_info in enumerate(all_run_info):
         LOGGER.info(f"AOAI: Fetching results for run {idx + 1}/{len(all_run_info)} (ID: {run_info['eval_run_id']})...")
-        cur_output_df, cur_run_metrics = _get_single_run_results(run_info, aoai_output_items_page_size)
+        cur_output_df, cur_run_metrics = _get_single_run_results(run_info)
         output_df = pd.concat([output_df, cur_output_df], axis=1)
         run_metrics.update(cur_run_metrics)
 
@@ -295,67 +314,8 @@ def _get_evaluation_run_results(
     return output_df, run_metrics
 
 
-def _list_output_items_page(
-    client: Union[AzureOpenAI, OpenAI],
-    list_kwargs: Dict[str, Any],
-    page_size: int,
-) -> Tuple[Any, int]:
-    """Fetch one output-items page with the OpenAI client's retry policy and a three-attempt budget.
-
-    :param client: A scoped OpenAI client with automatic retries disabled.
-    :type client: Union[AzureOpenAI, OpenAI]
-    :param list_kwargs: Arguments identifying the evaluation run and current cursor.
-    :type list_kwargs: Dict[str, Any]
-    :param page_size: The number of output items to request.
-    :type page_size: int
-    :return: The fetched page and the page size to retain for subsequent pages.
-    :rtype: Tuple[Any, int]
-    """
-    retry_options = FinalRequestOptions(
-        method="get",
-        url="/evals/runs/output_items",
-        max_retries=_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1,
-    )
-
-    for attempt in range(_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS):
-        try:
-            return client.evals.runs.output_items.list(**list_kwargs, limit=page_size), page_size
-        except (APIConnectionError, APIStatusError) as error:
-            should_reduce_page_size = isinstance(error, APITimeoutError)
-            should_retry = isinstance(error, APIConnectionError)
-            response_headers = None
-
-            if isinstance(error, APIStatusError):
-                should_retry = client._should_retry(error.response)  # pylint: disable=protected-access
-                should_reduce_page_size = should_retry and error.status_code in (408, 504)
-                response_headers = error.response.headers
-
-            if not should_retry or attempt == _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1:
-                raise
-
-            if should_reduce_page_size:
-                page_size = max(1, (page_size + 1) // 2)
-
-            remaining_retries = _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - attempt - 1
-            delay = client._calculate_retry_timeout(  # pylint: disable=protected-access
-                remaining_retries,
-                retry_options,
-                response_headers,
-            )
-            LOGGER.warning(
-                "AOAI output-items request failed for cursor %s. Retrying with page size %d in %.2f seconds.",
-                list_kwargs.get("after"),
-                page_size,
-                delay,
-            )
-            sleep(delay)
-
-    raise RuntimeError("AOAI output-items retry loop exited unexpectedly.")
-
-
 def _get_single_run_results(
     run_info: OAIEvalRunCreationInfo,
-    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
 ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
@@ -364,8 +324,6 @@ def _get_single_run_results(
     :param run_info: The evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type run_info: OAIEvalRunCreationInfo
-    :param aoai_output_items_page_size: The maximum number of output items to request per page.
-    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -419,18 +377,14 @@ def _get_single_run_results(
     LOGGER.info(f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination...")
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
-    page_size = aoai_output_items_page_size
-    output_items_client = run_info["client"].with_options(max_retries=0)
+    limit = 100  # Max allowed by API
 
     while True:
-        list_kwargs = {
-            "eval_id": run_info["eval_group_id"],
-            "run_id": run_info["eval_run_id"],
-        }
+        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results, page_size = _list_output_items_page(output_items_client, list_kwargs, page_size)
+        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
 
         # Add current page results
         all_results.extend(raw_list_results.data)
@@ -915,7 +869,11 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+def _get_data_source(
+    input_data_df: pd.DataFrame,
+    column_mapping: Dict[str, str],
+    item_schema: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Given a dataframe of data to be evaluated, and a column mapping,
     produce a dictionary that can be used as the data source input for an OAI evaluation run.
@@ -925,12 +883,32 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :type input_data_df: pd.DataFrame
     :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
     :type column_mapping: Optional[Dict[str, str]]
+    :param item_schema: Explicit item schema, excluding inferred defaults. Declared values are not coerced.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
 
-    def _convert_value(val: Any) -> Any:
+    explicit_properties = item_schema.get("properties", {}) if item_schema is not None else {}
+    explicit_additional_properties = (
+        isinstance(item_schema.get("additionalProperties"), dict) if item_schema is not None else False
+    )
+    missing = object()
+
+    def _has_explicit_schema(key: str) -> bool:
+        return key in explicit_properties or explicit_additional_properties
+
+    def _convert_value(val: Any, explicit: bool = False) -> Any:
         """Convert to AOAI-friendly representation while preserving structure when useful."""
+        if explicit:
+            # Unbox pandas/numpy scalars without converting between JSON types.
+            if pd.api.types.is_bool(val):
+                return bool(val)
+            if pd.api.types.is_integer(val):
+                return int(val)
+            if pd.api.types.is_float(val):
+                return float(val)
+            return deepcopy(val)
         if val is None:
             return ""
         if isinstance(val, str):
@@ -953,6 +931,21 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             cursor = cursor.get(segment)
             if cursor is None:
                 return None
+        return cursor
+
+    def _get_explicit_value(row: Dict[str, Any], normalized_row: Dict[str, Any], path: str) -> Any:
+        parts = path.split(".")
+        # Original containers retain nulls, missing keys and integer types lost by flattening.
+        if parts[0] in row:
+            cursor: Any = row
+        elif path in row:
+            return row[path]
+        else:
+            cursor = normalized_row
+        for part in parts:
+            if not isinstance(cursor, dict) or part not in cursor:
+                return missing
+            cursor = cursor[part]
         return cursor
 
     LOGGER.info(
@@ -1023,10 +1016,39 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     LOGGER.info(f"AOAI: Processed {len(path_specs)} path specifications from column mappings.")
     content: List[Dict[str, Any]] = []
+    explicit_source_columns = {
+        spec["dataframe_col"]
+        for spec in path_specs
+        if _has_explicit_schema(spec["relative_parts"][0]) and not spec["is_run_output"]
+    }
 
-    for _, row in input_data_df.iterrows():
-        normalized_row = _normalize_row_for_item_wrapper(row.to_dict())
+    def _is_flattened_field(key: str, source: Dict[str, Any]) -> bool:
+        root_key = key.split(".", 1)[0]
+        return (
+            key not in explicit_properties
+            and root_key != key
+            and (key in explicit_source_columns or (root_key in source and _has_explicit_schema(root_key)))
+        )
+
+    # iterrows can promote integer columns to floats when another column contains floats.
+    rows = (
+        (dict(zip(input_data_df.columns, values)) for values in input_data_df.itertuples(index=False, name=None))
+        if explicit_properties or explicit_additional_properties
+        else (row.to_dict() for _, row in input_data_df.iterrows())
+    )
+    for row in rows:
+        normalized_row = _normalize_row_for_item_wrapper(row)
         item_root: Dict[str, Any] = {}
+        source_item = row.get(WRAPPER_KEY, row)
+        if isinstance(source_item, dict):
+            # Flattened mappings omit empty objects and can omit siblings of mapped leaves.
+            item_root.update(
+                {
+                    key: _convert_value(value, True)
+                    for key, value in source_item.items()
+                    if _has_explicit_schema(key) and not _is_flattened_field(key, source_item)
+                }
+            )
 
         # Track which top-level keys under the wrapper have been populated via mappings
         processed_root_keys: Set[str] = set()
@@ -1036,15 +1058,20 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             if not rel_parts:
                 continue
 
+            explicit = _has_explicit_schema(rel_parts[0])
             if spec["is_run_output"]:
-                val = row.get(spec["dataframe_col"], None)
+                val = row.get(spec["dataframe_col"], missing if explicit else None)
+            elif explicit:
+                val = _get_explicit_value(row, normalized_row, cast(str, spec["source_path"]))
             else:
                 source_path = cast(str, spec["source_path"])
                 val = _get_value_from_path(normalized_row, source_path)
                 if val is None:
                     val = row.get(spec["dataframe_col"], None)
 
-            norm_val = _convert_value(val)
+            if val is missing:
+                continue
+            norm_val = _convert_value(val, explicit)
 
             cursor = item_root
             for seg in rel_parts[:-1]:
@@ -1066,7 +1093,10 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
                     continue
                 if key in item_root:
                     continue
-                item_root[key] = _convert_value(raw_val)
+                if _is_flattened_field(key, wrapper_view):
+                    # Do not duplicate flattened leaves alongside their explicitly declared object.
+                    continue
+                item_root[key] = _convert_value(raw_val, _has_explicit_schema(key))
 
         content_row: Dict[str, Any] = {}
 
@@ -1090,6 +1120,7 @@ def _begin_eval_run(
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
     data_source_params: Optional[Dict[str, Any]] = None,
+    item_schema: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -1105,12 +1136,14 @@ def _begin_eval_run(
     :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
         helper function.
     :type input_data_df: pd.DataFrame
+    :param item_schema: Explicit item schema used to preserve declared data types during serialization.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: The ID of the evaluation run.
     :rtype: str
     """
 
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
-    data_source = _get_data_source(input_data_df, column_mapping)
+    data_source = _get_data_source(input_data_df, column_mapping, item_schema=item_schema)
     if data_source_params is not None:
         data_source.update(data_source_params)
 

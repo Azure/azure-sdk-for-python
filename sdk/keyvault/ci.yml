@@ -34,7 +34,7 @@ extends:
     TestProxy: true
     Artifacts:
     - name: azure-keyvault-administration
-      safename: azurekeyvaultadministration
+      safeName: azurekeyvaultadministration
     - name: azure-keyvault-certificates
       safeName: azurekeyvaultcertificates
     - name: azure-keyvault-keys
