@@ -7,16 +7,23 @@
 """Internal module for native transfer acceleration dispatch.
 
 This module provides the bridge between azure-storage-blob's Python upload/download
-paths and the optional azure-storage-extensions-transfer Rust extension. When the
-extension is installed and conditions are met, transfers are dispatched to the Rust
-backend for improved performance.
+paths and the optional azure-storage-extensions-transfer Rust extension. Uploads use
+the Rust backend whenever the extension is available and raise for unsupported native
+inputs rather than silently falling back to Python.
 """
 
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TYPE_CHECKING
-
+from datetime import timezone
 import logging
 import os
 import threading
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TYPE_CHECKING
+
+from azure.core.credentials import AzureSasCredential
+from ._models import BlobType
+from ._serialize import (
+    get_blob_modify_conditions,
+    get_lease_id,
+)
 
 if TYPE_CHECKING:
     from ._shared.models import StorageConfiguration
@@ -33,7 +40,12 @@ _DISABLE_NATIVE_ENV_VAR = "AZURE_STORAGE_DISABLE_NATIVE_TRANSFER"
 
 def _native_disabled() -> bool:
     """Return True if the native transfer path has been explicitly disabled via env var."""
-    return os.environ.get(_DISABLE_NATIVE_ENV_VAR, "").strip().lower() in ("1", "true", "yes", "on")
+    return os.environ.get(_DISABLE_NATIVE_ENV_VAR, "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
 
 
 def _is_native_available() -> bool:
@@ -41,14 +53,18 @@ def _is_native_available() -> bool:
     if _native_disabled():
         return False
     try:
-        from azure.storage.extensions.transfer import is_available  # pylint: disable=import-outside-toplevel
+        from azure.storage.extensions.transfer import (
+            is_available,
+        )  # pylint: disable=import-outside-toplevel
 
         return is_available()
     except ImportError:
         return False
 
 
-def _build_token_provider(credential: Any) -> Optional[Callable[[Any], Tuple[str, int]]]:
+def _build_token_provider(
+    credential: Any,
+) -> Optional[Callable[[Any], Tuple[str, int]]]:
     """Build a token-provider callable for the native extension.
 
     The native extension refreshes tokens on demand by calling back into Python
@@ -82,6 +98,14 @@ def _build_token_provider(credential: Any) -> Optional[Callable[[Any], Tuple[str
     return provider
 
 
+def _to_unix_timestamp(value: Any) -> Optional[int]:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return int(value.timestamp())
+
+
 def _can_use_native_upload(
     blob_type: str,
     encryption_options: Dict[str, Any],
@@ -90,77 +114,45 @@ def _can_use_native_upload(
     credential: Any,
     **kwargs: Any,
 ) -> bool:
-    """Determine if native upload acceleration can be used for this call."""
+    """Validate native upload support.
+
+    Returns ``False`` only when the native extension is unavailable or explicitly disabled.
+    If the extension is available, unsupported upload options raise :class:`ValueError`
+    with a reason-specific message instead of silently falling back to the Python upload path.
+    """
     if not _is_native_available():
         return False
 
-    # Only block blob supported
-    from ._models import BlobType  # pylint: disable=import-outside-toplevel
-
     if blob_type not in (BlobType.BLOCKBLOB, BlobType.BlockBlob, "BlockBlob"):
-        return False
+        raise ValueError(
+            f"Native upload supports only block blobs; received blob type {blob_type!r}."
+        )
 
-    # No encryption support
     if encryption_options.get("key") or encryption_options.get("required"):
-        return False
+        raise ValueError("Native upload does not support client-side encryption.")
 
-    # No content validation support
     if validate_content not in (None, False):
-        return False
+        raise ValueError(
+            "Native upload does not support transactional content validation."
+        )
 
-    # No progress hook support (yet)
     if kwargs.get("progress_hook"):
-        return False
+        raise ValueError("Native upload does not support progress hooks.")
 
-    # No CPK support
-    if kwargs.get("cpk"):
-        return False
-
-    # Credential must be TokenCredential or SAS (not shared key)
     if credential is not None and not hasattr(credential, "get_token"):
-        # Check if it's a SAS credential or string — those work via URL
-        from azure.core.credentials import AzureSasCredential  # pylint: disable=import-outside-toplevel
-
         if not isinstance(credential, (str, AzureSasCredential)):
-            return False
+            raise ValueError(
+                "Native upload requires a token credential or SAS credential; "
+                f"received {type(credential).__name__}."
+            )
 
-    # No conditional access support
-    if any(kwargs.get(k) for k in (
-        "if_modified_since", "if_unmodified_since", "etag", "if_tags_match_condition",
-    )):
-        return False
-
-    # No lease support
-    if kwargs.get("lease"):
-        return False
-
-    # No tags support
-    if kwargs.get("tags"):
-        return False
-
-    # No immutability policy support
-    if kwargs.get("immutability_policy") or kwargs.get("legal_hold"):
-        return False
-
-    # No tier support
-    if kwargs.get("standard_blob_tier") or kwargs.get("premium_page_blob_tier"):
-        return False
-
-    # Native acceleration only handles immutable data that is already fully in memory
-    # (bytes, or str which encodes to bytes). The Rust upload reads the Python allocation
-    # without the GIL, so mutable buffers must use the Python upload path.
-    # File-like streams are intentionally NOT eligible: reading them would
-    # materialize the entire payload in memory, which is unsafe for large blobs.
-    # The Python upload path streams such inputs in fixed-size chunks, so we
-    # fall back to it for anything that isn't already resident in memory.
     if isinstance(data, (bytes, str)):
         return True
 
-    _LOGGER.debug(
-        "Native upload not eligible for %s input (streams use the Python upload path).",
-        type(data).__name__,
+    raise ValueError(
+        "Native upload requires immutable bytes or str data that is already fully in memory; "
+        f"received {type(data).__name__}."
     )
-    return False
 
 
 def _can_use_native_download(
@@ -195,15 +187,19 @@ def _can_use_native_download(
 
     # Credential must be TokenCredential or SAS
     if credential is not None and not hasattr(credential, "get_token"):
-        from azure.core.credentials import AzureSasCredential  # pylint: disable=import-outside-toplevel
-
         if not isinstance(credential, (str, AzureSasCredential)):
             return False
 
     # No conditional access support
-    if any(kwargs.get(k) for k in (
-        "if_modified_since", "if_unmodified_since", "etag", "if_tags_match_condition",
-    )):
+    if any(
+        kwargs.get(k)
+        for k in (
+            "if_modified_since",
+            "if_unmodified_since",
+            "etag",
+            "if_tags_match_condition",
+        )
+    ):
         return False
 
     # No lease support
@@ -226,10 +222,11 @@ def try_native_upload(
     config: "StorageConfiguration",
     **kwargs: Any,
 ) -> Optional[Dict[str, Any]]:
-    """Attempt to perform upload via the native Rust extension.
+    """Upload through the native Rust extension when it is available.
 
-    Returns the upload result dict if native upload was used successfully,
-    or None if conditions aren't met or native upload fails.
+    Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
+    extension is available, unsupported inputs and native execution failures are raised rather
+    than falling back to the Python upload path.
     """
     if not _can_use_native_upload(
         blob_type=blob_type,
@@ -239,57 +236,97 @@ def try_native_upload(
         credential=blob_client.credential,
         **kwargs,
     ):
-        _LOGGER.debug("Native upload not eligible; using Python upload path.")
+        _LOGGER.debug("Native upload extension unavailable; using Python upload path.")
         return None
 
-    try:
-        from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
-            upload_blob as native_upload,
+    from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
+        upload_blob as native_upload,
+    )
+
+    if isinstance(data, str):
+        encoding = kwargs.get("encoding", "UTF-8")
+        upload_data = data.encode(encoding)
+    elif isinstance(data, bytes):
+        upload_data = data
+    else:
+        raise ValueError(
+            "Native upload requires immutable bytes or str data that is already fully in memory; "
+            f"received {type(data).__name__}."
         )
 
-        # Prepare immutable bytes whose allocation can be read by Rust without copying or
-        # holding the GIL. Only str needs encoding.
-        # File-like streams are rejected by _can_use_native_upload (they use the Python
-        # path to avoid materializing large payloads in memory), so we don't handle them
-        # here.
-        if isinstance(data, str):
-            encoding = kwargs.get("encoding", "UTF-8")
-            upload_data = data.encode(encoding)
-        elif isinstance(data, bytes):
-            upload_data = data
-        else:
-            _LOGGER.debug("Native upload data type unsupported; using Python upload path.")
-            return None
+    token_provider = _build_token_provider(blob_client.credential)
 
-        token_provider = _build_token_provider(blob_client.credential)
+    overwrite = kwargs.get("overwrite", False)
+    content_settings = kwargs.get("content_settings", None)
+    content_type = getattr(content_settings, "content_type", None)
+    content_encoding = getattr(content_settings, "content_encoding", None)
+    content_language = getattr(content_settings, "content_language", None)
+    content_disposition = getattr(content_settings, "content_disposition", None)
+    cache_control = getattr(content_settings, "cache_control", None)
+    content_md5 = getattr(content_settings, "content_md5", None)
+    if content_md5 is not None:
+        content_md5 = bytes(content_md5)
 
-        overwrite = kwargs.get("overwrite", False)
-        content_settings = kwargs.get("content_settings", None)
-        content_type = None
-        if content_settings and hasattr(content_settings, "content_type"):
-            content_type = content_settings.content_type
+    metadata = kwargs.get("metadata", None)
+    max_concurrency = kwargs.get("max_concurrency", None)
+    cpk = kwargs.get("cpk", None)
+    lease = get_lease_id(kwargs.get("lease", None))
+    tags = kwargs.get("tags", None)
 
-        metadata = kwargs.get("metadata", None)
-        max_concurrency = kwargs.get("max_concurrency", None)
+    conditions = get_blob_modify_conditions(dict(kwargs))
+    if_tags = kwargs.get("if_tags_match_condition", None)
 
-        result = native_upload(
-            url=blob_client.url,
-            data=upload_data,
-            token_provider=token_provider,
-            credential_id=id(blob_client.credential) if token_provider else None,
-            overwrite=overwrite,
-            content_type=content_type,
-            metadata=metadata,
-            max_concurrency=max_concurrency,
-            max_block_size=config.max_block_size,
+    immutability_policy = kwargs.get("immutability_policy", None)
+    immutability_policy_expiry = None
+    immutability_policy_mode = None
+    if immutability_policy:
+        immutability_policy_expiry = _to_unix_timestamp(
+            immutability_policy.expiry_time
         )
-        _LOGGER.info("Used native Rust extension for blob upload.")
-        return result
+        immutability_policy_mode = immutability_policy.policy_mode
+        if hasattr(immutability_policy_mode, "value"):
+            immutability_policy_mode = immutability_policy_mode.value
 
-    except Exception:  # pylint: disable=broad-except
-        # If native upload fails for any reason, fall back to Python path
-        _LOGGER.warning("Native upload failed; falling back to Python upload path.", exc_info=True)
-        return None
+    tier = kwargs.get("standard_blob_tier", None)
+    if hasattr(tier, "value"):
+        tier = tier.value
+
+    result = native_upload(
+        url=blob_client.url,
+        data=upload_data,
+        token_provider=token_provider,
+        credential_id=id(blob_client.credential) if token_provider else None,
+        overwrite=overwrite,
+        content_type=content_type,
+        content_encoding=content_encoding,
+        content_language=content_language,
+        content_disposition=content_disposition,
+        cache_control=cache_control,
+        content_md5=content_md5,
+        metadata=metadata,
+        tags=tags,
+        lease_id=lease,
+        encryption_key=getattr(cpk, "key_value", None),
+        encryption_key_sha256=getattr(cpk, "key_hash", None),
+        encryption_algorithm=getattr(cpk, "algorithm", None),
+        encryption_scope=kwargs.get("encryption_scope", None),
+        if_match=conditions.get("if_match"),
+        if_none_match=conditions.get("if_none_match"),
+        if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
+        if_unmodified_since=_to_unix_timestamp(
+            conditions.get("if_unmodified_since")
+        ),
+        if_tags=if_tags,
+        immutability_policy_expiry=immutability_policy_expiry,
+        immutability_policy_mode=immutability_policy_mode,
+        legal_hold=kwargs.get("legal_hold", None),
+        tier=tier,
+        timeout=kwargs.get("timeout", None),
+        max_concurrency=max_concurrency,
+        max_block_size=config.max_block_size,
+    )
+    _LOGGER.info("Used native Rust extension for blob upload.")
+    return result
 
 
 class NativeStorageStreamDownloader:
@@ -431,5 +468,8 @@ def try_native_download_eager(
         )
 
     except Exception:  # pylint: disable=broad-except
-        _LOGGER.warning("Native download failed; falling back to Python download path.", exc_info=True)
+        _LOGGER.warning(
+            "Native download failed; falling back to Python download path.",
+            exc_info=True,
+        )
         return None
