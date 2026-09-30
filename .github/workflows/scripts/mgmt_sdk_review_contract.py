@@ -28,6 +28,7 @@ from mgmt_sdk_review_evidence import (
 
 MARKER = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
 SUBMISSION = "Structured management SDK review."
+INCOMPLETE = "Management SDK review incomplete: "
 SEVERITIES = ("Blocking", "Warning", "Suggestion")
 MAX_BYTES = 2 * 1024 * 1024
 
@@ -410,7 +411,7 @@ def validate_review(data, context):
             "not_applicable requires complete trusted discovery with no management packages",
         )
         return
-    require(packages, "data.packages", "no package checks completed; report_incomplete instead")
+    require(packages, "data.packages", "no package checks completed; use the incomplete operation instead")
     breaking_by_package = unique_index(context["breakingChangeContext"], "packagePath", "context.breakingChangeContext")
     completed = 0
     for package, review in packages.items():
@@ -855,6 +856,38 @@ def schema_errors(data, schema=DRAFT_SCHEMA, path="data"):
     return errors
 
 
+def draft_template(context):
+    """Supply structure and trusted identities, never prepopulate review conclusions."""
+    return {
+        "schema_version": "2",
+        "outcome": "reviewed" if context["affectedPackages"] else "not_applicable",
+        "packages": [
+            {
+                "package": item["packagePath"],
+                "checks": {name: {"outcome": "unverified", "reason": "", "sources": []} for name in SEMANTIC_CHECKS},
+                "findings": [],
+                "attribution": [
+                    {
+                        "entry_id": entry_id(entry),
+                        "cause": "human_review",
+                        "explanation": "",
+                        "sources": [],
+                        "sdk_context": [],
+                    }
+                    for entry in item["introducedEntries"]
+                ],
+            }
+            for item in context["breakingChangeContext"]
+        ],
+    }
+
+
+def incomplete_submission(message):
+    validate_schema(message, TEXT, "incomplete.reason")
+    reason(message, "incomplete.reason")
+    return {"message": INCOMPLETE + message}
+
+
 def expand_draft(data, context):
     """Convert the only public schema into renderer data using trusted facts."""
     validate_schema(data, DRAFT_SCHEMA)
@@ -1095,6 +1128,16 @@ def prepare_output(payload, context, resolver=None):
         "expected exactly one review",
     )
     item = items[0]
+    if item.get("type") == "noop":
+        require(set(item) == {"type", "message"}, "output.items[0]", "expected only incomplete diagnostic fields")
+        message = item["message"]
+        require(
+            isinstance(message, str) and message.startswith(INCOMPLETE),
+            "output.items[0].message",
+            "expected explicit incomplete review diagnostic, not a clean-review noop",
+        )
+        incomplete_submission(message[len(INCOMPLETE) :])
+        return {"items": [item], "errors": []}
     require(item.get("type") == "add_comment", "output.items[0].type", "expected add_comment")
     require(
         set(item) <= {"type", "body", "data", "temporary_id", "item_number"},
@@ -1168,6 +1211,30 @@ def main():
         temporary = output.with_suffix(".validated.json")
         temporary.write_text(json.dumps(prepared, ensure_ascii=False), encoding="utf-8")
         temporary.replace(output)
+        if prepared["items"][0]["type"] == "noop":
+            message = prepared["items"][0]["message"]
+            print(
+                json.dumps(
+                    {
+                        "automation": "incomplete",
+                        "publication": "skipped",
+                        "reason": message,
+                        "schemaVersion": "2",
+                        "toolingRevision": context["toolingRevision"],
+                    }
+                )
+            )
+            print(
+                "::warning::Management SDK review incomplete. No review was published or hidden; human review required."
+            )
+            if os.environ.get("GITHUB_STEP_SUMMARY"):
+                with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
+                    summary.write(
+                        "## Management SDK review incomplete\n\n"
+                        "**No review published or hidden. Human review required; this is not a clean review.**\n\n"
+                        f"<pre>{html.escape(message)}</pre>\n"
+                    )
+            return
         print(
             json.dumps(
                 {

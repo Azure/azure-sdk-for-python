@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only host service: bounded immutable evidence and three semantic attempts.
+"""Read-only host service: bounded evidence, format checks and semantic attempts.
 
 Only GET requests reach GitHub. No package content is executed. State lives in
 memory for this job; a restart loses corrections rather than authorizing output.
@@ -195,7 +195,9 @@ class ReviewService:
         self.context = copy.deepcopy(context)
         self.registry = EvidenceRegistry(self.context)
         self.attempts = 0
+        self.format_checks = 0
         self.accepted = False
+        self.incomplete = False
 
     def call(self, request):
         contract.require(isinstance(request, dict), "request", "Expected a JSON object.")
@@ -204,6 +206,7 @@ class ReviewService:
             contract.require(set(request) == {"operation"}, "request", "describe takes no other fields.")
             return {
                 "schema": contract.DRAFT_SCHEMA,
+                "draft": contract.draft_template(self.context),
                 "schemaVersion": "2",
                 "toolingRevision": self.context["toolingRevision"],
                 "packages": [
@@ -219,6 +222,21 @@ class ReviewService:
                 ],
                 "deterministicChecks": self.context["deterministicChecks"],
             }
+        if operation == "incomplete":
+            contract.require(set(request) == {"operation", "reason"}, "request", "incomplete requires only reason.")
+            contract.require(not self.accepted, "request", "A review was already accepted.", "correction_limit")
+            submission = contract.incomplete_submission(request["reason"])
+            self.incomplete = True
+            result = {
+                "ok": False,
+                "outcome": "incomplete",
+                "reason": request["reason"],
+                "attempt": self.attempts,
+                "schemaVersion": "2",
+                "toolingRevision": self.context["toolingRevision"],
+            }
+            print(json.dumps(result), file=sys.stderr, flush=True)
+            return {**result, "incompleteSubmission": submission}
         if operation == "read":
             contract.require(set(request) == {"operation", "source_id"}, "request", "read requires only source_id.")
             records = self.context["sources"] + list(self.registry.records.values())
@@ -234,7 +252,7 @@ class ReviewService:
                 "register requires package, repository, revision and path only.",
             )
             contract.require(
-                not self.accepted and self.attempts < 3,
+                not self.accepted and not self.incomplete and self.attempts < 3,
                 "request",
                 "Review is already accepted or exhausted.",
                 "correction_limit",
@@ -242,16 +260,37 @@ class ReviewService:
             record = self.registry.register(*(request[key] for key in ("package", "repository", "revision", "path")))
             return self.display(record)
         contract.require(
-            operation == "preflight" and set(request) == {"operation", "draft"},
+            operation in {"check", "preflight"} and set(request) == {"operation", "draft"},
             "request.operation",
-            "Use describe, read, register or preflight.",
+            "Use describe, read, register, check, preflight or incomplete.",
         )
         contract.require(
-            not self.accepted and self.attempts < 3,
+            not self.accepted and not self.incomplete and self.attempts < 3,
             "request",
             "Initial attempt and two corrections are exhausted, or a review was already accepted. Report incomplete; do not submit again.",
             "correction_limit",
         )
+        contract.require(
+            self.format_checks < 10,
+            "request",
+            "Ten format checks are exhausted. Use incomplete; do not submit a review.",
+            "format_check_limit",
+        )
+        self.format_checks += 1
+        errors = contract.schema_errors(request["draft"])
+        if operation == "check" or errors:
+            result = {
+                "ok": not errors,
+                "phase": "format",
+                "errors": errors,
+                "attempt": self.attempts,
+                "correctionsRemaining": 3 - self.attempts,
+                "formatChecksRemaining": 10 - self.format_checks,
+                "schemaVersion": "2",
+                "toolingRevision": self.context["toolingRevision"],
+            }
+            print(json.dumps(result), file=sys.stderr, flush=True)
+            return result
         self.attempts += 1
         context = copy.deepcopy(self.context)
         context["sources"].extend(self.registry.records.values())

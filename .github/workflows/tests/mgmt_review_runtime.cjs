@@ -66,7 +66,8 @@ async function main() {
   process.env.GH_AW_WORKFLOW_ID = "mgmt-sdk-pr-review";
   process.env.GH_AW_WORKFLOW_NAME = "Management SDK PR Review";
   process.env.GH_AW_PROMPTS_DIR = path.join(root, "..", "md");
-  const { main: createHandler } = require(path.join(root, "add_comment.cjs"));
+  const handlerFile = request.payload.items[0]?.type === "noop" ? "noop_handler.cjs" : "add_comment.cjs";
+  const { main: createHandler } = require(path.join(root, handlerFile));
   const handler = await createHandler(request.handlerConfig || { target: "49107", max: 1, hide_older_comments: true, footer: false, discussions: false });
   const result = request.payload.items.length ? await handler(request.payload.items[0]) : null;
   return { result, comment, writes, hides };
