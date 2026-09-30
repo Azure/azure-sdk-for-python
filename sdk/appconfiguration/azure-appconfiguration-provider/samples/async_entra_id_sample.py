@@ -5,11 +5,13 @@
 # -------------------------------------------------------------------------
 import os
 import asyncio
+from azure.identity.aio import DefaultAzureCredential
 from azure.appconfiguration.provider import SettingSelector
 
 
 async def main():
     endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
 
     # [START create_provider_entra_id_async]
     from azure.appconfiguration.provider.aio import load

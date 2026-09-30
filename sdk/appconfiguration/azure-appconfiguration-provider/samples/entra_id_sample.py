@@ -41,7 +41,6 @@ config = load(
     selects=selects,
     feature_flag_enabled=True,
     feature_flag_selectors=None,
-    **kwargs,
 )
 # [END setting_selector_entra_id]
 
@@ -88,7 +87,6 @@ config = load(
     credential=credential,
     feature_flag_enabled=True,
     feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
-    **kwargs,
 )
 feature_flags = config["feature_management"]["feature_flags"]
 alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
