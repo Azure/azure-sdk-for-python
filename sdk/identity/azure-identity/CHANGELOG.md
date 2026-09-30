@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - Fixed `AzureDeveloperCliCredential` to correctly parse error messages from Azure Developer CLI v1.23.7 and later, which previously caused raw JSON to surface in `ClientAuthenticationError` instead of the underlying error text.
+- Fixed an issue where `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential` could return a cached token for another account when multiple credentials shared a token cache. ([#49001](https://github.com/Azure/azure-sdk-for-python/pull/49001))
 
 ### Other Changes
 
