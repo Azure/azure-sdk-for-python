@@ -205,3 +205,11 @@ def test_decode_rejects_described_array_depth_bypass():
 
 def test_decode_accepts_described_array_at_limit():
     _decode(_nested_described_array(_MAX_NESTING_DEPTH // 2))
+
+
+def test_decode_list_large_threads_explicit_depth():
+    # depth is now a parameter rather than thread-local state: a decode already at the limit rejects.
+    empty = b"\x00\x00\x00\x04\x00\x00\x00\x00"
+    _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH - 1)
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH)

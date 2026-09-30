@@ -7,8 +7,6 @@ import struct
 import uuid
 import logging
 import decimal
-import functools
-import threading
 from typing import (
     Callable,
     List,
@@ -36,23 +34,6 @@ _HEADER_PREFIX = memoryview(b"AMQP")
 
 # Max nesting depth for compound types during decode; bounds recursion (matches .NET's 64).
 _MAX_NESTING_DEPTH = 64
-_nesting = threading.local()
-
-
-def _bounded(decoder):
-    # Bound the nesting depth of a recursive compound-type decoder.
-    @functools.wraps(decoder)
-    def wrapper(*args):
-        depth = getattr(_nesting, "depth", 0) + 1
-        if depth > _MAX_NESTING_DEPTH:
-            raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
-        _nesting.depth = depth
-        try:
-            return decoder(*args)
-        finally:
-            _nesting.depth = depth - 1
-
-    return wrapper
 
 
 # Maximum number of elements permitted in any AMQP compound type (list, array, map).
@@ -99,105 +80,105 @@ DECIMAL128_BIAS = 6176
 
 
 
-def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
+def _decode_null(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, None]:
     return buffer, None
 
 
-def _decode_true(buffer: memoryview) -> Tuple[memoryview, Literal[True]]:
+def _decode_true(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Literal[True]]:
     return buffer, True
 
 
-def _decode_false(buffer: memoryview) -> Tuple[memoryview, Literal[False]]:
+def _decode_false(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Literal[False]]:
     return buffer, False
 
 
-def _decode_zero(buffer: memoryview) -> Tuple[memoryview, Literal[0]]:
+def _decode_zero(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Literal[0]]:
     return buffer, 0
 
 
-def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_empty(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
     return buffer, []
 
 
-def _decode_boolean(buffer: memoryview) -> Tuple[memoryview, bool]:
+def _decode_boolean(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, bool]:
     return buffer[1:], buffer[:1] == b"\x01"
 
 
-def _decode_ubyte(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ubyte(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ushort(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ushort(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[2:], c_unsigned_short.unpack(buffer[:2])[0]
 
 
-def _decode_uint_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_uint_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_uint_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_uint_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[4:], c_unsigned_int.unpack(buffer[:4])[0]
 
 
-def _decode_ulong_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ulong_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ulong_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ulong_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_unsigned_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_byte(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_byte(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_short(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_short(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[2:], c_signed_short.unpack(buffer[:2])[0]
 
 
-def _decode_int_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_int_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_int_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_int_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[4:], c_signed_int.unpack(buffer[:4])[0]
 
 
-def _decode_long_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_long_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_long_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_long_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_float(buffer: memoryview) -> Tuple[memoryview, float]:
+def _decode_float(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, float]:
     return buffer[4:], c_float.unpack(buffer[:4])[0]
 
 
-def _decode_double(buffer: memoryview) -> Tuple[memoryview, float]:
+def _decode_double(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, float]:
     return buffer[8:], c_double.unpack(buffer[:8])[0]
 
 
-def _decode_timestamp(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_timestamp(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_uuid(buffer: memoryview) -> Tuple[memoryview, uuid.UUID]:
+def _decode_uuid(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, uuid.UUID]:
     return buffer[16:], uuid.UUID(bytes=buffer[:16].tobytes())
 
 
-def _decode_binary_small(buffer: memoryview) -> Tuple[memoryview, bytes]:
+def _decode_binary_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, bytes]:
     length_index = buffer[0] + 1
     return buffer[length_index:], buffer[1:length_index].tobytes()
 
 
-def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
+def _decode_binary_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 
-def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+def _decode_decimal128(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, decimal.Decimal]:
     """
     Decode a Decimal128 value from the buffer.
 
@@ -255,18 +236,22 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     with decimal.localcontext(decimal_ctx) as ctx:
         return buffer[16:], ctx.create_decimal((sign, digits, exponent))
 
-@_bounded
-def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_list_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = buffer[1]
     buffer = buffer[2:]
     values = [None] * count
     for i in range(count):
-        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
     return buffer, values
 
 
-@_bounded
-def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_list_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`,
     # which would otherwise scale linearly with an untrusted 32-bit value.
@@ -277,12 +262,14 @@ def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     buffer = buffer[8:]
     values = [None] * count
     for i in range(count):
-        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
     return buffer, values
 
 
-@_bounded
-def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
+def _decode_map_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Dict[Any, Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     raw_count = buffer[1]
     if raw_count % 2 != 0:
         raise ValueError(
@@ -292,14 +279,16 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     buffer = buffer[2:]
     values = {}
     for _ in range(count):
-        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
+        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
         values[key] = value
     return buffer, values
 
 
-@_bounded
-def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
+def _decode_map_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Dict[Any, Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     # Validate the raw on-wire count *before* halving it (the AMQP encoding
     # stores total entries; pairs = entries / 2). Checking pre-halve keeps
     # the comparison aligned with the bound used by _decode_list_large /
@@ -319,14 +308,16 @@ def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     buffer = buffer[8:]
     values = {}
     for _ in range(count):
-        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
+        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
         values[key] = value
     return buffer, values
 
 
-@_bounded
-def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_array_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
         values = [None] * count
@@ -334,21 +325,23 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
         if subconstructor == 0:
             composite_type = buffer[3]
-            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:])
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:], depth)
             subconstructor = buffer[0]
             buffer = buffer[1:]
             for i in range(count):
-                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor, depth)
         else:
             buffer = buffer[3:]
             for i in range(count):
-                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer, depth)
         return buffer, values
     return buffer[2:], []
 
 
-@_bounded
-def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_array_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`.
     # An Array32 frame's COUNT is read directly from the network and would
@@ -363,27 +356,29 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
         if subconstructor == 0:
             composite_type = buffer[9]
-            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:])
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:], depth)
             subconstructor = buffer[0]
             buffer = buffer[1:]
             for i in range(count):
-                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor, depth)
         else:
             buffer = buffer[9:]
             for i in range(count):
-                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer, depth)
         return buffer, values
     return buffer[8:], []
 
 
-@_bounded
-def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
+def _decode_described(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, object]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
-    buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
+    buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:], depth)
     tp = buffer[0]
-    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:], depth)
     try:
         value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
     except KeyError:
@@ -395,9 +390,11 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
         return buffer, value
 
 
-@_bounded
-def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
-    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
+def _decode_described_array(buffer: memoryview, tp: int, descriptor, depth: int = 0) -> Tuple[memoryview, Any]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer, depth)
     try:
         value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
     except KeyError:
