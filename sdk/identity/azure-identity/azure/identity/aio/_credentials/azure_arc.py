@@ -11,17 +11,23 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .._internal.managed_identity_base import AsyncManagedIdentityBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._constants import EnvironmentVariables
-from ..._credentials.azure_arc import _get_request, _get_secret_key
+from ..._credentials.azure_arc import _get_request, _get_secret_key, _validate_user_assigned_identity
 
 
 class AzureArcCredential(AsyncManagedIdentityBase):
     def get_client(self, **kwargs: Any) -> Optional[AsyncManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
+        identity_config = dict(kwargs.pop("identity_config", None) or {})
+        client_id = kwargs.pop("client_id", None)
+        if client_id:
+            identity_config["client_id"] = client_id
         if url and imds:
             return AsyncManagedIdentityClient(
                 per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
+                identity_config=identity_config,
+                _content_callback=functools.partial(_validate_user_assigned_identity, identity_config),
                 **kwargs,
             )
         return None
