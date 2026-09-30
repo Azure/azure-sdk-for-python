@@ -74,7 +74,7 @@ def main() -> None:
                 type="azure_ai_evaluator",
                 name="tool_input_accuracy",
                 evaluator_name="builtin.tool_input_accuracy",
-                initialization_parameters={"model": f"{model_deployment_name}"},
+                initialization_parameters={"deployment_name": model_deployment_name},
                 data_mapping={
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
@@ -96,7 +96,8 @@ def main() -> None:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
-        # Success example - accurate tool inputs (string query, complex response)
+        # Single-turn, structured JSON response input
+        # Success example - accurate tool inputs
         success_query = "Get the weather for Boston"
         success_response = [
             {
@@ -264,6 +265,10 @@ def main() -> None:
             }
         ]
 
+        # Single-turn, string response input describing the tool call
+        string_query = "Get the weather for Denver"
+        string_response = "Called get_weather with location='Denver' and received a sunny forecast."
+
         print("Creating Eval Run with Inline Data")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
@@ -298,6 +303,13 @@ def main() -> None:
                                 "tool_definitions": complex_tool_definitions,
                             }
                         ),
+                        SourceFileContentContent(
+                            item={
+                                "query": string_query,
+                                "response": string_response,
+                                "tool_definitions": success_tool_definitions,
+                            }
+                        ),
                     ],
                 ),
             ),
@@ -323,6 +335,80 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        # Single-turn, messages input
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Get the weather for Austin."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_austin_weather",
+                        "name": "get_weather",
+                        "arguments": {"location": "Austin"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_austin_weather",
+                "content": [{"type": "tool_result", "tool_result": {"weather": "Sunny, 22°C"}}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "It is sunny and 22°C in Austin."}]},
+        ]
+        messages_eval = client.evals.create(
+            name="Test Tool Input Accuracy Evaluator with messages",
+            data_source_config=DataSourceConfigCustom(
+                type="custom",
+                item_schema={
+                    "type": "object",
+                    "properties": {
+                        "messages": {"type": "array", "items": {"type": "object"}},
+                        "tool_definitions": {"type": "array", "items": {"type": "object"}},
+                    },
+                    "required": ["messages", "tool_definitions"],
+                },
+                include_sample_schema=False,
+            ),
+            testing_criteria=[
+                TestingCriterionAzureAIEvaluator(
+                    type="azure_ai_evaluator",
+                    name="tool_input_accuracy_messages",
+                    evaluator_name="builtin.tool_input_accuracy",
+                    initialization_parameters={"deployment_name": model_deployment_name},
+                    data_mapping={
+                        "messages": "{{item.messages}}",
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
+                )
+            ],  # type: ignore
+        )
+        try:
+            messages_run = client.evals.runs.create(
+                eval_id=messages_eval.id,
+                name="messages_inline_run",
+                extra_body={"evaluation_level": "turn"},
+                data_source=CreateEvalJSONLRunDataSourceParam(
+                    type="jsonl",
+                    source=SourceFileContent(
+                        type="file_content",
+                        content=[
+                            SourceFileContentContent(
+                                item={"messages": messages, "tool_definitions": success_tool_definitions}
+                            )
+                        ],
+                    ),
+                ),
+            )
+            while messages_run.status not in ("completed", "failed", "cancelled"):
+                time.sleep(5)
+                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
+            print(f"Messages eval run status: {messages_run.status}")
+            print(f"Messages eval run report: {messages_run.report_url}")
+            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
+        finally:
+            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":

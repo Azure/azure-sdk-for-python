@@ -59,7 +59,10 @@ def main() -> None:
             type="custom",
             item_schema={
                 "type": "object",
-                "properties": {"ground_truth": {"type": "string"}, "response": {"type": "string"}},
+                "properties": {
+                    "ground_truth": {"type": "string"},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                },
                 "required": ["ground_truth", "response"],
             },
             include_sample_schema=True,
@@ -70,7 +73,7 @@ def main() -> None:
                 type="azure_ai_evaluator",
                 name="response_completeness",
                 evaluator_name="builtin.response_completeness",
-                initialization_parameters={"model": f"{model_deployment_name}"},
+                initialization_parameters={"deployment_name": model_deployment_name},
                 data_mapping={"ground_truth": "{{item.ground_truth}}", "response": "{{item.response}}"},
             )
         ]
@@ -88,7 +91,7 @@ def main() -> None:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
-        # Complete response example
+        # Single-turn, string response input
         complete_response = (
             "Itinerary: Day 1 check out the downtown district of the city on train; for Day 2, we can rest in hotel."
         )
@@ -99,6 +102,17 @@ def main() -> None:
         # Incomplete response example
         incomplete_response = "The order with ID 124 is delayed and should now arrive by March 20, 2025."
         incomplete_ground_truth = "The order with ID 123 has been shipped and is expected to be delivered on March 15, 2025. However, the order with ID 124 is delayed and should now arrive by March 20, 2025."
+
+        # Single-turn, structured JSON response input
+        json_response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Day 1: take a train downtown for sightseeing. Day 2: rest at the hotel."}
+                ],
+            }
+        ]
+        json_ground_truth = "Day 1: take a train downtown for sightseeing. Day 2: rest at the hotel."
 
         print("Creating Eval Run with Inline Data")
         eval_run_object = client.evals.runs.create(
@@ -118,6 +132,7 @@ def main() -> None:
                         SourceFileContentContent(
                             item={"ground_truth": incomplete_ground_truth, "response": incomplete_response}
                         ),
+                        SourceFileContentContent(item={"ground_truth": json_ground_truth, "response": json_response}),
                     ],
                 ),
             ),
@@ -143,6 +158,65 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+
+        # Single-turn, messages input
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Summarize a two-day city itinerary."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Day 1: visit the museum. Day 2: explore the park."}],
+            },
+        ]
+        messages_ground_truth = "Day 1: visit the museum. Day 2: explore the park."
+        messages_eval = client.evals.create(
+            name="Test Response Completeness Evaluator with messages",
+            data_source_config=DataSourceConfigCustom(
+                type="custom",
+                item_schema={
+                    "type": "object",
+                    "properties": {
+                        "messages": {"type": "array", "items": {"type": "object"}},
+                        "ground_truth": {"type": "string"},
+                    },
+                    "required": ["messages", "ground_truth"],
+                },
+                include_sample_schema=False,
+            ),
+            testing_criteria=[
+                TestingCriterionAzureAIEvaluator(
+                    type="azure_ai_evaluator",
+                    name="response_completeness_messages",
+                    evaluator_name="builtin.response_completeness",
+                    initialization_parameters={"deployment_name": model_deployment_name},
+                    data_mapping={"messages": "{{item.messages}}", "ground_truth": "{{item.ground_truth}}"},
+                )
+            ],
+        )
+        try:
+            messages_run = client.evals.runs.create(
+                eval_id=messages_eval.id,
+                name="messages_inline_run",
+                extra_body={"evaluation_level": "turn"},
+                data_source=CreateEvalJSONLRunDataSourceParam(
+                    type="jsonl",
+                    source=SourceFileContent(
+                        type="file_content",
+                        content=[
+                            SourceFileContentContent(item={"messages": messages, "ground_truth": messages_ground_truth})
+                        ],
+                    ),
+                ),
+            )
+            while messages_run.status not in ("completed", "failed", "cancelled"):
+                time.sleep(5)
+                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
+            print(f"Messages eval run status: {messages_run.status}")
+            print(f"Messages eval run report: {messages_run.report_url}")
+            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
+        finally:
+            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":

@@ -102,6 +102,7 @@ def main() -> None:  # pylint: disable=too-many-locals
         print("Eval Run Response:")
         pprint(eval_object_response)
 
+        # Single-turn, string response input
         # Success example - response grounded in context
         success_context = (
             "France, a country in Western Europe, is known for its rich history and cultural heritage. "
@@ -123,7 +124,7 @@ def main() -> None:  # pylint: disable=too-many-locals
         simple_context = "Tokyo, the capital of Japan, has a population of approximately 14 million people in the city proper and 38 million in the greater metropolitan area."
         simple_response = "According to the information provided, Tokyo has approximately 14 million people in the city proper and 38 million in the greater metropolitan area."
 
-        # Complex example - conversation format with grounded response
+        # Single-turn, structured JSON response input with tool output
         complex_context = "Weather service provides current weather information for any location."
         complex_response = [
             {
@@ -167,7 +168,7 @@ def main() -> None:  # pylint: disable=too-many-locals
             }
         ]
 
-        # Another complex example - conversation format with query but no tool calls
+        # Another structured response input without tool calls
         query_conversation_context = "The company's employee handbook states that vacation days must be requested at least 2 weeks in advance and approved by your direct supervisor."
         query_conversation_query = [
             {
@@ -207,7 +208,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                                 "context": success_context,
                                 "response": success_response,
                                 "query": None,
-                                "tool_definitions": None,
+                                "tool_definitions": [],
                             }
                         ),
                         # Failure example - ungrounded response
@@ -216,7 +217,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                                 "context": failure_context,
                                 "response": failure_response,
                                 "query": None,
-                                "tool_definitions": None,
+                                "tool_definitions": [],
                             }
                         ),
                         # Simple example with query
@@ -225,7 +226,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                                 "context": simple_context,
                                 "query": simple_query,
                                 "response": simple_response,
-                                "tool_definitions": None,
+                                "tool_definitions": [],
                             }
                         ),
                         # Complex example - conversation format with grounded response
@@ -243,7 +244,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                                 "context": query_conversation_context,
                                 "query": query_conversation_query,
                                 "response": query_conversation_response,
-                                "tool_definitions": None,
+                                "tool_definitions": [],
                             }
                         ),
                     ],
@@ -271,6 +272,60 @@ def main() -> None:  # pylint: disable=too-many-locals
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+
+        # Single-turn, messages input
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "What is the capital of Canada?"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "The capital of Canada is Ottawa."}]},
+        ]
+        messages_context = "Ottawa is the capital of Canada."
+        messages_eval = client.evals.create(
+            name="Test Groundedness Evaluator with messages",
+            data_source_config=DataSourceConfigCustom(
+                type="custom",
+                item_schema={
+                    "type": "object",
+                    "properties": {
+                        "messages": {"type": "array", "items": {"type": "object"}},
+                        "context": {"type": "string"},
+                    },
+                    "required": ["messages", "context"],
+                },
+                include_sample_schema=False,
+            ),
+            testing_criteria=[
+                TestingCriterionAzureAIEvaluator(
+                    type="azure_ai_evaluator",
+                    name="groundedness_messages",
+                    evaluator_name="builtin.groundedness",
+                    initialization_parameters={"deployment_name": model_deployment_name},
+                    data_mapping={"messages": "{{item.messages}}", "context": "{{item.context}}"},
+                )
+            ],
+        )
+        try:
+            messages_run = client.evals.runs.create(
+                eval_id=messages_eval.id,
+                name="messages_inline_run",
+                extra_body={"evaluation_level": "turn"},
+                data_source=CreateEvalJSONLRunDataSourceParam(
+                    type="jsonl",
+                    source=SourceFileContent(
+                        type="file_content",
+                        content=[SourceFileContentContent(item={"messages": messages, "context": messages_context})],
+                    ),
+                ),
+            )
+            while messages_run.status not in ("completed", "failed", "cancelled"):
+                time.sleep(5)
+                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
+            print(f"Messages eval run status: {messages_run.status}")
+            print(f"Messages eval run report: {messages_run.report_url}")
+            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
+        finally:
+            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":
