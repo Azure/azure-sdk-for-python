@@ -15,6 +15,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
 )
+from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration import _state as _configuration_state
+from azure.monitor.opentelemetry.exporter._utils import Singleton
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -36,6 +39,17 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+        # Reset the real _ConfigurationManager singleton too. Other test modules running in the
+        # same process (e.g. test_base_exporter.py) may have already called config_manager.initialize(),
+        # leaving is_initialized() True for the rest of the process. That would make
+        # collect_statsbeat_metrics() take the OneSettings-deferred-callback branch instead of the
+        # synchronous get_statsbeat_manager().initialize(config) fallback these tests rely on.
+        if _ConfigurationManager in Singleton._instances:
+            existing_instance = Singleton._instances[_ConfigurationManager]
+            if hasattr(existing_instance, "_configuration_worker") and existing_instance._configuration_worker:
+                existing_instance.shutdown()
+            del Singleton._instances[_ConfigurationManager]
+        _configuration_state._configuration_manager = None
         with _STATSBEAT_STATE_LOCK:
             _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
             _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
@@ -55,6 +69,13 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+        # Reset the real _ConfigurationManager singleton so later test modules start clean.
+        if _ConfigurationManager in Singleton._instances:
+            existing_instance = Singleton._instances[_ConfigurationManager]
+            if hasattr(existing_instance, "_configuration_worker") and existing_instance._configuration_worker:
+                existing_instance.shutdown()
+            del Singleton._instances[_ConfigurationManager]
+        _configuration_state._configuration_manager = None
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
