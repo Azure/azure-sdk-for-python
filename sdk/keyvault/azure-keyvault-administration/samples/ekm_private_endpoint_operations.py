@@ -11,8 +11,9 @@ import os
 #
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
-# 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM, and PRIVATE_LINK_SERVICE_ID with the
-#    alias of the Private Link Service that fronts your EKM proxy.
+# 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM, PRIVATE_LINK_SERVICE_ID with the
+#    alias of the Private Link Service that fronts your EKM proxy, and CA_CERTIFICATE with the proxy server's
+#    certificate in DER format and base64 encoded.
 #
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
@@ -81,7 +82,9 @@ for endpoint in private_endpoints:
 
 # Once the connection is approved, an EKM connection can reach the EKM proxy through the private endpoint. To do so,
 # set the connection's `host` to the private endpoint's name and its `connectivity_mode` to `PRIVATE_ENDPOINT`.
+# Services with manual approval stay `PENDING` until their owner approves, and the call below fails until they do.
 print("\n.. Create EKM connection over the private endpoint")
+print("This requires the Private Link Service owner to have approved the private endpoint connection")
 # [START create_private_ekm_connection]
 import base64
 from azure.keyvault.administration import KeyVaultEkmConnection, KeyVaultEkmConnectivityMode

@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for service API version `2026-07-01-preview`
+- Added support for service API version `2026-07-01-preview` [#48963](https://github.com/Azure/azure-sdk-for-python/pull/48963)
 - Added EKM proxy private endpoint management to `KeyVaultEkmClient`. The client now exposes
   `begin_create_ekm_private_endpoint`, `begin_delete_ekm_private_endpoint`, `get_ekm_private_endpoint`,
   `list_ekm_private_endpoints`, and `get_ekm_private_endpoint_operation_status`.
