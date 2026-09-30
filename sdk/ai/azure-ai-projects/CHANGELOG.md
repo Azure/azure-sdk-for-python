@@ -6,11 +6,6 @@
 
 Breaking changes in beta classes:
 * Enum members `DataGenerationJobScenario.SUPERVISED_FINETUNING` and `DataGenerationJobScenario.REINFORCEMENT_FINETUNING` renamed to `SUPERVISED_FINETUNING_PREVIEW` and `REINFORCEMENT_FINETUNING_PREVIEW`. Their wire values changed to `supervised_finetuning_preview` and `reinforcement_finetuning_preview`.
-* Renamed class `CreateTeamsPhoneExtensionTelephonyBindingRequest` to `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`.
-* Renamed class `TeamsPhoneExtensionTelephonyBinding` to `TeamsPhoneExtensibilityTelephonyBinding`.
-* Renamed class `TeamsPhoneExtensionTelephonyBindingListItem` to `TeamsPhoneExtensibilityTelephonyBindingListItem`.
-* Enum members `TelephonyProvider.TEAMS_PHONE_EXTENSION` and `TelephonyCallLifecycleEventSource.TEAMS_PHONE_EXTENSION` renamed to `TEAMS_PHONE_EXTENSIBILITY`. The wire value changed from `teams_phone_extension` to `teams_phone_extensibility`.
-
 ### Bugs Fixed
 
 * The data generation job methods on `.datasets` (`begin_create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job` and `delete_generation_job`) now send the `Foundry-Features: DataGenerationJobs=V1Preview` opt-in HTTP request header, which the service requires for preview data generation features (supervised and reinforcement fine-tuning scenarios, `question_types`, `tool_use` and Azure OpenAI file outputs). The value is appended to any caller-supplied `Foundry-Features` header. Other `.datasets` methods are not affected.
