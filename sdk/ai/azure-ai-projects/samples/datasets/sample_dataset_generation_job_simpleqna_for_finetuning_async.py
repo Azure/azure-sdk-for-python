@@ -11,7 +11,7 @@ DESCRIPTION:
 
       1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
+      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING_PREVIEW,
          type=simple_qna) that synthesizes short-answer and long-answer
          question / answer pairs from the file content and emits them as
          training and validation JSONL files.
@@ -27,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -54,15 +54,13 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
+    SupervisedFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobOutputTarget,
 )
 
 load_dotenv()
@@ -144,35 +142,32 @@ async def main() -> None:
         # 2. Submit a fine-tuning data generation job that consumes the file.
         # ------------------------------------------------------------------
 
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-finetuning-{run_id}",
-                scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-                sources=[
-                    FileDataGenerationJobSource(
-                        description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                        id=seed_file.id,
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
-                    # Split generated samples 80% training / 20% validation.
-                    train_split=0.8,
-                    # Ask for both short-answer and long-answer questions.
-                    question_types=[
-                        SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
-                        SimpleQnAFineTuningQuestionType.LONG_ANSWER,
-                    ],
+        job = SupervisedFineTuningDataGenerationJobInputs(
+            name=f"simpleqna-finetuning-{run_id}",
+            sources=[
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
                 ),
-                output_options=DataGenerationJobOutputOptions(name=output_name),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
+                # Split generated samples 80% training / 20% validation.
+                train_split=0.8,
+                # Ask for both short-answer and long-answer questions.
+                question_types=[
+                    SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
+                    SimpleQnAFineTuningQuestionType.LONG_ANSWER,
+                ],
             ),
+            output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
         )
 
         print("Begin creating a dataset generation job.")
-        poller = await project_client.beta.datasets.begin_create_generation_job(
+        poller = await project_client.datasets.begin_create_generation_job(
             job=job,
             polling_interval=poll_interval_seconds,
         )

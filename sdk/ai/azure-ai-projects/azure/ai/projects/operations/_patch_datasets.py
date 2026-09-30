@@ -20,10 +20,7 @@ from azure.core.polling import NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
-from ._operations import (
-    BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
-    DatasetsOperations as DatasetsOperationsGenerated,
-)
+from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from .. import models as _models
 from .._utils.model_base import _deserialize
 from ..models import DatasetGenerationLROPoller
@@ -40,13 +37,13 @@ logger = logging.getLogger(__name__)
 JSON = MutableMapping[str, Any]
 
 
-class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
-    """Custom operations for beta data generation jobs."""
+class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
+    """Custom operations for data generation jobs."""
 
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.DataGenerationJob,
+        job: _models.DataGenerationJobInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -76,7 +73,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -84,7 +81,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         """Create a data generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -150,7 +147,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         return DatasetGenerationLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DatasetsOperations(DatasetsOperationsGenerated):
+class DatasetsOperations(_DatasetsOperationsWithGeneration):
     """
     .. warning::
         **DO NOT** instantiate this class directly.

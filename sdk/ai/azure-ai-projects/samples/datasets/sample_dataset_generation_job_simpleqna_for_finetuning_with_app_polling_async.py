@@ -11,7 +11,7 @@ DESCRIPTION:
 
       1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
+      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING_PREVIEW,
          type=simple_qna) without SDK polling.
       3. Polls the job asynchronously from application code until it reaches a
          terminal state, then prints every generated file output.
@@ -26,7 +26,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.5.0" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -52,16 +52,14 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
     JobStatus,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
+    SupervisedFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobOutputTarget,
 )
 
 load_dotenv()
@@ -144,42 +142,39 @@ async def main() -> None:
         # ------------------------------------------------------------------
         # 2. Submit a fine-tuning data generation job without SDK polling.
         # ------------------------------------------------------------------
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-finetuning-{run_id}",
-                scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-                sources=[
-                    FileDataGenerationJobSource(
-                        description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                        id=seed_file.id,
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
-                    # Split generated samples 80% training / 20% validation.
-                    train_split=0.8,
-                    # Ask for both short-answer and long-answer questions.
-                    question_types=[
-                        SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
-                        SimpleQnAFineTuningQuestionType.LONG_ANSWER,
-                    ],
+        job_inputs = SupervisedFineTuningDataGenerationJobInputs(
+            name=f"simpleqna-finetuning-{run_id}",
+            sources=[
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
                 ),
-                output_options=DataGenerationJobOutputOptions(name=output_name),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
+                # Split generated samples 80% training / 20% validation.
+                train_split=0.8,
+                # Ask for both short-answer and long-answer questions.
+                question_types=[
+                    SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
+                    SimpleQnAFineTuningQuestionType.LONG_ANSWER,
+                ],
             ),
+            output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
         )
 
         print("Create a dataset generation job without SDK polling.")
-        poller = await project_client.beta.datasets.begin_create_generation_job(
-            job=job,
+        poller = await project_client.datasets.begin_create_generation_job(
+            job=job_inputs,
             polling=False,
         )
         job_id = poller.details["job_id"]
         if not job_id:
             raise RuntimeError("The create operation did not return a data generation job ID.")
-        job = await project_client.beta.datasets.get_generation_job(job_id=job_id)
+        job = await project_client.datasets.get_generation_job(job_id=job_id)
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
@@ -188,7 +183,7 @@ async def main() -> None:
         print(f"Polling job `{job.id}` to completion...", end="", flush=True)
         while job.status not in TERMINAL_STATUSES:
             await asyncio.sleep(poll_interval_seconds)
-            job = await project_client.beta.datasets.get_generation_job(job_id=job.id)
+            job = await project_client.datasets.get_generation_job(job_id=job.id)
             print(".", end="", flush=True)
         print()
         print(f"Final job status: `{job.status}`.")

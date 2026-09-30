@@ -7,7 +7,7 @@ This folder contains samples demonstrating how to use Azure AI Foundry's evaluat
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.0.0" python-dotenv
+pip install "azure-ai-projects>=2.8.0" python-dotenv
 ```
 
 To run asynchronous samples, you will also need to install `aiohttp`.
@@ -47,7 +47,7 @@ python sample_evaluations_builtin_with_inline_data.py
 | [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent responses with function tools |
 | [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Create response from model and evaluate |
 | [sample_synthetic_data_agent_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_agent_evaluation.py) | Generate synthetic test data, evaluate a Foundry agent |
-| [sample_synthetic_multiturn_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_multiturn_evaluation.py) | Generate simulation seed data from an agent, simulate multi-turn conversations, and evaluate them |
+| [sample_synthetic_multiturn_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_multiturn_evaluation.py) | Generate synthetic scenarios from an agent and simulate multi-turn conversations for them in a single eval run, then evaluate |
 | [sample_synthetic_data_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_model_evaluation.py) | Generate synthetic test data, evaluate a model |
 
 ### Red Team Evaluations

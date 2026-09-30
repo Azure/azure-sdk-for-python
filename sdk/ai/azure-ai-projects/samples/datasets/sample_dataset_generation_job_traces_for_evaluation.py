@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
@@ -48,12 +48,10 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
@@ -139,23 +137,20 @@ with (
             )
             try:
                 print("Begin creating a dataset generation job.")
-                poller = project_client.beta.datasets.begin_create_generation_job(
-                    job=DataGenerationJob(
-                        inputs=DataGenerationJobInputs(
-                            name=f"traces-eval-{run_id}-a{attempt}",
-                            scenario=DataGenerationJobScenario.EVALUATION,
-                            sources=[
-                                TracesDataGenerationJobSource(
-                                    description="Application Insights conversation traces for the agent.",
-                                    agent_name=agent_name,
-                                    start_time=start_time,
-                                    end_time=end_time,
-                                ),
-                            ],
-                            # max_samples must be in [15, 1000]; caps output dataset size.
-                            options=TracesDataGenerationJobOptions(max_samples=15),
-                            output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
-                        ),
+                poller = project_client.datasets.begin_create_generation_job(
+                    job=EvaluationDataGenerationJobInputs(
+                        name=f"traces-eval-{run_id}-a{attempt}",
+                        sources=[
+                            TracesDataGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                        ],
+                        # max_samples must be in [15, 1000]; caps output dataset size.
+                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15),
+                        output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )

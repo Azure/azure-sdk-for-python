@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
@@ -142,7 +142,7 @@ def main() -> None:
             print("Filter strategy: smart_filtering")
 
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": trace_source,
         }
 
