@@ -1,5 +1,22 @@
 # Release History
 
+## 1.26.0 (2026-09-30)
+
+### Features Added
+
+- `ManagedIdentityCredential` now supports user-assigned managed identities on Azure Arc-enabled servers. An identity can be selected by client ID, object ID, or resource ID. Token responses that do not confirm the requested identity are rejected. ([#48967](https://github.com/Azure/azure-sdk-for-python/pull/48967))
+
+### Bugs Fixed
+
+- Fixed synchronous Service Fabric managed identity authentication with MSAL 1.39.0 and later. Service Fabric now uses the session from an Azure Core `RequestsTransport`. ([#48967](https://github.com/Azure/azure-sdk-for-python/pull/48967))
+- Fixed an issue where `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential` could return a cached token for another account when multiple credentials shared a token cache. ([#49001](https://github.com/Azure/azure-sdk-for-python/pull/49001))
+
+### Other Changes
+
+- Added `RequestIdPolicy` to the default pipeline policies to ensure a unique `x-ms-client-request-id` header is sent with each request. ([#46070](https://github.com/Azure/azure-sdk-for-python/pull/46070))
+- `CertificateCredential` now passes the PEM private key to MSAL as a `str` rather than `bytes`, matching MSAL's documented `client_credential` contract. ([#46801](https://github.com/Azure/azure-sdk-for-python/pull/46801))
+- Bumped the minimum dependency on `msal` to `>=1.39.0`.
+
 ## 1.25.3 (2026-03-12)
 
 ### Bugs Fixed
@@ -443,7 +460,7 @@ More information on this change and the consideration behind it can be found [he
 
 ## 1.11.0b3 (2022-08-09)
 
-Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ### Features Added
 

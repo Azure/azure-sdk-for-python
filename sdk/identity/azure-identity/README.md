@@ -23,6 +23,10 @@ pip install azure-identity
 - An [Azure subscription](https://azure.microsoft.com/free/python)
 - Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
+### Use with AI tools
+
+AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
+
 ### Authenticate the client
 
 When debugging and executing code locally, it's typical for a developer to use their own account for authenticating calls to Azure services. There are several developer tools that can be used to perform this authentication in your development environment. For more information, see [Authentication during local development](https://learn.microsoft.com/azure/developer/python/sdk/authentication/overview#authentication-during-local-development).
@@ -251,6 +255,8 @@ For other open issues, refer to the library's [GitHub repository](https://github
 If you encounter bugs or have suggestions, [open an issue](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Contributing
+
+For deeper context on why the library is designed the way it is, see the [architecture decision log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/design-decisions.md), a chronological record of key design decisions and the reasoning behind them.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
 

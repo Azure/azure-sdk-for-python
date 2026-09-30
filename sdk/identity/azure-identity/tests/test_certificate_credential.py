@@ -10,7 +10,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.certificate import load_pkcs12_certificate
+from azure.identity._credentials.certificate import load_pkcs12_certificate, get_client_credential
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -56,6 +56,22 @@ def test_non_rsa_key():
         CertificateCredential("tenant-id", "client-id", EC_CERT_PATH)
     with pytest.raises(ValueError, match=".*RS256.*"):
         CertificateCredential("tenant-id", "client-id", certificate_data=open(EC_CERT_PATH, "rb").read())
+
+
+def test_get_client_credential_returns_str_private_key():
+    """get_client_credential should return private_key as a string."""
+
+    cred_dict = get_client_credential(PEM_CERT_PATH)
+
+    assert isinstance(cred_dict["private_key"], str)
+    assert "-----BEGIN" in cred_dict["private_key"]
+    assert "passphrase" not in cred_dict
+
+    cred_dict = get_client_credential(PFX_CERT_WITH_PASSWORD_PATH, password=CERT_PASSWORD)
+
+    assert isinstance(cred_dict["private_key"], str)
+    assert "-----BEGIN" in cred_dict["private_key"]
+    assert "passphrase" not in cred_dict
 
 
 def test_tenant_id_validation():

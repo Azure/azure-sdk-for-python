@@ -11,6 +11,7 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
+    RequestIdPolicy,
     RetryPolicy,
     UserAgentPolicy,
     HttpLoggingPolicy,
@@ -38,6 +39,7 @@ def _get_config(**kwargs) -> Configuration:
 
 def _get_policies(config, _per_retry_policies=None, **kwargs):
     policies = [
+        RequestIdPolicy(**kwargs),
         config.headers_policy,
         config.user_agent_policy,
         config.proxy_policy,
