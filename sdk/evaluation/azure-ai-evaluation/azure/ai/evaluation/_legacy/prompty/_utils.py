@@ -461,7 +461,7 @@ def _read_contained_local_file(local_file: str, working_dir: Path) -> Tuple[byte
         file_contents = _read_windows_file_from_directory(working_dir_resolved, relative_path)
     else:
         file_contents = _read_posix_file_from_directory(working_dir_resolved, relative_path)
-    return file_contents, path.suffix
+    return file_contents, normalized_path.suffix
 
 
 def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str, Any]:

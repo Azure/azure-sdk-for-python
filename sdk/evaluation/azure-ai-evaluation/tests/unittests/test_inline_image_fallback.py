@@ -195,9 +195,10 @@ class TestInlineImageGracefulFallback:
 
         assert result == {"type": "text", "text": "![test](linked.png)"}
 
-    def test_contained_symlink_remains_supported(self, tmp_path):
-        (tmp_path / "inside.png").write_bytes(b"inside")
-        _symlink_or_skip(tmp_path / "linked.png", tmp_path / "inside.png")
+    @pytest.mark.parametrize("target_name", ["inside.png", "inside", "inside.jpg"])
+    def test_contained_symlink_remains_supported(self, tmp_path, target_name):
+        (tmp_path / target_name).write_bytes(b"inside")
+        _symlink_or_skip(tmp_path / "linked.png", tmp_path / target_name)
 
         result = _inline_image("![test](linked.png)", tmp_path, "auto")
 
