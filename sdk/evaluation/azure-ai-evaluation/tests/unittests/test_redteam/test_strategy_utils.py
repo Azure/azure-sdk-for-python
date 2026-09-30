@@ -122,7 +122,7 @@ class TestChatTargetFunctions:
 
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
-            endpoint="https://example.openai.azure.com",
+            endpoint="https://example.openai.azure.com/openai/v1",
             api_key="test-api-key",
             httpx_client_kwargs={
                 "timeout": httpx.Timeout(
@@ -153,7 +153,7 @@ class TestChatTargetFunctions:
         mock_get_auth.assert_called_once_with("https://example.openai.azure.com")
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
-            endpoint="https://example.openai.azure.com",
+            endpoint="https://example.openai.azure.com/openai/v1",
             api_key=mock_auth_result,
             httpx_client_kwargs={
                 "timeout": httpx.Timeout(
@@ -190,7 +190,7 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once()
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["model_name"] == "gpt-35-turbo"
-        assert call_kwargs["endpoint"] == "https://example.openai.azure.com"
+        assert call_kwargs["endpoint"] == "https://example.openai.azure.com/openai/v1"
         # api_key should be a callable (token provider)
         assert callable(call_kwargs["api_key"])
 
@@ -221,7 +221,7 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once()
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["model_name"] == "gpt-35-turbo"
-        assert call_kwargs["endpoint"] == "https://example.openai.azure.com"
+        assert call_kwargs["endpoint"] == "https://example.openai.azure.com/openai/v1"
         # api_key should be a callable (token provider)
         assert callable(call_kwargs["api_key"])
 
@@ -247,7 +247,7 @@ class TestChatTargetFunctions:
         # Should use api_key, not credential
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
-            endpoint="https://example.openai.azure.com",
+            endpoint="https://example.openai.azure.com/openai/v1",
             api_key="test-api-key",
             httpx_client_kwargs={
                 "timeout": httpx.Timeout(
@@ -516,8 +516,8 @@ class TestChatTargetFunctions:
         ), f"Trailing slash should be stripped before appending, got: {call_kwargs['endpoint']}"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_traditional_aoai_not_modified(self, mock_openai_chat_target):
-        """Test that traditional Azure OpenAI endpoints are NOT modified."""
+    def test_get_chat_target_traditional_aoai_normalized(self, mock_openai_chat_target):
+        """Test that traditional Azure OpenAI endpoints get /openai/v1 appended."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
 
@@ -531,8 +531,8 @@ class TestChatTargetFunctions:
 
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert (
-            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
-        ), f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com/openai/v1"
+        ), f"Traditional AOAI endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_foundry_endpoint_case_insensitive(self, mock_openai_chat_target):
@@ -554,8 +554,8 @@ class TestChatTargetFunctions:
         ), f"Case-insensitive hostname should be detected, got: {call_kwargs['endpoint']}"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_non_foundry_url_with_matching_substring_not_modified(self, mock_openai_chat_target):
-        """Test that non-Foundry URLs containing .services.ai.azure.com in the path are NOT modified."""
+    def test_get_chat_target_aoai_url_with_matching_substring_normalized(self, mock_openai_chat_target):
+        """Test that Azure OpenAI URLs with .openai.azure.com get /openai/v1 appended."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
 
@@ -569,8 +569,8 @@ class TestChatTargetFunctions:
 
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert (
-            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
-        ), f"Non-Foundry endpoint should not be modified, got: {call_kwargs['endpoint']}"
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com/openai/v1"
+        ), f"Azure OpenAI endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
 
 
 @pytest.mark.unittest

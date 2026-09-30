@@ -13,6 +13,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
+    FaultKind,
     PartitionScheme,
     ServiceKind,
     ServicePlacementPolicyType,
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdditionalNetworkInterfaceConfiguration(_Model):
+class AdditionalNetworkInterfaceConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the settings for a network interface to attach to the node type.
 
     :ivar name: Name of the network interface. Required.
@@ -75,7 +76,7 @@ class AdditionalNetworkInterfaceConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScalingMechanism(_Model):
+class ScalingMechanism(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the mechanism for performing a scaling operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -112,7 +113,7 @@ class ScalingMechanism(_Model):
 
 class AddRemoveIncrementalNamedPartitionScalingMechanism(
     ScalingMechanism, discriminator="AddRemoveIncrementalNamedPartition"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a scaling mechanism for adding or removing named partitions of a stateless service.
     Partition names are in the format '0','1'...'N-1'.
 
@@ -165,7 +166,7 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(
         self.kind = ServiceScalingMechanismKind.ADD_REMOVE_INCREMENTAL_NAMED_PARTITION  # type: ignore
 
 
-class ApplicationFetchHealthRequest(_Model):
+class ApplicationFetchHealthRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for fetching the health of an application.
 
     :ivar events_health_state_filter: Allows filtering of the health events returned in the
@@ -240,7 +241,7 @@ class ApplicationFetchHealthRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationHealthPolicy(_Model):
+class ApplicationHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a health policy used to evaluate the health of an application or one of its children
     entities.
 
@@ -353,7 +354,7 @@ class ProxyResource(Resource):
     """
 
 
-class ApplicationResource(ProxyResource):
+class ApplicationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The application resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -432,7 +433,7 @@ class ApplicationResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationResourceProperties(_Model):
+class ApplicationResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The application resource properties.
 
     :ivar managed_identities: List of user assigned identities for the application, each mapped to
@@ -491,7 +492,7 @@ class ApplicationResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationTypeResource(ProxyResource):
+class ApplicationTypeResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The application type name resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -575,7 +576,7 @@ class ApplicationTypeResourceProperties(_Model):
     """The current deployment or provisioning state, which only appears in the response."""
 
 
-class ApplicationTypeUpdateParameters(_Model):
+class ApplicationTypeUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application type update request.
 
     :ivar tags: Application type update parameters.
@@ -603,7 +604,7 @@ class ApplicationTypeUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationTypeVersionResource(ProxyResource):
+class ApplicationTypeVersionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An application type version resource for the specified application type name resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -675,7 +676,7 @@ class ApplicationTypeVersionResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationTypeVersionResourceProperties(_Model):
+class ApplicationTypeVersionResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the application type version resource.
 
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
@@ -708,7 +709,7 @@ class ApplicationTypeVersionResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationTypeVersionsCleanupPolicy(_Model):
+class ApplicationTypeVersionsCleanupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy used to clean up unused versions. When the policy is not specified explicitly, the
     default unused application versions to keep will be 3.
 
@@ -740,7 +741,7 @@ class ApplicationTypeVersionsCleanupPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationTypeVersionUpdateParameters(_Model):
+class ApplicationTypeVersionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application type version update request.
 
     :ivar tags: Application type version update parameters.
@@ -768,7 +769,7 @@ class ApplicationTypeVersionUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationUpdateParameters(_Model):
+class ApplicationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application update request.
 
     :ivar tags: Application update parameters.
@@ -804,7 +805,7 @@ class ApplicationUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationUpdateParametersProperties(_Model):
+class ApplicationUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for application update request.
 
     :ivar parameters: List of application parameters with overridden values from their default
@@ -834,7 +835,7 @@ class ApplicationUpdateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationUpgradePolicy(_Model):
+class ApplicationUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the policy for a monitored application upgrade.
 
     :ivar application_health_policy: Defines a health policy used to evaluate the health of an
@@ -932,7 +933,7 @@ class ApplicationUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationUserAssignedIdentity(_Model):
+class ApplicationUserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User assigned identity for the application.
 
     :ivar name: The friendly name of user assigned identity. Required.
@@ -965,7 +966,57 @@ class ApplicationUserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailableOperationDisplay(_Model):
+class ApplyMaintenanceWindowRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes the request to apply a maintenance window on a Service Fabric Managed Cluster.
+
+    :ivar start_date_time: Effective start date of the maintenance window in yyyy-MM-dd HH:mm
+     format. If not provided, defaults to the current time.
+    :vartype start_date_time: str
+    :ivar duration: Duration of the maintenance window in hh:mm format. If not provided, defaults
+     to 5 hours. Example: 08:30 for 8 and a half hours.
+    :vartype duration: str
+    :ivar time_zone: Name of the timezone. List of timezones can be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. If not provided, defaults to UTC.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea Standard Time, Central
+     Australia Standard Time.
+    :vartype time_zone: str
+    """
+
+    start_date_time: Optional[str] = rest_field(
+        name="startDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Effective start date of the maintenance window in yyyy-MM-dd HH:mm format. If not provided,
+     defaults to the current time."""
+    duration: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Duration of the maintenance window in hh:mm format. If not provided, defaults to 5 hours.
+     Example: 08:30 for 8 and a half hours."""
+    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the timezone. List of timezones can be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. If not provided, defaults to UTC.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea Standard Time, Central
+     Australia Standard Time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_date_time: Optional[str] = None,
+        duration: Optional[str] = None,
+        time_zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvailableOperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation supported by the Service Fabric resource provider.
 
     :ivar provider: The name of the provider.
@@ -1008,7 +1059,7 @@ class AvailableOperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScalingTrigger(_Model):
+class ScalingTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the trigger for performing a scaling operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1041,7 +1092,9 @@ class ScalingTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AveragePartitionLoadScalingTrigger(ScalingTrigger, discriminator="AveragePartitionLoadTrigger"):
+class AveragePartitionLoadScalingTrigger(
+    ScalingTrigger, discriminator="AveragePartitionLoadTrigger"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a scaling trigger related to an average load of a metric/resource of a partition.
 
     :ivar metric_name: The name of the metric for which usage should be tracked. Required.
@@ -1100,7 +1153,9 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger, discriminator="AverageP
         self.kind = ServiceScalingTriggerKind.AVERAGE_PARTITION_LOAD_TRIGGER  # type: ignore
 
 
-class AverageServiceLoadScalingTrigger(ScalingTrigger, discriminator="AverageServiceLoadTrigger"):
+class AverageServiceLoadScalingTrigger(
+    ScalingTrigger, discriminator="AverageServiceLoadTrigger"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a scaling policy related to an average load of a metric/resource of a service.
 
     :ivar metric_name: The name of the metric for which usage should be tracked. Required.
@@ -1172,7 +1227,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger, discriminator="AverageSer
         self.kind = ServiceScalingTriggerKind.AVERAGE_SERVICE_LOAD_TRIGGER  # type: ignore
 
 
-class AzureActiveDirectory(_Model):
+class AzureActiveDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The settings to enable AAD authentication on the cluster.
 
     :ivar tenant_id: Azure active directory tenant id.
@@ -1214,7 +1269,7 @@ class AzureActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientCertificate(_Model):
+class ClientCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client certificate definition.
 
     :ivar is_admin: Indicates if the client certificate has admin access to the cluster. Non admin
@@ -1264,7 +1319,7 @@ class ClientCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterHealthPolicy(_Model):
+class ClusterHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a health policy used to evaluate the health of the cluster or of a cluster node.
 
     :ivar max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
@@ -1350,7 +1405,7 @@ class ClusterHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterMonitoringPolicy(_Model):
+class ClusterMonitoringPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the monitoring policies for the cluster upgrade.
 
     :ivar health_check_wait_duration: The length of time to wait after completing an upgrade domain
@@ -1421,7 +1476,7 @@ class ClusterMonitoringPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpgradeDeltaHealthPolicy(_Model):
+class ClusterUpgradeDeltaHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the delta health policies for the cluster upgrade.
 
     :ivar max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
@@ -1495,7 +1550,7 @@ class ClusterUpgradeDeltaHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpgradePolicy(_Model):
+class ClusterUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the policy used when upgrading the cluster.
 
     :ivar force_restart: If true, then processes are forcefully restarted during upgrade even when
@@ -1572,7 +1627,7 @@ class ClusterUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointRangeDescription(_Model):
+class EndpointRangeDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port range details.
 
     :ivar start_port: Starting port of a range of ports. Required.
@@ -1650,7 +1705,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorModelError(_Model):
+class ErrorModelError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error details.
 
     :ivar code: The error code.
@@ -1683,7 +1738,7 @@ class ErrorModelError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1711,7 +1766,253 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendConfiguration(_Model):
+class FaultSimulation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fault simulation object with status.
+
+    :ivar simulation_id: unique identifier for the fault simulation.
+    :vartype simulation_id: str
+    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
+     "Done", "StartFailed", and "StopFailed".
+    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
+    :ivar start_time: The start time of the fault simulation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the fault simulation.
+    :vartype end_time: ~datetime.datetime
+    :ivar details: Fault simulation details.
+    :vartype details: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationDetails
+    """
+
+    simulation_id: Optional[str] = rest_field(
+        name="simulationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """unique identifier for the fault simulation."""
+    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
+     \"StartFailed\", and \"StopFailed\"."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the fault simulation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the fault simulation."""
+    details: Optional["_models.FaultSimulationDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        simulation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        details: Optional["_models.FaultSimulationDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationConstraints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Constraints for Fault Simulation action.
+
+    :ivar expiration_time: The absolute expiration timestamp (UTC) after which this fault
+     simulation should be stopped if it's still active.
+    :vartype expiration_time: ~datetime.datetime
+    """
+
+    expiration_time: Optional[datetime.datetime] = rest_field(
+        name="expirationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The absolute expiration timestamp (UTC) after which this fault simulation should be stopped if
+     it's still active."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expiration_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for Fault Simulation action.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ZoneFaultSimulationContent
+
+    :ivar fault_kind: The kind of fault to be simulated. Required. "Zone"
+    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultKind
+    :ivar force: Force the action to go through without any check on the cluster.
+    :vartype force: bool
+    :ivar constraints: Constraints for Fault Simulation action.
+    :vartype constraints:
+     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    fault_kind: str = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of fault to be simulated. Required. \"Zone\""""
+    force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Force the action to go through without any check on the cluster."""
+    constraints: Optional["_models.FaultSimulationConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Constraints for Fault Simulation action."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fault_kind: str,
+        force: Optional[bool] = None,
+        constraints: Optional["_models.FaultSimulationConstraints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationContentWrapper(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fault Simulation Request for Start action.
+
+    :ivar parameters: Parameters for Fault Simulation start action. Required.
+    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
+    """
+
+    parameters: "_models.FaultSimulationContent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for Fault Simulation start action. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.FaultSimulationContent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details for Fault Simulation.
+
+    :ivar cluster_id: unique identifier for the cluster resource.
+    :vartype cluster_id: str
+    :ivar operation_id: unique identifier for the operation associated with the fault simulation.
+    :vartype operation_id: str
+    :ivar node_type_fault_simulation: List of node type simulations associated with the cluster
+     fault simulation.
+    :vartype node_type_fault_simulation:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeFaultSimulation]
+    :ivar parameters: Fault simulation parameters.
+    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
+    """
+
+    cluster_id: Optional[str] = rest_field(name="clusterId", visibility=["read", "create", "update", "delete", "query"])
+    """unique identifier for the cluster resource."""
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """unique identifier for the operation associated with the fault simulation."""
+    node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = rest_field(
+        name="nodeTypeFaultSimulation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of node type simulations associated with the cluster fault simulation."""
+    parameters: Optional["_models.FaultSimulationContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_id: Optional[str] = None,
+        operation_id: Optional[str] = None,
+        node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = None,
+        parameters: Optional["_models.FaultSimulationContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationIdContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for Fault Simulation id.
+
+    :ivar simulation_id: unique identifier for the fault simulation. Required.
+    :vartype simulation_id: str
+    """
+
+    simulation_id: str = rest_field(name="simulationId", visibility=["read", "create", "update", "delete", "query"])
+    """unique identifier for the fault simulation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        simulation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FrontendConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the frontend configurations for the node type.
 
     :ivar ip_address_type: The IP address type of this frontend configuration. If omitted the
@@ -1776,7 +2077,51 @@ class FrontendConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpConfiguration(_Model):
+class HostEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies particular host endpoint settings.
+
+    :ivar mode: Specifies the execution mode. In Audit mode, the system acts as if it is enforcing
+     the access control policy, including emitting access denial entries in the logs but it does not
+     actually deny any requests to host endpoints. In Enforce mode, the system will enforce the
+     access control and it is the recommended mode of operation.
+    :vartype mode: str
+    :ivar in_vm_access_control_profile_reference_id: Specifies the InVMAccessControlProfileVersion
+     resource id in the format of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
+    :vartype in_vm_access_control_profile_reference_id: str
+    """
+
+    mode: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the execution mode. In Audit mode, the system acts as if it is enforcing the access
+     control policy, including emitting access denial entries in the logs but it does not actually
+     deny any requests to host endpoints. In Enforce mode, the system will enforce the access
+     control and it is the recommended mode of operation."""
+    in_vm_access_control_profile_reference_id: Optional[str] = rest_field(
+        name="inVMAccessControlProfileReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the InVMAccessControlProfileVersion resource id in the format of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[str] = None,
+        in_vm_access_control_profile_reference_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IpConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies an IP configuration of the network interface.
 
     :ivar name: Name of the network interface. Required.
@@ -1864,7 +2209,9 @@ class IpConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class IpConfigurationPublicIPAddressConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The public IP address configuration of the network interface.
 
     :ivar name: Name of the network interface. Required.
@@ -1909,7 +2256,7 @@ class IpConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class IpTag(_Model):
+class IpTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage. Required.
@@ -1942,7 +2289,7 @@ class IpTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadBalancingRule(_Model):
+class LoadBalancingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a load balancing rule.
 
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
@@ -2015,7 +2362,7 @@ class LoadBalancingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LongRunningOperationResult(_Model):
+class LongRunningOperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Long running operation result.
 
     :ivar name: The name of the operation.
@@ -2074,7 +2421,7 @@ class LongRunningOperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedAzResiliencyStatus(_Model):
+class ManagedAzResiliencyStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the result of the request to list Managed VM Sizes for Service Fabric Managed
     Clusters.
 
@@ -2110,7 +2457,7 @@ class ManagedAzResiliencyStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2154,7 +2501,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCluster(TrackedResource):
+class ManagedCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2281,7 +2628,7 @@ class ManagedCluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterCodeVersionResult(_Model):
+class ManagedClusterCodeVersionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the Service Fabric runtime versions.
 
     :ivar id: The identification of the result.
@@ -2347,7 +2694,7 @@ class ManagedClusterCodeVersionResult(_Model):
             super().__setattr__(key, value)
 
 
-class ManagedClusterProperties(_Model):
+class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the managed cluster resource properties.
 
     :ivar dns_name: The cluster dns name. Required.
@@ -2748,7 +3095,7 @@ class ManagedClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpdateParameters(_Model):
+class ManagedClusterUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed cluster update request.
 
     :ivar tags: Managed cluster update parameters.
@@ -2776,7 +3123,7 @@ class ManagedClusterUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterVersionDetails(_Model):
+class ManagedClusterVersionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The detail of the Service Fabric runtime version result.
 
     :ivar cluster_code_version: The Service Fabric runtime version of the cluster.
@@ -2820,7 +3167,7 @@ class ManagedClusterVersionDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentity(_Model):
+class ManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the managed identities for an Azure resource.
 
     :ivar principal_id: The principal id of the managed identity. This property will only be
@@ -2940,7 +3287,7 @@ class ManagedVMSize(_Model):
     """VM Size type."""
 
 
-class Partition(_Model):
+class Partition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes how the service is partitioned.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2976,7 +3323,9 @@ class Partition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedPartitionScheme(Partition, discriminator="Named"):
+class NamedPartitionScheme(
+    Partition, discriminator="Named"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the named partition scheme of the service.
 
     :ivar names: Array for the names of the partitions. Required.
@@ -3011,7 +3360,7 @@ class NamedPartitionScheme(Partition, discriminator="Named"):
         self.partition_scheme = PartitionScheme.NAMED  # type: ignore
 
 
-class NetworkSecurityRule(_Model):
+class NetworkSecurityRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network security rule.
 
     :ivar name: Network security rule name. Required.
@@ -3143,7 +3492,7 @@ class NetworkSecurityRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeType(ProxyResource):
+class NodeType(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a node type in the cluster, each node type represents sub set of nodes in the
     cluster.
 
@@ -3230,6 +3579,8 @@ class NodeType(ProxyResource):
         "zone_balance",
         "is_outbound_only",
         "enable_resilient_ephemeral_os_disk",
+        "scale_in_policy",
+        "proxy_agent_settings",
     ]
 
     @overload
@@ -3270,7 +3621,7 @@ class NodeType(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NodeTypeActionParameters(_Model):
+class NodeTypeActionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Node type action. If nodes are not specified on the parameters, the operation
     will be performed in all nodes of the node type one upgrade domain at a time.
 
@@ -3334,7 +3685,63 @@ class NodeTypeAvailableSku(_Model):
     """Provides information about how the node count can be scaled."""
 
 
-class NodeTypeNatConfig(_Model):
+class NodeTypeFaultSimulation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Node type fault simulation object with status.
+
+    :ivar node_type_name: Node type name.
+    :vartype node_type_name: str
+    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
+     "Done", "StartFailed", and "StopFailed".
+    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
+    :ivar operation_id: Current or latest asynchronous operation identifier on the node type.
+    :vartype operation_id: str
+    :ivar operation_status: Current or latest asynchronous operation status on the node type. Known
+     values are: "Created", "Started", "Succeeded", "Failed", "Aborted", and "Canceled".
+    :vartype operation_status: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.SfmcOperationStatus
+    """
+
+    node_type_name: Optional[str] = rest_field(
+        name="nodeTypeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Node type name."""
+    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
+     \"StartFailed\", and \"StopFailed\"."""
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current or latest asynchronous operation identifier on the node type."""
+    operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = rest_field(
+        name="operationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current or latest asynchronous operation status on the node type. Known values are:
+     \"Created\", \"Started\", \"Succeeded\", \"Failed\", \"Aborted\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_type_name: Optional[str] = None,
+        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
+        operation_id: Optional[str] = None,
+        operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NodeTypeNatConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides information about NAT configuration on the default public Load Balancer for the node
     type.
 
@@ -3379,7 +3786,7 @@ class NodeTypeNatConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeTypeProperties(_Model):
+class NodeTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a node type in the cluster, each node type represents sub set of nodes in the
     cluster.
 
@@ -3571,6 +3978,13 @@ class NodeTypeProperties(_Model):
      resilient ephemeral OS disk when using a supported SKU size. A resilient ephemeral OS disk
      provides improved reliability for ephemeral OS disks by enabling full caching.
     :vartype enable_resilient_ephemeral_os_disk: bool
+    :ivar scale_in_policy: Specifies the scale in policy for the node type, which will be used when
+     scale in happens on the cluster. If not specified, the default is Default which means the
+     platform will decide which nodes to remove during scale in.
+    :vartype scale_in_policy: ~azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicy
+    :ivar proxy_agent_settings: Specifies the settings for the proxy agent on the node type.
+    :vartype proxy_agent_settings:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ProxyAgentSettings
     """
 
     is_primary: bool = rest_field(name="isPrimary", visibility=["read", "create", "update", "delete", "query"])
@@ -3835,6 +4249,16 @@ class NodeTypeProperties(_Model):
     """Specifies whether the node type should use a resilient ephemeral OS disk when using a supported
      SKU size. A resilient ephemeral OS disk provides improved reliability for ephemeral OS disks by
      enabling full caching."""
+    scale_in_policy: Optional["_models.ScaleInPolicy"] = rest_field(
+        name="scaleInPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the scale in policy for the node type, which will be used when scale in happens on
+     the cluster. If not specified, the default is Default which means the platform will decide
+     which nodes to remove during scale in."""
+    proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = rest_field(
+        name="proxyAgentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the settings for the proxy agent on the node type."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -3895,6 +4319,8 @@ class NodeTypeProperties(_Model):
         zone_balance: Optional[bool] = None,
         is_outbound_only: Optional[bool] = None,
         enable_resilient_ephemeral_os_disk: Optional[bool] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -3908,7 +4334,7 @@ class NodeTypeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeTypeSku(_Model):
+class NodeTypeSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a node type sku.
 
     :ivar name: The sku name. Name is internally generated and is used in auto-scale scenarios.
@@ -3992,7 +4418,7 @@ class NodeTypeSupportedSku(_Model):
     """Specifies the tier of the node type. Possible Values: **Standard**."""
 
 
-class NodeTypeUpdateParameters(_Model):
+class NodeTypeUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node type update request.
 
     :ivar tags: Node type update parameters.
@@ -4025,7 +4451,7 @@ class NodeTypeUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(_Model):
+class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available operation list result.
 
     :ivar name: The name of the operation.
@@ -4077,7 +4503,9 @@ class OperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartitionInstanceCountScaleMechanism(ScalingMechanism, discriminator="ScalePartitionInstanceCount"):
+class PartitionInstanceCountScaleMechanism(
+    ScalingMechanism, discriminator="ScalePartitionInstanceCount"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a scaling mechanism for adding or removing instances of stateless service partition.
 
     :ivar min_instance_count: Minimum number of instances of the partition. Required.
@@ -4129,6 +4557,72 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism, discriminator="Scal
         self.kind = ServiceScalingMechanismKind.SCALE_PARTITION_INSTANCE_COUNT  # type: ignore
 
 
+class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies ProxyAgent settings for the virtual machine or virtual machine scale set.
+
+    :ivar enabled: Specifies whether ProxyAgent feature should be enabled on the virtual machine or
+     virtual machine scale set.
+    :vartype enabled: bool
+    :ivar key_incarnation_id: Increasing the value of this property allows users to reset the key
+     used for securing communication channel between guest and host.
+    :vartype key_incarnation_id: int
+    :ivar wire_server: Specifies the Wire Server endpoint settings while creating the virtual
+     machine or virtual machine scale set.
+    :vartype wire_server: ~azure.mgmt.servicefabricmanagedclusters.models.HostEndpointSettings
+    :ivar imds: Specifies the IMDS endpoint settings while creating the virtual machine or virtual
+     machine scale set.
+    :vartype imds: ~azure.mgmt.servicefabricmanagedclusters.models.HostEndpointSettings
+    :ivar add_proxy_agent_extension: Specify whether to implicitly install the ProxyAgent
+     Extension. This option is currently applicable only for Linux Os.
+    :vartype add_proxy_agent_extension: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether ProxyAgent feature should be enabled on the virtual machine or virtual
+     machine scale set."""
+    key_incarnation_id: Optional[int] = rest_field(
+        name="keyIncarnationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Increasing the value of this property allows users to reset the key used for securing
+     communication channel between guest and host."""
+    wire_server: Optional["_models.HostEndpointSettings"] = rest_field(
+        name="wireServer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Wire Server endpoint settings while creating the virtual machine or virtual
+     machine scale set."""
+    imds: Optional["_models.HostEndpointSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the IMDS endpoint settings while creating the virtual machine or virtual machine
+     scale set."""
+    add_proxy_agent_extension: Optional[bool] = rest_field(
+        name="addProxyAgentExtension", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify whether to implicitly install the ProxyAgent Extension. This option is currently
+     applicable only for Linux Os."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        key_incarnation_id: Optional[int] = None,
+        wire_server: Optional["_models.HostEndpointSettings"] = None,
+        imds: Optional["_models.HostEndpointSettings"] = None,
+        add_proxy_agent_extension: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ResourceAzStatus(_Model):
     """Describes Az Resiliency status of Base resources.
 
@@ -4152,7 +4646,7 @@ class ResourceAzStatus(_Model):
     """Zone resiliency status details for the resource."""
 
 
-class RestartDeployedCodePackageRequest(_Model):
+class RestartDeployedCodePackageRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for restarting a deployed code package.
 
     :ivar node_name: The name of the node where the code package needs to be restarted. Use '*' to
@@ -4232,7 +4726,7 @@ class RestartDeployedCodePackageRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestartReplicaRequest(_Model):
+class RestartReplicaRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to restart a replica.
 
     :ivar partition_id: The ID of the partition. Required.
@@ -4290,7 +4784,7 @@ class RestartReplicaRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RollingUpgradeMonitoringPolicy(_Model):
+class RollingUpgradeMonitoringPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy used for monitoring the application upgrade.
 
     :ivar failure_action: The compensating action to perform when a Monitored upgrade encounters
@@ -4381,7 +4875,7 @@ class RollingUpgradeMonitoringPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeApplicationHealthPolicy(_Model):
+class RuntimeApplicationHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster level definition for a health policy used to evaluate the health of an application or
     one of its children entities.
 
@@ -4449,7 +4943,9 @@ class RuntimeApplicationHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeResumeApplicationUpgradeParameters(_Model):  # pylint: disable=name-too-long
+class RuntimeResumeApplicationUpgradeParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters for Resume Upgrade action. The upgrade domain name must be specified.
 
     :ivar upgrade_domain_name: The upgrade domain name. Expected to be the next upgrade domain if
@@ -4481,7 +4977,9 @@ class RuntimeResumeApplicationUpgradeParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RuntimeRollingUpgradeUpdateMonitoringPolicy(_Model):  # pylint: disable=name-too-long
+class RuntimeRollingUpgradeUpdateMonitoringPolicy(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the parameters for updating a rolling upgrade of application or cluster.
 
     :ivar rolling_upgrade_mode: The mode used to monitor health during a rolling upgrade. Required.
@@ -4628,7 +5126,7 @@ class RuntimeRollingUpgradeUpdateMonitoringPolicy(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class RuntimeServiceTypeHealthPolicy(_Model):
+class RuntimeServiceTypeHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster level definition that represents the health policy used to evaluate the health of
     services belonging to a service type.
 
@@ -4723,7 +5221,9 @@ class RuntimeServiceTypeHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeUpdateApplicationUpgradeParameters(_Model):  # pylint: disable=name-too-long
+class RuntimeUpdateApplicationUpgradeParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters for the Update Upgrade action.
 
     :ivar name: The name of the application, including the 'fabric:' URI scheme. Required.
@@ -4779,7 +5279,40 @@ class RuntimeUpdateApplicationUpgradeParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ScalingPolicy(_Model):
+class ScaleInPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Scale in policy for a node type. This is used to specify the mode for scale in operations on a
+    node type.
+
+    :ivar mode: The scale in policy mode for a node type. Known values are: "Default",
+     "OldestNodeFirst", and "NewestNodeFirst".
+    :vartype mode: str or ~azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicyMode
+    """
+
+    mode: Optional[Union[str, "_models.ScaleInPolicyMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale in policy mode for a node type. Known values are: \"Default\", \"OldestNodeFirst\",
+     and \"NewestNodeFirst\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.ScaleInPolicyMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScalingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a metric to load balance a service during runtime.
 
     :ivar scaling_mechanism: Specifies the mechanism associated with this scaling policy. Required.
@@ -4816,7 +5349,7 @@ class ScalingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceCorrelation(_Model):
+class ServiceCorrelation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Creates a particular correlation between services.
 
     :ivar scheme: The ServiceCorrelationScheme which describes the relationship between this
@@ -4858,7 +5391,7 @@ class ServiceCorrelation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceEndpoint(_Model):
+class ServiceEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service endpoint properties.
 
     :ivar service: The type of the endpoint service. Required.
@@ -4899,7 +5432,7 @@ class ServiceEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceLoadMetric(_Model):
+class ServiceLoadMetric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a metric to load balance a service during runtime.
 
     :ivar name: The name of the metric. If the service chooses to report load during runtime, the
@@ -4967,7 +5500,7 @@ class ServiceLoadMetric(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePlacementPolicy(_Model):
+class ServicePlacementPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the policy to be used for placement of a Service Fabric service.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5004,7 +5537,9 @@ class ServicePlacementPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy, discriminator="InvalidDomain"):
+class ServicePlacementInvalidDomainPolicy(
+    ServicePlacementPolicy, discriminator="InvalidDomain"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the policy to be used for placement of a Service Fabric service where a particular
     fault or upgrade domain should not be used for placement of the instances or replicas of that
     service.
@@ -5081,7 +5616,7 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(
 
 class ServicePlacementPreferPrimaryDomainPolicy(
     ServicePlacementPolicy, discriminator="PreferredPrimaryDomain"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the policy to be used for placement of a Service Fabric service where the service's
     Primary replicas should optimally be placed in a particular domain.
 
@@ -5133,7 +5668,9 @@ class ServicePlacementPreferPrimaryDomainPolicy(
         self.type = ServicePlacementPolicyType.PREFERRED_PRIMARY_DOMAIN  # type: ignore
 
 
-class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy, discriminator="RequiredDomain"):
+class ServicePlacementRequiredDomainPolicy(
+    ServicePlacementPolicy, discriminator="RequiredDomain"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the policy to be used for placement of a Service Fabric service where the instances
     or replicas of that service must be placed in a particular domain.
 
@@ -5176,7 +5713,7 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy, discriminator
 
 class ServicePlacementRequireDomainDistributionPolicy(
     ServicePlacementPolicy, discriminator="RequiredDomainDistribution"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the policy to be used for placement of a Service Fabric service where two replicas
     from the same partition should never be placed in the same fault or upgrade domain.
 
@@ -5230,7 +5767,7 @@ class ServicePlacementRequireDomainDistributionPolicy(
         self.type = ServicePlacementPolicyType.REQUIRED_DOMAIN_DISTRIBUTION  # type: ignore
 
 
-class ServiceResource(ProxyResource):
+class ServiceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5281,7 +5818,7 @@ class ServiceResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResourcePropertiesBase(_Model):
+class ServiceResourcePropertiesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The common service resource properties.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
@@ -5360,7 +5897,9 @@ class ServiceResourcePropertiesBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResourceProperties(ServiceResourcePropertiesBase):
+class ServiceResourceProperties(
+    ServiceResourcePropertiesBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service resource properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5468,7 +6007,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class ServiceTypeHealthPolicy(_Model):
+class ServiceTypeHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the health policy used to evaluate the health of services belonging to a service
     type.
 
@@ -5563,7 +6102,7 @@ class ServiceTypeHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceUpdateParameters(_Model):
+class ServiceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service update request.
 
     :ivar tags: Service update parameters.
@@ -5591,7 +6130,7 @@ class ServiceUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SettingsParameterDescription(_Model):
+class SettingsParameterDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a parameter in fabric settings of the cluster.
 
     :ivar name: The parameter name of fabric setting. Required.
@@ -5624,7 +6163,7 @@ class SettingsParameterDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SettingsSectionDescription(_Model):
+class SettingsSectionDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a section in the fabric settings of the cluster.
 
     :ivar name: The section name of the fabric settings. Required.
@@ -5689,7 +6228,7 @@ class SingletonPartitionScheme(Partition, discriminator="Singleton"):
         self.partition_scheme = PartitionScheme.SINGLETON  # type: ignore
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service Fabric managed cluster Sku definition.
 
     :ivar name: Sku Name. Required. Known values are: "Basic" and "Standard".
@@ -5717,7 +6256,9 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatefulServiceProperties(ServiceResourceProperties, discriminator="Stateful"):
+class StatefulServiceProperties(
+    ServiceResourceProperties, discriminator="Stateful"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a stateful service resource.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
@@ -5855,7 +6396,9 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
         self.service_kind = ServiceKind.STATEFUL  # type: ignore
 
 
-class StatelessServiceProperties(ServiceResourceProperties, discriminator="Stateless"):
+class StatelessServiceProperties(
+    ServiceResourceProperties, discriminator="Stateless"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a stateless service resource.
 
     :ivar placement_constraints: The placement constraints as a string. Placement constraints are
@@ -5973,7 +6516,7 @@ class StatelessServiceProperties(ServiceResourceProperties, discriminator="State
         self.service_kind = ServiceKind.STATELESS  # type: ignore
 
 
-class Subnet(_Model):
+class Subnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Subnet.
 
     :ivar name: Subnet name. Required.
@@ -6037,7 +6580,7 @@ class Subnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure resource identifier.
 
     :ivar id: Azure resource identifier.
@@ -6065,7 +6608,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -6133,7 +6676,9 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UniformInt64RangePartitionScheme(Partition, discriminator="UniformInt64Range"):
+class UniformInt64RangePartitionScheme(
+    Partition, discriminator="UniformInt64Range"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a partitioning scheme where an integer range is allocated evenly across a number of
     partitions.
 
@@ -6200,7 +6745,7 @@ class UserAssignedIdentity(_Model):
     """The client id of user assigned identity."""
 
 
-class VaultCertificate(_Model):
+class VaultCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a single certificate reference in a Key Vault, and where the certificate should
     reside on the VM.
 
@@ -6249,7 +6794,7 @@ class VaultCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSecretGroup(_Model):
+class VaultSecretGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies set of certificates that should be installed onto the virtual machines.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
@@ -6290,7 +6835,7 @@ class VaultSecretGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmApplication(_Model):
+class VmApplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the gallery application that should be made available to the underlying VMSS.
 
     :ivar configuration_reference: Optional, Specifies the uri to an azure blob that will replace
@@ -6364,7 +6909,7 @@ class VmApplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmImagePlan(_Model):
+class VmImagePlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the marketplace image used to create the virtual machine. This
     element is only used for marketplace images. Before you can use a marketplace image from an
     API, you must enable the image for programmatic use. In the Azure portal, find the marketplace
@@ -6415,7 +6960,7 @@ class VmImagePlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmManagedIdentity(_Model):
+class VmManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identities for the virtual machine scale set under the node type.
 
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
@@ -6460,7 +7005,7 @@ class VMSize(_Model):
     """VM Size name."""
 
 
-class VmssDataDisk(_Model):
+class VmssDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed data disk description.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
@@ -6515,7 +7060,7 @@ class VmssDataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMSSExtension(_Model):
+class VMSSExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies set of extensions that should be installed onto the virtual machines.
 
     :ivar name: The name of the extension. Required.
@@ -6582,7 +7127,7 @@ class VMSSExtension(_Model):
             super().__setattr__(key, value)
 
 
-class VMSSExtensionProperties(_Model):
+class VMSSExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Scale Set Extension.
 
     :ivar publisher: The name of the extension handler publisher. Required.
@@ -6684,3 +7229,45 @@ class VMSSExtensionProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ZoneFaultSimulationContent(
+    FaultSimulationContent, discriminator="Zone"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for Zone Fault Simulation action.
+
+    :ivar force: Force the action to go through without any check on the cluster.
+    :vartype force: bool
+    :ivar constraints: Constraints for Fault Simulation action.
+    :vartype constraints:
+     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
+    :ivar zones: Indicates the zones of the fault simulation.
+    :vartype zones: list[str]
+    :ivar fault_kind: The kind of fault simulation. Required. Simulates an availability zone down.
+    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ZONE
+    """
+
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates the zones of the fault simulation."""
+    fault_kind: Literal[FaultKind.ZONE] = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of fault simulation. Required. Simulates an availability zone down."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        force: Optional[bool] = None,
+        constraints: Optional["_models.FaultSimulationConstraints"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.fault_kind = FaultKind.ZONE  # type: ignore

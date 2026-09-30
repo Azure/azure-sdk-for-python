@@ -10,19 +10,21 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 - **High-Quality Audio Processing**: 24kHz PCM16 mono audio for optimal quality
 - **Robust Error Handling**: Connection error recovery and graceful shutdown
 - **Async Architecture**: Non-blocking operations for responsive interaction
+- **Optional Telemetry Tracing**: Built-in OpenTelemetry support via `--enable-tracing` flag
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - Microphone and speakers/headphones
-- Azure AI VoiceLive API key and endpoint
+- Azure AI VoiceLive endpoint
+- An Entra ID identity with access to Azure AI VoiceLive, or a VoiceLive API key
 
 ## Installation
 
 1. **Install the SDK**:
-   ```bash
-   pip install azure-ai-voicelive python-dotenv
-   ```
+    ```bash
+    python -m pip install --pre "azure-ai-voicelive[aiohttp]" azure-identity python-dotenv
+    ```
 
 2. **Install PyAudio** (required for audio capture/playback):
 
@@ -45,14 +47,20 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 ## Configuration
 
-Create a `.env` file with your credentials:
+Create a `.env` file. By default, the sample uses Entra ID via `DefaultAzureCredential`. For local development, `az login` is the easiest way to satisfy that credential chain:
 
 ```bash
-AZURE_VOICELIVE_API_KEY=your-api-key
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
-AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
-AZURE_VOICELIVE_VOICE=en-US-AvaNeural
+AZURE_VOICELIVE_MODEL=gpt-realtime
+AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
+```
+
+To use API key authentication instead, add:
+
+```bash
+AZURE_VOICELIVE_USE_API_KEY=true
+AZURE_VOICELIVE_API_KEY=your-api-key
 ```
 
 ## Running the Sample
@@ -61,14 +69,22 @@ AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally a
 python basic_voice_assistant_async.py
 ```
 
+The sample writes logs to standard output and does not create log files.
+
 Optional command-line arguments:
 
 ```bash
 python basic_voice_assistant_async.py \
-    --model gpt-4o-realtime-preview \
+    --model gpt-realtime \
     --voice en-US-AvaNeural \
     --instructions "You are a helpful assistant" \
     --verbose
+```
+
+Use API key authentication only when you want it explicitly:
+
+```bash
+python basic_voice_assistant_async.py --use-api-key
 ```
 
 ## How It Works
@@ -95,6 +111,7 @@ session_config = RequestSession(
     voice=voice_config,
     input_audio_format=InputAudioFormat.PCM16,
     output_audio_format=OutputAudioFormat.PCM16,
+    input_audio_echo_cancellation=AudioEchoCancellation(),
     turn_detection=ServerVad(
         threshold=0.5,
         prefix_padding_ms=300,
@@ -102,6 +119,10 @@ session_config = RequestSession(
     ),
 )
 ```
+
+The sample keeps echo cancellation on the default server loopback path. If your application captures
+stereo PCM16 input with the microphone on channel 0 and a client-provided echo reference on channel 1,
+you can switch to `AudioEchoCancellation(reference_source="client", channels=2)`.
 
 ### 3. Audio Processing
 - **Input**: Captures microphone audio in real-time using PyAudio
@@ -162,6 +183,10 @@ Main application class that coordinates WebSocket connection, session management
 - **API errors**: Check model availability and account permissions
 - **Network timeouts**: Check firewall settings and network connectivity
 
+### Authentication Issues
+- **Default auth failures**: Run `az login` or otherwise confirm `DefaultAzureCredential` can get a token and your identity can access the VoiceLive resource
+- **API key auth failures**: Set `AZURE_VOICELIVE_USE_API_KEY=true` and verify `AZURE_VOICELIVE_API_KEY`
+
 ### PyAudio Installation Issues
 - **Linux**: `sudo apt-get install -y portaudio19-dev libasound2-dev`
 - **macOS**: `brew install portaudio`
@@ -194,6 +219,31 @@ Enable verbose logging for troubleshooting:
 python basic_voice_assistant_async.py --verbose
 ```
 
+### Telemetry Tracing
+Enable OpenTelemetry tracing to emit spans for all connection, send, and receive operations:
+
+```bash
+# Console tracing (spans printed to stdout)
+python basic_voice_assistant_async.py --enable-tracing
+
+# With full message content in traces (may contain personal data)
+python basic_voice_assistant_async.py --enable-tracing --enable-content-recording
+```
+
+This requires additional dependencies:
+```bash
+pip install opentelemetry-sdk azure-core-tracing-opentelemetry
+```
+
+When enabled, the following are traced automatically:
+- **connect** span covering the entire WebSocket session lifetime
+- **send** spans for each message sent (session.update, response.create, etc.)
+- **recv** spans for each message received (session.created, response.done, etc.)
+- **close** span when the session ends
+- Session-level metrics: turn count, audio bytes, first-token latency, interruptions
+
+See the `telemetry/` folder for more advanced tracing examples (Azure Monitor export, custom attributes, OTLP).
+
 ## Code Structure
 
 ```
@@ -208,6 +258,7 @@ basic_voice_assistant_async.py
 │   └── Event processing
 └── Main execution
     ├── Argument parsing
+    ├── Telemetry setup (optional, --enable-tracing)
     ├── Environment setup
     └── Assistant initialization
 ```

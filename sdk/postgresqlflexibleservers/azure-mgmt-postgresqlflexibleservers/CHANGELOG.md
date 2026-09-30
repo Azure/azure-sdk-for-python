@@ -1,5 +1,35 @@
 # Release History
 
+## 3.0.0b2 (2026-06-03)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added operation group `maintenance_events`
+  - Client `PostgreSQLManagementClient` added operation group `major_version_upgrade_precheck`
+  - Model `DataEncryption` added property `primary_federated_identity_client_id`
+  - Model `DataEncryption` added property `geo_backup_federated_identity_client_id`
+  - Enum `HighAvailabilityState` added member `COMPUTE_UPDATING_BY_FAILOVER`
+  - Enum `HighAvailabilityState` added member `RECREATING_STANDBY`
+  - Added model `MaintenanceEventActionResponse`
+  - Added model `MaintenanceEventRescheduleRequest`
+  - Added model `MaintenanceEventResource`
+  - Added model `MaintenanceEventResourceProperties`
+  - Added enum `MaintenanceEventStatus`
+  - Added enum `MaintenanceEventStatusFilter`
+  - Added enum `MaintenanceType`
+  - Added model `MajorVersionUpgradePrecheckResource`
+  - Added model `MajorVersionUpgradePrecheckResourceProperties`
+  - Added enum `MajorVersionUpgradePrecheckStatus`
+  - Added model `PolicyDetail`
+  - Added model `PrecheckErrorInfo`
+  - Added model `PrecheckResult`
+  - Added model `StartMajorVersionUpgradePrecheckRequest`
+  - Added model `StartMajorVersionUpgradePrecheckResponse`
+  - Added model `UpgradeSequence`
+  - Operation group `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
+  - Added operation group `MaintenanceEventsOperations`
+  - Added operation group `MajorVersionUpgradePrecheckOperations`
+
 ## 3.0.0b1 (2026-02-13)
 
 ### Features Added

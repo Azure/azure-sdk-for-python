@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import ConfigurationStoresOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import KeyValuesOperations  # type: ignore
 from ._operations import ReplicasOperations  # type: ignore
@@ -27,6 +28,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ConfigurationStoresOperations",
     "PrivateEndpointConnectionsOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
     "PrivateLinkResourcesOperations",
     "KeyValuesOperations",
     "ReplicasOperations",

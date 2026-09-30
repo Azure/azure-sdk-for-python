@@ -45,10 +45,7 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
         if config_manager:
             config_manager.register_callback(get_quickpulse_configuration_callback)
 
-    # We can detect feature usage for statsbeat since we are in an opt-in model currently
-    # Once we move to live metrics on-by-default, we will have to check for both explicit usage
-    # and whether or not user is actually using live metrics (being on live metrics blade in UX)
-    set_statsbeat_live_metrics_feature_set()
+    # Live metrics disable tracking is handled via local config flow.
 
 
 def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
@@ -74,8 +71,14 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
                 resource=manager._resource,  # pylint:disable=protected-access
             )
     elif live_metrics_enabled is False and manager.is_initialized():
+        # Track explicit live metrics disable for statsbeat feature reporting.
+        # (Tracking the disable live metrics feature starting 06/03/2026)
+        set_statsbeat_live_metrics_feature_set()
         # Disable live metrics if it's currently enabled
         manager.shutdown()
+    elif live_metrics_enabled is False:
+        # Track explicit live metrics disable even when quickpulse is already off.
+        set_statsbeat_live_metrics_feature_set()
 
 
 def shutdown_live_metrics() -> bool:

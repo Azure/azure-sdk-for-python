@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import re
-import pytest
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -15,7 +13,7 @@ class TestFiles(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_files.py::TestFiles::test_files -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_files(self, **kwargs):
 
         file_purpose = self.test_files_params["file_purpose"]

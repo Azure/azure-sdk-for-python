@@ -278,6 +278,7 @@ class TestRedTeam:
             for i in range(len(conversation)):
                 assert conversation[i]["role"] == "user" if i % 2 == 0 else "assistant"
 
+    @pytest.mark.skip(reason="Recordings are stale (Accept-Encoding header mismatch). Re-record separately.")
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
         ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))

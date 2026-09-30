@@ -5,10 +5,9 @@
 # ------------------------------------
 
 import pytest
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AzureAISearchIndex, IndexType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.ai.projects.models import AzureAISearchIndex, IndexType
 
 
 @pytest.mark.skip(reason="Backend throw 400 on index list api")

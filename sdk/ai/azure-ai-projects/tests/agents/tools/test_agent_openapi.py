@@ -27,7 +27,7 @@ class TestAgentOpenApi(TestBase):
     # To run this test:
     # pytest tests/agents/tools/test_agent_openapi.py::TestAgentOpenApi::test_agent_openapi -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_openapi(self, **kwargs):
         """
         Test agent with OpenAPI tool capabilities.
@@ -51,7 +51,7 @@ class TestAgentOpenApi(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -65,7 +65,7 @@ class TestAgentOpenApi(TestBase):
             assert os.path.exists(weather_asset_file_path), f"OpenAPI spec file not found at: {weather_asset_file_path}"
             print(f"Using OpenAPI spec file: {weather_asset_file_path}")
 
-            with open(weather_asset_file_path, "r") as f:
+            with open(weather_asset_file_path, "r", encoding="utf-8") as f:
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool
@@ -124,6 +124,6 @@ class TestAgentOpenApi(TestBase):
     # pytest tests/agents/tools/test_agent_openapi.py::TestAgentOpenApi::test_agent_openapi_with_auth -s
     @servicePreparer()
     @pytest.mark.skip(reason="Add test here once we have a Foundry Project with a connection with auth credentials")
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_openapi_with_auth(self, **kwargs):
         pass

@@ -941,6 +941,10 @@ class MongoClusterProperties(_Model):
     :ivar encryption: The encryption configuration for the cluster. Depends on identity being
      configured.
     :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
+    :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
+     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+     "AzureCosmosDB".
+    :vartype network_bypass_mode: str or ~azure.mgmt.mongocluster.models.NetworkBypassMode
     """
 
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(
@@ -1025,6 +1029,11 @@ class MongoClusterProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The encryption configuration for the cluster. Depends on identity being configured."""
+    network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = rest_field(
+        name="networkBypassMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+     service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
     @overload
     def __init__(
@@ -1045,6 +1054,7 @@ class MongoClusterProperties(_Model):
         preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = None,
         auth_config: Optional["_models.AuthConfigProperties"] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
+        network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -1202,6 +1212,10 @@ class MongoClusterUpdateProperties(_Model):
     :ivar encryption: The encryption configuration for the cluster. Depends on identity being
      configured.
     :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
+    :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
+     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+     "AzureCosmosDB".
+    :vartype network_bypass_mode: str or ~azure.mgmt.mongocluster.models.NetworkBypassMode
     """
 
     administrator: Optional["_models.AdministratorProperties"] = rest_field(
@@ -1253,6 +1267,11 @@ class MongoClusterUpdateProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The encryption configuration for the cluster. Depends on identity being configured."""
+    network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = rest_field(
+        name="networkBypassMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+     service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
     @overload
     def __init__(
@@ -1270,6 +1289,7 @@ class MongoClusterUpdateProperties(_Model):
         preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = None,
         auth_config: Optional["_models.AuthConfigProperties"] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
+        network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -1341,7 +1361,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1647,7 +1667,8 @@ class PrivateLinkServiceConnectionState(_Model):
 class PromoteReplicaRequest(_Model):
     """Promote replica request properties.
 
-    :ivar promote_option: The promote option to apply to the operation. Required. "Forced"
+    :ivar promote_option: The promote option to apply to the operation. Required. Known values are:
+     "Forced" and "Planned".
     :vartype promote_option: str or ~azure.mgmt.mongocluster.models.PromoteOption
     :ivar mode: The mode to apply to the promote operation. Value is optional and default value is
      'Switchover'. "Switchover"
@@ -1657,7 +1678,8 @@ class PromoteReplicaRequest(_Model):
     promote_option: Union[str, "_models.PromoteOption"] = rest_field(
         name="promoteOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The promote option to apply to the operation. Required. \"Forced\""""
+    """The promote option to apply to the operation. Required. Known values are: \"Forced\" and
+     \"Planned\"."""
     mode: Optional[Union[str, "_models.PromoteMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )

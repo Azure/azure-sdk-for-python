@@ -30,16 +30,20 @@ SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 class DirectorySamples(object):
 
-    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def create_directory_and_file(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: create_directory_and_file")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: create_directory_and_file"
+            )
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
+
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples1")
 
         # Create the share
@@ -74,12 +78,16 @@ class DirectorySamples(object):
 
     def create_subdirectory_and_file(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: create_subdirectory_and_file")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: create_subdirectory_and_file"
+            )
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
+
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples2")
 
         # Create the share
@@ -123,12 +131,16 @@ class DirectorySamples(object):
 
     def get_subdirectory_client(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_subdirectory_client")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: get_subdirectory_client"
+            )
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
+
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples3")
 
         # Create the share
@@ -149,7 +161,7 @@ class DirectorySamples(object):
             share.delete_share()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DirectorySamples()
     sample.create_directory_and_file()
     sample.create_subdirectory_and_file()

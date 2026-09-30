@@ -1,0 +1,617 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+"""Validation utilities for request and response models."""
+
+from __future__ import annotations
+
+from typing import Any, Mapping, cast
+
+from starlette.responses import JSONResponse
+
+from azure.ai.agentserver.core.platform_headers import (
+    ERROR_DETAIL,
+    ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
+)
+from .._id_generator import IdGenerator
+from .._metadata_constraints import (
+    MAX_METADATA_KEYS,
+    MAX_METADATA_KEY_LENGTH,
+    MAX_METADATA_VALUE_LENGTH,
+)
+from .._options import ResponsesServerOptions
+
+from .. import models as _public_models
+from ..models._errors import RequestValidationError
+from ..models._validators import (
+    validate_create_response_payload,
+)
+
+
+def parse_create_response(payload: Mapping[str, Any]) -> _public_models.CreateResponse:
+    """Validate incoming JSON payload and return a dict-native ``CreateResponse`` payload.
+
+    :param payload: Raw request payload mapping.
+    :type payload: Mapping[str, Any]
+    :returns: Parsed create response wire payload.
+    :rtype: CreateResponse
+    :raises RequestValidationError: If payload is not an object or cannot be parsed.
+    """
+    if not isinstance(payload, Mapping):
+        raise RequestValidationError("request body must be a JSON object", code="invalid_request")
+
+    validation_errors = validate_create_response_payload(payload)
+    if validation_errors:
+        details = [
+            {
+                "code": "invalid_value",
+                "message": e.get("message", ""),
+                "param": (("$" + e.get("path", "")) if e.get("path", "").startswith(".") else e.get("path", "")),
+            }
+            for e in validation_errors
+        ]
+        raise RequestValidationError(
+            "request body failed schema validation",
+            code="invalid_request",
+            details=details,
+        )
+
+    if isinstance(payload, dict):
+        return cast("_public_models.CreateResponse", payload)
+    return cast("_public_models.CreateResponse", dict(payload))
+
+
+def normalize_create_response(
+    request: _public_models.CreateResponse,
+    options: ResponsesServerOptions | None,
+) -> _public_models.CreateResponse:
+    """Apply server-side defaults to a parsed create request payload.
+
+    :param request: The parsed create response model to normalize.
+    :type request: CreateResponse
+    :param options: Server runtime options containing defaults, or ``None``.
+    :type options: ResponsesServerOptions | None
+    :return: The same model instance with defaults applied.
+    :rtype: CreateResponse
+    """
+    model = request.get("model")
+    if (model is None or (isinstance(model, str) and not model.strip())) and options:
+        request["model"] = options.default_model or ""
+        model = request.get("model")
+
+    if isinstance(model, str):
+        request["model"] = model.strip() or ""
+    elif model is None:
+        request["model"] = ""
+
+    return request
+
+
+def validate_create_response(request: _public_models.CreateResponse) -> None:
+    """Validate create request semantics not enforced by generated model typing.
+
+    :param request: The parsed create response model to validate.
+    :type request: CreateResponse
+    :raises RequestValidationError: If semantic preconditions are violated.
+    """
+    store_enabled = True if request.get("store") is None else bool(request.get("store"))
+
+    if request.get("background") and not store_enabled:
+        raise RequestValidationError(
+            "background=true requires store=true",
+            code="unsupported_parameter",
+            param="background",
+        )
+
+    if request.get("stream_options") is not None and request.get("stream") is not True:
+        raise RequestValidationError(
+            "stream_options requires stream=true",
+            code="invalid_mode",
+            param="stream",
+        )
+
+    # B22: model is optional — resolved to default in normalize_create_response()
+
+    metadata = request.get("metadata")
+    if isinstance(metadata, Mapping):
+        if len(metadata) > MAX_METADATA_KEYS:
+            raise RequestValidationError(
+                f"metadata must have at most {MAX_METADATA_KEYS} key-value pairs",
+                code="invalid_request",
+                param="metadata",
+            )
+        for key, value in metadata.items():
+            if isinstance(key, str) and len(key) > MAX_METADATA_KEY_LENGTH:
+                raise RequestValidationError(
+                    f"metadata key '{key[:MAX_METADATA_KEY_LENGTH]}...' exceeds maximum length of "
+                    f"{MAX_METADATA_KEY_LENGTH} characters",
+                    code="invalid_request",
+                    param="metadata",
+                )
+            if isinstance(value, str) and len(value) > MAX_METADATA_VALUE_LENGTH:
+                raise RequestValidationError(
+                    f"metadata value for key '{key}' exceeds maximum length of "
+                    f"{MAX_METADATA_VALUE_LENGTH} characters",
+                    code="invalid_request",
+                    param="metadata",
+                )
+
+    # Validate previous_response_id format (must be a valid caresp ID)
+    prev_id = request.get("previous_response_id")
+    if isinstance(prev_id, str) and prev_id:
+        is_valid, _ = IdGenerator.is_valid(prev_id, allowed_prefixes=["caresp"])
+        if not is_valid:
+            raise RequestValidationError(
+                "Malformed identifier.",
+                code="invalid_parameters",
+                param="previous_response_id",
+            )
+
+
+def parse_and_validate_create_response(
+    payload: Mapping[str, Any],
+    *,
+    options: ResponsesServerOptions | None = None,
+) -> _public_models.CreateResponse:
+    """Parse, normalize, and validate a create request wire payload.
+
+    :param payload: Raw request payload mapping.
+    :type payload: Mapping[str, Any]
+    :keyword options: Server runtime options for defaults, or ``None``.
+    :keyword type options: ResponsesServerOptions | None
+    :return: A fully validated ``CreateResponse`` wire payload.
+    :rtype: CreateResponse
+    :raises RequestValidationError: If parsing or validation fails.
+    """
+    request = parse_create_response(payload)
+    request = normalize_create_response(request, options)
+    validate_create_response(request)
+    return request
+
+
+def build_api_error_response(
+    message: str,
+    *,
+    code: str,
+    param: str | None = None,
+    error_type: str = "invalid_request_error",
+    debug_info: dict[str, Any] | None = None,
+) -> _public_models.ApiErrorResponse:
+    """Build an API error envelope for client-visible failures.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :keyword code: Machine-readable error code.
+    :keyword type code: str
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
+    :keyword error_type: Error type category (default ``"invalid_request_error"``).
+    :keyword type error_type: str
+    :keyword debug_info: Optional debug information dictionary.
+    :keyword type debug_info: dict[str, Any] | None
+    :return: An ``ApiErrorResponse`` wire envelope.
+    :rtype: ApiErrorResponse
+    """
+    error: dict[str, Any] = {
+        "code": code,
+        "message": message,
+        "param": param,
+        "type": error_type,
+    }
+    if debug_info is not None:
+        error["debugInfo"] = debug_info
+    return cast("_public_models.ApiErrorResponse", {"error": error})
+
+
+def build_not_found_error_response(
+    resource_id: str,
+    *,
+    param: str = "response_id",
+    resource_name: str = "response",
+) -> _public_models.ApiErrorResponse:
+    """Build a canonical not-found error envelope.
+
+    :param resource_id: The ID of the resource that was not found.
+    :type resource_id: str
+    :keyword param: The parameter name to include in the error (default ``"response_id"``).
+    :keyword type param: str
+    :keyword resource_name: Display name for the resource type (default ``"response"``).
+    :keyword type resource_name: str
+    :return: An ``ApiErrorResponse`` wire envelope with not-found error.
+    :rtype: ApiErrorResponse
+    """
+    return build_api_error_response(
+        message=f"{resource_name} '{resource_id}' was not found",
+        code="invalid_request_error",
+        param=param,
+        error_type="invalid_request_error",
+    )
+
+
+def build_invalid_mode_error_response(
+    message: str,
+    *,
+    param: str | None = None,
+) -> _public_models.ApiErrorResponse:
+    """Build a canonical invalid-mode error envelope.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
+    :return: An ``ApiErrorResponse`` wire envelope with invalid-mode error.
+    :rtype: ApiErrorResponse
+    """
+    return build_api_error_response(
+        message=message,
+        code="invalid_request_error",
+        param=param,
+        error_type="invalid_request_error",
+    )
+
+
+def to_api_error_response(error: Exception) -> _public_models.ApiErrorResponse:
+    """Map a Python exception to an API error wire envelope.
+
+    :param error: The exception to convert.
+    :type error: Exception
+    :return: A generated ``ApiErrorResponse`` envelope.
+    :rtype: ApiErrorResponse
+    """
+    if isinstance(error, RequestValidationError):
+        return error.to_api_error_response()
+
+    if isinstance(error, ValueError):
+        return build_api_error_response(
+            message=str(error) or "invalid request",
+            code="invalid_request_error",
+            error_type="invalid_request_error",
+        )
+
+    return build_api_error_response(
+        message="internal server error",
+        code="server_error",
+        error_type="server_error",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Internal error-source classification constants & helpers
+# ---------------------------------------------------------------------------
+
+ERROR_SOURCE_USER: str = "user"
+ERROR_SOURCE_PLATFORM: str = "platform"
+ERROR_SOURCE_UPSTREAM: str = "upstream"
+
+
+def is_platform_error(exc: BaseException) -> bool:
+    """Check whether *exc* has been tagged as a platform infrastructure error.
+
+    :param exc: The exception to check.
+    :type exc: BaseException
+    :return: True if the exception is tagged as a platform error.
+    :rtype: bool
+    """
+    return getattr(exc, PLATFORM_ERROR_TAG, False) is True
+
+
+def tag_platform_error(exc: BaseException) -> None:
+    """Tag *exc* as a platform infrastructure error.
+
+    :param exc: The exception to tag.
+    :type exc: BaseException
+    """
+    setattr(exc, PLATFORM_ERROR_TAG, True)
+
+
+def format_error_detail(exc: BaseException) -> str:
+    """Format an exception for the ``x-platform-error-detail`` header.
+
+    Uses ``type(exc).__name__: str(exc)`` to avoid leaking sensitive
+    material (URLs with query parameters, internal hostnames, etc.)
+    that ``repr()`` may include.  Truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
+
+    :param exc: The exception to format.
+    :type exc: BaseException
+    :return: The formatted error detail string.
+    :rtype: str
+    """
+    detail = f"{type(exc).__name__}: {exc}"
+    if len(detail) > MAX_ERROR_DETAIL_LENGTH:
+        suffix = "...[truncated]"
+        detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
+    return detail
+
+
+def _apply_error_source_headers(
+    headers: dict[str, str],
+    error_source: str,
+    error_detail: str | None = None,
+) -> dict[str, str]:
+    """Return a new dict with error source classification headers merged in.
+
+    :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
+    :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
+    :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
+    :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
+    """
+    merged = {**headers, ERROR_SOURCE: error_source}
+    if error_detail:
+        merged[ERROR_DETAIL] = error_detail
+    return merged
+
+
+# ---------------------------------------------------------------------------
+# HTTP error response factories (moved from _http_errors.py)
+# ---------------------------------------------------------------------------
+
+
+def _json_payload(value: Any) -> Any:
+    """Convert a value to a JSON-serializable form.
+
+    :param value: The value to convert.
+    :type value: Any
+    :return: A JSON-serializable representation of the value.
+    :rtype: Any
+    """
+    return value
+
+
+def _api_error(
+    *,
+    message: str,
+    code: str,
+    param: str | None = None,
+    error_type: str = "invalid_request_error",
+    status_code: int,
+    headers: dict[str, str],
+    request_id: str | None = None,
+) -> JSONResponse:
+    """Build a standard API error ``JSONResponse``.
+
+    :keyword message: Human-readable error message.
+    :keyword code: Machine-readable error code.
+    :keyword headers: HTTP headers to include in the response.
+    :keyword param: Optional parameter name associated with the error.
+    :keyword status_code: HTTP status code for the response.
+    :keyword error_type: The error type category.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :return: A JSONResponse containing the error payload.
+    :rtype: JSONResponse
+    """
+    payload = _json_payload(build_api_error_response(message=message, code=code, param=param, error_type=error_type))
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
+    return JSONResponse(payload, status_code=status_code, headers=headers)
+
+
+def error_response(
+    error: Exception,
+    headers: dict[str, str],
+    request_id: str | None = None,
+    *,
+    error_source: str | None = None,
+) -> JSONResponse:
+    """Map an exception to an appropriate HTTP error ``JSONResponse``.
+
+    Automatically classifies the error source when *error_source* is not
+    provided:
+
+    - :class:`RequestValidationError` / :class:`ValueError` → ``user``
+    - Exceptions tagged with :data:`PLATFORM_ERROR_TAG` → ``platform``
+      (includes ``x-platform-error-detail`` header)
+    - All other exceptions → ``upstream`` (developer handler code)
+
+    :param error: The exception to convert to an error response.
+    :type error: Exception
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
+    :keyword error_source: Override error source classification.
+    :paramtype error_source: str | None
+    :return: A JSONResponse with the appropriate status code and error payload.
+    :rtype: JSONResponse
+    """
+    envelope = to_api_error_response(error)
+    payload = _json_payload(envelope)
+    error_type = payload.get("error", {}).get("type") if isinstance(payload, dict) else None
+    status_code = 500
+    if error_type == "invalid_request_error":
+        status_code = 400
+    elif error_type == "not_found_error":
+        status_code = 404
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
+
+    # Classify error source — check platform tag first so that a ValueError
+    # propagated from storage with PLATFORM_ERROR_TAG is not misclassified.
+    if error_source is None:
+        if is_platform_error(error):
+            error_source = ERROR_SOURCE_PLATFORM
+        elif isinstance(error, (RequestValidationError, ValueError)):
+            error_source = ERROR_SOURCE_USER
+        else:
+            error_source = ERROR_SOURCE_UPSTREAM
+
+    detail = format_error_detail(error) if error_source == ERROR_SOURCE_PLATFORM else None
+    merged_headers = _apply_error_source_headers(headers, error_source, detail)
+    return JSONResponse(payload, status_code=status_code, headers=merged_headers)
+
+
+def not_found_response(response_id: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
+    """Build a 404 Not Found error response.
+
+    :param response_id: The ID of the response that was not found.
+    :type response_id: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
+    :return: A 404 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=f"Response with id '{response_id}' not found.",
+        code="invalid_request_error",
+        param="response_id",
+        error_type="invalid_request_error",
+        status_code=404,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
+    )
+
+
+def invalid_request_response(
+    message: str,
+    headers: dict[str, str],
+    *,
+    param: str | None = None,
+    request_id: str | None = None,
+) -> JSONResponse:
+    """Build a 400 Bad Request error response.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :return: A 400 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=message,
+        code="invalid_request_error",
+        param=param,
+        error_type="invalid_request_error",
+        status_code=400,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
+    )
+
+
+def invalid_parameters_response(
+    message: str,
+    headers: dict[str, str],
+    *,
+    param: str | None = None,
+    request_id: str | None = None,
+) -> JSONResponse:
+    """Build a 400 Bad Request error response with ``code: "invalid_parameters"``.
+
+    Used for malformed identifier validation (spec rule B40).
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :return: A 400 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=message,
+        code="invalid_parameters",
+        param=param,
+        error_type="invalid_request_error",
+        status_code=400,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
+    )
+
+
+def invalid_mode_response(
+    message: str,
+    headers: dict[str, str],
+    *,
+    param: str | None = None,
+    request_id: str | None = None,
+) -> JSONResponse:
+    """Build a 400 Bad Request error response for an invalid mode combination.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :return: A 400 JSONResponse.
+    :rtype: JSONResponse
+    """
+    payload = _json_payload(build_invalid_mode_error_response(message, param=param))
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
+    return JSONResponse(
+        payload,
+        status_code=400,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+    )
+
+
+def service_unavailable_response(message: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
+    """Build a 503 Service Unavailable error response.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
+    :return: A 503 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=message,
+        code="service_unavailable",
+        param=None,
+        error_type="server_error",
+        status_code=503,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_PLATFORM),
+        request_id=request_id,
+    )
+
+
+def deleted_response(response_id: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
+    """Build a 404 error response indicating the response has been deleted.
+
+    Per spec, all endpoints treat deleted responses as not-found (HTTP 404).
+
+    :param response_id: The ID of the deleted response.
+    :type response_id: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
+    :return: A 404 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return not_found_response(response_id, headers, request_id=request_id)
+
+
+def _enrich_error_payload(payload: dict[str, Any], request_id: str) -> None:
+    """Inject ``request_id`` into the ``error.additionalInfo`` of an error payload.
+
+    Mutates the payload dict in-place.  If ``error.additionalInfo`` already
+    contains a ``request_id`` key, it is left unchanged.
+
+    :param payload: The error response payload dict.
+    :type payload: dict[str, Any]
+    :param request_id: The resolved request ID value.
+    :type request_id: str
+    """
+    error = payload.get("error")
+    if not isinstance(error, dict):
+        return
+    additional_info = error.get("additionalInfo")
+    if not isinstance(additional_info, dict):
+        additional_info = {}
+        error["additionalInfo"] = additional_info
+    if "request_id" not in additional_info:
+        additional_info["request_id"] = request_id

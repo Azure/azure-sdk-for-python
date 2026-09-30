@@ -12,7 +12,7 @@ import logging
 import sys
 from typing import Callable, cast, List, Any, Awaitable, Optional, Union, IO
 
-from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
+from ._operations import _LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
 from ..._models import LogsUploadError
 
@@ -26,7 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class LogsIngestionClientOperationsMixin(GeneratedOps):
+class _LogsIngestionClientOperationsMixin(GeneratedOps):
     async def upload(
         self,
         rule_id: str,
@@ -94,7 +94,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
 
 
 __all__: List[str] = [
-    "LogsIngestionClientOperationsMixin"
+    "_LogsIngestionClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

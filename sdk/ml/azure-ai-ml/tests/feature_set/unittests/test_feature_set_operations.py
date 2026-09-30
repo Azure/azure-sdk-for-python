@@ -6,13 +6,11 @@ import pytest
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_10_01.models._models_py3 import (
-    FeatureResourceArmPaginatedResult,
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,
     FeaturesetVersionProperties,
-    JobBaseResourceArmPaginatedResult,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
@@ -30,13 +28,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -111,17 +109,13 @@ class TestFeatureSetOperations:
         mock_feature_set_operations._operation.begin_backfill.assert_called_once()
 
     def test_list_materialization_operation(self, mock_feature_set_operations: FeatureSetOperations) -> None:
-        mock_feature_set_operations._jobs_operation.list.return_value = [
-            Mock(JobBaseResourceArmPaginatedResult) for _ in range(10)
-        ]
+        mock_feature_set_operations._jobs_operation.list.return_value = [Mock() for _ in range(10)]
         result = mock_feature_set_operations.list_materialization_operations(name="random_name", version="1")
         assert isinstance(result, Iterable)
         mock_feature_set_operations._jobs_operation.list.assert_called_once()
 
     def test_list_features(self, mock_feature_set_operations: FeatureSetOperations) -> None:
-        mock_feature_set_operations._feature_operation.list.return_value = [
-            Mock(FeatureResourceArmPaginatedResult) for _ in range(10)
-        ]
+        mock_feature_set_operations._feature_operation.list.return_value = [Mock() for _ in range(10)]
         result = mock_feature_set_operations.list_features(feature_set_name="random_name", version="1")
         assert isinstance(result, Iterable)
         mock_feature_set_operations._feature_operation.list.assert_called_once()
@@ -160,12 +154,14 @@ class TestFeatureSetOperations:
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )
 
-    def test_create(self, mock_feature_set_operations: FeatureSetOperations):
-        import os
+    def test_create(self, mock_feature_set_operations: FeatureSetOperations, tmp_path):
+        import shutil
         import sys
-        import uuid
         from pathlib import Path
-        from tempfile import gettempdir
+
+        # Wheel and sdist runs must not rewrite the same fixture's .amlignore.
+        spec_path = tmp_path / "spec"
+        shutil.copytree(Path("./tests/test_configs/feature_set/sample_feature_set/spec"), spec_path)
 
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", side_effect=mock_artifact_storage
@@ -177,14 +173,14 @@ class TestFeatureSetOperations:
                 description="7-day and 3-day rolling aggregation of transactions featureset",
                 entities=["azureml:account:1"],
                 stage="Development",
-                specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+                specification=FeatureSetSpecification(path=str(spec_path)),
                 tags={"data_type": "nonPII"},
             )
 
             mock_feature_set_operations.begin_create_or_update(featureset=fs)
             if sys.version_info >= (3, 8):
                 call_args = mock_upload_to_datastore.call_args.args
-                assert call_args[2] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
+                assert call_args[2] == spec_path.resolve()
             mock_upload_to_datastore.assert_called_once()
             mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
 
@@ -196,13 +192,12 @@ class TestFeatureSetOperations:
                 description="7-day and 3-day rolling aggregation of transactions featureset",
                 entities=["azureml:account:1"],
                 stage="Development",
-                specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+                specification=FeatureSetSpecification(path=str(spec_path)),
                 tags={"data_type": "nonPII"},
             )
-            temp_folder = uuid.uuid4().hex
-            temp_folder = os.path.join(gettempdir(), temp_folder)
-            dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
-            os.makedirs(temp_folder)
+            dump_folder = tmp_path / "dumped"
+            dump_folder.mkdir()
+            dump_path = dump_folder / "feature_set_asset.yaml"
             fs.dump(dest=dump_path)
             from azure.ai.ml.entities._load_functions import load_feature_set
 
@@ -211,5 +206,5 @@ class TestFeatureSetOperations:
 
             if sys.version_info >= (3, 8):
                 call_args = mock_upload_to_datastore.call_args.args
-                assert call_args[2] == Path(os.path.dirname(dump_path), "spec").resolve()
+                assert call_args[2] == (dump_folder / "spec").resolve()
             mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()

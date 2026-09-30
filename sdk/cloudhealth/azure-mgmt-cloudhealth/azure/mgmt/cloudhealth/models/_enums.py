@@ -19,25 +19,50 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation strategy for combining a set of health states into one."""
+
+    WORST_OF = "WorstOf"
+    """Worst health state across members is propagated. Default behavior."""
+    BEST_OF = "BestOf"
+    """Best (least severe) health state across the non-Unknown members is propagated. Unknown members
+    are excluded from the selection; if every member is Unknown the group resolves to Unknown. The
+    'ignoreUnknown' flag has no observable effect for this strategy and is documented as such."""
+    MIN_HEALTHY = "MinHealthy"
+    """Healthy if the count/percentage of healthy members meets the threshold."""
+    MAX_NOT_HEALTHY = "MaxNotHealthy"
+    """Healthy if the count/percentage of not-healthy members stays below the threshold."""
+
+
+class AggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Unit type for the thresholds used by threshold-bearing aggregation strategies."""
+
+    ABSOLUTE = "Absolute"
+    """Threshold is an absolute count of members."""
+    PERCENTAGE = "Percentage"
+    """Threshold is a percentage of members (0-100)."""
+
+
 class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of an alert."""
 
     SEV0 = "Sev0"
-    """Critical"""
+    """Critical."""
     SEV1 = "Sev1"
-    """Error"""
+    """Error."""
     SEV2 = "Sev2"
-    """Warning"""
+    """Warning."""
     SEV3 = "Sev3"
-    """Informational"""
+    """Informational."""
     SEV4 = "Sev4"
-    """Verbose"""
+    """Verbose."""
 
 
 class AuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported kinds of authentication settings as discriminator."""
 
     MANAGED_IDENTITY = "ManagedIdentity"
+    """MANAGED_IDENTITY."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -53,60 +78,55 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
-class DependenciesAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation type for child dependencies."""
+class DiscoveryRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discovery rule specification kind discriminator."""
 
-    WORST_OF = "WorstOf"
-    """Default behavior: Worst child health state is propagated."""
-    THRESHOLDS = "Thresholds"
-    """Based on configurable thresholds."""
+    RESOURCE_GRAPH_QUERY = "ResourceGraphQuery"
+    """Azure Resource Graph query based discovery."""
+    APPLICATION_INSIGHTS_TOPOLOGY = "ApplicationInsightsTopology"
+    """Application Insights topology based discovery."""
 
 
 class DiscoveryRuleRecommendedSignalsBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Discovery rule recommended signal behavior."""
 
     ENABLED = "Enabled"
-    """Automatically add recommended signals"""
+    """Automatically add recommended signals."""
     DISABLED = "Disabled"
-    """Do not automatically add recommended signals"""
+    """Do not automatically add recommended signals."""
 
 
-class DiscoveryRuleRelationshipDiscoveryBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DiscoveryRuleRelationshipDiscoveryBehavior(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Discovery rule relationship discovery behavior."""
 
     ENABLED = "Enabled"
-    """Automatically attempt to discover relationships"""
+    """Automatically attempt to discover relationships."""
     DISABLED = "Disabled"
-    """Do not automatically attempt to discover relationships"""
+    """Do not automatically attempt to discover relationships."""
 
 
-class DynamicThresholdDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Threshold direction for dynamic thresholds."""
+class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sensitivity level for dynamic threshold detection."""
 
-    LOWER_THAN = "LowerThan"
-    """Lower than"""
-    GREATER_THAN = "GreaterThan"
-    """Greater than"""
-    GREATER_OR_LOWER_THAN = "GreaterOrLowerThan"
-    """Greater or Lower Than"""
-
-
-class DynamicThresholdModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ML-based model variants."""
-
-    ANOMALY_DETECTION = "AnomalyDetection"
-    """Anomaly detection model"""
+    LOW = "Low"
+    """Low sensitivity — fewer anomalies detected, wider threshold band."""
+    MEDIUM = "Medium"
+    """Medium sensitivity — balanced detection."""
+    HIGH = "High"
+    """High sensitivity — more anomalies detected, tighter threshold band."""
 
 
 class EntityImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of impact an entity has on health state propagation."""
 
     STANDARD = "Standard"
-    """Standard impact"""
+    """Standard impact."""
     LIMITED = "Limited"
-    """Limited impact"""
+    """Limited impact."""
     SUPPRESSED = "Suppressed"
-    """Suppressed impact"""
+    """Suppressed impact."""
 
 
 class HealthModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -119,22 +139,22 @@ class HealthModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CREATING = "Creating"
+    """CREATING."""
     DELETING = "Deleting"
+    """DELETING."""
 
 
 class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health state of an entity."""
 
     HEALTHY = "Healthy"
-    """Healthy status"""
+    """Healthy status."""
     DEGRADED = "Degraded"
-    """Degraded status"""
-    ERROR = "Error"
-    """Error status (Unhealthy)"""
+    """Degraded status."""
+    UNHEALTHY = "Unhealthy"
+    """Unhealthy status."""
     UNKNOWN = "Unknown"
-    """Unknown status"""
-    DELETED = "Deleted"
-    """Deleted status"""
+    """Unknown status."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -156,11 +176,17 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metric aggregation type."""
 
     NONE = "None"
+    """NONE."""
     AVERAGE = "Average"
+    """AVERAGE."""
     COUNT = "Count"
+    """COUNT."""
     MINIMUM = "Minimum"
+    """MINIMUM."""
     MAXIMUM = "Maximum"
+    """MAXIMUM."""
     TOTAL = "Total"
+    """TOTAL."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -179,38 +205,104 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RefreshInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Refresh interval in ISO duration format."""
 
-    PT1M = "PT1M"
-    """One Minute"""
-    PT5M = "PT5M"
-    """Five Minutes"""
-    PT10M = "PT10M"
-    """Ten Minutes"""
-    PT30M = "PT30M"
-    """Thirty Minutes"""
-    PT1H = "PT1H"
-    """One Hour"""
-    PT2H = "PT2H"
-    """Two Hours"""
+    PT1_M = "PT1M"
+    """One Minute."""
+    PT5_M = "PT5M"
+    """Five Minutes."""
+    PT10_M = "PT10M"
+    """Ten Minutes."""
+    PT15_M = "PT15M"
+    """Fifteen Minutes."""
+    PT30_M = "PT30M"
+    """Thirty Minutes."""
+    PT1_H = "PT1H"
+    """One Hour."""
+    PT2_H = "PT2H"
+    """Two Hours."""
+
+
+class ResourceHealthAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Availability state of an Azure resource as reported by Azure Resource Health."""
+
+    AVAILABLE = "Available"
+    """The resource is available."""
+    UNAVAILABLE = "Unavailable"
+    """The resource is unavailable."""
+    DEGRADED = "Degraded"
+    """The resource is degraded."""
+    UNKNOWN = "Unknown"
+    """The resource availability state is unknown."""
+
+
+class ResourceHealthAvailabilityStateSignalBehavior(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Resource health availability state signal behavior."""
+
+    ENABLED = "Enabled"
+    """Automatically add resource health availability state signal."""
+    DISABLED = "Disabled"
+    """Do not automatically add resource health availability state signal."""
+
+
+class ResourceHealthCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether an Azure Resource Health status changing event was planned or unplanned."""
+
+    PLANNED = "Planned"
+    """The event was planned."""
+    UNPLANNED = "Unplanned"
+    """The event was unplanned."""
+
+
+class ResourceHealthReasonChronicity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the current Azure Resource Health availability state is persistent or transient."""
+
+    PERSISTENT = "Persistent"
+    """Persistent state."""
+    TRANSIENT = "Transient"
+    """Transient state."""
+
+
+class ResourceHealthReasonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason type for the current Azure Resource Health availability state."""
+
+    UNPLANNED = "Unplanned"
+    """Unplanned reason."""
+    PLANNED = "Planned"
+    """Planned reason."""
+    USER_INITIATED = "UserInitiated"
+    """User-initiated reason."""
 
 
 class SignalKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported signal kinds as discriminator."""
 
     AZURE_RESOURCE_METRIC = "AzureResourceMetric"
+    """AZURE_RESOURCE_METRIC."""
     LOG_ANALYTICS_QUERY = "LogAnalyticsQuery"
+    """LOG_ANALYTICS_QUERY."""
     PROMETHEUS_METRICS_QUERY = "PrometheusMetricsQuery"
+    """PROMETHEUS_METRICS_QUERY."""
+    EXTERNAL_SIGNAL = "External"
+    """EXTERNAL_SIGNAL."""
 
 
 class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Signal operator."""
 
-    LOWER_THAN = "LowerThan"
-    """Lower than"""
-    LOWER_OR_EQUALS = "LowerOrEquals"
-    """Lower than or equal to"""
     GREATER_THAN = "GreaterThan"
-    """Greater than"""
-    GREATER_OR_EQUALS = "GreaterOrEquals"
-    """Greater than or equal to"""
-    EQUALS = "Equals"
-    """Equal to"""
+    """Greater than."""
+    LESS_THAN = "LessThan"
+    """Less than."""
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+    """Less than or equal to."""
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    """Greater than or equal to."""
+    EQUAL = "Equal"
+    """Equal to."""
+    NOT_EQUAL = "NotEqual"
+    """Not equal to."""
+    DYNAMIC = "Dynamic"
+    """Dynamic threshold — uses deviation from a ML-computed baseline to determine health state
+    transitions. Only valid for the unhealthy threshold rule. Requires ``sensitivity`` and
+    ``lookBackWindow`` on the rule; ``threshold`` is ignored."""

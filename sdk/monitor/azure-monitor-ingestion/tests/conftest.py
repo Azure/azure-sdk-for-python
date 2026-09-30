@@ -64,7 +64,8 @@ def add_sanitizers(test_proxy, environment_variables):
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     set_custom_default_matcher(
-        compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        compare_bodies=False,
+        excluded_headers="Accept,Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
     )
     add_general_regex_sanitizer(
         regex="http[s]?://.+\\.ingest\\.monitor\\.azure\\.com",

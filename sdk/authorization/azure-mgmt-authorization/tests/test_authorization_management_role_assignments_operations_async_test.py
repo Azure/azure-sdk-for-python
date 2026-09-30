@@ -33,4 +33,4 @@ class TestAuthorizationManagementRoleAssignmentsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
-        assert response
+        assert len(result)

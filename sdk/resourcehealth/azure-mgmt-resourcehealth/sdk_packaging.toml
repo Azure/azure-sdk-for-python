@@ -1,9 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-resourcehealth"
-package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Resource Health Management"
-package_doc_id = ""
-is_stable = false
-is_arm = true
-sample_link = ""
-title = "ResourceHealthMgmtClient"

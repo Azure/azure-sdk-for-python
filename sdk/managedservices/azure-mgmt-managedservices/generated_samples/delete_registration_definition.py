@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2022-10-01/examples/DeleteRegistrationDefinition.json
+# x-ms-original-file: specification/managedservices/resource-manager/Microsoft.ManagedServices/ManagedServices/preview/2020-02-01-preview/examples/DeleteRegistrationDefinition.json
 if __name__ == "__main__":
     main()

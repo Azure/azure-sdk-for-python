@@ -3,9 +3,13 @@
   "reportMissingImports": false,
   "pythonVersion": "3.11",
   "extraPaths": [
+    "./../../authorization/azure-mgmt-authorization",
+    "./../../cognitiveservices/azure-mgmt-cognitiveservices",
     "./../../core/azure-core",
     "./../../evaluation/azure-ai-evaluation",
     "./../../identity/azure-identity",
+    "./../../resources/azure-mgmt-resource",
+    "./../../resources/azure-mgmt-subscription",
     "./../../monitor/azure-monitor-opentelemetry"
   ]
 }

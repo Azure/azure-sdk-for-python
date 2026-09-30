@@ -128,7 +128,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
 
@@ -198,8 +198,8 @@ class FacetResult(_Model):
      for each faceted field; null if the query did not contain any nested facets."""
 
 
-class HybridSearch(_Model):
-    """TThe query parameters to configure hybrid search behaviors.
+class HybridSearch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The query parameters to configure hybrid search behaviors.
 
     :ivar max_text_recall_size: Determines the maximum number of documents to be retrieved by the
      text query portion of a hybrid search request. Those documents will be combined with the
@@ -249,7 +249,7 @@ class HybridSearch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexAction(_Model):
+class IndexAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an index action that operates on a document.
 
     :ivar action_type: The operation to perform on a document in an indexing batch. Known values
@@ -281,7 +281,7 @@ class IndexAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexDocumentsBatch(_Model):
+class IndexDocumentsBatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains a batch of document write actions to send to the index.
 
     :ivar actions: The actions in the batch. Required.
@@ -540,7 +540,7 @@ class SearchDocumentsResult(_Model):
     :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the requested results in a single response. You can use this JSON along with.
-    :vartype next_page_parameters: ~azure.search.documents.models.SearchRequest
+    :vartype next_page_parameters: ~azure.search.documents.models._models.SearchRequest
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SearchResult]
     :ivar next_link: Continuation URL returned when the query can't return all the requested
@@ -579,7 +579,7 @@ class SearchDocumentsResult(_Model):
      specified or set to 'none'."""
     debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
     """Debug information that applies to the search results as a whole."""
-    next_page_parameters: Optional["_models.SearchRequest"] = rest_field(
+    next_page_parameters: Optional["_models._models.SearchRequest"] = rest_field(
         name="@search.nextPageParameters", visibility=["read"]
     )
     """Continuation JSON payload returned when the query can't return all the requested results in a
@@ -601,13 +601,13 @@ class SearchDocumentsResult(_Model):
     )
     """Type of partial response that was returned for a semantic ranking request. Known values are:
      \"baseResults\" and \"rerankedResults\"."""
-    semantic_query_rewrites_result_type: Optional[Union[str, "_models.SemanticQueryRewritesResultType"]] = rest_field(
-        name="@search.semanticQueryRewritesResultType", visibility=["read"]
+    semantic_query_rewrites_result_type: Optional[Union[str, "_models._enums.SemanticQueryRewritesResultType"]] = (
+        rest_field(name="@search.semanticQueryRewritesResultType", visibility=["read"])
     )
     """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
 
 
-class SearchRequest(_Model):
+class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for filtering, sorting, faceting, paging, and other search query behaviors.
 
     :ivar include_total_count: A value that specifies whether to fetch the total count of results.
@@ -1021,7 +1021,7 @@ class SearchResult(_Model):
     """Contains debugging information that can be used to further explore your search results."""
 
 
-class VectorThreshold(_Model):
+class VectorThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The threshold used for vector queries.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1054,7 +1054,9 @@ class VectorThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchScoreThreshold(VectorThreshold, discriminator="searchScore"):
+class SearchScoreThreshold(
+    VectorThreshold, discriminator="searchScore"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The results of the vector query will filter based on the '.
 
     :ivar value: The threshold will filter based on the '. Required.
@@ -1187,7 +1189,7 @@ class TextResult(_Model):
     """The BM25 or Classic score for the text portion of the query."""
 
 
-class VectorQuery(_Model):
+class VectorQuery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query parameters for vector and hybrid search queries.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1301,7 +1303,9 @@ class VectorQuery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
+class VectorizableImageBinaryQuery(
+    VectorQuery, discriminator="imageBinary"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query parameters to use for vector search when a base 64 encoded binary of an image that
     needs to be vectorized is provided.
 
@@ -1381,7 +1385,9 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
         self.kind = VectorQueryKind.IMAGE_BINARY  # type: ignore
 
 
-class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
+class VectorizableImageUrlQuery(
+    VectorQuery, discriminator="imageUrl"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query parameters to use for vector search when an url that represents an image value that
     needs to be vectorized is provided.
 
@@ -1458,7 +1464,9 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
         self.kind = VectorQueryKind.IMAGE_URL  # type: ignore
 
 
-class VectorizableTextQuery(VectorQuery, discriminator="text"):
+class VectorizableTextQuery(
+    VectorQuery, discriminator="text"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query parameters to use for vector search when a text value that needs to be vectorized is
     provided.
 
@@ -1544,7 +1552,9 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
         self.kind = VectorQueryKind.TEXT  # type: ignore
 
 
-class VectorizedQuery(VectorQuery, discriminator="vector"):
+class VectorizedQuery(
+    VectorQuery, discriminator="vector"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The query parameters to use for vector search when a raw vector value is provided.
 
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
@@ -1633,7 +1643,9 @@ class VectorsDebugInfo(_Model):
      method such as RRF."""
 
 
-class VectorSimilarityThreshold(VectorThreshold, discriminator="vectorSimilarity"):
+class VectorSimilarityThreshold(
+    VectorThreshold, discriminator="vectorSimilarity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The results of the vector query will be filtered based on the vector similarity metric. Note
     this is the canonical definition of similarity metric, not the 'distance' version. The
     threshold direction (larger or smaller) will be chosen automatically according to the metric

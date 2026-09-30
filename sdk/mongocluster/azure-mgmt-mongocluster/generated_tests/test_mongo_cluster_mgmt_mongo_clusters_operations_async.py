@@ -67,6 +67,7 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
                         },
                         "highAvailability": {"targetMode": "str"},
                         "infrastructureVersion": "str",
+                        "networkBypassMode": "str",
                         "previewFeatures": ["str"],
                         "privateEndpointConnections": [
                             {
@@ -149,6 +150,7 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
                             }
                         },
                         "highAvailability": {"targetMode": "str"},
+                        "networkBypassMode": "str",
                         "previewFeatures": ["str"],
                         "publicNetworkAccess": "str",
                         "serverVersion": "str",

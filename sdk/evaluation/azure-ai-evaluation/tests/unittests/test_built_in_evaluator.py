@@ -40,7 +40,7 @@ class TestBuiltInEvaluators:
         score = fluency_eval(response="The capital of Japan is Tokyo.")
 
         assert score is not None
-        assert score["fluency"] == score["gpt_fluency"] == 1
+        assert score["fluency_score"] == 1
 
     def test_fluency_evaluator_non_string_inputs(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
@@ -69,22 +69,19 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
             ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
-        assert result["similarity"] == result["gpt_similarity"] == 1
-        # Updated assertion to expect 4 keys instead of 2
-        assert len(result) == 11
+        assert result["similarity_score"] == 1
+        assert len(result) == 8
         # Verify all expected keys are present
         assert set(result.keys()) == {
-            "similarity",
-            "gpt_similarity",
-            "similarity_result",
+            "similarity_score",
+            "similarity_passed",
+            "similarity_reason",
+            "similarity_status",
             "similarity_threshold",
-            "similarity_prompt_tokens",
-            "similarity_completion_tokens",
-            "similarity_total_tokens",
-            "similarity_finish_reason",
-            "similarity_model",
-            "similarity_sample_input",
-            "similarity_sample_output",
+            "similarity_properties",
+            # Backward-compatibility keys
+            "similarity_result",
+            "similarity",
         }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
@@ -94,8 +91,7 @@ class TestBuiltInEvaluators:
             query="What is the value of 2 + 2?",
             context="1 + 2 = 2",
         )
-        assert result["retrieval"] == result["gpt_retrieval"] == 1
-        assert result["retrieval"] == result["gpt_retrieval"]
+        assert result["retrieval_score"] == 1
         assert result["retrieval_reason"]
 
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
@@ -116,7 +112,7 @@ class TestBuiltInEvaluators:
         }
 
         result = retrieval_eval(conversation=conversation)
-        assert result["retrieval"] == result["gpt_retrieval"] == 1
+        assert result["retrieval_score"] == 1
 
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
         retrieval_eval._flow = MagicMock(return_value=quality_response_async_mock())
@@ -132,7 +128,7 @@ class TestBuiltInEvaluators:
         }
 
         result = retrieval_eval(conversation=conversation)
-        assert result["retrieval"] == result["gpt_retrieval"] == 1
+        assert result["retrieval_score"] == 1
 
     def test_quality_evaluator_missing_input(self, mock_model_config):
         """All evaluators that inherit from EvaluatorBase are covered by this test"""
@@ -207,7 +203,7 @@ class TestBuiltInEvaluators:
         )
 
         assert result is not None
-        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert result["groundedness_score"] == 1
         assert "groundedness_reason" in result
 
     def test_groundedness_evaluator_with_context(self, mock_model_config):
@@ -221,7 +217,7 @@ class TestBuiltInEvaluators:
         )
 
         assert result is not None
-        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert result["groundedness_score"] == 1
         assert "groundedness_reason" in result
 
     def test_groundedness_evaluator_missing_required_inputs(self, mock_model_config):

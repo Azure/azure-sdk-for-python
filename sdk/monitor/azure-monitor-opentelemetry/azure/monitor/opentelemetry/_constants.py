@@ -78,6 +78,8 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "django",
     "fastapi",
     "flask",
+    "httpx",
+    "httpx2",
     "psycopg2",
     "requests",
     "urllib",
@@ -89,3 +91,8 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 
 _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
 _AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"
+
+# --------------------Browser SDK snippet injection------------------------------
+
+_BROWSER_SDK_MAX_COMPRESSED_BYTES = 1 * 1024 * 1024  # 1 MiB on the wire
+_BROWSER_SDK_MAX_DECOMPRESSED_BYTES = 5 * 1024 * 1024  # 5 MiB after decompression

@@ -8,7 +8,7 @@ from typing import Any, List
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012025Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -42,7 +42,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client_01_2025: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient012025Preview).
-    :type service_client_01_2025: ~azure.ai.ml._restclient.v2025_01_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces    # pylint: disable=line-too-long
+    :type service_client_01_2025: ~azure.ai.ml._restclient.arm_ml_service._client.MachineLearningServicesMgmtClient    # pylint: disable=line-too-long
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credentials: Credential to use for authentication.
@@ -68,7 +68,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
         :param service_client_01_2025: Service client to allow end users to operate on Azure Machine Learning Workspace
             resources (ServiceClient012025Preview).
-        :type service_client_01_2025: ~azure.ai.ml._restclient.v2025_01_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces    # pylint: disable=line-too-long
+        :type service_client_01_2025: ~azure.ai.ml._restclient.arm_ml_service._client.MachineLearningServicesMgmtClient    # pylint: disable=line-too-long
         :param all_operations: All operations classes of an MLClient object.
         :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
         :param credentials: Credential to use for authentication.

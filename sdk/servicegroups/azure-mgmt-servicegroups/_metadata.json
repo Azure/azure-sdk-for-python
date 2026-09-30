@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-08-01",
+  "apiVersions": {
+    "Microsoft.Management": "2026-08-01"
+  },
+  "commit": "4cd7e2ac392a5d75c6a29fee14e93d2146364e79",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/management/resource-manager/Microsoft.Management/ServiceGroups",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

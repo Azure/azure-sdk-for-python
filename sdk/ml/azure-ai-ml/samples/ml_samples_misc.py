@@ -48,7 +48,7 @@ class MiscConfigurationOptions(object):
         # [END job_operations_create_and_update]
 
         # [START job_operations_list]
-        from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+        from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 
         list_of_jobs = ml_client.jobs.list(parent_job_name=job_name, list_view_type=ListViewType.ARCHIVED_ONLY)
         # [END job_operations_list]
@@ -116,7 +116,7 @@ class MiscConfigurationOptions(object):
 
         # [START model_entity_with_default_deployment_template]
         from azure.ai.ml.entities import Model
-        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
         model_with_template = Model(
             name="model-with-template",
@@ -124,7 +124,7 @@ class MiscConfigurationOptions(object):
             description="Model with default deployment template",
             path="models/my_model.pkl",
             type="custom_model",
-            default_deployment_template=DefaultDeploymentTemplate(
+            default_deployment_template=DeploymentTemplateReference(
                 asset_id="azureml://registries/my-registry/deploymenttemplates/my-template/versions/1"
             ),
         )

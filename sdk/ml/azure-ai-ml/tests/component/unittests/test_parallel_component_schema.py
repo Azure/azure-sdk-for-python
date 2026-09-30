@@ -7,7 +7,8 @@ import pytest
 import yaml
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion as ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -78,7 +79,7 @@ def load_component_entity_from_rest_json(path) -> ParallelComponent:
     """Rest component json -> rest component object -> component entity"""
     with open(path, "r") as f:
         target = yaml.safe_load(f)
-    rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(target)))
+    rest_obj = _deserialize(ComponentVersionData, json.loads(json.dumps(target)))
     internal_component = ParallelComponent._from_rest_object(rest_obj)
     return internal_component
 

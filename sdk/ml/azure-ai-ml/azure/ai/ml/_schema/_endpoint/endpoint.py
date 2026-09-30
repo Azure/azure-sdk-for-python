@@ -6,7 +6,7 @@ import logging
 
 from marshmallow import fields, validate
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthMode
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.identity import IdentitySchema

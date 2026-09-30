@@ -15,6 +15,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+from opentelemetry.semconv._incubating.attributes import session_attributes
 from opentelemetry.sdk import _logs
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -31,7 +32,14 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+    _MICROSOFT_AVAILABILITY_DURATION,
+    _MICROSOFT_AVAILABILITY_ID,
+    _MICROSOFT_AVAILABILITY_MESSAGE,
+    _MICROSOFT_AVAILABILITY_NAME,
+    _MICROSOFT_AVAILABILITY_RUN_LOCATION,
+    _MICROSOFT_AVAILABILITY_SUCCESS,
     _MICROSOFT_CUSTOM_EVENT_NAME,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
     _DEFAULT_LOG_MESSAGE,
     _APPLICATION_ID_RESOURCE_KEY,
 )
@@ -103,6 +111,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute",
                     "enduser.id": "test-auth",
                     "enduser.pseudo.id": "test-user",
+                    session_attributes.SESSION_ID: "test-session",
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -232,7 +241,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
-            instrumentation_scope=InstrumentationScope("test_name"),
+            instrumentation_scope=InstrumentationScope("custom-event-logger"),
         )
         cls._exc_data = _logs.ReadWriteLogRecord(
             LogRecord(
@@ -283,7 +292,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
-            instrumentation_scope=InstrumentationScope("test_name"),
+            instrumentation_scope=InstrumentationScope("blank_exception_logger"),
         )
         cls._exc_data_empty = _logs.ReadWriteLogRecord(
             LogRecord(
@@ -465,8 +474,11 @@ class TestAzureLogExporter(unittest.TestCase):
 
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_AUTH_USER_ID), "test-auth")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "test-user")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "test-session")
         self.assertNotIn("enduser.id", envelope.data.base_data.properties)
         self.assertNotIn("enduser.pseudo.id", envelope.data.base_data.properties)
+        self.assertNotIn(session_attributes.SESSION_ID, envelope.data.base_data.properties)
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "test_name")
 
     def test_log_to_envelope_log_none(self):
         exporter = self._exporter
@@ -577,6 +589,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "test exception")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "blank_exception_logger")
 
     def test_log_to_envelope_event(self):
         exporter = self._exporter
@@ -618,6 +631,176 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, "event_name")
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "custom-event-logger")
+
+    def test_log_to_envelope_custom_measurements(self):
+        exporter = self._exporter
+        attributes = {
+            "test": "attribute",
+            _MICROSOFT_CUSTOM_MEASUREMENTS: '{"itemsProcessed": 42.0, "queueDepth": 7}',
+        }
+        expected = {"itemsProcessed": 42.0, "queueDepth": 7.0}
+        cases = {
+            "MessageData": {},
+            "EventData": {_MICROSOFT_CUSTOM_EVENT_NAME: "event_name"},
+            "ExceptionData": {EXCEPTION_TYPE: "ZeroDivisionError", EXCEPTION_MESSAGE: "division by zero"},
+        }
+        for base_type, extra_attributes in cases.items():
+            with self.subTest(base_type=base_type):
+                log_data = _logs.ReadWriteLogRecord(
+                    LogRecord(
+                        timestamp=1646865018558419456,
+                        severity_text="INFO",
+                        severity_number=SeverityNumber.INFO,
+                        body="Test message",
+                        attributes={**attributes, **extra_attributes},
+                    ),
+                    resource=Resource.create(attributes={"asd": "test_resource"}),
+                    instrumentation_scope=InstrumentationScope("test_name"),
+                )
+                envelope = exporter._log_to_envelope(log_data)
+                self.assertEqual(envelope.data.base_type, base_type)
+                self.assertEqual(envelope.data.base_data.measurements, expected)
+                self.assertIsNone(envelope.data.base_data.properties.get(_MICROSOFT_CUSTOM_MEASUREMENTS))
+
+    def test_log_to_envelope_availability(self):
+        exporter = self._exporter
+        timestamp = 1646865018558419456
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=timestamp,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="availability log",
+                attributes={
+                    "test": "attribute",
+                    _MICROSOFT_AVAILABILITY_ID: "test-id",
+                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                    _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                    _MICROSOFT_AVAILABILITY_RUN_LOCATION: "test-location",
+                    _MICROSOFT_AVAILABILITY_MESSAGE: "test-message",
+                    _MICROSOFT_CUSTOM_MEASUREMENTS: '{"itemsProcessed": 42.0}',
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Availability")
+        self.assertEqual(envelope.time, ns_to_datetime(timestamp))
+        self.assertEqual(envelope.data.base_type, "AvailabilityData")
+        self.assertEqual(envelope.data.base_data.id, "test-id")
+        self.assertEqual(envelope.data.base_data.name, "test-name")
+        self.assertEqual(envelope.data.base_data.duration, "00:00:05")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.run_location, "test-location")
+        self.assertEqual(envelope.data.base_data.message, "test-message")
+        self.assertEqual(envelope.data.base_data.measurements, {"itemsProcessed": 42.0})
+        self.assertEqual(envelope.data.base_data.properties, {"test": "attribute", "logger_name": "test_name"})
+
+    def test_log_to_envelope_availability_preserves_empty_message(self):
+        exporter = self._exporter
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=1646865018558419456,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="availability log",
+                attributes={
+                    _MICROSOFT_AVAILABILITY_ID: "test-id",
+                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                    _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                    _MICROSOFT_AVAILABILITY_MESSAGE: "",
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.data.base_type, "AvailabilityData")
+        self.assertEqual(envelope.data.base_data.message, "")
+
+    def test_log_to_envelope_availability_missing_required_attribute(self):
+        exporter = self._exporter
+        for availability_id in (None, ""):
+            with self.subTest(availability_id=availability_id):
+                log_data = _logs.ReadWriteLogRecord(
+                    LogRecord(
+                        timestamp=1646865018558419456,
+                        severity_text="INFO",
+                        severity_number=SeverityNumber.INFO,
+                        body="availability log",
+                        attributes={
+                            _MICROSOFT_AVAILABILITY_ID: availability_id,
+                            _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                            _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                            _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                        },
+                    ),
+                    resource=Resource.create(attributes={"asd": "test_resource"}),
+                    instrumentation_scope=InstrumentationScope("test_name"),
+                )
+
+                envelope = exporter._log_to_envelope(log_data)
+
+                self.assertEqual(envelope.data.base_type, "MessageData")
+                self.assertEqual(envelope.data.base_data.message, "availability log")
+
+    def test_log_to_envelope_custom_event_precedes_availability(self):
+        exporter = self._exporter
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=1646865018558419456,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="availability log",
+                attributes={
+                    _MICROSOFT_AVAILABILITY_ID: "test-id",
+                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                    _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                    _MICROSOFT_CUSTOM_EVENT_NAME: "test-event",
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.data.base_type, "EventData")
+        self.assertEqual(envelope.data.base_data.name, "test-event")
+
+    def test_log_to_envelope_exception_precedes_availability(self):
+        exporter = self._exporter
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=1646865018558419456,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="availability log",
+                attributes={
+                    _MICROSOFT_AVAILABILITY_ID: "test-id",
+                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                    _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                    EXCEPTION_TYPE: "ValueError",
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ValueError")
 
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter

@@ -38,6 +38,8 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
     AMQP_LONG_VALUE: Callable
     AMQP_ARRAY_VALUE: Callable
     AMQP_UINT_VALUE: Callable
+    AMQP_INT_VALUE: Callable
+    AMQP_TIMESTAMP_VALUE: Callable
 
     @staticmethod
     @abstractmethod
@@ -101,6 +103,16 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
         Returns max peer message size.
         :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
         :rtype: int
+        """
+
+    @staticmethod
+    @abstractmethod
+    def get_remote_max_message_batch_size(handler):
+        """
+        Returns the max batch size from the vendor link property
+        'com.microsoft:max-message-batch-size', or None if unavailable.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to read link properties from.
+        :rtype: int or None
         """
 
     @staticmethod
@@ -178,6 +190,22 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
         Add ServiceBusMessage to the data body of the BatchMessage.
         :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
         :param ~azure.servicebus.ServiceBusMessage outgoing_sb_message: Transformed ServiceBusMessage for sending.
+        :rtype: None
+        """
+
+    @staticmethod
+    @abstractmethod
+    def set_batch_envelope_properties(batch_message, message_id, session_id, partition_key):
+        """
+        Populate the batch envelope's message_id/session_id properties and partition_key annotation
+        on the underlying uamqp/pyamqp batch message, using the transport-appropriate representation.
+        session_id is carried as the AMQP group_id on the envelope. When message_id, session_id, and
+        partition_key are all falsy this is a no-op and the batch message is left unchanged.
+        :param batch_message: The underlying batch message (a list for pyamqp, a BatchMessage for uamqp).
+        :type batch_message: list or ~uamqp.BatchMessage
+        :param str or None message_id: The message_id of the first message in the batch.
+        :param str or None session_id: The session_id of the first message in the batch.
+        :param str or None partition_key: The partition_key of the first message in the batch.
         :rtype: None
         """
 
@@ -278,12 +306,23 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def drain_and_release_messages(handler):
+        """
+        Drain the receive link and release buffered/in-flight messages on close.
+        :param ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient handler: The handler.
+        """
+
+    @staticmethod
+    @abstractmethod
     def settle_message_via_receiver_link(
         handler,
         message,
         settle_operation,
         dead_letter_reason=None,
         dead_letter_error_description=None,
+        *,
+        await_outcome: bool = False,
+        outcome_timeout=None,
     ) -> None:
         """
         Settles message.
@@ -292,6 +331,10 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
         :param callable settle_operation: The operation to settle message.
         :param str or None dead_letter_reason: Optional. Dead letter reason.
         :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        :keyword bool await_outcome: Whether to wait for the service to confirm the settlement.
+         Only supported by the pyamqp transport.
+        :keyword outcome_timeout: Seconds to wait for the settlement outcome.
+        :paramtype outcome_timeout: float or None
         """
 
     @staticmethod

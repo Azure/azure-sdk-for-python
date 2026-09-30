@@ -1,5 +1,561 @@
 # Release History
 
+## 6.0.0b1 (2026-03-27)
+
+### Features Added
+
+  - Client `ApiManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ApiManagementClient` added method `send_request`
+  - Client `ApiManagementClient` added operation group `api_tool`
+  - Client `ApiManagementClient` added operation group `api_gateway_hostname_binding`
+  - Client `ApiManagementClient` added operation group `client_application`
+  - Client `ApiManagementClient` added operation group `client_application_product_link`
+  - Model `AccessInformationContract` added property `system_data`
+  - Model `AllPoliciesContract` added property `system_data`
+  - Model `ApiContract` added property `properties`
+  - Model `ApiContract` added property `system_data`
+  - Model `ApiManagementGatewayConfigConnectionResource` added property `properties`
+  - Model `ApiManagementGatewayConfigConnectionResource` added property `system_data`
+  - Model `ApiManagementGatewayResource` added property `properties`
+  - Model `ApiManagementGatewayUpdateParameters` added property `properties`
+  - Model `ApiManagementServiceBaseProperties` added property `release_channel`
+  - Model `ApiManagementServiceBaseProperties` added property `zone_redundant`
+  - Model `ApiManagementServiceProperties` added property `release_channel`
+  - Model `ApiManagementServiceProperties` added property `zone_redundant`
+  - Model `ApiManagementServiceResource` added property `properties`
+  - Model `ApiManagementServiceUpdateParameters` added property `properties`
+  - Model `ApiManagementServiceUpdateProperties` added property `release_channel`
+  - Model `ApiManagementServiceUpdateProperties` added property `zone_redundant`
+  - Model `ApiManagementWorkspaceLinksResource` added property `properties`
+  - Model `ApiManagementWorkspaceLinksResource` added property `system_data`
+  - Model `ApiReleaseContract` added property `system_data`
+  - Model `ApiVersionSetContract` added property `properties`
+  - Model `ApiVersionSetContract` added property `system_data`
+  - Model `AssociationContract` added property `system_data`
+  - Model `AuthorizationAccessPolicyContract` added property `system_data`
+  - Model `AuthorizationContract` added property `system_data`
+  - Model `AuthorizationProviderContract` added property `system_data`
+  - Model `AuthorizationProviderOAuth2Settings` added property `key_vault`
+  - Model `AuthorizationServerContract` added property `properties`
+  - Model `AuthorizationServerContract` added property `system_data`
+  - Model `AuthorizationServerUpdateContract` added property `properties`
+  - Model `AuthorizationServerUpdateContract` added property `system_data`
+  - Model `BackendBaseParameters` added property `azure_region`
+  - Model `BackendBaseParametersPool` added property `failure_response`
+  - Model `BackendBaseParametersPool` added property `session_affinity`
+  - Model `BackendContract` added property `system_data`
+  - Model `BackendContractProperties` added property `azure_region`
+  - Model `BackendPool` added property `failure_response`
+  - Model `BackendPool` added property `session_affinity`
+  - Model `BackendPoolItem` added property `preferred_carbon_emission`
+  - Model `BackendReconnectContract` added property `properties`
+  - Model `BackendReconnectContract` added property `system_data`
+  - Model `BackendTlsProperties` added property `server_certificate_thumbprints`
+  - Model `BackendTlsProperties` added property `server_x509_names`
+  - Model `BackendUpdateParameterProperties` added property `azure_region`
+  - Model `CacheContract` added property `system_data`
+  - Model `CertificateContract` added property `system_data`
+  - Model `CircuitBreakerRule` added property `failure_response`
+  - Model `ContentItemContract` added property `system_data`
+  - Model `ContentTypeContract` added property `system_data`
+  - Model `DeletedServiceContract` added property `system_data`
+  - Model `DiagnosticContract` added property `system_data`
+  - Model `DiagnosticUpdateContract` added property `properties`
+  - Model `DiagnosticUpdateContract` added property `system_data`
+  - Model `DocumentationContract` added property `system_data`
+  - Model `EmailTemplateContract` added property `system_data`
+  - Model `GatewayCertificateAuthorityContract` added property `system_data`
+  - Model `GatewayContract` added property `identity`
+  - Model `GatewayContract` added property `system_data`
+  - Model `GatewayHostnameConfigurationContract` added property `system_data`
+  - Model `GlobalSchemaContract` added property `system_data`
+  - Model `GroupContract` added property `properties`
+  - Model `GroupContract` added property `system_data`
+  - Model `IdentityProviderContract` added property `properties`
+  - Model `IdentityProviderContract` added property `system_data`
+  - Model `IdentityProviderContractProperties` added property `certificate_id`
+  - Model `IdentityProviderCreateContract` added property `properties`
+  - Model `IdentityProviderCreateContract` added property `system_data`
+  - Model `IdentityProviderCreateContractProperties` added property `certificate_id`
+  - Model `IdentityProviderUpdateProperties` added property `certificate_id`
+  - Model `IssueAttachmentContract` added property `system_data`
+  - Model `IssueCommentContract` added property `system_data`
+  - Model `IssueContract` added property `properties`
+  - Model `IssueContract` added property `system_data`
+  - Model `LoggerContract` added property `system_data`
+  - Model `NamedValueContract` added property `properties`
+  - Model `NamedValueContract` added property `system_data`
+  - Model `NamedValueCreateContract` added property `properties`
+  - Model `NamedValueCreateContract` added property `system_data`
+  - Model `NotificationContract` added property `system_data`
+  - Model `OpenidConnectProviderContract` added property `system_data`
+  - Model `OperationContract` added property `properties`
+  - Model `OperationContract` added property `system_data`
+  - Model `OperationResultContract` added property `system_data`
+  - Model `PolicyContract` added property `system_data`
+  - Model `PolicyDescriptionContract` added property `system_data`
+  - Model `PolicyFragmentContract` added property `system_data`
+  - Model `PolicyRestrictionContract` added property `system_data`
+  - Model `PortalConfigContract` added property `properties`
+  - Model `PortalConfigContract` added property `system_data`
+  - Model `PortalDelegationSettings` added property `system_data`
+  - Model `PortalRevisionContract` added property `system_data`
+  - Model `PortalSettingsContract` added property `system_data`
+  - Model `PortalSigninSettings` added property `properties`
+  - Model `PortalSigninSettings` added property `system_data`
+  - Model `PortalSignupSettings` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `PrivateLinkResourceListResult` added property `next_link`
+  - Model `ProductApiLinkContract` added property `system_data`
+  - Model `ProductContract` added property `properties`
+  - Model `ProductContract` added property `system_data`
+  - Model `ProductContractProperties` added property `authentication_type`
+  - Model `ProductContractProperties` added property `application`
+  - Model `ProductEntityBaseParameters` added property `authentication_type`
+  - Model `ProductEntityBaseParameters` added property `application`
+  - Model `ProductGroupLinkContract` added property `system_data`
+  - Model `ProductTagResourceContractProperties` added property `authentication_type`
+  - Model `ProductTagResourceContractProperties` added property `application`
+  - Model `ProductUpdateProperties` added property `authentication_type`
+  - Model `ProductUpdateProperties` added property `application`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RecipientEmailContract` added property `system_data`
+  - Model `RecipientUserContract` added property `properties`
+  - Model `RecipientUserContract` added property `system_data`
+  - Model `RemotePrivateEndpointConnectionWrapper` added property `properties`
+  - Model `ResolverContract` added property `properties`
+  - Model `ResolverContract` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceCollectionValueItem` added property `system_data`
+  - Model `SchemaContract` added property `system_data`
+  - Enum `SkuType` added member `PREMIUM_V2`
+  - Model `SubscriptionContract` added property `system_data`
+  - Model `TagApiLinkContract` added property `system_data`
+  - Model `TagContract` added property `system_data`
+  - Model `TagDescriptionContract` added property `properties`
+  - Model `TagDescriptionContract` added property `system_data`
+  - Model `TagOperationLinkContract` added property `system_data`
+  - Model `TagProductLinkContract` added property `system_data`
+  - Model `TenantConfigurationSyncStateContract` added property `system_data`
+  - Model `TenantSettingsContract` added property `system_data`
+  - Model `UserContract` added property `properties`
+  - Model `UserContract` added property `system_data`
+  - Model `WikiContract` added property `system_data`
+  - Model `WorkspaceContract` added property `system_data`
+  - Added model `AccessInformationCreateParameterProperties`
+  - Added model `AccessInformationUpdateParameterProperties`
+  - Added model `AuthorizationProviderKeyVaultContract`
+  - Added model `AuthorizationProviderKeyVaultCreateProperties`
+  - Added model `BackendFailureResponse`
+  - Added model `BackendReconnectProperties`
+  - Added model `BackendSessionAffinity`
+  - Added model `BackendSessionId`
+  - Added enum `BackendSessionIdSource`
+  - Added model `CacheUpdateProperties`
+  - Added enum `CarbonEmissionCategory`
+  - Added model `CertificateCreateOrUpdateProperties`
+  - Added model `ClientApplicationContract`
+  - Added model `ClientApplicationContractProperties`
+  - Added model `ClientApplicationProductLinkContract`
+  - Added model `ClientApplicationProductLinkContractProperties`
+  - Added model `ClientApplicationSecretsContract`
+  - Added model `ClientApplicationSecretsContractEntra`
+  - Added enum `ClientApplicationState`
+  - Added model `DeployConfigurationParameterProperties`
+  - Added model `DiagnosticContractUpdateProperties`
+  - Added model `EmailTemplateUpdateParameterProperties`
+  - Added model `GatewayConfigConnectionBaseProperties`
+  - Added model `GatewayHostnameBindingBaseProperties`
+  - Added model `GatewayHostnameBindingCertificate`
+  - Added model `GatewayHostnameBindingKeyVault`
+  - Added model `GatewayHostnameBindingKeyVaultLastStatus`
+  - Added model `GatewayHostnameBindingResource`
+  - Added model `GroupCreateParametersProperties`
+  - Added model `GroupUpdateParametersProperties`
+  - Added enum `KeyVaultFetchCode`
+  - Added model `LLMDiagnosticSettings`
+  - Added model `LLMMessageDiagnosticSettings`
+  - Added enum `LlmDiagnosticSettings`
+  - Added enum `LlmMessageLogTypes`
+  - Added model `LoggerUpdateParameters`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `OpenidConnectProviderUpdateContractProperties`
+  - Added model `PortalConfigProperties`
+  - Added model `PortalSigninSettingProperties`
+  - Added model `PrivateEndpointConnectionWrapperProperties`
+  - Added model `ProductApplicationContract`
+  - Added model `ProductApplicationContractEntra`
+  - Added enum `ProductAuthType`
+  - Added model `ProductEntityBaseParametersApplication`
+  - Added model `RecipientUsersContractProperties`
+  - Added enum `ReleaseChannel`
+  - Added model `ResolverEntityBaseContract`
+  - Added model `ResolverUpdateContractProperties`
+  - Added model `SaveConfigurationParameterProperties`
+  - Added model `SchemaDocumentProperties`
+  - Added model `SubscriptionCreateParameterProperties`
+  - Added model `SubscriptionUpdateParameterProperties`
+  - Added model `ToolContract`
+  - Added model `ToolContractProperties`
+  - Added model `TrackedResource`
+  - Added model `UserAssignedIdentity`
+  - Added model `UserTokenParameterProperties`
+  - Operation group `ApiManagementServiceOperations` added method `begin_refresh_hostnames`
+  - Operation group `AuthorizationProviderOperations` added method `refresh_secret`
+  - Added operation group `ApiGatewayHostnameBindingOperations`
+  - Added operation group `ApiToolOperations`
+  - Added operation group `ClientApplicationOperations`
+  - Added operation group `ClientApplicationProductLinkOperations`
+  - Model `AccessInformationCreateParameters` added property `properties`
+  - Model `AccessInformationUpdateParameters` added property `properties`
+  - Model `ApiUpdateContract` added property `properties`
+  - Model `ApiVersionSetUpdateParameters` added property `properties`
+  - Model `CacheUpdateParameters` added property `properties`
+  - Model `DeployConfigurationParameters` added property `properties`
+  - Model `DocumentationUpdateContract` added property `properties`
+  - Model `GroupCreateParameters` added property `properties`
+  - Model `GroupUpdateParameters` added property `properties`
+  - Model `IdentityProviderUpdateParameters` added property `properties`
+  - Model `IssueUpdateContract` added property `properties`
+  - Model `LoggerUpdateContract` added property `properties`
+  - Model `OpenidConnectProviderUpdateContract` added property `properties`
+  - Model `OperationUpdateContract` added property `properties`
+  - Model `PolicyRestrictionUpdateContract` added property `properties`
+  - Model `ProductUpdateParameters` added property `properties`
+  - Model `QuotaCounterValueUpdateContract` added property `properties`
+  - Model `ResolverUpdateContract` added property `properties`
+  - Model `SaveConfigurationParameter` added property `properties`
+  - Model `SubscriptionCreateParameters` added property `properties`
+  - Model `SubscriptionUpdateParameters` added property `properties`
+  - Model `TagCreateUpdateParameters` added property `properties`
+  - Model `TagDescriptionCreateParameters` added property `properties`
+  - Model `UserCreateParameters` added property `properties`
+  - Model `UserTokenParameters` added property `properties`
+  - Model `UserUpdateParameters` added property `properties`
+  - Model `WikiUpdateContract` added property `properties`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AccessInformationCreateParameters` moved instance variable `principal_id`, `primary_key`, `secondary_key` and `enabled` under property `properties`
+  - Model `AccessInformationUpdateParameters` moved instance variable `enabled` under property `properties`
+  - Model `ApiContract` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `source_api_id`, `display_name`, `service_url`, `path`, `protocols`, `api_version_set`, `provisioning_state` under property `properties`
+  - Model `ApiCreateOrUpdateParameter` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `source_api_id`, `display_name`, `service_url`, `path`, `protocols`, `api_version_set`, `provisioning_state`, `value`, `format`, `wsdl_selector`, `soap_api_type` and `translate_required_query_parameters_conduct` under property `properties`
+  - Model `ApiManagementGatewayConfigConnectionResource` moved instance variable `provisioning_state`, `source_id`, `default_hostname`, `hostnames` under property `properties`
+  - Model `ApiManagementGatewayResource` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
+  - Model `ApiManagementGatewayUpdateParameters` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
+  - Model `ApiManagementServiceResource` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
+  - Model `ApiManagementServiceUpdateParameters` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
+  - Model `ApiManagementSkuRestrictions` renamed its instance variable `values` to `values_property`
+  - Model `ApiManagementWorkspaceLinksResource` moved instance variable `workspace_id`, `gateways` under property `properties`
+  - Model `ApiUpdateContract` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `display_name`, `service_url`, `path` and `protocols` under property `properties`
+  - Model `ApiVersionSetContract` moved instance variable `description`, `version_query_name`, `version_header_name`, `display_name`, `versioning_scheme` under property `properties`
+  - Model `ApiVersionSetUpdateParameters` moved instance variable `description`, `version_query_name`, `version_header_name`, `display_name` and `versioning_scheme` under property `properties`
+  - Model `AuthorizationServerContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
+  - Model `AuthorizationServerUpdateContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
+  - Model `BackendContract` moved instance variable `title`, `description`, `resource_id`, `credentials`, `proxy`, `tls`, `circuit_breaker`, `pool`, `type_properties_type`, `url` and `protocol` under property `properties`
+  - Model `BackendReconnectContract` moved instance variable `after` under property `properties`
+  - Model `BackendUpdateParameters` moved instance variable `title`, `description`, `resource_id`, `credentials`, `proxy`, `tls`, `circuit_breaker`, `pool`, `type`, `url` and `protocol` under property `properties`
+  - Model `CacheUpdateParameters` moved instance variable `description`, `connection_string`, `use_from_location` and `resource_id` under property `properties`
+  - Model `CertificateCreateOrUpdateParameters` moved instance variable `data`, `password` and `key_vault` under property `properties`
+  - Model `DeployConfigurationParameters` moved instance variable `branch` and `force` under property `properties`
+  - Model `DiagnosticUpdateContract` moved instance variable `always_log`, `logger_id`, `sampling`, `frontend`, `backend`, `log_client_ip`, `http_correlation_protocol`, `verbosity`, `operation_name_format`, `metrics` under property `properties`
+  - Model `DocumentationUpdateContract` moved instance variable `title` and `content` under property `properties`
+  - Model `EmailTemplateUpdateParameters` moved instance variable `subject`, `title`, `description`, `body` and `parameters` under property `properties`
+  - Model `GroupContract` moved instance variable `display_name`, `description`, `built_in`, `type_properties_type`, `external_id` under property `properties`
+  - Model `GroupCreateParameters` moved instance variable `display_name`, `description`, `type` and `external_id` under property `properties`
+  - Model `GroupUpdateParameters` moved instance variable `display_name`, `description`, `type` and `external_id` under property `properties`
+  - Model `IdentityProviderContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
+  - Model `IdentityProviderCreateContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
+  - Model `IdentityProviderUpdateParameters` moved instance variable `type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id` and `client_secret` under property `properties`
+  - Model `IssueContract` moved instance variable `created_date`, `state`, `api_id`, `title`, `description`, `user_id` under property `properties`
+  - Model `IssueUpdateContract` moved instance variable `created_date`, `state`, `api_id`, `title`, `description` and `user_id` under property `properties`
+  - Model `LoggerUpdateContract` moved instance variable `logger_type`, `description`, `credentials` and `is_buffered` under property `properties`
+  - Model `NamedValueContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault`, `provisioning_state` under property `properties`
+  - Model `NamedValueCreateContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault` under property `properties`
+  - Model `NamedValueUpdateParameters` moved instance variable `tags`, `secret`, `display_name`, `value` and `key_vault` under property `properties`
+  - Model `OpenidConnectProviderUpdateContract` moved instance variable `display_name`, `description`, `metadata_endpoint`, `client_id`, `client_secret`, `use_in_test_console` and `use_in_api_documentation` under property `properties`
+  - Model `OperationContract` moved instance variable `template_parameters`, `description`, `request`, `responses`, `policies`, `display_name`, `method`, `url_template` under property `properties`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `resource_id`
+  - Model `OperationUpdateContract` moved instance variable `template_parameters`, `description`, `request`, `responses`, `policies`, `display_name`, `method` and `url_template` under property `properties`
+  - Model `ParameterContract` renamed its instance variable `values` to `values_property`
+  - Model `PolicyRestrictionUpdateContract` moved instance variable `scope` and `require_base` under property `properties`
+  - Model `PortalConfigContract` moved instance variable `enable_basic_auth`, `signin`, `signup`, `delegation`, `cors`, `csp` under property `properties`
+  - Model `PortalSigninSettings` moved instance variable `enabled` under property `properties`
+  - Model `ProductContract` moved instance variable `description`, `terms`, `subscription_required`, `approval_required`, `subscriptions_limit`, `state`, `display_name` under property `properties`
+  - Model `ProductUpdateParameters` moved instance variable `description`, `terms`, `subscription_required`, `approval_required`, `subscriptions_limit`, `state` and `display_name` under property `properties`
+  - Model `QuotaCounterValueUpdateContract` moved instance variable `calls_count` and `kb_transferred` under property `properties`
+  - Model `RecipientUserContract` moved instance variable `user_id` under property `properties`
+  - Model `RemotePrivateEndpointConnectionWrapper` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state`, `group_ids` under property `properties`
+  - Model `ResolverContract` moved instance variable `display_name`, `path`, `description` under property `properties`
+  - Model `ResolverUpdateContract` moved instance variable `display_name`, `path` and `description` under property `properties`
+  - Model `SaveConfigurationParameter` moved instance variable `branch` and `force` under property `properties`
+  - Model `SubscriptionCreateParameters` moved instance variable `owner_id`, `scope`, `display_name`, `primary_key`, `secondary_key`, `state` and `allow_tracing` under property `properties`
+  - Model `SubscriptionUpdateParameters` moved instance variable `owner_id`, `scope`, `expiration_date`, `display_name`, `primary_key`, `secondary_key`, `state`, `state_comment` and `allow_tracing` under property `properties`
+  - Model `TagCreateUpdateParameters` moved instance variable `display_name` under property `properties`
+  - Model `TagDescriptionContract` moved instance variable `description`, `external_docs_url`, `external_docs_description`, `tag_id`, `display_name` under property `properties`
+  - Model `TagDescriptionCreateParameters` moved instance variable `description`, `external_docs_url` and `external_docs_description` under property `properties`
+  - Model `UserContract` moved instance variable `state`, `note`, `identities`, `first_name`, `last_name`, `email`, `registration_date`, `groups` under property `properties`
+  - Model `UserCreateParameters` moved instance variable `state`, `note`, `identities`, `email`, `first_name`, `last_name`, `password`, `app_type` and `confirmation` under property `properties`
+  - Model `UserTokenParameters` moved instance variable `key_type` and `expiry` under property `properties`
+  - Model `UserUpdateParameters` moved instance variable `state`, `note`, `identities`, `email`, `password`, `first_name` and `last_name` under property `properties`
+  - Model `WikiUpdateContract` moved instance variable `documents` under property `properties`
+  - Deleted or renamed model `ApiRevisionInfoContract`
+  - Deleted or renamed model `AsyncResolverStatus`
+  - Deleted or renamed model `PolicyWithComplianceContract`
+  - Deleted or renamed model `QuotaCounterValueContract`
+  - Deleted or renamed model `ResolverResultContract`
+  - Deleted or renamed model `ResolverResultLogItemContract`
+  - Deleted or renamed model `ApiManagementClientOperationsMixin`
+  - Method `ApiDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiGatewayConfigConnectionOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueAttachmentOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueAttachmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueCommentOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueCommentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiTagDescriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiTagDescriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationAccessPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationAccessPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentItemOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentItemOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentTypeOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentTypeOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DelegationSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DelegationSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayCertificateAuthorityOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayCertificateAuthorityOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayHostnameConfigurationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayHostnameConfigurationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GlobalSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GlobalSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NotificationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyFragmentOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyFragmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalConfigOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalConfigOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalRevisionOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignInSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignInSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignUpSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignUpSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TenantAccessOperations.create` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TenantAccessOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceCertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceCertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGlobalSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGlobalSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNotificationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyFragmentOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyFragmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiExportOperations.get` changed its parameter `format`/`export` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiIssueOperations.get` changed its parameter `expand_comments_attachments` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiIssueOperations.list_by_service` changed its parameter `expand_comments_attachments` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperationOperations.list_by_api` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperationPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperations.list_by_service` changed its parameter `tags`/`expand_api_version_set` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperations.list_by_tags` changed its parameter `include_not_tagged_apis` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `CertificateOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
+  - Method `GraphQLApiResolverPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `NamedValueOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
+  - Method `OperationOperations.list_by_tags` changed its parameter `include_not_tagged_operations` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyDescriptionOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyFragmentOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyFragmentOperations.list_by_service` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductOperations.list_by_service` changed its parameter `expand_groups`/`tags` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductOperations.list_by_tags` changed its parameter `include_not_tagged_products` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_api` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_operation` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_product` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_subscription` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_time` changed its parameter `interval`/`orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_user` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `TagOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
+  - Method `UserConfirmationPasswordOperations.send` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `UserOperations.list_by_service` changed its parameter `expand_groups` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiExportOperations.get` changed its parameter `format`/`export` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiOperationOperations.list_by_api` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiOperationPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiOperations.list_by_service` changed its parameter `tags`/`expand_api_version_set` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceCertificateOperations.list_by_workspace` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceNamedValueOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspacePolicyFragmentOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspacePolicyFragmentOperations.list_by_service` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspacePolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceProductOperations.list_by_service` changed its parameter `expand_groups`/`tags` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceProductPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceTagOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperations.begin_delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
+  - Method `SubscriptionOperations.create_or_update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `SubscriptionOperations.update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `UserOperations.begin_delete` changed its parameter `delete_subscriptions`/`notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `UserOperations.create_or_update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiOperations.delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceSubscriptionOperations.update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AccessInformationCollection`/`AllPoliciesCollection`/`ApiCollection`/`ApiManagementSkusResult`/`ApiReleaseCollection`/`ApiRevisionCollection`/`ApiVersionSetCollection`/`AuthorizationAccessPolicyCollection`/`AuthorizationCollection`/`AuthorizationProviderCollection`/`AuthorizationServerCollection`/`BackendCollection`/`CacheCollection`/`CertificateCollection`/`ContentItemCollection`/`ContentTypeCollection`/`DeletedServicesCollection`/`DiagnosticCollection`/`DocumentationCollection`/`EmailTemplateCollection`/`GatewayCertificateAuthorityCollection`/`GatewayCollection`/`GatewayHostnameConfigurationCollection`/`GatewayResourceSkuResults`/`GlobalSchemaCollection`/`GroupCollection`/`IdentityProviderList`/`IssueAttachmentCollection`/`IssueCollection`/`IssueCommentCollection`/`LoggerCollection`/`NamedValueCollection`/`NotificationCollection`/`OpenIdConnectProviderCollection`/`OperationCollection`/`PolicyFragmentCollection`/`PolicyRestrictionCollection`/`PolicyWithComplianceCollection`/`PortalConfigCollection`/`PortalRevisionCollection`/`ProductApiLinkCollection`/`ProductCollection`/`ProductGroupLinkCollection`/`ReportCollection`/`RequestReportCollection`/`ResolverCollection`/`ResourceSkuResults`/`SchemaCollection`/`SubscriptionCollection`/`TagApiLinkCollection`/`TagCollection`/`TagDescriptionCollection`/`TagOperationLinkCollection`/`TagProductLinkCollection`/`TagResourceCollection`/`TenantSettingsCollection`/`UserCollection`/`UserIdentityCollection`/`WikiCollection`/`WorkspaceCollection` which actually were not used by SDK users
+
 ## 5.0.0 (2025-04-21)
 
 ### Features Added

@@ -3,10 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 import unittest
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, call, Mock, MagicMock
 import pytest
-from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
+from azure.appconfiguration.provider._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper
+from azure.appconfiguration.provider._client_manager_base import (
+    FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
+    MINIMAL_CLIENT_REFRESH_INTERVAL,
+)
+from azure.appconfiguration.provider._models import SettingSelector
 
 
 def _create_mock_credential():
@@ -24,6 +30,10 @@ class MockClient:
         self.credential = credential
         self.retry_total = retry_total
         self.retry_backoff = retry_backoff
+        self.closed = False
+
+    def close(self):
+        self.closed = True
 
 
 @pytest.mark.usefixtures("caplog")
@@ -199,6 +209,32 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_closes_removed_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+        mock_update_failover_endpoints.return_value = []
+        mock_client.return_value = MockClient(endpoint, "", "fake-credential", 0, 0)
+        manager = ConfigurationClientManager(None, endpoint, _create_mock_credential(), "", 0, 0, True, 0, 0, False)
+
+        original_client = MockClient(endpoint, "", "fake-credential", 0, 0)
+        retained_replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        removed_replica = MockClient("https://fake.endpoint3", "", "fake-credential", 0, 0)
+        manager._original_client = original_client
+        manager._replica_clients = [original_client, retained_replica, removed_replica]
+
+        # endpoint3 is no longer part of the failover set, so its client must be closed and dropped.
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        manager.refresh_clients()
+
+        assert removed_replica.closed is True
+        assert retained_replica.closed is False
+        assert original_client.closed is False
+        assert removed_replica not in manager._replica_clients
+        assert retained_replica in manager._replica_clients
+        assert original_client in manager._replica_clients
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_connection_string")
     def test_refresh_clients_connection_string(
         self, mock_client, mock_update_failover_endpoints
@@ -302,6 +338,73 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_timeout_uses_fallback_interval(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # A timeout while resolving replicas falls back to the longer refresh interval
+        mock_update_failover_endpoints.side_effect = TimeoutError
+        manager._next_update_time = 0
+        before = time.time()
+        manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        # No new clients should have been created on a timeout
+        mock_client.assert_not_called()
+        assert manager._next_update_time >= before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_update_failover_endpoints.side_effect = None
+
+        # An empty result (no timeout) refreshes at the normal minimal interval
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        before = time.time()
+        manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        assert (
+            before + MINIMAL_CLIENT_REFRESH_INTERVAL
+            <= manager._next_update_time
+            < before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+        )
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_empty_removes_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # Discover a replica
+        replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        mock_client.return_value = replica
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        manager.refresh_clients()
+        assert len(manager._replica_clients) == 2
+
+        # A subsequent successful discovery with no replicas (e.g. the last replica was deleted)
+        # closes and removes the discovered client, leaving only the original.
+        replica.close = Mock()
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        manager.refresh_clients()
+        replica.close.assert_called_once()
+        assert len(manager._replica_clients) == 1
+        assert manager._replica_clients[0] is manager._original_client
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_update_failover_endpoints.return_value = []
@@ -322,3 +425,51 @@ class TestConfigurationClientManager(unittest.TestCase):
         assert 30000.0 <= manager._calculate_backoff(10) <= 600000.0
 
         assert manager_invalid._calculate_backoff(0) == 600000
+
+
+def test_check_page_etags_snapshot_first_then_keys():
+    """Refresh enabled without watch settings: snapshot selector first, then normal keys."""
+    mock_client = Mock()
+    wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(snapshot_name="my-snapshot"),
+        SettingSelector(key_filter="app/*"),
+    ]
+    page_etags = [[], ["etag1"]]
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = iter([])
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    # Only the non-snapshot selector should trigger a service call
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )
+
+
+def test_check_page_etags_keys_first_then_snapshot():
+    """Refresh enabled without watch settings: normal keys first, then snapshot selector."""
+    mock_client = Mock()
+    wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(key_filter="app/*"),
+        SettingSelector(snapshot_name="my-snapshot"),
+    ]
+    page_etags = [["etag1"], []]
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = iter([])
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    # Only the non-snapshot selector should trigger a service call
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )

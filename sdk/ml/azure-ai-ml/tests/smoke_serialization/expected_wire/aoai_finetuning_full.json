@@ -1,0 +1,41 @@
+{
+  "properties": {
+    "displayName": "smoke-aoai-finetuning-display",
+    "experimentName": "smoke-experiment",
+    "fineTuningDetails": {
+      "hyperParameters": {
+        "batchSize": 4,
+        "learningRateMultiplier": 0.5,
+        "nEpochs": 2
+      },
+      "model": {
+        "jobInputType": "mlflow_model",
+        "uri": "azureml://registries/azure-openai/models/gpt-4/versions/1"
+      },
+      "modelProvider": "AzureOpenAI",
+      "taskType": "textCompletion",
+      "trainingData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/train.jsonl"
+      },
+      "validationData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/validation.jsonl"
+      }
+    },
+    "isArchived": false,
+    "jobType": "FineTuning",
+    "outputs": {
+      "registered_model": {
+        "assetName": "smoke-aoai-registered",
+        "jobOutputType": "mlflow_model"
+      }
+    },
+    "properties": {
+      "prop1": "value1"
+    },
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

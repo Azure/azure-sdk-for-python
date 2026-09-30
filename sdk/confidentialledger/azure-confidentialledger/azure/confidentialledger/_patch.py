@@ -14,6 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
+from azure.confidentialledger._redirect_caching_policy import RedirectCachingPolicy
 from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient  # pylint: disable=import-error,no-name-in-module
 
 __all__: List[str] = [
@@ -116,5 +117,11 @@ class ConfidentialLedgerClient(GeneratedClient):
         # Customize the underlying client to use a self-signed TLS certificate.
 
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
+
+        # Inject the redirect-caching policy so that write requests skip the
+        # load-balancer after the first redirect, and preserve sensitive headers
+        # on service-managed redirects within the trusted ledger endpoint.
+        kwargs.setdefault("redirect_policy", RedirectCachingPolicy(**kwargs))
+        kwargs.setdefault("disable_redirect_cleanup", True)
 
         super().__init__(endpoint, **kwargs)

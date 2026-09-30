@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,13 @@ from typing import TYPE_CHECKING
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -24,7 +30,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -1287,6 +1294,7 @@ def build_cancel_run_with_uri_by_experiment_name_request(
         **kwargs
     )
 
+
 # fmt: on
 class RunsOperations(object):  # pylint: disable=too-many-public-methods
     """RunsOperations operations.
@@ -1363,14 +1371,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_child_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1383,13 +1390,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
                     sortorder=sortorder,
                     top=top,
                     count=count,
-                    template_url=self.get_child_by_experiment_name.metadata['url'],
+                    template_url=self.get_child_by_experiment_name.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_child_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1420,9 +1427,7 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1433,11 +1438,9 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_child_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/children"}  # type: ignore
+    get_child_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/children"}  # type: ignore
 
     @distributed_trace
     def get_child_by_experiment_id(
@@ -1492,14 +1495,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_child_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1512,13 +1514,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
                     sortorder=sortorder,
                     top=top,
                     count=count,
-                    template_url=self.get_child_by_experiment_id.metadata['url'],
+                    template_url=self.get_child_by_experiment_id.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_child_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1549,9 +1551,7 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1562,11 +1562,9 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_child_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/children"}  # type: ignore
+    get_child_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/children"}  # type: ignore
 
     @distributed_trace
     def get_child(
@@ -1618,14 +1616,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_child_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1637,13 +1634,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
                     sortorder=sortorder,
                     top=top,
                     count=count,
-                    template_url=self.get_child.metadata['url'],
+                    template_url=self.get_child.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_child_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1673,9 +1670,7 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1686,11 +1681,9 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_child.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/children"}  # type: ignore
+    get_child.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/children"}  # type: ignore
 
     @distributed_trace
     def get_details_by_experiment_id(
@@ -1720,28 +1713,23 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.RunDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunDetails"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RunDetails"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_details_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
             experiment_id=experiment_id,
-            template_url=self.get_details_by_experiment_id.metadata['url'],
+            template_url=self.get_details_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1750,15 +1738,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RunDetails', pipeline_response)
+        deserialized = self._deserialize("RunDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_details_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/details"}  # type: ignore
-
+    get_details_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/details"}  # type: ignore
 
     @distributed_trace
     def get_details_by_experiment_name(
@@ -1788,28 +1775,23 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.RunDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunDetails"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RunDetails"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_details_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
             experiment_name=experiment_name,
-            template_url=self.get_details_by_experiment_name.metadata['url'],
+            template_url=self.get_details_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1818,15 +1800,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RunDetails', pipeline_response)
+        deserialized = self._deserialize("RunDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_details_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/details"}  # type: ignore
-
+    get_details_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/details"}  # type: ignore
 
     @distributed_trace
     def get_details(
@@ -1853,27 +1834,22 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.RunDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunDetails"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RunDetails"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_details_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
-            template_url=self.get_details.metadata['url'],
+            template_url=self.get_details.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1882,15 +1858,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RunDetails', pipeline_response)
+        deserialized = self._deserialize("RunDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_details.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/details"}  # type: ignore
-
+    get_details.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/details"}  # type: ignore
 
     @distributed_trace
     def get_run_data(
@@ -1917,16 +1892,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.GetRunDataResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetRunDataResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.GetRunDataResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'GetRunDataRequest')
+            _json = self._serialize.body(body, "GetRunDataRequest")
         else:
             _json = None
 
@@ -1936,15 +1909,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_run_data.metadata['url'],
+            template_url=self.get_run_data.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1953,15 +1924,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('GetRunDataResult', pipeline_response)
+        deserialized = self._deserialize("GetRunDataResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_run_data.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/rundata"}  # type: ignore
-
+    get_run_data.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/rundata"}  # type: ignore
 
     @distributed_trace
     def batch_get_run_data(
@@ -1988,16 +1958,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchResult1
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchResult1"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchResult1"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchRequest1')
+            _json = self._serialize.body(body, "BatchRequest1")
         else:
             _json = None
 
@@ -2007,15 +1975,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_get_run_data.metadata['url'],
+            template_url=self.batch_get_run_data.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2025,18 +1991,17 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchResult1', pipeline_response)
+            deserialized = self._deserialize("BatchResult1", pipeline_response)
 
         if response.status_code == 207:
-            deserialized = self._deserialize('BatchResult1', pipeline_response)
+            deserialized = self._deserialize("BatchResult1", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_get_run_data.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchrundata"}  # type: ignore
-
+    batch_get_run_data.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchrundata"}  # type: ignore
 
     @distributed_trace
     def batch_add_or_modify_by_experiment_id(
@@ -2066,16 +2031,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchRunResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchRunResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchRunResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchAddOrModifyRunRequest')
+            _json = self._serialize.body(body, "BatchAddOrModifyRunRequest")
         else:
             _json = None
 
@@ -2086,15 +2049,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_add_or_modify_by_experiment_id.metadata['url'],
+            template_url=self.batch_add_or_modify_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2103,15 +2064,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchRunResult', pipeline_response)
+        deserialized = self._deserialize("BatchRunResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_add_or_modify_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/batch/runs"}  # type: ignore
-
+    batch_add_or_modify_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/batch/runs"}  # type: ignore
 
     @distributed_trace
     def batch_add_or_modify_by_experiment_name(
@@ -2141,16 +2101,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchRunResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchRunResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchRunResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchAddOrModifyRunRequest')
+            _json = self._serialize.body(body, "BatchAddOrModifyRunRequest")
         else:
             _json = None
 
@@ -2161,15 +2119,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_add_or_modify_by_experiment_name.metadata['url'],
+            template_url=self.batch_add_or_modify_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2178,15 +2134,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchRunResult', pipeline_response)
+        deserialized = self._deserialize("BatchRunResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_add_or_modify_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/batch/runs"}  # type: ignore
-
+    batch_add_or_modify_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/batch/runs"}  # type: ignore
 
     @distributed_trace
     def add_or_modify_by_experiment_name(
@@ -2219,16 +2174,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateRun')
+            _json = self._serialize.body(body, "CreateRun")
         else:
             _json = None
 
@@ -2240,15 +2193,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.add_or_modify_by_experiment_name.metadata['url'],
+            template_url=self.add_or_modify_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2257,15 +2208,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    add_or_modify_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}"}  # type: ignore
-
+    add_or_modify_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def get_by_experiment_name(
@@ -2295,28 +2245,23 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
             experiment_name=experiment_name,
-            template_url=self.get_by_experiment_name.metadata['url'],
+            template_url=self.get_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2325,15 +2270,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}"}  # type: ignore
-
+    get_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def add_or_modify_by_experiment_id(
@@ -2366,16 +2310,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateRun')
+            _json = self._serialize.body(body, "CreateRun")
         else:
             _json = None
 
@@ -2387,15 +2329,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.add_or_modify_by_experiment_id.metadata['url'],
+            template_url=self.add_or_modify_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2404,15 +2344,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    add_or_modify_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}"}  # type: ignore
-
+    add_or_modify_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def get_by_experiment_id(
@@ -2442,28 +2381,23 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
             experiment_id=experiment_id,
-            template_url=self.get_by_experiment_id.metadata['url'],
+            template_url=self.get_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2472,15 +2406,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}"}  # type: ignore
-
+    get_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def add_or_modify_experiment(
@@ -2510,16 +2443,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateRun')
+            _json = self._serialize.body(body, "CreateRun")
         else:
             _json = None
 
@@ -2530,15 +2461,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.add_or_modify_experiment.metadata['url'],
+            template_url=self.add_or_modify_experiment.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2547,15 +2476,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    add_or_modify_experiment.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
-
+    add_or_modify_experiment.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def add(
@@ -2585,16 +2513,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateRun')
+            _json = self._serialize.body(body, "CreateRun")
         else:
             _json = None
 
@@ -2605,15 +2531,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.add.metadata['url'],
+            template_url=self.add.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2622,15 +2546,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    add.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
-
+    add.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -2657,27 +2580,22 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2686,15 +2604,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
-
+    get.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace
     def delete_tags_by_experiment_id(
@@ -2727,16 +2644,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, '[str]')
+            _json = self._serialize.body(body, "[str]")
         else:
             _json = None
 
@@ -2748,15 +2663,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_tags_by_experiment_id.metadata['url'],
+            template_url=self.delete_tags_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2765,15 +2678,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_tags_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/tags"}  # type: ignore
-
+    delete_tags_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/tags"}  # type: ignore
 
     @distributed_trace
     def modify_or_delete_tags_by_experiment_id(
@@ -2806,16 +2718,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DeleteOrModifyTags')
+            _json = self._serialize.body(body, "DeleteOrModifyTags")
         else:
             _json = None
 
@@ -2827,15 +2737,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.modify_or_delete_tags_by_experiment_id.metadata['url'],
+            template_url=self.modify_or_delete_tags_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2844,15 +2752,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    modify_or_delete_tags_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/tags"}  # type: ignore
-
+    modify_or_delete_tags_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/tags"}  # type: ignore
 
     @distributed_trace
     def delete_tags_by_experiment_name(
@@ -2885,16 +2792,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, '[str]')
+            _json = self._serialize.body(body, "[str]")
         else:
             _json = None
 
@@ -2906,15 +2811,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_tags_by_experiment_name.metadata['url'],
+            template_url=self.delete_tags_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2923,15 +2826,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_tags_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/tags"}  # type: ignore
-
+    delete_tags_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/tags"}  # type: ignore
 
     @distributed_trace
     def modify_or_delete_tags_by_experiment_name(
@@ -2964,16 +2866,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DeleteOrModifyTags')
+            _json = self._serialize.body(body, "DeleteOrModifyTags")
         else:
             _json = None
 
@@ -2985,15 +2885,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.modify_or_delete_tags_by_experiment_name.metadata['url'],
+            template_url=self.modify_or_delete_tags_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3002,15 +2900,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    modify_or_delete_tags_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/tags"}  # type: ignore
-
+    modify_or_delete_tags_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/tags"}  # type: ignore
 
     @distributed_trace
     def delete_tags(
@@ -3040,16 +2937,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, '[str]')
+            _json = self._serialize.body(body, "[str]")
         else:
             _json = None
 
@@ -3060,15 +2955,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_tags.metadata['url'],
+            template_url=self.delete_tags.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3077,15 +2970,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_tags.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/tags"}  # type: ignore
-
+    delete_tags.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/tags"}  # type: ignore
 
     @distributed_trace
     def delete_run_services_by_experiment_id(
@@ -3118,16 +3010,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DeleteRunServices')
+            _json = self._serialize.body(body, "DeleteRunServices")
         else:
             _json = None
 
@@ -3139,15 +3029,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_run_services_by_experiment_id.metadata['url'],
+            template_url=self.delete_run_services_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3156,15 +3044,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_run_services_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/services"}  # type: ignore
-
+    delete_run_services_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/services"}  # type: ignore
 
     @distributed_trace
     def delete_run_services_by_experiment_name(
@@ -3197,16 +3084,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DeleteRunServices')
+            _json = self._serialize.body(body, "DeleteRunServices")
         else:
             _json = None
 
@@ -3218,15 +3103,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_run_services_by_experiment_name.metadata['url'],
+            template_url=self.delete_run_services_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3235,15 +3118,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_run_services_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/services"}  # type: ignore
-
+    delete_run_services_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/services"}  # type: ignore
 
     @distributed_trace
     def delete_run_services(
@@ -3273,16 +3155,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DeleteRunServices')
+            _json = self._serialize.body(body, "DeleteRunServices")
         else:
             _json = None
 
@@ -3293,15 +3173,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.delete_run_services.metadata['url'],
+            template_url=self.delete_run_services.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3310,15 +3188,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete_run_services.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/services"}  # type: ignore
-
+    delete_run_services.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/services"}  # type: ignore
 
     @distributed_trace
     def add_or_modify_run_service_instances(
@@ -3351,16 +3228,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.RunServiceInstances
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunServiceInstances"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RunServiceInstances"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'AddOrModifyRunServiceInstancesRequest')
+            _json = self._serialize.body(body, "AddOrModifyRunServiceInstancesRequest")
         else:
             _json = None
 
@@ -3372,15 +3247,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             node_id=node_id,
             content_type=content_type,
             json=_json,
-            template_url=self.add_or_modify_run_service_instances.metadata['url'],
+            template_url=self.add_or_modify_run_service_instances.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3389,15 +3262,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RunServiceInstances', pipeline_response)
+        deserialized = self._deserialize("RunServiceInstances", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    add_or_modify_run_service_instances.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/serviceinstances/{nodeId}"}  # type: ignore
-
+    add_or_modify_run_service_instances.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/serviceinstances/{nodeId}"}  # type: ignore
 
     @distributed_trace
     def get_run_service_instances(
@@ -3427,28 +3299,23 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.RunServiceInstances
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunServiceInstances"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RunServiceInstances"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_run_service_instances_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             run_id=run_id,
             node_id=node_id,
-            template_url=self.get_run_service_instances.metadata['url'],
+            template_url=self.get_run_service_instances.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3457,15 +3324,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RunServiceInstances', pipeline_response)
+        deserialized = self._deserialize("RunServiceInstances", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_run_service_instances.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/serviceinstances/{nodeId}"}  # type: ignore
-
+    get_run_service_instances.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/serviceinstances/{nodeId}"}  # type: ignore
 
     @distributed_trace
     def get_by_query_by_experiment_name(
@@ -3496,20 +3362,19 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
                 if body is not None:
-                    _json = self._serialize.body(body, 'QueryParams')
+                    _json = self._serialize.body(body, "QueryParams")
                 else:
                     _json = None
-                
+
                 request = build_get_by_query_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -3517,17 +3382,17 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
                     experiment_name=experiment_name,
                     content_type=content_type,
                     json=_json,
-                    template_url=self.get_by_query_by_experiment_name.metadata['url'],
+                    template_url=self.get_by_query_by_experiment_name.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 if body is not None:
-                    _json = self._serialize.body(body, 'QueryParams')
+                    _json = self._serialize.body(body, "QueryParams")
                 else:
                     _json = None
-                
+
                 request = build_get_by_query_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -3553,9 +3418,7 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3566,11 +3429,9 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_by_query_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs:query"}  # type: ignore
+    get_by_query_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs:query"}  # type: ignore
 
     @distributed_trace
     def get_by_query_by_experiment_id(
@@ -3601,20 +3462,19 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
                 if body is not None:
-                    _json = self._serialize.body(body, 'QueryParams')
+                    _json = self._serialize.body(body, "QueryParams")
                 else:
                     _json = None
-                
+
                 request = build_get_by_query_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -3622,17 +3482,17 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
                     experiment_id=experiment_id,
                     content_type=content_type,
                     json=_json,
-                    template_url=self.get_by_query_by_experiment_id.metadata['url'],
+                    template_url=self.get_by_query_by_experiment_id.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 if body is not None:
-                    _json = self._serialize.body(body, 'QueryParams')
+                    _json = self._serialize.body(body, "QueryParams")
                 else:
                     _json = None
-                
+
                 request = build_get_by_query_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -3658,9 +3518,7 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3671,11 +3529,9 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_by_query_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs:query"}  # type: ignore
+    get_by_query_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs:query"}  # type: ignore
 
     @distributed_trace
     def get_by_ids_by_experiment_id(
@@ -3705,16 +3561,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchRunResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchRunResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchRunResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'GetRunsByIds')
+            _json = self._serialize.body(body, "GetRunsByIds")
         else:
             _json = None
 
@@ -3725,15 +3579,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.get_by_ids_by_experiment_id.metadata['url'],
+            template_url=self.get_by_ids_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3742,15 +3594,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchRunResult', pipeline_response)
+        deserialized = self._deserialize("BatchRunResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_ids_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/runIds"}  # type: ignore
-
+    get_by_ids_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/runIds"}  # type: ignore
 
     @distributed_trace
     def get_by_ids_by_experiment_name(
@@ -3780,16 +3631,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchRunResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchRunResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchRunResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'GetRunsByIds')
+            _json = self._serialize.body(body, "GetRunsByIds")
         else:
             _json = None
 
@@ -3800,15 +3649,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_by_ids_by_experiment_name.metadata['url'],
+            template_url=self.get_by_ids_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3817,15 +3664,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchRunResult', pipeline_response)
+        deserialized = self._deserialize("BatchRunResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_ids_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/runIds"}  # type: ignore
-
+    get_by_ids_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/runIds"}  # type: ignore
 
     @distributed_trace
     def cancel_run_with_uri_by_experiment_id(
@@ -3858,13 +3704,10 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_cancel_run_with_uri_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -3872,15 +3715,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             experiment_id=experiment_id,
             cancelation_reason=cancelation_reason,
-            template_url=self.cancel_run_with_uri_by_experiment_id.metadata['url'],
+            template_url=self.cancel_run_with_uri_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3889,15 +3730,14 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    cancel_run_with_uri_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/cancel"}  # type: ignore
-
+    cancel_run_with_uri_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/cancel"}  # type: ignore
 
     @distributed_trace
     def cancel_run_with_uri_by_experiment_name(
@@ -3930,13 +3770,10 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.machinelearningservices.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Run"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_cancel_run_with_uri_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -3944,15 +3781,13 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             run_id=run_id,
             experiment_name=experiment_name,
             cancelation_reason=cancelation_reason,
-            template_url=self.cancel_run_with_uri_by_experiment_name.metadata['url'],
+            template_url=self.cancel_run_with_uri_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3961,12 +3796,11 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Run', pipeline_response)
+        deserialized = self._deserialize("Run", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    cancel_run_with_uri_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/cancel"}  # type: ignore
-
+    cancel_run_with_uri_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/cancel"}  # type: ignore

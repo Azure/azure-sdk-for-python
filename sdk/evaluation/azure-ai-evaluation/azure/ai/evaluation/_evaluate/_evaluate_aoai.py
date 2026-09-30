@@ -5,20 +5,20 @@
 import json
 import logging
 import re
-
-from openai import AzureOpenAI, OpenAI
-import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
+from copy import deepcopy
 from time import sleep
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
-from ._batch_run import CodeClient, ProxyClient
+import pandas as pd
+from openai import AzureOpenAI, OpenAI
 
 # import aoai_mapping
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
+from ._batch_run import CodeClient, ProxyClient
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
@@ -179,11 +179,12 @@ def _begin_single_aoai_evaluation(
     data_source_config: Dict[str, Any] = {}
 
     if kwargs.get("data_source_config") is not None:
-        data_source_config = kwargs.get("data_source_config", {})
+        data_source_config = deepcopy(kwargs.get("data_source_config", {}))
 
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source", {})
 
+    explicit_item_schema = data_source_config.get("item_schema")
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
     client = list(graders.values())[0].get_client()
@@ -202,6 +203,10 @@ def _begin_single_aoai_evaluation(
 
     # Combine with the item schema with generated data outside Eval SDK
     _combine_item_schemas(data_source_config, kwargs)
+    if explicit_item_schema is not None:
+        explicit_item_schema = data_source_config.get("item_schema")
+    elif isinstance(kwargs.get("item_schema"), dict):
+        explicit_item_schema = deepcopy(kwargs["item_schema"])
 
     eval_group_info = client.evals.create(
         data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
@@ -224,7 +229,15 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
+    eval_run_id = _begin_eval_run(
+        client,
+        eval_group_info.id,
+        run_name,
+        data,
+        effective_column_mapping,
+        data_source,
+        item_schema=explicit_item_schema,
+    )
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -244,18 +257,33 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
         not kwargs
         or not kwargs.get("item_schema")
         or not isinstance(kwargs["item_schema"], dict)
-        or "properties" not in kwargs["item_schema"]
+        or (
+            "properties" not in kwargs["item_schema"]
+            and not isinstance(kwargs["item_schema"].get("additionalProperties"), dict)
+        )
     ):
         return
 
     if "item_schema" in data_source_config:
-        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
-        for key in kwargs["item_schema"]["properties"]:
-            if key not in data_source_config["item_schema"]["properties"]:
-                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
-
-                if key in item_schema:
-                    data_source_config["item_schema"]["required"].append(key)
+        explicit_schema = deepcopy(kwargs["item_schema"])
+        explicit_properties = explicit_schema.get("properties", {})
+        combined = deepcopy(data_source_config["item_schema"])
+        properties = combined.setdefault("properties", {})
+        inherited_required = combined.get("required", [])
+        if explicit_schema.get("additionalProperties", True) is not True:
+            # Inferred properties would bypass an explicit restriction on additional properties.
+            properties = {}
+            inherited_required = []
+        properties.update(explicit_properties)
+        # Explicit subtrees are authoritative, including optional properties and constraints.
+        required = [name for name in inherited_required if name not in explicit_properties]
+        for name in explicit_schema.get("required", []):
+            if name not in required:
+                required.append(name)
+        combined.update(explicit_schema)
+        combined["properties"] = properties
+        combined["required"] = required
+        data_source_config["item_schema"] = combined
 
 
 def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
@@ -307,10 +335,16 @@ def _get_single_run_results(
 
     LOGGER.info(f"AOAI: Eval run {run_info['eval_run_id']} completed with status: {run_results.status}")
     if run_results.status != "completed":
+        error_code = getattr(getattr(run_results, "error", None), "code", None)
+        blame = (
+            ErrorBlame.USER_ERROR
+            if isinstance(error_code, str) and error_code.lower() == "usererror"
+            else ErrorBlame.UNKNOWN
+        )
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
             + f" failed with status {run_results.status}.",
-            blame=ErrorBlame.UNKNOWN,
+            blame=blame,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
@@ -762,26 +796,27 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
             wrapper_name = only_seg
             LOGGER.info(f"AOAI: All paths start with wrapper '{WRAPPER_KEY}', will strip from schema.")
 
-    effective_paths = referenced_paths
+    path_pairs = [(p, p) for p in referenced_paths]
     if strip_wrapper:
         stripped = []
         for p in referenced_paths:
             parts = p.split(".", 1)
             if len(parts) == 2:
-                stripped.append(parts[1])  # drop leading 'item.'
+                stripped.append((p, parts[1]))  # drop leading 'item.'
             else:
                 # Path was just 'item' (no leaf) – ignore; it doesn't define a leaf value.
                 continue
         # If stripping produced at least one usable path, adopt; else fall back to original.
         if stripped:
-            effective_paths = stripped
-            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {effective_paths}")
+            path_pairs = stripped
+            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {[p for _, p in path_pairs]}")
 
+    effective_paths = [p for _, p in path_pairs]
     LOGGER.info(f"AOAI: Building nested schema from {len(effective_paths)} effective paths...")
 
     # Infer leaf types from the DataFrame so nested schemas also get array/object types
     leaf_type_map: Dict[str, str] = {}
-    for ref_path, eff_path in zip(referenced_paths, effective_paths if strip_wrapper else referenced_paths):
+    for ref_path, eff_path in path_pairs:
         if ref_path in input_data_df:
             for candidate in input_data_df[ref_path]:
                 if isinstance(candidate, (list, dict)):
@@ -834,7 +869,11 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+def _get_data_source(
+    input_data_df: pd.DataFrame,
+    column_mapping: Dict[str, str],
+    item_schema: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Given a dataframe of data to be evaluated, and a column mapping,
     produce a dictionary that can be used as the data source input for an OAI evaluation run.
@@ -844,12 +883,32 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :type input_data_df: pd.DataFrame
     :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
     :type column_mapping: Optional[Dict[str, str]]
+    :param item_schema: Explicit item schema, excluding inferred defaults. Declared values are not coerced.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
 
-    def _convert_value(val: Any) -> Any:
+    explicit_properties = item_schema.get("properties", {}) if item_schema is not None else {}
+    explicit_additional_properties = (
+        isinstance(item_schema.get("additionalProperties"), dict) if item_schema is not None else False
+    )
+    missing = object()
+
+    def _has_explicit_schema(key: str) -> bool:
+        return key in explicit_properties or explicit_additional_properties
+
+    def _convert_value(val: Any, explicit: bool = False) -> Any:
         """Convert to AOAI-friendly representation while preserving structure when useful."""
+        if explicit:
+            # Unbox pandas/numpy scalars without converting between JSON types.
+            if pd.api.types.is_bool(val):
+                return bool(val)
+            if pd.api.types.is_integer(val):
+                return int(val)
+            if pd.api.types.is_float(val):
+                return float(val)
+            return deepcopy(val)
         if val is None:
             return ""
         if isinstance(val, str):
@@ -860,7 +919,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         if isinstance(val, (int, float)):
             return str(val)
         if isinstance(val, (list, dict)):
-            return val
+            # Later path insertions must not mutate objects shared with callable evaluators.
+            return deepcopy(val)
         return str(val)
 
     def _get_value_from_path(normalized_row: Dict[str, Any], path: str) -> Any:
@@ -871,6 +931,21 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             cursor = cursor.get(segment)
             if cursor is None:
                 return None
+        return cursor
+
+    def _get_explicit_value(row: Dict[str, Any], normalized_row: Dict[str, Any], path: str) -> Any:
+        parts = path.split(".")
+        # Original containers retain nulls, missing keys and integer types lost by flattening.
+        if parts[0] in row:
+            cursor: Any = row
+        elif path in row:
+            return row[path]
+        else:
+            cursor = normalized_row
+        for part in parts:
+            if not isinstance(cursor, dict) or part not in cursor:
+                return missing
+            cursor = cursor[part]
         return cursor
 
     LOGGER.info(
@@ -941,10 +1016,39 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     LOGGER.info(f"AOAI: Processed {len(path_specs)} path specifications from column mappings.")
     content: List[Dict[str, Any]] = []
+    explicit_source_columns = {
+        spec["dataframe_col"]
+        for spec in path_specs
+        if _has_explicit_schema(spec["relative_parts"][0]) and not spec["is_run_output"]
+    }
 
-    for _, row in input_data_df.iterrows():
-        normalized_row = _normalize_row_for_item_wrapper(row.to_dict())
+    def _is_flattened_field(key: str, source: Dict[str, Any]) -> bool:
+        root_key = key.split(".", 1)[0]
+        return (
+            key not in explicit_properties
+            and root_key != key
+            and (key in explicit_source_columns or (root_key in source and _has_explicit_schema(root_key)))
+        )
+
+    # iterrows can promote integer columns to floats when another column contains floats.
+    rows = (
+        (dict(zip(input_data_df.columns, values)) for values in input_data_df.itertuples(index=False, name=None))
+        if explicit_properties or explicit_additional_properties
+        else (row.to_dict() for _, row in input_data_df.iterrows())
+    )
+    for row in rows:
+        normalized_row = _normalize_row_for_item_wrapper(row)
         item_root: Dict[str, Any] = {}
+        source_item = row.get(WRAPPER_KEY, row)
+        if isinstance(source_item, dict):
+            # Flattened mappings omit empty objects and can omit siblings of mapped leaves.
+            item_root.update(
+                {
+                    key: _convert_value(value, True)
+                    for key, value in source_item.items()
+                    if _has_explicit_schema(key) and not _is_flattened_field(key, source_item)
+                }
+            )
 
         # Track which top-level keys under the wrapper have been populated via mappings
         processed_root_keys: Set[str] = set()
@@ -954,15 +1058,20 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             if not rel_parts:
                 continue
 
+            explicit = _has_explicit_schema(rel_parts[0])
             if spec["is_run_output"]:
-                val = row.get(spec["dataframe_col"], None)
+                val = row.get(spec["dataframe_col"], missing if explicit else None)
+            elif explicit:
+                val = _get_explicit_value(row, normalized_row, cast(str, spec["source_path"]))
             else:
                 source_path = cast(str, spec["source_path"])
                 val = _get_value_from_path(normalized_row, source_path)
                 if val is None:
                     val = row.get(spec["dataframe_col"], None)
 
-            norm_val = _convert_value(val)
+            if val is missing:
+                continue
+            norm_val = _convert_value(val, explicit)
 
             cursor = item_root
             for seg in rel_parts[:-1]:
@@ -984,7 +1093,10 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
                     continue
                 if key in item_root:
                     continue
-                item_root[key] = _convert_value(raw_val)
+                if _is_flattened_field(key, wrapper_view):
+                    # Do not duplicate flattened leaves alongside their explicitly declared object.
+                    continue
+                item_root[key] = _convert_value(raw_val, _has_explicit_schema(key))
 
         content_row: Dict[str, Any] = {}
 
@@ -1008,6 +1120,7 @@ def _begin_eval_run(
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
     data_source_params: Optional[Dict[str, Any]] = None,
+    item_schema: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -1023,12 +1136,14 @@ def _begin_eval_run(
     :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
         helper function.
     :type input_data_df: pd.DataFrame
+    :param item_schema: Explicit item schema used to preserve declared data types during serialization.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: The ID of the evaluation run.
     :rtype: str
     """
 
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
-    data_source = _get_data_source(input_data_df, column_mapping)
+    data_source = _get_data_source(input_data_df, column_mapping, item_schema=item_schema)
     if data_source_params is not None:
         data_source.update(data_source_params)
 

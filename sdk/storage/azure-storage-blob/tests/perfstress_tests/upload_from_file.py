@@ -29,12 +29,9 @@ class UploadFromFileTest(_BlobTest):
         await super().global_cleanup()
 
     def run_sync(self):
-        with open(self._temp_file, 'rb') as fp:
+        with open(self._temp_file, "rb") as fp:
             self.blob_client.upload_blob(fp, max_concurrency=self.args.max_concurrency, overwrite=True)
 
     async def run_async(self):
-        with open(self._temp_file, 'rb') as fp:
-            await self.async_blob_client.upload_blob(
-                fp,
-                max_concurrency=self.args.max_concurrency,
-                overwrite=True)
+        with open(self._temp_file, "rb") as fp:
+            await self.async_blob_client.upload_blob(fp, max_concurrency=self.args.max_concurrency, overwrite=True)

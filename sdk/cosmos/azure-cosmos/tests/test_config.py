@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import collections
+import asyncio
 import logging
 import os
 import random
@@ -35,6 +36,123 @@ except:
 SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
 SLEEP_TIME = 30  # sleep for 30 seconds
 
+# The live tests run against fixed, long-lived accounts that are shared with other
+# language SDKs and with concurrent runs of this suite. Databases are the only
+# account-scoped namespace we control, so every database this suite creates carries a
+# prefix identifying the run that owns it. That keeps concurrent runs from colliding and
+# lets cleanup delete only what a given run created.
+RESOURCE_PREFIX = "PythonSDKTest"
+
+
+def _build_run_id():
+    # Build.BuildId is shared by every matrix leg of one pipeline run, which is what an
+    # out-of-band janitor matches on; the random suffix keeps parallel legs distinct.
+    build_id = os.getenv('BUILD_BUILDID')
+    suffix = uuid.uuid4().hex[:8]
+    return "{}-{}".format(build_id, suffix) if build_id else suffix
+
+
+RUN_ID = _build_run_id()
+
+
+def unique_database_id(label=""):
+    """Build a database id owned by this test run.
+
+    Format: ``PythonSDKTest-<run id>-<label>-<random>``. Callers that need particular
+    characters in the id (unicode, leading spaces) can embed this in a larger id; only
+    the prefix is required for ownership.
+    """
+    parts = [RESOURCE_PREFIX, RUN_ID]
+    if label:
+        parts.append(label)
+    parts.append(uuid.uuid4().hex)
+    return "-".join(parts)
+
+
+def set_environment_variables(**overrides):
+    """Apply environment variable overrides and return the values they replaced.
+
+    Tests that toggle SDK feature flags must put the process back exactly as they found
+    it, because several of those flags are also set for the whole job by the pipeline.
+    Restoring an assumed default instead of the captured value silently disables the
+    feature under test for everything that runs later in the same process.
+
+    Pass a ``None`` value to unset a variable. Hand the return value to
+    :func:`restore_environment_variables` from a ``finally`` block.
+    """
+    previous = {name: os.environ.get(name) for name in overrides}
+    restore_environment_variables(overrides)
+    return previous
+
+
+def restore_environment_variables(previous):
+    """Reapply the environment variable values captured by :func:`set_environment_variables`."""
+    for name, value in previous.items():
+        if value is None:
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = value
+
+
+# The live-test accounts are long lived and shared with concurrent runs of this suite and
+# with other language SDKs' CI, so the account control plane is a contended resource:
+# creating or deleting a database or container can fail purely because someone else is
+# busy on the same account. The SDK's own throttle retry gives up after ~30s, which is not
+# enough headroom for suite setup and teardown on a busy account.
+CONTROL_PLANE_MAX_ATTEMPTS = 20
+CONTROL_PLANE_MAX_BACKOFF_SECONDS = 15
+# Retried: request timeout, throttled, retry-with, internal error, service unavailable.
+# Deliberately absent: 400, 401, 403, 404, 409. Those describe the request itself, so
+# negative tests that assert on them must keep failing fast.
+CONTROL_PLANE_RETRY_STATUS_CODES = frozenset({408, 429, 449, 500, 503})
+
+
+def _control_plane_backoff(attempt, error):
+    """Seconds to wait before retrying, preferring the service's own hint."""
+    headers = getattr(error, "headers", None) or {}
+    for header in (HttpHeaders.RetryAfterInMilliseconds, HttpHeaders.RetryAfter):
+        raw = headers.get(header)
+        if raw is None:
+            continue
+        try:
+            hinted = float(raw) / 1000 if header == HttpHeaders.RetryAfterInMilliseconds else float(raw)
+        except (TypeError, ValueError):
+            continue
+        return min(max(hinted, 0.1), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
+    backoff = min(0.5 * (2 ** attempt), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
+    # Jitter so that parallel matrix legs retrying the same account don't stay in lockstep.
+    return backoff * (0.5 + random.random() / 2)
+
+
+def _should_retry_control_plane(error, attempt):
+    return (error.status_code in CONTROL_PLANE_RETRY_STATUS_CODES
+            and attempt < CONTROL_PLANE_MAX_ATTEMPTS - 1)
+
+
+def retry_control_plane(operation, *args, **kwargs):
+    """Run a control-plane operation, retrying transient service-side failures."""
+    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
+        try:
+            return operation(*args, **kwargs)
+        except exceptions.CosmosHttpResponseError as error:
+            if not _should_retry_control_plane(error, attempt):
+                raise
+            time.sleep(_control_plane_backoff(attempt, error))
+    raise AssertionError("unreachable")  # pragma: no cover
+
+
+async def retry_control_plane_async(operation, *args, **kwargs):
+    """Async counterpart of :func:`retry_control_plane`."""
+    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
+        try:
+            return await operation(*args, **kwargs)
+        except exceptions.CosmosHttpResponseError as error:
+            if not _should_retry_control_plane(error, attempt):
+                raise
+            await asyncio.sleep(_control_plane_backoff(attempt, error))
+    raise AssertionError("unreachable")  # pragma: no cover
+
+
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
@@ -49,6 +167,116 @@ class TestConfig(object):
     is_live._cache = True if not is_emulator else False
     credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
+    data_auth_mode = os.getenv('COSMOS_TEST_DATA_AUTH_MODE', 'key').strip().lower()
+    if data_auth_mode not in ('key', 'aad'):
+        raise ValueError(
+            "Unknown COSMOS_TEST_DATA_AUTH_MODE: {!r}. Expected 'key' or 'aad'.".format(data_auth_mode)
+        )
+
+    @classmethod
+    def create_data_client(cls, **kwargs):
+        """Return a data-plane Cosmos client using AAD when configured, else key auth.
+
+        Extra ``**kwargs`` are forwarded to the ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``no_response_on_write=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(cls.host, cls.credential, **kwargs)
+        return CosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_for_endpoint(cls, endpoint, **kwargs):
+        """Return a sync data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(resolved_endpoint, cls.credential, **kwargs)
+        return CosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async(cls, **kwargs):
+        """Return an async data-plane Cosmos client using AAD when configured, else key auth.
+
+        Lifecycle (important):
+            The returned ``azure.cosmos.aio.CosmosClient`` is **not entered**. The caller
+            owns its lifecycle and MUST either:
+              * use it as an async context manager
+                (``async with test_config.TestConfig.create_data_client_async() as c: ...``), or
+              * call ``await client.__aenter__()`` after construction and ``await client.close()``
+                in teardown (the pattern used by ``unittest.IsolatedAsyncioTestCase`` test
+                files such as ``test_query_async.py``).
+
+            Failing to close the client leaks the underlying ``aiohttp`` session and can
+            surface as ``Unclosed client session`` warnings or socket exhaustion in long
+            test runs.
+
+        Extra ``**kwargs`` are forwarded to the async ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``multiple_write_locations=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async_for_endpoint(cls, endpoint, **kwargs):
+        """Return an async data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client_async` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(resolved_endpoint, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_test_clients(cls, database_id, **kwargs):
+        """Return ``(key_client, key_db, data_client, data_db)`` for tests that need
+        both a control-plane (key-auth) and a data-plane (AAD-or-key) client.
+
+        Removes the 4-line key+data-client setUp boilerplate. Typical use::
+
+            cls.key_client, cls.key_db, cls.client, cls.created_db = (
+                test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
+
+        Extra ``**kwargs`` are forwarded to BOTH client constructors (use-cases:
+        ``multiple_write_locations=True`` for circuit-breaker tests). For per-client
+        construction options (e.g. custom ``transport`` for fault injection), construct
+        the clients manually instead of using this factory.
+        """
+        key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
+
+    @classmethod
+    def create_test_clients_async(cls, database_id, **kwargs):
+        """Async equivalent of :meth:`create_test_clients`.
+
+        Returns ``(key_client, key_db, data_client, data_db)`` where both clients
+        are async ``azure.cosmos.aio.CosmosClient`` instances. Callers own the
+        lifecycle of both clients and MUST close them in teardown
+        (see :meth:`create_data_client_async` for details).
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        key_client = AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client_async(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
@@ -64,7 +292,7 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', unique_database_id("Shared"))
 
     TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
     TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
@@ -90,15 +318,17 @@ class TestConfig(object):
     @classmethod
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> DatabaseProxy
-        test_database = client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
-                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+        test_database = retry_control_plane(client.create_database_if_not_exists,
+                                            cls.TEST_DATABASE_ID,
+                                            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
         return test_database
 
     @classmethod
     def create_single_partition_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
@@ -108,7 +338,8 @@ class TestConfig(object):
     def create_multi_partition_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
             offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
@@ -118,7 +349,8 @@ class TestConfig(object):
     def create_single_partition_prefix_pk_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
@@ -128,7 +360,8 @@ class TestConfig(object):
     def create_multi_partition_prefix_pk_container_if_not_exist(cls, client):
         # type: (CosmosClient) -> ContainerProxy
         database = cls.create_database_if_not_exist(client)
-        document_collection = database.create_container_if_not_exists(
+        document_collection = retry_control_plane(
+            database.create_container_if_not_exists,
             id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
             offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
@@ -137,17 +370,13 @@ class TestConfig(object):
     @classmethod
     def try_delete_database(cls, client):
         # type: (CosmosClient) -> None
-        try:
-            client.delete_database(cls.TEST_DATABASE_ID)
-        except exceptions.CosmosHttpResponseError as e:
-            if e.status_code != StatusCodes.NOT_FOUND:
-                raise e
+        cls.try_delete_database_with_id(client, cls.TEST_DATABASE_ID)
 
     @classmethod
     def try_delete_database_with_id(cls, client, database_id):
         # type: (CosmosClient, str) -> None
         try:
-            client.delete_database(database_id)
+            retry_control_plane(client.delete_database, database_id)
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
@@ -223,6 +452,7 @@ class TestConfig(object):
     @staticmethod
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -244,6 +474,7 @@ class TestConfig(object):
     @staticmethod
     async def trigger_split_async(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         await container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -257,7 +488,7 @@ class TestConfig(object):
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(SLEEP_TIME)
+                    await asyncio.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")

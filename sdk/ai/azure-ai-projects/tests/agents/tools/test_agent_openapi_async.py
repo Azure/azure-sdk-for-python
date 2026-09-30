@@ -28,10 +28,10 @@ class TestAgentOpenApiAsync(TestBase):
     # To run this test:
     # pytest tests/agents/tools/test_agent_openapi_async.py::TestAgentOpenApiAsync::test_agent_openapi_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_openapi_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -45,7 +45,7 @@ class TestAgentOpenApiAsync(TestBase):
             assert os.path.exists(weather_asset_file_path), f"OpenAPI spec file not found at: {weather_asset_file_path}"
             print(f"Using OpenAPI spec file: {weather_asset_file_path}")
 
-            with open(weather_asset_file_path, "r") as f:
+            with open(weather_asset_file_path, "r", encoding="utf-8") as f:
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool
@@ -104,6 +104,6 @@ class TestAgentOpenApiAsync(TestBase):
     # pytest tests/agents/tools/test_agent_openapi_async.py::TestAgentOpenApiAsync::test_agent_openapi_with_auth_async -s
     @servicePreparer()
     @pytest.mark.skip(reason="Add test here once we have a Foundry Project with a connection with auth credentials")
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_openapi_with_auth_async(self, **kwargs):
         pass

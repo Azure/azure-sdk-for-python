@@ -36,6 +36,7 @@ from .. import models as _models
 from .._configuration import ArtifactSigningMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -50,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +72,7 @@ def build_code_signing_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +101,7 @@ def build_code_signing_accounts_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +132,7 @@ def build_code_signing_accounts_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +161,7 @@ def build_code_signing_accounts_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CodeSigning/codeSigningAccounts/{accountName}"
     path_format_arguments = {
@@ -183,7 +184,7 @@ def build_code_signing_accounts_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +211,7 @@ def build_code_signing_accounts_list_by_subscription_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +238,7 @@ def build_code_signing_accounts_check_name_availability_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +266,7 @@ def build_certificate_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -295,7 +296,7 @@ def build_certificate_profiles_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -325,7 +326,7 @@ def build_certificate_profiles_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CodeSigning/codeSigningAccounts/{accountName}/certificateProfiles/{profileName}"
     path_format_arguments = {
@@ -349,7 +350,7 @@ def build_certificate_profiles_list_by_code_signing_account_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -371,16 +372,16 @@ def build_certificate_profiles_list_by_code_signing_account_request(  # pylint: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_certificate_profiles_revoke_certificate_request(  # pylint: disable=name-too-long
+def build_certificate_profiles_revoke_certificates_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, profile_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-13"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CodeSigning/codeSigningAccounts/{accountName}/certificateProfiles/{profileName}/revokeCertificate"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CodeSigning/codeSigningAccounts/{accountName}/certificateProfiles/{profileName}/revokeCertificates"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -464,7 +465,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -477,7 +481,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -560,6 +567,7 @@ class CodeSigningAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -581,7 +589,7 @@ class CodeSigningAccountsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CodeSigningAccount, response.json())
 
@@ -633,6 +641,7 @@ class CodeSigningAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -656,7 +665,7 @@ class CodeSigningAccountsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -865,6 +874,7 @@ class CodeSigningAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -889,7 +899,7 @@ class CodeSigningAccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1083,6 +1093,7 @@ class CodeSigningAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1107,7 +1118,7 @@ class CodeSigningAccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1225,7 +1236,10 @@ class CodeSigningAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1238,7 +1252,10 @@ class CodeSigningAccountsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CodeSigningAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CodeSigningAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1312,7 +1329,10 @@ class CodeSigningAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1325,7 +1345,10 @@ class CodeSigningAccountsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CodeSigningAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CodeSigningAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1450,6 +1473,7 @@ class CodeSigningAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1471,7 +1495,7 @@ class CodeSigningAccountsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResult, response.json())
 
@@ -1542,6 +1566,7 @@ class CertificateProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1563,7 +1588,7 @@ class CertificateProfilesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CertificateProfile, response.json())
 
@@ -1617,6 +1642,7 @@ class CertificateProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1640,7 +1666,7 @@ class CertificateProfilesOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1849,6 +1875,7 @@ class CertificateProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1873,7 +1900,7 @@ class CertificateProfilesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1999,7 +2026,10 @@ class CertificateProfilesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2012,7 +2042,10 @@ class CertificateProfilesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CertificateProfile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CertificateProfile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2039,17 +2072,17 @@ class CertificateProfilesOperations:
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def revoke_certificate(
+    def revoke_certificates(
         self,
         resource_group_name: str,
         account_name: str,
         profile_name: str,
-        body: _models.RevokeCertificate,
+        body: _models.RevokeCertificateList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """Revoke a certificate under a certificate profile.
+        """Revokes certificates under a certificate profile.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2058,8 +2091,8 @@ class CertificateProfilesOperations:
         :type account_name: str
         :param profile_name: Certificate profile name. Required.
         :type profile_name: str
-        :param body: Parameters to revoke the certificate profile. Required.
-        :type body: ~azure.mgmt.artifactsigning.models.RevokeCertificate
+        :param body: Parameters to revoke the certificates in the certificate profile. Required.
+        :type body: ~azure.mgmt.artifactsigning.models.RevokeCertificateList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2069,7 +2102,7 @@ class CertificateProfilesOperations:
         """
 
     @overload
-    def revoke_certificate(
+    def revoke_certificates(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2079,7 +2112,7 @@ class CertificateProfilesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """Revoke a certificate under a certificate profile.
+        """Revokes certificates under a certificate profile.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2088,7 +2121,7 @@ class CertificateProfilesOperations:
         :type account_name: str
         :param profile_name: Certificate profile name. Required.
         :type profile_name: str
-        :param body: Parameters to revoke the certificate profile. Required.
+        :param body: Parameters to revoke the certificates in the certificate profile. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2099,7 +2132,7 @@ class CertificateProfilesOperations:
         """
 
     @overload
-    def revoke_certificate(
+    def revoke_certificates(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2109,7 +2142,7 @@ class CertificateProfilesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """Revoke a certificate under a certificate profile.
+        """Revokes certificates under a certificate profile.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2118,7 +2151,7 @@ class CertificateProfilesOperations:
         :type account_name: str
         :param profile_name: Certificate profile name. Required.
         :type profile_name: str
-        :param body: Parameters to revoke the certificate profile. Required.
+        :param body: Parameters to revoke the certificates in the certificate profile. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2129,15 +2162,29 @@ class CertificateProfilesOperations:
         """
 
     @distributed_trace
-    def revoke_certificate(  # pylint: disable=inconsistent-return-statements
+    @api_version_validation(
+        method_added_on="2026-05-15-preview",
+        params_added_on={
+            "2026-05-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "profile_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-15-preview"],
+    )
+    def revoke_certificates(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
         profile_name: str,
-        body: Union[_models.RevokeCertificate, JSON, IO[bytes]],
+        body: Union[_models.RevokeCertificateList, JSON, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        """Revoke a certificate under a certificate profile.
+        """Revokes certificates under a certificate profile.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2146,9 +2193,9 @@ class CertificateProfilesOperations:
         :type account_name: str
         :param profile_name: Certificate profile name. Required.
         :type profile_name: str
-        :param body: Parameters to revoke the certificate profile. Is one of the following types:
-         RevokeCertificate, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.artifactsigning.models.RevokeCertificate or JSON or IO[bytes]
+        :param body: Parameters to revoke the certificates in the certificate profile. Is one of the
+         following types: RevokeCertificateList, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.artifactsigning.models.RevokeCertificateList or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2174,7 +2221,7 @@ class CertificateProfilesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_certificate_profiles_revoke_certificate_request(
+        _request = build_certificate_profiles_revoke_certificates_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             profile_name=profile_name,

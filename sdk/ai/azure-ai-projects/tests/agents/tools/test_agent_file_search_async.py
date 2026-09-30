@@ -6,7 +6,6 @@
 # cSpell:disable
 
 import os
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -17,10 +16,10 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 class TestAgentFileSearchAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_file_search_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -97,7 +96,7 @@ class TestAgentFileSearchAsync(TestBase):
             print("Vector store deleted")
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_file_search_multi_turn_conversation_async(self, **kwargs):
         """
         Test multi-turn conversation with File Search (async version).
@@ -106,7 +105,7 @@ class TestAgentFileSearchAsync(TestBase):
         while using File Search to answer follow-up questions.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,

@@ -90,6 +90,37 @@ class AdditionalCacheNodeProperties(_Model):
     :vartype creation_method: int
     :ivar tls_status: Cache node tls certificate status.
     :vartype tls_status: str
+    :ivar host_os_edition: Operating system edition of the cache node host machine.
+    :vartype host_os_edition: str
+    :ivar host_os_version: Operating system version of the cache node host machine.
+    :vartype host_os_version: str
+    :ivar host_os_build: Operating system build of the cache node host machine.
+    :vartype host_os_build: str
+    :ivar distro_os_edition_wsl: Operating system edition of the WSL Linux distribution used to run
+     the cache node on Windows host machines.
+    :vartype distro_os_edition_wsl: str
+    :ivar distro_os_version_wsl: Operating system version of the WSL Linux distribution used to run
+     the cache node on Windows host machines.
+    :vartype distro_os_version_wsl: str
+    :ivar distro_os_build_wsl: Operating system build of the WSL Linux distribution used to run the
+     cache node on Windows host machines.
+    :vartype distro_os_build_wsl: str
+    :ivar container_os_edition: Operating system edition of container used to run the cache node.
+    :vartype container_os_edition: str
+    :ivar container_os_version: Operating system version of the container used to run the cache
+     node.
+    :vartype container_os_version: str
+    :ivar container_os_build: Operating system build of the container used to run the cache node.
+    :vartype container_os_build: str
+    :ivar install_version_msix: Version of the Windows deployment application used to deploy the
+     cache node.
+    :vartype install_version_msix: str
+    :ivar install_version_script: Version of the installation scripts used to deploy the cache
+     node.
+    :vartype install_version_script: str
+    :ivar app_version_wsl: Version of the Windows Subsystem for Linux application version used to
+     run the cache node on the Windows host machine.
+    :vartype app_version_wsl: str
     :ivar optional_property1: Optional property #1 of Mcc response object.
     :vartype optional_property1: str
     :ivar optional_property2: Optional property #2 of Mcc response object.
@@ -197,6 +228,34 @@ class AdditionalCacheNodeProperties(_Model):
     """Resource creation method of mcc cache node resource, cli or portal."""
     tls_status: Optional[str] = rest_field(name="tlsStatus", visibility=["read"])
     """Cache node tls certificate status."""
+    host_os_edition: Optional[str] = rest_field(name="hostOsEdition", visibility=["read"])
+    """Operating system edition of the cache node host machine."""
+    host_os_version: Optional[str] = rest_field(name="hostOsVersion", visibility=["read"])
+    """Operating system version of the cache node host machine."""
+    host_os_build: Optional[str] = rest_field(name="hostOsBuild", visibility=["read"])
+    """Operating system build of the cache node host machine."""
+    distro_os_edition_wsl: Optional[str] = rest_field(name="distroOsEditionWsl", visibility=["read"])
+    """Operating system edition of the WSL Linux distribution used to run the cache node on Windows
+     host machines."""
+    distro_os_version_wsl: Optional[str] = rest_field(name="distroOsVersionWsl", visibility=["read"])
+    """Operating system version of the WSL Linux distribution used to run the cache node on Windows
+     host machines."""
+    distro_os_build_wsl: Optional[str] = rest_field(name="distroOsBuildWsl", visibility=["read"])
+    """Operating system build of the WSL Linux distribution used to run the cache node on Windows host
+     machines."""
+    container_os_edition: Optional[str] = rest_field(name="containerOsEdition", visibility=["read"])
+    """Operating system edition of container used to run the cache node."""
+    container_os_version: Optional[str] = rest_field(name="containerOsVersion", visibility=["read"])
+    """Operating system version of the container used to run the cache node."""
+    container_os_build: Optional[str] = rest_field(name="containerOsBuild", visibility=["read"])
+    """Operating system build of the container used to run the cache node."""
+    install_version_msix: Optional[str] = rest_field(name="installVersionMsix", visibility=["read"])
+    """Version of the Windows deployment application used to deploy the cache node."""
+    install_version_script: Optional[str] = rest_field(name="installVersionScript", visibility=["read"])
+    """Version of the installation scripts used to deploy the cache node."""
+    app_version_wsl: Optional[str] = rest_field(name="appVersionWsl", visibility=["read"])
+    """Version of the Windows Subsystem for Linux application version used to run the cache node on
+     the Windows host machine."""
     optional_property1: Optional[str] = rest_field(
         name="optionalProperty1", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -608,6 +667,8 @@ class CacheNodeEntity(_Model):
     :vartype cidr_csv: list[str]
     :ivar cidr_csv_last_update_time: Cache node resource last Cidr Csv update timestamp.
     :vartype cidr_csv_last_update_time: ~datetime.datetime
+    :ivar bgp_network_interface: Cache node resource Bgp network interface.
+    :vartype bgp_network_interface: str
     :ivar bgp_cidr_csv_last_update_time: Cache node resource last Bgp Cidr Csv update timestamp.
     :vartype bgp_cidr_csv_last_update_time: ~datetime.datetime
     :ivar bgp_last_reported_time: Cache node resource last Bgp report timestamp.
@@ -663,8 +724,9 @@ class CacheNodeEntity(_Model):
     :ivar fully_qualified_domain_name: FQDN(fully qualified domain name) value of the mcc cache
      node.
     :vartype fully_qualified_domain_name: str
-    :ivar auto_update_ring_type: Auto Update Ring Type which is slow or fast etc. Known values are:
-     "Preview", "Slow", and "Fast".
+    :ivar auto_update_ring_type: Auto Update Ring Type which is stable or beta as new values. slow
+     or fast are legacy from version 2026-06-01. Known values are: "Preview", "Slow", "Fast",
+     "Stable", and "Beta".
     :vartype auto_update_ring_type: str or ~azure.mgmt.connectedcache.models.AutoUpdateRingType
     :ivar auto_update_requested_week: Customer requested week of month for mcc install of auto
      update cycle. 0 is default no selection. 1-5 are valid weeks of month, 1 is first week, 2 is
@@ -676,6 +738,19 @@ class CacheNodeEntity(_Model):
     :ivar auto_update_requested_time: Customer requested time of the day for mcc install of auto
      update cycle, should be hh:mm.
     :vartype auto_update_requested_time: str
+    :ivar open_firewall_port80: Cache node port firewall rule creation opt-in for port 80 property.
+    :vartype open_firewall_port80: bool
+    :ivar open_firewall_port443: Cache node port firewall rule creation opt-in for port 443
+     property.
+    :vartype open_firewall_port443: bool
+    :ivar open_firewall_port5000: Cache node port firewall rule creation opt-in for port 5000
+     property.
+    :vartype open_firewall_port5000: bool
+    :ivar open_firewall_port5001: Cache node port firewall rule creation opt-in for port 5001
+     property.
+    :vartype open_firewall_port5001: bool
+    :ivar runtime_account_type: Connected Cache runtime account type.
+    :vartype runtime_account_type: str
     """
 
     fully_qualified_resource_id: Optional[str] = rest_field(
@@ -752,6 +827,10 @@ class CacheNodeEntity(_Model):
         name="cidrCsvLastUpdateTime", visibility=["read"], format="rfc3339"
     )
     """Cache node resource last Cidr Csv update timestamp."""
+    bgp_network_interface: Optional[str] = rest_field(
+        name="bgpNetworkInterface", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cache node resource Bgp network interface."""
     bgp_cidr_csv_last_update_time: Optional[datetime.datetime] = rest_field(
         name="bgpCidrCsvLastUpdateTime", visibility=["read"], format="rfc3339"
     )
@@ -822,8 +901,9 @@ class CacheNodeEntity(_Model):
     auto_update_ring_type: Optional[Union[str, "_models.AutoUpdateRingType"]] = rest_field(
         name="autoUpdateRingType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Auto Update Ring Type which is slow or fast etc. Known values are: \"Preview\", \"Slow\", and
-     \"Fast\"."""
+    """Auto Update Ring Type which is stable or beta as new values. slow or fast are legacy from
+     version 2026-06-01. Known values are: \"Preview\", \"Slow\", \"Fast\", \"Stable\", and
+     \"Beta\"."""
     auto_update_requested_week: Optional[int] = rest_field(
         name="autoUpdateRequestedWeek", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -838,6 +918,26 @@ class CacheNodeEntity(_Model):
         name="autoUpdateRequestedTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Customer requested time of the day for mcc install of auto update cycle, should be hh:mm."""
+    open_firewall_port80: Optional[bool] = rest_field(
+        name="openFirewallPort80", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cache node port firewall rule creation opt-in for port 80 property."""
+    open_firewall_port443: Optional[bool] = rest_field(
+        name="openFirewallPort443", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cache node port firewall rule creation opt-in for port 443 property."""
+    open_firewall_port5000: Optional[bool] = rest_field(
+        name="openFirewallPort5000", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cache node port firewall rule creation opt-in for port 5000 property."""
+    open_firewall_port5001: Optional[bool] = rest_field(
+        name="openFirewallPort5001", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cache node port firewall rule creation opt-in for port 5001 property."""
+    runtime_account_type: Optional[str] = rest_field(
+        name="runtimeAccountType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connected Cache runtime account type."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -854,6 +954,7 @@ class CacheNodeEntity(_Model):
         max_allowable_egress_in_mbps: Optional[int] = None,
         is_enterprise_managed: Optional[bool] = None,
         cidr_csv: Optional[list[str]] = None,
+        bgp_network_interface: Optional[str] = None,
         should_migrate: Optional[bool] = None,
         cidr_selection_type: Optional[int] = None,
         fully_qualified_domain_name: Optional[str] = None,
@@ -861,6 +962,11 @@ class CacheNodeEntity(_Model):
         auto_update_requested_week: Optional[int] = None,
         auto_update_requested_day: Optional[int] = None,
         auto_update_requested_time: Optional[str] = None,
+        open_firewall_port80: Optional[bool] = None,
+        open_firewall_port443: Optional[bool] = None,
+        open_firewall_port5000: Optional[bool] = None,
+        open_firewall_port5001: Optional[bool] = None,
+        runtime_account_type: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1931,6 +2037,8 @@ class MccCacheNodeTlsCertificate(_Model):
     :vartype action_required: str
     :ivar certificate_file_name: Mcc cache node Tls certificate file name.
     :vartype certificate_file_name: str
+    :ivar cert_type: Mcc cache node Tls certificate Type.
+    :vartype cert_type: str
     :ivar thumbprint: Mcc cache node Tls certificate thumbprint.
     :vartype thumbprint: str
     :ivar expiry_date: Mcc cache node Tls certificate expiry date.
@@ -1947,6 +2055,8 @@ class MccCacheNodeTlsCertificate(_Model):
     """Mcc cache node Tls certificate status."""
     certificate_file_name: Optional[str] = rest_field(name="certificateFileName", visibility=["read"])
     """Mcc cache node Tls certificate file name."""
+    cert_type: Optional[str] = rest_field(name="certType", visibility=["read"])
+    """Mcc cache node Tls certificate Type."""
     thumbprint: Optional[str] = rest_field(visibility=["read"])
     """Mcc cache node Tls certificate thumbprint."""
     expiry_date: Optional[datetime.datetime] = rest_field(name="expiryDate", visibility=["read"], format="rfc3339")
@@ -2138,7 +2248,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".

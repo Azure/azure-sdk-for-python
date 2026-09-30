@@ -6,5 +6,5 @@ opencensus-ext-azure
 opencensus-ext-threading
 -e ../../../../../../eng/tools/azure-sdk-tools
 a/contained/package
-https://docsupport.blob.core.windows.net/repackaged/azure-core-1.5.0.zip
+https://fake-storage.blob.core.windows.net/fake-container/azure-core-1.5.0.zip
 ./optional-environment-test-1.0.0.zip

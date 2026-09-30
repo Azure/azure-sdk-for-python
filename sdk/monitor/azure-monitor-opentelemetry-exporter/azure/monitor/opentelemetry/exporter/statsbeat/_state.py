@@ -20,6 +20,7 @@ _STATSBEAT_STATE = {
     "LIVE_METRICS_FEATURE_SET": False,
     "CUSTOMER_SDKSTATS_FEATURE_SET": False,
     "BROWSER_SDK_LOADER_FEATURE_SET": False,
+    "FEATURE_ATTRIBUTE_BITS": 0,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
@@ -115,3 +116,12 @@ def get_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-
 def set_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-long
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["BROWSER_SDK_LOADER_FEATURE_SET"] = True
+
+
+def get_statsbeat_feature_attribute_bits() -> int:
+    return int(_STATSBEAT_STATE["FEATURE_ATTRIBUTE_BITS"])
+
+
+def set_statsbeat_feature_attribute_bits(feature_bits: int) -> None:
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["FEATURE_ATTRIBUTE_BITS"] = int(feature_bits)

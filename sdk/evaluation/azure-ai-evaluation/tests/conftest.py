@@ -210,6 +210,7 @@ def add_sanitizers(
 
         # removes some headers since they are causing some unnecessary mismatches in recordings
         headers_to_ignore = [
+            "accept-encoding",
             "ms-azure-ai-promptflow",
             "ms-azure-ai-promptflow-called-from",
             "x-ms-useragent",
@@ -326,8 +327,9 @@ def simple_conversation():
 @pytest.fixture
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
+    proxy_url = PROXY_URL() if callable(PROXY_URL) else PROXY_URL
     config = TestProxyConfig(
-        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL()
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=proxy_url
     )
 
     with TestProxyHttpxClientBase.record_with_proxy(config):

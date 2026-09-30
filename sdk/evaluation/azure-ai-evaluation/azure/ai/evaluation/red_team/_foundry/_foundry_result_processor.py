@@ -184,6 +184,42 @@ class FoundryResultProcessor:
 
         return jsonl_content
 
+    def to_jsonl_per_strategy(self, output_dir: str, risk_value: str) -> Dict[str, str]:
+        """Write per-strategy JSONL files using the scenario's strategy grouping.
+
+        Uses ``ScenarioOrchestrator.get_attack_results_by_strategy()`` which
+        returns results keyed by ``atomic_attack_name`` — the FoundryStrategy
+        value (e.g. ``"baseline"``, ``"crescendo"``, ``"base64"``).  This
+        avoids any heuristic mapping from PyRIT class names to strategy names.
+
+        :param output_dir: Directory to write per-strategy JSONL files
+        :type output_dir: str
+        :param risk_value: Risk category value (used for file naming)
+        :type risk_value: str
+        :return: Dictionary mapping strategy name to JSONL file path
+        :rtype: Dict[str, str]
+        """
+        results_by_strategy = self.scenario.get_attack_results_by_strategy()
+        memory = self.scenario.get_memory()
+
+        strategy_files: Dict[str, str] = {}
+
+        for strategy_name, attack_results in results_by_strategy.items():
+            jsonl_lines = []
+            for attack_result in attack_results:
+                entry = self._process_attack_result(attack_result, memory)
+                if entry:
+                    jsonl_lines.append(json.dumps(entry, ensure_ascii=False))
+
+            strategy_path = os.path.join(output_dir, f"{risk_value}_{strategy_name}_results.jsonl")
+            Path(strategy_path).parent.mkdir(parents=True, exist_ok=True)
+            with open(strategy_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(jsonl_lines))
+
+            strategy_files[strategy_name] = strategy_path
+
+        return strategy_files
+
     def _process_attack_result(
         self,
         attack_result: AttackResult,
@@ -303,16 +339,52 @@ class FoundryResultProcessor:
         sorted_pieces = sorted(conversation_pieces, key=lambda p: getattr(p, "sequence", 0))
 
         for piece in sorted_pieces:
+            # Skip context pieces (from prepended_conversation).
+            # These are tool context SeedPrompts for categories like
+            # sensitive_data_leakage and should not appear in the conversation.
+            pm = getattr(piece, "prompt_metadata", None)
+            if isinstance(pm, dict) and pm.get("is_context") is True:
+                continue
+
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 
-            # Get content (prefer converted_value over original_value)
-            content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
+            # Get content. For both user and assistant turns, ``content`` reflects
+            # what was actually sent on the wire (``converted_value``) so the
+            # stored conversation matches the payload the target received /
+            # produced. When a converter (Base64, Flip, Morse, Caesar, etc.) was
+            # applied, the pre-conversion adversarial objective is preserved as
+            # ``original_value`` on the same message so consumers can still
+            # display / score against the decoded text without losing fidelity
+            # of the actual attack surface.
+            #
+            # ``converted_value`` / ``original_value`` are passed through
+            # without forcing them to ``str`` so non-text payloads (bytes,
+            # structured / multimodal content) survive unchanged. ``content``
+            # falls back to ``""`` only when both fields are falsy / missing.
+            original = getattr(piece, "original_value", None)
+            converted = getattr(piece, "converted_value", None)
+            if converted:
+                content = converted
+            elif original:
+                content = original
+            else:
+                content = ""
 
             message: Dict[str, Any] = {
                 "role": role,
                 "content": content,
             }
+
+            # Preserve the pre-converter objective when it differs from the
+            # transmitted content. This keeps the audit trail intact: callers
+            # can compare ``content`` (what the target saw) with
+            # ``original_value`` (what the attack meant to say) for every
+            # encoding-based strategy. Restricted to strings because the
+            # audit field is only meaningful when both values are textual
+            # (and arbitrary cross-type inequality would be too aggressive).
+            if isinstance(original, str) and original and isinstance(content, str) and original != content:
+                message["original_value"] = original
 
             # Add context from labels if present (for XPIA)
             if hasattr(piece, "labels") and piece.labels:
@@ -324,6 +396,10 @@ class FoundryResultProcessor:
                             message["context"] = context_dict["contexts"]
                     except (json.JSONDecodeError, TypeError):
                         pass
+
+                token_usage = piece.labels.get("token_usage")
+                if token_usage:
+                    message["token_usage"] = token_usage
 
             messages.append(message)
 

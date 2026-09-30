@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: Code Interpreter + Function Tool
 
@@ -14,7 +12,6 @@ Tests various scenarios using an agent with Code Interpreter and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
@@ -23,14 +20,13 @@ from azure.ai.projects.models import (
     AutoCodeInterpreterToolParam,
     FunctionTool,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_calculate_and_save(self, **kwargs):
         """
         Test calculation with Code Interpreter and saving with Function Tool.
@@ -40,7 +36,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Saves the computed result
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -90,7 +86,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_generate_data_and_report(self, **kwargs):
         """
         Test generating data with Code Interpreter and reporting with Function.
@@ -100,7 +96,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Creates a report with the computed statistics
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

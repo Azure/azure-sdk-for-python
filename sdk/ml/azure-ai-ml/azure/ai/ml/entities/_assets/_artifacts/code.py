@@ -6,7 +6,10 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    CodeVersion as CodeVersionData,
+    CodeVersionProperties as CodeVersionDetails,
+)
 from azure.ai.ml._schema import CodeAssetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_content_hash, get_content_hash_version, get_ignore_file
@@ -21,21 +24,21 @@ from .artifact import ArtifactStorageInfo
 class Code(Artifact):
     """Code for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param path: A local path or a remote uri. A storage remote uri example is like,
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword path: A local path or a remote uri. A storage remote uri example is like,
         "https://{storage_account}.blob.core.windows.net/{container}/{path}"
-    :type path: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param ignore_file: Ignore file for the resource.
-    :type ignore_file: IgnoreFile
+    :paramtype path: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword ignore_file: Ignore file for the resource.
+    :paramtype ignore_file: IgnoreFile
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -137,6 +140,6 @@ class Code(Artifact):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "CodeVersionDetails"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: properties.as_dict(),
             }
         }

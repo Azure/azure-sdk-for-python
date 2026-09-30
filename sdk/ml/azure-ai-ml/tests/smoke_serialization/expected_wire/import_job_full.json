@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "command": "import",
+    "computeId": "smoke-compute",
+    "description": "smoke serialization import job",
+    "displayName": "smoke-import-job-display",
+    "environmentId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "connection": {
+        "jobInputType": "literal",
+        "value": "azureml:my_username_password"
+      },
+      "query": {
+        "jobInputType": "literal",
+        "value": "SELECT * FROM my_table"
+      },
+      "type": {
+        "jobInputType": "literal",
+        "value": "azuresqldb"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {
+      "output": {
+        "jobOutputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/imported/"
+      }
+    }
+  }
+}

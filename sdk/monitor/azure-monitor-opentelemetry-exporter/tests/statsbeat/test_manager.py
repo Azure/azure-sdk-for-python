@@ -96,6 +96,8 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
             self.assertEqual(config.region, "westus")
             self.assertEqual(config.instrumentation_key, "test-key")
+            # config.disable_offline_storage mirrors the user's setting (used only for DISK_RETRY
+            # reporting); statsbeat's own exporter never persists to disk regardless (see _do_initialize).
             self.assertTrue(config.disable_offline_storage)
             self.assertIsNotNone(config.credential)
             self.assertEqual(config.distro_version, "1.0.0")
@@ -140,11 +142,13 @@ class TestStatsbeatConfig(unittest.TestCase):
             region="westus",
             instrumentation_key="test-key",
             credential="test_credential",
-            disable_offline_storage=False,
+            disable_offline_storage=True,
             distro_version="1.0.0",
         )
 
-        config_dict = {"disable_offline_storage": "true"}
+        # A conflicting value in the dict must be ignored: the customer's setting is preserved from
+        # base_config, and statsbeat's own storage is never controlled by OneSettings.
+        config_dict = {"disable_offline_storage": "false"}
 
         new_config = StatsbeatConfig.from_config(base_config, config_dict)
 
@@ -270,6 +274,8 @@ class TestStatsbeatManager(unittest.TestCase):
             self.manager._metrics = None
         if hasattr(self.manager, "_meter_provider"):
             self.manager._meter_provider = None
+        if hasattr(self.manager, "_warmup_timer"):
+            self.manager._warmup_timer = None
 
     def tearDown(self):
         """Clean up after tests."""
@@ -366,9 +372,16 @@ class TestStatsbeatManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_success(
-        self, mock_is_enabled, mock_statsbeat_metrics, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self,
+        mock_is_enabled,
+        mock_timer_class,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
     ):
         """Test successful initialization."""
         mock_is_enabled.return_value = True
@@ -388,6 +401,7 @@ class TestStatsbeatManager(unittest.TestCase):
         # Mock the statsbeat metrics
         mock_metrics = Mock()
         mock_statsbeat_metrics.return_value = mock_metrics
+        mock_timer_class.return_value = Mock()
 
         config = self._create_valid_config()
 
@@ -404,8 +418,46 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_reader_class.assert_called_once()
         mock_meter_provider_class.assert_called_once()
         mock_statsbeat_metrics.assert_called_once()
-        mock_meter_provider.force_flush.assert_called_once()
+        mock_timer_class.assert_called_once()
+        mock_timer_class.return_value.start.assert_called_once()
+        mock_meter_provider.force_flush.assert_not_called()
         mock_metrics.init_non_initial_metrics.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
+    def test_initialize_with_delay_schedules_non_blocking_flush(
+        self,
+        mock_is_enabled,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
+        mock_timer_class,
+    ):
+        """Test delayed initial statsbeat flush is scheduled asynchronously."""
+        mock_is_enabled.return_value = True
+
+        mock_exporter_class.return_value = Mock()
+        mock_reader_class.return_value = Mock()
+        mock_meter_provider = Mock()
+        mock_meter_provider_class.return_value = mock_meter_provider
+        mock_metrics = Mock()
+        mock_statsbeat_metrics.return_value = mock_metrics
+
+        mock_timer = Mock()
+        mock_timer_class.return_value = mock_timer
+
+        result = self.manager.initialize(self._create_valid_config())
+
+        self.assertTrue(result)
+        mock_timer_class.assert_called_once()
+        self.assertEqual(mock_timer_class.call_args[0][0], 15)
+        mock_timer.start.assert_called_once()
+        mock_meter_provider.force_flush.assert_not_called()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
@@ -627,6 +679,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -636,8 +690,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_called_once()
 
     def test_cleanup_without_shutdown(self):
@@ -646,6 +702,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -655,8 +713,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_not_called()
 
     def test_cleanup_meter_provider_exception(self):

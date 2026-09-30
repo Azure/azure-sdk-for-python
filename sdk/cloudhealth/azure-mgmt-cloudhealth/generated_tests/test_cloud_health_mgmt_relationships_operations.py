@@ -32,8 +32,8 @@ class TestCloudHealthMgmtRelationshipsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_relationships_create_or_update(self, resource_group):
-        response = self.client.relationships.create_or_update(
+    def test_relationships_begin_create_or_update(self, resource_group):
+        response = self.client.relationships.begin_create_or_update(
             resource_group_name=resource_group.name,
             health_model_name="str",
             relationship_name="str",
@@ -43,11 +43,10 @@ class TestCloudHealthMgmtRelationshipsOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "childEntityName": "str",
                     "parentEntityName": "str",
-                    "deletionDate": "2020-02-20 00:00:00",
                     "discoveredBy": "str",
                     "displayName": "str",
-                    "labels": {"str": "str"},
                     "provisioningState": "str",
+                    "tags": {"str": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -59,19 +58,19 @@ class TestCloudHealthMgmtRelationshipsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_relationships_delete(self, resource_group):
-        response = self.client.relationships.delete(
+    def test_relationships_begin_delete(self, resource_group):
+        response = self.client.relationships.begin_delete(
             resource_group_name=resource_group.name,
             health_model_name="str",
             relationship_name="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

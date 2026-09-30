@@ -86,6 +86,8 @@ class TestIoTOperationsMgmtDataflowEndpointOperations(AzureMgmtRecordedTestCase)
                         "oneLakePathType": "str",
                         "batching": {"latencySeconds": 0, "maxMessages": 0},
                     },
+                    "healthState": "str",
+                    "hostType": "str",
                     "kafkaSettings": {
                         "authentication": {
                             "method": "str",
@@ -130,6 +132,12 @@ class TestIoTOperationsMgmtDataflowEndpointOperations(AzureMgmtRecordedTestCase)
                         "qos": 0,
                         "retain": "str",
                         "sessionExpirySeconds": 0,
+                        "tls": {"mode": "str", "trustedCaCertificateConfigMapRef": "str"},
+                    },
+                    "openTelemetrySettings": {
+                        "authentication": "dataflow_open_telemetry_authentication",
+                        "host": "str",
+                        "batching": {"latencySeconds": 0, "maxMessages": 0},
                         "tls": {"mode": "str", "trustedCaCertificateConfigMapRef": "str"},
                     },
                     "provisioningState": "str",

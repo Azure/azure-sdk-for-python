@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-10-01-preview",
+  "apiVersions": {
+    "Microsoft.AAD": "2025-10-01-preview"
+  },
+  "commit": "88976ab9ea9fb7f69533fbd465540060bd1f225a",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/domainservices/resource-manager/Microsoft.AAD/DomainServices",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
+}

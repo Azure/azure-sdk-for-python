@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "dataType": "uri_folder",
+    "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke/data/",
+    "description": "smoke data",
+    "isAnonymous": false,
+    "isArchived": false,
+    "properties": {},
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

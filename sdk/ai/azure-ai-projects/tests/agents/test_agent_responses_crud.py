@@ -13,7 +13,6 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
-import pytest
 
 
 class TestAgentResponsesCrud(TestBase):
@@ -21,7 +20,7 @@ class TestAgentResponsesCrud(TestBase):
     # To run this test:
     # pytest tests/agents/test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_crud -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_responses_crud(self, **kwargs):
         """
         Test two-turn Responses with Agent reference and Conversation.
@@ -48,7 +47,7 @@ class TestAgentResponsesCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -75,7 +74,7 @@ class TestAgentResponsesCrud(TestBase):
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
 
-        items = openai_client.conversations.items.create(
+        _ = openai_client.conversations.items.create(
             conversation.id,
             items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
         )
@@ -156,9 +155,9 @@ class TestAgentResponsesCrud(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_responses_with_structured_output(self, **kwargs):
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

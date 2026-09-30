@@ -114,7 +114,6 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
-    CONTINUE_ENUM = "Continue"
 
 
 class LinuxOsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -171,9 +170,9 @@ class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PremiumDataDisk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The setting to enable usage of premium data disks.
-    When its value is 'Enabled', creation of standard or premium data disks is allowed.
-    When its value is 'Disabled', only creation of standard data disks is allowed.
+    """The setting to enable usage of premium data disks. When its value is 'Enabled', creation of
+    standard or premium data disks is allowed. When its value is 'Disabled', only creation of
+    standard data disks is allowed.
     """
 
     DISABLED = "Disabled"

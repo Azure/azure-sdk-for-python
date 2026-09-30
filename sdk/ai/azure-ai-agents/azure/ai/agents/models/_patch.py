@@ -333,9 +333,9 @@ def _map_type(annotation) -> Dict[str, Any]:  # pylint: disable=too-many-return-
     if origin is Union:
         args = get_args(annotation)
         # If Union contains None, it is an optional parameter
-        if type(None) in args:
+        if type(None) in args:  # pylint: disable=unidiomatic-typecheck
             # If Union contains only one non-None type, it is a nullable parameter
-            non_none_args = [arg for arg in args if arg is not type(None)]
+            non_none_args = [arg for arg in args if arg is not type(None)]  # pylint: disable=unidiomatic-typecheck
             if len(non_none_args) == 1:
                 schema = _map_type(non_none_args[0])
                 if "type" in schema:

@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -83,12 +84,32 @@ class breaking(Check):
             action="store_true",
             default=False,
         )
+        p.add_argument(
+            "--use-apistub",
+            dest="use_apistub",
+            help="Build the code report from the apistub-generated api.md instead of importing the package.",
+            action="store_true",
+            default=False,
+        )
+        p.add_argument(
+            "--debug",
+            dest="debug",
+            help="Keep the generated api.md and code_report.json files for easier debugging.",
+            action="store_true",
+            default=False,
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the breaking change check command."""
         logger.info("Running breaking check...")
 
         set_envvar_defaults()
+
+        # Fast path: if two pre-built code reports are provided, compare them directly
+        # without needing a package directory, build, or install step.
+        if getattr(args, "source_report", None) and getattr(args, "target_report", None):
+            return self._run_from_reports(args)
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -98,11 +119,24 @@ class breaking(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for breaking check...")
 
-            # install dependencies
-            self.install_dev_reqs(executable, args, package_dir)
+            use_apistub = getattr(args, "use_apistub", False)
+
+            # The apistub path builds the code report via static analysis (apistub generates
+            # api.md and it is converted to a report); the target package is never imported.
+            # So installing dev requirements and building/installing the package sdist is only
+            # needed for the default (import-based) path. Skip both in apistub mode.
+            if not use_apistub:
+                # install dependencies
+                self.install_dev_reqs(executable, args, package_dir)
 
             try:
                 install_into_venv(
@@ -117,17 +151,18 @@ class breaking(Check):
                 results.append(1)
                 continue
 
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="sdist",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
+            if not use_apistub:
+                create_package_and_install(
+                    distribution_directory=staging_directory,
+                    target_setup=package_dir,
+                    skip_install=False,
+                    cache_dir=None,
+                    work_dir=staging_directory,
+                    force_create=False,
+                    package_type="sdist",
+                    pre_download_disabled=False,
+                    python_executable=executable,
+                )
 
             try:
                 cmd = [
@@ -152,6 +187,10 @@ class breaking(Check):
                     cmd.extend(["--target-report", args.target_report])
                 if getattr(args, "latest_pypi_version", False):
                     cmd.append("--latest-pypi-version")
+                if getattr(args, "use_apistub", False):
+                    cmd.append("--use-apistub")
+                if getattr(args, "debug", False):
+                    cmd.append("--debug")
                 check_call(cmd)
             except CalledProcessError as e:
                 logger.error(f"Breaking check failed for {package_name}: {e}")
@@ -159,3 +198,39 @@ class breaking(Check):
                 continue
 
         return max(results) if results else 0
+
+    def _run_from_reports(self, args: argparse.Namespace) -> int:
+        """Compare two pre-built code reports directly, skipping package build and install."""
+        source = os.path.abspath(args.source_report)
+        target = os.path.abspath(args.target_report)
+
+        # Use a temporary root directory, but create a subdirectory whose basename is derived
+        # from the source report path so detect_breaking_changes.py can infer the package name
+        # correctly from os.path.basename(pkg_dir).
+        with tempfile.TemporaryDirectory() as tmp_root:
+            # Heuristic: use the parent directory name of the source report as the package name.
+            pkg_name = os.path.basename(os.path.dirname(source))
+            tmp_pkg_dir = os.path.join(tmp_root, pkg_name)
+            os.makedirs(tmp_pkg_dir, exist_ok=True)
+
+            cmd = [
+                sys.executable,
+                os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
+                "--target",
+                tmp_pkg_dir,
+                "--source-report",
+                source,
+                "--target-report",
+                target,
+            ]
+            if getattr(args, "changelog", False):
+                cmd.append("--changelog")
+            if getattr(args, "use_apistub", False):
+                cmd.append("--use-apistub")
+
+            try:
+                check_call(cmd)
+            except CalledProcessError as e:
+                logger.error(f"Breaking change report generation failed: {e}")
+                return 1
+        return 0

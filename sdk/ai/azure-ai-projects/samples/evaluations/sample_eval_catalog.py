@@ -10,19 +10,21 @@ DESCRIPTION:
     `.evaluators` methods to create, get and list evaluators.
 
 USAGE:
-    python sample_evaluators.py
+    python sample_eval_catalog.py
 
     Before running the sample:
 
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
 
 """
 
 import os
+from pprint import pprint
+from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -36,12 +38,9 @@ from azure.ai.projects.models import (
     EvaluatorMetricType,
 )
 
-from pprint import pprint
-from dotenv import load_dotenv
-
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -57,19 +56,19 @@ with (
         definition=PromptBasedEvaluatorDefinition(
             prompt_text="""You are an evaluator.
                 Rate the GROUNDEDNESS (factual correctness without unsupported claims) of the system response to the customer query.
-                
+
                 Scoring (1–5):
                 1 = Mostly fabricated/incorrect
                 2 = Many unsupported claims
                 3 = Mixed: some facts but notable errors/guesses
                 4 = Mostly factual; minor issues
                 5 = Fully factual; no unsupported claims
-                
+
                 Return ONLY a single integer 1–5 as score in valid json response e.g {\"score\": int}.
-                
+
                 Query:
                 {query}
-                
+
                 Response:
                 {response}
                 """,
@@ -154,10 +153,11 @@ with (
     pprint(prompt_evaluator_latest)
 
     print("Updating code based evaluator version")
-    updated_evaluator = project_client.beta.evaluators.update_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    updated_evaluator = project_client.beta.evaluators.update_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name=code_evaluator.name,
         version=code_evaluator.version,
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "categories": [EvaluatorCategory.SAFETY],
             "display_name": "my_custom_evaluator_updated",
             "description": "Custom evaluator description changed",

@@ -14,20 +14,22 @@ class MessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for HTTP headers in message operations (closed union for HTTP compliance)."""
 
     APPLICATION_JSON = "application/json"
-    """Content Type 'application/json'"""
+    """Content Type 'application/json'."""
     APPLICATION_OCTET_STREAM = "application/octet-stream"
-    """Content Type 'application/octet-stream'"""
+    """Content Type 'application/octet-stream'."""
     TEXT_PLAIN = "text/plain"
-    """Content Type 'text/plain'"""
+    """Content Type 'text/plain'."""
 
 
 class ResponseContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for response headers (closed union for HTTP compliance)."""
 
+    TEXT_PLAIN = "text/plain"
+    """Content Type 'text/plain'."""
     APPLICATION_JSON = "application/json"
-    """Content Type 'application/json'"""
+    """Content Type 'application/json'."""
     TEXT_JSON = "text/json"
-    """Content Type 'text/json'"""
+    """Content Type 'text/json'."""
 
 
 class WebPubSubClientType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -35,7 +37,7 @@ class WebPubSubClientType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     """Default value."""
-    MQTT = "mqtt"
+    MQTT = "MQTT"
     """MQTT client."""
 
 

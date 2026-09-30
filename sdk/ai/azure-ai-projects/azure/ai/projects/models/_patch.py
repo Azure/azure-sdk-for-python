@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, Dict, Mapping, Optional, Any, Tuple
+from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -16,8 +16,89 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from ._patch_evaluation_typeddicts import (
+    AzureAIAgentTargetParam,
+    AzureAIBenchmarkPreviewEvalRunDataSource,
+    AzureAIDataSourceConfig,
+    AzureAIModelTargetParam,
+    AzureAIResponsesEvalRunDataSource,
+    EvalCsvFileIdSource,
+    EvalCsvRunDataSource,
+    TestingCriterionAzureAIEvaluator,
+    ModelSamplingConfigParam,
+    RedTeamEvalRunDataSource,
+    ResponseRetrievalItemGenerationParams,
+    TargetCompletionEvalRunDataSource,
+    ToolDescriptionParam,
+    TracesPreviewEvalRunDataSource,
+)
 from ._models import CustomCredential as CustomCredentialGenerated
-from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ..models import (
+    AgentInsightRunResult,
+    AgentOptimizationJobResult,
+    DataGenerationJobResult,
+    EvaluatorVersion,
+    MemoryStoreUpdateCompletedResult,
+    MemoryStoreUpdateResult,
+)
+from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
+
+_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
+"""The HTTP header name used to opt in to Foundry preview features."""
+
+_PREVIEW_FEATURE_REQUIRED_CODE: Final = "preview_feature_required"
+_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
+    '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
+    "when calling the AIProjectClient constructor. "
+    "\nNote that preview features are under development and subject to change. They should not be used in production environments."
+)
+_AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
+    [
+        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.GITHUB_COPILOT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.SKILLS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.MODEL_ROUTER_CONTROLS_V1_PREVIEW.value,
+    ]
+)
+
+_BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "agent_insight_monitors": _FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW.value,
+    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
+    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "routines": _FoundryFeaturesOptInKeys.ROUTINES_V2_PREVIEW.value,
+    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
+    "voice_agents": _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+    "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
+    "agents": _AGENT_OPERATION_FEATURE_HEADERS,
+}
+"""Foundry-Features header values keyed by beta sub-client property name."""
+
+
+def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
+    """Return True if headers already contains the provided header name.
+
+    :param headers: The headers mapping to search.
+    :type headers: Any
+    :param header_name: The header name to look for (case-insensitive).
+    :type header_name: str
+    :return: True if the header is present, False otherwise.
+    :rtype: bool
+    """
+    try:
+        header_name_lower = header_name.lower()
+        return any(str(key).lower() == header_name_lower for key in headers)
+    except Exception:  # pylint: disable=broad-except
+        return False
 
 
 class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
@@ -64,11 +145,11 @@ class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
             self.credential_keys = {}
 
 
-_FINISHED = frozenset(["completed", "superseded", "failed"])
-_FAILED = frozenset(["failed"])
+_FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed"])
+_FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
-class UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(LROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -139,7 +220,7 @@ class UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -213,7 +294,7 @@ class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
 class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom LROPoller for Memory Store update operations."""
 
-    _polling_method: "UpdateMemoriesLROPollingMethod"
+    _polling_method: "_UpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -263,7 +344,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
-    _polling_method: "AsyncUpdateMemoriesLROPollingMethod"
+    _polling_method: "_AsyncUpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -313,12 +394,367 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
+    """Custom LROPoller for data generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job_id = self._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @staticmethod
+    def _get_job_id(initial_response: Any) -> Optional[str]:
+        try:
+            return initial_response.http_response.json().get("id")
+        except (AttributeError, TypeError, ValueError):
+            return None
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the data generation job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created data generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[DataGenerationJobResult], continuation_token: str, **kwargs: Any
+    ) -> "DatasetGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of DatasetGenerationLROPoller.
+        :rtype: DatasetGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
+    """Custom AsyncLROPoller for data generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the data generation job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created data generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[DataGenerationJobResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncDatasetGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncDatasetGenerationLROPoller.
+        :rtype: AsyncDatasetGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class EvaluatorGenerationLROPoller(LROPoller[EvaluatorVersion]):
+    """Custom LROPoller for evaluator generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the evaluator generation job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created evaluator generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[EvaluatorVersion], continuation_token: str, **kwargs: Any
+    ) -> "EvaluatorGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of EvaluatorGenerationLROPoller.
+        :rtype: EvaluatorGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
+    """Custom AsyncLROPoller for evaluator generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the evaluator generation job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created evaluator generation job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[EvaluatorVersion],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncEvaluatorGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncEvaluatorGenerationLROPoller.
+        :rtype: AsyncEvaluatorGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
+    """Custom LROPoller for agent optimization job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the agent optimization job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created agent optimization job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[AgentOptimizationJobResult], continuation_token: str, **kwargs: Any
+    ) -> "AgentOptimizationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AgentOptimizationLROPoller.
+        :rtype: AgentOptimizationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
+    """Custom AsyncLROPoller for agent optimization job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the agent optimization job operation.
+
+        The mapping contains a ``job_id`` key whose value is the created agent optimization job ID.
+
+        :return: A mapping containing the ``job_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[AgentOptimizationJobResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncAgentOptimizationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncAgentOptimizationLROPoller.
+        :rtype: AsyncAgentOptimizationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
+    """Custom LROPoller for Agent Insights run operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the Agent Insights run operation.
+
+        The mapping contains a ``run_id`` key whose value is the created run ID. Use it to call
+        ``get_run`` or ``cancel_run`` while the run is still in progress.
+
+        :return: A mapping containing the ``run_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"run_id": self._run_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[AgentInsightRunResult], continuation_token: str, **kwargs: Any
+    ) -> "AgentInsightRunLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AgentInsightRunLROPoller.
+        :rtype: AgentInsightRunLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
+    """Custom AsyncLROPoller for Agent Insights run operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the Agent Insights run operation.
+
+        The mapping contains a ``run_id`` key whose value is the created run ID. Use it to call
+        ``get_run`` or ``cancel_run`` while the run is still in progress.
+
+        :return: A mapping containing the ``run_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"run_id": self._run_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[AgentInsightRunResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncAgentInsightRunLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncAgentInsightRunLROPoller.
+        :rtype: AsyncAgentInsightRunLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
 __all__: List[str] = [
-    "CustomCredential",
-    "UpdateMemoriesLROPollingMethod",
-    "AsyncUpdateMemoriesLROPollingMethod",
-    "UpdateMemoriesLROPoller",
+    "AgentInsightRunLROPoller",
+    "AgentOptimizationLROPoller",
+    "AsyncAgentInsightRunLROPoller",
+    "AsyncAgentOptimizationLROPoller",
+    "AsyncDatasetGenerationLROPoller",
+    "AsyncEvaluatorGenerationLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "AzureAIAgentTargetParam",
+    "AzureAIBenchmarkPreviewEvalRunDataSource",
+    "AzureAIDataSourceConfig",
+    "AzureAIModelTargetParam",
+    "AzureAIResponsesEvalRunDataSource",
+    "CustomCredential",
+    "DatasetGenerationLROPoller",
+    "EvaluatorGenerationLROPoller",
+    "EvalCsvFileIdSource",
+    "EvalCsvRunDataSource",
+    "TestingCriterionAzureAIEvaluator",
+    "ModelSamplingConfigParam",
+    "RedTeamEvalRunDataSource",
+    "ResponseRetrievalItemGenerationParams",
+    "TargetCompletionEvalRunDataSource",
+    "ToolDescriptionParam",
+    "TracesPreviewEvalRunDataSource",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

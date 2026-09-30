@@ -14,16 +14,15 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
-import pytest
 
 
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_responses_crud_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -76,7 +75,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 conversation_id=conversation.id,
                 items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
             )
-            print(f"Added a second user message to the conversation")
+            print("Added a second user message to the conversation")
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
@@ -127,9 +126,9 @@ class TestAgentResponsesCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_agent_responses_with_structured_output_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)

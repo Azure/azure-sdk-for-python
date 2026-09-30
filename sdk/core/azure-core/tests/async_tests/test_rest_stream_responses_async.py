@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import pytest
+
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
@@ -77,9 +78,7 @@ async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        content = ""
-        async for part in response.iter_text():
-            content += part
+        content = "".join([part async for part in response.iter_text()])
         assert content == "Hello, world!"
 
 

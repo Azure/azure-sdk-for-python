@@ -59,9 +59,11 @@ class TestPostgreSQLManagementServersOperations(AzureMgmtRecordedTestCase):
                     "createMode": "str",
                     "dataEncryption": {
                         "geoBackupEncryptionKeyStatus": "str",
+                        "geoBackupFederatedIdentityClientId": "str",
                         "geoBackupKeyURI": "str",
                         "geoBackupUserAssignedIdentityId": "str",
                         "primaryEncryptionKeyStatus": "str",
+                        "primaryFederatedIdentityClientId": "str",
                         "primaryKeyURI": "str",
                         "primaryUserAssignedIdentityId": "str",
                         "type": "str",
@@ -166,9 +168,11 @@ class TestPostgreSQLManagementServersOperations(AzureMgmtRecordedTestCase):
                     "createMode": "str",
                     "dataEncryption": {
                         "geoBackupEncryptionKeyStatus": "str",
+                        "geoBackupFederatedIdentityClientId": "str",
                         "geoBackupKeyURI": "str",
                         "geoBackupUserAssignedIdentityId": "str",
                         "primaryEncryptionKeyStatus": "str",
+                        "primaryFederatedIdentityClientId": "str",
                         "primaryKeyURI": "str",
                         "primaryUserAssignedIdentityId": "str",
                         "type": "str",
@@ -274,6 +278,18 @@ class TestPostgreSQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.begin_migrate_network_mode(
             resource_group_name=resource_group.name,
             server_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_servers_begin_start_major_version_upgrade_precheck(self, resource_group):
+        response = self.client.servers.begin_start_major_version_upgrade_precheck(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            body={"targetVersion": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

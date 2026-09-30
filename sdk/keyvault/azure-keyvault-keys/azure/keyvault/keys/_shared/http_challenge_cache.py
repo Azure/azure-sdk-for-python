@@ -8,7 +8,6 @@ from urllib import parse
 
 from .http_challenge import HttpChallenge
 
-
 _cache: "Dict[str, HttpChallenge]" = {}
 _lock = threading.Lock()
 

@@ -1,5 +1,110 @@
 # Release History
 
+## 1.0.0 (2026-09-16)
+
+### Features Added
+
+  - Model `Selector` added property `progress`
+  - Enum `SelectorKind` added member `RESOURCE_ROLLOUT_PERCENTAGE`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PolicyClient.policy_enrollments`
+  - Deleted or renamed client operation group `PolicyClient.policy_exemptions`
+  - Deleted or renamed client operation group `PolicyClient.variable_values`
+  - Deleted or renamed client operation group `PolicyClient.variables`
+  - Deleted or renamed model `AssignmentScopeValidation`
+  - Deleted or renamed model `ExemptionCategory`
+  - Deleted or renamed model `ExemptionManagementMode`
+  - Deleted or renamed model `PolicyEnrollment`
+  - Deleted or renamed model `PolicyEnrollmentProperties`
+  - Deleted or renamed model `PolicyEnrollmentUpdate`
+  - Deleted or renamed model `PolicyEnrollmentUpdateProperties`
+  - Deleted or renamed model `PolicyExemption`
+  - Deleted or renamed model `PolicyExemptionProperties`
+  - Deleted or renamed model `PolicyExemptionUpdate`
+  - Deleted or renamed model `PolicyExemptionUpdateProperties`
+  - Deleted or renamed model `PolicyVariableColumn`
+  - Deleted or renamed model `PolicyVariableProperties`
+  - Deleted or renamed model `PolicyVariableValueColumnValue`
+  - Deleted or renamed model `PolicyVariableValueProperties`
+  - Deleted or renamed model `Variable`
+  - Deleted or renamed model `VariableValue`
+  - Deleted or renamed operation group `PolicyEnrollmentsOperations`
+  - Deleted or renamed operation group `PolicyExemptionsOperations`
+  - Deleted or renamed operation group `VariableValuesOperations`
+  - Deleted or renamed operation group `VariablesOperations`
+
+## 1.0.0b4 (2026-08-31)
+
+### Features Added
+
+  - Model `PolicyExemptionProperties` added property `exemption_management_mode`
+  - Model `PolicyExemptionUpdateProperties` added property `exemption_management_mode`
+  - Added enum `ExemptionManagementMode`
+
+## 1.0.0b3 (2026-05-26)
+
+### Features Added
+
+  - Client `PolicyClient` added method `send_request`
+  - Client `PolicyClient` added operation group `policy_enrollments`
+  - Client `PolicyClient` added operation group `policy_exemptions`
+  - Client `PolicyClient` added operation group `variables`
+  - Client `PolicyClient` added operation group `variable_values`
+  - Model `DataPolicyManifest` added property `system_data`
+  - Model `ExternalEvaluationEndpointInvocationResult` added property `endpoint_kind`
+  - Model `ExternalEvaluationEndpointInvocationResult` added property `policy_action`
+  - Model `ExternalEvaluationEndpointInvocationResult` added property `policy_evaluation_details`
+  - Model `ExternalEvaluationEndpointInvocationResult` added property `additional_info`
+  - Model `PolicyTokenResponse` added property `request_details`
+  - Enum `SelectorKind` added member `GROUP_PRINCIPAL_ID`
+  - Enum `SelectorKind` added member `USER_PRINCIPAL_ID`
+  - Added enum `AssignmentScopeValidation`
+  - Added model `DataManifestResourceFunctionsDefinition`
+  - Added enum `ExemptionCategory`
+  - Added model `ExtensionResource`
+  - Added enum `PolicyAction`
+  - Added model `PolicyEnrollment`
+  - Added model `PolicyEnrollmentProperties`
+  - Added model `PolicyEnrollmentUpdate`
+  - Added model `PolicyEnrollmentUpdateProperties`
+  - Added model `PolicyExemption`
+  - Added model `PolicyExemptionProperties`
+  - Added model `PolicyExemptionUpdate`
+  - Added model `PolicyExemptionUpdateProperties`
+  - Added model `PolicyTokenEvaluatedRequestDetails`
+  - Added model `PolicyVariableColumn`
+  - Added model `PolicyVariableProperties`
+  - Added model `PolicyVariableValueColumnValue`
+  - Added model `PolicyVariableValueProperties`
+  - Added model `SelfServeExemptionSettings`
+  - Added model `Variable`
+  - Added model `VariableValue`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `PolicyLogInfo` deleted property `policy_set_definition_display_name`/`policy_set_definition_category`/`policy_definition_display_name`/`policy_definition_group_names`/`policy_assignment_display_name`/`resource_location`/`ancestors`/`compliance_reason_code`/`policy_exemption_ids` to match actual service behavior
+  - Method `PolicyAssignmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.get_by_id` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
+  - Method `PolicyAssignmentsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_resource` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
 ## 1.0.0b2 (2026-02-28)
 
 ### Features Added

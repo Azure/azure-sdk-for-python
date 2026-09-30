@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+import json
 import platform
 import time
 import unittest
@@ -11,8 +12,6 @@ from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
-from opentelemetry.sdk.resources import Resource
-from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -50,23 +49,23 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(len(filtered["valid_key"]), 9000)
+        self.assertEqual(len(filtered["valid_key"]), 8192)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_custom_properties_gen_ai_attributes_not_truncated(self):
-        # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB
-        large_value = "x" * (64 * 1024 + 1000)
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_8kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb but at > 256kb
+        large_value = "x" * (8 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
         for key in _GEN_AI_ATTRIBUTES:
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
-                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
+                self.assertEqual(len(filtered[key]), 8 * 1024 + 1000)
 
-    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
-        # Regular properties exceeding 64KiB should be truncated
-        max_length = 64 * 1024
+    def test_filter_custom_properties_non_gen_ai_truncated_at_8kb(self):
+        # Regular properties exceeding 8kb should be truncated
+        max_length = 8 * 1024
         large_value = "y" * (max_length + 2000)
         properties = {
             "span_kind": large_value,
@@ -81,9 +80,10 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), max_length)
 
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
-        # Gen AI attributes keep full value, regular ones are truncated
-        max_length = 64 * 1024
-        large_value = "z" * (max_length + 3000)
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 8kb
+        max_length = 8 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "z" * (1024 * 1024 + 3000)
         properties = {
             "gen_ai.input.messages": large_value,
             "gen_ai.output.messages": large_value,
@@ -92,13 +92,105 @@ class TestUtils(unittest.TestCase):
             "db.statement": large_value,
         }
         filtered = _utils._filter_custom_properties(properties)
-        # Gen AI attributes — not truncated
-        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length + 3000)
-        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length + 3000)
-        # Regular attributes — truncated
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+
         self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
         self.assertEqual(len(filtered["span_kind"]), max_length)
         self.assertEqual(len(filtered["db.statement"]), max_length)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
+
+    def test_filter_custom_measurements(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{"itemsProcessed": 42.0, "queueDepth": 7}'}
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
+
+    def test_filter_custom_measurements_accepts_mapping(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"itemsProcessed": 42.0}})
+        self.assertEqual(measurements, {"itemsProcessed": 42.0})
+
+    def test_filter_custom_measurements_invalid_json(self):
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "not json"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "[1, 2]"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": 42}), {})
+
+    def test_filter_custom_measurements_deeply_nested_json(self):
+        # Deeply nested payloads raise RecursionError from json.loads and must be ignored
+        deeply_nested = "[" * 200000 + "]" * 200000
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": deeply_nested}), {})
+
+    def test_filter_custom_measurements_drops_invalid_entries(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "valid": 1.5,
+                        "string_value": "asd",
+                        "none_value": None,
+                        "bool_value": True,
+                        "": 1.0,
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"valid": 1.5})
+
+    def test_filter_custom_measurements_drops_non_finite(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": {"nan": float("nan"), "inf": float("inf"), "valid": 1.0}}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_drops_int_outside_double_range(self):
+        # A JSON integer too large to convert to a double must be dropped, not raised
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{{"huge": {}, "valid": 1.0}}'.format(14**600)}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_truncates_key(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"k" * 151: 1.0}})
+        self.assertEqual(measurements, {"k" * 150: 1.0})
+
+    def test_filter_custom_measurements_key_must_match_exactly(self):
+        # Near-miss attribute names are ignored, even when they carry a valid payload
+        for key in ("microsoft.custom_measurement", "custom_measurements", "Microsoft.Custom_Measurements"):
+            with self.subTest(key=key):
+                self.assertEqual(_utils._filter_custom_measurements({key: '{"itemsProcessed": 42.0}'}), {})
+
+    def test_filter_custom_measurements_attribute_value_not_present(self):
+        for attributes in (None, {}, {"test": "asd"}, {"microsoft.custom_measurements": None}):
+            with self.subTest(attributes=attributes):
+                self.assertEqual(_utils._filter_custom_measurements(attributes), {})
+
+    def test_filter_custom_measurements_keeps_valid_drops_invalid(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "itemsProcessed": 42.0,
+                        "queueDepth": 7,
+                        "retries": "3",
+                        "succeeded": True,
+                        "unset": None,
+                        "nested": {"a": 1},
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -304,7 +396,47 @@ class TestUtils(unittest.TestCase):
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_uses_service_instance_id_when_pod_name_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_falls_back_to_hostname_when_pod_and_instance_id_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
@@ -679,6 +811,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_enabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), True)
@@ -690,6 +823,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_app_service_disabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), False)
@@ -726,6 +860,269 @@ class TestUtils(unittest.TestCase):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
 
+    # Attach with APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE env var
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_not_called(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "integratedauto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_lower(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "INTEGRATEDAUTO",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_upper(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_app_service(self, mock_isdir):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_functions(self):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_aks(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_aks(self):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=False,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+    )
+    def test_attach_type_integrated_auto_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=False,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "manual",
+        },
+    )
+    def test_attach_type_manual_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertFalse(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "false",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions_enable_telemetry_false(self):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY check.
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions_no_enable_telemetry(self):
+        # IntegratedAuto but ENABLE_TELEMETRY not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_aks_no_arm_namespace(self):
+        # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
+
+    # OneSettings normalization helpers
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_os_name_linux(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "linux")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    def test_get_os_name_windows(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "windows")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Darwin")
+    def test_get_os_name_darwin(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "darwin")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
+    def test_get_os_name_unknown(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"FUNCTIONS_WORKER_RUNTIME": "python"},
+        clear=True,
+    )
+    def test_get_rp_name_functions(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
+    )
+    def test_get_rp_name_app_service(self):
+        self.assertEqual(_utils._get_rp_name(), "appsvc")  # cspell:disable-line
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST},
+        clear=True,
+    )
+    def test_get_rp_name_aks(self):
+        self.assertEqual(_utils._get_rp_name(), "aks")
+
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {}, clear=True)
+    def test_get_rp_name_unknown(self):
+        self.assertEqual(_utils._get_rp_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
+        clear=True,
+    )
+    def test_get_rp_name_functions_takes_priority(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    def test_get_attach_type_name_integrated_auto(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "integratedauto")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
+    def test_get_attach_type_name_manual(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "manual")
+
     # Synthetic
 
     def test_is_synthetic_source_bot(self):
@@ -735,6 +1132,99 @@ class TestUtils(unittest.TestCase):
     def test_is_synthetic_source_test(self):
         properties = {"user_agent.synthetic.type": "test"}
         self.assertTrue(_utils._is_synthetic_source(properties))
+
+    # SDK Version
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.ext_version",
+        "1.0.0b21",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {},
+        clear=True,
+    )
+    def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"AZURE_MONITOR_DISTRO_VERSION": "1.8.8"},
+        clear=True,
+    )
+    def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:dst1.8.8")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0"},
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "AZURE_MONITOR_DISTRO_VERSION": "1.8.8",
+            "MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0",
+        },
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry_takes_priority(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
 
     def test_is_synthetic_source_none(self):
         properties = {}
@@ -782,3 +1272,47 @@ class TestUtils(unittest.TestCase):
     def test_is_any_synthetic_source_none(self):
         properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         self.assertFalse(_utils._is_any_synthetic_source(properties))
+
+    # _is_status_code_success tests
+
+    def test_is_status_code_success_none(self):
+        self.assertFalse(_utils._is_status_code_success(None))
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+
+    def test_is_status_code_success_zero(self):
+        self.assertFalse(_utils._is_status_code_success(0))
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+
+    def test_is_status_code_success_200(self):
+        self.assertTrue(_utils._is_status_code_success(200))
+        self.assertTrue(_utils._is_status_code_success(200, is_trace=True))
+
+    def test_is_status_code_success_4xx_metrics(self):
+        self.assertFalse(_utils._is_status_code_success(400))
+        self.assertFalse(_utils._is_status_code_success(404))
+        self.assertFalse(_utils._is_status_code_success(499))
+
+    def test_is_status_code_success_4xx_trace(self):
+        self.assertFalse(_utils._is_status_code_success(400, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(404, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(499, is_trace=True))
+
+    def test_is_status_code_success_5xx_metrics(self):
+        # Metrics: 5xx is failure (code >= 400)
+        self.assertFalse(_utils._is_status_code_success(500))
+        self.assertFalse(_utils._is_status_code_success(503))
+
+    def test_is_status_code_success_5xx_trace(self):
+        # Trace: 5xx is NOT failure (only 4xx range is failure)
+        self.assertTrue(_utils._is_status_code_success(500, is_trace=True))
+        self.assertTrue(_utils._is_status_code_success(503, is_trace=True))
+
+    def test_is_status_code_success_3xx(self):
+        self.assertTrue(_utils._is_status_code_success(301))
+        self.assertTrue(_utils._is_status_code_success(301, is_trace=True))
+
+    def test_is_status_code_success_returns_bool(self):
+        self.assertIsInstance(_utils._is_status_code_success(200), bool)
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+        self.assertIsInstance(_utils._is_status_code_success(500, is_trace=True), bool)

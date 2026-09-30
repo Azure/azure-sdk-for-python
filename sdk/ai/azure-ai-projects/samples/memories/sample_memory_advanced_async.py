@@ -24,7 +24,7 @@ USAGE:
     Once you have deployed models, set the deployment name in the variables below.
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -35,6 +35,7 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
+from openai.types.responses import EasyInputMessageParam
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -43,14 +44,13 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
-from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
 
 async def main() -> None:
 
-    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
     async with (
         DefaultAzureCredential() as credential,

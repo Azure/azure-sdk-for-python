@@ -16,6 +16,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Literal,
     IO,
     Iterable,
     Optional,
@@ -152,8 +153,6 @@ class ContainerClient(  # type: ignore[misc]
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -165,8 +164,6 @@ class ContainerClient(  # type: ignore[misc]
         *,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobLeaseClient: ...
@@ -213,7 +210,9 @@ class ContainerClient(  # type: ignore[misc]
         include: Optional[Union[str, List[str]]] = None,
         *,
         results_per_page: Optional[int] = None,
+        response_format: Literal["auto", "xml", "arrow"] = "auto",
         start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[BlobProperties]: ...
@@ -223,7 +222,9 @@ class ContainerClient(  # type: ignore[misc]
         *,
         name_starts_with: Optional[str] = None,
         results_per_page: Optional[int] = None,
+        response_format: Literal["auto", "xml", "arrow"] = "auto",
         start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[str]: ...
@@ -234,7 +235,9 @@ class ContainerClient(  # type: ignore[misc]
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
         *,
+        response_format: Literal["auto", "xml", "arrow"] = "auto",
         start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Union[BlobProperties, BlobPrefix]]: ...
@@ -258,7 +261,7 @@ class ContainerClient(  # type: ignore[misc]
         *,
         overwrite: Optional[bool] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -300,7 +303,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -322,7 +325,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -344,7 +347,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,

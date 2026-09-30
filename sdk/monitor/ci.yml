@@ -41,3 +41,7 @@ extends:
       safeName: azuremonitoringestion
     - name: azure-monitor-querymetrics
       safeName: azuremonitorquerymetrics
+    - name: azure-mgmt-monitorslis
+      safeName: azuremgmtmonitorslis
+    - name: azure-mgmt-monitorworkspaces
+      safeName: azuremgmtmonitorworkspaces

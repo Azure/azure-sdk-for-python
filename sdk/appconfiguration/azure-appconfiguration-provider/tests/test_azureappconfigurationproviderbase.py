@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import unittest
 import time
-import datetime
 import json
 import base64
 from unittest.mock import patch, Mock
@@ -13,10 +12,8 @@ from typing import Dict, Any
 
 from azure.appconfiguration import FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    delay_failure,
     is_json_content_type,
     _build_watched_setting,
-    sdk_allowed_kwargs,
     AzureAppConfigurationProviderBase,
 )
 from azure.appconfiguration.provider._models import SettingSelector
@@ -26,30 +23,10 @@ from azure.appconfiguration.provider._constants import (
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_KEY,
+    FEATURE_MANAGEMENT_KEY,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
-
-
-class TestDelayFailure(unittest.TestCase):
-    """Test the delay_failure function."""
-
-    def test_delay_failure_when_enough_time_passed(self):
-        """Test that no delay occurs when enough time has passed."""
-        start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        with patch("time.sleep") as mock_sleep:
-            delay_failure(start_time)
-            mock_sleep.assert_not_called()
-
-    def test_delay_failure_when_insufficient_time_passed(self):
-        """Test that delay occurs when insufficient time has passed."""
-        start_time = datetime.datetime.now() - datetime.timedelta(seconds=2)
-        with patch("time.sleep") as mock_sleep:
-            delay_failure(start_time)
-            mock_sleep.assert_called_once()
-            # Verify the delay is approximately correct (around 3 seconds)
-            called_delay = mock_sleep.call_args[0][0]
-            self.assertGreater(called_delay, 2)
-            self.assertLess(called_delay, 4)
 
 
 class TestIsJsonContentType(unittest.TestCase):
@@ -92,6 +69,11 @@ class TestBuildWatchedSetting(unittest.TestCase):
         result = _build_watched_setting("test_key")
         self.assertEqual(result, ("test_key", NULL_CHAR))
 
+    def test_two_character_string_input(self):
+        """Test with a two-character string input is treated as a key, not unpacked character-by-character."""
+        result = _build_watched_setting("ab")
+        self.assertEqual(result, ("ab", NULL_CHAR))
+
     def test_tuple_input(self):
         """Test with tuple input."""
         result = _build_watched_setting(("test_key", "test_label"))
@@ -106,28 +88,6 @@ class TestBuildWatchedSetting(unittest.TestCase):
         """Test that wildcard in label raises ValueError."""
         with self.assertRaises(ValueError):
             _build_watched_setting(("test_key", "test*label"))
-
-
-class TestSdkAllowedKwargs(unittest.TestCase):
-    """Test the sdk_allowed_kwargs function."""
-
-    def test_filters_allowed_kwargs(self):
-        """Test that only allowed kwargs are returned."""
-        kwargs = {
-            "headers": {"test": "value"},
-            "timeout": 30,
-            "invalid_param": "should_be_filtered",
-            "user_agent": "test_agent",
-            "unknown_param": "filtered_out",
-        }
-        result = sdk_allowed_kwargs(kwargs)
-        expected = {"headers": {"test": "value"}, "timeout": 30, "user_agent": "test_agent"}
-        self.assertEqual(result, expected)
-
-    def test_empty_kwargs(self):
-        """Test with empty kwargs."""
-        result = sdk_allowed_kwargs({})
-        self.assertEqual(result, {})
 
 
 class TestRefreshTimer(unittest.TestCase):
@@ -336,6 +296,49 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             ]
             result = self.provider._process_key_value_base(config)
             self.assertEqual(result, '{"invalid": json}')  # Should return as string
+
+    def test_process_ff_with_empty_list(self):
+        """Test that an empty feature flag list clears previously processed feature flags."""
+        provider = AzureAppConfigurationProviderBase(feature_flag_enabled=True)
+        provider._dict = {
+            "key": "value",
+            FEATURE_MANAGEMENT_KEY: {
+                FEATURE_FLAG_KEY: [{"id": "Alpha", "enabled": True}],
+            },
+        }
+
+        processed = provider._process_feature_flags(
+            processed_settings=provider._dict,
+            processed_feature_flags=provider._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY],
+            feature_flags=[],
+        )
+
+        self.assertEqual(processed["key"], "value")
+        self.assertIn(FEATURE_MANAGEMENT_KEY, processed)
+        self.assertListEqual(processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY], [])
+
+    def test_process_ff_with_none(self):
+        """Test that None preserves previously processed feature flags."""
+        provider = AzureAppConfigurationProviderBase(feature_flag_enabled=True)
+        existing_feature_flags = [{"id": "Alpha", "enabled": True}]
+        provider._dict = {
+            "key": "value",
+            FEATURE_MANAGEMENT_KEY: {
+                FEATURE_FLAG_KEY: existing_feature_flags,
+            },
+        }
+
+        processed = provider._process_feature_flags(
+            processed_settings=provider._dict,
+            processed_feature_flags=existing_feature_flags,
+            feature_flags=None,
+        )
+
+        self.assertEqual(processed["key"], "value")
+        self.assertListEqual(
+            processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY],
+            existing_feature_flags,
+        )
 
     def test_update_ff_telemetry_metadata(self):
         """Test feature flag telemetry processing."""

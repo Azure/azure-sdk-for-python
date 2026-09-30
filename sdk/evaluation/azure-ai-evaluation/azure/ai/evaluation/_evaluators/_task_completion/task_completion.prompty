@@ -66,29 +66,40 @@ C. Assess Task Completion:
 - **Incomplete**: No usable deliverable or major requirements unmet
 
 D. Assign a Score:
-   - **TRUE**: The agent delivered a complete and correct solution that accomplishes the user's entire goal. The user does not need to take further action or ask follow-up questions to get what they originally asked for.
-   - **FALSE**: The agent failed to complete one or more parts of the task, provided an incorrect/incomplete result, or left the user's goal unresolved.
+   - **1 (TRUE)**: The agent delivered a complete and correct solution that accomplishes the user's entire goal. The user does not need to take further action or ask follow-up questions to get what they originally asked for.
+   - **0 (FALSE)**: The agent failed to complete one or more parts of the task, provided an incorrect/incomplete result, or left the user's goal unresolved.
+
+   **Note on subjective/open-ended queries:** When the user asks a subjective, opinion-based, or comparison question (e.g., "Which is better, X or Y?", "What do you think about…?"), there is no single correct answer. The task is considered **complete** (1) if the agent provides a thoughtful, relevant response that addresses the question with reasonable perspectives or trade-offs — even if it does not give a single definitive recommendation.
+
+   **Note on direct/factual queries:** When the user asks a straightforward factual, yes/no, or verification question (e.g., "What is the capital of France?"), a correct and direct answer fully completes the task. No additional elaboration, context, or "actionable information" beyond the accurate answer is required.
 
 OUTPUT FORMAT
 =============
 Output a JSON object with these keys:
 {
-  "explanation": "<15-60 words explaining the completion status>",
-  "details": {
+  "reason": "<15-60 words explaining the completion status>",
+  "properties": {
     "task_requirements": "<15-60 words on what the user specifically requested>",
     "delivered_outcome": "<15-60 words on what the agent actually provided>",
     "completion_gaps": "<15-60 words on missing elements if task is incomplete>"
   },
-  "success": <TRUE or FALSE>
+  "score": <1 if task completed successfully, 0 if task failed or incomplete, null if status is skipped>,
+  "status": "<completed or skipped>"
 }
+
+**Status: Skipped**
+If the CONVERSATION_HISTORY or AGENT_RESPONSE is empty or not provided, return status "skipped" immediately without scoring:
+```json
+{"reason": "<explain why evaluation was skipped>", "properties": null, "score": null, "status": "skipped"}
+```
 
 SCORING EXAMPLES
 ================
 
-### SUCCESS: TRUE - Example A
+### SCORE: 1 - Example A
 
 CONVERSATION_HISTORY:
-User: Plan a 3-day itinerary for Paris with cultural landmarks and local cuisine.
+User: Plan a detailed day-by-day 3-day itinerary for Paris with cultural landmarks and local cuisine.
 
 AGENT_RESPONSE:
 **Day 1:**
@@ -113,16 +124,17 @@ Transportation: Metro Day Pass recommended. Book Louvre tickets online in advanc
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Complete 3-day Paris itinerary delivered with cultural landmarks and local cuisine for each day, including practical transportation advice.",
-  "details": {
+  "reason": "Complete 3-day Paris itinerary delivered with cultural landmarks and local cuisine for each day, including practical transportation advice.",
+  "properties": {
     "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
     "delivered_outcome": "Detailed 3-day schedule with specific landmarks, restaurants, and practical tips",
     "completion_gaps": "None"
   },
-  "success": TRUE
+  "score": 1,
+  "status": "completed"
 }
 
-### SUCCESS: TRUE - Example B
+### SCORE: 1 - Example B
 
 CONVERSATION_HISTORY:
 User: My internet connection keeps dropping. Help me troubleshoot and then upgrade my data plan to unlimited.
@@ -138,35 +150,89 @@ Your internet issues are resolved - update firmware and change DNS as instructed
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Both issues resolved: specific troubleshooting steps provided for internet drops, and unlimited data plan successfully activated.",
-  "details": {
+  "reason": "Both issues resolved: specific troubleshooting steps provided for internet drops, and unlimited data plan successfully activated.",
+  "properties": {
     "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
     "delivered_outcome": "Diagnostic completed with specific fix instructions, data plan upgrade confirmed active",
     "completion_gaps": "None"
   },
-  "success": TRUE
+  "score": 1,
+  "status": "completed"
 }
 
-### SUCCESS: FALSE - Example A
+### SCORE: 1 - Example C
 
 CONVERSATION_HISTORY:
-User: Plan a 3-day itinerary for Paris with cultural landmarks and local cuisine.
+User: Which is better for a beginner, Python or JavaScript?
+
+AGENT_RESPONSE:
+Both are excellent choices for beginners, and the best pick depends on your goals:
+
+**Python**
+- Simpler, more readable syntax — great for learning fundamentals
+- Strong in data science, AI/ML, and scripting
+- Widely used in academia and backend development
+
+**JavaScript**
+- Essential for web development (front-end and back-end with Node.js)
+- Immediate visual feedback when building websites
+- Huge ecosystem of frameworks (React, Vue, etc.)
+
+If you're interested in data or automation, start with Python. If you want to build websites or interactive apps, JavaScript is the way to go. Many developers eventually learn both.
+
+EXPECTED OUTPUT:
+{
+  "reason": "The question is subjective with no single correct answer. The agent provided a balanced comparison covering syntax, use cases, and ecosystems for both languages with actionable guidance.",
+  "properties": {
+    "task_requirements": "Subjective comparison of Python vs JavaScript for beginners",
+    "delivered_outcome": "Balanced pros/cons for each language with context-dependent recommendation",
+    "completion_gaps": "None"
+  },
+  "score": 1,
+  "status": "completed"
+}
+
+### SCORE: 1 - Example D
+
+CONVERSATION_HISTORY:
+User: Is the boiling point of water 50°C?
+
+AGENT_RESPONSE:
+No, the boiling point of water is 100°C at standard atmospheric pressure, not 50°C.
+
+EXPECTED OUTPUT:
+{
+  "reason": "The user asked a factual verification question. The agent correctly identified the error and provided the accurate value. No further elaboration is required.",
+  "properties": {
+    "task_requirements": "Verify whether the boiling point of water is 50°C",
+    "delivered_outcome": "Correct answer provided: boiling point is 100°C, not 50°C",
+    "completion_gaps": "None"
+  },
+  "score": 1,
+  "status": "completed"
+}
+
+### SCORE: 0 - Example A
+
+CONVERSATION_HISTORY:
+User: Plan a detailed day-by-day 3-day itinerary for Paris with cultural landmarks and local cuisine.
 
 AGENT_RESPONSE:
 I'd recommend visiting the Louvre and Eiffel Tower. Paris has great food - try French pastries and wine. The Metro is convenient for getting around.
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Vague suggestions provided but no actual day-by-day itinerary created. Missing specific landmarks, restaurants, and detailed schedule.",
-  "details": {
-    "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
-    "delivered_outcome": "General recommendations without structured itinerary",
+  "reason": "Vague suggestions provided but no actual detailed day-by-day itinerary created as user requested. Missing specific landmarks, restaurants, and detailed schedule.",
+  "properties": {
+    "task_requirements": "A detailed 3-day Paris itinerary with cultural landmarks and local cuisine",
+    "delivered_outcome": "General recommendations without structured itinerary as asked",
     "completion_gaps": "No day-by-day schedule, no specific restaurant recommendations, no detailed cultural landmarks"
   },
-  "success": FALSE
+  "score": 0,
+  "status": "completed"
 }
 
-### SUCCESS: FALSE - Example B
+### SCORE: 0 - Example B
 
 CONVERSATION_HISTORY:
 User: My internet connection keeps dropping. Help me troubleshoot and then upgrade my data plan to unlimited.
@@ -178,16 +244,17 @@ I found that your router firmware needs updating. You can usually do this throug
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Internet troubleshooting started but not completed with specific steps. Data plan upgrade not attempted. User cannot proceed without more help.",
-  "details": {
+  "reason": "Internet troubleshooting started but not completed with specific steps. Data plan upgrade not attempted. User cannot proceed without more help.",
+  "properties": {
     "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
     "delivered_outcome": "Identified router firmware issue but no specific fix instructions, data upgrade not completed",
     "completion_gaps": "No specific firmware update steps, data plan upgrade not processed"
   },
-  "success": FALSE
+  "score": 0,
+  "status": "completed"
 }
 
-### SUCCESS: FALSE - Example C
+### SCORE: 0 - Example C
 
 CONVERSATION_HISTORY:
 User: Analyze our Q3 sales data and generate a summary report.
@@ -197,13 +264,14 @@ I can help you analyze sales data! Sales analysis is important for business grow
 
 EXPECTED OUTPUT:
 {
-  "explanation": "No actual analysis performed and no report generated. Agent provided general information about sales analysis instead of completing the requested task.",
-  "details": {
+  "reason": "No actual analysis performed and no report generated. Agent provided general information about sales analysis instead of completing the requested task.",
+  "properties": {
     "task_requirements": "Analyze Q3 sales data and generate summary report",
     "delivered_outcome": "General information about sales analysis concepts",
     "completion_gaps": "No data analysis performed, no summary report created"
   },
-  "success": FALSE
+  "score": 0,
+  "status": "completed"
 }
 
 KEY PRINCIPLES
@@ -214,6 +282,8 @@ KEY PRINCIPLES
 3. **Requirement Matching**: Does the outcome match what was specifically requested?
 4. **Completeness**: Are all components of the task addressed?
 5. **Actionability**: Is the deliverable usable in its current form?
+6. **Subjective Tolerance**: For opinion-based, comparison, or open-ended questions, a well-reasoned response that addresses the query is sufficient — a single definitive answer is not required.
+7. **Conciseness Accepted**: A correct, direct answer to a factual or yes/no question is complete on its own — do not penalize brevity when the response fully addresses the query.
 
 Remember: A task can be understood correctly and approached properly but still fail if the final outcome doesn't meet requirements.
 

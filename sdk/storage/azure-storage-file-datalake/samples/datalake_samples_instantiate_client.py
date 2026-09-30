@@ -17,12 +17,14 @@ USAGE:
 """
 
 import os
-connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
+
+connection_string = os.environ["DATALAKE_STORAGE_CONNECTION_STRING"]
 
 
 def instantiate_directory_client_from_conn_str():
     # [START instantiate_directory_client_from_conn_str]
     from azure.storage.filedatalake import DataLakeDirectoryClient
+
     DataLakeDirectoryClient.from_connection_string(connection_string, "myfilesystem", "mydirectory")
     # [END instantiate_directory_client_from_conn_str]
 
@@ -30,10 +32,11 @@ def instantiate_directory_client_from_conn_str():
 def instantiate_file_client_from_conn_str():
     # [START instantiate_file_client_from_conn_str]
     from azure.storage.filedatalake import DataLakeFileClient
+
     DataLakeFileClient.from_connection_string(connection_string, "myfilesystem", "mydirectory", "myfile")
     # [END instantiate_file_client_from_conn_str]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     instantiate_directory_client_from_conn_str()
     instantiate_file_client_from_conn_str()

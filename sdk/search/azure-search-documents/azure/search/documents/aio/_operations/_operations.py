@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ..._operations._operations import (
     build_search_autocomplete_get_request,
     build_search_autocomplete_post_request,
@@ -41,6 +41,7 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from .._configuration import SearchClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -85,6 +86,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -109,7 +111,7 @@ class _SearchClientOperationsMixin(
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(int, response.text())
 
@@ -119,6 +121,19 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={
+            "2026-05-01-preview": [
+                "query_source_authorization",
+                "enable_elevated_read",
+                "query_rewrites",
+                "query_language",
+                "speller",
+                "semantic_fields",
+            ]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _search_get(  # pylint: disable=too-many-locals
         self,
         *,
@@ -155,7 +170,7 @@ class _SearchClientOperationsMixin(
         speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         semantic_fields: Optional[list[str]] = None,
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
+    ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
 
         :keyword query_source_authorization: Token identifying the user for which the query is being
@@ -310,7 +325,7 @@ class _SearchClientOperationsMixin(
          None.
         :paramtype semantic_fields: list[str]
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
+        :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -324,7 +339,7 @@ class _SearchClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.SearchDocumentsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models2._models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         _request = build_search_search_get_request(
             index_name=self._config.index_name,
@@ -369,6 +384,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -390,9 +406,11 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.SearchDocumentsResult, response.json())
+            deserialized = _deserialize(
+                _models2._models.SearchDocumentsResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -440,17 +458,17 @@ class _SearchClientOperationsMixin(
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
         hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult: ...
+    ) -> _models2._models.SearchDocumentsResult: ...
     @overload
     async def _search_post(
         self,
-        body: JSON,
+        body: _types_models2.SearchPostRequest,
         *,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult: ...
+    ) -> _models2._models.SearchDocumentsResult: ...
     @overload
     async def _search_post(
         self,
@@ -460,12 +478,16 @@ class _SearchClientOperationsMixin(
         enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult: ...
+    ) -> _models2._models.SearchDocumentsResult: ...
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def _search_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types_models2.SearchPostRequest, IO[bytes]] = _Unset,
         *,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
@@ -503,11 +525,11 @@ class _SearchClientOperationsMixin(
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
         hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
+    ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SearchPostRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.search.documents.types.SearchPostRequest or IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -653,7 +675,7 @@ class _SearchClientOperationsMixin(
          value is None.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
+        :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -668,7 +690,7 @@ class _SearchClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.SearchDocumentsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models2._models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {
@@ -729,6 +751,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -750,9 +773,11 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.SearchDocumentsResult, response.json())
+            deserialized = _deserialize(
+                _models2._models.SearchDocumentsResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -760,6 +785,10 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+    )
     async def get_document(
         self,
         key: str,
@@ -815,6 +844,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -836,7 +866,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.LookupDocument, response.json())
 
@@ -947,6 +977,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -968,7 +999,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -999,7 +1030,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
     async def _suggest_post(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.SuggestPostRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
     async def _suggest_post(
@@ -1009,7 +1040,7 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def _suggest_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types_models2.SuggestPostRequest, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
@@ -1026,8 +1057,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SuggestPostRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.search.documents.types.SuggestPostRequest or IO[bytes]
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
          character, and no more than 100 characters. Required.
         :paramtype search_text: str
@@ -1129,6 +1160,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1150,7 +1182,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1167,7 +1199,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.IndexDocumentsResult: ...
     @overload
     async def _index(
-        self, batch: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, batch: _types_models2.IndexDocumentsBatch, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult: ...
     @overload
     async def _index(
@@ -1176,13 +1208,14 @@ class _SearchClientOperationsMixin(
 
     @distributed_trace_async
     async def _index(
-        self, batch: Union[_models2.IndexDocumentsBatch, JSON, IO[bytes]], **kwargs: Any
+        self, batch: Union[_models2.IndexDocumentsBatch, _types_models2.IndexDocumentsBatch, IO[bytes]], **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult:
         """Sends a batch of document write actions to the index.
 
-        :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
-         JSON, IO[bytes] Required.
-        :type batch: ~azure.search.documents.models.IndexDocumentsBatch or JSON or IO[bytes]
+        :param batch: The batch of index actions. Is either a IndexDocumentsBatch type or a IO[bytes]
+         type. Required.
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch or
+         ~azure.search.documents.types.IndexDocumentsBatch or IO[bytes]
         :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.IndexDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1221,6 +1254,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1242,7 +1276,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.IndexDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1345,6 +1379,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1366,7 +1401,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
@@ -1396,7 +1431,7 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.AutocompleteResult: ...
     @overload
     async def _autocomplete_post(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.AutocompletePostRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.AutocompleteResult: ...
     @overload
     async def _autocomplete_post(
@@ -1406,7 +1441,7 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def _autocomplete_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types_models2.AutocompletePostRequest, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
@@ -1422,8 +1457,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, AutocompletePostRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.search.documents.types.AutocompletePostRequest or IO[bytes]
         :keyword search_text: The search text on which to base autocomplete results. Required.
         :paramtype search_text: str
         :keyword suggester_name: The name of the suggester as specified in the suggesters collection
@@ -1517,6 +1552,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1538,7 +1574,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access

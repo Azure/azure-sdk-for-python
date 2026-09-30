@@ -2,8 +2,11 @@
 # Licensed under the MIT License.
 
 import datetime
+from collections.abc import Mapping
 from importlib.metadata import version
+import json
 import locale
+import math
 from os import environ
 from os.path import isdir
 import platform
@@ -23,13 +26,17 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
+    _APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE,
+    _AZURE_MONITOR_DISTRO_VERSION,
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
     _KUBERNETES_SERVICE_HOST,
+    _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
     _GEN_AI_ATTRIBUTES,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -66,6 +73,14 @@ def _is_on_aks():
 
 
 def _is_attach_enabled():
+    attach_type = environ.get(_APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE)
+    if attach_type is not None:
+        # If the env var is set, attach is only enabled if the value is
+        # "IntegratedAuto" AND the existing per-RP logic is satisfied.
+        if attach_type.lower() == "integratedauto":
+            return True
+        return False
+    # Fallback to legacy logic when the env var is not set
     if _is_on_functions():
         return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
     if _is_on_app_service():
@@ -81,7 +96,7 @@ def _get_rp():
         rp = "f"
     elif _is_on_app_service():
         rp = "a"
-    # TODO: Add VM scenario outside statsbeat
+    # TODO: Add VM scenario outside sdkstats
     # elif _is_on_vm():
     #     rp = 'v'
     elif _is_on_aks():
@@ -106,6 +121,41 @@ def _get_attach_type():
     return attach_type
 
 
+# OneSettings
+
+# cspell:ignore appsvc
+# The OneSettings feature-flag schema expects full names for os/rp/attach (windows/linux/darwin,
+# appsvc/fn/aks, manual/integratedauto), unlike the short single-letter codes used for the statsbeat
+# SDK version prefix. These helpers are used only for the OneSettings _ConfigurationProfile.
+
+
+def _get_os_name():
+    system = platform.system()
+    if system == "Linux":
+        return "linux"
+    if system == "Windows":
+        return "windows"
+    if system == "Darwin":
+        return "darwin"
+    return "unknown"
+
+
+def _get_rp_name():
+    if _is_on_functions():
+        return "fn"
+    if _is_on_app_service():
+        return "appsvc"
+    if _is_on_aks():
+        return "aks"
+    return "unknown"
+
+
+def _get_attach_type_name():
+    if _is_attach_enabled():
+        return "integratedauto"
+    return "manual"
+
+
 def _get_sdk_version_prefix():
     sdk_version_prefix = ""
     rp = _get_rp()
@@ -117,8 +167,25 @@ def _get_sdk_version_prefix():
 
 
 def _get_sdk_version():
+    prefix = _get_sdk_version_prefix()
+    distro_version = environ.get(_AZURE_MONITOR_DISTRO_VERSION)
+    ms_otel_version = environ.get(_MICROSOFT_OPENTELEMETRY_VERSION)
+    if ms_otel_version:
+        return "{}py{}:otel{}:mot{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            ms_otel_version,
+        )
+    if distro_version:
+        return "{}py{}:otel{}:dst{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            distro_version,
+        )
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(),
+        prefix,
         platform.python_version(),
         opentelemetry_version,
         ext_version,
@@ -297,12 +364,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
@@ -337,6 +404,18 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
     return False
 
 
+def _is_status_code_success(status_code: Optional[int], is_trace: bool = False) -> bool:
+    if status_code is None or status_code == 0:
+        return False
+    try:
+        code = int(status_code)
+        if is_trace:
+            return code not in range(400, 500)
+        return code < 400
+    except ValueError:
+        return False
+
+
 def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
     """
     Check if the telemetry should be marked as synthetic from any source.
@@ -351,7 +430,8 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 64 * 1024
+    max_length = 8 * 1024
+    max_length_for_gen_ai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
@@ -361,14 +441,43 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 64 * 1024
+        # Max key length is 150, value is 8 * 1024
         if not key or len(key) > 150 or val is None:
             continue
         if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)
+            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
         else:
             processed_properties[key] = str(val)[:max_length]
     return processed_properties
+
+
+def _filter_custom_measurements(attributes: Attributes) -> Dict[str, float]:
+    # Extract custom measurements from the `microsoft.custom_measurements` attribute.
+    processed_measurements: Dict[str, float] = {}
+    if not attributes:
+        return processed_measurements
+    value = attributes.get(_MICROSOFT_CUSTOM_MEASUREMENTS)
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except (ValueError, RecursionError):
+            return processed_measurements
+    if not isinstance(value, Mapping):
+        return processed_measurements
+    for key, val in value.items():
+        if not key or not isinstance(key, str):
+            continue
+        if isinstance(val, bool) or not isinstance(val, (int, float)):
+            continue
+        try:
+            measurement = float(val)
+        except OverflowError:
+            continue
+        if not math.isfinite(measurement):
+            continue
+        # Max key length is 150
+        processed_measurements[key[:150]] = measurement
+    return processed_measurements
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
@@ -435,3 +544,33 @@ def _get_sha256_hash(input_str: str) -> str:
 def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
     parsed_connection_string = ConnectionStringParser(connection_string)
     return parsed_connection_string.application_id
+
+
+def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
+    if headers is None:
+        return None
+
+    retry_after = None
+    for key, value in headers.items():
+        if key.lower() == "retry-after":
+            retry_after = value
+
+    if retry_after is None:
+        return None
+
+    if isinstance(retry_after, str) and retry_after.isdigit():
+        delay_seconds = int(retry_after)
+        if delay_seconds > 0:
+            return delay_seconds
+    try:
+        parsed = datetime.datetime.strptime(retry_after, "%a, %d %b %Y %H:%M:%S GMT")
+        parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+
+        diff_seconds = int((parsed - now).total_seconds())
+        if diff_seconds > 0:
+            return diff_seconds
+    except ValueError:
+        return None
+    return None

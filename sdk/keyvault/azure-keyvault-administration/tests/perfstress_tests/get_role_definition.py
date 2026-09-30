@@ -8,10 +8,10 @@ from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.keyvault.administration import (
-    KeyVaultAccessControlClient, 
+    KeyVaultAccessControlClient,
     KeyVaultDataAction,
     KeyVaultPermission,
-     KeyVaultRoleScope,
+    KeyVaultRoleScope,
 )
 from azure.keyvault.administration.aio import KeyVaultAccessControlClient as AsyncKeyVaultAccessControlClient
 
@@ -32,7 +32,7 @@ class GetRoleDefinitionTest(PerfStressTest):
         self.role_name = uuid.uuid4()
         self.scope = KeyVaultRoleScope.GLOBAL
         self.permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
-    
+
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
@@ -42,7 +42,7 @@ class GetRoleDefinitionTest(PerfStressTest):
         """The global cleanup is run only once."""
         await self.async_client.delete_role_definition(scope=self.scope, name=self.role_name)
         await super().global_cleanup()
-    
+
     async def close(self):
         """This is run after cleanup."""
         await self.async_client.close()

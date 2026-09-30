@@ -32,6 +32,7 @@ from ._lease import ShareLeaseClient
 from ._models import (
     ContentSettings,
     FileProperties,
+    FileRange,
     Handle,
     NTFSAttributes,
 )
@@ -132,6 +133,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
+        data: Optional[bytes] = None,
+        validate_content: Optional[Literal["auto", "crc64", "md5"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -149,7 +153,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         file_change_time: Optional[Union[str, datetime]] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         max_concurrency: Optional[int] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
@@ -197,7 +201,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         length: Optional[int] = None,
         *,
         max_concurrency: Optional[int] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         decompress: Optional[bool] = None,
@@ -268,7 +272,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         offset: int,
         length: int,
         *,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         encoding: str = "UTF-8",
         file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
@@ -304,6 +308,17 @@ class ShareFileClient(StorageAccountHostsMixin):
         **kwargs: Any
     ) -> List[Dict[str, int]]: ...
     @distributed_trace
+    def list_ranges(
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
+    @distributed_trace
     def get_ranges_diff(
         self,
         previous_sharesnapshot: Union[str, Dict[str, Any]],
@@ -315,6 +330,19 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
     @distributed_trace
     def clear_range(
         self,

@@ -52,7 +52,7 @@ class TestAgentAISearch(TestBase):
         condition=(not is_live_and_not_recording()),
         reason="Skipped because we cannot record network calls with OpenAI client",
     )
-    def test_agent_ai_search_question_answering(self, **kwargs):
+    def test_agent_ai_search_question_answering(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test agent with Azure AI Search capabilities for question answering.
 
@@ -81,7 +81,7 @@ class TestAgentAISearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Get AI Search connection and index from environment
         ai_search_connection_id = kwargs.get("ai_search_project_connection_id")

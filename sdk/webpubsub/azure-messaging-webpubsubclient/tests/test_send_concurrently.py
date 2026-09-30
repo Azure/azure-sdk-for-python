@@ -13,9 +13,11 @@ from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, Saf
 class TestWebpubsubClientSendConcurrently(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_send_concurrently(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_send_concurrently(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, _, _ = self.setup_events(client)
         with client:
+            assert connected_event.wait(timeout=30), "Timed out waiting for connection"
             group_name = "test_send_concurrently"
             client.join_group(group_name)
 

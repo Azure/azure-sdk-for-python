@@ -12,27 +12,24 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, ove
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
+from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
 from ._enums import (
     LexicalAnalyzerName,
-    OcrSkillLanguage,
     SearchFieldDataType as _SearchFieldDataType,
-    SplitSkillLanguage,
-    TextTranslationSkillLanguage,
-)
-from ...knowledgebases.models import (
-    KnowledgeRetrievalReasoningEffort,
 )
 
 if TYPE_CHECKING:
+    from enum import Enum
+
     from ._models import (
+        AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
         DataDeletionDetectionPolicy,
         DataSourceCredentials,
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
-        SearchResourceEncryptionKey,
     )
-    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
+    from ._enums import SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -93,7 +90,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -110,7 +106,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -128,19 +123,37 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBase(_KnowledgeBase):
-    """Represents a knowledge base definition.
+class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
+    """A customer-managed encryption key in Azure Key Vault."""
 
-    This class adds proper deserialization of the retrieval_reasoning_effort field
-    which uses discriminated polymorphism from the knowledgebases models.
-    """
+    @overload
+    def __init__(
+        self,
+        *,
+        key_name: Optional[str] = None,
+        vault_uri: Optional[str] = None,
+        key_version: Optional[str] = None,
+        access_credentials: Optional["AzureActiveDirectoryApplicationCredentials"] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
+        is_service_level_key: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Properly deserialize retrieval_reasoning_effort if it's a dict
-        effort = self.retrieval_reasoning_effort
-        if effort is not None and isinstance(effort, dict):
-            self.retrieval_reasoning_effort = KnowledgeRetrievalReasoningEffort._deserialize(effort, [])
+
+
+class KnowledgeBase(_KnowledgeBase):
+    """Represents a knowledge base definition."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 def _collection_helper(typ: Any) -> str:
@@ -159,24 +172,52 @@ def _collection_helper(typ: Any) -> str:
 
 # Re-export SearchFieldDataType with Collection method
 # The Collection method is added at runtime via monkey-patching
-SearchFieldDataType = _SearchFieldDataType
-SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
+if TYPE_CHECKING:
 
-# Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
-SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
-SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
-SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
-SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
-SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
-SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
-SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
-SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
-SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+    # pylint: disable=enum-must-inherit-case-insensitive-enum-meta,enum-must-be-uppercase
+    class SearchFieldDataType(str, Enum):
+        STRING = "Edm.String"
+        INT32 = "Edm.Int32"
+        INT64 = "Edm.Int64"
+        DOUBLE = "Edm.Double"
+        BOOLEAN = "Edm.Boolean"
+        DATE_TIME_OFFSET = "Edm.DateTimeOffset"
+        GEOGRAPHY_POINT = "Edm.GeographyPoint"
+        COMPLEX = "Edm.ComplexType"
+        SINGLE = "Edm.Single"
+        HALF = "Edm.Half"
+        INT16 = "Edm.Int16"
+        S_BYTE = "Edm.SByte"
+        BYTE = "Edm.Byte"
+        String = "Edm.String"
+        Int32 = "Edm.Int32"
+        Int64 = "Edm.Int64"
+        Single = "Edm.Single"
+        Double = "Edm.Double"
+        Boolean = "Edm.Boolean"
+        DateTimeOffset = "Edm.DateTimeOffset"
+        GeographyPoint = "Edm.GeographyPoint"
+        ComplexType = "Edm.ComplexType"
 
-# Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
-OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
-SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
-TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+        @staticmethod
+        def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
+            return _collection_helper(typ)
+
+    # pylint: enable=enum-must-inherit-case-insensitive-enum-meta,enum-must-be-uppercase
+
+else:
+    SearchFieldDataType = _SearchFieldDataType
+    SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
+    # Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
+    SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
+    SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
+    SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
+    SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
+    SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
+    SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
+    SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
+    SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
+    SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:
@@ -196,7 +237,7 @@ def Collection(typ: Any) -> str:
 def SimpleField(
     *,
     name: str,
-    type: Union[str, _SearchFieldDataType],
+    type: Union[str, SearchFieldDataType],
     key: bool = False,
     hidden: bool = False,
     filterable: bool = False,
@@ -251,7 +292,7 @@ def SimpleField(
     :rtype:  SearchField
     """
     # If type is an enum, get its value; otherwise use it as-is
-    field_type = type.value if hasattr(type, "value") else type
+    field_type = type.value if isinstance(type, SearchFieldDataType) else type
     result: Dict[str, Any] = {
         "name": name,
         "type": field_type,
@@ -443,65 +484,15 @@ def ComplexField(
     return SearchField(**result)
 
 
-class _RemovedModel:
-    """Base class for models that have been removed from the SDK.
-
-    Allows import to succeed but raises an error on instantiation.
-    """
-
-    _removed_name: str = ""
-    _replacement_name: str = ""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        raise ValueError(f"{self._removed_name} has been removed. Use {self._replacement_name} instead.")
-
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)
-        # Allow direct tombstone class definitions (direct subclasses of _RemovedModel),
-        # but prevent further subclassing of tombstone classes.
-        if _RemovedModel not in cls.__bases__:
-            parent = cls.__bases__[0]
-            raise TypeError(
-                f"{getattr(parent, '_removed_name', parent.__name__)} has been removed and cannot be subclassed. "
-                f"Use {getattr(parent, '_replacement_name', '')} instead."
-            )
-
-
-class EntityRecognitionSkill(_RemovedModel):
-    """EntityRecognitionSkill has been removed. Use EntityRecognitionSkillV3 instead."""
-
-    _removed_name = "EntityRecognitionSkill"
-    _replacement_name = "EntityRecognitionSkillV3"
-
-
-class EntityRecognitionSkillLanguage(_RemovedModel):
-    """EntityRecognitionSkillLanguage has been removed. Use EntityRecognitionSkillV3 instead."""
-
-    _removed_name = "EntityRecognitionSkillLanguage"
-    _replacement_name = "EntityRecognitionSkillV3"
-
-
-class SentimentSkill(_RemovedModel):
-    """SentimentSkill has been removed. Use SentimentSkillV3 instead."""
-
-    _removed_name = "SentimentSkill"
-    _replacement_name = "SentimentSkillV3"
-
-
 __all__: list[str] = [
-    "EntityRecognitionSkill",
-    "EntityRecognitionSkillLanguage",
     "KnowledgeBase",
-    "OcrSkillLanguage",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",
-    "SentimentSkill",
+    "SearchResourceEncryptionKey",
     "SimpleField",
     "SearchableField",
     "ComplexField",
-    "SplitSkillLanguage",
-    "TextTranslationSkillLanguage",
 ]  # Add all objects you want publicly available to users at this package level
 
 

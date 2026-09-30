@@ -5,6 +5,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
+
 # pylint: disable=enum-must-be-uppercase
 class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key wrapping algorithms"""
@@ -21,6 +22,24 @@ class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # Microsoft does *not* recommend RSA_1_5, which is included solely for backwards compatibility.
     # Cryptographic standards no longer consider RSA with the PKCS#1 v1.5 padding scheme secure for encryption.
     rsa1_5 = "RSA1_5"
+    ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
+    ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
+
+
+class KeySecureWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Key wrapping algorithms supported by the SECURE WRAP / SECURE UNWRAP operations.
+
+    The secure wrap/unwrap surface is only available with API version ``2026-01-01-preview``
+    and newer.
+    """
+
+    rsa_oaep_256 = "RSA-OAEP-256"
+    aes_128 = "A128KW"
+    aes_192 = "A192KW"
+    aes_256 = "A256KW"
+    aes_128_pad = "A128KWPAD"
+    aes_192_pad = "A192KWPAD"
+    aes_256_pad = "A256KWPAD"
     ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
     ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
 

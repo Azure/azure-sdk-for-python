@@ -36,11 +36,15 @@ pip install azure-keyvault-keys azure-identity
 | [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
 | [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
 | [key_rotation.py][key_rotation_sample] ([async version][key_rotation_async_sample]) | create/update key rotation policies and rotate keys on-demand |
+| [external_key_operations.py][external_key_sample] ([async version][external_key_async_sample]) | register and manage external keys with Managed HSM (EKM) |
 | [send_request.py][send_request_sample] | use the `send_request` client method |
 
 
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
+
+[external_key_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/external_key_operations.py
+[external_key_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/external_key_operations_async.py
 
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/hello_world.py
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py

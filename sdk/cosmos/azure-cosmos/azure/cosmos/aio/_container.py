@@ -25,7 +25,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from datetime import datetime
 from typing import (Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
-                    Callable)
+                    Callable, Dict)
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -43,6 +43,7 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._global_secondary_index import _normalize_gsi_container_properties
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -104,8 +105,10 @@ class ContainerProxy:
                 kwargs['excluded_locations'] = options['excludedLocations']
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-            if "timeout" in options:
-                kwargs['timeout'] = options['timeout']
+            if Constants.Kwargs.TIMEOUT in options:
+                kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
+            if Constants.Kwargs.READ_TIMEOUT in options:
+                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
 
         return await self._get_properties(**kwargs)
 
@@ -207,6 +210,7 @@ class ContainerProxy:
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        _normalize_gsi_container_properties(container)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
                                                                _build_properties_cache(container, self.container_link))
@@ -259,7 +263,7 @@ class ContainerProxy:
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
             Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
             False (disable hedging even if client has it enabled),
@@ -305,7 +309,7 @@ class ContainerProxy:
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -346,7 +350,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -390,7 +394,7 @@ class ContainerProxy:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -420,7 +424,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -454,7 +458,7 @@ class ContainerProxy:
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         kwargs["containerProperties"] = self._get_properties_with_options
 
         items = self.client_connection.ReadItems(
@@ -494,7 +498,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
             Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
             False (disable hedging even if client has it enabled),
@@ -525,6 +529,7 @@ class ContainerProxy:
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
+        query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
         query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
@@ -542,6 +547,7 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -574,6 +580,10 @@ class ContainerProxy:
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -635,6 +645,7 @@ class ContainerProxy:
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
             feed_range: dict[str, Any],
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -667,6 +678,10 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -723,6 +738,7 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -754,6 +770,10 @@ class ContainerProxy:
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -843,6 +863,10 @@ class ContainerProxy:
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -902,6 +926,11 @@ class ContainerProxy:
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
+            scope = kwargs.pop("full_text_score_scope")
+            if scope not in ("Local", "Global"):
+                raise ValueError(f"full_text_score_scope must be 'Local' or 'Global', got '{scope}'")
+            feed_options["fullTextScoreScope"] = scope
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
@@ -1211,7 +1240,7 @@ class ContainerProxy:
             response_hook.clear()
 
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
@@ -1261,7 +1290,7 @@ class ContainerProxy:
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1300,7 +1329,7 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -1400,7 +1429,7 @@ class ContainerProxy:
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1442,7 +1471,7 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -1501,7 +1530,7 @@ class ContainerProxy:
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1543,7 +1572,7 @@ class ContainerProxy:
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
@@ -1599,7 +1628,7 @@ class ContainerProxy:
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
             Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
             False (disable hedging even if client has it enabled),
@@ -1632,7 +1661,7 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -1662,7 +1691,7 @@ class ContainerProxy:
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = [throughput async for throughput in
                                  self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
@@ -1699,7 +1728,7 @@ class ContainerProxy:
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = [throughput async for throughput in
                                  self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
@@ -1730,7 +1759,7 @@ class ContainerProxy:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1773,7 +1802,7 @@ class ContainerProxy:
         else:
             feed_options["enableCrossPartitionQuery"] = True
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1809,8 +1838,8 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -1842,6 +1871,8 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        await self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1876,7 +1907,7 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :rtype: None
         """
         etag = kwargs.get('etag')
@@ -1904,7 +1935,7 @@ class ContainerProxy:
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1947,7 +1978,7 @@ class ContainerProxy:
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: A CosmosList representing the items after the batch operations went through.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
             Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
@@ -1989,7 +2020,7 @@ class ContainerProxy:
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
@@ -2013,16 +2044,27 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
-        if force_refresh is True:
-            self.client_connection.refresh_routing_map_provider()
+        feed_options: Dict[str, Any] = {}
+        setup_complete = False
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
+            nonlocal setup_complete
+            if not setup_complete:
+                if force_refresh is True:
+                    await self.client_connection.refresh_routing_map_provider()
+
+                # Ensure container properties cache is populated so we can get the container RID.
+                await self._get_properties_with_options()
+                feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+                setup_complete = True
+
             partition_key_ranges = \
                 await self.client_connection._routing_map_provider.get_overlapping_ranges(
                     # pylint: disable=protected-access
                     self.container_link,
                     # default to full range
                     [Range("", "FF", True, False)],
+                    feed_options,
                     **kwargs)
 
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()

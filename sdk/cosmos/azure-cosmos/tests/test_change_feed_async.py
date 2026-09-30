@@ -28,39 +28,54 @@ async def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = CosmosClient(config.host, config.masterKey, multiple_write_locations=use_multiple_write_locations)
-    await test_client.__aenter__()
-    created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
-    created_db_data = {
-        "created_db": created_db,
+    # Key-auth client for control-plane operations (create/delete containers)
+    key_client = CosmosClient(config.host, config.masterKey, multiple_write_locations=use_multiple_write_locations)
+    await key_client.__aenter__()
+    key_db = key_client.get_database_client(config.TEST_DATABASE_ID)
+
+    # Data-plane client (AAD when configured, else key auth)
+    data_client = test_config.TestConfig.create_data_client_async()
+    await data_client.__aenter__()
+    data_db = data_client.get_database_client(config.TEST_DATABASE_ID)
+
+    yield {
+        "key_db": key_db,
+        "data_db": data_db,
         "is_emulator": config.is_emulator
     }
-
-    yield created_db_data
-    await test_client.close()
+    await data_client.close()
+    await key_client.close()
 
 def round_time():
     utc_now = datetime.now(timezone.utc)
     return utc_now - timedelta(microseconds=utc_now.microsecond)
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:
     """Test to ensure escaping of non-ascii characters from partition key"""
 
+
     async def test_get_feed_ranges(self, setup):
-        created_collection = await setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
+        created_collection_ref = await setup["key_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
-        result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
-        assert len(result) == 1
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
+        try:
+            result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
+            assert len(result) == 1
+        finally:
+            await setup["key_db"].delete_container(created_collection_ref.id)
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
     async def test_query_change_feed_with_different_filter_async(self, change_feed_filter_param, setup):
 
-        created_collection = await setup["created_db"].create_container(
+        created_collection_ref = await setup["key_db"].create_container(
             "change_feed_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
 
         if change_feed_filter_param == "partitionKey":
             filter_param = {"partition_key": "pk"}
@@ -197,15 +212,20 @@ class TestChangeFeedAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
 
-        await setup["created_db"].delete_container(created_collection.id)
+        await setup["key_db"].delete_container(created_collection_ref.id)
 
     @pytest.mark.asyncio
     async def test_query_change_feed_with_start_time(self, setup):
-        created_collection = await setup["created_db"].create_container_if_not_exists("query_change_feed_start_time_test",
-                                                                                  PartitionKey(path="/pk"))
+        container_id = "query_change_feed_start_time_test_" + str(uuid.uuid4())
+        created_collection_ref = await setup["key_db"].create_container(
+            container_id,
+            PartitionKey(path="/pk")
+        )
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         batchSize = 50
 
         async def create_random_items(container, batch_size):
+            created_ids = set()
             for _ in range(batch_size):
                 # Generate a Random partition key
                 partition_key = 'pk' + str(uuid.uuid4())
@@ -213,73 +233,88 @@ class TestChangeFeedAsync:
                 # Generate a random item
                 item = {
                     'id': 'item' + str(uuid.uuid4()),
-                    'partitionKey': partition_key,
+                    'pk': partition_key,
                     'content': 'This is some random content',
                 }
 
                 try:
                     # Create the item in the container
                     await container.upsert_item(item)
+                    created_ids.add(item['id'])
                 except exceptions.CosmosHttpResponseError as e:
-                    pytest.fail(e)
+                    pytest.fail(str(e))
+            return created_ids
 
-        # Create first batch of random items
-        await create_random_items(created_collection, batchSize)
+        try:
+            # Create first batch of random items
+            first_batch_ids = await create_random_items(created_collection, batchSize)
 
-        # wait for 1 second and record the time, then wait another second
-        await sleep(1)
-        start_time = round_time()
-        not_utc_time = datetime.now()
-        await sleep(1)
+            # wait for 1 second and record the time, then wait another second
+            await sleep(1)
+            start_time = round_time()
+            # Use an equivalent instant in a non-UTC timezone to validate SDK timezone normalization.
+            not_utc_time = start_time.astimezone(timezone(timedelta(hours=5, minutes=30)))
+            await sleep(1)
 
-        # now create another batch of items
-        await create_random_items(created_collection, batchSize)
+            # now create another batch of items
+            second_batch_ids = await create_random_items(created_collection, batchSize)
 
-        # now query change feed based on start time
-        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=start_time)]
-        totalCount = len(change_feed_iter)
+            # now query change feed based on start time
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=start_time)]
+            change_feed_ids = {item['id'] for item in change_feed_iter}
 
-        # now check if the number of items that were changed match the batch size
-        assert totalCount == batchSize
+            # start_time is second-granular; boundary writes from the first batch can be included.
+            assert second_batch_ids.issubset(change_feed_ids)
+            assert change_feed_ids.issubset(first_batch_ids.union(second_batch_ids))
 
-        # negative test: pass in a valid time in the future
-        future_time = start_time + timedelta(hours=1)
-        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=future_time)]
-        totalCount = len(change_feed_iter)
-        # A future time should return 0
-        assert totalCount == 0
+            # negative test: pass in a valid time in the future
+            future_time = start_time + timedelta(hours=1)
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=future_time)]
+            # A future time should return 0
+            assert len(change_feed_iter) == 0
 
-        # test a date that is not utc, will be converted to utc by sdk
-        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=not_utc_time)]
-        totalCount = len(change_feed_iter)
-        # Should equal batch size
-        assert totalCount == batchSize
+            # test a date that is not utc, will be converted to utc by sdk
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=not_utc_time)]
+            change_feed_non_utc_ids = {item['id'] for item in change_feed_iter}
+            assert change_feed_non_utc_ids == change_feed_ids
+        finally:
+            await setup["key_db"].delete_container(created_collection_ref.id)
 
-        await setup["created_db"].delete_container(created_collection.id)
-
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     async def test_query_change_feed_with_multi_partition_async(self, setup):
-        created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"),
-                                                              offer_throughput=11000)
+        created_collection_ref = await setup["key_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+                                                               PartitionKey(path="/pk"),
+                                                               offer_throughput=11000)
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
 
-        # create one doc and make sure change feed query can return the document
-        new_documents = [
-            {'pk': 'pk', 'id': 'doc1'},
-            {'pk': 'pk2', 'id': 'doc2'},
-            {'pk': 'pk3', 'id': 'doc3'},
-            {'pk': 'pk4', 'id': 'doc4'}]
-        expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
+        try:
+            # create one doc and make sure change feed query can return the document
+            new_documents = [
+                {'pk': 'pk', 'id': 'doc1'},
+                {'pk': 'pk2', 'id': 'doc2'},
+                {'pk': 'pk3', 'id': 'doc3'},
+                {'pk': 'pk4', 'id': 'doc4'}]
+            expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
 
-        for document in new_documents:
-            await created_collection.create_item(body=document)
+            for document in new_documents:
+                await created_collection.create_item(body=document)
 
-        query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
-        it = query_iterable.__aiter__()
-        actual_ids = []
-        async for item in it:
-            actual_ids.append(item['id'])
+            # Regression note: under AAD, service-side RBAC propagation right after container create
+            # can intermittently reject readChangeFeed with 403/5302, so this runs in non-AAD mode only.
+            query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
+            it = query_iterable.__aiter__()
+            actual_ids = []
+            async for item in it:
+                actual_ids.append(item['id'])
 
-        assert actual_ids == expected_ids
+            assert actual_ids == expected_ids
+        finally:
+            await setup["key_db"].delete_container(created_collection_ref.id)
 
 if __name__ == '__main__':
     unittest.main()
+

@@ -12,8 +12,12 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._validators import (
+    ConversationValidator,
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +95,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
-        # Initialize input validator
-        self._validator = ConversationValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
+        # Initialize input validator — accepts messages OR query/response.
+        self._validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,
@@ -161,6 +165,16 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         return super().__call__(*args, **kwargs)
 
     @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` so the base ``_derive_conversation_converter``
+        can extract per-turn q/r for the judge. Shared with other evaluators
+        via ``hoist_messages_to_conversation``."""
+        hoist_messages_to_conversation(kwargs)
+        return super()._convert_kwargs_to_eval_input(**kwargs)
+
+    @override
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -201,7 +215,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -220,23 +234,26 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         score = math.nan
 
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = float(llm_output.get("score", math.nan))
-            reason = llm_output.get("explanation", "")
-            # Parse out score and reason from evaluators known to possess them.
-            binary_result = self._get_binary_result(score)
+            reason = llm_output.get("reason", "")
+            llm_properties = llm_output.get("properties", {}) or {}
+            score_result = self._get_binary_result(score)
+            llm_properties.update(self._get_token_metadata(result))
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_result": binary_result,
-                f"{self._result_key}_threshold": self._threshold,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
-                f"{self._result_key}_model": result.get("model_id", ""),
-                f"{self._result_key}_sample_input": result.get("sample_input", ""),
-                f"{self._result_key}_sample_output": result.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
         raise EvaluationException(

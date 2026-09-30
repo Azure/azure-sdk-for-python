@@ -11,6 +11,7 @@ from azure.ai.evaluation._evaluators._rouge._rouge import RougeScoreEvaluator, R
 from azure.ai.evaluation._evaluators._gleu._gleu import GleuScoreEvaluator
 from azure.ai.evaluation._evaluators._meteor._meteor import MeteorScoreEvaluator
 from azure.ai.evaluation._evaluators._f1_score._f1_score import F1ScoreEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 @pytest.mark.unittest
@@ -203,6 +204,24 @@ class TestRougeThresholdBehavior:
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
 
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"precision_threshold": 1},
+            {"recall_threshold": "0.5"},
+            {"f1_score_threshold": None},
+        ],
+    )
+    def test_rouge_invalid_threshold_type_error_metadata(self, kwargs):
+        """Test that a non-float threshold raises EvaluationException with correct metadata."""
+        with pytest.raises(EvaluationException) as exc_info:
+            RougeScoreEvaluator(rouge_type=RougeType.ROUGE_L, **kwargs)  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.ROUGE_EVALUATOR
+
 
 @pytest.mark.unittest
 class TestActualThresholdBehavior:
@@ -218,7 +237,7 @@ class TestActualThresholdBehavior:
 
         # The score should be > 0.5 and result should be "pass"
         assert result["meteor_score"] > 0.5
-        assert result["meteor_result"] == "pass"
+        assert result["meteor_passed"] is True
         assert result["meteor_threshold"] == 0.5
 
     def test_bleu_score_decimal_threshold_behavior(self):
@@ -231,7 +250,7 @@ class TestActualThresholdBehavior:
 
         # The score should be > 0.1 and result should be "pass"
         assert result["bleu_score"] > 0.1
-        assert result["bleu_result"] == "pass"
+        assert result["bleu_passed"] is True
         assert result["bleu_threshold"] == 0.1
 
     def test_meteor_score_threshold_boundary_cases(self):
@@ -240,10 +259,10 @@ class TestActualThresholdBehavior:
         evaluator_low = MeteorScoreEvaluator(threshold=0.1)
         result_low = evaluator_low(ground_truth="Hello world", response="Hello world")
         assert result_low["meteor_score"] > 0.1
-        assert result_low["meteor_result"] == "pass"
+        assert result_low["meteor_passed"] is True
 
         # Test where threshold is set very high - should fail
         evaluator_high = MeteorScoreEvaluator(threshold=1.0)
         result_high = evaluator_high(ground_truth="Hello world", response="Hello world")
         assert result_high["meteor_score"] < 1.0
-        assert result_high["meteor_result"] == "fail"
+        assert result_high["meteor_passed"] is False

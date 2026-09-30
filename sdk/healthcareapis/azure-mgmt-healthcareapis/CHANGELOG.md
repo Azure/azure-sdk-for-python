@@ -1,5 +1,32 @@
 # Release History
 
+## 3.0.0b1 (2026-06-03)
+
+### Features Added
+
+  - Client `HealthcareApisManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HealthcareApisManagementClient` added method `send_request`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResourceListResultDescription` added property `next_link`
+  - Model `Resource` added property `system_data`
+  - Model `StorageConfiguration` added property `storage_indexing_configuration`
+  - Added model `ProxyResource`
+  - Added model `StorageIndexingConfiguration`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `IotFhirDestination` moved instance variable `provisioning_state`, `resource_identity_resolution_type`, `fhir_service_resource_id` and `fhir_mapping` under property `properties` whose type is `IotFhirDestinationProperties`
+  - Model `PrivateEndpointConnectionDescription` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResourceDescription` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ServicesPatchDescription` moved instance variable `public_network_access` under property `properties` whose type is `ServicesPropertiesUpdateParameters`
+
+### Other Changes
+
+  - Deleted model `DicomServiceCollection`/`FhirServiceCollection`/`IotConnectorCollection`/`IotFhirDestinationCollection`/`ListOperations`/`PrivateEndpointConnectionListResultDescription`/`WorkspaceList` which actually were not used by SDK users
+  - Deleted model `LocationBasedResource`/`PrivateLinkResource`/`ResourceCore`/`ServiceManagedIdentity`/`ServicesResource`/`TaggedResource` which actually were not used by SDK users
+
 ## 2.1.0 (2024-04-22)
 
 ### Features Added

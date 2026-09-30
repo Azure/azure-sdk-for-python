@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-01-preview",
+  "apiVersions": {
+    "ContentSafety": "2026-09-01-preview"
+  },
+  "commit": "e7d422ec1d105f2871caca4940636098ef6ab580",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/ContentSafety",
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
+}

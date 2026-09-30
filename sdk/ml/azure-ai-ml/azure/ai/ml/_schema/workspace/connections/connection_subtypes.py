@@ -8,7 +8,7 @@ from marshmallow import fields, post_load
 from marshmallow.exceptions import ValidationError
 from marshmallow.decorators import pre_load
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import ConnectionTypes

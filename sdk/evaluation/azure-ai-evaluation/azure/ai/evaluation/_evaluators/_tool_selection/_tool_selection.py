@@ -143,29 +143,36 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_calls = parsed_tool_calls
 
         if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+            # If no tool calls provided and response is string, use response string as tool calls as is
+            if response and isinstance(response, str):
+                tool_calls = response
+            else:
+                return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
-        if not isinstance(tool_calls, list):
+        if not isinstance(tool_calls, list) and not isinstance(tool_calls, str):
             tool_calls = [tool_calls]
-        if not isinstance(tool_definitions, list):
+        if not isinstance(tool_definitions, list) and not isinstance(tool_definitions, str):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
-            )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        if isinstance(tool_calls, str) or isinstance(tool_definitions, str):
+            needed_tool_definitions = tool_definitions
+        else:
+            try:
+                needed_tool_definitions = self._extract_needed_tool_definitions(
+                    tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
+                )
+            except EvaluationException:
+                # Check if this is because no tool definitions were provided at all
+                if len(tool_definitions) == 0:
+                    return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+                else:
+                    return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
-        if len(needed_tool_definitions) == 0:
+        if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Extract only tool names from tool calls, removing parameters and results
-        tool_names = self._extract_tool_names_from_calls(tool_calls)
+        # Extract only tool names from tool calls, removing parameters and results (skip for strings)
+        tool_names = tool_calls if isinstance(tool_calls, str) else self._extract_tool_names_from_calls(tool_calls)
 
         return {
             "query": query,
@@ -190,10 +197,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
-                1,
-                has_details=True,
+                self._threshold,
             )
 
         # Preprocess messages if they are lists
@@ -222,6 +228,12 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = llm_output.get("score", None)
             if score not in [0, 1]:
                 raise EvaluationException(
@@ -232,29 +244,27 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            explanation = llm_output.get("explanation", "")
-            score = int(score)  # Keep as int since it's binary (0 or 1)
+            reason = llm_output.get("reason", "")
+            score = float(score)
             score_result = "pass" if score == 1 else "fail"
 
             # Add tool selection accuracy post-processing
-            details = llm_output.get("details", {})
-            if details:
-                tool_selection_accuracy = self._calculate_tool_selection_accuracy(details)
-                details["tool_selection_accuracy"] = tool_selection_accuracy
+            llm_properties = llm_output.get("properties", {}) or {}
+            if llm_properties:
+                tool_selection_accuracy = self._calculate_tool_selection_accuracy(llm_properties)
+                llm_properties["tool_selection_accuracy"] = tool_selection_accuracy
+
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             response_dict = {
                 self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": explanation,
-                f"{self._result_key}_details": details,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 
@@ -280,7 +290,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), 1, has_details=True)
+            return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
 
         result = await self._do_eval(eval_input)
 

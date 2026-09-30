@@ -33,23 +33,32 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
+        # Key-auth client is used for control-plane operations in this test.
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        # AAD (or key) client for data-plane operations
+        self.data_client = test_config.TestConfig.create_data_client_async()
+        self.data_database = self.data_client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.data_client.close()
 
     async def test_session_token_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
         # Database
-        database = await self.client.create_database(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database = await self.client.create_database(test_config.unique_database_id("backcompat"), session_token=str(uuid.uuid4()))
         assert database is not None
-        database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database2 = await self.client.create_database_if_not_exists(test_config.unique_database_id("backcompat"), session_token=str(uuid.uuid4()))
         assert database2 is not None
-        database_list = [db async for db in self.client.list_databases(session_token=str(uuid.uuid4()))]
-        database_list2 = [db async for db in self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()))]
-        assert len(database_list) > 0
-        assert len(database_list2) > 0
+        # Assert this run's own database is present rather than that the account is
+        # non-empty: the account is shared with other runs and other language SDKs, so a
+        # non-zero count says nothing about the database under test.
+        database_ids = {db['id'] async for db in self.client.list_databases(session_token=str(uuid.uuid4()))}
+        database_ids2 = {db['id'] async for db in
+                         self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()))}
+        assert database.id in database_ids
+        assert database.id in database_ids2
         database_read = await database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
         await self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
@@ -64,10 +73,12 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         assert container is not None
         container2 = await self.created_database.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
         assert container2 is not None
-        container_list = [cont async for cont in self.created_database.list_containers(session_token=str(uuid.uuid4()))]
-        container_list2 = [cont async for cont in self.created_database.query_containers(query="select * from c", session_token=str(uuid.uuid4()))]
-        assert len(container_list) > 0
-        assert len(container_list2) > 0
+        container_ids = {c['id'] async for c in self.created_database.list_containers(session_token=str(uuid.uuid4()))}
+        container_ids2 = {c['id'] async for c in
+                          self.created_database.query_containers(query="select * from c",
+                                                                 session_token=str(uuid.uuid4()))}
+        assert container.id in container_ids
+        assert container.id in container_ids2
         container2_read = await container2.read(session_token=str(uuid.uuid4()))
         assert container2_read is not None
         replace_container = await self.created_database.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
@@ -88,9 +99,9 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     async def test_etag_match_condition_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
         # Database
-        database = await self.client.create_database(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        database = await self.client.create_database(test_config.unique_database_id("backcompat"), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert database is not None
-        database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        database2 = await self.client.create_database_if_not_exists(test_config.unique_database_id("backcompat"), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         await self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
@@ -121,15 +132,16 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        # Item
-        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        # Item â€” data-plane operations use AAD client
+        data_container = self.data_database.get_container_client(container.id)
+        item = await data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
-        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
+        item2 = await data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
-        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item = await data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
         assert item is not None
-        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
+        item2 = await data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
                                             match_condition=None)
         assert item2 is not None
         batch_operations = [
@@ -138,7 +150,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
             ("read", (item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 0},)),
         ]
-        batch_results = await container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        batch_results = await data_container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert len(batch_results) == 4
         for result in batch_results:
             assert result['statusCode'] in (200, 201)

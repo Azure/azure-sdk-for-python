@@ -53,8 +53,9 @@ async def directory_sample(filesystem_client):
     # [START rename_directory]
     new_dir_name = "testdir2async"
     print("Renaming the directory named '{}' to '{}'.".format(dir_name, new_dir_name))
-    new_directory = await directory_client\
-        .rename_directory(new_name=directory_client.file_system_name + '/' + new_dir_name)
+    new_directory = await directory_client.rename_directory(
+        new_name=directory_client.file_system_name + "/" + new_dir_name
+    )
     # [END rename_directory]
 
     # display the properties of the new directory to make sure it was renamed successfully
@@ -72,11 +73,12 @@ async def directory_sample(filesystem_client):
 
 async def create_child_files(directory_client, num_child_files):
     import itertools
+
     # Use a thread pool because it is too slow otherwise
 
     async def create_file():
         # generate a random name
-        file_name = str(uuid.uuid4()).replace('-', '')
+        file_name = str(uuid.uuid4()).replace("-", "")
         file_client = directory_client.get_file_client(file_name)
         await file_client.create_file()
 
@@ -86,14 +88,13 @@ async def create_child_files(directory_client, num_child_files):
 
 
 async def main():
-    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv("DATALAKE_STORAGE_ACCOUNT_NAME", "")
+    account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY", "")
 
     # set up the service client with the credentials from the environment variables
-    service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
-        "https",
-        account_name
-    ), credential=account_key)
+    service_client = DataLakeServiceClient(
+        account_url="{}://{}.dfs.core.windows.net".format("https", account_name), credential=account_key
+    )
 
     async with service_client:
         # generate a random name for testing purpose
@@ -110,5 +111,6 @@ async def main():
             # clean up the demo filesystem
             await filesystem_client.delete_file_system()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

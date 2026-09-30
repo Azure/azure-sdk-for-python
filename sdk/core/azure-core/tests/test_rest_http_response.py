@@ -9,13 +9,14 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
-import sys
+import xml.etree.ElementTree as ET
+
 import pytest
+from utils import readonly_checks
+
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.rest._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
-import xml.etree.ElementTree as ET
-from utils import readonly_checks
 
 
 @pytest.fixture
@@ -337,6 +338,7 @@ def test_readonly(send_request):
     response = send_request(HttpRequest("GET", "/health"))
 
     assert isinstance(response, RestRequestsTransportResponse)
+    # pylint: disable=no-name-in-module
     from azure.core.pipeline.transport import RequestsTransportResponse
 
     readonly_checks(response, old_response_class=RequestsTransportResponse)

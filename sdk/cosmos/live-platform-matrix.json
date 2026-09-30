@@ -2,7 +2,11 @@
   "displayNames": {
     "--disablecov": "",
     "false": "",
-    "true": ""
+    "true": "",
+    "single-session": "",
+    "single-session-split": "",
+    "multiregion-tc-session": "",
+    "multimaster-multiregion-session": ""
   },
   "include": [
     {
@@ -13,7 +17,8 @@
           "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
+          "TestMarkArgument": "cosmosSplit",
+          "AccountSelector": "single-session-split"
         },
         "Ubuntu2404_313_split": {
           "OSVmImage": "env:LINUXVMIMAGE",
@@ -21,7 +26,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
+          "TestMarkArgument": "cosmosSplit",
+          "AccountSelector": "single-session-split"
         }
       }
     },
@@ -33,7 +39,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreaker"
+          "TestMarkArgument": "cosmosCircuitBreaker",
+          "AccountSelector": "multimaster-multiregion-session"
         }
       },
       "ArmConfig": {
@@ -44,13 +51,14 @@
     },
     {
       "CircuitBreakerMultiRegionTestConfig": {
-        "Ubuntu2404_39_circuit_breaker": {
+        "Ubuntu2404_310_circuit_breaker": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
+          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion",
+          "AccountSelector": "multiregion-tc-session"
         }
       },
       "ArmConfig": {
@@ -67,7 +75,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover"
+          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover",
+          "AccountSelector": "multiregion-tc-session"
         }
       },
       "ArmConfig": {
@@ -84,31 +93,124 @@
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSearchQuery"
-        }
-      }
-    },
-    {
-      "PyPyConfig": {
-        "ubuntu2404_pypy311_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.11",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
+          "TestMarkArgument": "cosmosSearchQuery",
+          "AccountSelector": "single-session"
         }
       }
     },
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage_query": {
+        "ubuntu2404_310_coverage_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
+          "TestMarkArgument": "cosmosQuery",
+          "AccountSelector": "single-session"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_312_aad_long": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADLong",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_313_aad_split": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADSplit",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_312_aad_query": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADQuery",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_313_aad_circuit_breaker": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADCircuitBreaker",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiMaster": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_310_aad_circuit_breaker_multi_region": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADCircuitBreakerMultiRegion",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_312_aad_multiregion": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADMultiRegion",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiMaster_MultiRegion": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_313_aad_per_partition_automatic_failover": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADPerPartitionAutomaticFailover",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true;}"
         }
       }
     },
@@ -120,7 +222,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
+          "TestMarkArgument": "cosmosLong",
+          "AccountSelector": "single-session"
         },
         "Windows2022_312_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -128,7 +231,8 @@
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
+          "TestMarkArgument": "cosmosLong",
+          "AccountSelector": "single-session"
         }
       }
     },
@@ -140,7 +244,8 @@
           "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         },
         "Windows2022_310": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -148,7 +253,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         },
         "Windows2022_312": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -156,12 +262,25 @@
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         }
       },
       "ArmConfig": {
         "MultiMaster_MultiRegion": {
           "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+        }
+      }
+    },
+    {
+      "GSITestConfig": {
+        "Ubuntu2404_313_gsi": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosGSI"
         }
       }
     }

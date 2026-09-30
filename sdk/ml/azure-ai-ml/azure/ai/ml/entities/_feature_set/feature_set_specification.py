@@ -5,15 +5,15 @@
 from os import PathLike
 from typing import Any, Optional, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import FeaturesetSpecification as RestFeaturesetSpecification
+from azure.ai.ml._restclient.arm_ml_service.models import FeaturesetSpecification as RestFeaturesetSpecification
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class FeatureSetSpecification(RestTranslatableMixin):
     """Feature Set Specification
 
-    :param path: Specifies the feature set spec path to file. Defaults to None.
-    :type path: Optional[str]
+    :keyword path: Specifies the feature set spec path to file. Defaults to None.
+    :paramtype path: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -31,8 +31,8 @@ class FeatureSetSpecification(RestTranslatableMixin):
         self, *, path: Optional[Union[PathLike, str]] = None, **kwargs: Any
     ):  # pylint: disable=unused-argument
         """
-        :param path: Specifies the spec path.
-        :type path: str
+        :keyword path: Specifies the spec path.
+        :paramtype path: str
         """
         self.path = path
 

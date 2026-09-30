@@ -19,13 +19,12 @@ USAGE:
     3) AZURE_SEARCH_INDEX_NAME - target search index name (e.g., "hotels-sample-index")
 """
 
-
 import os
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
-alias_name = "hotel-alias"
+alias_name = "hotels-sample-alias"
 new_index_name = "hotels-sample-index-v2"
 
 

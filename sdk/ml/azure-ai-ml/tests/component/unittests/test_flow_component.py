@@ -9,6 +9,7 @@ from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.flow import FlowComponent
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -55,7 +56,7 @@ class TestFlowComponent:
             },
         }
 
-        assert component._to_rest_object().as_dict() == expected_rest_dict
+        assert as_attribute_dict(component._to_rest_object()) == expected_rest_dict
 
         named_component = load_component(
             target_path,
@@ -70,7 +71,7 @@ class TestFlowComponent:
             "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
         )
 
-        assert named_component._to_rest_object().as_dict() == expected_rest_dict
+        assert as_attribute_dict(named_component._to_rest_object()) == expected_rest_dict
 
     def test_component_normalize_folder_name(self):
         target_path = "./tests/test_configs/flows/basic/"
@@ -94,7 +95,10 @@ class TestFlowComponent:
                 "component_spec": {
                     "_source": "YAML.COMPONENT",
                     "connections": {
-                        "llm": {"connection": "azure_open_ai_connection", "deployment_name": "text-davinci-003"}
+                        "llm": {
+                            "connection": "azure_open_ai_connection",
+                            "deployment_name": "text-davinci-003",
+                        }
                     },
                     "description": "A run of the basic flow",
                     "display_name": "Basic Run",
@@ -122,7 +126,7 @@ class TestFlowComponent:
 
         component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
-        assert component._to_rest_object().as_dict() == expected_rest_dict
+        assert as_attribute_dict(component._to_rest_object()) == expected_rest_dict
 
     def test_component_load_fail(self):
         flow_dir_path = "./tests/test_configs/flows/basic"
@@ -135,7 +139,10 @@ class TestFlowComponent:
             )
 
             component = load_component(f"{temp_dir}/basic/flow.dag.yaml")
-            with pytest.raises(Exception, match="Flow component must be created with a ./promptflow/flow.tools.json"):
+            with pytest.raises(
+                Exception,
+                match="Flow component must be created with a ./promptflow/flow.tools.json",
+            ):
                 with component._build_code():
                     pass
 
@@ -183,7 +190,7 @@ class TestFlowComponent:
 
         component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
-        assert component._to_rest_object().as_dict() == {
+        assert as_attribute_dict(component._to_rest_object()) == {
             "name": "basic",
             "properties": {
                 "component_spec": {
@@ -205,7 +212,10 @@ class TestFlowComponent:
         }
 
         flow_node = component(
-            data=Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE),
+            data=Input(
+                path="./tests/test_configs/flows/data/basic.jsonl",
+                type=AssetTypes.URI_FILE,
+            ),
             text="${data.text}",
         )
 
@@ -215,7 +225,10 @@ class TestFlowComponent:
             "_source": "YAML.COMPONENT",
             "componentId": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/components/xxx/versions/1",
             "inputs": {
-                "data": {"job_input_type": "uri_file", "uri": "./tests/test_configs/flows/data/basic.jsonl"},
+                "data": {
+                    "job_input_type": "uri_file",
+                    "uri": "./tests/test_configs/flows/data/basic.jsonl",
+                },
                 "text": {"job_input_type": "literal", "value": "${data.text}"},
             },
             "type": "parallel",
@@ -227,7 +240,10 @@ class TestFlowComponent:
             pytest.param(
                 {"connections": {"llm": {"connection": "azure_open_ai_connection"}}},
                 {
-                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                    "connections.llm.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
                 },
                 id="dict-1",
             ),
@@ -242,8 +258,14 @@ class TestFlowComponent:
                     }
                 },
                 {
-                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
-                    "connections.llm.deployment_name": {"job_input_type": "literal", "value": "text-davinci-003"},
+                    "connections.llm.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                    "connections.llm.deployment_name": {
+                        "job_input_type": "literal",
+                        "value": "text-davinci-003",
+                    },
                     "connections.llm.custom_connection": {
                         "job_input_type": "literal",
                         "value": "azure_open_ai_connection",
@@ -254,7 +276,10 @@ class TestFlowComponent:
             pytest.param(
                 {"connections.llm.connection": "azure_open_ai_connection"},
                 {
-                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                    "connections.llm.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
                 },
                 id="dot-key-1",
             ),
@@ -265,12 +290,18 @@ class TestFlowComponent:
                     "connections": {"llm": {"deployment_name": "text-davinci-003"}},
                 },
                 {
-                    "connections.llm.connection": {"job_input_type": "literal", "value": "azure_open_ai_connection"},
+                    "connections.llm.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
                     "connections.llm.custom_connection": {
                         "job_input_type": "literal",
                         "value": "azure_open_ai_connection",
                     },
-                    "connections.llm.deployment_name": {"job_input_type": "literal", "value": "text-davinci-003"},
+                    "connections.llm.deployment_name": {
+                        "job_input_type": "literal",
+                        "value": "text-davinci-003",
+                    },
                 },
                 id="dot-key-plus-dict",
             ),
@@ -285,6 +316,9 @@ class TestFlowComponent:
         node = component(data=data_input, **input_values)
         node._component = "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/components/xxx/versions/1"
         assert node._to_rest_object()["inputs"] == {
-            "data": {"job_input_type": "uri_file", "uri": "./tests/test_configs/flows/data/basic.jsonl"},
+            "data": {
+                "job_input_type": "uri_file",
+                "uri": "./tests/test_configs/flows/data/basic.jsonl",
+            },
             **expected_rest_objects,
         }

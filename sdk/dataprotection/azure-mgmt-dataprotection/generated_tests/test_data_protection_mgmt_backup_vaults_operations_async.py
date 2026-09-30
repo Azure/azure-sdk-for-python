@@ -40,8 +40,8 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                 parameters={
                     "location": "str",
                     "properties": {
-                        "storageSettings": [{"datastoreType": "str", "type": "str"}],
                         "bcdrSecurityLevel": "str",
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "featureSettings": {
                             "crossRegionRestoreSettings": {"state": "str"},
                             "crossSubscriptionRestoreSettings": {"state": "str"},
@@ -70,6 +70,7 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                             "immutabilitySettings": {"state": "str"},
                             "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                         },
+                        "storageSettings": [{"datastoreType": "str", "type": "str"}],
                     },
                     "eTag": "str",
                     "id": "str",
@@ -112,6 +113,7 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "properties": {
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "featureSettings": {
                             "crossRegionRestoreSettings": {"state": "str"},
                             "crossSubscriptionRestoreSettings": {"state": "str"},

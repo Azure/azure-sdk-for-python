@@ -6,7 +6,7 @@ This guide is intended for developers contributing to the Azure Schema Registry 
 
 ### Prerequisites
 
-- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)
+- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)
 - Git
 - pip and setuptools
 - Node.js and npm (for TypeSpec client generation)
@@ -119,8 +119,8 @@ For detailed usage and examples, see the [Avro Encoder README](https://github.co
    AZURE_TEST_RUN_LIVE=true
    ```
   * Each namespace is Standard tier. Each namespace has one schema group, with schema type set as per namespace.
-  * The schema group name is the same across namespaces. 
-  
+  * The schema group name is the same across namespaces.
+
    If using CLI:
    ```
    AZURE_TEST_USE_CLI_AUTH=true

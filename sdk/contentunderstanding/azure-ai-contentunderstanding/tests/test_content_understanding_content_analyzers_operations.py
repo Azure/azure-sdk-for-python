@@ -21,6 +21,7 @@ from test_helpers import (
     new_simple_content_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
+    assert_analyze_poller_usage,
     assert_simple_content_analyzer_result,
     save_analysis_result_to_file,
     save_keyframe_image_to_file,
@@ -30,7 +31,9 @@ from devtools_testutils import is_live, is_live_and_not_recording
 
 
 def create_analyzer_and_assert_sync(
-    client: ContentUnderstandingClient, analyzer_id: str, resource: Union[ContentAnalyzer, Dict[str, Any]]
+    client: ContentUnderstandingClient,
+    analyzer_id: str,
+    resource: Union[ContentAnalyzer, Dict[str, Any]],
 ) -> Any:
     """Create an analyzer and perform basic assertions (sync version).
 
@@ -154,7 +157,11 @@ def download_keyframes_and_assert_sync(
     sorted_keyframes: List[str] = sorted(keyframe_paths, key=lambda x: int(x.split("/")[-1]))
 
     # Create a set with first, middle, and last frames (automatically removes duplicates)
-    frames_set: Set[str] = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+    frames_set: Set[str] = {
+        sorted_keyframes[0],
+        sorted_keyframes[-1],
+        sorted_keyframes[len(sorted_keyframes) // 2],
+    }
 
     # Convert set to list for processing
     frames_to_download: List[str] = list(frames_set)
@@ -228,7 +235,9 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
-            analyzer_id=analyzer_id, description=f"test analyzer: {analyzer_id}", tags={"tag1_name": "tag1_value"}
+            analyzer_id=analyzer_id,
+            description=f"test analyzer: {analyzer_id}",
+            tags={"tag1_name": "tag1_value"},
         )
 
         try:
@@ -273,7 +282,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
                     },
                     "description": f"test analyzer: {analyzer_id}",
                     "processingLocation": "global",
-                    "models": {"completion": "gpt-4.1"},
+                    "models": {"completion": "gpt-5.2"},
                     "tags": {"tag1_name": "tag1_value"},
                 },
             )
@@ -433,7 +442,10 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             # Save the analysis result to a file
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_begin_analyze_url", test_file_dir, analyzer_id
+                analysis_result,
+                "test_content_analyzers_begin_analyze_url",
+                test_file_dir,
+                analyzer_id,
             )
 
         finally:
@@ -489,7 +501,10 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
             # Save the analysis result to a file
             save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_begin_analyze_binary", test_file_dir, analyzer_id
+                analysis_result,
+                "test_content_analyzers_begin_analyze_binary",
+                test_file_dir,
+                analyzer_id,
             )
 
         finally:
@@ -574,7 +589,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
     def test_content_analyzers_analyze_binary_extract_markdown(self, contentunderstanding_endpoint: str) -> None:
         """Test extracting markdown content from analyzed binary documents.
 
-        This test corresponds to .NET AnalyzeBinary_ExtractMarkdown.
         Verifies that markdown is successfully extracted and is non-empty.
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -604,6 +618,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -634,7 +649,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
     def test_content_analyzers_create_classifier(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a classifier with content categories and document segmentation.
 
-        This test corresponds to .NET CreateClassifier.
         Verifies that the classifier is created successfully with the specified categories
         and configuration, and can segment documents into different categories.
         """
@@ -660,14 +674,18 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             }
 
             # Create analyzer configuration with categories and segmentation enabled
-            config = {"returnDetails": True, "enableSegment": True, "contentCategories": content_categories}
+            config = {
+                "returnDetails": True,
+                "enableSegment": True,
+                "contentCategories": content_categories,
+            }
 
             # Create the classifier analyzer
             classifier = {
                 "baseAnalyzerId": "prebuilt-document",
                 "description": "Custom classifier for financial document categorization",
                 "config": config,
-                "models": {"completion": "gpt-4.1"},
+                "models": {"completion": "gpt-5.2"},
             }
 
             print(f"\nCreating classifier with {len(content_categories)} categories...")
@@ -708,7 +726,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
     def test_content_analyzers_analyze_configs(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with specific configurations enabled.
 
-        This test corresponds to .NET AnalyzeConfigs.
         Verifies that document features can be extracted with formulas, layout, and OCR enabled.
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -739,6 +756,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -771,7 +789,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
     def test_content_analyzers_analyze_return_raw_json(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and returning raw JSON response.
 
-        This test corresponds to .NET AnalyzeReturnRawJson.
         Verifies that the raw JSON response can be retrieved and parsed.
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -801,6 +818,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify operation completed successfully
         assert result is not None, "Analysis result should not be null"
@@ -827,7 +845,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
     def test_content_analyzers_delete_result(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analysis result.
 
-        This test corresponds to .NET DeleteResult.
         Verifies that an analysis result can be deleted using its operation ID.
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)

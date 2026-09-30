@@ -11,22 +11,16 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 ## Sample test logging
 
-Optionally enable logging to capture sample execution results in log files (useful for monitoring and alerting):
-
-```bash
-# In .env - uncomment to enable logging
-SAMPLE_TEST_ERROR_LOG=<sample_filename>_errors_<timestamp>.log
-SAMPLE_TEST_FAILED_LOG=<sample_filename>_failed_<timestamp>.log
-SAMPLE_TEST_PASSED_LOG=<sample_filename>_success_<timestamp>.log
-```
+In live mode, sample execution always writes a log file to the system temp directory.
 
 Log types:
 
-- **`SAMPLE_TEST_ERROR_LOG`**: Sample crashed with an exception during execution
-- **`SAMPLE_TEST_FAILED_LOG`**: Sample ran successfully but LLM validation failed (incorrect output)
-- **`SAMPLE_TEST_PASSED_LOG`**: Sample ran successfully and LLM validation passed (correct output)
+- `*_errors_<timestamp>.log`: Sample crashed with an exception during execution
+- `*_failed_<timestamp>.log`: Sample ran successfully but LLM validation failed (incorrect output)
+- `*_success_<timestamp>.log`: Sample ran successfully and LLM validation passed (correct output)
+- `*_output_<timestamp>.log`: Captured `print()` output only, without SDK debug log entries
 
-Logs are written to the system's temp directory with the specified filename format. Each log includes the sample path, status/error details, exception traceback (for errors), and all captured print statements.
+Logs are written to the system's temp directory with those fixed filename templates. The `*_errors_*`, `*_failed_*`, and `*_success_*` logs include the sample path, status/error details, exception traceback (for errors), and all captured print/debug statements. The `*_output_*` log contains only captured `print()` output.
 
 ## Sync example
 
@@ -35,7 +29,7 @@ import pytest
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import SyncSampleExecutor, get_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
 
 class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
@@ -55,7 +49,7 @@ class TestSamples(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -65,10 +59,7 @@ class TestSamples(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-        )        
+        executor.validate_print_calls_by_llm()
 ```
 
 ## Async example
@@ -79,7 +70,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import AsyncSampleExecutor, get_async_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
 
 class TestSamplesAsync(AzureRecordedTestCase):
 
@@ -94,7 +85,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(
@@ -104,10 +95,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             **kwargs,
         )
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 ```
 
 ## Key pieces
@@ -122,8 +110,8 @@ from devtools_testutils import EnvironmentVariableLoader
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
         "",
-        azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-        azure_ai_model_deployment_name="gpt-4o",
+        foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+        foundry_model_name="gpt-4o",
     # add other sanitized vars here
 )
 ```
@@ -143,9 +131,9 @@ servicePreparer = functools.partial(
 
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
-- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
+- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX2` when samples use httpx2 in addition to the default `RecordedTransport.AZURE_CORE`.
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
-- `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).
+- `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Validate captured print output with LLM instructions resolved automatically from the sample folder. You can still pass an explicit `instructions` override when needed.
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
 
 ## Optional test environment variables mapping
@@ -154,8 +142,8 @@ If you need to remap the values provided by your fixtures to the environment-var
 
 ```python
 env_vars = {
-    "AZURE_AI_PROJECT_ENDPOINT": kwargs["TEST_AZURE_AI_PROJECT_ENDPOINT"],
-    "AZURE_AI_MODEL_DEPLOYMENT_NAME": kwargs["TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+    "FOUNDRY_PROJECT_ENDPOINT": kwargs["TEST_FOUNDRY_PROJECT_ENDPOINT"],
+    "FOUNDRY_MODEL_NAME": kwargs["TEST_FOUNDRY_MODEL_NAME"],
 }
 executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
 ```
@@ -194,7 +182,7 @@ from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
     ),
 )
 @SamplePathPasser()
-@recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+@recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
 def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
     ...
 ```
@@ -237,7 +225,7 @@ executor = SyncSampleExecutor(
 
 Behavior:
 
-- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated (if `SAMPLE_TEST_FAILED_LOG` is configured in `.env`).
+- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated.
 - **Samples not in the allowlist:** Fail the test when LLM validation fails (existing behavior).
 - **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
 
@@ -254,7 +242,7 @@ def _preprocess_validation(entries: list[str]) -> str:
     """Filter debug log entries and annotate metric counters."""
     import re
     # Remove SDK debug log entries (they start with "[module.name]")
-    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx2|httpcore|msrest)")
     kept = [e for e in entries if not _NOISE.match(e.strip())]
     return "\n".join(kept)
 

@@ -3,11 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.ai.projects.models import ConnectionType
 
 
 class TestConnectionsAsync(TestBase):

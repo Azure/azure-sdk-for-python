@@ -1,8 +1,7 @@
-"""Utilities for resolving dependency sets for tox-style checks.
+"""Utilities for resolving dependency sets for checks.
 
 This module contains the logic previously hosted in ``eng/tox/install_depend_packages.py``
-so that both the legacy tox entry point and the azpysdk checks can share a
-single implementation.
+so that the azpysdk checks can share a single implementation.
 """
 
 import logging
@@ -86,7 +85,7 @@ PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     },
 }
 
-PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {}
+PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {"<3.10.0": {"requests": "2.32.5"}}
 
 # This is used to actively _add_ requirements to the install set. These are used to actively inject
 # a new requirement specifier to the set of packages being installed.

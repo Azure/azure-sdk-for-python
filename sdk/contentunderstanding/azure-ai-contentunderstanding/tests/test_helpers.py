@@ -19,9 +19,18 @@ from azure.ai.contentunderstanding.models import (
     ContentFieldSchema,
     ContentFieldDefinition,
 )
-from azure.ai.contentunderstanding.models import GenerationMethod, ContentFieldType, ProcessingLocation
+from azure.ai.contentunderstanding.models import (
+    GenerationMethod,
+    ContentFieldType,
+    ProcessingLocation,
+)
 
 from devtools_testutils import is_live, is_live_and_not_recording
+
+
+def get_completion_model_name() -> str:
+    # Keep gpt-4.1 for both GA and preview so playback recordings stay stable.
+    return "gpt-4.1"
 
 
 def generate_analyzer_id(client, test_name: str, is_async: bool = False) -> str:
@@ -41,7 +50,9 @@ def generate_analyzer_id(client, test_name: str, is_async: bool = False) -> str:
 
 
 def new_simple_content_analyzer_object(
-    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+    analyzer_id: str,
+    description: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
 ) -> ContentAnalyzer:
     """Create a simple ContentAnalyzer object with default configuration.
 
@@ -80,13 +91,15 @@ def new_simple_content_analyzer_object(
             name="schema name here",
         ),
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4.1"},  # Required when using field_schema
+        models={"completion": get_completion_model_name()},  # Required when using field_schema
         tags=tags,
     )
 
 
 def new_marketing_video_analyzer_object(
-    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+    analyzer_id: str,
+    description: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
 ) -> ContentAnalyzer:
     """Create a marketing video ContentAnalyzer object based on the marketing video template.
 
@@ -110,7 +123,7 @@ def new_marketing_video_analyzer_object(
         ),
         description=description,
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4.1"},  # Required when using field_schema
+        models={"completion": get_completion_model_name()},  # Required when using field_schema
         tags=tags,
     )
 
@@ -130,6 +143,25 @@ def assert_poller_properties(poller: Any, poller_name: str = "Poller") -> None:
     assert poller.status() != "", f"{poller_name} status should not be empty"
     assert poller.continuation_token() is not None, f"{poller_name} continuation_token should not be None"
     print(f"{poller_name} properties verified successfully")
+
+
+def assert_analyze_poller_usage(poller: Any, poller_name: str = "Poller") -> None:
+    """Assert the usage property on a completed analyze poller (AnalyzeLROPoller / AnalyzeAsyncLROPoller).
+
+    Must be called AFTER poller.result() has been called, since usage is only available
+    once the LRO has completed and the final polling response contains the usage data.
+
+    Args:
+        poller: The AnalyzeLROPoller or AnalyzeAsyncLROPoller instance to validate
+        poller_name: Optional name for the poller in log messages
+
+    Raises:
+        AssertionError: If the usage property is not available or invalid
+    """
+    assert hasattr(poller, "usage"), f"{poller_name} should have a 'usage' property"
+    usage = poller.usage
+    assert usage is not None, f"{poller_name} usage should not be None after completion"
+    print(f"{poller_name} usage verified: {usage}")
 
 
 def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str = "Analysis result") -> None:
@@ -365,7 +397,9 @@ def assert_document_properties(analysis_result: Any, expected_min_pages: int = 1
 
 
 def new_invoice_analyzer_object(
-    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+    analyzer_id: str,
+    description: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
 ) -> ContentAnalyzer:
     """Create an invoice ContentAnalyzer object with comprehensive field extraction schema.
 
@@ -461,7 +495,7 @@ def new_invoice_analyzer_object(
             name="invoice_schema",
         ),
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4.1"},  # Required when using field_schema
+        models={"completion": get_completion_model_name()},  # Required when using field_schema
         tags=tags,
     )
 

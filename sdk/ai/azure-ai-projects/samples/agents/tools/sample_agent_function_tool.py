@@ -17,21 +17,26 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
+# pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 import os
 import json
 from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool
-from azure.identity import DefaultAzureCredential
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from util import create_version_with_endpoint
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
 load_dotenv()
+
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
 def get_horoscope(sign: str) -> str:
@@ -39,46 +44,43 @@ def get_horoscope(sign: str) -> str:
     return f"{sign}: Next Tuesday you will befriend a baby otter."
 
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+
+
+tool = FunctionTool(
+    name="get_horoscope",
+    parameters={
+        "type": "object",
+        "properties": {
+            "sign": {
+                "type": "string",
+                "description": "An astrological sign like Taurus or Aquarius",
+            },
+        },
+        "required": ["sign"],
+        "additionalProperties": False,
+    },
+    description="Get today's horoscope for an astrological sign.",
+    strict=True,
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-
-    # [START tool_declaration]
-    tool = FunctionTool(
-        name="get_horoscope",
-        parameters={
-            "type": "object",
-            "properties": {
-                "sign": {
-                    "type": "string",
-                    "description": "An astrological sign like Taurus or Aquarius",
-                },
-            },
-            "required": ["sign"],
-            "additionalProperties": False,
-        },
-        description="Get today's horoscope for an astrological sign.",
-        strict=True,
-    )
-    # [END tool_declaration]
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that can use function tools.",
             tools=[tool],
         ),
-    )
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     # Prompt the model with tools defined
     response = openai_client.responses.create(
         input="What is my horoscope? I am an Aquarius.",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -105,11 +107,6 @@ with (
     response = openai_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Agent response: {response.output_text}")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

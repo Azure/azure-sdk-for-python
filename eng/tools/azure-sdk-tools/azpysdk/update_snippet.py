@@ -206,6 +206,8 @@ class update_snippet(Check):
         self, pkg_dir: str, pkg_name: str, samples_dir: str, args: argparse.Namespace
     ) -> Optional[subprocess.CompletedProcess]:
         """Run black on the sample files of a package using the repo-wide config."""
-        executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
+        executable, _ = self.get_executable(
+            args.isolate, args.command, sys.executable, pkg_dir, python_version=getattr(args, "python_version", None)
+        )
         logger.info(f"Running black on samples for {pkg_name} to format before snippet extraction.")
         return black.format_directory(executable, samples_dir)

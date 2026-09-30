@@ -6,48 +6,28 @@
 # cSpell:disable
 import os
 import pytest
-from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
-from azure.ai.projects.models import (
-    Reasoning,
-    FunctionTool,
-    # ResponseTextFormatConfigurationText,
-)
-
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
 from devtools_testutils.aio import recorded_by_proxy_async
-
 from test_base import servicePreparer
-from test_ai_instrumentor_base import (
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
     TestAiAgentsInstrumentorBase,
-    MessageCreationMode,
     CONTENT_TRACING_ENV_VARIABLE,
 )
-
+from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.core.settings import settings
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 from azure.ai.projects.telemetry._utils import (
-    AZ_NAMESPACE,
-    AZ_NAMESPACE_VALUE,
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_AGENT_VERSION,
-    GEN_AI_CONVERSATION_ID,
     GEN_AI_EVENT_CONTENT,
     GEN_AI_OPERATION_NAME,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_REQUEST_MODEL,
-    GEN_AI_RESPONSE_FINISH_REASONS,
-    GEN_AI_RESPONSE_ID,
-    GEN_AI_RESPONSE_MODEL,
-    GEN_AI_SYSTEM,
-    GEN_AI_USAGE_INPUT_TOKENS,
-    GEN_AI_USAGE_OUTPUT_TOKENS,
     SERVER_ADDRESS,
     GEN_AI_AGENT_TYPE,
     GEN_AI_SYSTEM_INSTRUCTION_EVENT,
     GEN_AI_AGENT_WORKFLOW_EVENT,
-    GEN_AI_CONVERSATION_ITEM_TYPE,
-    AZURE_AI_AGENTS_SYSTEM,
     AGENTS_PROVIDER,
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
@@ -55,7 +35,7 @@ from azure.ai.projects.telemetry._utils import (
 )
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
 class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
@@ -75,7 +55,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with project_client:
             agent_definition = PromptAgentDefinition(
@@ -186,7 +166,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with project_client:
             agent_definition = PromptAgentDefinition(
@@ -241,7 +221,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         else:
             # When using attributes and content recording disabled, verify empty structure
             from azure.ai.projects.telemetry._utils import GEN_AI_SYSTEM_MESSAGE
-            import json
+            import json  # pylint: disable=reimported
 
             assert span.attributes is not None
             assert GEN_AI_SYSTEM_MESSAGE in span.attributes
@@ -286,7 +266,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         from azure.ai.projects.models import WorkflowAgentDefinition
 
         operation_group = "tracing" if content_recording_enabled else "agents"
-        project_client = self.create_async_client(operation_group=operation_group, **kwargs)
+        project_client = self.create_async_client(operation_group=operation_group, allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -383,7 +363,7 @@ trigger:
 
     async def _test_agent_with_structured_output_with_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for structured output with instructions test (async).
 
         :param use_events: If True, use events for messages. If False, use attributes.
@@ -406,7 +386,7 @@ trigger:
         project_client = self.create_async_client(operation_group=operation_group, **kwargs)
 
         async with project_client:
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",
@@ -568,7 +548,7 @@ trigger:
 
     async def _test_agent_with_structured_output_without_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for structured output without instructions test (async).
 
         :param use_events: If True, use events for messages. If False, use attributes.
@@ -591,7 +571,7 @@ trigger:
         project_client = self.create_async_client(operation_group=operation_group, **kwargs)
 
         async with project_client:
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",

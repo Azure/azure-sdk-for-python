@@ -22,16 +22,95 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Any, Optional
-
-from ... import _base
+import threading
+from typing import Dict, Any, Optional, List, TYPE_CHECKING
+from azure.core.utils import CaseInsensitiveDict
+from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
-from .. import routing_range
+from ...exceptions import CosmosHttpResponseError
+from .._routing_map_provider_common import (
+    _resolve_endpoint,
+    prepare_fetch_options_and_headers,
+    process_fetched_ranges,
+    is_cache_unchanged_since_previous,
+    determine_refresh_action,
+    get_smart_overlapping_ranges,
+    _IncrementalMergeFailed,
+    _OverlapDetected,
+    _GapDetected,
+    _handle_transient_snapshot_retry_decision,
+    _DrainPageDecision,
+    evaluate_drain_page,
+)
 
-_LOGGER = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from ...aio._cosmos_client_connection_async import CosmosClientConnection
+
+# Module-level shared state, keyed by endpoint URL. All four dicts and the
+# refcount are mutated only while holding ``_shared_cache_lock``. Sharing across
+# every async CosmosClient that targets the same endpoint is what eliminates
+# the per-client duplicate copies of the routing map (the memory win driving
+# this change), and what lets concurrent readers single-flight a single
+# refresh.
+
+# endpoint -> { collection_id -> CollectionRoutingMap }. The actual cached
+# routing maps. The inner dict is shared by every client for that endpoint, so
+# a routing-map populated by one client is immediately visible to all others.
+_shared_routing_map_cache: dict = {}
+
+# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Per-collection
+# refresh lock, scoped to the asyncio event loop that owns it. We key by loop
+# id (``id(asyncio.get_running_loop())``) because ``asyncio.Lock`` instances
+# bind to the loop on first ``acquire()`` (CPython 3.10+) and raise
+# ``RuntimeError: ... bound to a different event loop`` if reused from a
+# different running loop. Single-flighting only needs to be per-loop in
+# practice — coroutines on different loops have different connection pools
+# and are effectively independent clients.
+_shared_collection_locks: Dict[str, Dict[tuple, asyncio.Lock]] = {}
+
+# endpoint -> threading.Lock. Guards the creation of new entries in the inner
+# dict of ``_shared_collection_locks``. Was an ``asyncio.Lock`` previously,
+# but its critical sections are pure dict reads/writes (no await), so a
+# ``threading.Lock`` works identically and avoids the same loop-binding
+# hazard described above. Without this guard, two coroutines racing on a
+# brand-new (loop, collection_id) could each create a different Lock object
+# and defeat the single-flight invariant.
+_shared_locks_locks: Dict[str, threading.Lock] = {}
+
+# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances
+# using this endpoint. Incremented on construction and decremented in
+# ``release`` (called from ``CosmosClient.__aexit__`` / ``close`` / ``__del__``).
+# When the count hits zero we drop the entry from all four dicts so an idle
+# endpoint does not pin memory forever. ``clear_cache`` does NOT touch this
+# count — it only wipes routing-map contents.
+_shared_cache_refcounts: Dict[str, int] = {}
+
+# Process-wide lock guarding the four dicts above. The sync module
+# (``_routing/routing_map_provider.py``) has its own independent set, so
+# sync and async clients targeting the same endpoint do not share state.
+#
+# A ``threading`` lock (not ``asyncio.Lock``) is used because an
+# ``asyncio.Lock`` binds to the loop that first acquires it, which breaks
+# across multiple event loops in the same process. The critical sections
+# are pure dict reads/writes with no await and no network I/O, so a brief
+# threading-lock acquisition from a coroutine does not meaningfully block
+# the event loop.
+#
+# Reentrant (``RLock``) to tolerate same-thread re-entry (for example
+# ``__del__`` -> ``release()``) if future refactors add allocation points
+# inside this critical section.
+_shared_cache_lock = threading.RLock()
+
 
 # pylint: disable=protected-access
+
+logger = logging.getLogger(__name__)
+# Number of extra incremental attempts after an incomplete incremental merge
+# before falling back to a full routing-map refresh.
+_INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
 
 
 class PartitionKeyRangeCache(object):
@@ -43,131 +122,399 @@ class PartitionKeyRangeCache(object):
     collection on demand.
     """
 
-    def __init__(self, client):
+    page_size_change_feed = "-1"  # Return all available changes
+
+    def __init__(self, client: Any):
         """
         Constructor
         """
 
-        self._documentClient = client
+        self._document_client = client
+        self._endpoint = _resolve_endpoint(client)
+        self._released = False
 
-        # keeps the cached collection routing map by collection id
-        self._collection_routing_map_by_item = {}
+        # Share routing map cache, per-collection asyncio locks, and the lock
+        # that protects lock creation across clients for this endpoint.
+        # Defaults are allocated before locking so this block stays dict-only.
+        new_routing_map: Dict[str, CollectionRoutingMap] = {}
+        new_collection_locks: Dict[tuple, asyncio.Lock] = {}
+        new_locks_lock = threading.Lock()
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
-        """Given a partition key range and a collection, return the list of
-        overlapping partition key ranges.
+        with _shared_cache_lock:
+            # ``setdefault`` preserves existing endpoint entries.
+            routing_map = _shared_routing_map_cache.setdefault(
+                self._endpoint, new_routing_map)
+            collection_locks = _shared_collection_locks.setdefault(
+                self._endpoint, new_collection_locks)
+            locks_lock = _shared_locks_locks.setdefault(
+                self._endpoint, new_locks_lock)
+            # Preserve existing refcount instead of reinitializing.
+            _shared_cache_refcounts[self._endpoint] = (
+                _shared_cache_refcounts.get(self._endpoint, 0) + 1
+            )
 
-        :param str collection_link: The name of the collection.
-        :param list partition_key_ranges: List of partition key range.
-        :param dict feed_options: The request options.
-        :return: List of overlapping partition key ranges.
+            self._collection_routing_map_by_item = routing_map
+            self._collection_locks: Dict[tuple, asyncio.Lock] = collection_locks
+            self._locks_lock: threading.Lock = locks_lock
+
+    def clear_cache(self):
+        """Clear the shared routing map cache for this endpoint.
+
+        Uses in-place ``.clear()`` on the routing-map dict to preserve all
+        client references to the same dict object, so concurrent clients
+        sharing the endpoint continue to share a single cache instance.
+
+        The per-collection locks dict is intentionally **not** cleared here:
+        an in-flight ``_fetch_routing_map`` caller holds one of those locks
+        and will write its result into the (now-empty) shared cache when it
+        completes. Keeping the lock in place ensures that any concurrent
+        arrival serialises behind the in-flight refresh (single-flight
+        invariant) instead of racing it with a fresh lock. The locks dict
+        is evicted in ``release()`` once the endpoint refcount hits zero.
+        """
+        with _shared_cache_lock:
+            if self._endpoint in _shared_routing_map_cache:
+                _shared_routing_map_cache[self._endpoint].clear()
+
+    def release(self) -> None:
+        """Decrement the per-endpoint refcount and evict shared state at zero.
+
+        Safe to call multiple times concurrently. Best-effort: never raises.
+
+        The ``_released`` check-and-set is performed *inside* the shared
+        cache lock to close the TOCTOU window between two concurrent callers
+        (e.g. ``CosmosClient.__aexit__`` racing the GC's ``__del__``).
+        Without the lock, both callers could pass the early-return guard
+        before either set the flag, then both would decrement the refcount.
+        """
+        endpoint = self._endpoint
+        try:
+            with _shared_cache_lock:
+                if self._released:
+                    return
+                self._released = True
+                count = _shared_cache_refcounts.get(endpoint, 0) - 1
+                if count <= 0:
+                    _shared_cache_refcounts.pop(endpoint, None)
+                    _shared_routing_map_cache.pop(endpoint, None)
+                    _shared_collection_locks.pop(endpoint, None)
+                    _shared_locks_locks.pop(endpoint, None)
+                else:
+                    _shared_cache_refcounts[endpoint] = count
+        except Exception:  # pylint: disable=broad-except
+            # release() may be called from __del__ during interpreter shutdown
+            # where module globals may already be torn down.
+            pass
+
+    def __del__(self):
+        # Defensive fallback in case the owning client teardown path didn't
+        # call release(). Must never raise.
+        try:
+            self.release()
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+    async def _get_lock_for_collection(self, collection_id: str) -> asyncio.Lock:
+        """Safely gets or creates a lock for a given (loop, collection) pair.
+
+        Scoped to the running event loop so the returned ``asyncio.Lock`` is
+        always bound to the loop that will await it — see the comment on
+        ``_shared_collection_locks`` for the loop-binding rationale.
+
+        :param str collection_id: The ID of the collection.
+        :return: An asyncio.Lock specific to the (loop, collection) pair.
+        :rtype: asyncio.Lock
+        """
+        key = (id(asyncio.get_running_loop()), collection_id)
+        with self._locks_lock:
+            lock = self._collection_locks.get(key)
+            if lock is None:
+                lock = asyncio.Lock()
+                self._collection_locks[key] = lock
+            return lock
+
+    def _is_cache_stale(
+            self,
+            collection_id: str,
+            previous_routing_map: Optional[CollectionRoutingMap]
+    ) -> bool:
+        """Compatibility shim for legacy call sites and tests.
+
+        :param str collection_id: The collection identifier used as the cache key.
+        :param previous_routing_map: The previously observed routing map, if any.
+        :type previous_routing_map: CollectionRoutingMap or None
+        :return: ``True`` when cached and previous maps have the same generation ETag.
+        :rtype: bool
+        """
+        return is_cache_unchanged_since_previous(
+            self._collection_routing_map_by_item,
+            collection_id,
+            previous_routing_map,
+        )
+
+    async def get_overlapping_ranges(
+            self, collection_link, partition_key_ranges,
+            feed_options: Optional[Dict[str, Any]] = None, **kwargs):
+        """Efficiently gets overlapping ranges for a collection.
+
+        :param str collection_link: The link to the collection.
+        :param list partition_key_ranges: A list of sorted, non-overlapping ranges to find overlaps for.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options used when fetching the routing map.
+        :return: A list of overlapping partition key ranges from the collection.
         :rtype: list
         """
+
+        if not partition_key_ranges:
+            return []  # Return empty list directly instead of delegating to parent
+
+        routing_map = await self.get_routing_map(collection_link, feed_options, **kwargs)
+
+        if routing_map is None:
+            return []
+
+        ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
+        return ranges
+
+    # pylint: disable=invalid-name
+    async def get_routing_map(
+            self,
+            collection_link: str,
+            feed_options: Optional[Dict[str, Any]],
+            force_refresh: bool = False,
+            previous_routing_map: Optional[CollectionRoutingMap] = None,
+            **kwargs: Any
+    ) -> Optional[CollectionRoutingMap]:
+        """Gets or refreshes the routing map for a collection.
+
+        This method handles the logic for fetching, caching, and updating the
+        collection's routing map. It uses a locking mechanism to prevent race
+        conditions during concurrent updates.
+
+        :param str collection_link: The link to the collection.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options.
+        :param bool force_refresh: If True, forces a refresh of the routing map.
+        :param Optional[CollectionRoutingMap] previous_routing_map: The last known routing map,
+            used for incremental updates.
+        :return: The updated or cached CollectionRoutingMap, or None if it couldn't be retrieved.
+        :rtype: Optional[CollectionRoutingMap]
+        """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        pk_range_options = _base.format_pk_range_options(feed_options)
-        await self.init_collection_routing_map_if_needed(collection_link, collection_id, pk_range_options, **kwargs)
 
-        return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
+        # First check (no lock) for the fast path.
+        if not force_refresh:
+            cached_map = self._collection_routing_map_by_item.get(collection_id)
+            if cached_map:
+                return cached_map
 
-    async def init_collection_routing_map_if_needed(
+        # Acquire lock only when a refresh or initial load is likely needed.
+        collection_lock = await self._get_lock_for_collection(collection_id)
+        async with collection_lock:
+            # Second check (with lock) — use shared helper for the decision logic.
+            should_fetch, base_routing_map = determine_refresh_action(
+                self._collection_routing_map_by_item,
+                collection_id,
+                force_refresh,
+                previous_routing_map,
+            )
+
+            if should_fetch:
+                new_routing_map = await self._fetch_routing_map(
+                    collection_link,
+                    collection_id,
+                    base_routing_map,
+                    feed_options,
+                    **kwargs
+                )
+
+                # ``_fetch_routing_map`` always returns a populated
+                # ``CollectionRoutingMap`` on success and raises otherwise --
+                # No defensive None-check needed; one
+                # would only mask a future regression by silently leaving
+                # the cache empty instead of surfacing the failure.
+                self._collection_routing_map_by_item[collection_id] = new_routing_map
+
+            return self._collection_routing_map_by_item.get(collection_id)
+
+
+    # pylint: disable=too-many-statements,too-many-locals
+    async def _fetch_routing_map(
             self,
             collection_link: str,
             collection_id: str,
-            feed_options: dict[str, Any],
-            **kwargs: dict[str, Any]
-    ):
-        collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
-        if collection_routing_map is None:
-            # Pass _internal_pk_range_fetch flag to prevent recursive 410 retry logic
-            # When a 410 partition split error occurs, the SDK calls refresh_routing_map_provider()
-            # which clears the cache and retries. The retry needs partition key ranges, which calls
-            # this method, which triggers _ReadPartitionKeyRanges. If that query also goes through
-            # the 410 retry logic and calls refresh again, we get infinite recursion.
-            _LOGGER.debug(
-                "PK range cache (async): Initializing routing map for collection_id=%s with "
-                "_internal_pk_range_fetch=True to prevent recursive 410 retry.",
-                collection_id
+            previous_routing_map: Optional[CollectionRoutingMap],
+            feed_options: Optional[Dict[str, Any]],
+            **kwargs
+    ) -> CollectionRoutingMap:
+        """Fetches or updates the routing map using an incremental change feed.
+
+        This method handles both the initial loading of a collection's routing
+        map and subsequent incremental updates. If a previous_routing_map is
+        provided, it fetches only the changes since that map was generated.
+        Otherwise, it performs a full read of all partition key ranges. In case
+        of inconsistencies during an incremental update, it automatically falls
+        back to a full refresh.
+
+        Always returns a populated :class:`CollectionRoutingMap` on success.
+        Failure modes raise an exception rather than returning ``None``:
+        ``CosmosHttpResponseError`` for the underlying network call (including
+        the transient HTTP 503 raised once the snapshot-inconsistency retry
+        budget is exhausted), or the internal ``_IncrementalMergeFailed``
+        signal when the incremental-merge path cannot make progress and there
+        is no previous map to fall back on.
+
+        :param str collection_link: The link to the collection.
+        :param str collection_id: The ID of the collection.
+        :param previous_routing_map: The last known routing map for incremental updates.
+        :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
+        :param feed_options: Options for the change feed request.
+        :type feed_options: dict or None
+        :return: The updated or newly created CollectionRoutingMap.
+        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
+        :raises CosmosHttpResponseError: If the underlying ``/pkranges`` fetch
+            fails, or if every snapshot-inconsistency retry exhausts the
+            budget (surfaced as HTTP 503 so the upstream retry policy can
+            take over).
+        """
+        current_previous_map = previous_routing_map
+        incomplete_attempt_count = 0
+        inconsistency_attempt_count = 0
+
+        while True:
+            ranges: List[Dict[str, Any]] = []
+            # Start the change-feed drain at the previous map's etag (if any).
+            # On subsequent drain pages we advance this with the etag returned
+            # for the previous page so the service returns "what's new since X"
+            # until it eventually responds with 304 / no new ranges, mirroring
+            # the .NET and Go SDK behaviour.
+            current_if_none_match = (
+                current_previous_map.change_feed_etag if current_previous_map else None
             )
-            pk_range_kwargs = {**kwargs, "_internal_pk_range_fetch": True}
-            collection_pk_ranges = [pk async for pk in
-                                    self._documentClient._ReadPartitionKeyRanges(collection_link,
-                                                                                 feed_options,
-                                                                                 **pk_range_kwargs)]
-            # for large collections, a split may complete between the read partition key ranges query page responses,
-            # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
-            # to discard the parent ranges to have a valid routing map.
-            collection_pk_ranges = list(PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges))
-            collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(
-                [(r, True) for r in collection_pk_ranges], collection_id
+            new_etag = current_if_none_match
+            # Track whether the service ever surfaced an ETag header during this
+            # drain attempt. If it never did, we want ``process_fetched_ranges``
+            # to surface the "no ETag" observability warning rather than
+            # silently treating ``current_if_none_match`` as the fresh etag.
+            seen_any_etag = False
+
+            # Hoist: ``prepare_fetch_options_and_headers`` is loop-invariant
+            # for this drain attempt -- ``change_feed_options`` depends only on
+            # ``feed_options`` and the headers it builds depend only on
+            # ``current_previous_map.change_feed_etag``, neither of which
+            # change inside the inner drain loop. Compute them once here; the
+            # only per-page mutation is the ``If-None-Match`` override below.
+            base_kwargs_for_headers: Dict[str, Any] = dict(kwargs)
+            change_feed_options = prepare_fetch_options_and_headers(
+                current_previous_map, feed_options, base_kwargs_for_headers
             )
-            self._collection_routing_map_by_item[collection_id] = collection_routing_map
-            _LOGGER.debug(
-                "PK range cache (async): Cached routing map for collection_id=%s with %d ranges",
-                collection_id, len(collection_pk_ranges)
-            )
+            base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
+
+            while True:
+                request_kwargs = dict(kwargs)
+                # Shallow-copy ``base_headers`` so the per-iter
+                # ``If-None-Match`` override does not bleed across iterations.
+                request_kwargs['headers'] = dict(base_headers)
+                response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+                request_kwargs['_internal_response_headers_capture'] = response_headers
+                # Sidecar list -- populated by _Request with the raw wire
+                # status. Lets us terminate on literal 304 (matching peer
+                # SDKs) instead of inferring it from an empty page.
+                status_capture: List[Optional[int]] = [None]
+                request_kwargs['_internal_response_status_capture'] = status_capture
+
+                # Override If-None-Match with the running etag from the drain
+                # so each page advances. ``prepare_fetch_options_and_headers``
+                # only sets it from ``current_previous_map.change_feed_etag``
+                # which never advances during this drain.
+                drain_headers = request_kwargs['headers']
+                if current_if_none_match:
+                    drain_headers[http_constants.HttpHeaders.IfNoneMatch] = current_if_none_match
+                else:
+                    drain_headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
+
+                try:
+                    pk_range_generator = self._document_client._ReadPartitionKeyRanges(
+                        collection_link,
+                        change_feed_options,
+                        **request_kwargs
+                    )
+                    ranges.extend([item async for item in pk_range_generator])
+                except CosmosHttpResponseError as e:
+                    logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                        "Failed to read partition key ranges for collection '%s': %s",
+                        collection_link, e)
+                    raise
+
+                decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
+                    page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),
+                    current_if_none_match=current_if_none_match,
+                    new_etag=new_etag,
+                    seen_any_etag=seen_any_etag,
+                    status_code=status_capture[0],
+                )
+                if decision == _DrainPageDecision.STOP_DRAINED:
+                    break
+
+            try:
+                effective_new_etag = new_etag if seen_any_etag else None
+                return process_fetched_ranges(
+                    ranges, current_previous_map, collection_id, collection_link, effective_new_etag
+                )
+            except _IncrementalMergeFailed:
+                if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:
+                    incomplete_attempt_count += 1
+                    logger.warning(
+                        "Incremental routing-map refresh incomplete for collection '%s'. "
+                        "Retrying incremental fetch (attempt %d/%d).",
+                        collection_link,
+                        incomplete_attempt_count,
+                        _INCOMPLETE_ROUTING_MAP_MAX_RETRIES,
+                    )
+                    continue
+
+                if current_previous_map is not None:
+                    logger.error(
+                        "Incremental routing-map refresh remained incomplete for collection '%s' "
+                        "after %d retry attempt(s). Falling back to full refresh.",
+                        collection_link,
+                        incomplete_attempt_count,
+                    )
+                    current_previous_map = None
+                    continue
+
+                raise
+            except (_OverlapDetected, _GapDetected):
+                # Reset to ``None`` so the next attempt runs a full refresh
+                # instead of merging onto the same inconsistent base.
+                inconsistency_attempt_count += 1
+                backoff = _handle_transient_snapshot_retry_decision(
+                    retry_attempt_count=inconsistency_attempt_count,
+                    collection_link=collection_link,
+                    logger=logger,
+                )
+                await asyncio.sleep(backoff)
+                current_previous_map = None
+                continue
 
     async def get_range_by_partition_key_range_id(
             self,
             collection_link: str,
-            partition_key_range_id: int,
-            feed_options: dict[str, Any],
-            **kwargs: dict[str, Any]
-    ) -> Optional[dict[str, Any]]:
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        pk_range_options = _base.format_pk_range_options(feed_options)
-        await self.init_collection_routing_map_if_needed(collection_link, collection_id, pk_range_options, **kwargs)
+            partition_key_range_id: str,
+            feed_options: Dict[str, Any],
+            **kwargs: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        routing_map = await self.get_routing_map(
+            collection_link,
+            feed_options,
+            force_refresh=False,
+            previous_routing_map=None,
+            **kwargs
+        )
+        if not routing_map:
+            return None
 
-        return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(
-            partition_key_range_id)
-
-    @staticmethod
-    def _discard_parent_ranges(partitionKeyRanges):
-        parentIds = set()
-        for r in partitionKeyRanges:
-            if isinstance(r, dict) and routing_range.PartitionKeyRange.Parents in r:
-                for parentId in r[routing_range.PartitionKeyRange.Parents]:
-                    parentIds.add(parentId)
-        return (r for r in partitionKeyRanges if r[routing_range.PartitionKeyRange.Id] not in parentIds)
+        return routing_map.get_range_by_partition_key_range_id(partition_key_range_id)
 
 
-def _second_range_is_after_first_range(range1, range2):
-    if range1.max > range2.min:
-        ##r.min < #previous_r.max
-        return False
-
-    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
-        # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
-        return False
-
-    return True
-
-
-def _is_sorted_and_non_overlapping(ranges):
-    for idx, r in list(enumerate(ranges))[1:]:
-        previous_r = ranges[idx - 1]
-        if not _second_range_is_after_first_range(previous_r, r):
-            return False
-    return True
-
-
-def _subtract_range(r, partition_key_range):
-    """Evaluates and returns r - partition_key_range
-
-    :param dict partition_key_range: Partition key range.
-    :param routing_range.Range r: query range.
-    :return: The subtract r - partition_key_range.
-    :rtype: routing_range.Range
-    """
-
-    left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
-
-    if left == r.min:
-        leftInclusive = r.isMinInclusive
-    else:
-        leftInclusive = False
-
-    queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
-    return queryRange
 
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
@@ -176,70 +523,19 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
-        """
-        Given the sorted ranges and a collection,
-        Returns the list of overlapping partition key ranges
+    async def get_overlapping_ranges(
+            self, collection_link, partition_key_ranges,
+            feed_options: Optional[Dict[str, Any]] = None, **kwargs):
+        if not partition_key_ranges:
+            return []
 
-        :param str collection_link: The collection link.
-        :param (list of routing_range.Range) partition_key_ranges:
-            The sorted list of non-overlapping ranges.
-        :param dict feed_options: The request options.
-        :return: List of partition key ranges.
-        :rtype: list of dict
-        :raises ValueError:
-            If two ranges in partition_key_ranges overlap or if the list is not sorted
-        """
-
-        # validate if the list is non-overlapping and sorted
-        if not _is_sorted_and_non_overlapping(partition_key_ranges):
-            raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
-
-        target_partition_key_ranges = []
-
-        it = iter(partition_key_ranges)
+        gen = get_smart_overlapping_ranges(partition_key_ranges)
         try:
-            currentProvidedRange = next(it)
+            query_range = next(gen)
             while True:
-                if currentProvidedRange.isEmpty():
-                    # skip and go to the next item\
-                    currentProvidedRange = next(it)
-                    continue
-
-                if target_partition_key_ranges:
-                    queryRange = _subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
-                else:
-                    queryRange = currentProvidedRange
-
-                overlappingRanges =\
-                    await PartitionKeyRangeCache.get_overlapping_ranges(
-                        self,
-                        collection_link,
-                        [queryRange],
-                        feed_options,
-                        **kwargs)
-                assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
-                    queryRange
+                overlapping = await PartitionKeyRangeCache.get_overlapping_ranges(
+                    self, collection_link, [query_range], feed_options, **kwargs
                 )
-                target_partition_key_ranges.extend(overlappingRanges)
-
-                lastKnownTargetRange = routing_range.Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])
-
-                # the overlapping ranges must contain the requested range
-                assert (
-                    currentProvidedRange.max <= lastKnownTargetRange.max
-                ), "code bug: returned overlapping ranges {} does not contain the requested range {}".format(
-                    overlappingRanges, queryRange
-                )
-
-                # the current range is contained in target_partition_key_ranges just move forward
-                currentProvidedRange = next(it)
-
-                while currentProvidedRange.max <= lastKnownTargetRange.max:
-                    # the current range is covered too. just move forward
-                    currentProvidedRange = next(it)
-        except StopIteration:
-            # when the iteration is exhausted we get here. There is nothing else to be done
-            pass
-
-        return target_partition_key_ranges
+                query_range = gen.send(overlapping)
+        except StopIteration as e:
+            return e.value

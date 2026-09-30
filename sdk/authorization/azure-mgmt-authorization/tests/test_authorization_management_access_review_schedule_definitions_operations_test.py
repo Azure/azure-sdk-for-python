@@ -23,4 +23,4 @@ class TestAuthorizationManagementAccessReviewScheduleDefinitionsOperations(Azure
     def test_access_review_schedule_definitions_list(self, resource_group):
         response = self.client.access_review_schedule_definitions.list()
         result = [r for r in response]
-        assert response
+        assert len(result)

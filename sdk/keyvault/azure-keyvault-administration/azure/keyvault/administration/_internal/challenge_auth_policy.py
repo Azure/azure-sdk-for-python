@@ -36,6 +36,12 @@ from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
 
 
+# Key under which the original request is stashed on the per-request pipeline context during the challenge flow.
+# Storing this per-request (rather than on the policy instance) prevents the body of one request from leaking into a
+# subsequent request made by the same client.
+_REQUEST_COPY_KEY = "key_vault_request_copy"
+
+
 def _enforce_tls(request: PipelineRequest) -> None:
     if not request.http_request.url.lower().startswith("https"):
         raise ServiceRequestError(
@@ -58,7 +64,7 @@ def _has_claims(challenge: str) -> bool:
 
 
 def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
-    """Parse challenge from a challenge response, cache it, and return it.
+    """Parse challenge from a challenge response and return it.
 
     :param request: The pipeline request that prompted the challenge response.
     :type request: ~azure.core.pipeline.PipelineRequest
@@ -74,7 +80,6 @@ def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) ->
         challenger.http_response.headers.get("WWW-Authenticate"),
         response_headers=challenger.http_response.headers,
     )
-    ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
     return challenge
 
 
@@ -93,7 +98,6 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         self._credential: TokenProvider = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
-        self._request_copy: Optional[HttpRequest] = None
 
     def send(self, request: PipelineRequest[HttpRequest]) -> PipelineResponse[HttpRequest, HttpResponse]:
         """Authorize request with a bearer token and send it to the next policy.
@@ -184,8 +188,10 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
         # on_challenge will parse that challenge, use the original request including the body, authorize the
         # request, and tell super to send it again.
-        if request.http_request.content:
-            self._request_copy = request.http_request
+        # The original request is stashed on the request's context (per-request), so it cannot leak into a later
+        # request made by the same client. Don't overwrite a previously stashed copy if this is a retry.
+        if request.http_request.content and _REQUEST_COPY_KEY not in request.context:
+            request.context[_REQUEST_COPY_KEY] = request.http_request
             bodiless_request = HttpRequest(
                 method=request.http_request.method,
                 url=request.http_request.url,
@@ -227,9 +233,12 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                     "See https://aka.ms/azsdk/blog/vault-uri for more information."
                 )
 
-        # If we had created a request copy in on_request, use it now to send along the original body content
-        if self._request_copy:
-            request.http_request = self._request_copy
+        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+
+        # If we stashed the original request in on_request, use it now to send along the original body content
+        request_copy = request.context.get(_REQUEST_COPY_KEY)
+        if request_copy:
+            request.http_request = request_copy
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648

@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
+from azure.core.serialization import as_attribute_dict
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml.dsl import pipeline
@@ -808,7 +809,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         with include_private_preview_nodes_in_pipeline():
             pipeline_job = assert_job_cancel(pipeline_job, client)
 
-        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        dsl_pipeline_job_dict = omit_with_wildcard(as_attribute_dict(pipeline_job._to_rest_object()), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "parallel_body": {
                 "_source": "YAML.COMPONENT",
@@ -848,12 +849,12 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
-        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+        assert rest_pipeline_component["properties"]["componentSpec"]["outputs"] == {
             "component_out_file": {"type": "mltable"},
             "component_out_path": {"type": "mltable"},
             "component_out_table": {"type": "mltable"},
         }
-        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+        assert rest_pipeline_component["properties"]["componentSpec"]["jobs"]["parallel_node"] == {
             "body": "${{parent.jobs.parallel_body}}",
             "items": '[{"component_in_number": 3}, {"component_in_number": 4}]',
             "outputs": {
@@ -906,13 +907,13 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
-        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+        assert rest_pipeline_component["properties"]["componentSpec"]["outputs"] == {
             "component_out_boolean": {"type": "string"},
             "component_out_number": {"type": "string"},
             "component_out_path": {"type": "mltable"},
         }
 
-        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+        assert rest_pipeline_component["properties"]["componentSpec"]["jobs"]["parallel_node"] == {
             "body": "${{parent.jobs.parallel_body}}",
             "items": '[{"component_in_number": 1}, {"component_in_number": 2}]',
             "outputs": {

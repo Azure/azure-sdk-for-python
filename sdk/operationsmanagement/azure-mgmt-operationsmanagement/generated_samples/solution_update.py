@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.operationsmanagement import OperationsManagementClient
 
 """
@@ -37,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/preview/2015-11-01-preview/examples/SolutionUpdate.json
+# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/OperationsManagement/preview/2015-11-01-preview/examples/SolutionUpdate.json
 if __name__ == "__main__":
     main()

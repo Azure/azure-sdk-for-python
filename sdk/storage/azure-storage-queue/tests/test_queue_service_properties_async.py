@@ -4,15 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.queue import CorsRule, Metrics, QueueAnalyticsLogging, RetentionPolicy
-from azure.storage.queue.aio import QueueServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import QueuePreparer
+
+from azure.core.exceptions import HttpResponseError
+from azure.storage.queue import (
+    CorsRule,
+    Metrics,
+    QueueAnalyticsLogging,
+    RetentionPolicy,
+)
+from azure.storage.queue.aio import QueueServiceClient
 
 
 class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
@@ -77,8 +82,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -103,7 +107,10 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         # Act
         resp = await qsc.set_service_properties(
-            analytics_logging=QueueAnalyticsLogging(), hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[]
+            analytics_logging=QueueAnalyticsLogging(),
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=[],
         )
 
         # Assert
@@ -121,7 +128,10 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         logging = QueueAnalyticsLogging(
-            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            read=True,
+            write=True,
+            delete=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -139,7 +149,11 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
+        )
 
         # Act
         await qsc.set_service_properties(hour_metrics=hour_metrics)
@@ -157,7 +171,9 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -180,8 +196,18 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
         allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
-        exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
-        allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
+        exposed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-source*",
+            "x-ms-meta-abc",
+            "x-ms-meta-bcd",
+        ]
+        allowed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-target*",
+            "x-ms-meta-xyz",
+            "x-ms-meta-foo",
+        ]
         cors_rule2 = CorsRule(
             allowed_origins,
             allowed_methods,
@@ -202,13 +228,9 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
     # --Test cases for errors ---------------------------------------
 
     @QueuePreparer()
-    async def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Assert
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        pytest.raises(ValueError, RetentionPolicy, True, None)
+    async def test_retention_no_days(self):
+        with pytest.raises(ValueError):
+            RetentionPolicy(True, None)
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -219,12 +241,12 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors = []
-        for _ in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await qsc.set_service_properties()
+            await qsc.set_service_properties(None, None, None, cors)
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -235,12 +257,14 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=366),
         )
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await qsc.set_service_properties()
+            await qsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

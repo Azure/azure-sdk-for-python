@@ -81,7 +81,6 @@
 | azure-mgmt-maps                        | -          |
 | azure-mgmt-marketplaceordering         | M          |
 | azure-mgmt-media                       | M          |
-| azure-mgmt-mixedreality                | -          |
 | azure-mgmt-monitor                     | M          |
 | azure-mgmt-msi                         | 100.00     |
 | azure-mgmt-netapp                      | M          |

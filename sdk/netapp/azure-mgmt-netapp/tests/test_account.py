@@ -1,5 +1,5 @@
 import time
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, AccountProperties, NetAppAccountPatch

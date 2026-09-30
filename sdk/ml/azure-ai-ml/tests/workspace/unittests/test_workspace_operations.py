@@ -7,10 +7,10 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.arm_ml_service.models import Workspace as RestWorkspace
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     CustomerManagedKey,
@@ -187,12 +187,12 @@ class TestWorkspaceOperation:
     def test_begin_diagnose_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
-        mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
+        mocker.patch("azure.ai.ml._restclient.arm_ml_service.models.DiagnoseRequestProperties", return_value=None)
 
     def test_begin_diagnose_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
-        mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
+        mocker.patch("azure.ai.ml._restclient.arm_ml_service.models.DiagnoseRequestProperties", return_value=None)
 
     def test_load_uai_workspace_from_yaml(self, mock_workspace_operation: WorkspaceOperations):
         params_override = []
@@ -227,7 +227,7 @@ class TestWorkspaceOperation:
             # Will return empty dict if serverless_compute_settings is None
             assert len(settings) == 0
         else:
-            RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
+            RestServerlessComputeSettings._deserialize(settings, []) == serverless_compute_settings._to_rest_object()
 
     @pytest.mark.parametrize(
         "new_settings",

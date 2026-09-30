@@ -1,3 +1,6 @@
 {
-  "apiVersion": "2024-12-01"
+  "apiVersion": "2024-12-01",
+  "apiVersions": {
+    "WebPubSubService": "2024-12-01"
+  }
 }

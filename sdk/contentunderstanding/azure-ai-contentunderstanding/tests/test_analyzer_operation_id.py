@@ -10,13 +10,11 @@ Tests for Content Understanding analyzer operation ID functionality.
 """
 
 import pytest
-from unittest.mock import Mock, patch
-from azure.core.polling import LROPoller, PollingMethod
+from unittest.mock import Mock
 from azure.ai.contentunderstanding.models._patch import (
     AnalyzeLROPoller,
     _parse_operation_id,
 )
-from azure.ai.contentunderstanding.models import AnalysisInput
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 
 
@@ -69,7 +67,10 @@ class TestAnalyzeLROPoller:
 
         # Create poller instance
         poller = AnalyzeLROPoller(
-            client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
+            client=Mock(),
+            initial_response=Mock(),
+            deserialization_callback=Mock(),
+            polling_method=mock_polling_method,
         )
 
         # Test operation_id property
@@ -89,7 +90,10 @@ class TestAnalyzeLROPoller:
 
         # Create poller instance
         poller = AnalyzeLROPoller(
-            client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
+            client=Mock(),
+            initial_response=Mock(),
+            deserialization_callback=Mock(),
+            polling_method=mock_polling_method,
         )
 
         # Test operation_id property raises ValueError when header is missing
@@ -111,7 +115,10 @@ class TestAnalyzeLROPoller:
 
         # Create poller instance
         poller = AnalyzeLROPoller(
-            client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
+            client=Mock(),
+            initial_response=Mock(),
+            deserialization_callback=Mock(),
+            polling_method=mock_polling_method,
         )
 
         # Test operation_id property raises ValueError when URL format is invalid

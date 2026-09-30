@@ -17,5 +17,6 @@
         "azure.mgmt.commerce.aio.operations.UsageAggregatesOperations.list": "Microsoft.Commerce.UsageAggregatesOperationGroup.list",
         "azure.mgmt.commerce.operations.RateCardOperations.get": "Microsoft.Commerce.RateCardOperationGroup.get",
         "azure.mgmt.commerce.aio.operations.RateCardOperations.get": "Microsoft.Commerce.RateCardOperationGroup.get"
-    }
+    },
+    "CrossLanguageVersion": "dba286080259"
 }

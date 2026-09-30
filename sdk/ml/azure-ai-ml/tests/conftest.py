@@ -34,7 +34,7 @@ from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Te
 from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 from azure.ai.ml import MLClient, load_component, load_job
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._asset_utils import IgnoreFile
 from azure.ai.ml._utils.utils import hash_dict
@@ -55,6 +55,7 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
+SANITIZED_SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
 
 
@@ -92,13 +93,14 @@ def _query_param_regex(name, *, only_value=True) -> str:
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
-        # compare_bodies=False,
-        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+        compare_bodies=True,
+        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
         ignored_query_parameters="api-version",
+        ignore_query_ordering=True,
     )
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value=SANITIZED_SUBSCRIPTION_ID)
 
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
@@ -109,8 +111,9 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
-    add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
+    tenant_id = os.environ.get("ML_TENANT_ID")
+    if tenant_id:
+        add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
     )
@@ -134,6 +137,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex=r"/LocalUpload/([a-f0-9]{36}[a-f0-9]+)/?", group_for_replace="1"
     )
+    storage_account_name = os.environ.get("ML_TEST_STORAGE_ACCOUNT_NAME")
+    if storage_account_name:
+        add_general_string_sanitizer(
+            value="https://Sanitized.blob.core.windows.net",
+            target=f"https://{storage_account_name}.blob.core.windows.net",
+        )
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
@@ -182,7 +191,7 @@ def mock_operation_config_no_progress() -> OperationConfig:
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
-        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
+        "ML_SUBSCRIPTION_ID": SANITIZED_SUBSCRIPTION_ID,
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
         "ML_FEATURE_STORE_NAME": "00000",
@@ -217,17 +226,13 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 
 @pytest.fixture
 def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
-    mock_response = json.dumps(
-        {
-            "registryName": "testFeed",
-            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
-            "resourceGroup": "resourceGroup",
-            "subscriptionId": "subscriptionId",
-        }
-    )
+    mock_response = Mock()
+    mock_response.primary_region_resource_provider_uri = "https://cert-master.experiments.azureml-test.net/"
+    mock_response.resource_group = "resourceGroup"
+    mock_response.subscription_id = "subscriptionId"
     mocker.patch(
-        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
-        return_val=mock_response,
+        "azure.ai.ml._restclient.registry_discovery.operations._operations.RegistryManagementNonWorkspaceOperations.get_registry_management_non_workspace",
+        return_value=mock_response,
     )
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
@@ -237,19 +242,25 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
     )
 
 
+# set the version manually
 @pytest.fixture
 def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
+    mock = mocker.patch("azure.ai.ml._restclient.arm_ml_service")
+    mock._config.api_version = "2022-10-01"
+    return mock
 
 
 @pytest.fixture
 def mock_aml_services_2022_01_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_01_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2020_09_01_dataplanepreview")
+    # Production code no longer imports v2020_09_01_dataplanepreview (migrated to arm_ml_service). This
+    # fixture is only used as a passed-in service_client mock, so return a plain mock rather than patching the
+    # (now removed) module.
+    return mocker.MagicMock()
 
 
 @pytest.fixture
@@ -259,67 +270,58 @@ def mock_aml_services_workspace_dataplane(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+    # Registry data-plane assets now flow through the shared arm_ml_service hybrid client.
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_06_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_08_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_08_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_10_01")
+    mock = mocker.patch("azure.ai.ml._restclient.arm_ml_service")
+    mock._config.api_version = "2023-10-01"
+    return mock
 
 
 @pytest.fixture
 def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2024_07_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2024_07_01_preview")
+    # Production code no longer imports v2024_01_01_preview (operations were migrated to arm_ml_service). This
+    # fixture is only used as a passed-in service_client mock, so return a plain mock rather than patching the
+    # (now removed) module.
+    return mocker.MagicMock()
 
 
 @pytest.fixture
 def mock_aml_services_2024_10_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2024_10_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2025_01_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2025_01_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
@@ -334,7 +336,9 @@ def mock_registry_discovery_client(mock_credential: DefaultAzureCredential) -> S
 
 @pytest.fixture
 def mock_aml_services_2022_05_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_05_01")
+    mock = mocker.patch("azure.ai.ml._restclient.arm_ml_service")
+    mock._config.api_version = "2022-05-01"
+    return mock
 
 
 @pytest.fixture
@@ -657,6 +661,12 @@ def snapshot_hash_sanitizer(test_proxy):
         value="000000000000000000000000000000000000",
         regex=_query_param_regex("hash"),
         function_scoped=True,
+    )
+    set_custom_default_matcher(
+        compare_bodies=True,
+        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
+        ignored_query_parameters="api-version,hash",
+        ignore_query_ordering=True,
     )
 
 

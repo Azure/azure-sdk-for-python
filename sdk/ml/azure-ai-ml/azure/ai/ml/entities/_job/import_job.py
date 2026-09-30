@@ -7,8 +7,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -17,6 +19,7 @@ from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
 )
@@ -131,19 +134,19 @@ class FileImportSource(ImportSource):
 class ImportJob(Job, JobIOMixin):
     """Import job.
 
-    :param name: Name of the job.
-    :type name: str
-    :param description: Description of the job.
-    :type description: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
+    :keyword name: Name of the job.
+    :paramtype name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword experiment_name:  Name of the experiment the job will be created under.
         If None is provided, default will be set to current directory name.
-    :type experiment_name: str
-    :param source: Input source parameters to the import job.
-    :type source: azure.ai.ml.entities.DatabaseImportSource or FileImportSource
-    :param output: output data binding used in the job.
-    :type output: azure.ai.ml.Output
+    :paramtype experiment_name: str
+    :keyword source: Input source parameters to the import job.
+    :paramtype source: azure.ai.ml.entities.DatabaseImportSource or FileImportSource
+    :keyword output: output data binding used in the job.
+    :paramtype output: azure.ai.ml.Output
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -193,8 +196,14 @@ class ImportJob(Job, JobIOMixin):
             description=self.description,
             compute_id=self.compute,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(_inputs, job_type=self.type),
-            outputs=to_rest_data_outputs({"output": self.output}),
+            # The shared arm_ml_service CommandJob model defaults is_archived to None (omitted on the
+            # wire), but the legacy msrest model serialized isArchived=false on create. Set it explicitly
+            # to keep the wire body identical to the recordings.
+            is_archived=False,
+            # The shared rest helpers emit msrest models; convert each nested child to its
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            inputs=to_hybrid_rest_model(to_rest_dataset_literal_inputs(_inputs, job_type=self.type), RestJobInput),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs({"output": self.output}), RestJobOutput),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
             # No longer applicable once new import job type is ready on MFE in PuP
             # command and environment are required as we use command type for import

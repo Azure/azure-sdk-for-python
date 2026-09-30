@@ -1,22 +1,86 @@
 import argparse
+import fnmatch
 import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, run
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, find_whl
+from ci_tools.functions import install_into_venv, find_whl, get_interpreter_compatible_tags, check_whl_against_tags
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
-MAX_PYTHON_VERSION = (3, 11)
+AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+PYPI_INDEX_URL = "https://pypi.org/simple/"
+
+# Platform tag substrings that identify a Linux-compatible wheel. Used to deterministically pick a
+# wheel when multiple platform-specific wheels (win_amd64/macosx_*/manylinux) are present for the same
+# package/version, e.g. when Build_Extended downloads all three platform build artifacts into a single
+# staging directory for signed-binary packages.
+LINUX_WHEEL_TAG_MARKERS = ("manylinux", "linux_x86_64", "linux_aarch64", "musllinux")
 
 
-def get_package_wheel_path(pkg_root: str) -> str:
+def _glob_whls(whl_dir: str, pkg_name: str, pkg_version: str) -> List[str]:
+    """Return all wheel filenames (relative to whl_dir) matching pkg_name/pkg_version under whl_dir."""
+    pkg_name_format = f"{pkg_name.replace('-', '_')}-{pkg_version}*.whl"
+    whls = []
+    for root, _, filenames in os.walk(whl_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            whls.append(os.path.join(root, filename))
+    return [os.path.relpath(w, whl_dir) for w in whls]
+
+
+def _resolve_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
+    """Find the wheel to use for pkg_name/pkg_version under whl_dir.
+
+    apistub only needs to statically introspect the package's Python-level API surface, and the job
+    that runs it (Build_Extended) always runs on a Linux agent. If Build_Extended has combined
+    multiple platform-specific wheels (win_amd64/macosx_*/manylinux) for the same package/version into
+    one directory (e.g. signed-binary packages), only the Linux wheel is actually usable on that
+    agent, so we pick it deterministically instead of relying on find_whl's interpreter-tag matching,
+    which fails when multiple platform wheels are present and none happen to match the invoking
+    interpreter's tags.
+    """
+    whls = _glob_whls(whl_dir, pkg_name, pkg_version)
+    if len(whls) <= 1:
+        # Single (or no) candidate: defer to find_whl's existing lookup/logging behavior.
+        return find_whl(whl_dir, pkg_name, pkg_version)
+
+    linux_whls = [w for w in whls if any(marker in w for marker in LINUX_WHEEL_TAG_MARKERS)]
+    if linux_whls:
+        if len(linux_whls) > 1:
+            # More than one Linux wheel can legitimately exist for the same package/version, e.g.
+            # cibuildwheel producing separate CPython and PyPy manylinux wheels. Picking blindly
+            # (as an earlier version of this function did) can select a wheel that isn't
+            # installable on the invoking interpreter. Narrow to the one(s) that actually match
+            # this interpreter's tags, same as find_whl does for the single-Linux-wheel case.
+            compatible_tags = get_interpreter_compatible_tags()
+            interpreter_compatible = [w for w in linux_whls if check_whl_against_tags(w, compatible_tags)]
+            if interpreter_compatible:
+                linux_whls = interpreter_compatible
+            else:
+                logger.error(
+                    f"Multiple Linux wheels found for {pkg_name}=={pkg_version} in {whl_dir}, but none match "
+                    f"the invoking interpreter's tags: {linux_whls}"
+                )
+                return find_whl(whl_dir, pkg_name, pkg_version)
+
+        logger.info(
+            f"Multiple platform-specific wheels found for {pkg_name}=={pkg_version} in {whl_dir}; "
+            f"selecting Linux wheel: {linux_whls[0]}"
+        )
+        return linux_whls[0]
+
+    # No Linux wheel among the candidates (e.g. a genuinely ambiguous set); fall back to find_whl's
+    # interpreter-tag matching/error handling.
+    return find_whl(whl_dir, pkg_name, pkg_version)
+
+
+def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> str:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
 
@@ -24,7 +88,7 @@ def get_package_wheel_path(pkg_root: str) -> str:
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
         logger.info("Using prebuilt wheel directory: {}".format(prebuilt_dir))
-        found_whl = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
+        found_whl = _resolve_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
         pkg_path = os.path.join(prebuilt_dir, found_whl) if found_whl else None
         if not pkg_path:
             raise FileNotFoundError(
@@ -33,7 +97,11 @@ def get_package_wheel_path(pkg_root: str) -> str:
                 )
             )
         return pkg_path
-    # Otherwise, use wheel created in staging directory, or fall back on source directory
+    if staging_dir:
+        found_whl = _resolve_whl(staging_dir, pkg_details.name, pkg_details.version)
+        if found_whl:
+            return os.path.join(staging_dir, found_whl)
+    # Otherwise, use a wheel in the source directory, or fall back on the source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
     return pkg_path
 
@@ -58,22 +126,94 @@ class apistub(Check):
             "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
         )
         p.add_argument(
+            "--token-file",
+            dest="token_file",
+            default=False,
+            action="store_true",
+            help="Generate only the raw APIView token file.",
+        )
+        p.add_argument(
             "--dest-dir",
             dest="dest_dir",
             default=None,
-            help="Destination directory for generated API stub token files.",
+            help="Destination directory for generated API stub files.",
+        )
+        p.add_argument(
+            "--generate-from-pypi",
+            dest="generate_from_pypi",
+            default=None,
+            help="Generate the stub from this released PyPI version instead of local source code.",
+        )
+        p.add_argument(
+            "--install-deps",
+            dest="install_deps",
+            default=False,
+            action="store_true",
+            help="Install target package dev requirements before running.",
         )
         p.set_defaults(func=self.run)
+
+    def ensure_apistub_dependencies(self, executable: str, package_dir: str, staging_directory: str) -> None:
+        try:
+            self.run_venv_command(executable, ["-c", "import apistub"], cwd=staging_directory, check=True)
+            return
+        except CalledProcessError:
+            logger.info("apistub module is not installed. Installing APIView dependencies.")
+
+        install_into_venv(
+            executable,
+            [
+                "-r",
+                os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
+                "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+            ],
+            package_dir,
+        )
+
+    def download_pypi_wheel(self, executable: str, package_name: str, version: str, staging_directory: str) -> str:
+        """Download a released wheel from PyPI into the staging directory and return its path."""
+        for index_url in (AZURE_SDK_INDEX_URL, PYPI_INDEX_URL):
+            logger.info(f"Downloading {package_name}=={version} from {index_url}.")
+            try:
+                self.run_venv_command(
+                    executable,
+                    [
+                        "-m",
+                        "pip",
+                        "download",
+                        f"{package_name}=={version}",
+                        "--no-deps",
+                        "--only-binary=:all:",
+                        f"--index-url={index_url}",
+                        "-d",
+                        staging_directory,
+                    ],
+                    cwd=staging_directory,
+                    check=True,
+                    additional_environment_settings={"PIP_EXTRA_INDEX_URL": ""},
+                )
+                break
+            except CalledProcessError as error:
+                if index_url == PYPI_INDEX_URL:
+                    error_details = error.stderr or error.stdout or str(error)
+                    logger.error(
+                        f"Failed to download {package_name}=={version} from both package indexes: {error_details}"
+                    )
+                    raise
+                logger.warning(f"Failed to download from the Azure SDK feed: {error}. Retrying from public PyPI.")
+        found_whl = find_whl(staging_directory, package_name, version)
+        if not found_whl:
+            raise FileNotFoundError(
+                f"No wheel found for package {package_name} version {version} after downloading from PyPI."
+            )
+        return os.path.join(staging_directory, found_whl)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
         logger.info("Running apistub check...")
 
-        if sys.version_info > MAX_PYTHON_VERSION:
-            logger.error(
-                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {MAX_PYTHON_VERSION[0]}.{MAX_PYTHON_VERSION[1]}."
-            )
-            return 1
+        token_file = getattr(args, "token_file", False)
+        generate_markdown = not token_file
 
         set_envvar_defaults()
         targeted = self.get_targeted_directories(args)
@@ -85,50 +225,54 @@ class apistub(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for apistub check")
 
-            # install dependencies
-            self.install_dev_reqs(executable, args, package_dir)
+            install_deps = getattr(args, "install_deps", False)
+
+            if install_deps:
+                # install dependencies
+                self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(
-                    executable,
-                    [
-                        "-r",
-                        os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                    ],
-                    package_dir,
-                )
-            except CalledProcessError as e:
-                logger.error(f"Failed to install dependencies: {e}")
-                return e.returncode
+                self.ensure_apistub_dependencies(executable, package_dir, staging_directory)
+            except (CalledProcessError, RuntimeError) as e:
+                logger.error(f"Failed to install APIView dependencies: {e}")
+                return getattr(e, "returncode", 1)
 
-            if not os.getenv("PREBUILT_WHEEL_DIR"):
-                create_package_and_install(
-                    distribution_directory=staging_directory,
-                    target_setup=package_dir,
-                    skip_install=True,
-                    cache_dir=None,
-                    work_dir=staging_directory,
-                    force_create=False,
-                    package_type="wheel",
-                    pre_download_disabled=False,
-                    python_executable=executable,
-                )
+            generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
 
-            self.pip_freeze(executable)
+            if generate_from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
+            else:
+                if not os.getenv("PREBUILT_WHEEL_DIR"):
+                    create_package_and_install(
+                        distribution_directory=staging_directory,
+                        target_setup=package_dir,
+                        skip_install=True,
+                        cache_dir=None,
+                        work_dir=staging_directory,
+                        force_create=False,
+                        package_type="wheel",
+                        pre_download_disabled=False,
+                        python_executable=executable,
+                    )
+                pkg_path = get_package_wheel_path(package_dir, staging_directory)
 
-            pkg_path = get_package_wheel_path(package_dir)
+            if install_deps:
+                self.pip_freeze(executable)
+
             pkg_path = os.path.abspath(pkg_path)
 
-            dest_dir = getattr(args, "dest_dir", None)
-            if dest_dir:
-                out_token_path = os.path.join(dest_dir, package_name)
-                os.makedirs(out_token_path, exist_ok=True)
-            else:
-                out_token_path = os.path.abspath(staging_directory)
+            out_token_path = os.path.abspath(getattr(args, "dest_dir", None) or package_dir)
+            os.makedirs(out_token_path, exist_ok=True)
 
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
@@ -141,13 +285,63 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
+            if generate_markdown:
+                cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
+                token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                if token_file:
+                    if os.path.exists(token_json_path):
+                        logger.info(f"Generated APIView token file: {token_json_path}")
+                    else:
+                        logger.error(f"Expected APIView token file was not generated: {token_json_path}")
+                        results.append(1)
+                else:
+                    md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "extract_apiview_metadata.py")
+                    logger.info(f"Generating api.md for {package_name}")
+                    try:
+                        result = run(
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        # pwsh script logs the api.md location
+                        if result.stdout:
+                            logger.info(result.stdout)
+
+                        logger.info(f"Extracting API metadata for {package_name}")
+                        metadata_result = run(
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        if metadata_result.stdout:
+                            logger.info(metadata_result.stdout)
+                    except FileNotFoundError:
+                        logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                        results.append(1)
+                    except CalledProcessError as e:
+                        logger.error(f"Failed to generate api.md or extract metadata (exit code {e.returncode}):")
+                        if e.stderr:
+                            logger.error(e.stderr)
+                        if e.stdout:
+                            logger.error(e.stdout)
+                        results.append(1)
             except CalledProcessError as e:
-                logger.error(f"{package_name} exited with error {e.returncode}")
+                logger.error(f"{package_name} exited with error {e.returncode}: {e}")
                 results.append(e.returncode)
 
         return max(results) if results else 0

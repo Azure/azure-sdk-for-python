@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "experimentName": "smoke-experiment",
+    "fineTuningDetails": {
+      "model": {
+        "jobInputType": "mlflow_model",
+        "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+      },
+      "modelProvider": "Custom",
+      "taskType": "textCompletion",
+      "trainingData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/train.csv"
+      }
+    },
+    "isArchived": false,
+    "jobType": "FineTuning",
+    "outputs": {},
+    "properties": {},
+    "tags": {}
+  }
+}

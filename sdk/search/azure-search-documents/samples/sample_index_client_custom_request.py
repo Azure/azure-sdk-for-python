@@ -25,8 +25,8 @@ def sample_send_request():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest
+    from azure.search.documents import DEFAULT_VERSION
     from azure.search.documents.indexes import SearchIndexClient
-    from sample_utils import AZURE_SEARCH_API_VERSION
 
     endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
     index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
@@ -38,7 +38,7 @@ def sample_send_request():
     # while adding convenience for endpoint construction.
     request = HttpRequest(
         method="GET",
-        url=f"/indexes('{index_name}')?api-version={AZURE_SEARCH_API_VERSION}",
+        url=f"/indexes('{index_name}')?api-version={DEFAULT_VERSION.value}",
     )
     response = index_client.send_request(request)
     response.raise_for_status()

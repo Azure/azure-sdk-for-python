@@ -11,6 +11,7 @@ import re
 import tempfile
 import json
 import time
+from threading import Lock
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -18,6 +19,7 @@ from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
@@ -61,9 +63,11 @@ from ._evaluate_aoai import (
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
     OAIEvalRunCreationInfo,
+    WRAPPER_KEY,
 )
 
 LOGGER = logging.getLogger(__name__)
+AZURE_MONITOR_SCOPE = "https://monitor.azure.com/.default"
 
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
@@ -72,6 +76,24 @@ LOGGER = logging.getLogger(__name__)
 METRIC_COLUMN_NAME_REPLACEMENTS = {
     "groundedness_pro_label": "groundedness_pro_passing_rate",
 }
+
+# Property keys that already have dedicated named attributes in
+# ``_log_events_to_app_insights``. They are excluded from the generic
+# ``gen_ai.evaluation.properties`` JSON forwarder so the data is not emitted
+# twice.
+_DEDICATED_EVALUATION_PROPERTY_KEYS = frozenset(
+    (
+        "attack_success",
+        "attack_technique",
+        "attack_complexity",
+        "attack_success_threshold",
+    )
+)
+
+# Maximum serialized length of the ``gen_ai.evaluation.properties`` attribute
+# payload. App Insights caps individual attribute values around 8 KiB; we
+# truncate slightly below that to leave headroom for OTel framing.
+_MAX_EVALUATION_PROPERTIES_JSON_LEN = 7500
 
 
 class __EvaluatorInfo(TypedDict):
@@ -276,8 +298,19 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             )
             continue
         if evaluator_name:
-            # Count the occurrences of each unique value (pass/fail)
-            value_counts = df[col].value_counts().to_dict()
+            try:
+                # Count the occurrences of each unique value (pass/fail)
+                value_counts = df[col].value_counts().to_dict()
+            except TypeError as ex:
+                # Column contains unhashable values (e.g., lists/dicts) and is therefore
+                # not a binary pass/fail result column. Skip it instead of aborting the
+                # entire evaluation aggregation.
+                LOGGER.warning(
+                    "Skipping column '%s' for binary aggregation due to unhashable values: %s",
+                    col,
+                    ex,
+                )
+                continue
 
             # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
             total_rows = len(df)
@@ -978,7 +1011,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
+            aoai_column_mapping = _complete_aoai_default_column_mapping(column_mapping, input_data_df)
+            eval_run_info_list = _begin_aoai_evaluation(graders, aoai_column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1235,10 +1269,11 @@ def _log_events_to_app_insights(
                 if error:
                     standard_log_attributes["error.type"] = error
 
-                # Handle redteam attack properties if present
-                if "properties" in event_data:
-                    properties = event_data["properties"]
-
+                # Handle evaluator-specific structured properties (red-team attack metadata,
+                # rubric dimension scores, etc.). Guard the whole block with an isinstance
+                # check so unexpected payload shapes (None, list, str, ...) cannot raise here.
+                properties = event_data.get("properties")
+                if isinstance(properties, dict):
                     if "attack_success" in properties:
                         internal_log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
 
@@ -1255,6 +1290,41 @@ def _log_events_to_app_insights(
                             properties["attack_success_threshold"]
                         )
 
+                    # Forward any other evaluator-specific structured properties (e.g. rubric
+                    # ``dimension_scores``) as a single JSON attribute so consumers can query
+                    # them in App Insights. Keys with dedicated named attributes above are
+                    # excluded to avoid duplicate emission.
+                    extra_properties = {
+                        k: v for k, v in properties.items() if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
+                    }
+                    if extra_properties:
+                        try:
+                            properties_json = json.dumps(extra_properties, default=str)
+                        except (TypeError, ValueError) as ex:
+                            LOGGER.warning(
+                                "Failed to serialize evaluator properties for App Insights: %s",
+                                ex,
+                            )
+                        else:
+                            if len(properties_json) > _MAX_EVALUATION_PROPERTIES_JSON_LEN:
+                                # Slicing the JSON string would produce an unterminated, invalid
+                                # payload that downstream ``json.loads`` consumers cannot parse.
+                                # Emit a small, valid JSON marker instead so consumers can detect
+                                # the drop and reason about it.
+                                LOGGER.warning(
+                                    "Evaluator properties JSON length %d exceeds %d; "
+                                    "dropping payload from App Insights and emitting truncation marker.",
+                                    len(properties_json),
+                                    _MAX_EVALUATION_PROPERTIES_JSON_LEN,
+                                )
+                                properties_json = json.dumps(
+                                    {
+                                        "truncated": True,
+                                        "original_size_bytes": len(properties_json),
+                                    }
+                                )
+                            internal_log_attributes["gen_ai.evaluation.properties"] = properties_json
+
                 # Add data source item attributes if present
                 if response_id:
                     standard_log_attributes["gen_ai.response.id"] = response_id
@@ -1268,6 +1338,18 @@ def _log_events_to_app_insights(
                     standard_log_attributes["gen_ai.agent.name"] = agent_name
                 if agent_version:
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
+
+                # Add token usage information if present in sample.usage
+                # Normalize sample once so non-dict values do not break sample-derived logging
+                sample = event_data.get("sample")
+                sample = sample if isinstance(sample, dict) else {}
+                # Add token usage information if present in sample.usage
+                usage = sample.get("usage", {})
+                usage = usage if isinstance(usage, dict) else {}
+                if usage.get("prompt_tokens") is not None:
+                    internal_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                if usage.get("completion_tokens") is not None:
+                    internal_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
 
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
@@ -1306,19 +1388,23 @@ def emit_eval_result_events_to_app_insights(
     :type results: List[Dict]
     """
 
+    if not results:
+        LOGGER.debug("No results to log to App Insights")
+        return
+
+    exporter_options = _get_app_insights_exporter_options(app_insights_config)
+    use_entra_authentication = app_insights_config.get("credential_type") == "ProjectManagedIdentity"
+
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
-    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExportResult
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
     from opentelemetry._events import get_event_logger
     from opentelemetry.sdk._events import EventLoggerProvider
 
-    if not results:
-        LOGGER.debug("No results to log to App Insights")
-        return
-
+    logger_provider = None
     try:
         # Configure OpenTelemetry logging with anonymized Resource attributes
 
@@ -1336,10 +1422,16 @@ def emit_eval_result_events_to_app_insights(
         _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
-        azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
+        azure_log_exporter = AzureMonitorLogExporter(**exporter_options)
+        export_result_tracker: Optional["_ExportResultTrackingLogExporter"] = None
+        log_exporter: Any = azure_log_exporter
+        if use_entra_authentication:
+            export_result_tracker = _ExportResultTrackingLogExporter(azure_log_exporter, LogExportResult.FAILURE)
+            log_exporter = export_result_tracker
 
         # Add the Azure Monitor exporter to the logger provider
-        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        # Set export_timeout_millis to prevent individual batch exports from hanging
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter, export_timeout_millis=60000))
 
         # Create event logger
         event_provider = EventLoggerProvider(logger_provider)
@@ -1370,12 +1462,102 @@ def emit_eval_result_events_to_app_insights(
                 evaluator_config=evaluator_config,
                 app_insights_config=app_insights_config,
             )
-        # Force flush to ensure events are sent
-        logger_provider.force_flush()
-        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        # Force flush to ensure events are sent, with a timeout to prevent hanging
+        flush_timeout_millis = 60000  # 60 seconds
+        flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
+        export_failed = export_result_tracker is not None and export_result_tracker.export_failed
+        if export_failed:
+            LOGGER.error("Failed to export evaluation results to App Insights.")
+        if not flush_success:
+            timeout_message = (
+                f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
+                "Some evaluation events may not have been sent."
+            )
+            LOGGER.warning(timeout_message)
+        elif not export_failed:
+            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
 
-    except Exception as e:
-        LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
+    except Exception as ex:
+        LOGGER.error("Failed to emit evaluation results to App Insights: %s", ex)
+    finally:
+        # Shut down the logger provider to stop background threads (e.g. OneSettings
+        # configuration poller) that would otherwise keep the process alive indefinitely.
+        if logger_provider is not None:
+            try:
+                logger_provider.shutdown()
+            except Exception:
+                pass
+
+
+class _AzureMonitorScopedCredential:  # pylint: disable=too-few-public-methods
+    """Delegate token acquisition with Azure Monitor's required scope."""
+
+    def __init__(self, credential: TokenCredential) -> None:
+        self._credential = credential
+
+    def get_token(self, *_scopes: str, **kwargs: Any) -> AccessToken:
+        """Request a fresh Azure Monitor token from the configured credential."""
+        return self._credential.get_token(AZURE_MONITOR_SCOPE, **kwargs)
+
+
+class _ExportResultTrackingLogExporter:  # pylint: disable=too-few-public-methods
+    """Track failures returned by a log exporter running on a worker thread."""
+
+    def __init__(self, exporter: Any, failure_result: Any) -> None:
+        self._exporter = exporter
+        self._failure_result = failure_result
+        self._export_failed = False
+        self._lock = Lock()
+
+    @property
+    def export_failed(self) -> bool:
+        """Return whether any batch export failed."""
+        with self._lock:
+            return self._export_failed
+
+    def export(self, batch: Any) -> Any:
+        """Delegate a batch export and retain its failure status."""
+        try:
+            result = self._exporter.export(batch)
+        except Exception:
+            with self._lock:
+                self._export_failed = True
+            raise
+
+        if result == self._failure_result:
+            with self._lock:
+                self._export_failed = True
+        return result
+
+    def shutdown(self) -> None:
+        """Shut down the wrapped exporter."""
+        self._exporter.shutdown()
+
+
+def _get_app_insights_exporter_options(
+    app_insights_config: AppInsightsConfig,
+) -> Dict[str, Any]:
+    exporter_options: Dict[str, Any] = {"connection_string": app_insights_config["connection_string"]}
+    credential_type = app_insights_config.get("credential_type")
+    if credential_type is None:
+        return exporter_options
+    if credential_type == "ApiKey":
+        exporter_options["credential"] = None
+        return exporter_options
+    if credential_type != "ProjectManagedIdentity":
+        raise EvaluationException(
+            message=f"Unsupported App Insights credential type: {credential_type}.",
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.SYSTEM_ERROR,
+        )
+
+    credential = app_insights_config.get("credential")
+    if credential is None:
+        raise ValueError("App Insights ProjectManagedIdentity authentication requires a TokenCredential.")
+    exporter_options["credential"] = _AzureMonitorScopedCredential(credential)
+    exporter_options["credential_scopes"] = [AZURE_MONITOR_SCOPE]
+    return exporter_options
 
 
 def _preprocess_data(
@@ -1566,6 +1748,41 @@ def _preprocess_data(
         batch_run_client=batch_run_client,
         batch_run_data=batch_run_data,
     )
+
+
+def _complete_aoai_default_column_mapping(
+    column_mapping: Dict[str, Dict[str, str]], input_data_df: pd.DataFrame
+) -> Dict[str, Dict[str, str]]:
+    """Copy automatic mappings for AOAI, retaining nested sources with colliding leaf names."""
+    completed = {name: mapping.copy() for name, mapping in column_mapping.items()}
+    default_mapping = completed.setdefault("default", {})
+    mapped_sources = set(default_mapping.values())
+    # Run outputs occupy root fields inside AOAI's item wrapper, regardless of alias.
+    target_paths = {
+        f"{WRAPPER_KEY}.{source[2:-1].split('.')[-1]}"
+        for source in mapped_sources
+        if source.startswith("${run.outputs.")
+    }
+    for col in sorted(input_data_df.columns):
+        if "." not in col or col.startswith(Prefixes.TSG_OUTPUTS) or col in target_paths:
+            continue
+        source = f"${{data.{col}}}"
+        if source in mapped_sources:
+            continue
+        parts = col.split(".")
+        for depth in range(1, len(parts) + 1):
+            alias = ".".join(parts[-depth:])
+            if alias not in default_mapping:
+                break
+        else:
+            suffix = 1
+            alias = f"{col}__{suffix}"
+            while alias in default_mapping:
+                suffix += 1
+                alias = f"{col}__{suffix}"
+        default_mapping[alias] = source
+        mapped_sources.add(source)
+    return completed
 
 
 def _flatten_object_columns_for_default_mapping(
@@ -2576,7 +2793,8 @@ def _extract_metric_values(
             "score": 4.5,
             "coherence_reason": "Good flow",
             "threshold": 3.0,
-            "sample": {...}
+            "sample": {...},
+            "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
         }
         expected_metrics = ["score"]
 
@@ -2586,13 +2804,32 @@ def _extract_metric_values(
                 "score": 4.5,
                 "reason": "Good flow",
                 "threshold": 3.0,
-                "sample": {...}
+                "sample": {...},
+                "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
             }
         }
+
+    Note: If a ``properties`` key is present in the metrics dict and its value is a dict,
+    it is extracted and attached to every per-metric result entry. This allows evaluators
+    to return additional output fields alongside standard score/reason/threshold values.
     """
     result_per_metric = {}
+    properties = None
 
     for metric_key, metric_value in metrics.items():
+        if metric_key == "properties":
+            if isinstance(metric_value, dict):
+                properties = metric_value
+            else:
+                logger.info(
+                    "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+                    criteria_name,
+                    type(metric_value).__name__,
+                )
+            continue
+        # Skip per-turn breakdown columns; they are per-turn lists, not scalar AOAI result fields, and misroute by suffix into scalar slots.
+        if metric_key == "evaluation_per_turn" or metric_key.startswith("evaluation_per_turn."):
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -2612,6 +2849,11 @@ def _extract_metric_values(
         if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
             _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
 
+    if properties is not None:
+        for metric_dict in result_per_metric.values():
+            if metric_dict is not None and len(metric_dict) > 0:
+                metric_dict["properties"] = properties.copy()
+
     empty_metrics = []
     empty_metrics.extend(
         metric for metric, metric_dict in result_per_metric.items() if metric_dict is None or len(metric_dict) == 0
@@ -2629,12 +2871,22 @@ def _update_metric_value(
     metric: str,
     metric_value: Any,
     logger: logging.Logger,
-) -> Tuple[str, str, str]:
-    """Update metric dictionary with the appropriate field based on metric key.
+) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]:
+    """Update metric dictionary with the appropriate field based on metric key suffix.
 
-    This method processes a single metric key-value pair and updates the metric dictionary
-    with the appropriate field assignment based on the key pattern. It handles various
-    metric types including scores, results, reasons, thresholds, and sample data.
+    Processes a single metric key-value pair and routes it to the correct output field
+    based on the key's suffix pattern. The suffix-to-field mapping is:
+
+    - ``*_score`` / ``score``           → ``metric_dict["score"]``
+    - ``passed``                        → ``metric_dict["passed"]``
+    - ``*_result`` / ``*_label``        → ``metric_dict["label"]`` (+ derives ``passed`` for azure_ai_evaluator)
+    - ``*_reason`` (not *_finish_reason) → ``metric_dict["reason"]``
+    - ``*_threshold``                   → ``metric_dict["threshold"]``
+    - ``*_status`` / ``status``         → ``metric_dict["status"]`` (evaluator-reported execution status)
+    - ``*_properties`` / ``properties`` → ``metric_dict["properties"]`` (must be dict; non-dict values are
+      logged at INFO level and dropped)
+    - ``*_finish_reason`` / ``*_model`` / ``*_sample_*`` / ``*_*_tokens`` → nested under ``metric_dict["sample"]``
+    - Unrecognized keys that don't match known suffixes → ``metric_dict[metric_key]``
 
     :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
     :type criteria_type: str
@@ -2649,25 +2901,32 @@ def _update_metric_value(
     :param logger: Logger instance for warnings/errors
     :type logger: logging.Logger
     :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
-    :rtype: Tuple[str, str, str]
+    :rtype: Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_score"
-        metric_value = 4.5
-
-    Example Output:
+    Example — score key:
+        >>> _update_metric_value("quality", {}, "coherence_score", "coherence", 4.5, logger)
         metric_dict becomes {"score": 4.5}
         Returns: ("score", None, None, None)
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_result"
-        metric_value = "pass"
-
-    Example Output:
+    Example — label key (azure_ai_evaluator derives passed):
+        >>> _update_metric_value("azure_ai_evaluator", {}, "coherence_result", "coherence", "pass", logger)
         metric_dict becomes {"label": "pass", "passed": True}
         Returns: ("label", None, None, True)
+
+    Example — status key:
+        >>> _update_metric_value("quality", {}, "coherence_status", "coherence", "completed", logger)
+        metric_dict becomes {"status": "completed"}
+        Returns: ("status", None, None, None)
+
+    Example — properties key (dict value):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", {"k": "v"}, logger)
+        metric_dict becomes {"properties": {"k": "v"}}
+        Returns: ("properties", None, None, None)
+
+    Example — properties key (non-dict value, dropped with log):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", "bad", logger)
+        metric_dict unchanged; logs INFO "Evaluator returned 'properties' as str instead of dict; ignoring."
+        Returns: (None, None, None, None)
     """
     result_name = None
     result_name_child_level = None
@@ -2683,8 +2942,11 @@ def _update_metric_value(
     elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
         metric_dict["label"] = metric_value
         result_name = "label"
-        if criteria_type == "azure_ai_evaluator":
-            passed = str(metric_value).lower() in ["pass", "true"]
+        if criteria_type == "azure_ai_evaluator" and "passed" not in metric_dict:
+            if metric_value is None:
+                passed = False
+            else:
+                passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
     elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
@@ -2746,6 +3008,18 @@ def _update_metric_value(
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
+    elif metric_key.endswith("_status") or metric_key == "status":
+        metric_dict["status"] = metric_value
+        result_name = "status"
+    elif metric_key.endswith("_properties") or metric_key == "properties":
+        if isinstance(metric_value, dict):
+            metric_dict["properties"] = metric_value
+            result_name = "properties"
+        else:
+            logger.info(
+                "Evaluator returned 'properties' as %s instead of dict; ignoring.",
+                type(metric_value).__name__,
+            )
     elif not any(
         metric_key.endswith(suffix)
         for suffix in [
@@ -2761,6 +3035,8 @@ def _update_metric_value(
             "_total_tokens",
             "_prompt_tokens",
             "_completion_tokens",
+            "_status",
+            "_properties",
         ]
     ):
         # If no score found yet and this doesn't match other patterns, use as score
@@ -2855,7 +3131,8 @@ def _create_result_object(
             "score": 4.5,
             "reason": "Good logical flow",
             "threshold": 3.0,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
         criteria_type = "quality"
 
@@ -2869,8 +3146,13 @@ def _create_result_object(
             "reason": "Good logical flow",
             "threshold": 3.0,
             "passed": None,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
+
+    Note: The ``properties`` field is included only when the evaluator returned a
+    properties dict. It carries additional output fields beyond the standard
+    score/label/reason/threshold/passed values.
     """
     # Extract values
     score = metric_values.get("score")
@@ -2879,10 +3161,20 @@ def _create_result_object(
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
+    properties = metric_values.get("properties")
+    status = metric_values.get("status")
+    if status not in ("completed", "error", "skipped"):
+        status = "completed" if (passed is not None or not _is_none_or_nan(score)) else "error"
 
-    # Handle decrease boolean metrics
-    if is_inverse:
+    # Handle decrease boolean metrics — only apply inverse adjustment for
+    # boolean labels (from safety evaluators like indirect_attack). String
+    # labels like "pass"/"fail" (from code-based evaluators like deflection_rate)
+    # indicate the evaluator already computed direction-aware pass/fail.
+    if is_inverse and not (label is not None and isinstance(label, str)):
         score, label, passed = _adjust_for_inverse_metric(label)
+
+    if status == "skipped":
+        passed = None  # For skipped evaluations, passed should be None regardless of other values
 
     # Create result object
     result_obj = {
@@ -2894,10 +3186,13 @@ def _create_result_object(
         "reason": reason,
         "threshold": threshold,
         "passed": passed,
+        "status": status,
     }
 
     if sample is not None:
         result_obj["sample"] = sample
+    if properties is not None:
+        result_obj["properties"] = properties
 
     return result_obj
 
@@ -3089,6 +3384,7 @@ def _add_error_summaries(
                 "reason": None,
                 "threshold": None,
                 "passed": None,
+                "status": "error",
                 "sample": sample,
             }
             run_output_results.append(error_result)
@@ -3268,6 +3564,14 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     """
     Get the metric name from the testing criteria and metric key.
 
+    Resolution order:
+    1. Direct match against metric_list.
+    2. Legacy f1 special case — the f1 evaluator emits ``f1_result``, ``f1_threshold``
+       (not ``f1_score_result``), so we match the first segment to handle this.
+    3. Prefix-based fallback — sorted longest-first so more-specific metrics
+       match before shorter ones (e.g. ``xpia_manipulated_content`` before ``xpia``).
+    4. Falls back to the testing criteria name.
+
     :param testing_criteria_name: The name of the testing criteria
     :type testing_criteria_name: str
     :param metric_key: The metric key to look for
@@ -3277,27 +3581,21 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
-    metric = None
+    # Direct match against metric list
+    if metric_key in metric_list:
+        return metric_key
 
-    if metric_key == "xpia_manipulated_content":
-        metric = "xpia_manipulated_content"
-        return metric
-    elif metric_key == "xpia_intrusion":
-        metric = "xpia_intrusion"
-        return metric
-    elif metric_key == "xpia_information_gathering":
-        metric = "xpia_information_gathering"
-        return metric
-    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
-        metric = "f1_score"
-        return metric
-    for expected_metric in metric_list:
+    # Legacy: f1 evaluator uses non-standard naming (f1_result instead of f1_score_result)
+    if metric_key.split("_", 1)[0] == "f1":
+        return "f1_score"
+
+    # Prefix-based fallback — sort by length descending so longer (more-specific)
+    # metric names match first (e.g. xpia_manipulated_content before xpia)
+    for expected_metric in sorted(metric_list, key=len, reverse=True):
         if metric_key.startswith(expected_metric):
-            metric = expected_metric
-            break
-    if metric is None:
-        metric = testing_criteria_name
-    return metric
+            return expected_metric
+
+    return testing_criteria_name
 
 
 def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
@@ -3345,13 +3643,13 @@ def _calculate_aoai_evaluation_summary(
 
     Return structure:
     {
-        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int},
+        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int, "skipped": int},
         "per_model_usage": [{"model_name": str, "invocation_count": int, "total_tokens": int, ...}],
-        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int}]
+        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int, "skipped": int, "errored": int}]
     }
     """
     # Calculate result counts based on aoaiResults
-    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
+    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0, "skipped": 0}
 
     # Count results by status and calculate per model usage
     model_usage_stats = {}  # Dictionary to aggregate usage by model
@@ -3365,6 +3663,7 @@ def _calculate_aoai_evaluation_summary(
         passed_count = 0
         failed_count = 0
         error_count = 0
+        skipped_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
@@ -3393,43 +3692,57 @@ def _calculate_aoai_evaluation_summary(
                             f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
                         )
                         continue
-                    # Check if the result has a 'passed' field
-                    if "passed" in result_item and result_item["passed"] is not None:
-                        if testing_criteria not in result_counts_stats:
-                            result_counts_stats[testing_criteria] = {
-                                "testing_criteria": testing_criteria,
-                                "failed": 0,
-                                "passed": 0,
-                            }
-                        if result_item["passed"] is True:
-                            passed_count += 1
-                            result_counts_stats[testing_criteria]["passed"] += 1
-
-                        elif result_item["passed"] is False:
-                            failed_count += 1
-                            result_counts_stats[testing_criteria]["failed"] += 1
+                    # Initialize per-criteria tracking if needed
+                    if testing_criteria not in result_counts_stats:
+                        result_counts_stats[testing_criteria] = {
+                            "testing_criteria": testing_criteria,
+                            "passed": 0,
+                            "failed": 0,
+                            "skipped": 0,
+                            "errored": 0,
+                        }
+                    # Check if the result indicates a skipped status
+                    if result_item.get("status") == "skipped":
+                        skipped_count += 1
+                        result_counts_stats[testing_criteria]["skipped"] += 1
                     # Check if the result indicates an error status
-                    elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
+                    elif result_item.get("status") in ("error", "errored") or (
                         "sample" in result_item
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
                         error_count += 1
+                        result_counts_stats[testing_criteria]["errored"] += 1
+                    # Check if the result has a 'passed' field
+                    elif result_item.get("passed") is not None:
+                        if result_item["passed"] is True:
+                            passed_count += 1
+                            result_counts_stats[testing_criteria]["passed"] += 1
+                        elif result_item["passed"] is False:
+                            failed_count += 1
+                            result_counts_stats[testing_criteria]["failed"] += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
             error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
             error_count += 1
 
-        # Update overall result counts, error counts will not be considered for passed/failed
-        if error_count > 0:
-            result_counts["errored"] += 1
-
-        if failed_count > 0:
-            result_counts["failed"] += 1
-        elif (
-            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
-        ):
+        # Update overall result counts — mutually exclusive row-level classification
+        # Priority: passed (all executed tests passed) > failed > errored > skipped
+        # "Executed" means the evaluator returned a pass/fail verdict; errors/skips are non-executions.
+        total_classified = passed_count + failed_count + error_count + skipped_count
+        if passed_count > 0 and failed_count == 0:
             result_counts["passed"] += 1
+        elif failed_count > 0:
+            result_counts["failed"] += 1
+        elif error_count > 0:
+            result_counts["errored"] += 1
+        elif skipped_count > 0:
+            result_counts["skipped"] += 1
+        else:
+            # No pass/fail/error/skipped verdict — e.g., empty results list,
+            # all results filtered out, or passed=None when a threshold should
+            # have produced a verdict. Default to errored.
+            result_counts["errored"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
@@ -3511,11 +3824,19 @@ def _calculate_aoai_evaluation_summary(
             cur_failed_count = stats_val.get("failed", 0)
             if _is_none_or_nan(cur_failed_count):
                 cur_failed_count = 0
+            cur_skipped = stats_val.get("skipped", 0)
+            if _is_none_or_nan(cur_skipped):
+                cur_skipped = 0
+            cur_errored = stats_val.get("errored", 0)
+            if _is_none_or_nan(cur_errored):
+                cur_errored = 0
             result_counts_stats_val.append(
                 {
                     "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
                     "passed": cur_passed,
                     "failed": cur_failed_count,
+                    "skipped": cur_skipped,
+                    "errored": cur_errored,
                 }
             )
     return {

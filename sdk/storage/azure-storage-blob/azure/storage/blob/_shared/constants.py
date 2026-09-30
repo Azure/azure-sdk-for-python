@@ -6,7 +6,6 @@
 
 from .._serialize import _SUPPORTED_API_VERSIONS
 
-
 X_MS_VERSION = _SUPPORTED_API_VERSIONS[-1]
 
 # Connection defaults

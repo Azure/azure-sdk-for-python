@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -56,7 +55,7 @@ class Authorization(_serialization.Model):
         principal_id: str,
         role_definition_id: str,
         principal_id_display_name: Optional[str] = None,
-        delegated_role_definition_ids: Optional[List[str]] = None,
+        delegated_role_definition_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -199,7 +198,7 @@ class ErrorDefinition(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: str, message: str, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs: Any
+        self, *, code: str, message: str, details: Optional[list["_models.ErrorDefinition"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword code: The error code. Required.
@@ -267,7 +266,7 @@ class JustInTimeAccessPolicy(_serialization.Model):
         *,
         multi_factor_auth_provider: Union[str, "_models.MultiFactorAuthProvider"] = "None",
         maximum_activation_duration: datetime.timedelta = "PT8H",
-        managed_by_tenant_approvers: Optional[List["_models.EligibleApprover"]] = None,
+        managed_by_tenant_approvers: Optional[list["_models.EligibleApprover"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -339,9 +338,9 @@ class MarketplaceRegistrationDefinition(_serialization.Model):
         super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class MarketplaceRegistrationDefinitionList(_serialization.Model):
@@ -368,8 +367,8 @@ class MarketplaceRegistrationDefinitionList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.MarketplaceRegistrationDefinition"]] = None
+        self.next_link: Optional[str] = None
 
 
 class MarketplaceRegistrationDefinitionProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -414,8 +413,8 @@ class MarketplaceRegistrationDefinitionProperties(_serialization.Model):  # pyli
         self,
         *,
         managed_by_tenant_id: str,
-        authorizations: List["_models.Authorization"],
-        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
+        authorizations: list["_models.Authorization"],
+        eligible_authorizations: Optional[list["_models.EligibleAuthorization"]] = None,
         offer_display_name: Optional[str] = None,
         publisher_display_name: Optional[str] = None,
         plan_display_name: Optional[str] = None,
@@ -473,8 +472,8 @@ class Operation(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.display = None
+        self.name: Optional[str] = None
+        self.display: Optional["_models.OperationDisplay"] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -543,7 +542,7 @@ class OperationList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.Operation"]] = None
 
 
 class Plan(_serialization.Model):
@@ -606,15 +605,12 @@ class RegistrationAssignment(_serialization.Model):
     :vartype type: str
     :ivar name: The name of the registration assignment.
     :vartype name: str
-    :ivar system_data: The metadata for the registration assignment resource.
-    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "type": {"readonly": True},
         "name": {"readonly": True},
-        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -622,7 +618,6 @@ class RegistrationAssignment(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -634,10 +629,9 @@ class RegistrationAssignment(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.properties = properties
-        self.id = None
-        self.type = None
-        self.name = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class RegistrationAssignmentList(_serialization.Model):
@@ -664,8 +658,8 @@ class RegistrationAssignmentList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.RegistrationAssignment"]] = None
+        self.next_link: Optional[str] = None
 
 
 class RegistrationAssignmentProperties(_serialization.Model):
@@ -711,8 +705,8 @@ class RegistrationAssignmentProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.registration_definition_id = registration_definition_id
-        self.provisioning_state = None
-        self.registration_definition = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.registration_definition: Optional["_models.RegistrationAssignmentPropertiesRegistrationDefinition"] = None
 
 
 class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Model):  # pylint: disable=name-too-long
@@ -732,15 +726,12 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Mode
     :vartype type: str
     :ivar name: The name of the registration definition.
     :vartype name: str
-    :ivar system_data: The metadata for the registration definition resource.
-    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "type": {"readonly": True},
         "name": {"readonly": True},
-        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -749,7 +740,6 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Mode
         "id": {"key": "id", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -770,10 +760,9 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Mode
         super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
-        self.id = None
-        self.type = None
-        self.name = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(
@@ -824,8 +813,8 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(
         self,
         *,
         description: Optional[str] = None,
-        authorizations: Optional[List["_models.Authorization"]] = None,
-        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
+        authorizations: Optional[list["_models.Authorization"]] = None,
+        eligible_authorizations: Optional[list["_models.EligibleAuthorization"]] = None,
         registration_definition_name: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         managee_tenant_id: Optional[str] = None,
@@ -888,15 +877,12 @@ class RegistrationDefinition(_serialization.Model):
     :vartype type: str
     :ivar name: The name of the registration definition.
     :vartype name: str
-    :ivar system_data: The metadata for the registration assignment resource.
-    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "type": {"readonly": True},
         "name": {"readonly": True},
-        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -905,7 +891,6 @@ class RegistrationDefinition(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -924,10 +909,9 @@ class RegistrationDefinition(_serialization.Model):
         super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
-        self.id = None
-        self.type = None
-        self.name = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class RegistrationDefinitionList(_serialization.Model):
@@ -954,8 +938,8 @@ class RegistrationDefinitionList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.RegistrationDefinition"]] = None
+        self.next_link: Optional[str] = None
 
 
 class RegistrationDefinitionProperties(_serialization.Model):
@@ -1016,10 +1000,10 @@ class RegistrationDefinitionProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        authorizations: List["_models.Authorization"],
+        authorizations: list["_models.Authorization"],
         managed_by_tenant_id: str,
         description: Optional[str] = None,
-        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
+        eligible_authorizations: Optional[list["_models.EligibleAuthorization"]] = None,
         registration_definition_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1046,71 +1030,7 @@ class RegistrationDefinitionProperties(_serialization.Model):
         self.eligible_authorizations = eligible_authorizations
         self.registration_definition_name = registration_definition_name
         self.managed_by_tenant_id = managed_by_tenant_id
-        self.provisioning_state = None
-        self.managee_tenant_id = None
-        self.managee_tenant_name = None
-        self.managed_by_tenant_name = None
-
-
-class SystemData(_serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "created_by": {"key": "createdBy", "type": "str"},
-        "created_by_type": {"key": "createdByType", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.managee_tenant_id: Optional[str] = None
+        self.managee_tenant_name: Optional[str] = None
+        self.managed_by_tenant_name: Optional[str] = None

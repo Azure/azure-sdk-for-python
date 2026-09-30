@@ -11,21 +11,22 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The change category.
-    """
+    """The change category."""
 
     USER = "User"
     SYSTEM = "System"
 
+
 class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the change.
-    """
+    """The type of the change."""
 
     ADD = "Add"
     REMOVE = "Remove"
     UPDATE = "Update"
 
+
 class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level."""
 
     NOISY = "Noisy"
     NORMAL = "Normal"

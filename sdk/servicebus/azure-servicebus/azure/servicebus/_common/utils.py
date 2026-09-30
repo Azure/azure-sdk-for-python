@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+import time
 import datetime
 import logging
 import functools
@@ -37,8 +38,12 @@ from .constants import (
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     USER_AGENT_PREFIX,
+    DEFAULT_SERVER_TIMEOUT_MS,
+    SERVER_TIMEOUT_BUFFER_MS,
+    MAX_SERVER_TIMEOUT_MS,
 )
 from ..amqp import AmqpAnnotatedMessage
+from ..exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
     try:
@@ -87,6 +92,98 @@ def utc_from_timestamp(timestamp: float) -> datetime.datetime:
 
 def utc_now():
     return datetime.datetime.now(timezone.utc)
+
+
+def get_server_timeout_ms(timeout: Optional[float]) -> int:
+    """Return the server-timeout for a management operation, in milliseconds.
+
+    This is a service-side bound, not a client-side one. It clamps at zero, since under
+    a second of remaining time there is no room for the service to answer first, and at
+    the AMQP uint maximum, since the value is encoded as one.
+
+    :param float or None timeout: The caller's remaining timeout in seconds, or None.
+    :rtype: int
+    :returns: The remaining time less the buffer, or the default if no timeout was given.
+    """
+    if timeout is None:
+        return DEFAULT_SERVER_TIMEOUT_MS
+    capped = min(timeout, MAX_SERVER_TIMEOUT_MS / 1000)
+    return max(int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS, 0)
+
+
+def get_attempt_timeout(remaining_timeout: Optional[float], try_timeout: Optional[float]) -> Optional[float]:
+    """Return the timeout for a single attempt of a retryable operation.
+
+    Recomputed per attempt, so a slow attempt does not shrink later attempts' budgets.
+
+    :param float or None remaining_timeout: The caller's remaining timeout in seconds, or None.
+    :param float or None try_timeout: The per-attempt timeout in seconds. None or non-positive means off.
+    :rtype: float or None
+    :returns: The per-attempt timeout capped by the remaining timeout, or None if unbounded.
+    """
+    if try_timeout is None or try_timeout <= 0:
+        return remaining_timeout
+    if remaining_timeout is None:
+        return try_timeout
+    return min(try_timeout, remaining_timeout)
+
+
+def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
+    """Return the absolute time by which an AMQP link must report ready, or None if unbounded.
+
+    Only None means unbounded. A zero or negative timeout is an expired budget, not a
+    missing one, so it yields a deadline that has already passed.
+
+    :param float or None timeout: The per-attempt timeout in seconds, or None.
+    :rtype: float or None
+    :returns: The absolute deadline, or None when the wait is unbounded.
+    """
+    return (time.monotonic() + timeout) if timeout is not None else None
+
+
+def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[float]:
+    """Return the timeout left for the rest of an attempt after link acquisition.
+
+    Keeps one attempt bounded by a single budget rather than restarting it per phase.
+    Raises rather than returning zero, which both transports read as "wait forever".
+
+    :param float or None timeout: The attempt's timeout in seconds, or None if unbounded.
+    :param float started: The time the attempt began.
+    :rtype: float or None
+    :returns: The remaining timeout, or None when unbounded.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If no time is left.
+    """
+    if timeout is None:
+        return None
+    remaining = timeout - (time.monotonic() - started)
+    if remaining <= 0:
+        raise OperationTimeoutError(message="No time left for the operation after acquiring the AMQP link.")
+    return remaining
+
+
+def get_time_until_deadline(deadline: float) -> float:
+    """Return the seconds remaining before an absolute deadline.
+
+    Uses the same clock that created and checks the deadline, so all of the deadline
+    arithmetic moves together when a test fakes time.
+
+    :param float deadline: The absolute deadline.
+    :rtype: float
+    :returns: The seconds left, negative once the deadline has passed.
+    """
+    return deadline - time.monotonic()
+
+
+def check_link_ready_deadline(deadline: Optional[float]) -> None:
+    """Raise if an AMQP link has not reported ready by its deadline.
+
+    Reaching the deadline counts as expired. A strict comparison would also make a zero
+    budget depend on clock resolution, which is coarse on Windows.
+
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    """
+    if deadline is not None and time.monotonic() >= deadline:
+        raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 
 def build_uri(address, entity):
@@ -245,15 +342,37 @@ def transform_outbound_messages(
     return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
 
 
-def strip_protocol_from_uri(uri: str) -> str:
-    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN.
+def strip_protocol_from_uri(uri: str, *, strip_port: bool = True) -> str:
+    """Reduce a URI to its bare host by removing the scheme (e.g. sb://) and path.
+
+    The port is also removed by default (e.g. the ``:443/`` in the ARM-emitted
+    ``https://<ns>.servicebus.windows.net:443/``). Pass ``strip_port=False`` for
+    the development emulator, whose non-default port must be kept.
+
     :param str uri: The URI to modify.
-    :return: The URI without the protocol.
+    :keyword bool strip_port: Whether to also remove a trailing port. Defaults to ``True``.
+    :return: The bare host portion of the URI.
     :rtype: str
     """
+    # Strip the scheme (everything up to and including "//").
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
-        return uri[left_slash_pos + 2 :]
+        uri = uri[left_slash_pos + 2 :]
+    # Strip the path (the first "/" and everything after it).
+    slash_pos = uri.find("/")
+    if slash_pos != -1:
+        uri = uri[:slash_pos]
+    if not strip_port:
+        return uri
+    # Strip the port, but preserve a bracketed IPv6 literal (e.g. "[fe80::1]").
+    if uri.startswith("["):
+        bracket_pos = uri.find("]")
+        if bracket_pos != -1:
+            uri = uri[: bracket_pos + 1]
+    else:
+        colon_pos = uri.find(":")
+        if colon_pos != -1:
+            uri = uri[:colon_pos]
     return uri
 
 

@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, NlpParameterSubspace
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import NlpModels
+from azure.ai.ml.constants._job.automl import NlpLearningRateScheduler
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._job.sweep.search_space import Choice, SweepDistribution
@@ -16,32 +16,32 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class NlpSearchSpace(RestTranslatableMixin):
     """Search space for AutoML NLP tasks.
 
-    :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
+    :keyword gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
         pass. This must be a positive integer., defaults to None
-    :type gradient_accumulation_steps: Optional[Union[int, SweepDistribution]]
-    :param learning_rate: initial learning rate. Must be a float in (0, 1), defaults to None
-    :type learning_rate: Optional[Union[float, SweepDistribution]]
-    :param learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
+    :paramtype gradient_accumulation_steps: Optional[Union[int, SweepDistribution]]
+    :keyword learning_rate: initial learning rate. Must be a float in (0, 1), defaults to None
+    :paramtype learning_rate: Optional[Union[float, SweepDistribution]]
+    :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
         'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup', defaults to None
-    :type learning_rate_scheduler: Optional[Union[str, SweepDistribution]]
-    :param model_name: the model name to use during training. Must choose from 'bert-base-cased',
+    :paramtype learning_rate_scheduler: Optional[Union[str, SweepDistribution]]
+    :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
         'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
         'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
         'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased',
         defaults to None
-    :type model_name: Optional[Union[str, SweepDistribution]]
-    :param number_of_epochs: the number of epochs to train with. Must be a positive integer, defaults to None
-    :type number_of_epochs: Optional[Union[int, SweepDistribution]]
-    :param training_batch_size: the batch size during training. Must be a positive integer, defaults to None
-    :type training_batch_size: Optional[Union[int, SweepDistribution]]
-    :param validation_batch_size: the batch size during validation. Must be a positive integer, defaults to None
-    :type validation_batch_size: Optional[Union[int, SweepDistribution]]
-    :param warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
+    :paramtype model_name: Optional[Union[str, SweepDistribution]]
+    :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer, defaults to None
+    :paramtype number_of_epochs: Optional[Union[int, SweepDistribution]]
+    :keyword training_batch_size: the batch size during training. Must be a positive integer, defaults to None
+    :paramtype training_batch_size: Optional[Union[int, SweepDistribution]]
+    :keyword validation_batch_size: the batch size during validation. Must be a positive integer, defaults to None
+    :paramtype validation_batch_size: Optional[Union[int, SweepDistribution]]
+    :keyword warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
             Must be a float in [0, 1], defaults to None
-    :type warmup_ratio: Optional[Union[float, SweepDistribution]]
-    :param weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
+    :paramtype warmup_ratio: Optional[Union[float, SweepDistribution]]
+    :keyword weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
             the range [0, 1], defaults to None
-    :type weight_decay: Optional[Union[float, SweepDistribution]]
+    :paramtype weight_decay: Optional[Union[float, SweepDistribution]]
 
 
     .. admonition:: Example:
@@ -94,59 +94,71 @@ class NlpSearchSpace(RestTranslatableMixin):
         self.warmup_ratio = warmup_ratio
         self.weight_decay = weight_decay
 
-    def _to_rest_object(self) -> NlpParameterSubspace:
-        return NlpParameterSubspace(
-            gradient_accumulation_steps=(
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``NlpParameterSubspace`` was dropped from the arm_ml_service (2025-12) model set; emit the
+        # camelCase wire dict directly so it round-trips through ``SdkJSONEncoder``.
+        return {
+            "gradientAccumulationSteps": (
                 _convert_to_rest_object(self.gradient_accumulation_steps)
                 if self.gradient_accumulation_steps is not None
                 else None
             ),
-            learning_rate=_convert_to_rest_object(self.learning_rate) if self.learning_rate is not None else None,
-            learning_rate_scheduler=(
+            "learningRate": _convert_to_rest_object(self.learning_rate) if self.learning_rate is not None else None,
+            "learningRateScheduler": (
                 _convert_to_rest_object(self.learning_rate_scheduler)
                 if self.learning_rate_scheduler is not None
                 else None
             ),
-            model_name=_convert_to_rest_object(self.model_name) if self.model_name is not None else None,
-            number_of_epochs=(
+            "modelName": _convert_to_rest_object(self.model_name) if self.model_name is not None else None,
+            "numberOfEpochs": (
                 _convert_to_rest_object(self.number_of_epochs) if self.number_of_epochs is not None else None
             ),
-            training_batch_size=(
+            "trainingBatchSize": (
                 _convert_to_rest_object(self.training_batch_size) if self.training_batch_size is not None else None
             ),
-            validation_batch_size=(
+            "validationBatchSize": (
                 _convert_to_rest_object(self.validation_batch_size) if self.validation_batch_size is not None else None
             ),
-            warmup_ratio=_convert_to_rest_object(self.warmup_ratio) if self.warmup_ratio is not None else None,
-            weight_decay=_convert_to_rest_object(self.weight_decay) if self.weight_decay is not None else None,
-        )
+            "warmupRatio": _convert_to_rest_object(self.warmup_ratio) if self.warmup_ratio is not None else None,
+            "weightDecay": _convert_to_rest_object(self.weight_decay) if self.weight_decay is not None else None,
+        }
 
     @classmethod
-    def _from_rest_object(cls, obj: NlpParameterSubspace) -> "NlpSearchSpace":
+    def _from_rest_object(cls, obj: Dict[str, Any]) -> "NlpSearchSpace":
         return cls(
             gradient_accumulation_steps=(
-                _convert_from_rest_object(obj.gradient_accumulation_steps)
-                if obj.gradient_accumulation_steps is not None
+                _convert_from_rest_object(obj.get("gradientAccumulationSteps"))
+                if obj.get("gradientAccumulationSteps") is not None
                 else None
             ),
-            learning_rate=_convert_from_rest_object(obj.learning_rate) if obj.learning_rate is not None else None,
+            learning_rate=(
+                _convert_from_rest_object(obj.get("learningRate")) if obj.get("learningRate") is not None else None
+            ),
             learning_rate_scheduler=(
-                _convert_from_rest_object(obj.learning_rate_scheduler)
-                if obj.learning_rate_scheduler is not None
+                _convert_from_rest_object(obj.get("learningRateScheduler"))
+                if obj.get("learningRateScheduler") is not None
                 else None
             ),
-            model_name=_convert_from_rest_object(obj.model_name) if obj.model_name is not None else None,
+            model_name=_convert_from_rest_object(obj.get("modelName")) if obj.get("modelName") is not None else None,
             number_of_epochs=(
-                _convert_from_rest_object(obj.number_of_epochs) if obj.number_of_epochs is not None else None
+                _convert_from_rest_object(obj.get("numberOfEpochs")) if obj.get("numberOfEpochs") is not None else None
             ),
             training_batch_size=(
-                _convert_from_rest_object(obj.training_batch_size) if obj.training_batch_size is not None else None
+                _convert_from_rest_object(obj.get("trainingBatchSize"))
+                if obj.get("trainingBatchSize") is not None
+                else None
             ),
             validation_batch_size=(
-                _convert_from_rest_object(obj.validation_batch_size) if obj.validation_batch_size is not None else None
+                _convert_from_rest_object(obj.get("validationBatchSize"))
+                if obj.get("validationBatchSize") is not None
+                else None
             ),
-            warmup_ratio=_convert_from_rest_object(obj.warmup_ratio) if obj.warmup_ratio is not None else None,
-            weight_decay=_convert_from_rest_object(obj.weight_decay) if obj.weight_decay is not None else None,
+            warmup_ratio=(
+                _convert_from_rest_object(obj.get("warmupRatio")) if obj.get("warmupRatio") is not None else None
+            ),
+            weight_decay=(
+                _convert_from_rest_object(obj.get("weightDecay")) if obj.get("weightDecay") is not None else None
+            ),
         )
 
     @classmethod

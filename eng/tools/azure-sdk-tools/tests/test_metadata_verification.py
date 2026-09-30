@@ -12,6 +12,7 @@ import pytest
 import shutil
 import glob
 import sys
+import zipfile
 
 from unittest.mock import MagicMock
 from ci_tools.parsing import ParsedSetup
@@ -237,4 +238,63 @@ def test_verify_conda_section_passes_with_valid_config(tmp_path):
     parsed_pkg = MagicMock()
     parsed_pkg.get_conda_config.return_value = {"in_bundle": True}
     result = verify_conda_section(str(tmp_path), "pkg", parsed_pkg, pypi_versions=["1.0.0"])
+    assert result is True
+
+
+# ======================= disallowed file tests =======================
+
+
+def _create_test_wheel(dist_dir, version, files):
+    wheel_path = os.path.join(dist_dir, f"azure_test_package-{version}-py3-none-any.whl")
+    with zipfile.ZipFile(wheel_path, "w") as wheel_file:
+        for path, content in files.items():
+            wheel_file.writestr(path, content)
+    return wheel_path
+
+
+def test_verify_whl_root_directory_fails_when_api_md_present(monkeypatch, tmp_path):
+    version = "1.0.0"
+    monkeypatch.setattr(
+        "azpysdk.verify_whl.extract_package_metadata", lambda _: {"name": "azure-test-package", "version": version}
+    )
+
+    _create_test_wheel(
+        str(tmp_path),
+        version,
+        {
+            "azure/testpackage/__init__.py": "",
+            "azure/testpackage/api.md": "",
+            f"azure_test_package-{version}.dist-info/METADATA": f"Metadata-Version: 2.1\nName: azure-test-package\nVersion: {version}\n",
+        },
+    )
+
+    parsed_pkg = MagicMock()
+    parsed_pkg.version = version
+    parsed_pkg.name = "azure-test-package"
+
+    result = verify_whl_root_directory(str(tmp_path), "azure", parsed_pkg, sys.executable, pypi_versions=[])
+
+    assert result is False
+
+
+def test_verify_whl_root_directory_passes_without_api_md(monkeypatch, tmp_path):
+    version = "1.0.0"
+    monkeypatch.setattr(
+        "azpysdk.verify_whl.extract_package_metadata", lambda _: {"name": "azure-test-package", "version": version}
+    )
+
+    _create_test_wheel(
+        str(tmp_path),
+        version,
+        {
+            "azure/testpackage/__init__.py": "",
+            f"azure_test_package-{version}.dist-info/METADATA": f"Metadata-Version: 2.1\nName: azure-test-package\nVersion: {version}\n",
+        },
+    )
+
+    parsed_pkg = MagicMock()
+    parsed_pkg.version = version
+    parsed_pkg.name = "azure-test-package"
+
+    result = verify_whl_root_directory(str(tmp_path), "azure", parsed_pkg, sys.executable, pypi_versions=[])
     assert result is True

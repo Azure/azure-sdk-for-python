@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from ._azureappconfigurationprovider import load, AzureAppConfigurationProvider
+from ._load import load
+from ._azureappconfigurationprovider import AzureAppConfigurationProvider
 from ._models import (
     AzureAppConfigurationKeyVaultOptions,
     SettingSelector,

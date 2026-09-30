@@ -29,8 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-eventhub
       safeName: azureeventhub

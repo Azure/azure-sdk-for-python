@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import yaml
 
 from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from .._restclient.v2023_10_01.operations import (  # pylint: disable = unused-import
+from .._restclient.arm_ml_service.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,
@@ -94,12 +94,16 @@ def _archive_or_restore(
 
     version_resource.properties.is_archived = is_archived
     version_resource.properties.stage = "Archived" if is_archived else "Development"
+    # Prune None-valued properties to match the legacy msrest wire body (SdkJSONEncoder would otherwise emit them as
+    # explicit null); stage is intentionally set to a real value above and preserved.
+    from ._asset_utils import _archive_restore_body
+
     poller = version_operation.begin_create_or_update(
         name=name,
         version=version,
         resource_group_name=resource_group_name,
         workspace_name=workspace_name,
-        body=version_resource,
+        body=_archive_restore_body(version_resource, drop_stage=False),
         **kwargs,
     )
     poller.result()

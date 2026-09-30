@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,6 +8,7 @@ import os
 
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
+
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -64,9 +66,7 @@ async def run_sample():
     # new password. Calling set_secret on an existing secret creates a new version of the secret in the Key Vault
     # with the new value.
     updated_secret = await client.set_secret(bank_secret.name, "newSecretValue")
-    print(
-        f"Secret with name '{updated_secret.name}' was updated with new value '{updated_secret.value}'"
-    )
+    print(f"Secret with name '{updated_secret.name}' was updated with new value '{updated_secret.value}'")
 
     # You need to check all the different values your bank account password secret had previously. Lets print all
     # the versions of this secret.
@@ -84,9 +84,7 @@ async def run_sample():
     print("\n.. List deleted secrets from the Key Vault")
     deleted_secrets = client.list_deleted_secrets()
     async for deleted_secret in deleted_secrets:
-        print(
-            f"Secret with name '{deleted_secret.name}' has recovery id '{deleted_secret.recovery_id}'"
-        )
+        print(f"Secret with name '{deleted_secret.name}' has recovery id '{deleted_secret.recovery_id}'")
 
     print("\nrun_sample done")
     await credential.close()

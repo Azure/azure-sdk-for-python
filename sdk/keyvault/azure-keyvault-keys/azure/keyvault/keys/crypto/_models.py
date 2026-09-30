@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -26,7 +27,7 @@ from cryptography.hazmat.primitives.serialization import (
     PublicFormat,
 )
 
-from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from ._enums import EncryptionAlgorithm, KeySecureWrapAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from .._models import JsonWebKey
 
 if TYPE_CHECKING:
@@ -239,8 +240,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         if not result.is_valid:
             raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
-    def recover_data_from_signature(
-        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
+    def recover_data_from_signature(  # type: ignore[override]  # Parameter subset
+        self,
+        signature: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Optional[HashAlgorithm],
     ) -> bytes:
         # pylint: disable=line-too-long
         """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
@@ -317,6 +321,15 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         """
         return self
 
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
+        """
+        return self
+
     def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
     ) -> NoReturn:
@@ -381,7 +394,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         return KeyVaultRSAPublicKey(self._client, self._key)
 
-    def sign(
+    def sign(  # type: ignore[override]  # Parameter subset
         self,
         data: bytes,
         padding: AsymmetricPadding,
@@ -499,6 +512,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         return self
 
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
+        """
+        return self
+
 
 class DecryptResult:
     """The result of a decrypt operation.
@@ -594,6 +616,39 @@ class WrapResult:
     """
 
     def __init__(self, key_id: Optional[str], algorithm: KeyWrapAlgorithm, encrypted_key: bytes) -> None:
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.encrypted_key = encrypted_key
+
+
+class SecureUnwrapResult:
+    """The result of a secure unwrap key operation.
+
+    :param str key_id: Key encryption key's Key Vault identifier.
+    :param algorithm: The secure key wrap algorithm used.
+    :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+    :param bytes key: The unwrapped key.
+    """
+
+    def __init__(self, key_id: Optional[str], algorithm: KeySecureWrapAlgorithm, key: bytes) -> None:
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.key = key
+
+
+class SecureWrapResult:
+    """The result of a secure wrap key operation.
+
+    The secure wrap operation creates a new 256-bit AES key inside the trusted execution environment
+    (TEE) and returns the wrapped key bytes encrypted with the key wrapping key.
+
+    :param str key_id: The wrapping key's Key Vault identifier.
+    :param algorithm: The secure key wrap algorithm used.
+    :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+    :param bytes encrypted_key: The wrapped key bytes generated inside the TEE.
+    """
+
+    def __init__(self, key_id: Optional[str], algorithm: KeySecureWrapAlgorithm, encrypted_key: bytes) -> None:
         self.key_id = key_id
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key

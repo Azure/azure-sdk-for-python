@@ -17,6 +17,144 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AccessRule(_Model):
+    """Access rule in a network security perimeter configuration profile.
+
+    :ivar name: Name of the access rule.
+    :vartype name: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.appconfiguration.models.AccessRuleProperties
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the access rule."""
+    properties: Optional["_models.AccessRuleProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.AccessRuleProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccessRuleProperties(_Model):
+    """Properties of Access Rule.
+
+    :ivar direction: Known values are: "Inbound" and "Outbound".
+    :vartype direction: str or ~azure.mgmt.appconfiguration.models.AccessRuleDirection
+    :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
+    :vartype address_prefixes: list[str]
+    :ivar subscriptions: Subscriptions for inbound rules.
+    :vartype subscriptions:
+     list[~azure.mgmt.appconfiguration.models.AccessRulePropertiesSubscription]
+    :ivar network_security_perimeters: Network security perimeters for inbound rules.
+    :vartype network_security_perimeters:
+     list[~azure.mgmt.appconfiguration.models.NetworkSecurityPerimeter]
+    :ivar fully_qualified_domain_names: Fully qualified domain names (FQDN) for outbound rules.
+    :vartype fully_qualified_domain_names: list[str]
+    :ivar email_addresses: Email addresses for outbound rules.
+    :vartype email_addresses: list[str]
+    :ivar phone_numbers: Phone numbers for outbound rules.
+    :vartype phone_numbers: list[str]
+    """
+
+    direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"Inbound\" and \"Outbound\"."""
+    address_prefixes: Optional[list[str]] = rest_field(
+        name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Address prefixes in the CIDR format for inbound rules."""
+    subscriptions: Optional[list["_models.AccessRulePropertiesSubscription"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subscriptions for inbound rules."""
+    network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = rest_field(
+        name="networkSecurityPerimeters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network security perimeters for inbound rules."""
+    fully_qualified_domain_names: Optional[list[str]] = rest_field(
+        name="fullyQualifiedDomainNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fully qualified domain names (FQDN) for outbound rules."""
+    email_addresses: Optional[list[str]] = rest_field(
+        name="emailAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Email addresses for outbound rules."""
+    phone_numbers: Optional[list[str]] = rest_field(
+        name="phoneNumbers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Phone numbers for outbound rules."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None,
+        address_prefixes: Optional[list[str]] = None,
+        subscriptions: Optional[list["_models.AccessRulePropertiesSubscription"]] = None,
+        network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = None,
+        fully_qualified_domain_names: Optional[list[str]] = None,
+        email_addresses: Optional[list[str]] = None,
+        phone_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccessRulePropertiesSubscription(_Model):
+    """AccessRulePropertiesSubscription.
+
+    :ivar id: The fully qualified Azure resource ID of the subscription e.g.
+     ('/subscriptions/00000000-0000-0000-0000-000000000000').
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified Azure resource ID of the subscription e.g.
+     ('/subscriptions/00000000-0000-0000-0000-000000000000')."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ApiKey(_Model):
     """An API key used for authenticating with a configuration store endpoint.
 
@@ -301,7 +439,8 @@ class ConfigurationStoreProperties(_Model):
     :vartype private_endpoint_connections:
      list[~azure.mgmt.appconfiguration.models.PrivateEndpointConnectionReference]
     :ivar public_network_access: Control permission for data plane traffic coming from public
-     networks while private endpoint is enabled. Known values are: "Enabled" and "Disabled".
+     networks while private endpoint is enabled. Known values are: "Enabled", "Disabled", and
+     "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
     :ivar disable_local_auth: Disables all authentication methods other than AAD authentication.
     :vartype disable_local_auth: bool
@@ -353,7 +492,7 @@ class ConfigurationStoreProperties(_Model):
         name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
     """Control permission for data plane traffic coming from public networks while private endpoint is
-     enabled. Known values are: \"Enabled\" and \"Disabled\"."""
+     enabled. Known values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -428,7 +567,8 @@ class ConfigurationStorePropertiesUpdateParameters(_Model):  # pylint: disable=n
     :ivar disable_local_auth: Disables all authentication methods other than AAD authentication.
     :vartype disable_local_auth: bool
     :ivar public_network_access: Control permission for data plane traffic coming from public
-     networks while private endpoint is enabled. Known values are: "Enabled" and "Disabled".
+     networks while private endpoint is enabled. Known values are: "Enabled", "Disabled", and
+     "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this configuration store.
@@ -460,7 +600,7 @@ class ConfigurationStorePropertiesUpdateParameters(_Model):  # pylint: disable=n
         name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
     """Control permission for data plane traffic coming from public networks while private endpoint is
-     enabled. Known values are: \"Enabled\" and \"Disabled\"."""
+     enabled. Known values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
     enable_purge_protection: Optional[bool] = rest_field(
         name="enablePurgeProtection", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -948,50 +1088,48 @@ class KeyValueFilter(_Model):
 class KeyValueProperties(_Model):
     """All key-value properties.
 
-    :ivar key: The primary identifier of a key-value.
-     The key is used in unison with the label to uniquely identify a key-value.
+    :ivar key: The primary identifier of a key-value. The key is used in unison with the label to
+     uniquely identify a key-value.
     :vartype key: str
-    :ivar label: A value used to group key-values.
-     The label is used in unison with the key to uniquely identify a key-value.
+    :ivar label: A value used to group key-values. The label is used in unison with the key to
+     uniquely identify a key-value.
     :vartype label: str
     :ivar value: The value of the key-value.
     :vartype value: str
-    :ivar content_type: The content type of the key-value's value.
-     Providing a proper content-type can enable transformations of values when they are retrieved by
-     applications.
+    :ivar content_type: The content type of the key-value's value. Providing a proper content-type
+     can enable transformations of values when they are retrieved by applications.
     :vartype content_type: str
     :ivar e_tag: An ETag indicating the state of a key-value within a configuration store.
     :vartype e_tag: str
     :ivar last_modified: The last time a modifying operation was performed on the given key-value.
     :vartype last_modified: ~datetime.datetime
-    :ivar locked: A value indicating whether the key-value is locked.
-     A locked key-value may not be modified until it is unlocked.
+    :ivar locked: A value indicating whether the key-value is locked. A locked key-value may not be
+     modified until it is unlocked.
     :vartype locked: bool
     :ivar tags: A dictionary of tags that can help identify what a key-value may be applicable for.
     :vartype tags: dict[str, str]
     """
 
     key: Optional[str] = rest_field(visibility=["read"])
-    """The primary identifier of a key-value.
-     The key is used in unison with the label to uniquely identify a key-value."""
+    """The primary identifier of a key-value. The key is used in unison with the label to uniquely
+     identify a key-value."""
     label: Optional[str] = rest_field(visibility=["read"])
-    """A value used to group key-values.
-     The label is used in unison with the key to uniquely identify a key-value."""
+    """A value used to group key-values. The label is used in unison with the key to uniquely identify
+     a key-value."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the key-value."""
     content_type: Optional[str] = rest_field(
         name="contentType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The content type of the key-value's value.
-     Providing a proper content-type can enable transformations of values when they are retrieved by
-     applications."""
+    """The content type of the key-value's value. Providing a proper content-type can enable
+     transformations of values when they are retrieved by applications."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """An ETag indicating the state of a key-value within a configuration store."""
     last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """The last time a modifying operation was performed on the given key-value."""
     locked: Optional[bool] = rest_field(visibility=["read"])
-    """A value indicating whether the key-value is locked.
-     A locked key-value may not be modified until it is unlocked."""
+    """A value indicating whether the key-value is locked. A locked key-value may not be modified
+     until it is unlocked."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A dictionary of tags that can help identify what a key-value may be applicable for."""
 
@@ -1276,6 +1414,200 @@ class NameAvailabilityStatus(_Model):
      available."""
     reason: Optional[str] = rest_field(visibility=["read"])
     """If any, the reason that the name is not available."""
+
+
+class NetworkSecurityPerimeter(_Model):
+    """Information about a network security perimeter (NSP).
+
+    :ivar id: Fully qualified Azure resource ID of the NSP resource.
+    :vartype id: str
+    :ivar perimeter_guid: Universal unique ID (UUID) of the network security perimeter.
+    :vartype perimeter_guid: str
+    :ivar location: Location of the network security perimeter.
+    :vartype location: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Fully qualified Azure resource ID of the NSP resource."""
+    perimeter_guid: Optional[str] = rest_field(
+        name="perimeterGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Universal unique ID (UUID) of the network security perimeter."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """Location of the network security perimeter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        perimeter_guid: Optional[str] = None,
+        location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkSecurityPerimeterConfiguration(ProxyResource):
+    """Network security perimeter (NSP) configuration resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appconfiguration.models.SystemData
+    :ivar properties:
+    :vartype properties:
+     ~azure.mgmt.appconfiguration.models.NetworkSecurityPerimeterConfigurationProperties
+    """
+
+    properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+    """Network security configuration properties.
+
+    :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
+     "Accepted", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appconfiguration.models.NetworkSecurityPerimeterConfigurationProvisioningState
+    :ivar provisioning_issues: List of provisioning issues, if any.
+    :vartype provisioning_issues: list[~azure.mgmt.appconfiguration.models.ProvisioningIssue]
+    :ivar network_security_perimeter:
+    :vartype network_security_perimeter:
+     ~azure.mgmt.appconfiguration.models.NetworkSecurityPerimeter
+    :ivar resource_association:
+    :vartype resource_association: ~azure.mgmt.appconfiguration.models.ResourceAssociation
+    :ivar profile:
+    :vartype profile: ~azure.mgmt.appconfiguration.models.NetworkSecurityProfile
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
+        rest_field(name="provisioningState", visibility=["read"])
+    )
+    """Known values are: \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\",
+     \"Failed\", and \"Canceled\"."""
+    provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
+        name="provisioningIssues", visibility=["read"]
+    )
+    """List of provisioning issues, if any."""
+    network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
+        name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    resource_association: Optional["_models.ResourceAssociation"] = rest_field(
+        name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None,
+        resource_association: Optional["_models.ResourceAssociation"] = None,
+        profile: Optional["_models.NetworkSecurityProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkSecurityProfile(_Model):
+    """Network security perimeter configuration profile.
+
+    :ivar name: Name of the profile.
+    :vartype name: str
+    :ivar access_rules_version: Current access rules version.
+    :vartype access_rules_version: int
+    :ivar access_rules: List of Access Rules.
+    :vartype access_rules: list[~azure.mgmt.appconfiguration.models.AccessRule]
+    :ivar diagnostic_settings_version: Current diagnostic settings version.
+    :vartype diagnostic_settings_version: int
+    :ivar enabled_log_categories: List of log categories that are enabled.
+    :vartype enabled_log_categories: list[str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the profile."""
+    access_rules_version: Optional[int] = rest_field(
+        name="accessRulesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current access rules version."""
+    access_rules: Optional[list["_models.AccessRule"]] = rest_field(
+        name="accessRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of Access Rules."""
+    diagnostic_settings_version: Optional[int] = rest_field(
+        name="diagnosticSettingsVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current diagnostic settings version."""
+    enabled_log_categories: Optional[list[str]] = rest_field(
+        name="enabledLogCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of log categories that are enabled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        access_rules_version: Optional[int] = None,
+        access_rules: Optional[list["_models.AccessRule"]] = None,
+        diagnostic_settings_version: Optional[int] = None,
+        enabled_log_categories: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class OperationDefinition(_Model):
@@ -1728,6 +2060,58 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ProvisioningIssue(_Model):
+    """Describes a provisioning issue for a network security perimeter configuration.
+
+    :ivar name: Name of the issue.
+    :vartype name: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.appconfiguration.models.ProvisioningIssueProperties
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Name of the issue."""
+    properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
+
+
+class ProvisioningIssueProperties(_Model):
+    """Details of a provisioning issue for a network security perimeter (NSP) configuration. Resource
+    providers should generate separate provisioning issue elements for each separate issue
+    detected, and include a meaningful and distinctive description, as well as any appropriate
+    suggestedResourceIds and suggestedAccessRules.
+
+    :ivar issue_type: Type of issue. Known values are: "Unknown",
+     "ConfigurationPropagationFailure", "MissingPerimeterConfiguration", and
+     "MissingIdentityConfiguration".
+    :vartype issue_type: str or ~azure.mgmt.appconfiguration.models.IssueType
+    :ivar severity: Severity of the issue. Known values are: "Warning" and "Error".
+    :vartype severity: str or ~azure.mgmt.appconfiguration.models.Severity
+    :ivar description: Description of the issue.
+    :vartype description: str
+    :ivar suggested_resource_ids: Fully qualified resource IDs of suggested resources that can be
+     associated to the network security perimeter (NSP) to remediate the issue.
+    :vartype suggested_resource_ids: list[str]
+    :ivar suggested_access_rules: Access rules that can be added to the network security profile
+     (NSP) to remediate the issue.
+    :vartype suggested_access_rules: list[~azure.mgmt.appconfiguration.models.AccessRule]
+    """
+
+    issue_type: Optional[Union[str, "_models.IssueType"]] = rest_field(name="issueType", visibility=["read"])
+    """Type of issue. Known values are: \"Unknown\", \"ConfigurationPropagationFailure\",
+     \"MissingPerimeterConfiguration\", and \"MissingIdentityConfiguration\"."""
+    severity: Optional[Union[str, "_models.Severity"]] = rest_field(visibility=["read"])
+    """Severity of the issue. Known values are: \"Warning\" and \"Error\"."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """Description of the issue."""
+    suggested_resource_ids: Optional[list[str]] = rest_field(name="suggestedResourceIds", visibility=["read"])
+    """Fully qualified resource IDs of suggested resources that can be associated to the network
+     security perimeter (NSP) to remediate the issue."""
+    suggested_access_rules: Optional[list["_models.AccessRule"]] = rest_field(
+        name="suggestedAccessRules", visibility=["read"]
+    )
+    """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
+
+
 class RegenerateKeyParameters(_Model):
     """The parameters used to regenerate an API key.
 
@@ -1840,6 +2224,41 @@ class ReplicaProperties(_Model):
     )
     """The provisioning state of the replica. Known values are: \"Creating\", \"Succeeded\",
      \"Deleting\", \"Failed\", and \"Canceled\"."""
+
+
+class ResourceAssociation(_Model):
+    """Information about resource association.
+
+    :ivar name: Name of the resource association.
+    :vartype name: str
+    :ivar access_mode: Known values are: "Enforced", "Learning", and "Audit".
+    :vartype access_mode: str or ~azure.mgmt.appconfiguration.models.ResourceAssociationAccessMode
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the resource association."""
+    access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
+        name="accessMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"Enforced\", \"Learning\", and \"Audit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ResourceIdentity(_Model):
@@ -1980,14 +2399,12 @@ class Snapshot(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.appconfiguration.models.SystemData
-    :ivar properties: All snapshot properties.
+    :ivar properties: All snapshot properties. Required.
     :vartype properties: ~azure.mgmt.appconfiguration.models.SnapshotProperties
     """
 
-    properties: Optional["_models.SnapshotProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """All snapshot properties."""
+    properties: "_models.SnapshotProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """All snapshot properties. Required."""
 
     __flattened_items = [
         "provisioning_state",
@@ -2007,7 +2424,7 @@ class Snapshot(ProxyResource):
     def __init__(
         self,
         *,
-        properties: Optional["_models.SnapshotProperties"] = None,
+        properties: "_models.SnapshotProperties",
     ) -> None: ...
 
     @overload

@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "command": "echo docker",
+    "computeId": "smoke-compute",
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {},
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {},
+    "properties": {},
+    "resources": {
+      "dockerArgsList": [
+        "--shm-size=1g",
+        "--ipc=host"
+      ],
+      "instanceCount": 1,
+      "properties": {}
+    },
+    "tags": {}
+  }
+}

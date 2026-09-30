@@ -33,4 +33,4 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
     async def test_list(self, resource_group):
         response = self.client.accounts.list()
         result = [r async for r in response]
-        assert response
+        assert len(result)

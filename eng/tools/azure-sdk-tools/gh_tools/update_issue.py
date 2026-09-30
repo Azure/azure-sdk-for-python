@@ -10,13 +10,14 @@ import json
 import logging
 from github import Github, Auth
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
+root_dir = discover_repo_root()
 
 
 def get_build_info(service_directory: str, package_name: str) -> str:
-    """Get the build info from the build link."""
+    """Get the pylint build info from the CI build logs."""
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
@@ -24,22 +25,25 @@ def get_build_info(service_directory: str, package_name: str) -> str:
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     try:
-        # Make the API request
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
         response_json = json.loads(response.text)
 
         for task in response_json["records"]:
-            if "Run Pylint Next" in task["name"]:
+            if "Run Pylint Next" in task.get("name", ""):
                 log_link = task["log"]["url"] + "?api-version=6.0"
-                # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
-                new_output = (
-                    build_output.split(
-                        f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t {service_directory} --next=True"
-                    )[1]
-                ).split(f"ERROR:root:{package_name} exited with linting error")[0]
-                return new_output
+
+                # Extract next-pylint output from the dispatch_checks.py grouped log format
+                group_marker = f"{package_name} :: next-pylint ::"
+                if group_marker in build_output:
+                    section = build_output.split(group_marker, 1)[1]
+                    # The section ends at the next ##[endgroup] or the end of the log
+                    if "##[endgroup]" in section:
+                        section = section.split("##[endgroup]", 1)[0]
+                    return section.strip()
+
+        return "No next-pylint output found in build logs."
     except Exception as e:
         logging.error(f"Exception occurred while getting build info: {e}")
         return "Error getting build info"
@@ -84,7 +88,7 @@ if __name__ == "__main__":
         description="""
     This script is the single point for all checks invoked by CI within this repo. It works in two phases.
         1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
-        2. Invoke one or multiple `tox` environments for each package identified as in scope.
+        2. Invoke one or multiple checks for each package identified as in scope.
 
     In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
     """

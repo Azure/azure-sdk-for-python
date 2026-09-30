@@ -33,9 +33,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_backup_instances_adhoc_backup_request,
     build_backup_instances_create_or_update_request,
@@ -73,6 +74,8 @@ from ...operations._operations import (
     build_deleted_backup_instances_get_request,
     build_deleted_backup_instances_list_request,
     build_deleted_backup_instances_undelete_request,
+    build_deleted_backup_vaults_get_request,
+    build_deleted_backup_vaults_list_by_location_request,
     build_dpp_resource_guard_proxy_create_or_update_request,
     build_dpp_resource_guard_proxy_delete_request,
     build_dpp_resource_guard_proxy_get_request,
@@ -115,11 +118,10 @@ from .._configuration import DataProtectionMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class DataProtectionOperationsOperations:
+class DataProtectionOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -183,7 +185,10 @@ class DataProtectionOperationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -196,7 +201,10 @@ class DataProtectionOperationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -212,7 +220,10 @@ class DataProtectionOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -220,7 +231,7 @@ class DataProtectionOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
+class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -285,6 +296,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -299,13 +311,16 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.BackupInstanceResource, response.json())
 
@@ -372,7 +387,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -385,7 +403,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupInstanceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupInstanceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -401,7 +422,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -412,7 +436,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForBackupRequest, _types.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -451,6 +475,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -464,7 +489,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -474,7 +502,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -515,7 +543,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateForBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -528,7 +556,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateForBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -573,7 +601,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForBackupRequest, _types.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
@@ -583,10 +611,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateForBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateForBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or
+         ~azure.mgmt.dataprotection.types.ValidateForBackupRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -689,6 +717,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -703,11 +732,14 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupInstanceResource, response.json())
 
@@ -721,7 +753,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupInstanceResource, _types.BackupInstanceResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -764,6 +796,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -777,7 +810,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -791,7 +827,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -839,7 +875,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.BackupInstanceResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -855,7 +891,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BackupInstanceResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -909,7 +945,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupInstanceResource, _types.BackupInstanceResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -923,9 +959,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BackupInstanceResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a BackupInstanceResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or
+         ~azure.mgmt.dataprotection.types.BackupInstanceResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns BackupInstanceResource. The
@@ -1025,6 +1062,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1038,7 +1076,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1048,7 +1089,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1131,7 +1172,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerBackupRequest, _types.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1171,6 +1212,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1184,7 +1226,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1194,7 +1239,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1239,7 +1284,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.TriggerBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1254,7 +1299,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.TriggerBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1303,7 +1348,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerBackupRequest, _types.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
@@ -1315,9 +1360,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         TriggerBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a TriggerBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or
+         ~azure.mgmt.dataprotection.types.TriggerBackupRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -1382,7 +1428,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateForModifyBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForModifyBackupRequest, _types.ValidateForModifyBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1422,6 +1468,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1435,7 +1482,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1444,7 +1494,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1487,7 +1537,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateForModifyBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1502,7 +1552,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateForModifyBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1547,7 +1597,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateForModifyBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForModifyBackupRequest, _types.ValidateForModifyBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Validate whether update for backup instance will be successful or not.
@@ -1559,10 +1609,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateForModifyBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForModifyBackupRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateForModifyBackupRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForModifyBackupRequest or
+         ~azure.mgmt.dataprotection.types.ValidateForModifyBackupRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1620,7 +1670,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRehydrationRequest, _types.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1660,6 +1710,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1673,7 +1724,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1683,7 +1737,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1726,7 +1780,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupRehydrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1741,7 +1795,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupRehydrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1786,7 +1840,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRehydrationRequest, _types.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
@@ -1798,10 +1852,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupRehydrationRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a AzureBackupRehydrationRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupRehydrationRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1859,7 +1913,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -1902,6 +1956,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1915,7 +1970,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1925,7 +1983,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1973,7 +2031,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupRestoreRequest,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -1989,7 +2047,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2043,7 +2101,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -2057,10 +2115,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupRestoreRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a AzureBackupRestoreRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
@@ -2153,6 +2211,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2166,7 +2225,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2176,7 +2238,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2245,6 +2307,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     async def _resume_protection_initial(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -2275,6 +2350,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2288,7 +2364,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2298,7 +2377,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2306,6 +2385,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     async def begin_resume_protection(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -2372,7 +2464,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.StopProtectionRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, _types.StopProtectionRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -2419,6 +2511,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2432,7 +2525,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2442,7 +2538,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2488,7 +2584,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.StopProtectionRequest] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -2504,7 +2600,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.StopProtectionRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2554,7 +2650,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.StopProtectionRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, _types.StopProtectionRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -2568,9 +2664,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         StopProtectionRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a StopProtectionRequest type or
+         a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest or
+         ~azure.mgmt.dataprotection.types.StopProtectionRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns None
@@ -2632,7 +2729,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.SuspendBackupRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, _types.SuspendBackupRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -2679,6 +2776,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2692,7 +2790,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2702,7 +2803,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2749,7 +2850,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.SuspendBackupRequest] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -2766,7 +2867,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.SuspendBackupRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2817,7 +2918,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.SuspendBackupRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, _types.SuspendBackupRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -2832,9 +2933,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         SuspendBackupRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a SuspendBackupRequest type or
+         a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest or
+         ~azure.mgmt.dataprotection.types.SuspendBackupRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns None
@@ -2896,7 +2998,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, JSON, IO[bytes]],
+        parameters: Union[_models.SyncBackupInstanceRequest, _types.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2936,6 +3038,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2949,7 +3052,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2959,7 +3065,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2977,8 +3083,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Sync backup instance again in case of failure
-        This action will retry last failed operation and will bring backup instance to valid state.
+        """Sync backup instance again in case of failure This action will retry last failed operation and
+        will bring backup instance to valid state.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3003,13 +3109,13 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.SyncBackupInstanceRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Sync backup instance again in case of failure
-        This action will retry last failed operation and will bring backup instance to valid state.
+        """Sync backup instance again in case of failure This action will retry last failed operation and
+        will bring backup instance to valid state.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3019,7 +3125,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.SyncBackupInstanceRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3039,8 +3145,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Sync backup instance again in case of failure
-        This action will retry last failed operation and will bring backup instance to valid state.
+        """Sync backup instance again in case of failure This action will retry last failed operation and
+        will bring backup instance to valid state.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3065,11 +3171,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, JSON, IO[bytes]],
+        parameters: Union[_models.SyncBackupInstanceRequest, _types.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Sync backup instance again in case of failure
-        This action will retry last failed operation and will bring backup instance to valid state.
+        """Sync backup instance again in case of failure This action will retry last failed operation and
+        will bring backup instance to valid state.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3078,10 +3184,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         SyncBackupInstanceRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a SyncBackupInstanceRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or
+         ~azure.mgmt.dataprotection.types.SyncBackupInstanceRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3139,7 +3245,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3179,6 +3285,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3192,7 +3299,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3202,7 +3312,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3247,7 +3357,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3262,7 +3372,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3311,7 +3421,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
@@ -3323,10 +3433,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateRestoreRequestObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateRestoreRequestObject type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or
+         ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -3390,7 +3500,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, _types.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3429,6 +3539,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3442,7 +3553,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3452,7 +3566,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3493,7 +3607,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3506,7 +3620,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for trigger CRR operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3551,7 +3665,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, _types.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Triggers Cross Region Restore for BackupInstance.
@@ -3561,10 +3675,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for trigger CRR operation. Is one of the following types:
-         CrossRegionRestoreRequestObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or JSON or
-         IO[bytes]
+        :param parameters: Request body for trigger CRR operation. Is either a
+         CrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreRequestObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -3627,7 +3741,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ValidateCrossRegionRestoreRequestObject, _types.ValidateCrossRegionRestoreRequestObject, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3666,6 +3782,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3679,7 +3796,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3689,7 +3809,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3730,7 +3850,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.ValidateCrossRegionRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3743,7 +3863,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateCrossRegionRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3788,7 +3908,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ValidateCrossRegionRestoreRequestObject, _types.ValidateCrossRegionRestoreRequestObject, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validates whether Cross Region Restore can be triggered for DataSource.
@@ -3798,10 +3920,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a
+         ValidateCrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.ValidateCrossRegionRestoreRequestObject or
-         JSON or IO[bytes]
+         ~azure.mgmt.dataprotection.types.ValidateCrossRegionRestoreRequestObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -3861,7 +3983,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class BackupVaultOperationResultsOperations:
+class BackupVaultOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3922,6 +4044,7 @@ class BackupVaultOperationResultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3936,14 +4059,17 @@ class BackupVaultOperationResultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.BackupVaultResource, response.json())
 
@@ -3960,7 +4086,202 @@ class BackupVaultOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class ResourceGuardsOperations:
+class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`deleted_backup_vaults` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-09-01",
+        params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+    )
+    async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedBackupVaultResource:
+        """Gets a deleted backup vault.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param deleted_vault_name: The name of the DeletedBackupVaultResource. Required.
+        :type deleted_vault_name: str
+        :return: DeletedBackupVaultResource. The DeletedBackupVaultResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.DeletedBackupVaultResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeletedBackupVaultResource] = kwargs.pop("cls", None)
+
+        _request = build_deleted_backup_vaults_get_request(
+            location=location,
+            deleted_vault_name=deleted_vault_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DeletedBackupVaultResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-09-01",
+        params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+    )
+    def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedBackupVaultResource"]:
+        """Lists deleted backup vaults by location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of DeletedBackupVaultResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.DeletedBackupVaultResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DeletedBackupVaultResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_deleted_backup_vaults_list_by_location_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DeletedBackupVaultResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ResourceGuardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4022,6 +4343,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4036,11 +4358,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -4108,7 +4433,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4121,7 +4449,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4137,7 +4468,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4185,6 +4519,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4199,11 +4534,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceGuardResource, response.json())
 
@@ -4244,7 +4582,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceGuardResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4257,7 +4595,7 @@ class ResourceGuardsOperations:
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ResourceGuardResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4298,7 +4636,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: Union[_models.ResourceGuardResource, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceGuardResource, _types.ResourceGuardResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardResource:
         """Creates or updates a ResourceGuard resource belonging to a resource group.
@@ -4308,9 +4646,10 @@ class ResourceGuardsOperations:
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ResourceGuardResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a ResourceGuardResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardResource or
+         ~azure.mgmt.dataprotection.types.ResourceGuardResource or IO[bytes]
         :return: ResourceGuardResource. The ResourceGuardResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4351,6 +4690,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4365,11 +4705,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceGuardResource, response.json())
 
@@ -4411,7 +4754,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: JSON,
+        parameters: _types.PatchResourceGuardInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4425,7 +4768,7 @@ class ResourceGuardsOperations:
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.PatchResourceGuardInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4467,7 +4810,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: Union[_models.PatchResourceGuardInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceGuardInput, _types.PatchResourceGuardInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardResource:
         """Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
@@ -4478,10 +4821,10 @@ class ResourceGuardsOperations:
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         PatchResourceGuardInput, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a PatchResourceGuardInput type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput or
+         ~azure.mgmt.dataprotection.types.PatchResourceGuardInput or IO[bytes]
         :return: ResourceGuardResource. The ResourceGuardResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4522,6 +4865,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4536,11 +4880,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceGuardResource, response.json())
 
@@ -4597,7 +4944,10 @@ class ResourceGuardsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4658,7 +5008,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4671,7 +5024,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceGuardResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceGuardResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4687,7 +5043,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4743,7 +5102,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4756,7 +5118,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceGuardResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceGuardResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4772,7 +5137,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4824,6 +5192,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4838,11 +5207,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -4910,7 +5282,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4923,7 +5298,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4939,7 +5317,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4991,6 +5372,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5005,11 +5387,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -5077,7 +5462,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5090,7 +5478,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5106,7 +5497,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5158,6 +5552,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5172,11 +5567,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -5244,7 +5642,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5257,7 +5658,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5273,7 +5677,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5325,6 +5732,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5339,11 +5747,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -5411,7 +5822,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5424,7 +5838,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5440,7 +5857,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5492,6 +5912,7 @@ class ResourceGuardsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5506,11 +5927,14 @@ class ResourceGuardsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DppBaseResource, response.json())
 
@@ -5578,7 +6002,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5591,7 +6018,10 @@ class ResourceGuardsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DppBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DppBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5607,7 +6037,10 @@ class ResourceGuardsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5615,7 +6048,7 @@ class ResourceGuardsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupVaultsOperations:
+class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5671,6 +6104,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5685,11 +6119,14 @@ class BackupVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupVaultResource, response.json())
 
@@ -5698,13 +6135,18 @@ class BackupVaultsOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.BackupVaultResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupVaultResource, _types.BackupVaultResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
+        x_ms_deleted_vault_id: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5733,6 +6175,7 @@ class BackupVaultsOperations:
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
             x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
+            x_ms_deleted_vault_id=x_ms_deleted_vault_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5744,6 +6187,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5757,7 +6201,10 @@ class BackupVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5765,7 +6212,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5780,6 +6227,7 @@ class BackupVaultsOperations:
         parameters: _models.BackupVaultResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
+        x_ms_deleted_vault_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
@@ -5794,6 +6242,9 @@ class BackupVaultsOperations:
         :type parameters: ~azure.mgmt.dataprotection.models.BackupVaultResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
+        :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
+         undelete flow. Default value is None.
+        :paramtype x_ms_deleted_vault_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5809,9 +6260,10 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.BackupVaultResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
+        x_ms_deleted_vault_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
@@ -5823,9 +6275,12 @@ class BackupVaultsOperations:
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BackupVaultResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
+        :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
+         undelete flow. Default value is None.
+        :paramtype x_ms_deleted_vault_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5844,6 +6299,7 @@ class BackupVaultsOperations:
         parameters: IO[bytes],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
+        x_ms_deleted_vault_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
@@ -5858,6 +6314,9 @@ class BackupVaultsOperations:
         :type parameters: IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
+        :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
+         undelete flow. Default value is None.
+        :paramtype x_ms_deleted_vault_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5869,13 +6328,18 @@ class BackupVaultsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.BackupVaultResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupVaultResource, _types.BackupVaultResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
+        x_ms_deleted_vault_id: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
         """Creates or updates a BackupVault resource belonging to a resource group.
@@ -5885,11 +6349,15 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BackupVaultResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BackupVaultResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a BackupVaultResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BackupVaultResource or
+         ~azure.mgmt.dataprotection.types.BackupVaultResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
+        :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
+         undelete flow. Default value is None.
+        :paramtype x_ms_deleted_vault_id: str
         :return: An instance of AsyncLROPoller that returns BackupVaultResource. The
          BackupVaultResource is compatible with MutableMapping
         :rtype:
@@ -5910,6 +6378,7 @@ class BackupVaultsOperations:
                 vault_name=vault_name,
                 parameters=parameters,
                 x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
+                x_ms_deleted_vault_id=x_ms_deleted_vault_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5953,7 +6422,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.PatchResourceRequestInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceRequestInput, _types.PatchResourceRequestInput, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -5995,6 +6464,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6008,7 +6478,10 @@ class BackupVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6016,7 +6489,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6061,7 +6534,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.PatchResourceRequestInput,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -6076,7 +6549,7 @@ class BackupVaultsOperations:
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.PatchResourceRequestInput
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6127,7 +6600,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.PatchResourceRequestInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceRequestInput, _types.PatchResourceRequestInput, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -6140,10 +6613,10 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         PatchResourceRequestInput, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a PatchResourceRequestInput type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput or
+         ~azure.mgmt.dataprotection.types.PatchResourceRequestInput or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of AsyncLROPoller that returns BackupVaultResource. The
@@ -6232,6 +6705,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6245,7 +6719,10 @@ class BackupVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6253,7 +6730,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6366,7 +6843,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6379,7 +6859,10 @@ class BackupVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupVaultResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupVaultResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6395,7 +6878,10 @@ class BackupVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6457,7 +6943,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6470,7 +6959,10 @@ class BackupVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupVaultResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupVaultResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6486,7 +6978,10 @@ class BackupVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6528,7 +7023,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6543,7 +7038,7 @@ class BackupVaultsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Check name availability request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6588,7 +7083,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """API to check for resource name availability.
@@ -6600,10 +7095,10 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Check name availability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityRequest or JSON or
-         IO[bytes]
+        :param parameters: Check name availability request. Is either a CheckNameAvailabilityRequest
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.dataprotection.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityResult
@@ -6645,6 +7140,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6659,11 +7155,14 @@ class BackupVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResult, response.json())
 
@@ -6673,7 +7172,7 @@ class BackupVaultsOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-long
+class OperationStatusBackupVaultContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6734,6 +7233,7 @@ class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6748,11 +7248,14 @@ class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-l
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -6762,7 +7265,7 @@ class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
 
-class ExportJobsOperations:
+class ExportJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6806,6 +7309,7 @@ class ExportJobsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6819,14 +7323,17 @@ class ExportJobsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6891,7 +7398,7 @@ class ExportJobsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ExportJobsOperationResultOperations:
+class ExportJobsOperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6954,6 +7461,7 @@ class ExportJobsOperationResultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6968,13 +7476,16 @@ class ExportJobsOperationResultOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.ExportJobsResult, response.json())
 
@@ -6984,7 +7495,7 @@ class ExportJobsOperationResultOperations:
         return deserialized  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7046,6 +7557,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7060,11 +7572,14 @@ class BackupPoliciesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BaseBackupPolicyResource, response.json())
 
@@ -7110,7 +7625,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_policy_name: str,
-        parameters: JSON,
+        parameters: _types.BaseBackupPolicyResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7125,7 +7640,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Required.
         :type backup_policy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BaseBackupPolicyResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7172,7 +7687,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_policy_name: str,
-        parameters: Union[_models.BaseBackupPolicyResource, JSON, IO[bytes]],
+        parameters: Union[_models.BaseBackupPolicyResource, _types.BaseBackupPolicyResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.BaseBackupPolicyResource:
         """Creates or Updates a backup policy belonging to a backup vault.
@@ -7184,10 +7699,10 @@ class BackupPoliciesOperations:
         :type vault_name: str
         :param backup_policy_name: Required.
         :type backup_policy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BaseBackupPolicyResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a BaseBackupPolicyResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource or
+         ~azure.mgmt.dataprotection.types.BaseBackupPolicyResource or IO[bytes]
         :return: BaseBackupPolicyResource. The BaseBackupPolicyResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource
@@ -7230,6 +7745,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7244,11 +7760,14 @@ class BackupPoliciesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BaseBackupPolicyResource, response.json())
 
@@ -7308,7 +7827,10 @@ class BackupPoliciesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -7372,7 +7894,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7385,7 +7910,10 @@ class BackupPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BaseBackupPolicyResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BaseBackupPolicyResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7401,7 +7929,10 @@ class BackupPoliciesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7409,7 +7940,7 @@ class BackupPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTimeRangesOperations:
+class RestorableTimeRangesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7463,7 +7994,7 @@ class RestorableTimeRangesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupFindRestorableTimeRangesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7478,7 +8009,7 @@ class RestorableTimeRangesOperations:
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7525,7 +8056,11 @@ class RestorableTimeRangesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupFindRestorableTimeRangesRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AzureBackupFindRestorableTimeRangesRequest,
+            _types.AzureBackupFindRestorableTimeRangesRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
@@ -7537,10 +8072,10 @@ class RestorableTimeRangesOperations:
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupFindRestorableTimeRangesRequest, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a
+         AzureBackupFindRestorableTimeRangesRequest type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest or IO[bytes]
         :return: AzureBackupFindRestorableTimeRangesResponseResource. The
          AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
@@ -7583,6 +8118,7 @@ class RestorableTimeRangesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7597,11 +8133,14 @@ class RestorableTimeRangesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AzureBackupFindRestorableTimeRangesResponseResource, response.json())
 
@@ -7611,7 +8150,7 @@ class RestorableTimeRangesOperations:
         return deserialized  # type: ignore
 
 
-class RecoveryPointsOperations:
+class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7681,6 +8220,7 @@ class RecoveryPointsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7695,11 +8235,14 @@ class RecoveryPointsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AzureBackupRecoveryPointResource, response.json())
 
@@ -7782,7 +8325,10 @@ class RecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7795,7 +8341,10 @@ class RecoveryPointsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureBackupRecoveryPointResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupRecoveryPointResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7811,7 +8360,10 @@ class RecoveryPointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7819,7 +8371,7 @@ class RecoveryPointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7881,6 +8433,7 @@ class JobsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7895,11 +8448,14 @@ class JobsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AzureBackupJobResource, response.json())
 
@@ -7966,7 +8522,10 @@ class JobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7979,7 +8538,10 @@ class JobsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureBackupJobResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupJobResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7995,7 +8557,10 @@ class JobsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8003,7 +8568,7 @@ class JobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DeletedBackupInstancesOperations:
+class DeletedBackupInstancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8065,6 +8630,7 @@ class DeletedBackupInstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8079,11 +8645,14 @@ class DeletedBackupInstancesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeletedBackupInstanceResource, response.json())
 
@@ -8150,7 +8719,10 @@ class DeletedBackupInstancesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8163,7 +8735,10 @@ class DeletedBackupInstancesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedBackupInstanceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DeletedBackupInstanceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8179,7 +8754,10 @@ class DeletedBackupInstancesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8216,6 +8794,7 @@ class DeletedBackupInstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8229,7 +8808,10 @@ class DeletedBackupInstancesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8237,7 +8819,7 @@ class DeletedBackupInstancesOperations:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8307,7 +8889,7 @@ class DeletedBackupInstancesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DppResourceGuardProxyOperations:
+class DppResourceGuardProxyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8370,6 +8952,7 @@ class DppResourceGuardProxyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8384,11 +8967,14 @@ class DppResourceGuardProxyOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceGuardProxyBaseResource, response.json())
 
@@ -8434,7 +9020,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceGuardProxyBaseResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8449,7 +9035,7 @@ class DppResourceGuardProxyOperations:
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ResourceGuardProxyBaseResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8496,7 +9082,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.ResourceGuardProxyBaseResource, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceGuardProxyBaseResource, _types.ResourceGuardProxyBaseResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardProxyBaseResource:
         """Creates or Updates a ResourceGuardProxy.
@@ -8508,10 +9094,10 @@ class DppResourceGuardProxyOperations:
         :type vault_name: str
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ResourceGuardProxyBaseResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ResourceGuardProxyBaseResource type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource or
+         ~azure.mgmt.dataprotection.types.ResourceGuardProxyBaseResource or IO[bytes]
         :return: ResourceGuardProxyBaseResource. The ResourceGuardProxyBaseResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource
@@ -8554,6 +9140,7 @@ class DppResourceGuardProxyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8568,11 +9155,14 @@ class DppResourceGuardProxyOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceGuardProxyBaseResource, response.json())
 
@@ -8634,7 +9224,10 @@ class DppResourceGuardProxyOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8698,7 +9291,10 @@ class DppResourceGuardProxyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8711,7 +9307,10 @@ class DppResourceGuardProxyOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceGuardProxyBaseResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceGuardProxyBaseResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8727,7 +9326,10 @@ class DppResourceGuardProxyOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8773,7 +9375,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.UnlockDeleteRequest,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -8789,7 +9391,7 @@ class DppResourceGuardProxyOperations:
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.UnlockDeleteRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8839,7 +9441,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.UnlockDeleteRequest, JSON, IO[bytes]],
+        parameters: Union[_models.UnlockDeleteRequest, _types.UnlockDeleteRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -8853,9 +9455,10 @@ class DppResourceGuardProxyOperations:
         :type vault_name: str
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         UnlockDeleteRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.UnlockDeleteRequest or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a UnlockDeleteRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.UnlockDeleteRequest or
+         ~azure.mgmt.dataprotection.types.UnlockDeleteRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: UnlockDeleteResponse. The UnlockDeleteResponse is compatible with MutableMapping
@@ -8900,6 +9503,7 @@ class DppResourceGuardProxyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8914,11 +9518,14 @@ class DppResourceGuardProxyOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UnlockDeleteResponse, response.json())
 
@@ -8928,7 +9535,7 @@ class DppResourceGuardProxyOperations:
         return deserialized  # type: ignore
 
 
-class OperationResultOperations:
+class OperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8986,6 +9593,7 @@ class OperationResultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9000,14 +9608,17 @@ class OperationResultOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.OperationJobExtendedInfo, response.json())
 
@@ -9024,7 +9635,7 @@ class OperationResultOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusOperations:
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9081,6 +9692,7 @@ class OperationStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9095,11 +9707,14 @@ class OperationStatusOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -9109,7 +9724,7 @@ class OperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too-long
+class OperationStatusResourceGroupContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9167,6 +9782,7 @@ class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9181,11 +9797,14 @@ class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -9195,7 +9814,7 @@ class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class DataProtectionOperations:
+class DataProtectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9225,7 +9844,7 @@ class DataProtectionOperations:
 
         Validates if a feature is supported.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: The request body. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase
@@ -9240,16 +9859,21 @@ class DataProtectionOperations:
 
     @overload
     async def check_feature_support(
-        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        parameters: _types.FeatureValidationRequestBase,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
         Validates if a feature is supported.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.FeatureValidationRequestBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9267,7 +9891,7 @@ class DataProtectionOperations:
 
         Validates if a feature is supported.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: The request body. Required.
         :type parameters: IO[bytes]
@@ -9282,18 +9906,21 @@ class DataProtectionOperations:
 
     @distributed_trace_async
     async def check_feature_support(
-        self, location: str, parameters: Union[_models.FeatureValidationRequestBase, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        parameters: Union[_models.FeatureValidationRequestBase, _types.FeatureValidationRequestBase, IO[bytes]],
+        **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
         Validates if a feature is supported.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: The request body. Is one of the following types:
-         FeatureValidationRequestBase, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or JSON or
-         IO[bytes]
+        :param parameters: The request body. Is either a FeatureValidationRequestBase type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or
+         ~azure.mgmt.dataprotection.types.FeatureValidationRequestBase or IO[bytes]
         :return: FeatureValidationResponseBase. The FeatureValidationResponseBase is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
@@ -9334,6 +9961,7 @@ class DataProtectionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9348,11 +9976,14 @@ class DataProtectionOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FeatureValidationResponseBase, response.json())
 
@@ -9362,7 +9993,7 @@ class DataProtectionOperations:
         return deserialized  # type: ignore
 
 
-class FetchSecondaryRecoveryPointsOperations:
+class FetchSecondaryRecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9419,7 +10050,7 @@ class FetchSecondaryRecoveryPointsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.FetchSecondaryRPsRequestParameters,
         *,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
@@ -9435,7 +10066,7 @@ class FetchSecondaryRecoveryPointsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.FetchSecondaryRPsRequestParameters
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword skip_token: skipToken Filter. Default value is None.
@@ -9489,7 +10120,9 @@ class FetchSecondaryRecoveryPointsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.FetchSecondaryRPsRequestParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.FetchSecondaryRPsRequestParameters, _types.FetchSecondaryRPsRequestParameters, IO[bytes]
+        ],
         *,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
@@ -9503,10 +10136,10 @@ class FetchSecondaryRecoveryPointsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         FetchSecondaryRPsRequestParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.FetchSecondaryRPsRequestParameters or JSON
-         or IO[bytes]
+        :param parameters: Request body for operation. Is either a FetchSecondaryRPsRequestParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.FetchSecondaryRPsRequestParameters or
+         ~azure.mgmt.dataprotection.types.FetchSecondaryRPsRequestParameters or IO[bytes]
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword skip_token: skipToken Filter. Default value is None.
@@ -9569,7 +10202,10 @@ class FetchSecondaryRecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9582,7 +10218,10 @@ class FetchSecondaryRecoveryPointsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureBackupRecoveryPointResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupRecoveryPointResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9598,7 +10237,10 @@ class FetchSecondaryRecoveryPointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -9606,7 +10248,7 @@ class FetchSecondaryRecoveryPointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FetchCrossRegionRestoreJobOperations:
+class FetchCrossRegionRestoreJobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9655,7 +10297,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreJobRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9668,7 +10310,7 @@ class FetchCrossRegionRestoreJobOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9709,7 +10351,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreJobRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreJobRequest, _types.CrossRegionRestoreJobRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureBackupJobResource:
         """Fetches the Cross Region Restore Job.
@@ -9719,10 +10361,10 @@ class FetchCrossRegionRestoreJobOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         CrossRegionRestoreJobRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a CrossRegionRestoreJobRequest type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobRequest or IO[bytes]
         :return: AzureBackupJobResource. The AzureBackupJobResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9763,6 +10405,7 @@ class FetchCrossRegionRestoreJobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9777,11 +10420,14 @@ class FetchCrossRegionRestoreJobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AzureBackupJobResource, response.json())
 
@@ -9791,7 +10437,7 @@ class FetchCrossRegionRestoreJobOperations:
         return deserialized  # type: ignore
 
 
-class FetchCrossRegionRestoreJobsOperations:
+class FetchCrossRegionRestoreJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9844,7 +10490,7 @@ class FetchCrossRegionRestoreJobsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreJobsRequest,
         *,
         filter: Optional[str] = None,
         content_type: str = "application/json",
@@ -9858,7 +10504,7 @@ class FetchCrossRegionRestoreJobsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobsRequest
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9906,7 +10552,7 @@ class FetchCrossRegionRestoreJobsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreJobsRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreJobsRequest, _types.CrossRegionRestoreJobsRequest, IO[bytes]],
         *,
         filter: Optional[str] = None,
         **kwargs: Any
@@ -9918,10 +10564,10 @@ class FetchCrossRegionRestoreJobsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         CrossRegionRestoreJobsRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobsRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a CrossRegionRestoreJobsRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobsRequest or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobsRequest or IO[bytes]
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of AzureBackupJobResource
@@ -9981,7 +10627,10 @@ class FetchCrossRegionRestoreJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9994,7 +10643,10 @@ class FetchCrossRegionRestoreJobsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureBackupJobResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupJobResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10010,7 +10662,10 @@ class FetchCrossRegionRestoreJobsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10018,7 +10673,7 @@ class FetchCrossRegionRestoreJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-long
+class BackupInstancesExtensionRoutingOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10087,7 +10742,10 @@ class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-lon
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10100,7 +10758,10 @@ class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-lon
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupInstanceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupInstanceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10116,7 +10777,10 @@ class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-lon
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

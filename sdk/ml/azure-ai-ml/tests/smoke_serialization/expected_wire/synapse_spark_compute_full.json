@@ -1,0 +1,12 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "computeType": "SynapseSpark",
+    "description": "smoke synapse spark compute"
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

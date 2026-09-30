@@ -7,7 +7,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_data
-from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
@@ -118,8 +118,8 @@ class TestData(AzureRecordedTestCase):
         tmp_folder = tmp_path / "tmp_folder"
         tmp_folder.mkdir()
         tmp_metadata_file = tmp_folder / "MLTable"
-        tmp_metadata_file.write_text(
-            """
+        tmp_metadata_file.write_bytes(
+            b"""
 paths:
   - file: ./tmp_file.csv
 transformations:
@@ -130,8 +130,8 @@ transformations:
 """
         )
         tmp_file = tmp_folder / "tmp_file.csv"
-        tmp_file.write_text(
-            """
+        tmp_file.write_bytes(
+            b"""
 sepal_length,sepal_width,petal_length,petal_width,species
 101,152,123,187,Iris-setosa
 4.9,3,1.4,0.2,Iris-setosa

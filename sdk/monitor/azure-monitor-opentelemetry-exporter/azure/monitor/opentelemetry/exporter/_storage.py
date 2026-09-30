@@ -66,7 +66,15 @@ class LocalFileBlob:
     def put(self, data: List[Any], lease_period: int = 0) -> Union[StorageExportResult, str]:
         try:
             fullpath = self.fullpath + ".tmp"
-            with open(fullpath, "w", encoding="utf-8") as file:
+            # Use O_CREAT | O_EXCL | O_WRONLY to atomically create the file  # cspell:disable-line
+            # and fail if it already exists, preventing race conditions.
+            fd = os.open(fullpath, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)  # cspell:disable-line
+            try:
+                file = os.fdopen(fd, "w", encoding="utf-8")
+            except Exception:
+                os.close(fd)
+                raise
+            with file:
                 for item in data:
                     file.write(json.dumps(item))
                     # The official Python doc: Do not use os.linesep as a line
@@ -111,6 +119,10 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
+        # Remote (OneSettings) on/off toggle, independent of _enabled (folder permissions).
+        # When False, put()/gets() no-op but the instance and its maintenance thread stay alive,
+        # so the FEATURE_LOCAL_STORAGE kill-switch can flip storage on/off without teardown.
+        self._active = True
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -129,6 +141,16 @@ class LocalFileStorage:
         if self._enabled:
             self._maintenance_task.cancel()
             self._maintenance_task.join()
+
+    def enable(self) -> None:
+        # Turn the remote toggle on; put()/gets() resume. No-op if folder permissions were denied.
+        self._active = True
+
+    def disable(self) -> None:
+        # Turn the remote toggle off; put()/gets() become no-ops. The instance and maintenance
+        # thread are left running so storage can be re-enabled later without reconstruction. Any
+        # telemetry already persisted to disk is left in place for retry once re-enabled.
+        self._active = False
 
     def __enter__(self) -> "LocalFileStorage":
         return self
@@ -149,7 +171,7 @@ class LocalFileStorage:
 
     # pylint: disable=too-many-nested-blocks
     def gets(self) -> Generator[LocalFileBlob, None, None]:
-        if self._enabled:
+        if self._enabled and self._active:
             now = _now()
             lease_deadline = _fmt(now)
             retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -188,6 +210,7 @@ class LocalFileStorage:
             pass
 
     def get(self) -> Optional[LocalFileBlob]:
+        # gets() already gates on _enabled and _active, so no need to re-check _active here.
         if not self._enabled:
             return None
         cursor = self.gets()
@@ -199,12 +222,15 @@ class LocalFileStorage:
 
     def put(self, data: List[Any], lease_period: Optional[int] = None) -> Union[StorageExportResult, str]:
         try:
-            if not self._enabled:
-                if get_local_storage_setup_state_readonly():
-                    return StorageExportResult.CLIENT_READONLY
-                if get_local_storage_setup_state_exception() != "":
-                    # Type conversion has been done to match the return type of this function
-                    return str(get_local_storage_setup_state_exception())
+            # Storage is unavailable when remotely disabled (_active) or never set up (_enabled).
+            if not self._active or not self._enabled:
+                # Only report the specific setup-failure reason when not remotely disabled.
+                if self._active:
+                    if get_local_storage_setup_state_readonly():
+                        return StorageExportResult.CLIENT_READONLY
+                    if get_local_storage_setup_state_exception() != "":
+                        # Type conversion has been done to match the return type of this function
+                        return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
             if not self._check_storage_size():
                 return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
@@ -255,7 +281,29 @@ class LocalFileStorage:
                     return True
             # Unix
             else:
-                os.chmod(self._path, 0o700)
+                open_flags = (
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # pylint: disable=no-member  # cspell:disable-line
+                )
+                dir_fd = os.open(self._path, open_flags)
+                try:
+                    dir_stat = os.fstat(dir_fd)
+                    owner_uid = dir_stat.st_uid
+                    current_uid = os.getuid()  # pylint: disable=no-member
+                    if owner_uid not in (current_uid, 0):
+                        logger.error(
+                            "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
+                            "Refusing to use this directory.",
+                            self._path,
+                            owner_uid,
+                            current_uid,
+                        )
+                        set_local_storage_setup_state_exception(
+                            f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
+                        )
+                        return False
+                    os.fchmod(dir_fd, 0o700)  # pylint: disable=no-member  # cspell:disable-line
+                finally:
+                    os.close(dir_fd)
                 return True
         except OSError as error:
             if getattr(error, "errno", None) == errno.EROFS:  # cspell:disable-line

@@ -39,8 +39,9 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
+    # Enable Compiled CodeQL because azure-storage-extensions has C code that 
+    # must be scanned
+    EnableCompiledCodeql: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -54,6 +55,14 @@ extends:
       safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
+      # Ships compiled binaries, so its wheels are routed through a dedicated
+      # Sign_azurestorageextensions stage before release and dev feed publishing.
+      signBinaries: true
+      triggeringPaths:
+        - /sdk/storage/azure-storage-blob
+        - /sdk/storage/azure-storage-file-datalake
+        - /sdk/storage/azure-storage-file-share
+        - /sdk/storage/azure-storage-queue
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true

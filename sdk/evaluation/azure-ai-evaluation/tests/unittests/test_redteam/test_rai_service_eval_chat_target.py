@@ -75,7 +75,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
     mock_evaluate.return_value = {
         "results": [
             {
-                "name": "hate_fairness",
+                "name": "hate_unfairness",
                 "score": 5,
                 "reason": "Detected hateful content.",
                 "threshold": 3,
@@ -88,7 +88,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
 
     mock_evaluate.assert_called_once_with(
         {"query": "query", "response": "Test prompt", "context": None},
-        metric_name="hate_fairness",
+        metric_name="hate_unfairness",
         project_scope=mock_azure_ai_project,
         credential=MockCredential,
         annotation_task="content harm",
@@ -108,7 +108,6 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
             "threshold": 3,
             "result": "High Severity",
             "risk_category": "hate_unfairness",
-            "passed": None,
         },
     }
     assert json.loads(response_piece.converted_value) == expected_response_data
@@ -143,8 +142,9 @@ async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, 
     assert len(response.message_pieces) == 1
     response_piece = response.message_pieces[0]
     response_data = json.loads(response_piece.converted_value)
-    assert response_data["score_value"] == False  # 2 <= 4
+    assert response_data["score_value"] == False  # score 2 <= default threshold 3
     assert response_data["metadata"]["raw_score"] == 2
+    assert response_data["metadata"]["threshold"] == 3  # default threshold for violence
 
 
 def test_validate_request_success(mock_prompt_request, mock_azure_ai_project):

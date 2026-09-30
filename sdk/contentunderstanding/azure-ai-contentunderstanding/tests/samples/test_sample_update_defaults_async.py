@@ -28,7 +28,11 @@ USAGE:
 import pytest
 from typing import Dict, Optional
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+    get_test_api_version,
+)
 
 
 class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
@@ -50,26 +54,22 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
         variables = kwargs.pop("variables", {})
         import os
 
-        # Get deployment names from variables (playback) or environment (recording)
-        # If not found, use defaults and record them
-        gpt_4_1_deployment = variables.setdefault("gpt_4_1_deployment", os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1"))
-        gpt_4_1_mini_deployment = variables.setdefault(
-            "gpt_4_1_mini_deployment", os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
-        )
-        text_embedding_3_large_deployment = variables.setdefault(
-            "text_embedding_3_large_deployment",
-            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large"),
-        )
+        api_version = get_test_api_version()
+        profile = self.get_model_profile(api_version=api_version)
+        variables.setdefault("completion_model", profile.completion_model)
+        variables.setdefault("completion_deployment", profile.completion_deployment)
+        variables.setdefault("mini_completion_model", profile.mini_completion_model)
+        variables.setdefault("mini_completion_deployment", profile.mini_completion_deployment)
+        variables.setdefault("embedding_model", profile.embedding_model)
+        variables.setdefault("embedding_deployment", profile.embedding_deployment)
 
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint, api_version=api_version)
 
         try:
             # Test UpdateDefaults - pass deployment names directly from variables
             await self._test_update_defaults(
                 client,
-                gpt_4_1_deployment=gpt_4_1_deployment,
-                gpt_4_1_mini_deployment=gpt_4_1_mini_deployment,
-                text_embedding_3_large_deployment=text_embedding_3_large_deployment,
+                profile=profile,
             )
 
             # Test GetDefaults - always run
@@ -82,9 +82,7 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
     async def _test_update_defaults(
         self,
         client,
-        gpt_4_1_deployment: Optional[str] = None,
-        gpt_4_1_mini_deployment: Optional[str] = None,
-        text_embedding_3_large_deployment: Optional[str] = None,
+        profile,
     ) -> None:
         """Test updating model deployment defaults (async).
 
@@ -97,13 +95,8 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
             gpt_4_1_mini_deployment: GPT-4.1-mini deployment name (from test variables).
             text_embedding_3_large_deployment: text-embedding-3-large deployment name (from test variables).
         """
-        if gpt_4_1_deployment and gpt_4_1_mini_deployment and text_embedding_3_large_deployment:
-            # All deployment names are provided, attempt to update defaults
-            model_deployments = {
-                "gpt-4.1": gpt_4_1_deployment,
-                "gpt-4.1-mini": gpt_4_1_mini_deployment,
-                "text-embedding-3-large": text_embedding_3_large_deployment,
-            }
+        if profile.completion_deployment and profile.mini_completion_deployment and profile.embedding_deployment:
+            model_deployments = profile.default_model_deployments()
             print("Configuring model deployments...")
             updated_defaults = await client.update_defaults(model_deployments=model_deployments)
             assert updated_defaults is not None, "UpdateDefaults should return a valid response"
@@ -170,9 +163,14 @@ class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
                     assert value.strip(), f"Deployment value should not be empty for key {key}"
                     print(f"  {key}: {value}")
 
-                # Assertion: Check for expected model keys (if any configured)
-                # Common models: gpt-4.1, gpt-4.1-mini, text-embedding-3-large
-                expected_keys = {"gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"}
+                expected_keys = {
+                    "gpt-4.1",
+                    "gpt-4.1-mini",
+                    "text-embedding-3-large",
+                    "prebuilt-analyzer-completion",
+                    "prebuilt-analyzer-completion-mini",
+                    "prebuilt-analyzer-embedding",
+                }
                 found_keys = set(model_deployments.keys())
 
                 if found_keys & expected_keys:  # If any expected keys are present

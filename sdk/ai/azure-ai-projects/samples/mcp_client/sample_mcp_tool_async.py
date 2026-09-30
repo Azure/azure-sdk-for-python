@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,used-before-assignment,consider-using-with
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -8,7 +8,7 @@
 DESCRIPTION:
     This sample demonstrates how to directly interact with MCP (Model Context Protocol) tools
     using the low-level MCP client library to connect to the Foundry Project's MCP tools API:
-        {AZURE_AI_PROJECT_ENDPOINT}/mcp_tools?api-version=2025-05-15-preview
+        {FOUNDRY_PROJECT_ENDPOINT}/mcp_tools?api-version=2025-05-15-preview
 
     For agent-based MCP tool usage, see samples in samples/agents/tools/sample_agent_mcp.py
     and related files in that directory.
@@ -29,7 +29,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv mcp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) IMAGE_GEN_DEPLOYMENT_NAME - The deployment name of the image generation model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -48,11 +48,11 @@ import base64
 import os
 import logging
 from dotenv import load_dotenv
-from azure.ai.projects.aio import AIProjectClient
-from azure.identity.aio import DefaultAzureCredential
 from mcp import ClientSession
 from mcp.types import ImageContent
 from mcp.client.streamable_http import streamablehttp_client
+from azure.ai.projects.aio import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
@@ -64,7 +64,7 @@ if log_level:
     # Enable httpx logging to see HTTP requests at the same level
     logging.getLogger("httpx").setLevel(getattr(logging, log_level, logging.CRITICAL))
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
 async def main():

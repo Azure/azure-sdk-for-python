@@ -67,6 +67,126 @@ _Unset: Any = object()
 
 logger = logging.getLogger(__name__)
 
+
+class _InstrumentedAsyncRawResponse:
+    """Proxy for OpenAI's async raw response (from client.responses.with_raw_response.create(stream=True)).
+
+    OpenAI returns an APIResponse/LegacyAPIResponse wrapping the HTTP response. Callers use
+    .parse() to get the parsed stream, .headers for HTTP headers, and .close() to release resources.
+    This proxy intercepts .parse() and .close() to add telemetry while preserving the full interface.
+    """
+
+    def __init__(self, raw_response, wrap_stream):
+        self._raw_response = raw_response
+        self._wrap_stream = wrap_stream
+        self._wrapped_stream = None
+        self._active_stream = None
+        self._custom_streams = {}
+        self._finalized = [False]
+
+    def _get_default_stream(self):
+        if self._wrapped_stream is None:
+            parsed = self._raw_response.parse()
+            self._wrapped_stream = self._wrap_stream(parsed)
+            self._wrapped_stream._shared_finalized = self._finalized
+        return self._wrapped_stream
+
+    def parse(self, *, to=None):
+        # Sync — matches OpenAI LegacyAPIResponse.parse() contract in openai>=3.0.0
+        if to is None:
+            stream = self._get_default_stream()
+            self._active_stream = stream
+            return stream
+        if to not in self._custom_streams:
+            wrapper = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper._shared_finalized = self._finalized
+            self._custom_streams[to] = wrapper
+        self._active_stream = self._custom_streams[to]
+        return self._custom_streams[to]
+
+    def __aiter__(self):
+        return self._get_default_stream().__aiter__()
+
+    async def __anext__(self):
+        return await self._get_default_stream().__anext__()
+
+    async def close(self):
+        """Close the HTTP connection and finalize the telemetry span."""
+        try:
+            close = getattr(self._raw_response, "close", None)
+            if close is None:
+                http_response = getattr(self._raw_response, "http_response", None)
+                close = getattr(http_response, "aclose", None) or getattr(http_response, "close", None)
+            if close is None:
+                return None
+            result = close()
+            if hasattr(result, "__await__"):
+                return await result
+            return result
+        finally:
+            stream = self._active_stream or self._get_default_stream()
+            stream.cleanup()
+
+    def __getattr__(self, name):
+        return getattr(self._raw_response, name)
+
+
+class _InstrumentedSyncRawResponse:
+    """Proxy for OpenAI's sync raw response (from client.responses.with_raw_response.create(stream=True)).
+
+    Same role as _InstrumentedAsyncRawResponse but for synchronous clients.
+    """
+
+    def __init__(self, raw_response, wrap_stream):
+        self._raw_response = raw_response
+        self._wrap_stream = wrap_stream
+        self._wrapped_stream = None
+        self._active_stream = None
+        self._custom_streams = {}
+        self._finalized = [False]
+
+    def _get_default_stream(self):
+        if self._wrapped_stream is None:
+            self._wrapped_stream = self._wrap_stream(self._raw_response.parse())
+            self._wrapped_stream._shared_finalized = self._finalized
+        return self._wrapped_stream
+
+    def parse(self, *, to=None):
+        if to is None:
+            stream = self._get_default_stream()
+            self._active_stream = stream
+            return stream
+        if to not in self._custom_streams:
+            wrapper = self._wrap_stream(self._raw_response.parse(to=to))
+            wrapper._shared_finalized = self._finalized
+            self._custom_streams[to] = wrapper
+        self._active_stream = self._custom_streams[to]
+        return self._custom_streams[to]
+
+    def __iter__(self):
+        return iter(self._get_default_stream())
+
+    def __next__(self):
+        return next(self._get_default_stream())
+
+    def close(self):
+        """Close the HTTP connection and finalize the telemetry span."""
+        try:
+            close = getattr(self._raw_response, "close", None)
+            if close is None:
+                http_response = getattr(self._raw_response, "http_response", None)
+                close = getattr(http_response, "close", None)
+            if close is None:
+                return None
+            return close()
+        finally:
+            stream = self._active_stream or self._get_default_stream()
+            stream.cleanup()
+
+    def __getattr__(self, name):
+        return getattr(self._raw_response, name)
+
+
 try:  # pylint: disable=unused-import
     # pylint: disable = no-name-in-module
     from opentelemetry.trace import StatusCode
@@ -523,7 +643,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
     def _set_span_attribute_safe(self, span: "AbstractSpan", key: str, value: Any) -> None:
         """Safely set a span attribute only if the value is meaningful."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Only set attribute if value exists and is meaningful
@@ -846,7 +966,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Add workflow action events to the span for workflow agents."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Check if response has output items
@@ -1149,7 +1269,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Add tool call events to the span from response output."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Extract function calls and tool calls from response output
@@ -1638,7 +1758,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             # Set operation name attribute (start_span doesn't set this automatically)
             self._set_attributes(
                 span,
@@ -2063,6 +2183,19 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # For streaming, don't use context manager - let wrapper handle span lifecycle
             try:
                 result = function(*args, **kwargs)
+                # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
+                if hasattr(result, "parse"):
+                    wrap_stream = functools.partial(
+                        self._wrap_streaming_response,
+                        span=span,
+                        original_kwargs=kwargs,
+                        start_time=start_time,
+                        operation_name=operation_name,
+                        server_address=server_address,
+                        port=port,
+                        model=model,
+                    )
+                    return _InstrumentedSyncRawResponse(result, wrap_stream)
                 result = self._wrap_streaming_response(
                     result,
                     span,
@@ -2229,6 +2362,19 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # For streaming, don't use context manager - let wrapper handle span lifecycle
             try:
                 result = await function(*args, **kwargs)
+                # Detect with_raw_response path (result is APIResponse/LegacyAPIResponse)
+                if hasattr(result, "parse"):
+                    wrap_stream = functools.partial(
+                        self._wrap_async_streaming_response,
+                        span=span,
+                        original_kwargs=kwargs,
+                        start_time=start_time,
+                        operation_name=operation_name,
+                        server_address=server_address,
+                        port=port,
+                        model=model,
+                    )
+                    return _InstrumentedAsyncRawResponse(result, wrap_stream)
                 result = self._wrap_async_streaming_response(
                     result,
                     span,
@@ -2609,12 +2755,19 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             def cleanup(self):
                 """Perform final cleanup when streaming is complete."""
                 if not self.span_ended:
+                    shared = getattr(self, "_shared_finalized", None)
+                    if shared is not None and shared[0]:
+                        self.span_ended = True
+                        return
+                    if shared is not None:
+                        shared[0] = True
+
                     duration = time.time() - self.start_time
 
                     # Join all accumulated output content
                     complete_content = "".join(self.accumulated_output)
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Add tool call events if we detected any output items (tool calls, etc.)
                         if self.has_output_items:
                             # Create mock response with output items for event generation
@@ -2721,7 +2874,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     )
 
                     # End span with proper status
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         self.span.span_instance.set_status(
                             # pyright: ignore [reportPossiblyUnboundVariable]
                             StatusCode.OK
@@ -2730,8 +2883,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     self.span_ended = True
 
             def __iter__(self):
-                # Start streaming iteration
                 return self
+
+            def __getattr__(self, name):
+                return getattr(self.stream_iter, name)
 
             def __next__(self):
                 try:
@@ -2764,7 +2919,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             span_attributes=span_attributes,
                             error_type=str(type(e).__name__),
                         )
-                        if self.span.span_instance.is_recording:
+                        if self.span.span_instance.is_recording():
                             self.span.span_instance.set_status(
                                 # pyright: ignore [reportPossiblyUnboundVariable]
                                 StatusCode.ERROR,
@@ -2791,7 +2946,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         span_attributes=span_attributes,
                     )
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Note: For streaming responses, response metadata like tokens, finish_reasons
                         # are typically not available in individual chunks, so we focus on content.
 
@@ -2814,11 +2969,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             def __exit__(self, exc_type, exc_val, exc_tb):
-                try:
-                    self.cleanup()
-                except Exception:
-                    pass  # Don't let cleanup exceptions mask the original exception
+                if exc_type is not None:
+                    try:
+                        self.close()
+                    except Exception:
+                        pass
+                else:
+                    self.close()
                 return False
+
+            def close(self):
+                try:
+                    close = getattr(self.stream_iter, "close", None)
+                    if close is not None:
+                        return close()
+                    return None
+                finally:
+                    self.cleanup()
 
             def get_final_response(self):
                 """Proxy method to access the underlying stream's get_final_response if available."""
@@ -3087,12 +3254,19 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             def cleanup(self):
                 """Perform final cleanup when streaming is complete."""
                 if not self.span_ended:
+                    shared = getattr(self, "_shared_finalized", None)
+                    if shared is not None and shared[0]:
+                        self.span_ended = True
+                        return
+                    if shared is not None:
+                        shared[0] = True
+
                     duration = time.time() - self.start_time
 
                     # Join all accumulated output content
                     complete_content = "".join(self.accumulated_output)
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Add tool call events if we detected any output items (tool calls, etc.)
                         if self.has_output_items:
                             # Create mock response with output items for event generation
@@ -3199,7 +3373,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     )
 
                     # End span with proper status
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         self.span.span_instance.set_status(
                             # pyright: ignore [reportPossiblyUnboundVariable]
                             StatusCode.OK
@@ -3209,6 +3383,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             def __aiter__(self):
                 return self
+
+            def __getattr__(self, name):
+                return getattr(self.stream_async_iter, name)
 
             async def __anext__(self):
                 try:
@@ -3241,7 +3418,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             span_attributes=span_attributes,
                             error_type=str(type(e).__name__),
                         )
-                        if self.span.span_instance.is_recording:
+                        if self.span.span_instance.is_recording():
                             self.span.span_instance.set_status(
                                 # pyright: ignore [reportPossiblyUnboundVariable]
                                 StatusCode.ERROR,
@@ -3268,7 +3445,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         span_attributes=span_attributes,
                     )
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Note: For streaming responses, response metadata like tokens, finish_reasons
                         # are typically not available in individual chunks, so we focus on content.
 
@@ -3291,11 +3468,26 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self
 
             async def __aexit__(self, exc_type, exc_val, exc_tb):
-                try:
-                    self.cleanup()
-                except Exception:
-                    pass  # Don't let cleanup exceptions mask the original exception
+                if exc_type is not None:
+                    try:
+                        await self.close()
+                    except Exception:
+                        pass
+                else:
+                    await self.close()
                 return False
+
+            async def close(self):
+                try:
+                    close = getattr(self.stream_async_iter, "close", None)
+                    if close is None:
+                        return None
+                    result = close()
+                    if hasattr(result, "__await__"):
+                        return await result
+                    return result
+                finally:
+                    self.cleanup()
 
             async def get_final_response(self):
                 """Proxy method to access the underlying stream's get_final_response if available."""
@@ -3407,7 +3599,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             self._set_span_attribute_safe(span, GEN_AI_OPERATION_NAME, OperationName.CREATE_CONVERSATION.value)
 
         return span
@@ -3605,7 +3797,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             # Set operation name attribute (start_span doesn't set this automatically)
             self._set_attributes(
                 span,
@@ -3624,7 +3816,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         item: Any,
     ) -> None:
         """Add a conversation item event to the span."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Extract basic item information

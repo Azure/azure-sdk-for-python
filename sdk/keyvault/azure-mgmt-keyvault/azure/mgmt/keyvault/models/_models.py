@@ -982,7 +982,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsm(Resource):
+class ManagedHsm(ProxyResource):
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -998,40 +998,40 @@ class ManagedHsm(Resource):
     :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
     :ivar properties: Properties of the managed HSM.
     :vartype properties: ~azure.mgmt.keyvault.models.ManagedHsmProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
-    :vartype location: str
     :ivar sku: SKU details.
     :vartype sku: ~azure.mgmt.keyvault.models.ManagedHsmSku
     :ivar identity: Managed service identity.
     :vartype identity: ~azure.mgmt.keyvault.models.ManagedServiceIdentity
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     properties: Optional["_models.ManagedHsmProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of the managed HSM."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives."""
     sku: Optional["_models.ManagedHsmSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SKU details."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Managed service identity."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The geo-location where the resource lives."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
         properties: Optional["_models.ManagedHsmProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
-        location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1600,68 +1600,6 @@ class ManagedHsmProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmResource(_Model):
-    """Managed HSM resource.
-
-    :ivar id: The Azure Resource Manager resource ID for the managed HSM Pool.
-    :vartype id: str
-    :ivar name: The name of the managed HSM Pool.
-    :vartype name: str
-    :ivar type: The resource type of the managed HSM Pool.
-    :vartype type: str
-    :ivar location: The supported Azure location where the managed HSM Pool should be created.
-    :vartype location: str
-    :ivar sku: SKU details.
-    :vartype sku: ~azure.mgmt.keyvault.models.ManagedHsmSku
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the key vault
-     resource.
-    :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
-    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
-    :vartype identity: ~azure.mgmt.keyvault.models.ManagedServiceIdentity
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The Azure Resource Manager resource ID for the managed HSM Pool."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the managed HSM Pool."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type of the managed HSM Pool."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The supported Azure location where the managed HSM Pool should be created."""
-    sku: Optional["_models.ManagedHsmSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """SKU details."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Metadata pertaining to creation and last modification of the key vault resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Managed service identity (system assigned and/or user assigned identities)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        sku: Optional["_models.ManagedHsmSku"] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ManagedHsmRotationPolicy(_Model):
     """ManagedHsmRotationPolicy.
 
@@ -2096,7 +2034,7 @@ class MHSMPrivateEndpoint(_Model):
     """Full identifier of the private endpoint resource."""
 
 
-class MHSMPrivateEndpointConnection(Resource):
+class MHSMPrivateEndpointConnection(ProxyResource):
     """Private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2112,26 +2050,22 @@ class MHSMPrivateEndpointConnection(Resource):
     :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
     :ivar properties: Resource properties.
     :vartype properties: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnectionProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
-    :vartype location: str
     :ivar sku: SKU details.
     :vartype sku: ~azure.mgmt.keyvault.models.ManagedHsmSku
     :ivar identity: Managed service identity.
     :vartype identity: ~azure.mgmt.keyvault.models.ManagedServiceIdentity
     :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
     :vartype etag: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     properties: Optional["_models.MHSMPrivateEndpointConnectionProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource properties."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives."""
     sku: Optional["_models.ManagedHsmSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SKU details."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
@@ -2140,6 +2074,10 @@ class MHSMPrivateEndpointConnection(Resource):
     """Managed service identity."""
     etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Modified whenever there is a change in the state of private endpoint connection."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The geo-location where the resource lives."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
 
     __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
 
@@ -2148,11 +2086,11 @@ class MHSMPrivateEndpointConnection(Resource):
         self,
         *,
         properties: Optional["_models.MHSMPrivateEndpointConnectionProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
-        location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         etag: Optional[str] = None,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2291,34 +2229,86 @@ class MHSMPrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMPrivateLinkResource(ManagedHsmResource):
-    """A private link resource.
+class TrackedResource(Resource):
+    """Tracked Resource.
 
-    :ivar id: The Azure Resource Manager resource ID for the managed HSM Pool.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The name of the managed HSM Pool.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type of the managed HSM Pool.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The supported Azure location where the managed HSM Pool should be created.
-    :vartype location: str
-    :ivar sku: SKU details.
-    :vartype sku: ~azure.mgmt.keyvault.models.ManagedHsmSku
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the key vault
-     resource.
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MHSMPrivateLinkResource(TrackedResource):
+    """A private link resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
-    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
-    :vartype identity: ~azure.mgmt.keyvault.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar properties: Resource properties.
     :vartype properties: ~azure.mgmt.keyvault.models.MHSMPrivateLinkResourceProperties
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.models.ManagedHsmSku
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.keyvault.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.MHSMPrivateLinkResourceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource properties."""
+    sku: Optional["_models.ManagedHsmSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SKU details."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed service identity (system assigned and/or user assigned identities)."""
 
     __flattened_items = ["group_id", "required_members", "required_zone_names"]
 
@@ -2326,11 +2316,11 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
-        sku: Optional["_models.ManagedHsmSku"] = None,
+        location: str,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
         properties: Optional["_models.MHSMPrivateLinkResourceProperties"] = None,
+        sku: Optional["_models.ManagedHsmSku"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -3575,50 +3565,6 @@ class SystemData(_Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload

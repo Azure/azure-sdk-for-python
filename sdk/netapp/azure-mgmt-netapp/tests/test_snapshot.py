@@ -1,7 +1,7 @@
 import random
 import string
 import time
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Volume, Snapshot
 from test_volume import create_volume, wait_for_volume, delete_volume, create_virtual_network

@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import unittest
-from unittest.mock import patch, MagicMock
 
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 
@@ -22,7 +21,10 @@ class TestBrowserSDKConfig(unittest.TestCase):
 
     def test_browser_sdk_config_custom_values(self):
         """Test BrowserSDKConfig initialization with custom values."""
-        connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+        connection_string = (
+            "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+            + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+        )
 
         config = BrowserSDKConfig(enabled=False, connection_string=connection_string)
 

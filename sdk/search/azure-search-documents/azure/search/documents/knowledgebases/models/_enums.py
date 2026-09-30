@@ -19,16 +19,30 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Azure Blob retrieval activity."""
     INDEXED_SHARE_POINT = "indexedSharePoint"
     """Indexed SharePoint retrieval activity."""
-    INDEXED_ONE_LAKE = "indexedOneLake"
+    INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""
     REMOTE_SHARE_POINT = "remoteSharePoint"
     """Remote SharePoint retrieval activity."""
+    WORK_IQ = "workIQ"
+    """WorkIQ retrieval activity."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent retrieval activity."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology retrieval activity."""
+    MCP_SERVER = "mcpServer"
+    """MCP server retrieval activity."""
+    FILE = "file"
+    """File retrieval activity."""
+    INDEXED_SQL = "indexedSql"
+    """Indexed SQL retrieval activity."""
     MODEL_QUERY_PLANNING = "modelQueryPlanning"
     """LLM query planning activity."""
     MODEL_ANSWER_SYNTHESIS = "modelAnswerSynthesis"
     """LLM answer synthesis activity."""
+    MODEL_WEB_SUMMARIZATION = "modelWebSummarization"
+    """LLM web summarization activity."""
     AGENTIC_REASONING = "agenticReasoning"
     """Agentic reasoning activity."""
 
@@ -51,12 +65,33 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure Blob document reference."""
     INDEXED_SHARE_POINT = "indexedSharePoint"
     """Indexed SharePoint document reference."""
-    INDEXED_ONE_LAKE = "indexedOneLake"
+    INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake document reference."""
     WEB = "web"
     """Web document reference."""
     REMOTE_SHARE_POINT = "remoteSharePoint"
     """Remote SharePoint document reference."""
+    WORK_IQ = "workIQ"
+    """Work IQ document reference."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent document reference."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology document reference."""
+    MCP_SERVER = "mcpServer"
+    """MCP server document reference."""
+    FILE = "file"
+    """File document reference."""
+    INDEXED_SQL = "indexedSql"
+    """Indexed SQL document reference."""
+
+
+class KnowledgeBaseRetrievalStatusCode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The semantic HTTP status of a completed streaming retrieval."""
+
+    OK = 200
+    """The retrieval completed successfully."""
+    PARTIAL_CONTENT = 206
+    """The retrieval completed with partial results."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,3 +119,16 @@ class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitive
     """Use low reasoning during retrieval."""
     MEDIUM = "medium"
     """Use a moderate amount of reasoning during retrieval."""
+    AUTO = "auto"
+    """Automatically select the reasoning effort during retrieval, escalating from the cheapest tier
+    only as far as needed."""
+
+
+class KnowledgeSourceNetworkAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the network access mode for knowledge source ingestion. Default is 'public'."""
+
+    PUBLIC = "public"
+    """Ingestion runs in the standard, publicly reachable execution environment. This is the default."""
+    PRIVATE = "private"
+    """Ingestion runs in a private execution environment so it can reach data sources and dependencies
+    over a private network (private endpoint / shared private link)."""

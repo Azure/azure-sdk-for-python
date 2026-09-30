@@ -22,6 +22,8 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+# pylint: disable=unused-variable
+
 from datetime import datetime, timedelta
 import asyncio
 import os
@@ -72,7 +74,10 @@ class QueueMessageSamplesAsync(object):
                 from azure.storage.queue import generate_queue_sas
 
                 sas_token = generate_queue_sas(
-                    queue.account_name, queue.queue_name, queue.credential.account_key, policy_id="my-access-policy-id"
+                    queue.account_name,
+                    queue.queue_name,
+                    queue.credential.account_key,
+                    policy_id="my-access-policy-id",
                 )
 
                 # Authenticate with the sas token
@@ -180,7 +185,9 @@ class QueueMessageSamplesAsync(object):
 
             try:
                 await asyncio.gather(
-                    queue.send_message("message1"), queue.send_message("message2"), queue.send_message("message3")
+                    queue.send_message("message1"),
+                    queue.send_message("message2"),
+                    queue.send_message("message3"),
                 )
 
                 # [START receive_one_message]

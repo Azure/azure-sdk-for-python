@@ -21,6 +21,7 @@
 
 """Synchronized request in the Azure Cosmos database service.
 """
+# cspell:ignore surrogatepass
 import copy
 import json
 import time
@@ -33,8 +34,20 @@ from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
+from ._response_decoding import decode_response_body_for_status
 from ._request_object import RequestObject
 from .documents import _OperationType
+
+_ITEM_BODY_WRITE_OPERATIONS = frozenset((
+    _OperationType.Create,
+    _OperationType.Upsert,
+    _OperationType.Replace,
+    _OperationType.Patch,
+    # Batch membership is necessary but not sufficient: a batch made up only of
+    # read and delete operations carries no item body. _should_escape_non_ascii_
+    # in_request_body refines this entry with _batch_contains_item_body below.
+    _OperationType.Batch,
+))
 
 # cspell:ignore ppaf
 def _is_readable_stream(obj):
@@ -49,24 +62,102 @@ def _is_readable_stream(obj):
     return False
 
 
-def _request_body_from_data(data):
-    """Gets request body from data.
+def _request_body_from_data(data, ensure_ascii=True):
+    """Convert supported request data into an HTTP body.
 
-    When `data` is dict and list into unicode string; otherwise return `data`
-    without making any change.
+    Dictionaries, lists, and tuples are serialized as compact JSON. Other
+    supported body types are returned unchanged.
+
+    When ``ensure_ascii`` is False the serialized body is returned as UTF-8
+    ``bytes``. The escaped default and caller-supplied pre-serialized strings
+    keep returning ``str``, preserving existing behavior.
+
+    Returning bytes is required for correctness, not just convenience. The sync
+    Requests transport forwards the body to ``requests`` unchanged, and the
+    supported dependency range still permits urllib3 1.x, whose connection path
+    hands ``str`` bodies to ``http.client``. ``http.client`` encodes them as
+    Latin-1, so a compact body would be sent with the wrong encoding: text that
+    has no Latin-1 representation (any CJK or emoji) raises ``UnicodeEncodeError``
+    before the request is sent, and text that does have one is written in Latin-1
+    rather than UTF-8, so 'é' goes out as the single byte 0xE9 instead of
+    0xC3 0xA9 and the service receives different characters than the caller
+    supplied. Handing the transport the encoded bytes removes every subsequent
+    re-encoding step.
 
     :param Union[str, unicode, file-like stream object, dict, list, None] data:
-    :returns: the json dump data.
-    :rtype: Union[str, unicode, file-like stream object, None]
+    :param bool ensure_ascii: Whether non-ASCII characters should be escaped.
+    :returns: The serialized or unchanged request body.
+    :rtype: Union[str, bytes, file-like stream object, None]
 
     """
     if data is None or isinstance(data, str) or _is_readable_stream(data):
         return data
     if isinstance(data, (dict, list, tuple)):
-        json_dumped = json.dumps(data, separators=(",", ":"))
-
-        return json_dumped
+        if ensure_ascii:
+            return json.dumps(data, separators=(",", ":"))
+        json_dumped = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+        try:
+            # Encode once; callers derive Content-Length directly from these bytes.
+            encoded_body = json_dumped.encode("utf-8")
+        except UnicodeEncodeError:
+            # Rare path for text originating from UTF-16 APIs. Combine adjacent
+            # high/low surrogate pairs into their Unicode scalar while preserving
+            # unpaired surrogates, then escape only those remaining invalid code
+            # units as valid JSON \uXXXX sequences.
+            normalized_body = json_dumped.encode(
+                "utf-16-le", "surrogatepass"
+            ).decode("utf-16-le", "surrogatepass")
+            encoded_body = normalized_body.encode("utf-8", "backslashreplace")
+        # Send exactly these bytes, so no transport re-encodes them.
+        return encoded_body
     return None
+
+
+def _batch_contains_item_body(batch_operations):
+    """Return whether a formatted transactional batch contains an item body.
+
+    Read and delete batch operations contain only an item ID. Create, upsert,
+    replace, and patch operations contain a resourceBody.
+
+    :param list[dict[str, object]] batch_operations: The formatted batch operations.
+    :returns: Whether at least one operation contains an item body.
+    :rtype: bool
+    """
+    return (
+        isinstance(batch_operations, (list, tuple))
+        and any(
+            isinstance(operation, dict) and "resourceBody" in operation
+            for operation in batch_operations
+        )
+    )
+
+
+def _should_escape_non_ascii_in_request_body(client, request_params, request_data):
+    """Decide whether a request body must keep non-ASCII characters escaped.
+
+    Compact UTF-8 is only used when the client opted in and the request is one
+    of the item write operations the option is scoped to. A transactional batch
+    uses compact UTF-8 only when at least one operation contains an item body;
+    read/delete-only batches keep the escaped form. Every other request,
+    including control-plane bodies and queries, also keeps the escaped form.
+
+    :param object client: the client connection issuing the request.
+    :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
+    :param object request_data: The body data that will be serialized.
+    :returns: whether non-ASCII characters should be escaped in the body.
+    :rtype: bool
+    """
+    # getattr keeps the safe (escaped) default for any caller that supplies a
+    # client object without the option, e.g. custom or legacy connections.
+    return (
+        not getattr(client, "_enable_compact_utf8_item_writes", False)
+        or request_params.resource_type != http_constants.ResourceType.Document
+        or request_params.operation_type not in _ITEM_BODY_WRITE_OPERATIONS
+        or (
+            request_params.operation_type == _OperationType.Batch
+            and not _batch_contains_item_body(request_data)
+        )
+    )
 
 
 def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
@@ -88,6 +179,13 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
     kwargs.pop("_internal_pk_range_fetch", None)
+    # Sidecar mutable list (length 1) used by the /pkranges change-feed drain
+    # loop in ``routing_map_provider`` to observe the raw HTTP status without
+    # parsing headers. We populate ``status_capture[0]`` after the response is
+    # received, so callers can implement a literal ``status == 304`` drain
+    # termination check (matching peer SDKs) instead of relying on
+    # ``ItemPaged`` materializing 304 as an empty page.
+    status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout
@@ -173,11 +271,33 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         )
 
     response = response.http_response
+    if status_capture is not None:
+        # Length-1 list pattern: written-into by _Request, read by caller
+        # after _ReadPartitionKeyRanges returns. Set before any raise so a
+        # 304 (which never raises -- only >= 400 does) and a 4xx/5xx both
+        # surface the wire status to drain-loop observers.
+        status_capture[0] = response.status_code
     headers = copy.copy(response.headers)
 
     data = response.body()
     if data:
-        data = data.decode("utf-8")
+        try:
+            data = decode_response_body_for_status(
+                data, response.status_code, request_params.operation_type
+            )
+        except UnicodeDecodeError as decode_err:
+            # Only reachable when status is < 400 and strict decode is
+            # still in effect. ``decode_response_body_for_status`` never
+            # lets malformed UTF-8 escape on status >= 400, and it honors
+            # REPLACE/IGNORE env fallback before this point. Surface as a
+            # typed SDK decode exception so wire status (e.g. 200) and
+            # response metadata are preserved verbatim; the decoder error
+            # remains available via __cause__.
+            raise DecodeError(
+                message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                response=response,
+                error=decode_err,
+            ) from decode_err
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
@@ -255,9 +375,21 @@ def SynchronizedRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data = _request_body_from_data(request_data)
-    if request.data and isinstance(request.data, str):
+    request.data = _request_body_from_data(
+        request_data,
+        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
+    )
+    if isinstance(request.data, (bytes, bytearray)):
+        # Compact UTF-8 bodies reach the transport as their final bytes, so
+        # Content-Length cannot drift from the wire body.
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+    elif request.data and isinstance(request.data, str):
+        # Use UTF-8 byte length, not str length (code-point count), so the
+        # header matches the bytes the transport actually writes for any
+        # non-ASCII payload.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(
+            request.data.encode("utf-8")
+        )
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 

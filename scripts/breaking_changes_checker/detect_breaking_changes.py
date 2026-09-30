@@ -18,12 +18,19 @@ import ast
 import logging
 import inspect
 import subprocess
+import sys
+import shutil
+import tempfile
 from enum import Enum
-from typing import Dict, Union, Type, Callable, Optional
+from typing import Dict, Tuple, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
+from breaking_changes_allowlist import (
+    RUN_BREAKING_CHANGES_PACKAGES,
+    IGNORE_BREAKING_CHANGES,
+)
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
+from apiview_converter import convert_api_md_to_report
 from pathlib import Path
 from supported_checkers import CHECKERS, POST_PROCESSING_CHECKERS
 
@@ -31,7 +38,20 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 _LOGGER = logging.getLogger(__name__)
 
 
+class _ClassNodeFound(Exception):
+    """Raised to short-circuit AST traversal when the target class is found."""
+
+    pass
+
+
 class ClassTreeAnalyzer(ast.NodeVisitor):
+    """AST visitor that locates a ClassDef node by name.
+
+    Uses ``_ClassNodeFound`` exception to short-circuit the traversal once
+    the target class is found, since ``ast.NodeVisitor`` does not provide a
+    built-in early exit mechanism.
+    """
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.cls_node = None
@@ -39,7 +59,32 @@ class ClassTreeAnalyzer(ast.NodeVisitor):
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         if node.name == self.name:
             self.cls_node = node
+            raise _ClassNodeFound()  # Break out of entire traversal immediately
         self.generic_visit(node)
+
+
+# Module-level cache for parsed AST trees, keyed by file path.
+# This avoids re-reading and re-parsing the same source file when
+# multiple classes (or the same class for properties + overloads) share a file.
+_ast_cache: Dict[str, ast.Module] = {}
+
+
+def _get_parsed_module(path: str) -> ast.Module:
+    """Return the parsed AST for the given file path, using a cache."""
+    if path not in _ast_cache:
+        with open(path, "r", encoding="utf-8-sig") as source:
+            _ast_cache[path] = ast.parse(source.read())
+    return _ast_cache[path]
+
+
+def _find_class_node(module: ast.Module, class_name: str) -> Optional[ast.ClassDef]:
+    """Find and return the AST ClassDef node for the given class name, or None."""
+    analyzer = ClassTreeAnalyzer(class_name)
+    try:
+        analyzer.visit(module)
+    except _ClassNodeFound:
+        pass
+    return analyzer.cls_node
 
 
 def test_find_modules(pkg_root_path: str) -> Dict:
@@ -60,9 +105,7 @@ def test_find_modules(pkg_root_path: str) -> Dict:
 
         # Add current path as module name if _init.py is present
         if "__init__.py" in files:
-            module_name = os.path.relpath(root, pkg_root_path).replace(
-                os.path.sep, "."
-            )
+            module_name = os.path.relpath(root, pkg_root_path).replace(os.path.sep, ".")
             modules[module_name] = []
             for f in files:
                 if f.endswith(".py"):
@@ -73,7 +116,9 @@ def test_find_modules(pkg_root_path: str) -> Dict:
                 for f in files
                 if f.endswith(".py") and not os.path.basename(f).startswith("_")
             ]
-            modules[module_name].extend(["{0}.{1}".format(module_name, x) for x in sub_modules])
+            modules[module_name].extend(
+                ["{0}.{1}".format(module_name, x) for x in sub_modules]
+            )
 
     return modules
 
@@ -127,7 +172,9 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                 # FIXME: This can get the type hint for a limited set attributes. We need to address more complex
                 # type hints in the future.
                 # Build type hint for the attribute
-                if hasattr(assign.annotation, "value") and isinstance(assign.annotation.value, ast.Name):
+                if hasattr(assign.annotation, "value") and isinstance(
+                    assign.annotation.value, ast.Name
+                ):
                     attr_type = assign.annotation.value.id
                     if attr_type == "List" and hasattr(assign.annotation, "slice"):
                         if isinstance(assign.annotation.slice, ast.Constant):
@@ -136,27 +183,34 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
 
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
-        assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
+        assigns = [
+            node
+            for node in func_nodes[0].body
+            if isinstance(node, (ast.Assign, ast.AnnAssign))
+        ]
         if assigns:
             for assign in assigns:
                 if hasattr(assign, "target"):
-                    if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
+                    if hasattr(
+                        assign.target, "attr"
+                    ) and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.update({attr.attr: {
-                                "attr_type": get_property_type(assign)
-                            }})
+                        attribute_names.update(
+                            {attr.attr: {"attr_type": get_property_type(assign)}}
+                        )
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):
-                            attribute_names.update({target.attr: {
-                                "attr_type": get_property_type(assign)
-                            }})
+                            attribute_names.update(
+                                {target.attr: {"attr_type": get_property_type(assign)}}
+                            )
 
 
 def check_base_classes(cls_node: ast.ClassDef) -> bool:
     should_look = False
     init_node = [
-        node for node in cls_node.body
+        node
+        for node in cls_node.body
         if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
     ]
     if init_node:
@@ -183,12 +237,8 @@ def get_properties(cls: Type) -> Dict:
     attribute_names = {}
 
     path = inspect.getsourcefile(cls)
-    with open(path, "r", encoding="utf-8-sig") as source:
-        module = ast.parse(source.read())
-
-    analyzer = ClassTreeAnalyzer(cls.__name__)
-    analyzer.visit(module)
-    cls_node = analyzer.cls_node
+    module = _get_parsed_module(path)
+    cls_node = _find_class_node(module, cls.__name__)
     extract_base_classes = True if hasattr(cls_node, "bases") else False
 
     if extract_base_classes:
@@ -196,31 +246,59 @@ def get_properties(cls: Type) -> Dict:
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                with open(path, "r", encoding="utf-8-sig") as source:
-                    module = ast.parse(source.read())
+                module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
-                _LOGGER.info(f"Unable to create ast of {base_class}")
+                _LOGGER.debug(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
-            analyzer = ClassTreeAnalyzer(base_class.__name__)
-            analyzer.visit(module)
-            cls_node = analyzer.cls_node
+            cls_node = _find_class_node(module, base_class.__name__)
             if cls_node:
                 get_property_names(cls_node, attribute_names)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
+                _LOGGER.debug(
+                    f"Unable to get class node for {base_class.__name__}. Skipping..."
+                )
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
 
 
+def _is_overload_decorator(dec: ast.expr) -> bool:
+    """Return True if the AST decorator node is `@overload` or `@typing.overload`."""
+    # Bare `@overload`
+    if isinstance(dec, ast.Name) and dec.id == "overload":
+        return True
+    # Qualified `@typing.overload` (or any `pkg.overload`)
+    if isinstance(dec, ast.Attribute) and dec.attr == "overload":
+        return True
+    return False
+
+
+def _find_function_def_in_body(
+    body, target_name: str
+) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+    """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
+
+    Only scans direct children of ``body`` -- does NOT recurse -- so a method
+    lookup is scoped to the owning class body and a module-level function
+    lookup is scoped to the module's top level.
+    """
+    for node in body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name != target_name:
+            continue
+        # Skip @overload stubs - handled separately by `get_overload_data`.
+        if any(_is_overload_decorator(dec) for dec in node.decorator_list):
+            continue
+        return node
+    return None
+
+
 def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
-    func_obj = {
-        "parameters": {},
-        "is_async": is_async
-    }
+    func_obj = {"parameters": {}, "is_async": is_async, "return_type": None}
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
@@ -241,6 +319,54 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
         param[par.name]["param_type"] = param_type
         func_obj["parameters"].update(param)
 
+    # Capture the return type annotation by inspecting the source AST. We use
+    # the AST rather than `inspect.signature(f).return_annotation` because the
+    # latter resolves to live type objects whose `str()` representation differs
+    # from the source-level annotation (e.g. fully qualified module paths,
+    # generic alias quirks). Using AST keeps the captured value consistent with
+    # how parameter types are recorded for overloads via `get_parameter_type`.
+    #
+    # Scope the lookup so we don't pick up an unrelated same-named function or
+    # a method on a different class in the same module:
+    #   - For methods (qualname like "Cls.method"), search only the owning
+    #     ClassDef's direct body.
+    #   - For module-level functions, search only the module's top-level body.
+    try:
+        lookup_target = f
+        try:
+            lookup_target = inspect.unwrap(f)
+        except (AttributeError, ValueError, TypeError):
+            # Fall back to the original callable when unwrap is not possible.
+            lookup_target = f
+
+        source_path = inspect.getsourcefile(lookup_target)
+        target_name = getattr(lookup_target, "__name__", None)
+        qualname = getattr(lookup_target, "__qualname__", target_name) or ""
+        if source_path and target_name:
+            module_ast = _get_parsed_module(source_path)
+            target_node = None
+            # Heuristic: a qualname of the form "Owner.method" with no
+            # "<locals>" segment indicates a method bound to a class named
+            # by the first qualname component.
+            qualname_parts = qualname.split(".")
+            if (
+                len(qualname_parts) >= 2
+                and qualname_parts[-1] == target_name
+                and "<locals>" not in qualname_parts
+            ):
+                owner_class = qualname_parts[-2]
+                cls_node = _find_class_node(module_ast, owner_class)
+                if cls_node is not None:
+                    target_node = _find_function_def_in_body(cls_node.body, target_name)
+            if target_node is None:
+                # Module-level function (or fallback if class lookup failed).
+                target_node = _find_function_def_in_body(module_ast.body, target_name)
+            if target_node is not None and target_node.returns is not None:
+                func_obj["return_type"] = get_parameter_type(target_node.returns)
+    except (TypeError, OSError, SyntaxError) as exc:
+        # Built-ins, C-implemented functions, or unreadable source files.
+        _LOGGER.debug("Unable to capture return type for %r: %s", f, exc)
+
     return func_obj
 
 
@@ -255,6 +381,8 @@ def get_parameter_default_ast(default):
 
 
 def get_parameter_type(annotation) -> str:
+    if annotation is None:
+        return None
     if isinstance(annotation, ast.Name):
         return annotation.id
     if isinstance(annotation, ast.Attribute):
@@ -270,7 +398,28 @@ def get_parameter_type(annotation) -> str:
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
     if isinstance(annotation, ast.Tuple):
         return ", ".join([get_parameter_type(el) for el in annotation.elts])
-    return annotation
+    # PEP 604 union syntax (e.g. ``int | None``) parses as ``ast.BinOp`` with
+    # ``ast.BitOr``. Represent it as a ``Union[...]`` string so the captured
+    # value remains JSON-serializable.
+    if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+        parts = []
+
+        def _flatten(node):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                _flatten(node.left)
+                _flatten(node.right)
+            else:
+                parts.append(get_parameter_type(node))
+
+        _flatten(annotation)
+        return f"Union[{', '.join(str(p) for p in parts)}]"
+    # Fall back to a source-level string representation so we never return a
+    # raw AST node (which would not be JSON-serializable when the report is
+    # written via ``json.dump``).
+    try:
+        return ast.unparse(annotation)
+    except Exception:  # pylint: disable=broad-except
+        return str(annotation)
 
 
 def create_parameters(args: ast.arg) -> Dict:
@@ -278,19 +427,27 @@ def create_parameters(args: ast.arg) -> Dict:
     if hasattr(args, "posonlyargs"):
         for arg in args.posonlyargs:
             # Initialize the function parameters
-            params.update({arg.arg: {
-                "type": get_parameter_type(arg.annotation),
-                "default": None,
-                "param_type": "positional_only"
-            }})
+            params.update(
+                {
+                    arg.arg: {
+                        "type": get_parameter_type(arg.annotation),
+                        "default": None,
+                        "param_type": "positional_only",
+                    }
+                }
+            )
     if hasattr(args, "args"):
         for arg in args.args:
             # Initialize the function parameters
-            params.update({arg.arg: {
-                "type": get_parameter_type(arg.annotation),
-                "default": None,
-                "param_type": "positional_or_keyword"
-            }})
+            params.update(
+                {
+                    arg.arg: {
+                        "type": get_parameter_type(arg.annotation),
+                        "default": None,
+                        "param_type": "positional_or_keyword",
+                    }
+                }
+            )
     # Range through the corresponding default values
     all_args = args.posonlyargs + args.args
     positional_defaults = [None] * (len(all_args) - len(args.defaults)) + args.defaults
@@ -298,34 +455,41 @@ def create_parameters(args: ast.arg) -> Dict:
         params[arg.arg]["default"] = get_parameter_default_ast(default)
     if hasattr(args, "vararg"):
         if args.vararg:
-            params.update({args.vararg.arg: {
-                "type": get_parameter_type(args.vararg.annotation),
-                "default": None,
-                "param_type": "var_positional"
-            }})
+            params.update(
+                {
+                    args.vararg.arg: {
+                        "type": get_parameter_type(args.vararg.annotation),
+                        "default": None,
+                        "param_type": "var_positional",
+                    }
+                }
+            )
     if hasattr(args, "kwonlyargs"):
         for arg in args.kwonlyargs:
             # Initialize the function parameters
-            params.update({
-                arg.arg: {
-                    "type": get_parameter_type(arg.annotation),
-                    "default": None,
-                    "param_type": "keyword_only"
+            params.update(
+                {
+                    arg.arg: {
+                        "type": get_parameter_type(arg.annotation),
+                        "default": None,
+                        "param_type": "keyword_only",
+                    }
                 }
-            })
+            )
         # Range through the corresponding default values
-        for i in range(len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)):
-            params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(args.kw_defaults[i])
+        for i in range(
+            len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)
+        ):
+            params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(
+                args.kw_defaults[i]
+            )
     return params
+
 
 def get_overloads(cls: Type, cls_methods: Dict):
     path = inspect.getsourcefile(cls)
-    with open(path, "r", encoding="utf-8-sig") as source:
-        module = ast.parse(source.read())
-
-    analyzer = ClassTreeAnalyzer(cls.__name__)
-    analyzer.visit(module)
-    cls_node = analyzer.cls_node
+    module = _get_parsed_module(path)
+    cls_node = _find_class_node(module, cls.__name__)
     extract_base_classes = check_base_classes(cls_node)
 
     if extract_base_classes:
@@ -333,27 +497,34 @@ def get_overloads(cls: Type, cls_methods: Dict):
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                with open(path, "r", encoding="utf-8-sig") as source:
-                    module = ast.parse(source.read())
+                module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
-                _LOGGER.info(f"Unable to create ast of {base_class}")
+                _LOGGER.debug(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
-            analyzer = ClassTreeAnalyzer(base_class.__name__)
-            analyzer.visit(module)
-            cls_node = analyzer.cls_node
+            cls_node = _find_class_node(module, base_class.__name__)
             if cls_node:
                 get_overload_data(cls_node, cls_methods)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
+                _LOGGER.debug(
+                    f"Unable to get class node for {base_class.__name__}. Skipping..."
+                )
     else:
         get_overload_data(cls_node, cls_methods)
 
 
 def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
-    func_nodes = [node for node in node.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
-    public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
+    func_nodes = [
+        node
+        for node in node.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]
+    public_func_nodes = [
+        func
+        for func in func_nodes
+        if not func.name.startswith("_") or func.name.startswith("__init__")
+    ]
     # Check for method overloads on a class
     for func in public_func_nodes:
         if func.name not in cls_methods:
@@ -366,11 +537,14 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
             is_async = True
         # method_overloads.update({func.name: {"parameters": {}, "is_async": False, "return_type": None}})
         for decorator in func.decorator_list:
-            if hasattr(decorator, "id") and decorator.id == "overload":
+            if _is_overload_decorator(decorator):
+                overload_return_type = None
+                if func.returns is not None:
+                    overload_return_type = get_parameter_type(func.returns)
                 overload_report = {
                     "parameters": create_parameters(func.args),
                     "is_async": is_async,
-                    "return_type": None
+                    "return_type": overload_return_type,
                 }
                 cls_methods[func.name]["overloads"].append(overload_report)
 
@@ -385,12 +559,18 @@ def create_class_report(cls: Type) -> Dict:
     is_enum = Enum in cls.__mro__
     if is_enum:
         cls_info["type"] = "Enum"
-        cls_info["properties"] = {str(value): str(value) for value in dir(cls) if not value.startswith("_")}
+        cls_info["properties"] = {
+            str(value): str(value) for value in dir(cls) if not value.startswith("_")
+        }
         return cls_info
 
     cls_info["properties"] = get_properties(cls)
 
-    methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
+    methods = [
+        method
+        for method in dir(cls)
+        if not method.startswith("_") or method.startswith("__init__")
+    ]
     for method in methods:
         async_func = False
         try:
@@ -399,7 +579,7 @@ def create_class_report(cls: Type) -> Dict:
         except AttributeError:
             _LOGGER.info(f"Skipping method check for {method} on {cls}.")
             continue
-    
+
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
                 async_func = True
@@ -418,6 +598,7 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
 
 
 def build_library_report(target_module: str) -> Dict:
+    _ast_cache.clear()  # Clear AST cache to avoid stale data between runs
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
 
@@ -431,40 +612,75 @@ def build_library_report(target_module: str) -> Dict:
             if not importable.startswith("_"):
                 live_obj = getattr(module, importable)
                 if inspect.isfunction(live_obj):
-                    public_api[module_name]["function_nodes"].update({importable: create_function_report(live_obj)})
+                    public_api[module_name]["function_nodes"].update(
+                        {importable: create_function_report(live_obj)}
+                    )
                 elif inspect.isclass(live_obj):
-                    public_api[module_name]["class_nodes"].update({importable: create_class_report(live_obj)})
+                    public_api[module_name]["class_nodes"].update(
+                        {importable: create_class_report(live_obj)}
+                    )
                 # else:  # Constants, version, etc. Nothing of interest at the moment
                 #     public_api[module_name]["others"].update({importable: live_obj})
 
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
-    package_name = os.path.basename(pkg_dir)
-
-    with open(os.path.join(pkg_dir, source_report), "r") as fd:
-        stable = json.load(fd)
-    with open(os.path.join(pkg_dir, target_report), "r") as fd:
-        current = json.load(fd)
-
+def compare_report_dicts(
+    stable: Dict, current: Dict, package_name: str, changelog: bool
+):
+    """Compare two code report dicts and run the breaking change / changelog checks."""
     if "azure-mgmt-" in package_name:
         stable = report_azure_mgmt_versioned_module(stable)
         current = report_azure_mgmt_versioned_module(current)
 
-    checker = BreakingChangesTracker(
+    stable, current = drop_shadow_types_modules(stable, current)
+
+    tracker_cls = ChangelogTracker if changelog else BreakingChangesTracker
+    checker = tracker_cls(
         stable,
         current,
         package_name,
-        checkers = CHECKERS,
-        ignore = IGNORE_BREAKING_CHANGES,
-        post_processing_checkers = POST_PROCESSING_CHECKERS
+        checkers=CHECKERS,
+        ignore=IGNORE_BREAKING_CHANGES,
+        post_processing_checkers=POST_PROCESSING_CHECKERS,
     )
-    if changelog:
-        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES, post_processing_checkers = POST_PROCESSING_CHECKERS)
     checker.run_checks()
+    return checker
 
-    remove_json_files(pkg_dir)
+
+def test_compare_reports(
+    pkg_dir: str,
+    changelog: bool,
+    source_report: str = "stable.json",
+    target_report: str = "current.json",
+) -> None:
+    package_name = os.path.basename(pkg_dir)
+
+    # Preserve the original argument values so we can decide later whether cleanup is safe.
+    original_source_report = source_report
+    original_target_report = target_report
+
+    if not os.path.isabs(source_report):
+        source_report = os.path.join(pkg_dir, source_report)
+    if not os.path.isabs(target_report):
+        target_report = os.path.join(pkg_dir, target_report)
+
+    with open(source_report, "r") as fd:
+        stable = json.load(fd)
+    with open(target_report, "r") as fd:
+        current = json.load(fd)
+
+    checker = compare_report_dicts(stable, current, package_name, changelog)
+
+    # Only clean up reports that were generated into pkg_dir with default, non-absolute names.
+    cleanup_default_reports = (
+        original_source_report == "stable.json"
+        and original_target_report == "current.json"
+        and not os.path.isabs(original_source_report)
+        and not os.path.isabs(original_target_report)
+    )
+    if cleanup_default_reports:
+        remove_json_files(pkg_dir)
 
     print(checker.report_changes())
 
@@ -483,7 +699,7 @@ def remove_json_files(pkg_dir: str) -> None:
 
 
 def report_azure_mgmt_versioned_module(code_report):
-    
+
     def parse_module_name(module):
         split_module = module.split(".")
         # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
@@ -506,21 +722,208 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
+def drop_shadow_types_modules(stable: Dict, current: Dict) -> Tuple[Dict, Dict]:
+    """Drop the generated shadow ``types`` module from both code reports before diffing.
+
+    TypeSpec generated libraries emit a ``types`` module of ``TypedDict`` input aliases that
+    shadow the real classes in the sibling ``models`` module. It carries no API contract of its
+    own: which models get a ``TypedDict`` is decided by the emitter's input-reachability rules,
+    so the module's contents churn across emitter upgrades even when the service API is
+    unchanged. Diffing it yields either duplicates of the ``models`` entries or -- when a model
+    stops being used as input and only its ``TypedDict`` disappears -- false ``Deleted or renamed
+    model`` reports for classes that are still part of the public API.
+
+    A ``types`` module is only treated as a shadow when every class it declares also exists in a
+    sibling ``models`` module; that subset relation is what makes it a projection rather than an
+    API surface of its own. A ``types`` module that owns even one class -- hand-written or a
+    generated ``TypedDict`` with no counterpart model -- is kept and diffed normally.
+
+    The decision is made across both reports so the filter is symmetric; dropping the module from
+    only one side would surface a phantom added/removed module.
+    """
+
+    def is_shadow(module: str) -> bool:
+        if not module.endswith(".types"):
+            return False
+        models_module = module[: -len("types")] + "models"
+        seen = False
+        for report in (stable, current):
+            if module not in report:
+                continue
+            if models_module not in report:
+                return False
+            seen = True
+            types_classes = set(report[module].get("class_nodes", {}))
+            models_classes = set(report[models_module].get("class_nodes", {}))
+            if not types_classes <= models_classes:
+                return False
+        return seen
+
+    shadow_modules = {
+        module for module in set(stable) | set(current) if is_shadow(module)
+    }
+    if shadow_modules:
+        _LOGGER.info(
+            "Skipping generated shadow `types` module(s): %s",
+            ", ".join(sorted(shadow_modules)),
+        )
+
+    return (
+        {
+            module: nodes
+            for module, nodes in stable.items()
+            if module not in shadow_modules
+        },
+        {
+            module: nodes
+            for module, nodes in current.items()
+            if module not in shadow_modules
+        },
+    )
+
+
+def generate_apistub_markdown(
+    package_name: str,
+    out_dir: str,
+    version: Optional[str] = None,
+    from_pypi: bool = True,
+) -> str:
+    """Generate ``api.md`` for ``package_name`` and return its path.
+
+    Delegates to ``azpysdk apistub``. When ``from_pypi`` is set, the released
+    wheel for ``version`` is downloaded from PyPI; otherwise ``api.md`` is
+    generated from the local source in ``out_dir``. The APIView token file is
+    generated and exported to ``api.md``.
+    """
+    azpysdk = shutil.which("azpysdk")
+    if not azpysdk:
+        raise RuntimeError(
+            "azpysdk is not installed. Install it with "
+            "'pip install -e eng/tools/azure-sdk-tools' (or 'pip install azure-sdk-tools')."
+        )
+
+    # Use a fresh temp dir per call so a stale api.md is never picked up.
+    suffix = version if from_pypi else "local"
+    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{suffix}_")
+
+    command = [azpysdk, "apistub", "--dest-dir", dest_dir]
+    if from_pypi:
+        if not version:
+            raise ValueError("A version is required when generating api.md from PyPI.")
+        command += ["--generate-from-pypi", version]
+    command.append(".")
+
+    subprocess.check_call(command, cwd=out_dir)
+    api_md = os.path.join(dest_dir, "api.md")
+    if not os.path.isfile(api_md):
+        raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
+    return api_md
+
+
+def build_report_from_apistub(
+    package_name: str,
+    out_dir: str,
+    version: Optional[str] = None,
+    debug: bool = False,
+    label: str = "",
+    from_pypi: bool = True,
+) -> Dict:
+    """Generate api.md via apistub and convert it to a code report dict.
+
+    When ``debug`` is set, the generated ``api.md`` and the resulting
+    ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
+    so they can be inspected after the run instead of being left in a temp dir.
+    """
+    api_md = generate_apistub_markdown(
+        package_name, out_dir, version, from_pypi=from_pypi
+    )
+    dest_dir = os.path.dirname(api_md)
+    try:
+        report = convert_api_md_to_report(api_md)
+        if debug:
+            prefix = f"{label}_" if label else ""
+            debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
+            shutil.copyfile(api_md, debug_api_md)
+            debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
+            with open(debug_report, "w") as fd:
+                json.dump(report, fd, indent=2)
+            _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    finally:
+        shutil.rmtree(dest_dir, ignore_errors=True)
+    return report
+
+
+def _uninstall_package(package_name: str, pkg_dir: str) -> None:
+    """Remove an installed package so APIStub cannot reuse a same-version distribution."""
+    subprocess.run(
+        [sys.executable, "-m", "pip", "uninstall", "-y", package_name],
+        cwd=pkg_dir,
+        check=False,
+    )
+
+
+def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
+    """Resolve the PyPI version to compare against.
+
+    Returns the latest release (which may be a preview) when
+    ``latest_pypi_version`` is set, otherwise the most recent stable release.
+    Falls back to the configured package index when public PyPI is unavailable.
+    Exits cleanly when no relevant version exists on PyPI.
+    """
+    from pypi_tools.pypi import PyPIClient
+    from urllib3.exceptions import HTTPError
+
+    def resolve(client: PyPIClient) -> str:
+        if latest_pypi_version:
+            return str(client.get_ordered_versions(package_name)[-1])
+        return str(client.get_relevant_versions(package_name)[1])
+
+    # Force the public PyPI backend: in CI ``PIP_INDEX_URL`` points at the curated
+    # Azure Artifacts feed, which is not a full mirror of PyPI. A package can be
+    # released on public PyPI while absent from that feed, so query pypi.org
+    # directly to resolve the version to compare against.
+    client = PyPIClient(force_pypi=True)
+    try:
+        return resolve(client)
+    except (HTTPError, OSError, json.JSONDecodeError, UnicodeDecodeError) as error:
+        _LOGGER.warning(
+            "Failed to query public PyPI for %s; falling back to the configured package index: %s",
+            package_name,
+            error,
+        )
+        try:
+            return resolve(PyPIClient())
+        except (IndexError, KeyError):
+            raise error
+    except (IndexError, KeyError):
+        # IndexError: the package exists but has no relevant/previous version.
+        # KeyError: the package is brand new and not published on PyPI yet.
+        _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
+        exit(0)
+
+
 def main(
-        package_name: str,
-        target_module: str,
-        version: str,
-        in_venv: Union[bool, str],
-        pkg_dir: str,
-        changelog: bool,
-        code_report: bool,
-        latest_pypi_version: bool,
-        source_report: Optional[Path],
-        target_report: Optional[Path]
-    ):
+    package_name: str,
+    target_module: str,
+    version: str,
+    in_venv: Union[bool, str],
+    pkg_dir: str,
+    changelog: bool,
+    code_report: bool,
+    latest_pypi_version: bool,
+    source_report: Optional[Path],
+    target_report: Optional[Path],
+    use_apistub: bool = False,
+    debug: bool = False,
+):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
-        public_api = build_library_report(target_module)
+        if use_apistub:
+            public_api = build_report_from_apistub(
+                package_name, pkg_dir, from_pypi=False
+            )
+        else:
+            public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("code_report.json is written.")
@@ -531,23 +934,44 @@ def main(
         test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
         return
 
+    # If using apistub, generate api.md for the stable (PyPI) and current (local)
+    # versions, convert both to code reports, and compare them directly.
+    if use_apistub:
+        # Resolve the previous released version on PyPI when one was not provided,
+        # otherwise apistub falls back to the installed version and "stable" would
+        # match "current", producing an empty changelog.
+        if not version:
+            version = _resolve_pypi_version(package_name, latest_pypi_version)
+        # APIStub installs each target into this Python environment, and pip skips
+        # replacement when local and PyPI distributions have the same name/version.
+        # Clear both snapshots for repeatable runs, then install local last so it
+        # remains available to downstream SDK generation steps.
+        _uninstall_package(package_name, pkg_dir)
+        stable = build_report_from_apistub(
+            package_name,
+            pkg_dir,
+            version=version,
+            debug=debug,
+            label="stable",
+            from_pypi=True,
+        )
+        _uninstall_package(package_name, pkg_dir)
+        current = build_report_from_apistub(
+            package_name, pkg_dir, debug=debug, label="current", from_pypi=False
+        )
+        checker = compare_report_dicts(stable, current, package_name, changelog)
+        print(checker.report_changes())
+        if not changelog and checker.breaking_changes:
+            exit(1)
+        return
+
     # For default behavior, find the latest stable version on PyPi
     if not version:
+        version = _resolve_pypi_version(package_name, latest_pypi_version)
 
-        from pypi_tools.pypi import PyPIClient
-        client = PyPIClient()
-
-        try:
-            if latest_pypi_version:
-                versions = client.get_ordered_versions(package_name)
-                version = str(versions[-1])
-            else:
-                version = str(client.get_relevant_versions(package_name)[1])
-        except IndexError:
-            _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
-            exit(0)
-
-    in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
+    in_venv = (
+        True if in_venv == "true" else False
+    )  # subprocess sends back string so convert to bool
 
     if not in_venv:
         packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
@@ -559,21 +983,22 @@ def main(
                     "pip",
                     "install",
                     "-r",
-                    os.path.join(pkg_dir, "dev_requirements.txt")
-                ]
+                    os.path.join(pkg_dir, "dev_requirements.txt"),
+                ],
+                cwd=pkg_dir,
             )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
             args = [
                 venv.env_exe,
                 __file__,
                 "-t",
-                package_name,
+                pkg_dir,
                 "-m",
                 target_module,
                 "--in-venv",
                 "true",
                 "-s",
-                version
+                version,
             ]
             try:
                 subprocess.check_call(args)
@@ -584,19 +1009,23 @@ def main(
         public_api = build_library_report(target_module)
 
         if in_venv:
-            with open("stable.json", "w") as fd:
+            with open(os.path.join(pkg_dir, "stable.json"), "w") as fd:
                 json.dump(public_api, fd, indent=2)
             _LOGGER.info("stable.json is written.")
             return
 
-        with open("current.json", "w") as fd:
+        with open(os.path.join(pkg_dir, "current.json"), "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
         test_compare_reports(pkg_dir, changelog)
 
-    except Exception as err:  # catch any issues with capturing the public API and building the report
-        print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
+    except (
+        Exception
+    ) as err:  # catch any issues with capturing the public API and building the report
+        print(
+            "\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n"
+        )
         remove_json_files(pkg_dir)
         raise err
 
@@ -626,7 +1055,7 @@ if __name__ == "__main__":
         "--in-venv",
         dest="in_venv",
         help="Check if we are in the newly created venv.",
-        default=False
+        default=False,
     )
 
     parser.add_argument(
@@ -634,7 +1063,7 @@ if __name__ == "__main__":
         "--stable_version",
         dest="stable_version",
         help="The stable version of the target package, if it exists on PyPi.",
-        default=None
+        default=None,
     )
 
     parser.add_argument(
@@ -674,6 +1103,22 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--use-apistub",
+        dest="use_apistub",
+        help="Generate the code report from an apistub-generated api.md instead of importing the package.",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--debug",
+        dest="debug",
+        help="Keep the generated api.md and code_report.json files (in the target directory) for easier debugging.",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -688,23 +1133,45 @@ if __name__ == "__main__":
 
     # We dont need to block for code report generation
     if not args.code_report:
-        if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
-            _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-                        f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+        if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(
+            bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES
+        ):
+            _LOGGER.info(
+                f"{package_name} opted out of breaking changes checks. "
+                f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in."
+            )
             exit(0)
 
-    if not target_module:
+    if not target_module and not (args.source_report and args.target_report):
         from ci_tools.parsing import ParsedSetup
+
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace
 
     if args.source_report:
         if not args.target_report:
-            _LOGGER.exception("If providing the `--source-report` flag, the `--target-report` flag is also required.")
+            _LOGGER.exception(
+                "If providing the `--source-report` flag, the `--target-report` flag is also required."
+            )
             exit(1)
     if args.target_report:
         if not args.source_report:
-            _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
+            _LOGGER.exception(
+                "If providing the `--target-report` flag, the `--source-report` flag is also required."
+            )
             exit(1)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.latest_pypi_version, args.source_report, args.target_report)
+    main(
+        package_name,
+        target_module,
+        stable_version,
+        in_venv,
+        pkg_dir,
+        changelog,
+        args.code_report,
+        args.latest_pypi_version,
+        args.source_report,
+        args.target_report,
+        args.use_apistub,
+        args.debug,
+    )

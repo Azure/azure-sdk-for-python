@@ -8,12 +8,23 @@ parameters:
   - name: Arguments
     type: string
     default: ''
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    inputs:
+  # Sets a default PIP_INDEX_URL before UsePythonVersion@0 so the task's own pip
+  # auto-restore does not reach pypi.org under network isolation.
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
       versionSpec: $(PythonVersion)
+
+  # Authenticate to the Azure Artifacts feed before any pip install.
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org.
+  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
 
   - pwsh: |
       $ErrorActionPreference = 'Stop'

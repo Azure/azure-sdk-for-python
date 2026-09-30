@@ -79,6 +79,7 @@ IGNORE_BREAKING_CHANGES = {
 | ChangedParameterOrdering            | `def my_function(a, b, c=None)  -->  def my_function(b, c=None, a=None)`                                              | ("ChangedParameterOrdering", "module-name", "class-name", "function-name")        |
 | RemovedFunctionKwargs               | A function was changed to no longer accept keyword arguments. `def my_func(param, **kwargs)  -->  def my_func(param)` | ("RemovedFunctionKwargs", "module-name", "class-name", "function-name")           |
 | ChangedParameterKind                | `def my_function(a, b, c)  -->  def my_function(a, b, *, c)`                                                          | ("ChangedParameterKind", "module-name", "class-name", "function-name")            |
+| ChangedParameterType                | `def my_function(a: str)  -->  def my_function(a: int)`                                                               | ("ChangedParameterType", "module-name", "class-name", "function-name")            |
 | ChangedFunctionKind                 | `async def my_function(param) ->  def my_function(param)`                                                             | ("ChangedFunctionKind", "module-name", "class-name", "function-name")             |
 
 ## Advanced scenarios
@@ -138,3 +139,78 @@ Example:
 ```
 C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --source-report ./source_code_report.json --target-report ./target_code_report.json
 ```
+
+### Generate changelog from two code reports
+
+When both `--source-report` and `--target-report` are provided together with the `--changelog` flag, the tool skips the package build and PyPI install steps entirely and generates the changelog by comparing the two reports directly. This is the fastest way to produce a changelog when you already have code reports for both versions.
+
+**Step 1:** Generate a code report for the stable (old) version:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
+```
+
+Rename the output file: `mv code_report.json stable_report.json`
+
+**Step 2:** After updating your code, generate a report for the new version:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
+```
+
+Rename the output file: `mv code_report.json current_report.json`
+
+**Step 3:** Generate the changelog by comparing the two reports:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking --source-report ./stable_report.json --target-report ./current_report.json --changelog
+```
+
+Example output:
+
+```
+===== changelog start =====
+### Features Added
+
+  - Client `BlobServiceClient` added method `list_blobs_flat`
+
+### Breaking Changes
+
+  - Deleted or renamed client method `BlobServiceClient.list_blobs`
+===== changelog end =====
+```
+
+> **Note:** When `--source-report` and `--target-report` are both specified, you do not need to pass a positional package directory argument, but you should still run the command from the package's root directory so that the package name is inferred correctly for opt-in and ignore-rule behavior. The `--changelog` flag is optional — omitting it will report only breaking changes and exit with code 1 if any are found.
+
+### Generate code reports / changelog from `api.md` (apistub)
+
+Instead of importing the built package, the tool can build a code report from the APIView stub (`api.md`) produced by `apistub`. This avoids installing and importing the package, so it is significantly faster. Pass the `--use-apistub` flag.
+
+Generate a code report from `api.md`:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report --use-apistub
+```
+
+Generate a changelog comparing the local source against the latest stable PyPI release (both via apistub):
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --changelog --use-apistub
+```
+
+> **Note:** The apistub-based report is *functionally equivalent* to the import-based report (same namespaces, classes, enums, methods/overloads, properties and module functions) but not byte-identical — enum values reflect member names and the inherited `str`/`Mapping` boilerplate is omitted. Since both sides of a comparison use the same converter, those differences cancel out in the diff.
+
+## Run tests
+
+The default test command runs the full suite, including slow integration tests that generate full code reports for large packages:
+
+```bash
+python -m pytest tests/
+```
+
+Skip those slow tests for a faster local signal:
+
+```bash
+python -m pytest tests/ --fast
+```
+

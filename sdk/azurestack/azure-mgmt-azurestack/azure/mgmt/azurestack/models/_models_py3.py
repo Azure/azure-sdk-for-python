@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +7,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+import datetime
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -27,7 +27,7 @@ class ActivationKeyResult(_serialization.Model):
         "activation_key": {"key": "activationKey", "type": "str"},
     }
 
-    def __init__(self, *, activation_key: Optional[str] = None, **kwargs):
+    def __init__(self, *, activation_key: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword activation_key: Azure Stack activation key.
         :paramtype activation_key: str
@@ -63,8 +63,8 @@ class CloudManifestFileDeploymentData(_serialization.Model):
         custom_cloud_verification_key: Optional[str] = None,
         custom_cloud_arm_endpoint: Optional[str] = None,
         external_dsms_endpoint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword external_dsms_certificates: Dsms external certificates.
         :paramtype external_dsms_certificates: str
@@ -101,8 +101,8 @@ class CloudManifestFileProperties(_serialization.Model):
         *,
         deployment_data: Optional["_models.CloudManifestFileDeploymentData"] = None,
         signature: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deployment_data: Cloud specific manifest data.
         :paramtype deployment_data: ~azure.mgmt.azurestack.models.CloudManifestFileDeploymentData
@@ -142,15 +142,15 @@ class Resource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, etag: Optional[str] = None, **kwargs):
+    def __init__(self, *, etag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
         :paramtype etag: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
 
 
@@ -190,8 +190,8 @@ class CloudManifestFileResponse(Resource):
         *,
         etag: Optional[str] = None,
         properties: Optional["_models.CloudManifestFileProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
         :paramtype etag: str
@@ -228,9 +228,9 @@ class Compatibility(_serialization.Model):
         is_compatible: Optional[bool] = None,
         message: Optional[str] = None,
         description: Optional[str] = None,
-        issues: Optional[List[Union[str, "_models.CompatibilityIssue"]]] = None,
-        **kwargs
-    ):
+        issues: Optional[list[Union[str, "_models.CompatibilityIssue"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_compatible: Tells if product is compatible with current device.
         :paramtype is_compatible: bool
@@ -261,6 +261,8 @@ class CustomerSubscription(Resource):
     :vartype type: str
     :ivar etag: The entity tag used for optimistic concurrency when modifying the resource.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :ivar tenant_id: Tenant Id.
     :vartype tenant_id: str
     """
@@ -269,6 +271,7 @@ class CustomerSubscription(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -276,10 +279,11 @@ class CustomerSubscription(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tenant_id": {"key": "properties.tenantId", "type": "str"},
     }
 
-    def __init__(self, *, etag: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, etag: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
         :paramtype etag: str
@@ -287,6 +291,7 @@ class CustomerSubscription(Resource):
         :paramtype tenant_id: str
         """
         super().__init__(etag=etag, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.tenant_id = tenant_id
 
 
@@ -305,8 +310,12 @@ class CustomerSubscriptionList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.CustomerSubscription"]] = None, **kwargs
-    ):
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[list["_models.CustomerSubscription"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: URI to the next page.
         :paramtype next_link: str
@@ -339,61 +348,11 @@ class DataDiskImage(_serialization.Model):
         "source_blob_sas_uri": {"key": "sourceBlobSasUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.lun = None
-        self.source_blob_sas_uri = None
-
-
-class DeploymentLicenseRequest(_serialization.Model):
-    """Request details for generating a deployment license.
-
-    :ivar verification_version: Signing verification public key version.
-    :vartype verification_version: str
-    """
-
-    _attribute_map = {
-        "verification_version": {"key": "verificationVersion", "type": "str"},
-    }
-
-    def __init__(self, *, verification_version: Optional[str] = None, **kwargs):
-        """
-        :keyword verification_version: Signing verification public key version.
-        :paramtype verification_version: str
-        """
-        super().__init__(**kwargs)
-        self.verification_version = verification_version
-
-
-class DeploymentLicenseResponse(_serialization.Model):
-    """A license that can be used to deploy an Azure Stack device.
-
-    :ivar temporary_license_chain: A license chain that can be used to temporarily activate an
-     Azure Stack device.
-    :vartype temporary_license_chain: list[str]
-    :ivar signature: Signature of the license chain.
-    :vartype signature: str
-    """
-
-    _attribute_map = {
-        "temporary_license_chain": {"key": "temporaryLicenseChain", "type": "[str]"},
-        "signature": {"key": "signature", "type": "str"},
-    }
-
-    def __init__(
-        self, *, temporary_license_chain: Optional[List[str]] = None, signature: Optional[str] = None, **kwargs
-    ):
-        """
-        :keyword temporary_license_chain: A license chain that can be used to temporarily activate an
-         Azure Stack device.
-        :paramtype temporary_license_chain: list[str]
-        :keyword signature: Signature of the license chain.
-        :paramtype signature: str
-        """
-        super().__init__(**kwargs)
-        self.temporary_license_chain = temporary_license_chain
-        self.signature = signature
+        self.lun: Optional[int] = None
+        self.source_blob_sas_uri: Optional[str] = None
 
 
 class DeviceConfiguration(_serialization.Model):
@@ -417,11 +376,11 @@ class DeviceConfiguration(_serialization.Model):
         "identity_system": {"key": "identitySystem", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.device_version = None
-        self.identity_system = None
+        self.device_version: Optional[str] = None
+        self.identity_system: Optional[Union[str, "_models.Category"]] = None
 
 
 class Display(_serialization.Model):
@@ -455,8 +414,8 @@ class Display(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The localized, friendly version of the resource provider name.
         :paramtype provider: str
@@ -504,16 +463,17 @@ class ErrorDetails(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar error: The details of the error.
     :vartype error: ~azure.mgmt.azurestack.models.ErrorDetails
@@ -523,7 +483,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.azurestack.models.ErrorDetails
@@ -532,7 +492,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class ExtendedProduct(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ExtendedProduct(_serialization.Model):
     """Extended description about the product required for installing it into Azure Stack.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -598,21 +558,21 @@ class ExtendedProduct(_serialization.Model):  # pylint: disable=too-many-instanc
         "data_disk_images": {"key": "properties.dataDiskImages", "type": "[DataDiskImage]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.gallery_package_blob_sas_uri = None
-        self.product_kind = None
-        self.compute_role = None
-        self.is_system_extension = None
-        self.support_multiple_extensions = None
-        self.version_properties_version = None
-        self.vm_os_type = None
-        self.vm_scale_set_enabled = None
-        self.uri = None
-        self.version = None
-        self.os_disk_image = None
-        self.data_disk_images = None
+        self.gallery_package_blob_sas_uri: Optional[str] = None
+        self.product_kind: Optional[str] = None
+        self.compute_role: Optional[Union[str, "_models.ComputeRole"]] = None
+        self.is_system_extension: Optional[bool] = None
+        self.support_multiple_extensions: Optional[bool] = None
+        self.version_properties_version: Optional[str] = None
+        self.vm_os_type: Optional[Union[str, "_models.OperatingSystem"]] = None
+        self.vm_scale_set_enabled: Optional[bool] = None
+        self.uri: Optional[str] = None
+        self.version: Optional[str] = None
+        self.os_disk_image: Optional["_models.OsDiskImage"] = None
+        self.data_disk_images: Optional[list["_models.DataDiskImage"]] = None
 
 
 class VirtualMachineProductProperties(_serialization.Model):
@@ -640,12 +600,12 @@ class VirtualMachineProductProperties(_serialization.Model):
         "data_disk_images": {"key": "dataDiskImages", "type": "[DataDiskImage]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.version = None
-        self.os_disk_image = None
-        self.data_disk_images = None
+        self.version: Optional[str] = None
+        self.os_disk_image: Optional["_models.OsDiskImage"] = None
+        self.data_disk_images: Optional[list["_models.DataDiskImage"]] = None
 
 
 class VirtualMachineExtensionProductProperties(_serialization.Model):
@@ -692,16 +652,16 @@ class VirtualMachineExtensionProductProperties(_serialization.Model):
         "uri": {"key": "sourceBlob.uri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.compute_role = None
-        self.is_system_extension = None
-        self.support_multiple_extensions = None
-        self.version = None
-        self.vm_os_type = None
-        self.vm_scale_set_enabled = None
-        self.uri = None
+        self.compute_role: Optional[Union[str, "_models.ComputeRole"]] = None
+        self.is_system_extension: Optional[bool] = None
+        self.support_multiple_extensions: Optional[bool] = None
+        self.version: Optional[str] = None
+        self.vm_os_type: Optional[Union[str, "_models.OperatingSystem"]] = None
+        self.vm_scale_set_enabled: Optional[bool] = None
+        self.uri: Optional[str] = None
 
 
 class ExtendedProductProperties(VirtualMachineExtensionProductProperties, VirtualMachineProductProperties):
@@ -756,18 +716,18 @@ class ExtendedProductProperties(VirtualMachineExtensionProductProperties, Virtua
         "uri": {"key": "sourceBlob.uri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.os_disk_image = None
-        self.data_disk_images = None
-        self.compute_role = None
-        self.is_system_extension = None
-        self.support_multiple_extensions = None
-        self.version = None
-        self.vm_os_type = None
-        self.vm_scale_set_enabled = None
-        self.uri = None
+        self.os_disk_image: Optional["_models.OsDiskImage"] = None
+        self.data_disk_images: Optional[list["_models.DataDiskImage"]] = None
+        self.compute_role: Optional[Union[str, "_models.ComputeRole"]] = None
+        self.is_system_extension: Optional[bool] = None
+        self.support_multiple_extensions: Optional[bool] = None
+        self.version: Optional[str] = None
+        self.vm_os_type: Optional[Union[str, "_models.OperatingSystem"]] = None
+        self.vm_scale_set_enabled: Optional[bool] = None
+        self.uri: Optional[str] = None
 
 
 class IconUris(_serialization.Model):
@@ -801,8 +761,8 @@ class IconUris(_serialization.Model):
         medium: Optional[str] = None,
         small: Optional[str] = None,
         hero: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword large: URI to large icon.
         :paramtype large: str
@@ -821,6 +781,266 @@ class IconUris(_serialization.Model):
         self.medium = medium
         self.small = small
         self.hero = hero
+
+
+class TrackedResource(_serialization.Model):
+    """Base resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
+    :ivar location: Location of the resource. Required. "global"
+    :vartype location: str or ~azure.mgmt.azurestack.models.Location
+    :ivar tags: Custom tags for the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: The entity tag used for optimistic concurrency when modifying the resource.
+    :vartype etag: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "_models.Location"],
+        tags: Optional[dict[str, str]] = None,
+        etag: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the resource. Required. "global"
+        :paramtype location: str or ~azure.mgmt.azurestack.models.Location
+        :keyword tags: Custom tags for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
+        :paramtype etag: str
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.kind: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.location = location
+        self.tags = tags
+        self.etag = etag
+
+
+class LinkedSubscription(TrackedResource):
+    """Linked Subscription information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
+    :ivar location: Location of the resource. Required. "global"
+    :vartype location: str or ~azure.mgmt.azurestack.models.Location
+    :ivar tags: Custom tags for the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: The entity tag used for optimistic concurrency when modifying the resource.
+    :vartype etag: str
+    :ivar linked_subscription_id: The identifier associated with the device subscription.
+    :vartype linked_subscription_id: str
+    :ivar registration_resource_id: The identifier associated with the device registration.
+    :vartype registration_resource_id: str
+    :ivar device_id: The identifier of the Azure Stack device for remote management.
+    :vartype device_id: str
+    :ivar device_object_id: The object identifier associated with the Azure Stack device connecting
+     to Azure.
+    :vartype device_object_id: str
+    :ivar device_link_state: The connection state of the Azure Stack device.
+    :vartype device_link_state: str
+    :ivar last_connected_time: The last remote management connection time for the Azure Stack
+     device connected to the linked subscription resource.
+    :vartype last_connected_time: str
+    :ivar device_connection_status: The status of the remote management connection of the Azure
+     Stack device.
+    :vartype device_connection_status: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "device_id": {"readonly": True},
+        "device_object_id": {"readonly": True},
+        "device_link_state": {"readonly": True},
+        "last_connected_time": {"readonly": True},
+        "device_connection_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "linked_subscription_id": {"key": "properties.linkedSubscriptionId", "type": "str"},
+        "registration_resource_id": {"key": "properties.registrationResourceId", "type": "str"},
+        "device_id": {"key": "properties.deviceId", "type": "str"},
+        "device_object_id": {"key": "properties.deviceObjectId", "type": "str"},
+        "device_link_state": {"key": "properties.deviceLinkState", "type": "str"},
+        "last_connected_time": {"key": "properties.lastConnectedTime", "type": "str"},
+        "device_connection_status": {"key": "properties.deviceConnectionStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "_models.Location"],
+        tags: Optional[dict[str, str]] = None,
+        etag: Optional[str] = None,
+        linked_subscription_id: Optional[str] = None,
+        registration_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the resource. Required. "global"
+        :paramtype location: str or ~azure.mgmt.azurestack.models.Location
+        :keyword tags: Custom tags for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
+        :paramtype etag: str
+        :keyword linked_subscription_id: The identifier associated with the device subscription.
+        :paramtype linked_subscription_id: str
+        :keyword registration_resource_id: The identifier associated with the device registration.
+        :paramtype registration_resource_id: str
+        """
+        super().__init__(location=location, tags=tags, etag=etag, **kwargs)
+        self.linked_subscription_id = linked_subscription_id
+        self.registration_resource_id = registration_resource_id
+        self.device_id: Optional[str] = None
+        self.device_object_id: Optional[str] = None
+        self.device_link_state: Optional[str] = None
+        self.last_connected_time: Optional[str] = None
+        self.device_connection_status: Optional[str] = None
+
+
+class LinkedSubscriptionParameter(_serialization.Model):
+    """Linked Subscription resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar location: Location of the resource. Required. "global"
+    :vartype location: str or ~azure.mgmt.azurestack.models.Location
+    :ivar linked_subscription_id: The identifier associated with the device subscription. Required.
+    :vartype linked_subscription_id: str
+    :ivar registration_resource_id: The identifier associated with the device registration.
+     Required.
+    :vartype registration_resource_id: str
+    """
+
+    _validation = {
+        "location": {"required": True},
+        "linked_subscription_id": {"required": True},
+        "registration_resource_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "linked_subscription_id": {"key": "properties.linkedSubscriptionId", "type": "str"},
+        "registration_resource_id": {"key": "properties.registrationResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "_models.Location"],
+        linked_subscription_id: str,
+        registration_resource_id: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the resource. Required. "global"
+        :paramtype location: str or ~azure.mgmt.azurestack.models.Location
+        :keyword linked_subscription_id: The identifier associated with the device subscription.
+         Required.
+        :paramtype linked_subscription_id: str
+        :keyword registration_resource_id: The identifier associated with the device registration.
+         Required.
+        :paramtype registration_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.linked_subscription_id = linked_subscription_id
+        self.registration_resource_id = registration_resource_id
+
+
+class LinkedSubscriptionsList(_serialization.Model):
+    """List of linked subscriptions with paging support.
+
+    :ivar next_link: URI to the next page.
+    :vartype next_link: str
+    :ivar value: List of Linked Subscriptions.
+    :vartype value: list[~azure.mgmt.azurestack.models.LinkedSubscription]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[LinkedSubscription]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[list["_models.LinkedSubscription"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: URI to the next page.
+        :paramtype next_link: str
+        :keyword value: List of Linked Subscriptions.
+        :paramtype value: list[~azure.mgmt.azurestack.models.LinkedSubscription]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
 
 
 class MarketplaceProductLogUpdate(_serialization.Model):
@@ -852,13 +1072,13 @@ class MarketplaceProductLogUpdate(_serialization.Model):
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operation = None
-        self.status = None
-        self.error = None
-        self.details = None
+        self.operation: Optional[str] = None
+        self.status: Optional[str] = None
+        self.error: Optional[str] = None
+        self.details: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -885,8 +1105,8 @@ class Operation(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the operation being performed on this particular object.
         :paramtype name: str
@@ -916,7 +1136,9 @@ class OperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Array of operations.
         :paramtype value: list[~azure.mgmt.azurestack.models.Operation]
@@ -950,14 +1172,14 @@ class OsDiskImage(_serialization.Model):
         "source_blob_sas_uri": {"key": "sourceBlobSasUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operating_system = None
-        self.source_blob_sas_uri = None
+        self.operating_system: Optional[Union[str, "_models.OperatingSystem"]] = None
+        self.source_blob_sas_uri: Optional[str] = None
 
 
-class Product(Resource):  # pylint: disable=too-many-instance-attributes
+class Product(Resource):
     """Product information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -970,6 +1192,8 @@ class Product(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype type: str
     :ivar etag: The entity tag used for optimistic concurrency when modifying the resource.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :ivar display_name: The display name of the product.
     :vartype display_name: str
     :ivar description: The description of the product.
@@ -1012,6 +1236,7 @@ class Product(Resource):  # pylint: disable=too-many-instance-attributes
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1019,6 +1244,7 @@ class Product(Resource):  # pylint: disable=too-many-instance-attributes
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "publisher_display_name": {"key": "properties.publisherDisplayName", "type": "str"},
@@ -1054,15 +1280,15 @@ class Product(Resource):  # pylint: disable=too-many-instance-attributes
         vm_extension_type: Optional[str] = None,
         gallery_item_identity: Optional[str] = None,
         icon_uris: Optional["_models.IconUris"] = None,
-        links: Optional[List["_models.ProductLink"]] = None,
+        links: Optional[list["_models.ProductLink"]] = None,
         legal_terms: Optional[str] = None,
         privacy_policy: Optional[str] = None,
         payload_length: Optional[int] = None,
         product_kind: Optional[str] = None,
         product_properties: Optional["_models.ProductProperties"] = None,
         compatibility: Optional["_models.Compatibility"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
         :paramtype etag: str
@@ -1105,6 +1331,7 @@ class Product(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype compatibility: ~azure.mgmt.azurestack.models.Compatibility
         """
         super().__init__(etag=etag, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.display_name = display_name
         self.description = description
         self.publisher_display_name = publisher_display_name
@@ -1139,7 +1366,7 @@ class ProductLink(_serialization.Model):
         "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(self, *, display_name: Optional[str] = None, uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, display_name: Optional[str] = None, uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword display_name: The description of the link.
         :paramtype display_name: str
@@ -1165,7 +1392,9 @@ class ProductList(_serialization.Model):
         "value": {"key": "value", "type": "[Product]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Product"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Product"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: URI to the next page.
         :paramtype next_link: str
@@ -1177,7 +1406,7 @@ class ProductList(_serialization.Model):
         self.value = value
 
 
-class ProductLog(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ProductLog(_serialization.Model):
     """Product action log.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1234,20 +1463,20 @@ class ProductLog(_serialization.Model):  # pylint: disable=too-many-instance-att
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.product_id = None
-        self.subscription_id = None
-        self.registration_name = None
-        self.resource_group_name = None
-        self.operation = None
-        self.start_date = None
-        self.end_date = None
-        self.status = None
-        self.error = None
-        self.details = None
+        self.id: Optional[str] = None
+        self.product_id: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.registration_name: Optional[str] = None
+        self.resource_group_name: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.start_date: Optional[str] = None
+        self.end_date: Optional[str] = None
+        self.status: Optional[str] = None
+        self.error: Optional[str] = None
+        self.details: Optional[str] = None
 
 
 class ProductProperties(_serialization.Model):
@@ -1261,7 +1490,7 @@ class ProductProperties(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, *, version: Optional[str] = None, **kwargs):
+    def __init__(self, *, version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword version: The version.
         :paramtype version: str
@@ -1270,74 +1499,12 @@ class ProductProperties(_serialization.Model):
         self.version = version
 
 
-class TrackedResource(_serialization.Model):
-    """Base resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: ID of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of Resource.
-    :vartype type: str
-    :ivar location: Location of the resource. Required. "global"
-    :vartype location: str or ~azure.mgmt.azurestack.models.Location
-    :ivar tags: Custom tags for the resource.
-    :vartype tags: dict[str, str]
-    :ivar etag: The entity tag used for optimistic concurrency when modifying the resource.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Union[str, "_models.Location"],
-        tags: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword location: Location of the resource. Required. "global"
-        :paramtype location: str or ~azure.mgmt.azurestack.models.Location
-        :keyword tags: Custom tags for the resource.
-        :paramtype tags: dict[str, str]
-        :keyword etag: The entity tag used for optimistic concurrency when modifying the resource.
-        :paramtype etag: str
-        """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.etag = etag
-
-
 class Registration(TrackedResource):
     """Registration information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: ID of the resource.
     :vartype id: str
@@ -1345,6 +1512,10 @@ class Registration(TrackedResource):
     :vartype name: str
     :ivar type: Type of Resource.
     :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :ivar location: Location of the resource. Required. "global"
     :vartype location: str or ~azure.mgmt.azurestack.models.Location
     :ivar tags: Custom tags for the resource.
@@ -1363,6 +1534,8 @@ class Registration(TrackedResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "kind": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -1370,6 +1543,8 @@ class Registration(TrackedResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
@@ -1382,13 +1557,13 @@ class Registration(TrackedResource):
         self,
         *,
         location: Union[str, "_models.Location"],
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         object_id: Optional[str] = None,
         cloud_id: Optional[str] = None,
         billing_model: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required. "global"
         :paramtype location: str or ~azure.mgmt.azurestack.models.Location
@@ -1424,8 +1599,8 @@ class RegistrationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Registration"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Registration"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: URI to the next page.
         :paramtype next_link: str
@@ -1440,7 +1615,7 @@ class RegistrationList(_serialization.Model):
 class RegistrationParameter(_serialization.Model):
     """Registration resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location of the resource. Required. "global"
     :vartype location: str or ~azure.mgmt.azurestack.models.Location
@@ -1458,7 +1633,7 @@ class RegistrationParameter(_serialization.Model):
         "registration_token": {"key": "properties.registrationToken", "type": "str"},
     }
 
-    def __init__(self, *, location: Union[str, "_models.Location"], registration_token: str, **kwargs):
+    def __init__(self, *, location: Union[str, "_models.Location"], registration_token: str, **kwargs: Any) -> None:
         """
         :keyword location: Location of the resource. Required. "global"
         :paramtype location: str or ~azure.mgmt.azurestack.models.Location
@@ -1468,3 +1643,67 @@ class RegistrationParameter(_serialization.Model):
         super().__init__(**kwargs)
         self.location = location
         self.registration_token = registration_token
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

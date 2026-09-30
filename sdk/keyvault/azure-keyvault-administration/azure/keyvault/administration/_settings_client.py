@@ -27,6 +27,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
+
     # pylint:disable=protected-access
 
     @distributed_trace
@@ -75,11 +76,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         parameters = UpdateSettingRequest(value=setting.value)
-        result = self._client.update_setting(
-            setting_name=setting.name,
-            parameters=parameters,
-            **kwargs
-        )
+        result = self._client.update_setting(setting_name=setting.name, parameters=parameters, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     def __enter__(self) -> "KeyVaultSettingsClient":

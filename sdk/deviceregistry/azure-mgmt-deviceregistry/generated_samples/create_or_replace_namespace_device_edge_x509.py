@@ -50,11 +50,7 @@ def main():
                             "address": "opc.tcp://192.168.86.23:51211/UA/SampleServer",
                             "authentication": {
                                 "method": "Certificate",
-                                "x509Credentials": {
-                                    "certificateSecretName": "cert-secret",
-                                    "intermediateCertificatesSecretName": "intermediate-certs-secret",
-                                    "keySecretName": "key-secret",
-                                },
+                                "x509Credentials": {"certificateSecretName": "cert-secret"},
                             },
                             "endpointType": "microsoft.opcua",
                             "version": "2",
@@ -78,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_NamespaceDevice_Edge_x509.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceDevice_Edge_x509.json
 if __name__ == "__main__":
     main()

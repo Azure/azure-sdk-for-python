@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/ServersClusterCreate.json
+# x-ms-original-file: 2026-04-01-preview/ServersClusterCreate.json
 if __name__ == "__main__":
     main()

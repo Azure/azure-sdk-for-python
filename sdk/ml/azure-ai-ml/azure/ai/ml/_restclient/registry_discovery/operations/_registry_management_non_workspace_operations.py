@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +10,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,7 +30,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -54,6 +62,7 @@ def build_registry_management_non_workspace_request(
         headers=header_parameters,
         **kwargs
     )
+
 
 # fmt: on
 class RegistryManagementNonWorkspaceOperations(object):
@@ -94,16 +103,13 @@ class RegistryManagementNonWorkspaceOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.RegistryDiscoveryDto
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryDiscoveryDto"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RegistryDiscoveryDto"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_registry_management_non_workspace_request(
             registry_name=registry_name,
-            template_url=self.registry_management_non_workspace.metadata['url'],
+            template_url=self.registry_management_non_workspace.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -115,12 +121,11 @@ class RegistryManagementNonWorkspaceOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RegistryDiscoveryDto', pipeline_response)
+        deserialized = self._deserialize("RegistryDiscoveryDto", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    registry_management_non_workspace.metadata = {'url': '/registrymanagement/v1.0/registries/{registryName}/discovery'}  # type: ignore
-
+    registry_management_non_workspace.metadata = {"url": "/registrymanagement/v1.0/registries/{registryName}/discovery"}  # type: ignore

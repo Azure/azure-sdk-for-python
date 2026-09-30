@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
 import os
 import uuid
 from datetime import datetime, timezone
@@ -27,7 +26,9 @@ try:
     group = os.environ["DEVICEUPDATE_DEVICE_GROUP"]
 except KeyError:
     print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, ")
-    print("DEVICEUPDATE_DEVICE_GROUP, DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION")
+    print(
+        "DEVICEUPDATE_DEVICE_GROUP, DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION"
+    )
     exit()
 
 # Build a client through AAD
@@ -38,16 +39,15 @@ try:
     deployment = {
         "deploymentId": deployment_id,
         "startDateTime": str(datetime.now(timezone.utc)),
-        "updateId": {
-            "provider": update_provider,
-            "name": update_name,
-            "version": update_version
+        "update": {
+            "updateId": {"provider": update_provider, "name": update_name, "version": update_version},
         },
-        "groupId": group
+        "groupId": group,
     }
 
-    response = client.device_management.create_or_update_deployment(group, deployment_id, deployment)
-    response = client.device_management.get_deployment_status(group, deployment_id)
-    print(response)
+    created = client.device_management.create_or_update_deployment(group, deployment_id, deployment)
+    status = client.device_management.get_deployment_status(group, deployment_id)
+    print(created)
+    print(status)
 except HttpResponseError as e:
-    print('Failed to deploy update: {}'.format(e))
+    print("Failed to deploy update: {}".format(e))

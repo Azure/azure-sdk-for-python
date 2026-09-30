@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -20,6 +20,11 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import UsageManagementClientConfiguration
 from .operations import RateCardOperations, UsageAggregatesOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -43,8 +48,9 @@ class UsageManagementClient:
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2015-06-01-preview" and None. Default value is "2015-06-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2015-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 

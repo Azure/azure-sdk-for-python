@@ -1,0 +1,2021 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+# pylint: disable=too-many-return-statements
+"""HTTP endpoint handler for the Responses server.
+
+This module owns all Starlette I/O: ``Request`` parsing, route-level
+validation, header propagation, and ``Response`` construction.  Business
+logic lives in :class:`_ResponseOrchestrator`.
+"""
+
+from __future__ import annotations
+
+import asyncio  # pylint: disable=do-not-import-asyncio
+import contextvars
+from contextlib import aclosing
+import logging
+import os
+import threading
+from typing import TYPE_CHECKING, Any, AsyncGenerator, cast
+
+from anyio import CancelScope
+from opentelemetry import baggage as _otel_baggage
+from opentelemetry import context as _otel_context
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.types import Message, Send
+
+from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
+    FoundryAgentRequestContext,
+    flush_spans,
+    flush_spans_async,
+    reset_request_context,
+    schedule_flush_spans,
+    set_request_context,
+)
+from azure.ai.agentserver.core.tasks import (
+    LastInputIdPreconditionFailed,
+    TaskConflictError,
+)
+from azure.ai.agentserver.core.platform_headers import (
+    CLIENT_HEADER_PREFIX,
+    FOUNDRY_CALL_ID,
+    SESSION_ID,
+    USER_ID,
+)
+from azure.ai.agentserver.core import read_request_id
+from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
+    EventStreamNotFoundError,
+    streams,
+)
+
+from ..models import _generated as _generated_models
+
+from .._id_generator import IdGenerator
+from .._egress import strip_internal_metadata
+from .._options import ResponsesServerOptions
+from .._response_context import PlatformContext, ResponseContext, _resolve_history_item_ids
+from ..models._helpers import get_input_expanded, to_output_item
+from ..models.runtime import (
+    ResponseExecution,
+    ResponseModeFlags,
+    _resolve_cancelled_response,
+    _resolve_failed_response,
+)
+from ..store._base import ResponseProviderProtocol, ResponseStoreCorruptionError
+from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
+from ..streaming._sse import encode_sse_any_event, with_keep_alive
+from ..streaming._state_machine import _normalize_lifecycle_events
+from ._execution_context import _ExecutionContext
+from ._observability import (
+    CreateSpan,
+    _initial_create_span_tags,
+    build_create_span_tags,
+    extract_request_id,
+    start_create_span,
+)
+from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator
+from ._request_parsing import (
+    _apply_item_cursors,
+    _extract_agent_identity,
+    _extract_item_id,
+    _prevalidate_identity_payload,
+    _resolve_conversation_id,
+    _resolve_identity_fields,
+    _resolve_session_id,
+)
+from ._runtime_state import _RuntimeState
+from ._validation import (
+    ERROR_SOURCE_PLATFORM,
+    ERROR_SOURCE_UPSTREAM,
+    ERROR_SOURCE_USER,
+    _apply_error_source_headers,
+    format_error_detail,
+    is_platform_error,
+    parse_and_validate_create_response,
+)
+from ._validation import (
+    deleted_response as _deleted_response,
+)
+from ._validation import (
+    error_response as _error_response,
+)
+from ._validation import (
+    invalid_mode_response as _invalid_mode,
+)
+from ._validation import (
+    invalid_parameters_response as _invalid_parameters,
+)
+from ._validation import (
+    invalid_request_response as _invalid_request,
+)
+from ._validation import (
+    not_found_response as _not_found,
+)
+from ._validation import (
+    service_unavailable_response as _service_unavailable,
+)
+
+if TYPE_CHECKING:
+    from ._routing import ResponsesAgentServerHost
+
+logger = logging.getLogger("azure.ai.agentserver")
+
+
+class _CreateStreamingResponse(StreamingResponse):
+    """Close request-owned iterators and flush before HTTP stream completion."""
+
+    def __init__(
+        self,
+        source: AsyncGenerator[str, None],
+        interval_seconds: float | None,
+        *,
+        headers: dict[str, str],
+    ) -> None:
+        self._source = source
+        self._stream = cast(AsyncGenerator[str, None], with_keep_alive(source, interval_seconds))
+        super().__init__(self._stream, media_type="text/event-stream", headers=headers)
+
+    async def stream_response(self, send: Send) -> None:
+        """Flush after stream work, including on send errors and disconnects.
+
+        :param send: The ASGI ``send`` callable for the response.
+        :type send: ~starlette.types.Send
+        """
+        finalized = False
+
+        async def finalize() -> None:
+            nonlocal finalized
+            if finalized:
+                return
+            finalized = True
+            # Starlette's older ASGI path cancels this task's AnyIO scope on
+            # disconnect. Finish iterator cleanup before flushing ended spans.
+            with CancelScope(shield=True):
+                try:
+                    await self._stream.aclose()
+                finally:
+                    try:
+                        await self._source.aclose()
+                    finally:
+                        await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+
+        async def send_with_flush(message: Message) -> None:
+            if message["type"] == "http.response.body" and not message.get("more_body", False):
+                await finalize()
+            await send(message)
+
+        try:
+            await super().stream_response(send_with_flush)
+        finally:
+            await finalize()
+
+
+def _extract_platform_context(request: Request) -> PlatformContext:
+    """Build a ``PlatformContext`` from platform-injected request headers.
+
+    Returns the per-user key from ``x-agent-user-id`` and the per-request call
+    ID from ``x-agent-foundry-call-id`` (protocol ``2.0.0`` only).  Fields are
+    ``None`` when the header is absent (e.g. local development) and empty string
+    when sent with no value.
+
+    :param request: The incoming Starlette HTTP request.
+    :type request: Request
+    :return: A platform context with the user ID key and call ID.
+    :rtype: PlatformContext
+    """
+    return PlatformContext(
+        user_id_key=request.headers.get(USER_ID),
+        call_id=request.headers.get(FOUNDRY_CALL_ID),
+    )
+
+
+def _validate_response_id_format(
+    response_id: str, headers: dict[str, str] | None = None, *, request_id: str | None = None
+) -> Response | None:
+    """Validate that a response_id path parameter has the expected ID format.
+
+    Returns a 400 error response if the ID is malformed, or ``None`` if valid.
+    The error shape follows spec rule B40: ``code: "invalid_parameters"``,
+    ``param: "responseId{<value>}"``.
+
+    :param response_id: The response ID from the URL path.
+    :type response_id: str
+    :param headers: Optional HTTP headers to include on the error response.
+    :type headers: dict[str, str] | None
+    :keyword request_id: Resolved ``x-request-id`` for error enrichment.
+    :return: A 400 error response if invalid, or ``None`` if valid.
+    :rtype: Response | None
+    """
+    is_valid, _ = IdGenerator.is_valid(response_id, allowed_prefixes=["caresp"])
+    if not is_valid:
+        return _invalid_parameters(
+            "Malformed identifier.",
+            headers or {},
+            param=f"responseId{{{response_id}}}",
+            request_id=request_id,
+        )
+    return None
+
+
+def _get_scope_request_id(request: Request) -> str | None:
+    """Extract the resolved ``x-request-id`` from the ASGI scope state.
+
+    The value is set by :class:`~azure.ai.agentserver.core.RequestIdMiddleware`
+    during request processing.  Returns ``None`` when the middleware is not
+    installed or the value is absent.
+
+    :param request: The Starlette HTTP request.
+    :type request: Request
+    :return: The resolved request ID, or ``None``.
+    :rtype: str | None
+    """
+    return read_request_id(request.scope)
+
+
+# Structured log scope context variables (spec §7.4)
+_response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
+_conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ConversationId", default="")
+_streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
+
+
+_FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
+_DEFAULT_FLUSH_MODE = "background"
+_FLUSH_MODES = frozenset({"async", "background", "sync"})
+_invalid_flush_modes_warned: set[str] = set()
+_flush_mode_lock = threading.Lock()
+
+
+def _resolve_flush_mode(mode: str) -> str:
+    """Normalize and validate a configured flush mode.
+
+    :param mode: The configured flush mode.
+    :type mode: str
+    :return: A supported flush mode.
+    :rtype: str
+    """
+    normalized = (mode or "").strip().lower()
+    if normalized in _FLUSH_MODES:
+        return normalized
+    if normalized:
+        with _flush_mode_lock:
+            should_warn = normalized not in _invalid_flush_modes_warned
+            _invalid_flush_modes_warned.add(normalized)
+        if should_warn:
+            logger.warning(
+                "Unrecognised %s=%r; falling back to %r flush mode.",
+                _FLUSH_MODE_ENV,
+                mode,
+                _DEFAULT_FLUSH_MODE,
+            )
+    return _DEFAULT_FLUSH_MODE
+
+
+async def _flush_spans_for_mode(mode: str) -> None:
+    """Dispatch span flushing according to *mode* (see ``AGENTSERVER_FLUSH_MODE``).
+
+    ``force_flush`` blocks the calling thread until the exporter drains; doing
+    that inline on this ``async`` handler blocks the event loop and serialises
+    concurrent requests behind one export.  The mode selects the strategy:
+
+    * ``"async"`` -> :func:`flush_spans_async`: off the event loop;
+      same durability, no head-of-line blocking under concurrency.
+    * ``"background"`` (default) -> :func:`schedule_flush_spans`: schedule
+      flushing without awaiting export (lowest latency, but needs the platform
+      to grant a drain window before freezing).
+    * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
+
+    Empty or unrecognised values fall back to the ``"background"`` default.
+    Background export requires a platform drain window to preserve telemetry.
+
+    :param mode: The flush mode; matched case-insensitively.
+    :type mode: str
+    """
+    normalized = _resolve_flush_mode(mode)
+    if normalized == "sync":
+        flush_spans()
+    elif normalized == "background":
+        schedule_flush_spans()
+    else:
+        await flush_spans_async()
+
+
+class _ResponseLogFilter(logging.Filter):
+    """Attach response-scope IDs to every log record from context vars.
+
+    Reads from ``contextvars`` rather than instance state, so a single
+    filter instance can be installed once on the logger (not per-request).
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.response_id = _response_id_var.get("")  # type: ignore[attr-defined]
+        record.conversation_id = _conversation_id_var.get("")  # type: ignore[attr-defined]
+        record.streaming = _streaming_var.get("")  # type: ignore[attr-defined]
+        return True
+
+
+# Install once on first request — no per-request add/remove needed.
+_log_filter_lock = threading.Lock()
+_log_filter_installed = False
+
+
+def _ensure_response_log_filter() -> None:
+    """Install the response log filter on first use (lazy, thread-safe)."""
+    global _log_filter_installed  # pylint: disable=global-statement
+    if _log_filter_installed:
+        return
+    with _log_filter_lock:
+        if _log_filter_installed:
+            return
+        logger.addFilter(_ResponseLogFilter())
+        _log_filter_installed = True
+
+
+_CANCEL_TERMINAL_ERRORS: dict[str, str] = {
+    "completed": "Cannot cancel a completed response.",
+    "failed": "Cannot cancel a failed response.",
+    "incomplete": "Cannot cancel a response in terminal state.",
+}
+
+
+def _check_cancel_terminal_status(
+    status: str | None,
+    headers: dict[str, str],
+) -> Response | None:
+    """Return an error response if *status* is terminal, else ``None``.
+
+    For ``"cancelled"`` the caller must handle the idempotent path itself
+    (the caller decides between in-memory snapshot vs. persisted payload),
+    so this helper returns a sentinel ``JSONResponse`` with status 200 and
+    an empty body that the caller replaces.
+
+    :param status: The response's current status string.
+    :type status: str | None
+    :param headers: Session headers to include on error responses.
+    :type headers: dict[str, str]
+    :return: An error response, 200 sentinel for *cancelled*, or ``None``.
+    :rtype: Response | None
+    """
+    msg = _CANCEL_TERMINAL_ERRORS.get(status or "")
+    if msg is not None:
+        return _invalid_request(msg, headers, param="response_id")
+    if status == "cancelled":
+        # Sentinel — caller builds the idempotent 200 itself.
+        return JSONResponse({}, status_code=200, headers=headers)
+    return None
+
+
+async def _stop_disconnect_monitor(
+    task: asyncio.Task[None] | None,
+    cancellation_signal: asyncio.Event,
+) -> None:
+    """Stop and await a request disconnect monitor.
+
+    :param task: Monitor task, or ``None`` when monitoring is disabled.
+    :type task: asyncio.Task[None] | None
+    :param cancellation_signal: Shared signal used to stop the monitor.
+    :type cancellation_signal: asyncio.Event
+    """
+    if task is None:
+        return
+    cancellation_signal.set()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+
+
+class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
+    """HTTP-layer handler for all Responses API endpoints.
+
+    Owns all Starlette ``Request``/``Response`` concerns.  Delegates
+    event-pipeline logic to :class:`_ResponseOrchestrator`.
+
+    Mutable shutdown state (``_is_draining``, ``_shutdown_requested``) lives
+    here so every route method shares consistent drain/cancel semantics without
+    needing a ``nonlocal`` closure variable.
+    """
+
+    def __init__(
+        self,
+        *,
+        orchestrator: _ResponseOrchestrator,
+        runtime_state: _RuntimeState,
+        runtime_options: ResponsesServerOptions,
+        response_headers: dict[str, str],
+        sse_headers: dict[str, str],
+        host: "ResponsesAgentServerHost",
+        provider: ResponseProviderProtocol,
+    ) -> None:
+        """Initialise the endpoint handler.
+
+        :param orchestrator: Event-pipeline orchestrator.
+        :type orchestrator: _ResponseOrchestrator
+        :param runtime_state: In-memory execution record store.
+        :type runtime_state: _RuntimeState
+        :param runtime_options: Server runtime options.
+        :type runtime_options: ResponsesServerOptions
+        :param response_headers: Headers to include on all responses.
+        :type response_headers: dict[str, str]
+        :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
+        :type sse_headers: dict[str, str]
+        :param host: The ``ResponsesAgentServerHost`` instance.
+        :type host: ResponsesAgentServerHost
+        :param provider: Persistence provider for response envelopes and input items.
+        :type provider: ResponseProviderProtocol
+        """
+        self._orchestrator = orchestrator
+        self._runtime_state = runtime_state
+        self._runtime_options = runtime_options
+        self._response_headers = response_headers
+        self._sse_headers = sse_headers
+        self._host = host
+        self._provider = provider
+        self._shutdown_requested: asyncio.Event = asyncio.Event()
+        self._is_draining: bool = False
+
+        # Validate the lifecycle event state machine on startup so
+        # misconfigured state machines surface immediately.
+        _normalize_lifecycle_events(
+            response_id="resp_validation",
+            events=[
+                {"type": "response.created", "response": {"status": "in_progress"}},
+                {"type": "response.completed", "response": {"status": "completed"}},
+            ],
+        )
+
+    # ------------------------------------------------------------------
+    # §8: Session ID response header helper
+    # ------------------------------------------------------------------
+
+    def _session_headers(self, session_id: str | None = None) -> dict[str, str]:
+        """Build response headers including ``x-agent-session-id``.
+
+        Merges the base ``_response_headers`` with the session ID header.
+        For POST /responses the caller passes the per-request resolved
+        session ID; other endpoints use the ``FOUNDRY_AGENT_SESSION_ID``
+        environment variable via the host config (resolved lazily so the
+        value is available even when the handler is constructed before the
+        base class ``__init__``).
+
+        :param session_id: Per-request session ID (overrides env var).
+        :type session_id: str | None
+        :return: Headers dict with ``x-agent-session-id`` when available.
+        :rtype: dict[str, str]
+        """
+        sid = session_id or (getattr(getattr(self._host, "config", None), "session_id", "") or "")
+        headers = dict(self._response_headers)
+        if sid:
+            headers[SESSION_ID] = sid
+        return headers
+
+    # ------------------------------------------------------------------
+    # Streaming response helpers
+    # ------------------------------------------------------------------
+
+    async def _monitor_disconnect(
+        self,
+        request: Request,
+        cancellation_signal: asyncio.Event,
+        *,
+        context: "ResponseContext | None" = None,
+    ) -> None:
+        """Poll for client disconnect or server shutdown and set cancellation signal.
+
+        Used for non-background requests so that handler cancellation is
+        triggered when the client drops the connection (spec requirement B17)
+        or when the server is shutting down.
+
+        Client disconnect on a foreground request is treated as an explicit
+        client cancellation — stamps ``context.client_cancelled = True``.
+
+        :param request: The Starlette request to monitor.
+        :type request: Request
+        :param cancellation_signal: Event to set when disconnect is detected
+            (also delivered to the handler as its 3rd positional
+            ``cancellation_signal`` parameter, so handlers awaiting that
+            Event see the same wake-up).
+        :type cancellation_signal: asyncio.Event
+        :keyword context: Optional response context to stamp cancellation cause.
+        :paramtype context: ResponseContext | None
+        """
+        while not cancellation_signal.is_set():
+            if self._shutdown_requested.is_set():
+                if context is not None:
+                    context.shutdown.set()
+                cancellation_signal.set()
+                return
+            if await request.is_disconnected():
+                # Client disconnect on foreground. If shutdown is also
+                # in progress, prefer SHUTTING_DOWN cause — the
+                # disconnect is a side effect of server shutdown
+                # (Hypercorn closing connections during graceful
+                # drain), not an independent client action. (Spec 014
+                # Row 3 Path B / spec 024 Proposal #11.)
+                if context is not None:
+                    if self._shutdown_requested.is_set():
+                        context.shutdown.set()
+                    else:
+                        context.client_cancelled = True
+                cancellation_signal.set()
+                return
+            try:
+                await asyncio.wait_for(cancellation_signal.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                pass
+
+    # ------------------------------------------------------------------
+    # ResponseContext factory
+    # ------------------------------------------------------------------
+
+    def _build_execution_context(
+        self,
+        *,
+        parsed: _generated_models.CreateResponse,
+        response_id: str,
+        agent_reference: _generated_models.AgentReference | dict[str, Any],
+        agent_session_id: str | None = None,
+        agent_session_guid: str | None = None,
+        span: CreateSpan,
+        request: Request,
+    ) -> _ExecutionContext:
+        """Build an :class:`_ExecutionContext` from the parsed request.
+
+        Extracts all protocol fields from *parsed* exactly once and
+        creates the cancellation signal.  The companion
+        :class:`ResponseContext` is derived automatically so that both
+        objects share a single source of truth for mode flags, input
+        items, and conversation-threading fields.
+        :keyword parsed: Validated :class:`CreateResponse` model.
+        :paramtype parsed: CreateResponse
+        :keyword response_id: Assigned response identifier.
+        :paramtype response_id: str
+        :keyword agent_reference: Normalised agent reference model or dictionary.
+        :paramtype agent_reference: AgentReference | dict[str, Any]
+        :keyword agent_session_id: Resolved session ID (B39), or ``None``.
+        :paramtype agent_session_id: str | None
+        :keyword agent_session_guid: Platform session-incarnation GUID, or
+            ``None`` when unavailable.
+        :paramtype agent_session_guid: str | None
+        :keyword span: Active observability span for this request.
+        :paramtype span: CreateSpan
+        :keyword request: Starlette HTTP request (for headers / query params).
+        :paramtype request: Request
+        :return: A fully-populated :class:`_ExecutionContext` with its
+                    ``context`` field already set.
+        :rtype: _ExecutionContext
+        """
+        stream = bool(parsed.get("stream", False))
+        store = True if parsed.get("store") is None else bool(parsed.get("store"))
+        background = bool(parsed.get("background", False))
+        model = parsed.get("model") or ""
+        _expanded = get_input_expanded(parsed)
+        input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
+        previous_response_id: str | None = (
+            parsed.get("previous_response_id")
+            if isinstance(parsed.get("previous_response_id"), str) and parsed.get("previous_response_id")
+            else None
+        )
+        conversation_id = _resolve_conversation_id(parsed)
+
+        cancellation_signal = asyncio.Event()
+        if self._shutdown_requested.is_set():
+            cancellation_signal.set()
+
+        ctx = _ExecutionContext(
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            store=store,
+            background=background,
+            stream=stream,
+            input_items=input_items,
+            previous_response_id=previous_response_id,
+            conversation_id=conversation_id,
+            cancellation_signal=cancellation_signal,
+            agent_session_id=agent_session_id,
+            agent_session_guid=agent_session_guid,
+            span=span,
+            parsed=parsed,
+            user_id=request.headers.get(USER_ID),
+            call_id=request.headers.get(FOUNDRY_CALL_ID),
+        )
+
+        # Derive the public ResponseContext from the execution context.
+        ctx.context = self._create_response_context(ctx, request=request)
+        return ctx
+
+    def _create_response_context(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        request: Request,
+    ) -> ResponseContext:
+        """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
+
+        All protocol fields (mode flags, input items, conversation
+        threading) are read from *ctx* so that values are extracted from
+        the parsed request exactly once.
+
+        :param ctx: The execution context that owns the protocol fields.
+        :type ctx: _ExecutionContext
+        :keyword request: The Starlette HTTP request.
+        :paramtype request: Request
+        :return: A fully-populated :class:`ResponseContext`.
+        :rtype: ResponseContext
+        """
+        mode_flags = ResponseModeFlags(stream=ctx.stream, store=ctx.store, background=ctx.background)
+        client_headers = {
+            k.lower(): v for k, v in request.headers.items() if k.lower().startswith(CLIENT_HEADER_PREFIX)
+        }
+
+        context = ResponseContext(
+            response_id=ctx.response_id,
+            mode_flags=mode_flags,
+            request=ctx.parsed,
+            provider=self._provider,
+            input_items=ctx.input_items,
+            previous_response_id=ctx.previous_response_id,
+            conversation_id=ctx.conversation_id,
+            history_limit=self._runtime_options.default_fetch_history_count,
+            client_headers=client_headers,
+            query_parameters=dict(request.query_params),
+            platform_context=PlatformContext(
+                user_id_key=ctx.user_id,
+                call_id=ctx.call_id,
+            ),
+            prefetched_history_ids=ctx.prefetched_history_ids,
+            steerable=self._runtime_options.steerable_conversations,
+            agent_name=_extract_agent_identity(ctx.agent_reference)[0],
+            session_id=ctx.agent_session_id or "",
+        )
+        # Alias the execution-context cancellation_signal with the
+        # handler-facing private ``context._cancellation_signal`` so the
+        # disconnect monitor and the framework ``/cancel`` endpoint set
+        # the SAME Event the handler observes via its 3rd positional
+        # ``cancellation_signal`` parameter. ``context.shutdown`` is an
+        # independent Event — shutdown does NOT fire the cancel signal;
+        # handlers that care about both must observe each separately.
+        context._cancellation_signal = ctx.cancellation_signal  # pylint: disable=protected-access
+        if self._shutdown_requested.is_set():
+            context.shutdown.set()
+        return context
+
+    async def _prefetch_history_ids(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        span: "CreateSpan",
+        agent_session_id: str | None,
+    ) -> Response | None:
+        """Eagerly validate conversation references and prefetch history IDs.
+
+        Calls ``provider.get_history_item_ids()`` when the request carries
+        ``previous_response_id`` or ``conversation_id``.  A nonexistent
+        reference surfaces as a client-facing error *before* the handler is
+        invoked.  On success the fetched IDs are cached on *ctx* and its
+        ``ResponseContext`` so that ``get_history()`` skips the redundant
+        provider call.
+
+        :param ctx: The execution context for the current request.
+        :type ctx: _ExecutionContext
+        :keyword span: Active observability span.
+        :paramtype span: CreateSpan
+        :keyword agent_session_id: Resolved session ID for response headers.
+        :paramtype agent_session_id: str | None
+        :return: An error ``Response`` when validation fails, or ``None`` on success.
+        :rtype: Response | None
+        """
+        if self._provider is None or (not ctx.previous_response_id and not ctx.conversation_id):
+            return None
+
+        _hdrs = self._session_headers(agent_session_id)
+        try:
+            _context = ctx.context.platform_context if ctx.context else None
+            prefetched = await _resolve_history_item_ids(
+                self._provider,
+                ctx.previous_response_id,
+                ctx.conversation_id,
+                self._runtime_options.default_fetch_history_count,
+                context=_context,
+                request_context=ctx.context,
+            )
+            ctx.prefetched_history_ids = prefetched
+            if ctx.context is not None:
+                ctx.context._prefetched_history_ids = prefetched  # pylint: disable=protected-access
+            return None
+        except FoundryResourceNotFoundError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=404,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
+            return _not_found(str(ctx.previous_response_id or ctx.conversation_id), _hdrs)
+        except FoundryBadRequestError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=400,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
+            return _invalid_request(str(exc), _hdrs)
+        except FoundryApiError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=500,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)),
+                )
+            return _error_response(exc, _hdrs)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Failed to validate conversation references for response %s",
+                ctx.response_id,
+                exc_info=exc,
+            )
+            span.end(exc)
+            return _error_response(exc, _hdrs)
+
+    # ------------------------------------------------------------------
+    # Route handlers
+    # ------------------------------------------------------------------
+
+    async def handle_create(self, request: Request) -> Response:  # pylint: disable=too-many-locals,too-many-statements
+        """Route handler for ``POST /responses``.
+
+        Parses and validates the create request, builds an
+        :class:`_ExecutionContext`, then dispatches to the appropriate
+        orchestrator method (stream / sync / background).
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :return: HTTP response for the create operation.
+        :rtype: Response
+        """
+        if self._is_draining:
+            return _service_unavailable("Server is shutting down.", self._session_headers())
+
+        # Also maintain CreateSpanHook for backward compat (tests etc.)
+        span = start_create_span(
+            "create_response",
+            _initial_create_span_tags(),
+            hook=self._runtime_options.create_span_hook,
+        )
+        captured_error: Exception | None = None
+        scope_request_id = _get_scope_request_id(request)
+
+        try:
+            payload = await request.json()
+            # Ingress strip (spec 025 §A.2): remove any client-supplied
+            # framework-internal metadata BEFORE validation, so a client can
+            # neither inject nor read the reserved `_internal_metadata` key (and
+            # so the metadata 16-key/size validation counts only client keys).
+            strip_internal_metadata(payload)
+            _prevalidate_identity_payload(payload)
+            parsed = parse_and_validate_create_response(payload, options=self._runtime_options)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to parse/validate create request", exc_info=exc)
+            captured_error = exc
+            span.end(captured_error)
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
+
+        try:
+            response_id, agent_reference = _resolve_identity_fields(
+                parsed,
+                request_headers=request.headers,
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to resolve identity fields", exc_info=exc)
+            captured_error = exc
+            span.end(captured_error)
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
+
+        # B39: Resolve session ID
+        config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
+        host_config = getattr(self._host, "config", None)
+        config_session_guid = (
+            getattr(host_config, "session_guid", "") or ""
+            if getattr(host_config, "is_hosted", False)
+            else ""
+        )
+        agent_session_id = _resolve_session_id(
+            parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
+        )
+
+        ctx = self._build_execution_context(
+            parsed=parsed,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            agent_session_id=agent_session_id,
+            agent_session_guid=config_session_guid or None,
+            span=span,
+            request=request,
+        )
+
+        logger.info(
+            "Creating response %s: streaming=%s background=%s store=%s model=%s "
+            "conversation_id=%s previous_response_id=%s "
+            "has_user_id=%s has_call_id=%s",
+            ctx.response_id,
+            ctx.stream,
+            ctx.background,
+            ctx.store,
+            ctx.model,
+            ctx.conversation_id,
+            ctx.previous_response_id,
+            ctx.user_id is not None,
+            ctx.call_id is not None,
+        )
+
+        # Eagerly validate conversation references before the handler runs.
+        prefetch_error = await self._prefetch_history_ids(ctx, span=span, agent_session_id=agent_session_id)
+        if prefetch_error is not None:
+            return prefetch_error
+
+        # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
+        request_id = extract_request_id(request.headers)
+        _project_id = getattr(getattr(self._host, "config", None), "project_id", "") or ""
+
+        span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
+
+        # Set W3C baggage per spec §7.3
+        # Incoming baggage and trace context are already attached by
+        # BaggageMiddleware and the Starlette OTel instrumentor.
+        # Add protocol-specific baggage entries for this response.
+        bag_ctx = _otel_context.get_current()
+
+        bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.response_id", response_id, context=bag_ctx)
+        bag_ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx
+        )
+        bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
+        if request_id:
+            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
+        baggage_token = _otel_context.attach(bag_ctx)
+
+        # Set structured log scope per spec §7.4
+        _ensure_response_log_filter()
+        rid_token = _response_id_var.set(response_id)
+        cid_token = _conversation_id_var.set(ctx.conversation_id or "")
+        str_token = _streaming_var.set(str(ctx.stream).lower())
+        # Bind platform context so handler/tool code making raw outbound 1P calls
+        # can forward the per-request call ID and user ID (protocol 2.0.0).
+        platform_context = FoundryAgentRequestContext(
+            call_id=ctx.call_id or None,
+            user_id=ctx.user_id or None,
+            session_id=agent_session_id,
+        )
+        platform_ctx_token = set_request_context(platform_context)
+
+        disconnect_task: asyncio.Task[None] | None = None
+        stream_owns_flush = False
+        try:
+            if ctx.stream:
+                raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
+
+                # B17: monitor client disconnect for non-background streams
+                if not ctx.background:
+                    disconnect_task = asyncio.create_task(
+                        self._monitor_disconnect(request, ctx.cancellation_signal, context=ctx.context)
+                    )
+
+                # The handler runs lazily while Starlette iterates this body, which
+                # happens after handle_create returns and the outer `finally` has
+                # already reset the request context. Re-establish the platform
+                # context inside the streaming task so handler/tool code can still
+                # forward the per-request call ID / user ID (protocol 2.0.0), fold in
+                # the B17 client-disconnect handling (non-background only), and clean
+                # up the disconnect monitor.
+                async def _iter_with_context():  # type: ignore[return]
+                    stream_ctx_token = set_request_context(platform_context)
+                    try:
+                        async with aclosing(raw_iter):
+                            async for chunk in raw_iter:
+                                yield chunk
+                    except (asyncio.CancelledError, GeneratorExit):
+                        # B17: Hypercorn cancels the generator when the client
+                        # disconnects. For a NON-background stream, stamp
+                        # client_cancelled and signal the handler to exit gracefully
+                        # — UNLESS the server is shutting down, in which case
+                        # ``shutdown.set()`` is the correct cause (Spec 014 Row 3
+                        # Path B / spec 024 Proposal #11). A background stream is
+                        # decoupled from the client connection, so a consumer
+                        # disconnect must NOT cancel it.
+                        if not ctx.background and not ctx.cancellation_signal.is_set():
+                            if ctx.context is not None:
+                                if self._shutdown_requested.is_set():
+                                    ctx.context.shutdown.set()
+                                else:
+                                    ctx.context.client_cancelled = True
+                            ctx.cancellation_signal.set()
+                        raise
+                    finally:
+                        reset_request_context(stream_ctx_token)
+                        await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
+
+                sse_response = _CreateStreamingResponse(
+                    _iter_with_context(),
+                    # Ephemeral orchestration already owns heartbeats. A second
+                    # pump would advance its handler ahead of HTTP sends.
+                    self._runtime_options.sse_keep_alive_interval_seconds if ctx.store else None,
+                    headers={**self._sse_headers, **self._session_headers(agent_session_id)},
+                )
+                stream_owns_flush = True
+                return sse_response
+
+            if not ctx.background:
+                disconnect_task = asyncio.create_task(
+                    self._monitor_disconnect(request, ctx.cancellation_signal, context=ctx.context)
+                )
+                try:
+                    snapshot = await self._orchestrator.run_sync(ctx)
+                    logger.info(
+                        "Response %s completed: status=%s output_count=%d",
+                        ctx.response_id,
+                        snapshot.get("status"),
+                        len(snapshot.get("output", [])),
+                    )
+                    return JSONResponse(
+                        strip_internal_metadata(snapshot),
+                        status_code=200,
+                        headers=self._session_headers(agent_session_id),
+                    )
+                except _HandlerError as exc:
+                    logger.error(
+                        "Handler error in sync create (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=exc.original,
+                    )
+                    # Handler errors are server-side faults, not client errors
+                    err_body = {
+                        "error": {
+                            "message": "internal server error",
+                            "type": "server_error",
+                            "code": "server_error",
+                            "param": None,
+                        }
+                    }
+                    return JSONResponse(
+                        err_body,
+                        status_code=500,
+                        headers=_apply_error_source_headers(
+                            self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                        ),
+                    )
+                finally:
+                    await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
+
+            snapshot = await self._orchestrator.run_background(ctx)
+            logger.info(
+                "Background response created for %s: status=%s",
+                ctx.response_id,
+                snapshot.get("status"),
+            )
+            return JSONResponse(
+                strip_internal_metadata(snapshot), status_code=200, headers=self._session_headers(agent_session_id)
+            )
+        except LastInputIdPreconditionFailed as exc:
+            # Spec 023 — under the spec-022 narrow surface, only
+            # ``actual_last_input_id`` is carried (``expected_last_input_id``
+            # / ``task_id`` are no longer part of the public exception API).
+            # Steerable conversations enforce sequential `previous_response_id`
+            # (no forks). Surface as a succinct client-facing error.
+            logger.info(
+                "Conversation fork rejected for %s: actual_last_input_id=%r",
+                ctx.response_id,
+                exc.actual_last_input_id,
+            )
+            err_body = {
+                "error": {
+                    "message": (
+                        "This agent does not support conversation forking. "
+                        "previous_response_id must reference the most recent "
+                        "response in the conversation."
+                    ),
+                    "type": "conflict",
+                    "code": "conversation_fork_not_supported",
+                    "param": "previous_response_id",
+                }
+            }
+            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
+        except TaskConflictError as exc:
+            # Spec 023 — under the spec-022 narrow surface, TaskConflictError
+            # carries only ``current_status``; the task_id is not part of
+            # the public exception API. The endpoint already knows the
+            # response_id (logged separately); the chain identity is not
+            # exposed to the client error body.
+            logger.info(
+                "Conversation lock conflict for %s: task is %s",
+                ctx.response_id,
+                exc.current_status,
+            )
+            err_body = {
+                "error": {
+                    "message": f"Conversation is locked — task is {exc.current_status}",
+                    "type": "conflict",
+                    "code": "conversation_locked",
+                    "param": None,
+                }
+            }
+            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
+        except _HandlerError as exc:
+            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+            # Handler errors are server-side faults, not client errors
+            err_body = {
+                "error": {
+                    "message": "internal server error",
+                    "type": "server_error",
+                    "code": "server_error",
+                    "param": None,
+                }
+            }
+            return JSONResponse(
+                err_body,
+                status_code=500,
+                headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if is_platform_error(exc):
+                # A resilient task-start (or other platform-infrastructure)
+                # failure. Surface it immediately as HTTP 500 with the platform
+                # error source — the same way Foundry storage failures are
+                # surfaced — instead of silently degrading to a non-durable run.
+                logger.error("Platform error creating response %s; returning 500", ctx.response_id, exc_info=exc)
+                err_body = {
+                    "error": {
+                        "message": "internal server error",
+                        "type": "server_error",
+                        "code": "server_error",
+                        "param": None,
+                    }
+                }
+                return JSONResponse(
+                    err_body,
+                    status_code=500,
+                    headers=_apply_error_source_headers(
+                        self._session_headers(agent_session_id),
+                        ERROR_SOURCE_PLATFORM,
+                        format_error_detail(exc),
+                    ),
+                )
+            logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
+            raise
+        finally:
+            _response_id_var.reset(rid_token)
+            _conversation_id_var.reset(cid_token)
+            _streaming_var.reset(str_token)
+            reset_request_context(platform_ctx_token)
+            try:
+                # Flush pending spans before the process may be frozen. A lazy
+                # streaming body owns its flush (see ``stream_owns_flush``): no
+                # handler spans exist yet and flushing here would delay the first
+                # real SSE event. Everything else flushes here.
+                # ``AGENTSERVER_FLUSH_MODE`` selects the strategy (see
+                # ``_flush_spans_for_mode``); the default keeps the flush off the
+                # event loop without dropping telemetry.
+                if not stream_owns_flush:
+                    await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+            finally:
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
+
+    async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-branches
+        """Route handler for ``GET /responses/{response_id}``.
+
+        Returns the response snapshot or replays SSE events if
+        ``stream=true`` is in the query parameters.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :return: JSON snapshot or SSE replay streaming response.
+        :rtype: Response
+        """
+        response_id = request.path_params["response_id"]
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
+        if format_error is not None:
+            return format_error
+
+        stream_replay_param = request.query_params.get("stream", "false").lower() == "true"
+        _context = _extract_platform_context(request)
+        if stream_replay_param:
+            logger.info(
+                "Getting response %s with SSE replay, has_user_id=%s has_call_id=%s",
+                response_id,
+                _context.user_id_key is not None,
+                _context.call_id is not None,
+            )
+        else:
+            logger.info(
+                "Getting response %s, has_user_id=%s has_call_id=%s",
+                response_id,
+                _context.user_id_key is not None,
+                _context.call_id is not None,
+            )
+        record = await self._runtime_state.get(response_id)
+        if record is None:
+            return await self._handle_get_fallback(
+                request,
+                response_id,
+                stream_replay_param,
+                _context,
+                _hdrs,
+            )
+
+        # User isolation enforcement on in-flight response
+        if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
+            return _not_found(response_id, _hdrs)
+
+        _refresh_background_status(record)
+
+        if stream_replay_param:
+            return self._handle_get_stream(request, record, _hdrs)
+
+        if not record.visible_via_get:
+            return _not_found(response_id, _hdrs)
+
+        snapshot = _RuntimeState.to_snapshot(record)
+        output = snapshot.get("output")
+        logger.info(
+            "Retrieved response %s: status=%s output_count=%d",
+            response_id,
+            snapshot.get("status"),
+            len(output) if isinstance(output, list) else 0,
+        )
+        return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
+
+    def _handle_get_stream(
+        self,
+        request: Request,
+        record: ResponseExecution,
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Handle the ``stream=true`` path for an in-flight response.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :param record: The in-flight execution record.
+        :type record: ResponseExecution
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: SSE streaming response or error.
+        :rtype: Response
+        """
+        response_id = record.response_id
+        # B14: store=false responses are never persisted — return 404.
+        if not record.mode_flags.store:
+            return _not_found(response_id, _hdrs)
+        if not record.replay_enabled:
+            if not record.mode_flags.background:
+                return _invalid_mode(
+                    "This response cannot be streamed because it was not created with background=true.",
+                    _hdrs,
+                    param="stream",
+                )
+            return _invalid_mode(
+                "This response cannot be streamed because it was not created with stream=true.",
+                _hdrs,
+                param="stream",
+            )
+
+        parsed_cursor = self._parse_starting_after(request, _hdrs)
+        if isinstance(parsed_cursor, Response):
+            return parsed_cursor
+
+        return self._build_live_stream_response(record, parsed_cursor, _hdrs)
+
+    async def _handle_get_fallback(  # pylint: disable=too-many-return-statements,too-many-statements
+        self,
+        request: Request,
+        response_id: str,
+        stream_replay: bool,
+        _context: "PlatformContext",
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Provider fallback for GET when the record is not in runtime state.
+
+        Handles both JSON snapshot and SSE replay paths when the response
+        has been evicted from memory or the server has restarted.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :param response_id: The response ID to retrieve.
+        :type response_id: str
+        :param stream_replay: Whether the client requested SSE replay.
+        :type stream_replay: bool
+        :param _context: Platform context from the request.
+        :type _context: PlatformContext
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: Response.
+        :rtype: Response
+        """
+        if await self._runtime_state.is_deleted(response_id):
+            return _deleted_response(response_id, _hdrs)
+
+        if not stream_replay:
+            # Provider fallback: serve completed responses that are no longer in runtime state
+            # (e.g., after a process restart).
+            try:
+                response_obj = await self._provider.get_response(response_id, context=_context)
+                snapshot = dict(response_obj)
+                output = snapshot.get("output")
+                logger.info(
+                    "Retrieved response %s: status=%s output_count=%d",
+                    response_id,
+                    snapshot.get("status"),
+                    len(output) if isinstance(output, list) else 0,
+                )
+                return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
+            except FoundryResourceNotFoundError:
+                pass  # Fall through to 404 below
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), _hdrs, param="response_id")
+            except FoundryApiError as exc:
+                logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, _hdrs)
+            except ResponseStoreCorruptionError as exc:
+                # Envelope exists but its backing data is corrupt/missing. This is
+                # a server/storage error, NOT not-found — surface a 500 instead of
+                # falling through to 404 (which would hide the corruption).
+                logger.error("Store corruption for GET response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, _hdrs)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
+        else:
+            # Validate starting_after cursor early — invalid cursors must
+            # always get param=starting_after regardless of stream availability.
+            parsed_cursor = self._parse_starting_after(request, _hdrs)
+            if isinstance(parsed_cursor, Response):
+                return parsed_cursor
+
+            # (Spec 024 Phase 2 + B2) For non-background responses,
+            # SSE replay is always rejected per Rule B2 — even if events
+            # happen to be persisted via the unified Row 3 stream wire.
+            # Check the persisted response's background flag BEFORE
+            # attempting replay so non-bg streams get the standardised
+            # 400 instead of accidentally serving a stream.
+            try:
+                _persisted = await self._provider.get_response(response_id, context=_context)
+                _persisted_dict = dict(_persisted)
+                if _persisted_dict.get("background") is not True:
+                    return _invalid_mode(
+                        "This response cannot be streamed because it was not created with background=true.",
+                        _hdrs,
+                        param="stream",
+                    )
+            except FoundryResourceNotFoundError:
+                # Response doesn't exist — fall through to the no-stream
+                # branches below which handle 404 cleanly.
+                pass
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Background pre-check failed for SSE replay (response_id=%s); " + "proceeding to stream lookup",
+                    response_id,
+                    exc_info=True,
+                )
+
+            # Stream provider fallback: replay persisted SSE events when runtime state is gone.
+            replay_response = await self._try_replay_persisted_stream(
+                request,
+                response_id,
+                context=_context,
+                headers=_hdrs,
+            )
+            if replay_response is not None:
+                return replay_response
+
+            # No stream events available.  Check the persisted response's
+            # background flag; if not bg, give the clear non-bg error.
+            # Otherwise, we can't distinguish bg+non-stream from
+            # bg+stream-with-expired-TTL (we don't persist the stream flag),
+            # so use a combined message.
+            try:
+                persisted = await self._provider.get_response(response_id, context=_context)
+                persisted_dict = dict(persisted)
+                # B2: SSE replay requires background mode.
+                if persisted_dict.get("background") is not True:
+                    return _invalid_mode(
+                        "This response cannot be streamed because it was not created with background=true.",
+                        _hdrs,
+                        param="stream",
+                    )
+                # TODO: The container spec prescribes distinct error messages for
+                # "not created with stream=true" vs "stream TTL expired", but after
+                # eager eviction the persisted response does not carry the stream
+                # mode flag — we cannot distinguish the two cases.  Until the
+                # provider surfaces the reason, we use a combined message.
+                return _invalid_mode(
+                    "This response cannot be streamed because it was not created "
+                    "with stream=true or the stream TTL has expired.",
+                    _hdrs,
+                    param="stream",
+                )
+            except FoundryResourceNotFoundError:
+                pass  # Response doesn't exist in provider either — fall through to 404
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), _hdrs, param="response_id")
+            except FoundryApiError as exc:
+                logger.error(
+                    "Storage API error for GET SSE replay response_id=%s: %s",
+                    response_id,
+                    exc,
+                    exc_info=True,
+                )
+                return _error_response(exc, _hdrs)
+            except ResponseStoreCorruptionError as exc:
+                # Envelope exists but its backing data is corrupt/missing — a
+                # server/storage error, not not-found. Surface a 500.
+                logger.error("Store corruption for GET SSE replay response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, _hdrs)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # Response doesn't exist in provider either — fall through to 404
+
+        return _not_found(response_id, _hdrs)
+
+    @staticmethod
+    def _parse_starting_after(request: Request, headers: dict[str, str] | None = None) -> int | Response:
+        """Parse the ``starting_after`` query parameter.
+
+        Returns the integer cursor value (defaulting to ``-1``) or an
+        error :class:`Response` when the value is not a valid integer.
+
+        :param request: The incoming Starlette HTTP request.
+        :type request: Request
+        :param headers: Optional response headers to include on error responses.
+        :type headers: dict[str, str] | None
+        :return: The parsed cursor value or an error response.
+        :rtype: int | Response
+        """
+        cursor_raw = request.query_params.get("starting_after")
+        if cursor_raw is None:
+            return -1
+        try:
+            return int(cursor_raw)
+        except ValueError:
+            return _invalid_request(
+                "starting_after must be an integer",
+                headers or {},
+                param="starting_after",
+            )
+
+    def _build_live_stream_response(
+        self,
+        record: ResponseExecution,
+        starting_after: int,
+        headers: dict[str, str] | None = None,
+    ) -> StreamingResponse:
+        """Build a live SSE subscription response for an in-flight record.
+
+        :param record: The in-flight response execution record.
+        :type record: ResponseExecution
+        :param starting_after: The cursor position to start streaming from.
+            ``-1`` means "from the beginning of the retained history".
+        :type starting_after: int
+        :param headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
+        :type headers: dict[str, str] | None
+        :return: A streaming response with live SSE events.
+        :rtype: StreamingResponse
+        """
+        _cursor: int | None = starting_after if starting_after >= 0 else None
+        merged_headers = {**self._sse_headers, **(headers or {})}
+
+        async def _stream_from_subject():
+            stream = record.subject
+            if stream is None:
+                # Fall back to looking up the per-response stream from the
+                # registry. The orchestrator populates ``record.subject``
+                # on the bg+stream path but older eviction-race conditions
+                # may leave it unset; the registry lookup is idempotent.
+                stream = await streams.get_or_create(record.response_id)
+            async for event in stream.subscribe(after=_cursor):
+                yield encode_sse_any_event(event)
+
+        return StreamingResponse(
+            with_keep_alive(_stream_from_subject(), self._runtime_options.sse_keep_alive_interval_seconds),
+            media_type="text/event-stream",
+            headers=merged_headers,
+        )
+
+    async def _try_replay_persisted_stream(
+        self,
+        request: Request,
+        response_id: str,
+        *,
+        context: PlatformContext | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> Response | None:
+        """Try to replay events from the per-response registry stream.
+
+        Returns a ``StreamingResponse`` when a stream exists for the id
+        (either still in registry memory or rehydrated from disk by the
+        file-backed backing), an error ``Response`` for invalid query
+        parameters, or ``None`` when no stream exists.
+
+        :param request: The incoming Starlette HTTP request.
+        :type request: Request
+        :param response_id: The response identifier to replay.
+        :type response_id: str
+        :keyword context: Unused (kept for call-site compatibility — the stream
+            registry is process-wide; partitioning is handled by the response
+            provider, not the stream backing).
+        :paramtype context: PlatformContext | None
+        :keyword headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
+        :paramtype headers: dict[str, str] | None
+        :return: A streaming replay response, an error response, or ``None``.
+        :rtype: Response | None
+        """
+        del context  # unused — see docstring
+        parsed_cursor = self._parse_starting_after(request, headers)
+        if isinstance(parsed_cursor, Response):
+            return parsed_cursor
+
+        # Look up an existing stream — do NOT mint one. If the id was
+        # never registered (e.g. ``store=false`` responses never produce
+        # a replay log) ``get`` raises NotFound and we return ``None``
+        # so the caller falls through to its 404 path. Auto-evicted
+        # streams (TTL expiry on a closed file-backed log that was
+        # never re-opened) also surface as NotFound here because the
+        # tombstone was never installed for them.
+        try:
+            stream = await streams.get(response_id)
+        except EventStreamNotFoundError:
+            return None
+        # Peek at a method that raises NotFound for already-destroyed
+        # streams; last_cursor() is the cheapest such method.
+        try:
+            _ = await stream.last_cursor()
+        except EventStreamNotFoundError:
+            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning(
+                "Failed to inspect replay stream for response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+            return None
+
+        # If the stream has no retained events (e.g. file-backed
+        # rehydration yielded zero records), behave as "no replay
+        # available" — fall through to caller's 404 path. The cheapest
+        # signal is "no last_cursor seen AND no events to subscribe to";
+        # we use the cursor presence as a proxy.
+        merged_headers = {**self._sse_headers, **(headers or {})}
+        _cursor: int | None = parsed_cursor if parsed_cursor >= 0 else None
+
+        async def _stream_events():
+            try:
+                async for event in stream.subscribe(after=_cursor):
+                    yield encode_sse_any_event(event)
+            except EventStreamNotFoundError:
+                return
+
+        return StreamingResponse(
+            _stream_events(),
+            media_type="text/event-stream",
+            headers=merged_headers,
+        )
+
+    async def handle_delete(self, request: Request) -> Response:
+        """Route handler for ``DELETE /responses/{response_id}``.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :return: Deletion confirmation or error response.
+        :rtype: Response
+        """
+        response_id = request.path_params["response_id"]
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
+        if format_error is not None:
+            return format_error
+
+        _context = _extract_platform_context(request)
+        logger.info(
+            "Deleting response %s, has_user_id=%s has_call_id=%s",
+            response_id,
+            _context.user_id_key is not None,
+            _context.call_id is not None,
+        )
+        record = await self._runtime_state.get(response_id)
+        if record is None:
+            # Provider fallback: response may have been evicted from memory after
+            # reaching terminal state, or the server restarted since creation.
+            if await self._runtime_state.is_deleted(response_id):
+                return _not_found(response_id, _hdrs)
+
+            result = await self._provider_delete_response(response_id, _context, _hdrs)
+            if result is not None:
+                return result
+
+            return _not_found(response_id, _hdrs)
+
+        # User isolation enforcement
+        if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
+            return _not_found(response_id, _hdrs)
+
+        # store=false responses are not deletable
+        if not record.mode_flags.store:
+            return _not_found(response_id, _hdrs)
+
+        _refresh_background_status(record)
+
+        # (Spec 024 Phase 2) Non-bg non-stream responses in-flight are not
+        # publicly visible (Rule B16) — delete returns 404 to match the
+        # pre-Phase-2 behaviour where the record was not in runtime_state
+        # during inline execution.
+        if not record.visible_via_get and not record.mode_flags.background:
+            return _not_found(response_id, _hdrs)
+
+        if record.mode_flags.background and record.status in {"queued", "in_progress"}:
+            return _invalid_request(
+                "Cannot delete an in-flight response.",
+                _hdrs,
+                param="response_id",
+            )
+
+        # The wire may already be closed while terminal persistence is pending.
+        # Drain the producer before deleting; cancelling DELETE must not cancel it.
+        execution_task = record.execution_task
+        if execution_task is not None:
+            if not execution_task.done():
+                done, _ = await asyncio.wait(
+                    {execution_task},
+                    timeout=float(self._runtime_options.shutdown_grace_period_seconds),
+                )
+                if execution_task not in done:
+                    return _invalid_request(
+                        "Response persistence is still in progress. Retry deletion.",
+                        _hdrs,
+                        param="response_id",
+                    )
+            if not execution_task.cancelled():
+                error = execution_task.exception()
+                if error is not None:
+                    logger.warning(
+                        "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
+                    )
+
+        deleted = await self._runtime_state.delete(response_id)
+        if not deleted:
+            # Race: the background task's eager eviction (try_evict) removed
+            # the record between our get() and delete() calls. Eviction for
+            # terminal responses typically happens after a provider
+            # persistence attempt, but persistence is best-effort and may not
+            # have succeeded, so delegate to the provider path as a fallback.
+            if record.mode_flags.store:
+                result = await self._provider_delete_response(response_id, _context, _hdrs)
+                if result is not None:
+                    return result
+            return _not_found(response_id, _hdrs)
+
+        if record.mode_flags.store:
+            try:
+                await self._provider.delete_response(response_id, context=_extract_platform_context(request))
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
+            # Tear down the per-response stream — frees the registry slot,
+            # installs the deletion tombstone (so subsequent GET ?stream=true
+            # raises Gone, mapped to 404 below), and removes the on-disk log
+            # for the file-backed backing.
+            try:
+                await streams.delete(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Best-effort stream delete failed for response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
+
+        logger.info("Deleted response %s", response_id)
+        return JSONResponse(
+            {"id": response_id, "object": "response", "deleted": True},
+            status_code=200,
+            headers=_hdrs,
+        )
+
+    async def _provider_delete_response(
+        self,
+        response_id: str,
+        context: "PlatformContext",
+        headers: dict[str, str],
+    ) -> Response | None:
+        """Delete a response from the resilient provider (storage).
+
+        Used by :meth:`handle_delete` in both the provider-fallback path
+        (record already evicted from memory) and the eviction-race recovery
+        path (record evicted between ``get()`` and ``delete()``).
+
+        Returns a :class:`Response` on success or on a deterministic error
+        (bad request, API error).  Returns ``None`` when the provider
+        reports the response as not found **or** when an unexpected error
+        occurs (logged at DEBUG), so the caller can fall through to 404.
+
+        :param response_id: The response ID to delete.
+        :type response_id: str
+        :param context: Platform context extracted from the request.
+        :type context: PlatformContext
+        :param headers: Session headers to include on the response.
+        :type headers: dict[str, str]
+        :return: A success/error response, or ``None`` if not found.
+        :rtype: Response | None
+        """
+        try:
+            await self._provider.delete_response(response_id, context=context)
+            # Tear down the per-response stream — same as the in-memory
+            # delete path above.
+            try:
+                await streams.delete(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Best-effort stream delete failed for response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
+            # Mark as deleted in runtime state so subsequent requests get 404
+            await self._runtime_state.mark_deleted(response_id)
+            logger.info("Deleted response %s via provider", response_id)
+            return JSONResponse(
+                {"id": response_id, "object": "response", "deleted": True},
+                status_code=200,
+                headers=headers,
+            )
+        except (FoundryResourceNotFoundError, KeyError):
+            return None  # Caller falls through to 404
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), headers, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, headers)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "Provider fallback failed for DELETE response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+            return None
+
+    async def handle_cancel(self, request: Request) -> Response:
+        """Route handler for ``POST /responses/{response_id}/cancel``.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :return: Cancelled snapshot or error response.
+        :rtype: Response
+        """
+        response_id = request.path_params["response_id"]
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
+        if format_error is not None:
+            return format_error
+
+        _context = _extract_platform_context(request)
+        logger.info(
+            "Cancelling response %s, has_user_id=%s has_call_id=%s",
+            response_id,
+            _context.user_id_key is not None,
+            _context.call_id is not None,
+        )
+        record = await self._runtime_state.get(response_id)
+        if record is None:
+            return await self._handle_cancel_fallback(response_id, _context, _hdrs)
+
+        # User isolation enforcement on in-flight response
+        if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
+            return _not_found(response_id, _hdrs)
+
+        _refresh_background_status(record)
+
+        # (Spec 024 Phase 2) Non-bg non-stream responses in-flight are not
+        # publicly visible (Rule B16) — cancel returns 404 to match the
+        # pre-Phase-2 behaviour where the record was not in runtime_state
+        # during inline execution. With the unified handler-in-task-body
+        # path, the record IS in runtime_state mid-flight so cancel/GET/
+        # DELETE need explicit gating to preserve the contract.
+        if not record.visible_via_get and not record.mode_flags.background:
+            return await self._handle_cancel_fallback(response_id, _context, _hdrs)
+
+        if not record.mode_flags.background:
+            return _invalid_request(
+                "Cannot cancel a synchronous response.",
+                _hdrs,
+                param="response_id",
+            )
+
+        terminal_error = _check_cancel_terminal_status(record.status, _hdrs)
+        if terminal_error is not None:
+            if record.status == "cancelled":
+                record.set_response_snapshot(
+                    _resolve_cancelled_response(
+                        record.response, record.response_id, record.agent_reference, record.model
+                    )
+                )
+                return JSONResponse(
+                    strip_internal_metadata(_RuntimeState.to_snapshot(record)), status_code=200, headers=_hdrs
+                )
+            return terminal_error
+
+        # B11: initiate cancellation winddown
+        record.cancel_requested = True
+        if record.response_context is not None:
+            # Stamp ``client_cancelled`` cause flag and set the private
+            # cancellation signal; the handler observes the wake-up via
+            # its 3rd positional ``cancellation_signal`` parameter and
+            # inspects ``context.client_cancelled`` to learn the cause.
+            record.response_context.client_cancelled = True
+            record.response_context._cancellation_signal.set()  # pylint: disable=protected-access
+        record.cancel_signal.set()
+
+        # Wait for handler task to finish (up to 10s grace period).
+        if record.execution_task is not None:
+            try:
+                await asyncio.wait_for(asyncio.shield(record.execution_task), timeout=10.0)
+            except (asyncio.TimeoutError, asyncio.CancelledError, Exception):  # pylint: disable=broad-exception-caught
+                pass  # Handler may throw or timeout — already handled by the task itself
+
+        # Set cancelled snapshot and transition
+        record.set_response_snapshot(
+            _resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
+        )
+        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # after eager eviction removes the in-memory record.
+        if record.response is not None:
+            record.response["background"] = record.mode_flags.background
+        record.transition_to("cancelled")
+
+        # Persist cancelled state to the response store (B11: cancellation always wins)
+        try:
+            if record.response is not None:
+                await self._provider.update_response(record.response, context=_extract_platform_context(request))
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Best-effort cancel persist failed for response_id=%s", record.response_id, exc_info=True)
+
+        # Build snapshot before eviction removes the record from memory
+        snapshot = _RuntimeState.to_snapshot(record)
+
+        # Eager eviction: free memory now that the terminal state is persisted
+        await self._runtime_state.try_evict(record.response_id)
+
+        logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
+        return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
+
+    async def _handle_cancel_fallback(
+        self,
+        response_id: str,
+        _context: "PlatformContext",
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Provider fallback for cancel when the record is not in runtime state.
+
+        After a restart, stored terminal responses lose their runtime records.
+        Check the provider so we return the correct 400 error instead of a
+        misleading 404.
+
+        :param response_id: The response ID to cancel.
+        :type response_id: str
+        :param _context: Platform context from the request.
+        :type _context: PlatformContext
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: Error or idempotent response.
+        :rtype: Response
+        """
+        try:
+            response_obj = await self._provider.get_response(response_id, context=_context)
+            persisted = dict(response_obj)
+
+            # B1 + B16/B17: background check comes first. For non-bg responses:
+            #   - If still in_progress / queued (in-flight): return 404 (not
+            #     yet publicly visible — matches pre-Phase-2 behaviour where
+            #     non-bg in-flight responses were never persisted).
+            #   - If terminal: return 400 "synchronous" per B1.
+            # (Spec 024 Phase 2) The unified Row 3 stream path persists the
+            # response on first event, so the provider returns it mid-flight;
+            # the status filter preserves B16 visibility semantics.
+            if persisted.get("background") is not True:
+                stored_status_raw = persisted.get("status")
+                stored_status = stored_status_raw if isinstance(stored_status_raw, str) else None
+                if stored_status in ("in_progress", "queued"):
+                    return _not_found(response_id, _hdrs)
+                return _invalid_request(
+                    "Cannot cancel a synchronous response.",
+                    _hdrs,
+                    param="response_id",
+                )
+
+            stored_status_raw = persisted.get("status")
+            stored_status = stored_status_raw if isinstance(stored_status_raw, str) else None
+            terminal_error = _check_cancel_terminal_status(stored_status, _hdrs)
+            if terminal_error is not None:
+                if stored_status == "cancelled":
+                    return JSONResponse(strip_internal_metadata(persisted), status_code=200, headers=_hdrs)
+                return terminal_error
+        except FoundryResourceNotFoundError:
+            pass  # Fall through to 404 below
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), _hdrs, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, _hdrs)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "Provider fallback failed for cancel response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+        return _not_found(response_id, _hdrs)
+
+    async def handle_input_items(self, request: Request) -> Response:
+        """Route handler for ``GET /responses/{response_id}/input_items``.
+
+        Returns a paginated list of input items for the given response.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :return: Paginated input items list.
+        :rtype: Response
+        """
+        response_id = request.path_params["response_id"]
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
+        if format_error is not None:
+            return format_error
+
+        _context = _extract_platform_context(request)
+        logger.info(
+            "Getting input items for response %s, has_user_id=%s has_call_id=%s",
+            response_id,
+            _context.user_id_key is not None,
+            _context.call_id is not None,
+        )
+
+        # User isolation enforcement for in-flight responses.  After eviction,
+        # the provider (Foundry storage) enforces partitioning server-side.
+        record = await self._runtime_state.get(response_id)
+        if record is not None:
+            if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
+                return _not_found(response_id, _hdrs)
+
+        limit_raw = request.query_params.get("limit", "20")
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            return _invalid_request("limit must be an integer between 1 and 100", _hdrs, param="limit")
+
+        if limit < 1 or limit > 100:
+            return _invalid_request("limit must be between 1 and 100", _hdrs, param="limit")
+
+        order = request.query_params.get("order", "desc").lower()
+        if order not in {"asc", "desc"}:
+            return _invalid_request("order must be 'asc' or 'desc'", _hdrs, param="order")
+
+        after = request.query_params.get("after")
+        before = request.query_params.get("before")
+
+        try:
+            items = await self._provider.get_input_items(response_id, limit=100, ascending=True, context=_context)
+        except ValueError:
+            return _deleted_response(response_id, _hdrs)
+        except FoundryResourceNotFoundError:
+            return _not_found(response_id, _hdrs)
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), _hdrs, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for input_items response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, _hdrs)
+        except KeyError:
+            # Fall back to runtime_state for in-flight responses not yet persisted to provider.
+            # User isolation was already checked above when the record is in-flight.
+            try:
+                items = await self._runtime_state.get_input_items(response_id)
+            except ValueError:
+                return _deleted_response(response_id, _hdrs)
+            except KeyError:
+                return _not_found(response_id, _hdrs)
+
+        ordered_items = items if order == "asc" else list(reversed(items))
+        ordered_dicts: list[dict[str, Any]] = []
+        for item in ordered_items:
+            item_any = cast(Any, item)
+            ordered_dicts.append(item_any.as_dict() if hasattr(item_any, "as_dict") else cast("dict[str, Any]", item))
+        scoped_items = _apply_item_cursors(ordered_dicts, after=after, before=before)
+
+        page = scoped_items[:limit]
+        has_more = len(scoped_items) > limit
+
+        first_id = _extract_item_id(page[0]) if page else None
+        last_id = _extract_item_id(page[-1]) if page else None
+
+        page_data = page
+
+        return JSONResponse(
+            strip_internal_metadata(
+                {
+                    "object": "list",
+                    "data": page_data,
+                    "first_id": first_id,
+                    "last_id": last_id,
+                    "has_more": has_more,
+                }
+            ),
+            status_code=200,
+            headers=_hdrs,
+        )
+
+    async def handle_shutdown(self) -> None:
+        """Graceful shutdown handler.
+
+        Signals all active responses to cancel and waits for in-flight
+        background executions to complete within the configured grace period.
+
+        Shutdown behaviour depends on the response mode:
+
+        - **resilient=True, background=True** (``store=True`` with
+          ``resilient_background=True`` server option): The response is left in
+          whatever state the handler left it.  On restart the resilient task
+          framework will re-enter the handler to resume work.
+        - **resilient=True, background=False** (``store=True`` but foreground):
+          Best-effort mark as ``failed`` after the grace period expires.  If
+          that did not succeed, restart re-entry marks it failed.  The handler
+          is never re-entered.
+        - **store=False** (non-resilient): Best-effort mark as ``failed`` after
+          the grace period (and return the same to the client if still
+          connected).
+
+        :return: None
+        :rtype: None
+        """
+        self._is_draining = True
+        self._shutdown_requested.set()
+
+        is_resilient_server = self._runtime_options.resilient_background
+
+        records = await self._runtime_state.begin_draining()
+        for record in records:
+            if record.response_context is not None:
+                # Fire ``context.shutdown`` so handlers awaiting it (or
+                # checking ``is_set()``) can route to
+                # ``exit_for_recovery()`` or terminal-emit. The cancel
+                # signal is NOT fired here — shutdown and cancel are
+                # semantically distinct surfaces and handlers expect
+                # different responses to each.
+                record.response_context.shutdown.set()
+
+            record.cancel_signal.set()
+
+        # Wait for the grace period — give handlers time to checkpoint and exit.
+        deadline = asyncio.get_running_loop().time() + float(self._runtime_options.shutdown_grace_period_seconds)
+        while True:
+            pending = [
+                record for record in records if record.execution_task is not None and not record.execution_task.done()
+            ]
+            if not pending:
+                break
+            if asyncio.get_running_loop().time() >= deadline:
+                break
+            await asyncio.sleep(0.05)
+
+        # After grace period: mark non-resilient-background responses as failed.
+        # Resilient+background responses are left as-is — the resilient task
+        # framework will re-invoke the handler on restart.
+        # Pending records may have been replaced or evicted while draining.
+        for record in await self._runtime_state.list_records():
+            if record.status not in {"queued", "in_progress"}:
+                continue
+            is_resilient_background = is_resilient_server and record.mode_flags.store and record.mode_flags.background
+            if is_resilient_background:
+                # Leave in current state — will be re-entered on restart.
+                continue
+            # Non-resilient or foreground: best-effort mark failed.
+            failed_payload = _resolve_failed_response(
+                record.response, record.response_id, record.agent_reference, record.model
+            )
+            record.set_response_snapshot(failed_payload)
+            record.transition_to("failed")
+
+            # (Spec 014 FR-005b — close divergence 5) Persist the failed
+            # terminal to the response store before subprocess exit. Without
+            # this the response store still shows ``status="in_progress"``
+            # on next-lifetime GET, even though the in-memory record was
+            # marked failed. Only attempt for store=True responses (the
+            # store-disabled / ephemeral row 4 case has no store to persist
+            # to). Best-effort — log warning on failure rather than blocking
+            # shutdown.
+            if record.mode_flags.store and self._provider is not None:
+                try:
+                    _pctx = None
+                    if record.response_context is not None:
+                        _pctx = getattr(record.response_context, "platform_context", None)
+                    await self._provider.update_response(failed_payload, context=_pctx)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Failed to persist Path-B failed terminal for %s during " + "shutdown: %s",
+                        record.response_id,
+                        exc,
+                    )

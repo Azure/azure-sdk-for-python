@@ -25,6 +25,7 @@ USAGE:
     4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
+# pylint: disable=unused-variable, name-too-long
 
 from datetime import datetime, timedelta
 import asyncio
@@ -122,7 +123,11 @@ class QueueAuthSamplesAsync(object):
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
-        from azure.storage.queue import generate_account_sas, ResourceTypes, AccountSasPermissions
+        from azure.storage.queue import (
+            generate_account_sas,
+            ResourceTypes,
+            AccountSasPermissions,
+        )
 
         sas_token = generate_account_sas(
             self.account_name,

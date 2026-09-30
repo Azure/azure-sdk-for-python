@@ -8,6 +8,10 @@ resources:
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/canary
+    - repository: azure-sdk-build-tools
+      type: git
+      name: internal/azure-sdk-build-tools
+      ref: refs/tags/azure-sdk-build-tools_20260702.2
 
 parameters:
 - name: stages
@@ -19,6 +23,10 @@ parameters:
 - name: oneESTemplateTag
   type: string
   default: release
+- name: EnableCompiledCodeql
+  type: boolean
+  default: false
+
 
 extends:
   ${{ if and(parameters.Use1ESOfficial, eq(parameters.oneESTemplateTag, 'canary')) }}:
@@ -36,7 +44,10 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive
+      networkIsolationPolicy: Permissive, CFSClean, AzureStorage
+    ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
+      featureFlags:
+        autoBaseline: false
     sdl:
       ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
         autobaseline:
@@ -52,9 +63,16 @@ extends:
         enabled: false
         justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azur     19 e-sdk/internal/_build/results?buildId=3556850"
       codeql:
-        compiled:
-          enabled: false
-          justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
+        ${{ if eq(parameters.EnableCompiledCodeql, true) }}:
+          # "cpp" covers both C and C++ code. Language is specified because 
+          # checkout happens after the injected "CodeQL Initialize" step
+          language: cpp,python
+          compiled:
+            enabled: true
+        ${{ else }}:
+          compiled: 
+            enabled: false
+            justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
       componentgovernance:
         enabled: false
         justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."

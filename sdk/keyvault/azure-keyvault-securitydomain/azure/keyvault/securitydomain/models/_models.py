@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -26,7 +26,7 @@ class CertificateInfo(_Model):
     :vartype required: int
     """
 
-    certificates: List["_models.SecurityDomainJsonWebKey"] = rest_field(
+    certificates: list["_models.SecurityDomainJsonWebKey"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Certificates needed from customer. Required."""
@@ -38,7 +38,7 @@ class CertificateInfo(_Model):
     def __init__(
         self,
         *,
-        certificates: List["_models.SecurityDomainJsonWebKey"],
+        certificates: list["_models.SecurityDomainJsonWebKey"],
         required: Optional[int] = None,
     ) -> None: ...
 
@@ -53,33 +53,33 @@ class CertificateInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
-    """The key vault server error.
+class KeyVaultError(_Model):
+    """The key vault error exception.
+
+    :ivar error: The key vault server error.
+    :vartype error: ~azure.keyvault.securitydomain.models.KeyVaultErrorError
+    """
+
+    error: Optional["_models.KeyVaultErrorError"] = rest_field(visibility=["read"])
+    """The key vault server error."""
+
+
+class KeyVaultErrorError(_Model):
+    """KeyVaultErrorError.
 
     :ivar code: The error code.
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.securitydomain.models.Error
+    :vartype inner_error: ~azure.keyvault.securitydomain.models.KeyVaultErrorError
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
     """The error code."""
     message: Optional[str] = rest_field(visibility=["read"])
     """The error message."""
-    inner_error: Optional["_models.Error"] = rest_field(name="innererror", visibility=["read"])
-    """The key vault server error."""
-
-
-class KeyVaultError(_Model):
-    """The key vault error exception.
-
-    :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.securitydomain.models.Error
-    """
-
-    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    inner_error: Optional["_models.KeyVaultErrorError"] = rest_field(name="innererror", visibility=["read"])
     """The key vault server error."""
 
 
@@ -146,13 +146,13 @@ class SecurityDomainJsonWebKey(_Model):
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. For Security Domain
      this value must be RSA. Required."""
-    key_ops: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key_ops: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Supported key operations. Required."""
     n: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """RSA modulus. Required."""
     e: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """RSA public exponent. Required."""
-    x5_c: List[str] = rest_field(name="x5c", visibility=["read", "create", "update", "delete", "query"])
+    x5_c: list[str] = rest_field(name="x5c", visibility=["read", "create", "update", "delete", "query"])
     """X509 certificate chain parameter. Required."""
     use: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Public Key Use Parameter. This is optional and if present must be enc."""
@@ -169,10 +169,10 @@ class SecurityDomainJsonWebKey(_Model):
         *,
         kid: str,
         kty: str,
-        key_ops: List[str],
+        key_ops: list[str],
         n: str,
         e: str,
-        x5_c: List[str],
+        x5_c: list[str],
         x5_t_s256: str,
         alg: str,
         use: Optional[str] = None,

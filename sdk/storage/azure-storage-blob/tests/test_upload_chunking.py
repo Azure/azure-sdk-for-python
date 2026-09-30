@@ -16,14 +16,24 @@ from azure.storage.blob._shared.uploads import SubStream
 
 class StorageBlobUploadChunkingTest(unittest.TestCase):
 
+    def test_sub_stream_can_close_after_constructor_failure(self):
+        wrapped_stream = BytesIO()
+        wrapped_stream.close()
+        substream = SubStream.__new__(SubStream)
+
+        with self.assertRaisesRegex(ValueError, "Wrapped stream must support seek"):
+            substream.__init__(wrapped_stream, stream_begin_index=0, length=1, lockObj=None)
+
+        substream.close()
+
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when the buffer needs to be swapped out at least once
-    def test_sub_stream_with_length_larger_than_buffer(self, **kwargs):
+    def test_sub_stream_with_length_larger_than_buffer(self):
         data = os.urandom(12 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
         # the block size is 6MB for this test
-        expected_data = data[0: 6 * 1024 * 1024]
+        expected_data = data[0 : 6 * 1024 * 1024]
         wrapped_stream = BytesIO(data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
         substream = SubStream(wrapped_stream, stream_begin_index=0, length=6 * 1024 * 1024, lockObj=lockObj)
@@ -70,12 +80,12 @@ class StorageBlobUploadChunkingTest(unittest.TestCase):
 
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when block size is smaller than 4MB, thus there's no need for buffer swap
-    def test_sub_stream_with_length_equal_to_buffer(self, **kwargs):
+    def test_sub_stream_with_length_equal_to_buffer(self):
         data = os.urandom(6 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
         # the block size is 2MB for this test
-        expected_data = data[0: 2 * 1024 * 1024]
+        expected_data = data[0 : 2 * 1024 * 1024]
         wrapped_stream = BytesIO(expected_data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
         substream = SubStream(wrapped_stream, stream_begin_index=0, length=2 * 1024 * 1024, lockObj=lockObj)

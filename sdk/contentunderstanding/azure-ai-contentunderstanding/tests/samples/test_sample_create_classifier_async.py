@@ -24,7 +24,11 @@ import pytest
 import uuid
 from typing import Dict
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -60,13 +64,16 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
 
-        # Define content categories for classification using ContentCategoryDefinition objects
+        # Define content categories for classification using ContentCategoryDefinition objects.
+        # The Invoice category sets analyzer_id="prebuilt-invoice" so matched segments are
+        # routed to the prebuilt invoice analyzer for field extraction (mirrors the sample).
         categories = {
             "Loan_Application": ContentCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
             ),
             "Invoice": ContentCategoryDefinition(
-                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
+                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
+                analyzer_id="prebuilt-invoice",
             ),
             "Bank_Statement": ContentCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
@@ -76,7 +83,10 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         # Assertions for categories
         assert categories is not None, "Categories should not be null"
         assert len(categories) == 3, "Should have 3 categories"
-        print(f"[PASS] Content categories defined: {len(categories)} categories")
+        assert (
+            categories["Invoice"].analyzer_id == "prebuilt-invoice"
+        ), "Invoice category should route segments to prebuilt-invoice for field extraction"
+        print(f"[PASS] Content categories defined: {len(categories)} categories (Invoice -> prebuilt-invoice)")
 
         # Validate each category has description
         for cat_name, cat_def in categories.items():
@@ -104,7 +114,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Assertions for classifier
@@ -172,13 +182,15 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
 
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
 
-        # Define content categories for classification
+        # Define content categories for classification.
+        # Invoice category routes matched segments to prebuilt-invoice for field extraction.
         categories = {
             "Loan_Application": ContentCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
             ),
             "Invoice": ContentCategoryDefinition(
-                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
+                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
+                analyzer_id="prebuilt-invoice",
             ),
             "Bank_Statement": ContentCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
@@ -197,7 +209,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Create the classifier
@@ -256,6 +268,26 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
                 print("[PASS] All segments have required properties")
             else:
                 print("[INFO] No segments found (document classified as single unit)")
+
+            # Test to_llm_input conversion (mirrors sample's [START classifier_to_llm_input] block).
+            # For classification results, to_llm_input expands the parent into per-segment
+            # blocks separated by '*****', each tagged with its category in the YAML front matter.
+            text = to_llm_input(analyze_result)
+            assert isinstance(text, str) and text.strip(), "to_llm_input should return a non-empty string"
+            assert text.startswith("---"), "to_llm_input output should start with YAML front matter delimiter"
+            assert "mimeType: application/pdf" in text, "YAML front matter should declare 'mimeType: application/pdf'"
+            segments = getattr(document_content, "segments", None)
+            if segments and len(segments) > 1:
+                # Multi-segment classification: per-segment blocks separated by '*****'
+                assert "*****" in text, "Multi-segment classification output should include '*****' segment divider"
+                # Each segment should appear with its category label in front matter
+                for segment in segments:
+                    cat = getattr(segment, "category", None)
+                    if cat:
+                        assert (
+                            f"category: {cat}" in text
+                        ), f"Segment category '{cat}' should appear in YAML front matter"
+            print(f"[PASS] to_llm_input output validated ({len(text)} characters)")
 
             # Cleanup
             try:

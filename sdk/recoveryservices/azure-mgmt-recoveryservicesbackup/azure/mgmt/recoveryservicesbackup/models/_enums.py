@@ -11,6 +11,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether access to the storage account is key-based or identity-based."""
+
+    KEY_BASED = "KeyBased"
+    """Access using storage account keys."""
+    IDENTITY_BASED = "IdentityBased"
+    """Access using managed identity."""
+
+
 class AcquireStorageAccountLock(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether storage account lock is to be acquired for this container or not."""
 
@@ -425,21 +434,6 @@ class InquiryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FAILED."""
 
 
-class InstanceProtectionReadiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of instance protection."""
-
-    UNKNOWN = "Unknown"
-    """UNKNOWN."""
-    READY = "Ready"
-    """READY."""
-    SCHEDULE_DISABLED = "ScheduleDisabled"
-    """SCHEDULE_DISABLED."""
-    PARTIAL_PROTECTION = "PartialProtection"
-    """PARTIAL_PROTECTION."""
-    PROTECTION_ERROR = "ProtectionError"
-    """PROTECTION_ERROR."""
-
-
 class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of JobSupportedAction."""
 
@@ -720,15 +714,6 @@ class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_WORKLOAD_SQL_AUTO_PROTECTION_INTENT."""
 
 
-class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protection type in case protected as part of a parent."""
-
-    DATABASE = "Database"
-    """DATABASE."""
-    DATABASE_UNDER_INSTANCE = "DatabaseUnderInstance"
-    """DATABASE_UNDER_INSTANCE."""
-
-
 class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup state of this backup item."""
 
@@ -944,28 +929,41 @@ class SoftDeleteFeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ALWAYS_ON."""
 
 
+class SourceScanAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source scan configuration status for enabling or disabling source scan."""
+
+    ENABLE = "Enable"
+    """Enable source scan."""
+    DISABLE = "Disable"
+    """Disable source scan."""
+
+
 class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the container."""
 
     CONFIGURED = "Configured"
-    """CONFIGURED."""
+    """Source side scan is configured."""
     NOT_CONFIGURED = "NotConfigured"
-    """NOT_CONFIGURED."""
+    """Source side scan is not configured."""
     NOT_APPLICABLE = "NotApplicable"
-    """NOT_APPLICABLE."""
+    """Source side scan is not applicable."""
+    CONFIGURATION_FAILED = "ConfigurationFailed"
+    """Source side scan configuration failed."""
 
 
 class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat summary for the container."""
 
     UNKNOWN = "Unknown"
-    """UNKNOWN."""
+    """Scan summary is unknown."""
     NOT_APPLICABLE = "NotApplicable"
-    """NOT_APPLICABLE."""
+    """Scan summary is not applicable."""
     SUSPICIOUS = "Suspicious"
-    """SUSPICIOUS."""
+    """Scan summary is suspicious."""
     HEALTHY = "Healthy"
-    """HEALTHY."""
+    """Scan summary indicates healthy state."""
+    NO_THREATS_REPORTED = "NoThreatsReported"
+    """No threats reported."""
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1037,41 +1035,41 @@ class ThreatSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat Severity Types."""
 
     CRITICAL = "Critical"
-    """CRITICAL."""
+    """Critical severity level."""
     HIGH = "High"
-    """HIGH."""
+    """High severity level."""
     WARNING = "Warning"
-    """WARNING."""
+    """Warning severity level."""
     INFORMATIONAL = "Informational"
-    """INFORMATIONAL."""
+    """Informational severity level."""
 
 
 class ThreatState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat Status Types."""
 
     ACTIVE = "Active"
-    """ACTIVE."""
+    """Threat is active."""
     IN_PROGRESS = "InProgress"
-    """IN_PROGRESS."""
+    """Threat remediation is in progress."""
     IGNORED = "Ignored"
-    """IGNORED."""
+    """Threat has been ignored."""
     RESOLVED = "Resolved"
-    """RESOLVED."""
+    """Threat has been resolved."""
 
 
 class ThreatStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the recovery point."""
 
     UNKNOWN = "Unknown"
-    """UNKNOWN."""
+    """Threat status is unknown."""
     HEALTHY = "Healthy"
-    """HEALTHY."""
+    """Recovery point is healthy."""
     UN_HEALTHY = "UnHealthy"
-    """UN_HEALTHY."""
+    """Recovery point is unhealthy."""
     WARNING = "Warning"
-    """WARNING."""
+    """Recovery point has warning-level threats."""
     NOT_AVAILABLE = "NotAvailable"
-    """NOT_AVAILABLE."""
+    """Threat status is not available."""
 
 
 class TieringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1132,19 +1130,6 @@ class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_BACKUP_SECONDARY."""
     AZURE_SITE_RECOVERY = "AzureSiteRecovery"
     """AZURE_SITE_RECOVERY."""
-
-
-class VMWorkloadPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the protection policy."""
-
-    INVALID = "Invalid"
-    """INVALID."""
-    SNAPSHOT_V1 = "SnapshotV1"
-    """SNAPSHOT_V1."""
-    SNAPSHOT_V2 = "SnapshotV2"
-    """SNAPSHOT_V2."""
-    STREAMING = "Streaming"
-    """STREAMING."""
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

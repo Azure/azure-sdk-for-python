@@ -1,26 +1,13 @@
-
 steps:
-  - task: Bash@3
-    displayName: 'Install uv (Linux/macOS)'
-    inputs:
-      targetType: inline
-      script: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-    condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $indexUrl = if ($env:PIP_INDEX_URL) { $env:PIP_INDEX_URL } else { 'https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/' }
+      python -m pip install uv==0.11.6 --index-url $indexUrl
 
-  - task: Bash@3
-    inputs:
-      targetType: inline
-      script: |
-        echo "##vso[task.prependpath]$HOME/.local/bin"
-    displayName: 'Prepend path for MacOS'
-    condition: eq(variables['Agent.OS'], 'Darwin')
-
-  - task: PowerShell@2
-    displayName: 'Install uv (Windows)'
-    inputs:
-      targetType: inline
-      script: |
-        iex (irm https://astral.sh/uv/install.ps1)
-        Write-Host "##vso[task.prependpath]$env:USERPROFILE\.local\bin"
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
+      # prepend the path to the installed uv to the PATH so that it can be used in subsequent steps without needing to know the exact path or relying
+      # the global python instance being prepended on the PATH
+      $scriptsDir = python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+      $env:PATH = "$scriptsDir$([System.IO.Path]::PathSeparator)$env:PATH"
+      Write-Host "##vso[task.prependpath]$scriptsDir"
+    displayName: 'Install uv'

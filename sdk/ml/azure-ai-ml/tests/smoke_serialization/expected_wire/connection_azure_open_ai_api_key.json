@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "AzureOpenAi",
+    "credentials": {
+      "key": "smoke-aoai-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {
+      "ApiType": "Azure",
+      "ApiVersion": "2024-02-01",
+      "ResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg/providers/Microsoft.CognitiveServices/accounts/smoke-aoai"
+    },
+    "target": "https://smoke-aoai.openai.azure.com/"
+  }
+}

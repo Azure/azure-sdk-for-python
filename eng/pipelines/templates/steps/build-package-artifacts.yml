@@ -25,18 +25,13 @@ parameters:
     default: []
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-    parameters:
-      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-        TokenToUseForAuth: $(azuresdk-github-pat)
-      Paths:
-        - '**'
-
-  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
-  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
-  - template: auth-dev-feed.yml
-    parameters:
-      DevFeedName: ${{ parameters.DevFeedName }}
+  - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+    - checkout: self
+  - ${{ else }}:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        Paths:
+          - '**'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -44,12 +39,19 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
@@ -89,8 +91,8 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-  # todo, walk the artifacts and ensure that one which includes an extension package is present
-  # if not, we only need to build on linux. if so, we need to build on all platforms
+  # Decides whether the mac/windows builds produce anything, based on whether any targeted package
+  # declares compiled binaries. If none do, only the linux build runs.
   - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
     parameters:
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
@@ -115,6 +117,44 @@ steps:
       sudo update-binfmts --enable qemu-aarch64
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+  # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
+  # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
+  # cibuildwheel cache so it skips the blocked download.
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $version = "3.10.11"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      $nugetCpython = Join-Path $cache "nuget-cpython"
+      New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+      $nuget = (Get-Command nuget).Source
+      & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download python $version"
+        exit 1
+      }
+      & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download pythonarm64 $version"
+        exit 1
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
+  # dependencies from the Azure DevOps feed instead of PyPI. Using
+  # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
+  # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+    displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |
       which python

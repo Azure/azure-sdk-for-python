@@ -1,6 +1,6 @@
 # Release History
 
-## 2.4.1 (Unreleased)
+## 2.5.1 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,27 @@
 
 ### Bugs Fixed
 
+- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh.
+- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout (for either the origin or replica records) is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval.
+- Fixed a thread-safety issue by publishing refreshed secret values through a new configuration mapping instead of mutating the existing mapping while readers may be iterating.
+- Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character.
+- Fixed a `KeyError` when loading with an endpoint and credential (no connection string).
+- Fixed feature flag processing so that an empty feature flag list clears previously loaded feature flags.
+
 ### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`.
+
+## 2.5.0 (2026-05-22)
+
+### Features Added
+
+- Added `refresh_enabled` parameter to the `load` method. Defaults to `True` if `refresh_on` is set. When set to `True` without `refresh_on` keys, all selected key-values are monitored for changes. When set to `False`, calling `refresh` will be a no-op.
+- Added the ability to monitor all selected key-values for refresh with the `refresh_enabled` kwarg. When this kwarg is set to `True`, and `refresh_on` is not specified, changes to any selected key-values will trigger configuration reload.
+
+### Other Changes
+
+- Switched feature flag refresh to use page-based etag checking instead of per-flag etag checking, reducing the number of requests needed to detect changes.
 
 ## 2.4.0 (2026-02-17)
 

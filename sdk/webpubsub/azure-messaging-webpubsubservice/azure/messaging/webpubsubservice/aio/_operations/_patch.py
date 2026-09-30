@@ -111,12 +111,12 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
                 **kwargs
             )
         else:
-            access_token = await super().get_client_access_token(
+            access_token = await super().generate_client_token(
                 user_id=user_id,
-                roles=roles,
+                role=roles,
                 minutes_to_expire=minutes_to_expire,
-                groups=groups,
-                client_protocol=client_protocol,
+                group=groups,
+                client_type=client_protocol,
                 **kwargs
             )
             token = access_token.get("token")
@@ -157,7 +157,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
 
 
         """
-        paged_json = super().list_connections(group=group, top=top, **kwargs)
+        paged_json = super().list_connections_in_group(group=group, top=top, **kwargs)
 
         class GroupMemberPaged(AsyncItemPaged):
             def __aiter__(self_inner):
@@ -838,6 +838,31 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
+
+    @distributed_trace_async
+    async def has_permission(
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
+    ) -> bool:
+        """Check if a connection has permission to the specified action.
+
+        Check if a connection has permission to the specified action.
+
+        :param permission: The permission: current supported actions are joinLeaveGroup and
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
+        :type permission: str
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :keyword target_name: The meaning of the target depends on the specific permission. For
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
+         the group name. Default value is None.
+        :paramtype target_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await super().check_permission(
+            permission=permission, connection_id=connection_id, target_name=target_name, **kwargs
+        )
 
 
 __all__: List[str] = [

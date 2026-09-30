@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -55,7 +49,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -63,9 +57,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -114,7 +108,7 @@ class ApplicableSchedule(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         lab_vms_shutdown: Optional["_models.Schedule"] = None,
         lab_vms_startup: Optional["_models.Schedule"] = None,
         **kwargs: Any
@@ -147,7 +141,7 @@ class UpdateResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
@@ -176,7 +170,7 @@ class ApplyArtifactsRequest(_serialization.Model):
         "artifacts": {"key": "artifacts", "type": "[ArtifactInstallProperties]"},
     }
 
-    def __init__(self, *, artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, artifacts: Optional[list["_models.ArtifactInstallProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword artifacts: The list of artifacts to apply.
         :paramtype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
@@ -185,7 +179,7 @@ class ApplyArtifactsRequest(_serialization.Model):
         self.artifacts = artifacts
 
 
-class ArmTemplate(Resource):  # pylint: disable=too-many-instance-attributes
+class ArmTemplate(Resource):
     """An Azure Resource Manager template.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -253,7 +247,7 @@ class ArmTemplate(Resource):  # pylint: disable=too-many-instance-attributes
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -261,14 +255,14 @@ class ArmTemplate(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.display_name = None
-        self.description = None
-        self.publisher = None
-        self.icon = None
-        self.contents = None
-        self.created_date = None
-        self.parameters_value_files_info = None
-        self.enabled = None
+        self.display_name: Optional[str] = None
+        self.description: Optional[str] = None
+        self.publisher: Optional[str] = None
+        self.icon: Optional[str] = None
+        self.contents: Optional[JSON] = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.parameters_value_files_info: Optional[list["_models.ParametersValueFileInfo"]] = None
+        self.enabled: Optional[bool] = None
 
 
 class ArmTemplateInfo(_serialization.Model):
@@ -312,7 +306,7 @@ class ArmTemplateList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ArmTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ArmTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -351,7 +345,7 @@ class ArmTemplateParameterProperties(_serialization.Model):
         self.value = value
 
 
-class Artifact(Resource):  # pylint: disable=too-many-instance-attributes
+class Artifact(Resource):
     """An artifact.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -414,7 +408,7 @@ class Artifact(Resource):  # pylint: disable=too-many-instance-attributes
         "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the resource.
         :paramtype location: str
@@ -422,14 +416,14 @@ class Artifact(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.title = None
-        self.description = None
-        self.publisher = None
-        self.file_path = None
-        self.icon = None
-        self.target_os_type = None
-        self.parameters = None
-        self.created_date = None
+        self.title: Optional[str] = None
+        self.description: Optional[str] = None
+        self.publisher: Optional[str] = None
+        self.file_path: Optional[str] = None
+        self.icon: Optional[str] = None
+        self.target_os_type: Optional[str] = None
+        self.parameters: Optional[JSON] = None
+        self.created_date: Optional[datetime.datetime] = None
 
 
 class ArtifactDeploymentStatusProperties(_serialization.Model):
@@ -505,7 +499,7 @@ class ArtifactInstallProperties(_serialization.Model):
         *,
         artifact_id: Optional[str] = None,
         artifact_title: Optional[str] = None,
-        parameters: Optional[List["_models.ArtifactParameterProperties"]] = None,
+        parameters: Optional[list["_models.ArtifactParameterProperties"]] = None,
         status: Optional[str] = None,
         deployment_status_message: Optional[str] = None,
         vm_extension_status_message: Optional[str] = None,
@@ -553,7 +547,7 @@ class ArtifactList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Artifact"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Artifact"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -592,7 +586,7 @@ class ArtifactParameterProperties(_serialization.Model):
         self.value = value
 
 
-class ArtifactSource(Resource):  # pylint: disable=too-many-instance-attributes
+class ArtifactSource(Resource):
     """Properties of an artifact source.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -665,7 +659,7 @@ class ArtifactSource(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         display_name: Optional[str] = None,
         uri: Optional[str] = None,
         source_type: Optional[Union[str, "_models.SourceControlType"]] = None,
@@ -709,9 +703,9 @@ class ArtifactSource(Resource):  # pylint: disable=too-many-instance-attributes
         self.branch_ref = branch_ref
         self.security_token = security_token
         self.status = status
-        self.created_date = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class ArtifactSourceFragment(UpdateResource):
@@ -737,7 +731,7 @@ class ArtifactSourceList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ArtifactSource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ArtifactSource"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -859,7 +853,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -998,13 +992,13 @@ class ComputeVmProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        statuses: Optional[List["_models.ComputeVmInstanceViewStatus"]] = None,
+        statuses: Optional[list["_models.ComputeVmInstanceViewStatus"]] = None,
         os_type: Optional[str] = None,
         vm_size: Optional[str] = None,
         network_interface_id: Optional[str] = None,
         os_disk_id: Optional[str] = None,
-        data_disk_ids: Optional[List[str]] = None,
-        data_disks: Optional[List["_models.ComputeDataDisk"]] = None,
+        data_disk_ids: Optional[list[str]] = None,
+        data_disks: Optional[list["_models.ComputeDataDisk"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1095,7 +1089,7 @@ class CostThresholdProperties(_serialization.Model):
         self.notification_sent = notification_sent
 
 
-class CustomImage(Resource):  # pylint: disable=too-many-instance-attributes
+class CustomImage(Resource):
     """A custom image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1171,14 +1165,14 @@ class CustomImage(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         vm: Optional["_models.CustomImagePropertiesFromVm"] = None,
         vhd: Optional["_models.CustomImagePropertiesCustom"] = None,
         description: Optional[str] = None,
         author: Optional[str] = None,
         managed_image_id: Optional[str] = None,
         managed_snapshot_id: Optional[str] = None,
-        data_disk_storage_info: Optional[List["_models.DataDiskStorageTypeInfo"]] = None,
+        data_disk_storage_info: Optional[list["_models.DataDiskStorageTypeInfo"]] = None,
         custom_image_plan: Optional["_models.CustomImagePropertiesFromPlan"] = None,
         is_plan_authorized: Optional[bool] = None,
         **kwargs: Any
@@ -1214,14 +1208,14 @@ class CustomImage(Resource):  # pylint: disable=too-many-instance-attributes
         self.vhd = vhd
         self.description = description
         self.author = author
-        self.creation_date = None
+        self.creation_date: Optional[datetime.datetime] = None
         self.managed_image_id = managed_image_id
         self.managed_snapshot_id = managed_snapshot_id
         self.data_disk_storage_info = data_disk_storage_info
         self.custom_image_plan = custom_image_plan
         self.is_plan_authorized = is_plan_authorized
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class CustomImageFragment(UpdateResource):
@@ -1247,7 +1241,7 @@ class CustomImageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CustomImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.CustomImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -1527,7 +1521,7 @@ class DetachDiskProperties(_serialization.Model):
         self.leased_by_lab_vm_id = leased_by_lab_vm_id
 
 
-class Disk(Resource):  # pylint: disable=too-many-instance-attributes
+class Disk(Resource):
     """A Disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1600,7 +1594,7 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         disk_type: Optional[Union[str, "_models.StorageType"]] = None,
         disk_size_gi_b: Optional[int] = None,
         leased_by_lab_vm_id: Optional[str] = None,
@@ -1642,11 +1636,11 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         self.disk_blob_name = disk_blob_name
         self.disk_uri = disk_uri
         self.storage_account_id = storage_account_id
-        self.created_date = None
+        self.created_date: Optional[datetime.datetime] = None
         self.host_caching = host_caching
         self.managed_disk_id = managed_disk_id
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class DiskFragment(UpdateResource):
@@ -1672,7 +1666,7 @@ class DiskList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Disk"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Disk"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -1685,7 +1679,7 @@ class DiskList(_serialization.Model):
         self.next_link = next_link
 
 
-class DtlEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
+class DtlEnvironment(Resource):
     """An environment, which is essentially an ARM template deployment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1744,7 +1738,7 @@ class DtlEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         deployment_properties: Optional["_models.EnvironmentDeploymentProperties"] = None,
         arm_template_display_name: Optional[str] = None,
         **kwargs: Any
@@ -1764,10 +1758,10 @@ class DtlEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(location=location, tags=tags, **kwargs)
         self.deployment_properties = deployment_properties
         self.arm_template_display_name = arm_template_display_name
-        self.resource_group_id = None
-        self.created_by_user = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.resource_group_id: Optional[str] = None
+        self.created_by_user: Optional[str] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class DtlEnvironmentFragment(UpdateResource):
@@ -1793,7 +1787,7 @@ class DtlEnvironmentList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DtlEnvironment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.DtlEnvironment"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -1824,7 +1818,7 @@ class EnvironmentDeploymentProperties(_serialization.Model):
         self,
         *,
         arm_template_id: Optional[str] = None,
-        parameters: Optional[List["_models.ArmTemplateParameterProperties"]] = None,
+        parameters: Optional[list["_models.ArmTemplateParameterProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1895,7 +1889,7 @@ class EvaluatePoliciesRequest(_serialization.Model):
         "policies": {"key": "policies", "type": "[EvaluatePoliciesProperties]"},
     }
 
-    def __init__(self, *, policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, policies: Optional[list["_models.EvaluatePoliciesProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword policies: Policies to evaluate.
         :paramtype policies: list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
@@ -1915,7 +1909,7 @@ class EvaluatePoliciesResponse(_serialization.Model):
         "results": {"key": "results", "type": "[PolicySetResult]"},
     }
 
-    def __init__(self, *, results: Optional[List["_models.PolicySetResult"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, results: Optional[list["_models.PolicySetResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword results: Results of evaluating a policy set.
         :paramtype results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
@@ -2016,7 +2010,7 @@ class ExternalSubnet(_serialization.Model):
         self.name = name
 
 
-class Formula(Resource):  # pylint: disable=too-many-instance-attributes
+class Formula(Resource):
     """A formula for creating a VM, specifying an image base and other parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2079,7 +2073,7 @@ class Formula(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         os_type: Optional[str] = None,
         formula_content: Optional["_models.LabVirtualMachineCreationParameter"] = None,
@@ -2102,13 +2096,13 @@ class Formula(Resource):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
-        self.author = None
+        self.author: Optional[str] = None
         self.os_type = os_type
-        self.creation_date = None
+        self.creation_date: Optional[datetime.datetime] = None
         self.formula_content = formula_content
         self.vm = vm
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class FormulaFragment(UpdateResource):
@@ -2134,7 +2128,7 @@ class FormulaList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Formula"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Formula"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -2167,7 +2161,7 @@ class FormulaPropertiesFromVm(_serialization.Model):
         self.lab_vm_id = lab_vm_id
 
 
-class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryImage(Resource):
     """A gallery image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2228,7 +2222,7 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         author: Optional[str] = None,
         description: Optional[str] = None,
         image_reference: Optional["_models.GalleryImageReference"] = None,
@@ -2261,7 +2255,7 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.author = author
-        self.created_date = None
+        self.created_date: Optional[datetime.datetime] = None
         self.description = description
         self.image_reference = image_reference
         self.icon = icon
@@ -2285,7 +2279,7 @@ class GalleryImageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GalleryImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.GalleryImage"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -2377,7 +2371,7 @@ class GenerateArmTemplateRequest(_serialization.Model):
         self,
         *,
         virtual_machine_name: Optional[str] = None,
-        parameters: Optional[List["_models.ParameterInfo"]] = None,
+        parameters: Optional[list["_models.ParameterInfo"]] = None,
         location: Optional[str] = None,
         file_upload_options: Optional[Union[str, "_models.FileUploadOptions"]] = None,
         **kwargs: Any
@@ -2589,7 +2583,7 @@ class InboundNatRule(_serialization.Model):
         self.backend_port = backend_port
 
 
-class Lab(Resource):  # pylint: disable=too-many-instance-attributes
+class Lab(Resource):
     """A lab.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2627,10 +2621,9 @@ class Lab(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype mandatory_artifacts_resource_ids_windows: list[str]
     :ivar created_date: The creation date of the lab.
     :vartype created_date: ~datetime.datetime
-    :ivar premium_data_disks: The setting to enable usage of premium data disks.
-     When its value is 'Enabled', creation of standard or premium data disks is allowed.
-     When its value is 'Disabled', only creation of standard data disks is allowed. Known values
-     are: "Disabled" and "Enabled".
+    :ivar premium_data_disks: The setting to enable usage of premium data disks. When its value is
+     'Enabled', creation of standard or premium data disks is allowed. When its value is 'Disabled',
+     only creation of standard data disks is allowed. Known values are: "Disabled" and "Enabled".
     :vartype premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
     :ivar environment_permission: The access rights to be granted to the user when provisioning an
      environment. Known values are: "Reader" and "Contributor".
@@ -2709,19 +2702,19 @@ class Lab(Resource):  # pylint: disable=too-many-instance-attributes
         "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         lab_storage_type: Optional[Union[str, "_models.StorageType"]] = None,
-        mandatory_artifacts_resource_ids_linux: Optional[List[str]] = None,
-        mandatory_artifacts_resource_ids_windows: Optional[List[str]] = None,
+        mandatory_artifacts_resource_ids_linux: Optional[list[str]] = None,
+        mandatory_artifacts_resource_ids_windows: Optional[list[str]] = None,
         premium_data_disks: Optional[Union[str, "_models.PremiumDataDisk"]] = None,
         environment_permission: Optional[Union[str, "_models.EnvironmentPermission"]] = None,
         announcement: Optional["_models.LabAnnouncementProperties"] = None,
         support: Optional["_models.LabSupportProperties"] = None,
-        extended_properties: Optional[Dict[str, str]] = None,
+        extended_properties: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2740,10 +2733,10 @@ class Lab(Resource):  # pylint: disable=too-many-instance-attributes
          that should be applied on all Windows VM creations by default, prior to the artifacts specified
          by the user.
         :paramtype mandatory_artifacts_resource_ids_windows: list[str]
-        :keyword premium_data_disks: The setting to enable usage of premium data disks.
-         When its value is 'Enabled', creation of standard or premium data disks is allowed.
-         When its value is 'Disabled', only creation of standard data disks is allowed. Known values
-         are: "Disabled" and "Enabled".
+        :keyword premium_data_disks: The setting to enable usage of premium data disks. When its value
+         is 'Enabled', creation of standard or premium data disks is allowed. When its value is
+         'Disabled', only creation of standard data disks is allowed. Known values are: "Disabled" and
+         "Enabled".
         :paramtype premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
         :keyword environment_permission: The access rights to be granted to the user when provisioning
          an environment. Known values are: "Reader" and "Contributor".
@@ -2756,26 +2749,26 @@ class Lab(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype extended_properties: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.default_storage_account = None
-        self.default_premium_storage_account = None
-        self.artifacts_storage_account = None
-        self.premium_data_disk_storage_account = None
-        self.vault_name = None
+        self.default_storage_account: Optional[str] = None
+        self.default_premium_storage_account: Optional[str] = None
+        self.artifacts_storage_account: Optional[str] = None
+        self.premium_data_disk_storage_account: Optional[str] = None
+        self.vault_name: Optional[str] = None
         self.lab_storage_type = lab_storage_type
         self.mandatory_artifacts_resource_ids_linux = mandatory_artifacts_resource_ids_linux
         self.mandatory_artifacts_resource_ids_windows = mandatory_artifacts_resource_ids_windows
-        self.created_date = None
+        self.created_date: Optional[datetime.datetime] = None
         self.premium_data_disks = premium_data_disks
         self.environment_permission = environment_permission
         self.announcement = announcement
         self.support = support
-        self.vm_creation_resource_group = None
-        self.public_ip_id = None
-        self.load_balancer_id = None
-        self.network_security_group_id = None
+        self.vm_creation_resource_group: Optional[str] = None
+        self.public_ip_id: Optional[str] = None
+        self.load_balancer_id: Optional[str] = None
+        self.network_security_group_id: Optional[str] = None
         self.extended_properties = extended_properties
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class LabAnnouncementProperties(_serialization.Model):
@@ -2846,11 +2839,11 @@ class LabAnnouncementProperties(_serialization.Model):
         self.enabled = enabled
         self.expiration_date = expiration_date
         self.expired = expired
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
-class LabCost(Resource):  # pylint: disable=too-many-instance-attributes
+class LabCost(Resource):
     """A cost item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2920,7 +2913,7 @@ class LabCost(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         target_cost: Optional["_models.TargetCostProperties"] = None,
         currency_code: Optional[str] = None,
         start_date_time: Optional[datetime.datetime] = None,
@@ -2946,15 +2939,15 @@ class LabCost(Resource):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.target_cost = target_cost
-        self.lab_cost_summary = None
-        self.lab_cost_details = None
-        self.resource_costs = None
+        self.lab_cost_summary: Optional["_models.LabCostSummaryProperties"] = None
+        self.lab_cost_details: Optional[list["_models.LabCostDetailsProperties"]] = None
+        self.resource_costs: Optional[list["_models.LabResourceCostProperties"]] = None
         self.currency_code = currency_code
         self.start_date_time = start_date_time
         self.end_date_time = end_date_time
         self.created_date = created_date
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class LabCostDetailsProperties(_serialization.Model):
@@ -3041,7 +3034,7 @@ class LabList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Lab"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Lab"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -3206,7 +3199,7 @@ class LabVhdList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LabVhd"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.LabVhd"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -3219,7 +3212,7 @@ class LabVhdList(_serialization.Model):
         self.next_link = next_link
 
 
-class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
+class LabVirtualMachine(Resource):
     """A virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3383,7 +3376,7 @@ class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attribut
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         notes: Optional[str] = None,
         owner_object_id: str = "dynamicValue",
         owner_user_principal_name: Optional[str] = None,
@@ -3397,7 +3390,7 @@ class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attribut
         lab_subnet_name: Optional[str] = None,
         lab_virtual_network_id: Optional[str] = None,
         disallow_public_ip_address: bool = False,
-        artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None,
+        artifacts: Optional[list["_models.ArtifactInstallProperties"]] = None,
         gallery_image_reference: Optional["_models.GalleryImageReference"] = None,
         plan_id: Optional[str] = None,
         network_interface: Optional["_models.NetworkInterfaceProperties"] = None,
@@ -3405,8 +3398,8 @@ class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attribut
         allow_claim: bool = False,
         storage_type: str = "labStorageType",
         environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
-        schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
+        data_disk_parameters: Optional[list["_models.DataDiskProperties"]] = None,
+        schedule_parameters: Optional[list["_models.ScheduleCreationParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3470,41 +3463,41 @@ class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attribut
         self.notes = notes
         self.owner_object_id = owner_object_id
         self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = None
-        self.created_by_user = None
+        self.created_by_user_id: Optional[str] = None
+        self.created_by_user: Optional[str] = None
         self.created_date = created_date
-        self.compute_id = None
+        self.compute_id: Optional[str] = None
         self.custom_image_id = custom_image_id
-        self.os_type = None
+        self.os_type: Optional[str] = None
         self.size = size
         self.user_name = user_name
         self.password = password
         self.ssh_key = ssh_key
         self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
         self.lab_subnet_name = lab_subnet_name
         self.lab_virtual_network_id = lab_virtual_network_id
         self.disallow_public_ip_address = disallow_public_ip_address
         self.artifacts = artifacts
-        self.artifact_deployment_status = None
+        self.artifact_deployment_status: Optional["_models.ArtifactDeploymentStatusProperties"] = None
         self.gallery_image_reference = gallery_image_reference
         self.plan_id = plan_id
-        self.compute_vm = None
+        self.compute_vm: Optional["_models.ComputeVmProperties"] = None
         self.network_interface = network_interface
-        self.applicable_schedule = None
+        self.applicable_schedule: Optional["_models.ApplicableSchedule"] = None
         self.expiration_date = expiration_date
         self.allow_claim = allow_claim
         self.storage_type = storage_type
-        self.virtual_machine_creation_source = None
+        self.virtual_machine_creation_source: Optional[Union[str, "_models.VirtualMachineCreationSource"]] = None
         self.environment_id = environment_id
         self.data_disk_parameters = data_disk_parameters
         self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.last_known_power_state: Optional[str] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
-class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class LabVirtualMachineCreationParameter(_serialization.Model):
     """Properties for creating a virtual machine.
 
     :ivar name: The name of the virtual machine or environment.
@@ -3603,7 +3596,7 @@ class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disab
         *,
         name: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         bulk_creation_parameters: Optional["_models.BulkCreationParameters"] = None,
         notes: Optional[str] = None,
         owner_object_id: str = "dynamicValue",
@@ -3618,7 +3611,7 @@ class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disab
         lab_subnet_name: Optional[str] = None,
         lab_virtual_network_id: Optional[str] = None,
         disallow_public_ip_address: bool = False,
-        artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None,
+        artifacts: Optional[list["_models.ArtifactInstallProperties"]] = None,
         gallery_image_reference: Optional["_models.GalleryImageReference"] = None,
         plan_id: Optional[str] = None,
         network_interface: Optional["_models.NetworkInterfaceProperties"] = None,
@@ -3626,8 +3619,8 @@ class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disab
         allow_claim: bool = False,
         storage_type: str = "labStorageType",
         environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
-        schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
+        data_disk_parameters: Optional[list["_models.DataDiskProperties"]] = None,
+        schedule_parameters: Optional[list["_models.ScheduleCreationParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3746,7 +3739,7 @@ class LabVirtualMachineList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.LabVirtualMachine"]] = None,
+        value: Optional[list["_models.LabVirtualMachine"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3877,7 +3870,7 @@ class NetworkInterfaceProperties(_serialization.Model):
         self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
 
 
-class NotificationChannel(Resource):  # pylint: disable=too-many-instance-attributes
+class NotificationChannel(Resource):
     """A notification.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3941,12 +3934,12 @@ class NotificationChannel(Resource):  # pylint: disable=too-many-instance-attrib
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         web_hook_url: Optional[str] = None,
         email_recipient: Optional[str] = None,
         notification_locale: Optional[str] = None,
         description: Optional[str] = None,
-        events: Optional[List["_models.Event"]] = None,
+        events: Optional[list["_models.Event"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3973,9 +3966,9 @@ class NotificationChannel(Resource):  # pylint: disable=too-many-instance-attrib
         self.notification_locale = notification_locale
         self.description = description
         self.events = events
-        self.created_date = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class NotificationChannelFragment(UpdateResource):
@@ -4003,7 +3996,7 @@ class NotificationChannelList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.NotificationChannel"]] = None,
+        value: Optional[list["_models.NotificationChannel"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4225,8 +4218,8 @@ class OperationResult(_serialization.Model):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-     "HttpVersionNotSupported", and "Continue".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+     "HttpVersionNotSupported".
     :vartype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
     :ivar error: Error details for the operation in case of a failure.
     :vartype error: ~azure.mgmt.devtestlabs.models.OperationError
@@ -4258,8 +4251,8 @@ class OperationResult(_serialization.Model):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-         "HttpVersionNotSupported", and "Continue".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+         "HttpVersionNotSupported".
         :paramtype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
         :keyword error: Error details for the operation in case of a failure.
         :paramtype error: ~azure.mgmt.devtestlabs.models.OperationError
@@ -4344,7 +4337,7 @@ class PercentageCostThresholdProperties(_serialization.Model):
         self.threshold_value = threshold_value
 
 
-class Policy(Resource):  # pylint: disable=too-many-instance-attributes
+class Policy(Resource):
     """A Policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4414,7 +4407,7 @@ class Policy(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         status: Optional[Union[str, "_models.PolicyStatus"]] = None,
         fact_name: Optional[Union[str, "_models.PolicyFactName"]] = None,
@@ -4454,9 +4447,9 @@ class Policy(Resource):  # pylint: disable=too-many-instance-attributes
         self.fact_data = fact_data
         self.threshold = threshold
         self.evaluator_type = evaluator_type
-        self.created_date = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class PolicyFragment(UpdateResource):
@@ -4482,7 +4475,7 @@ class PolicyList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -4514,7 +4507,7 @@ class PolicySetResult(_serialization.Model):
         self,
         *,
         has_error: Optional[bool] = None,
-        policy_violations: Optional[List["_models.PolicyViolation"]] = None,
+        policy_violations: Optional[list["_models.PolicyViolation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4607,14 +4600,14 @@ class ProviderOperationResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OperationMetadata"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.OperationMetadata"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.devtestlabs.models.OperationMetadata]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RdpConnection(_serialization.Model):
@@ -4689,7 +4682,7 @@ class RetargetScheduleProperties(_serialization.Model):
         self.target_resource_id = target_resource_id
 
 
-class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
+class Schedule(Resource):
     """A schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4767,7 +4760,7 @@ class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.EnableStatus"]] = None,
         task_type: Optional[str] = None,
         weekly_recurrence: Optional["_models.WeekDetails"] = None,
@@ -4815,13 +4808,13 @@ class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
         self.hourly_recurrence = hourly_recurrence
         self.time_zone_id = time_zone_id
         self.notification_settings = notification_settings
-        self.created_date = None
+        self.created_date: Optional[datetime.datetime] = None
         self.target_resource_id = target_resource_id
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
-class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ScheduleCreationParameter(_serialization.Model):
     """Properties for creating a schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4879,7 +4872,7 @@ class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-ma
         self,
         *,
         name: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.EnableStatus"]] = None,
         task_type: Optional[str] = None,
         weekly_recurrence: Optional["_models.WeekDetails"] = None,
@@ -4921,7 +4914,7 @@ class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-ma
         """
         super().__init__(**kwargs)
         self.name = name
-        self.location = None
+        self.location: Optional[str] = None
         self.tags = tags
         self.status = status
         self.task_type = task_type
@@ -4956,7 +4949,7 @@ class ScheduleList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5015,7 +5008,7 @@ class Secret(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         value: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5029,8 +5022,8 @@ class Secret(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.value = value
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class SecretFragment(UpdateResource):
@@ -5056,7 +5049,7 @@ class SecretList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5123,7 +5116,7 @@ class ServiceFabric(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         external_service_fabric_id: Optional[str] = None,
         environment_id: Optional[str] = None,
         **kwargs: Any
@@ -5142,9 +5135,9 @@ class ServiceFabric(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.external_service_fabric_id = external_service_fabric_id
         self.environment_id = environment_id
-        self.applicable_schedule = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.applicable_schedule: Optional["_models.ApplicableSchedule"] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class ServiceFabricFragment(UpdateResource):
@@ -5170,7 +5163,7 @@ class ServiceFabricList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServiceFabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ServiceFabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5221,7 +5214,7 @@ class ServiceRunner(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.IdentityProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -5252,7 +5245,7 @@ class ServiceRunnerList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServiceRunner"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ServiceRunner"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5276,7 +5269,7 @@ class SharedPublicIpAddressConfiguration(_serialization.Model):
         "inbound_nat_rules": {"key": "inboundNatRules", "type": "[InboundNatRule]"},
     }
 
-    def __init__(self, *, inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, inbound_nat_rules: Optional[list["_models.InboundNatRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword inbound_nat_rules: The incoming NAT rules.
         :paramtype inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRule]
@@ -5285,7 +5278,7 @@ class SharedPublicIpAddressConfiguration(_serialization.Model):
         self.inbound_nat_rules = inbound_nat_rules
 
 
-class ShutdownNotificationContent(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ShutdownNotificationContent(_serialization.Model):
     """The contents of a shutdown notification. Webhooks can use this type to deserialize the request
     body when they get notified of an imminent shutdown.
 
@@ -5524,7 +5517,7 @@ class SubnetSharedPublicIpAddressConfiguration(_serialization.Model):
         "allowed_ports": {"key": "allowedPorts", "type": "[Port]"},
     }
 
-    def __init__(self, *, allowed_ports: Optional[List["_models.Port"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, allowed_ports: Optional[list["_models.Port"]] = None, **kwargs: Any) -> None:
         """
         :keyword allowed_ports: Backend ports that virtual machines on this subnet are allowed to
          expose.
@@ -5565,7 +5558,7 @@ class TargetCostProperties(_serialization.Model):
         *,
         status: Optional[Union[str, "_models.TargetCostStatus"]] = None,
         target: Optional[int] = None,
-        cost_thresholds: Optional[List["_models.CostThresholdProperties"]] = None,
+        cost_thresholds: Optional[list["_models.CostThresholdProperties"]] = None,
         cycle_start_date_time: Optional[datetime.datetime] = None,
         cycle_end_date_time: Optional[datetime.datetime] = None,
         cycle_type: Optional[Union[str, "_models.ReportingCycleType"]] = None,
@@ -5647,7 +5640,7 @@ class User(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.UserIdentity"] = None,
         secret_store: Optional["_models.UserSecretStore"] = None,
         **kwargs: Any
@@ -5665,9 +5658,9 @@ class User(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.secret_store = secret_store
-        self.created_date = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class UserFragment(UpdateResource):
@@ -5750,7 +5743,7 @@ class UserList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.User"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.User"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5791,7 +5784,7 @@ class UserSecretStore(_serialization.Model):
         self.key_vault_id = key_vault_id
 
 
-class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetwork(Resource):
     """A virtual network.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5855,11 +5848,11 @@ class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        allowed_subnets: Optional[List["_models.Subnet"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        allowed_subnets: Optional[list["_models.Subnet"]] = None,
         description: Optional[str] = None,
         external_provider_resource_id: Optional[str] = None,
-        subnet_overrides: Optional[List["_models.SubnetOverride"]] = None,
+        subnet_overrides: Optional[list["_models.SubnetOverride"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5881,11 +5874,11 @@ class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
         self.allowed_subnets = allowed_subnets
         self.description = description
         self.external_provider_resource_id = external_provider_resource_id
-        self.external_subnets = None
+        self.external_subnets: Optional[list["_models.ExternalSubnet"]] = None
         self.subnet_overrides = subnet_overrides
-        self.created_date = None
-        self.provisioning_state = None
-        self.unique_identifier = None
+        self.created_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.unique_identifier: Optional[str] = None
 
 
 class VirtualNetworkFragment(UpdateResource):
@@ -5911,7 +5904,7 @@ class VirtualNetworkList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of the list operation.
@@ -5939,7 +5932,7 @@ class WeekDetails(_serialization.Model):
         "time": {"key": "time", "type": "str"},
     }
 
-    def __init__(self, *, weekdays: Optional[List[str]] = None, time: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, weekdays: Optional[list[str]] = None, time: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
          Tuesday, etc.).

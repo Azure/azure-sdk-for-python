@@ -33,4 +33,4 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
     async def test_list_plans_by_subscription(self, resource_group):
         response = self.client.commitment_plans.list_plans_by_subscription()
         result = [r async for r in response]
-        assert response
+        assert len(result) == 0

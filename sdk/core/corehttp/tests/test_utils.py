@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 import pytest
 from corehttp.utils import case_insensitive_dict
-from corehttp.utils._utils import get_running_async_lock
-from corehttp.runtime.policies._utils import parse_retry_after
+from corehttp.utils._utils import get_running_async_lock, CaseInsensitiveSet
+from corehttp.runtime.policies._utils import parse_retry_after, sanitize_url
 
 
 @pytest.fixture()
@@ -136,3 +136,151 @@ def test_parse_retry_after():
     assert ret == 0
     ret = parse_retry_after("0.9")
     assert ret == 0.9
+
+
+def test_sanitize_url():
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert sanitize_url(url, {"q1"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    assert sanitize_url(url, {"q1", "q2"}) == url
+    assert sanitize_url(url, {"q2", "q3"}) == "https://www.example.com?q1=REDACTED&q2=value2"
+    url = "https://www.example.com"
+    assert sanitize_url(url, {"q1", "q3"}) == url
+    url = "https://www.example.com?q1=value1"
+    assert sanitize_url(url, {"q1", "q3"}) == url
+    url = "https://www.example.com?q1=value1&q2="
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    url = "https://www.example.com?q1=value1&q2"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2"
+    url = "https://www.example.com?q1=value1&q2&q3=value3"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value1&q2&q3=value3"
+    url = "https://www.example.com?q2=value1&q2=value2"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q2=REDACTED&q2=REDACTED"
+
+    url = "https://www.example.com?REDACTED=foo"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?REDACTED=REDACTED"
+    url = "https://www.example.com?REDACTED=foo&REDACTED=bar"
+    assert sanitize_url(url, {"redacted"}) == "https://www.example.com?REDACTED=foo&REDACTED=bar"
+    url = "https://www.example.com?Q1=value1"
+    assert sanitize_url(url, {"q3"}) == "https://www.example.com?Q1=REDACTED"
+
+    # Test multiple of the same query parameters.
+    url = "https://example.com?q1=value1&q1=value2&q1=value3"
+    assert sanitize_url(url, {"q1"}) == "https://example.com?q1=value1&q1=value2&q1=value3"
+    assert sanitize_url(url, {"q2"}) == "https://example.com?q1=REDACTED&q1=REDACTED&q1=REDACTED"
+
+    # Test query parameters in the path.
+    url = "https://www.example.com/q1=value1/foo"
+    assert sanitize_url(url, {"q1", "q3"}) == url
+    url = "https://www.example.com/q1=value1&q2=value2/foo"
+    assert sanitize_url(url, {"q1", "q3"}) == url
+
+    # Test encoded query parameters.
+    url = "https://www.example.com?q1=value%201&q2=value%202&q3=value%203"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value%201&q2=REDACTED&q3=value%203"
+    url = "https://www.example.com?q1=value%261&q2=value%262&q3=value%263"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value%261&q2=REDACTED&q3=value%263"
+    url = "https://www.example.com?q1=value+1&q2=value+2&q3=value+3"
+    assert sanitize_url(url, {"q1", "q3"}) == "https://www.example.com?q1=value+1&q2=REDACTED&q3=value+3"
+
+    # Test case insensitive query parameters.
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert sanitize_url(url, {"Q1", "q3"}) == "https://www.example.com?q1=value1&q2=REDACTED"
+    url = "https://www.example.com?q1=value1&Q2=value2"
+    assert sanitize_url(url, {"Q1", "q2"}) == url
+
+    # Test empty allowed set (all params redacted).
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert sanitize_url(url, set()) == "https://www.example.com?q1=REDACTED&q2=REDACTED"
+
+    # Test no-value params are always preserved (nothing to redact).
+    url = "https://www.example.com?q1&q2=value2"
+    assert sanitize_url(url, {"q1"}) == "https://www.example.com?q1&q2=REDACTED"
+    assert sanitize_url(url, {"q2"}) == "https://www.example.com?q1&q2=value2"
+    assert sanitize_url(url, set()) == "https://www.example.com?q1&q2=REDACTED"
+
+    url = "https://www.example.com?q1"
+    assert sanitize_url(url, set()) == url
+
+    # Test URL with fragment.
+    url = "https://www.example.com?q1=value1&q2=value2#fragment"
+    assert sanitize_url(url, {"q1"}) == "https://www.example.com?q1=value1&q2=REDACTED#fragment"
+
+    # Test value containing '=' (only first '=' splits key/value).
+    url = "https://www.example.com?q1=a=b&q2=value2"
+    assert sanitize_url(url, {"q1"}) == "https://www.example.com?q1=a=b&q2=REDACTED"
+    assert sanitize_url(url, {"q2"}) == "https://www.example.com?q1=REDACTED&q2=value2"
+
+
+def test_sanitize_url_with_different_placeholder():
+    url = "https://www.example.com?q1=value1&q2=value2"
+    assert sanitize_url(url, {"q1"}, "SANITIZED") == "https://www.example.com?q1=value1&q2=SANITIZED"
+
+
+class TestCaseInsensitiveSet:
+    def test_contains(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        assert "foo" in s
+        assert "FOO" in s
+        assert "Foo" in s
+        assert "bar" in s
+        assert "BAR" in s
+        assert "baz" not in s
+
+    def test_add(self):
+        s = CaseInsensitiveSet()
+        s.add("Foo")
+        assert "foo" in s
+        assert "FOO" in s
+        s.add("bar")
+        assert "Bar" in s
+        assert len(s) == 2
+
+    def test_discard(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        # Discard with different casing should work.
+        s.discard("foo")
+        assert "foo" not in s
+        assert "Foo" not in s
+        assert "bar" in s
+        # Discard missing item is a no-op.
+        s.discard("baz")
+        assert "bar" in s
+        assert len(s) == 1
+
+    def test_remove(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        # Remove with different casing should work.
+        s.remove("foo")
+        assert "Foo" not in s
+        assert "bar" in s
+        with pytest.raises(KeyError):
+            s.remove("baz")
+
+    def test_update(self):
+        s = CaseInsensitiveSet(["Foo"])
+        s.update(["Bar", "Baz"])
+        assert "bar" in s
+        assert "BAZ" in s
+        assert len(s) == 3
+
+    def test_clear(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        s.clear()
+        assert "foo" not in s
+        assert len(s) == 0
+
+    def test_pop(self):
+        s = CaseInsensitiveSet(["Foo"])
+        result = s.pop()
+        assert result == "Foo"
+        assert "foo" not in s
+        assert len(s) == 0
+
+    def test_multiple(self):
+        s = CaseInsensitiveSet(["Foo", "foo", "FOO"])
+        assert len(s) == 1
+        assert "foo" in s
+        s.add("FOO")
+        assert len(s) == 1
+        s.discard("foo")
+        assert len(s) == 0

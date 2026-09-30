@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import re
-import pytest
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -16,7 +14,7 @@ class TestFilesAsync(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_files_async.py::TestFilesAsync::test_files_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_files_async(self, **kwargs):
 
         file_purpose = self.test_files_params["file_purpose"]

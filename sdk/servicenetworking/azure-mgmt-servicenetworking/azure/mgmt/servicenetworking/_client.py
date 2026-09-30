@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -18,20 +19,28 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import ServiceNetworkingMgmtClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AssociationsInterfaceOperations,
     FrontendsInterfaceOperations,
     Operations,
+    PrivateEndpointConnectionsInterfaceOperations,
+    PrivateLinkResourcesInterfaceOperations,
     SecurityPoliciesInterfaceOperations,
     TrafficControllerInterfaceOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class ServiceNetworkingMgmtClient:
+class ServiceNetworkingMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Traffic Controller Provider management API.
 
     :ivar associations_interface: AssociationsInterfaceOperations operations
@@ -46,6 +55,13 @@ class ServiceNetworkingMgmtClient:
     :ivar traffic_controller_interface: TrafficControllerInterfaceOperations operations
     :vartype traffic_controller_interface:
      azure.mgmt.servicenetworking.operations.TrafficControllerInterfaceOperations
+    :ivar private_endpoint_connections_interface: PrivateEndpointConnectionsInterfaceOperations
+     operations
+    :vartype private_endpoint_connections_interface:
+     azure.mgmt.servicenetworking.operations.PrivateEndpointConnectionsInterfaceOperations
+    :ivar private_link_resources_interface: PrivateLinkResourcesInterfaceOperations operations
+    :vartype private_link_resources_interface:
+     azure.mgmt.servicenetworking.operations.PrivateLinkResourcesInterfaceOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicenetworking.operations.Operations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -54,19 +70,28 @@ class ServiceNetworkingMgmtClient:
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-03-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -75,6 +100,7 @@ class ServiceNetworkingMgmtClient:
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -112,6 +138,12 @@ class ServiceNetworkingMgmtClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.traffic_controller_interface = TrafficControllerInterfaceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections_interface = PrivateEndpointConnectionsInterfaceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources_interface = PrivateLinkResourcesInterfaceOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)

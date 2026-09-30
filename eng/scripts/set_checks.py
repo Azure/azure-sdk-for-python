@@ -17,10 +17,15 @@ FULL_BUILD_SET = [
     "sdist",
     "import_all",
     "latestdependency",
-    "mindependency",
+    # Testing mindependency is disabled for CFS onboarding. 
+    # https://github.com/Azure/azure-sdk-for-python/issues/48346
+    # "mindependency",
     "whl_no_aio",
 ]
-PR_BUILD_SET = ["whl", "sdist", "mindependency"]
+
+# Testing mindependency is disabled for CFS onboarding. 
+# https://github.com/Azure/azure-sdk-for-python/issues/48346
+PR_BUILD_SET = ["whl", "sdist"] #, "mindependency"]
 
 
 def resolve_devops_variable(var_value: str) -> List[str]:
@@ -28,20 +33,20 @@ def resolve_devops_variable(var_value: str) -> List[str]:
         if var_value.startswith("$("):
             return []
         else:
-            return [tox_env.strip() for tox_env in var_value.split(",") if tox_env.strip()]
+            return [check.strip() for check in var_value.split(",") if check.strip()]
     else:
         return []
 
 
 def set_devops_value(resolved_set: List[str]) -> None:
     string_value = ",".join(resolved_set)
-    set_ci_variable("toxenv", string_value)
+    set_ci_variable("checks", string_value)
 
 
 def remove_unsupported_values(selected_set: List[str], unsupported_values: List[str]):
-    for unsupported_tox_env in unsupported_values:
-        if unsupported_tox_env in selected_set:
-            selected_set.remove(unsupported_tox_env)
+    for unsupported_check in unsupported_values:
+        if unsupported_check in selected_set:
+            selected_set.remove(unsupported_check)
 
 
 def process_ci_skips(glob_string: str, service: str) -> None:
@@ -93,7 +98,7 @@ if __name__ == "__main__":
         "-o",
         "--override",
         dest="override_set",
-        help='If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(ChecksOverride). EG: "whl,sdist".',
+        help='If you have a set of checks that should override the defaults, provide it here. In CI this is runtime variable $(ChecksOverride). EG: "whl,sdist".',
     )
 
     parser.add_argument(

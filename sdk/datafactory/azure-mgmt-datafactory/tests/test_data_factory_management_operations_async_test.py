@@ -22,8 +22,6 @@ class TestDataFactoryManagementOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
-        response = self.client.operations.list(
-            api_version="2018-06-01",
-        )
+        response = self.client.operations.list()
         result = [r async for r in response]
         assert result

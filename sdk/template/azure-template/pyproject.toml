@@ -12,7 +12,7 @@ keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "azure-core<2.0.0,>=1.23.0",
+    "azure-core<2.0.0,>=1.31.0",
 ]
 dynamic = ["version", "readme"]
 
@@ -42,6 +42,7 @@ exclude = ["tests*", "samples*", "azure", "build*"]
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
+is_stable = true
 mypy = true
 type_check_samples = true
 verifytypes = true
@@ -49,4 +50,7 @@ pyright = true
 pylint = true
 black = true
 generate = false
-apistub = false
+apistub = true
+
+[tool.azure-sdk-conda]
+in_bundle = false

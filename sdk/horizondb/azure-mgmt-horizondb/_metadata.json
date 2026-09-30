@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-05-01-preview",
+  "apiVersions": {
+    "Microsoft.HorizonDb": "2026-05-01-preview"
+  },
+  "commit": "f868cf045de6223d605ed9b7bf2a9ce2947c808f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/horizondb/resource-manager/Microsoft.HorizonDb/HorizonDb",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

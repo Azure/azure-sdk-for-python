@@ -58,7 +58,13 @@ class InstallAndTest(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} using interpreter {executable}")
 
             install_result = self.install_all_requirements(
@@ -85,7 +91,7 @@ class InstallAndTest(Check):
 
     def check_coverage(self, executable: str, package_dir: str, package_name: str) -> int:
         coverage_command = [
-            os.path.join(REPO_ROOT, "eng/tox/run_coverage.py"),
+            os.path.join(REPO_ROOT, "eng/scripts/run_coverage.py"),
             "-t",
             package_dir,
             "-r",
@@ -126,7 +132,7 @@ class InstallAndTest(Check):
                     "pytest exited with code 5 for %s, which is allowed for management or opt-out packages.",
                     package_name,
                 )
-                # Align with tox: skip coverage when tests are skipped entirely
+                # Skip coverage when tests are skipped entirely
                 return 0
             else:
                 logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")

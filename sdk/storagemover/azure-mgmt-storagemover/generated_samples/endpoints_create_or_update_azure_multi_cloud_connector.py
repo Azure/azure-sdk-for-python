@@ -39,6 +39,7 @@ def main():
             "properties": {
                 "awsS3BucketId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.AwsConnector/s3Buckets/testBucket",
                 "description": "Example multi cloud connector resource id",
+                "endpointKind": "Source",
                 "endpointType": "AzureMultiCloudConnector",
                 "multiCloudConnectorId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.HybridConnectivity/publicCloudConnectors/TestConnector",
             }
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/Endpoints_CreateOrUpdate_AzureMultiCloudConnector.json
+# x-ms-original-file: 2025-12-01/Endpoints_CreateOrUpdate_AzureMultiCloudConnector.json
 if __name__ == "__main__":
     main()

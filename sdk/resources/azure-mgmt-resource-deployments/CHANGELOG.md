@@ -1,5 +1,49 @@
 # Release History
 
+## 2.0.0 (2026-08-25)
+
+### Features Added
+
+  - Model `DeploymentExtensionDefinition` added property `config_hash`
+  - Model `DeploymentWhatIfProperties` added property `resource_predictions`
+  - Model `ResourceReference` added property `symbolic_name_path`
+  - Model `TargetResource` added property `symbolic_name_path`
+  - Model `WhatIfChange` added property `resource_type`
+  - Added model `DeploymentResourceWhatIfPrediction`
+
+### Breaking Changes
+
+  - Model `DeploymentExtensionConfigItem` deleted or renamed its instance variable `type`
+  - Deleted or renamed model `ExtensionConfigPropertyType`
+
+## 1.0.0 (2026-07-20)
+
+### Other Changes
+
+  - First GA
+
+## 1.0.0b2 (2026-05-21)
+
+### Features Added
+
+  - Client `DeploymentsMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DeploymentsMgmtClient` added method `send_request`
+  - Model `DeploymentExtended` added property `system_data`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `ExtensionResource`
+  - Added model `Resource`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `WhatIfOperationResult` moved instance variable `changes`, `potential_changes` and `diagnostics` under property `properties` whose type is `WhatIfOperationProperties`
+
+### Other Changes
+
+  - Deleted model `DeploymentExtendedFilter`/`ResourceProviderOperationDisplayProperties`/`SubResource` which actually were not used by SDK users
+
 ## 1.0.0b1 (2025-06-20)
 
 ### Other Changes

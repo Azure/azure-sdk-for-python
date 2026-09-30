@@ -26,14 +26,16 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -46,28 +48,25 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
+tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-    # [START tool_declaration]
-    tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
-    # [END tool_declaration]
-    # Create Agent with web search tool
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that can search the web",
             tools=[tool],
         ),
         description="Agent for web search.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     # Create a conversation for the agent interaction
     conversation = openai_client.conversations.create()
     print(f"Created conversation (id: {conversation.id})")
@@ -78,7 +77,6 @@ with (
         stream=True,
         input=user_input,
         tool_choice="required",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:
@@ -87,7 +85,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             if event.item.type == "message":
                 item = event.item
@@ -101,8 +99,5 @@ with (
                                 f"End index: {annotation.end_index}"
                             )
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

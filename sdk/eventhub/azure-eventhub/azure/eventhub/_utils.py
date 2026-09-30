@@ -120,7 +120,7 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def event_position_selector(value: Union[str, int, datetime.datetime], inclusive: bool = False) -> bytes:
+def event_position_selector(value: Optional[Union[str, int, datetime.datetime]], inclusive: bool = False) -> bytes:
     """Creates a selector expression of the offset.
 
     :param int or str or datetime.datetime value: The offset value to use for the offset.

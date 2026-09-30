@@ -4,16 +4,26 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-Tests to verify that a custom http_client can be passed to get_openai_client()
-and that the returned AsyncOpenAI client uses it instead of the default one.
+Tests covering caller-side overrides (http_client, api_key, base_url, default_headers)
+and the user-agent / token-provider / logging-transport branches of
+AIProjectClient.get_openai_client() (async).
 """
 
 import os
-import pytest
-import httpx
 from typing import Any
+from unittest.mock import patch
+
+import pytest
+import httpx2
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
+
+from openai_test_helpers import (
+    ASYNC_OPENAI_PATCH,
+    ASYNC_TOKEN_PROVIDER_PATCH,
+    make_async_client,
+    mock_openai,
+)
 
 
 class DummyAsyncTokenCredential(AsyncTokenCredential):
@@ -48,16 +58,16 @@ class TestGetOpenAIClientWithOverridesAsync:
         # Track whether our custom http_client was invoked
         request_intercepted = {"called": False, "request": None}
 
-        class TrackingTransport(httpx.AsyncBaseTransport):
+        class TrackingTransport(httpx2.AsyncBaseTransport):
             """Custom async transport that tracks requests and returns mock responses."""
 
-            async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+            async def handle_async_request(self, request: httpx2.Request) -> httpx2.Response:
                 # Mark that our custom transport was called
                 request_intercepted["called"] = True
                 request_intercepted["request"] = request
 
                 # Return a mock response for the OpenAI responses.create() call
-                return httpx.Response(
+                return httpx2.Response(
                     200,
                     request=request,
                     json={
@@ -79,7 +89,7 @@ class TestGetOpenAIClientWithOverridesAsync:
                 )
 
         # Create a custom http_client with our tracking transport
-        custom_http_client = httpx.AsyncClient(transport=TrackingTransport())
+        custom_http_client = httpx2.AsyncClient(transport=TrackingTransport())
 
         # Create the AIProjectClient
         project_client = AIProjectClient(
@@ -138,3 +148,76 @@ class TestGetOpenAIClientWithOverridesAsync:
                 assert (
                     str(openai_client.base_url) == custom_base_url + "/"
                 ), f"Expected base_url '{custom_base_url}/', got '{openai_client.base_url}'"
+
+
+# ===========================================================================
+# api_key resolution branches (async)
+# ===========================================================================
+
+
+class TestApiKeyBranchesAsync:
+    @pytest.mark.asyncio
+    async def test_token_provider_used_when_no_api_key(self):
+        """Branch: no 'api_key' kwarg -> get_bearer_token_provider() is invoked."""
+        client = make_async_client()
+        mock_cls, _ = mock_openai()
+        with (
+            patch(ASYNC_OPENAI_PATCH, mock_cls),
+            patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="async-provider") as mock_tp,
+        ):
+            client.get_openai_client()
+        mock_tp.assert_called_once_with(client._config.credential, "https://ai.azure.com/.default")
+        for c in mock_cls.call_args_list:
+            assert c.kwargs["api_key"] == "async-provider"
+
+    @pytest.mark.asyncio
+    async def test_caller_api_key_skips_token_provider(self):
+        """Branch: 'api_key' in kwargs -> token provider is NOT called."""
+        client = make_async_client()
+        mock_cls, _ = mock_openai()
+        with patch(ASYNC_OPENAI_PATCH, mock_cls), patch(ASYNC_TOKEN_PROVIDER_PATCH) as mock_tp:
+            client.get_openai_client(api_key="async-secret")
+        mock_tp.assert_not_called()
+        for c in mock_cls.call_args_list:
+            assert c.kwargs["api_key"] == "async-secret"
+
+
+# ===========================================================================
+# http_client resolution branches (async)
+# ===========================================================================
+
+
+class TestHttpClientBranchesAsync:
+    @pytest.mark.asyncio
+    async def test_logging_disabled_still_creates_async_logging_transport(self):
+        """Branch: no override + logging disabled -> OpenAI default async client with reduced logging transport."""
+        client = make_async_client(console_logging=False, logging_enable=False)
+        mock_cls, _ = mock_openai()
+        with (
+            patch(ASYNC_OPENAI_PATCH, mock_cls),
+            patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
+            patch("azure.ai.projects.aio._patch.DefaultAsyncHttpxClient") as mock_default_http_client,
+            patch("azure.ai.projects.aio._patch._OpenAILoggingTransport") as mock_transport,
+        ):
+            mock_transport.return_value = object()
+            mock_default_http_client.return_value = object()
+            client.get_openai_client()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
+        mock_transport.assert_called_once_with(logging_enabled=False)
+
+    @pytest.mark.asyncio
+    async def test_logging_enable_creates_async_logging_transport_without_console_logging(self):
+        """Branch: constructor logging_enable=True -> OpenAI default async client with logging transport."""
+        client = make_async_client(console_logging=False, logging_enable=True)
+        mock_cls, _ = mock_openai()
+        with (
+            patch(ASYNC_OPENAI_PATCH, mock_cls),
+            patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
+            patch("azure.ai.projects.aio._patch.DefaultAsyncHttpxClient") as mock_default_http_client,
+            patch("azure.ai.projects.aio._patch._OpenAILoggingTransport") as mock_transport,
+        ):
+            mock_transport.return_value = object()
+            mock_default_http_client.return_value = object()
+            client.get_openai_client()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
+        mock_transport.assert_called_once_with(logging_enabled=True)

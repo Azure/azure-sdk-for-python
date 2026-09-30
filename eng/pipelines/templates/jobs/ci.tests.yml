@@ -5,6 +5,9 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
+  - name: Artifacts
+    type: object
+    default: []
   - name: TestMarkArgument
     type: string
     default: ''
@@ -20,10 +23,7 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: InjectedPackages
@@ -76,6 +76,23 @@ jobs:
         image: $(OSVmImage)
       os: ${{ parameters.OSName }}
 
+    templateContext:
+      # Compiled CodeQL is auto-injected by 1ES but is unsupported on macOS ARM64
+      # (and the test jobs do not compile the extension). Mirror the Build_MacOS carve-out.
+      ${{ if eq(parameters.OSName, 'macOS') }}:
+        sdl:
+          codeql:
+            compiled:
+              enabled: false
+              justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
+      # See eng/common/pipelines/templates/steps/upload-llm-artifacts.yml for corresponding file copy step
+      outputs:
+        - output: pipelineArtifact
+          targetPath: '$(Build.ArtifactStagingDirectory)/llm-artifacts'
+          artifactName: "LLM Artifacts - $(System.JobName) - $(System.JobAttempt)"
+          condition: eq(variables['uploadLlmArtifacts'], 'true')
+          sbomEnabled: false
+
     variables:
     - template: ../variables/globals.yml
     - name: InjectedPackages
@@ -89,16 +106,13 @@ jobs:
           Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
         displayName: 'Set DOTNET_ROOT'
 
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
-
-    # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
-    # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
-    - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -118,11 +132,11 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        CheckEnv: $(checks)
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
         BeforeTestSteps:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}

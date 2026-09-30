@@ -34,6 +34,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/PrivateDnsZoneSuffixGet.json
+# x-ms-original-file: 2026-04-01-preview/PrivateDnsZoneSuffixGet.json
 if __name__ == "__main__":
     main()

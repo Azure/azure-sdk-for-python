@@ -28,7 +28,7 @@ import copy
 import logging
 
 from ...aio import _retry_utility_async
-from ... import http_constants, exceptions
+from ... import http_constants, exceptions, _base
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +51,10 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+        self._resource_link = None
+        # Per-query mutable capture used by __QueryFeed to report response
+        # headers (including failure checkpoints) without crossing requests.
+        self._internal_response_headers_capture = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -118,8 +122,15 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         new_options = copy.deepcopy(self._options)
+        # Clear stale values from prior pages before issuing a new fetch.
+        self._internal_response_headers_capture.clear()
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
+            # Reattach on every iteration: __QueryFeed pops this key off
+            # `options`, so without re-setting it here later loop iterations
+            # (empty-page-with-continuation case) would lose the capture and
+            # the 410 retry layer would resume from stale headers.
+            new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
 
             response_headers = {}
             (fetched_items, response_headers) = await fetch_function(new_options)
@@ -182,20 +193,51 @@ class _QueryExecutionContextBase(object):
                         max_retries
                     )
 
-                    # Refresh routing map to get new partition key ranges
-                    self._client.refresh_routing_map_provider()
-                    # Reset execution context state to allow retry from the beginning
+                    # Refresh routing map to get new partition key ranges.
+                    collection_link = self._resource_link
+                    if collection_link:
+                        previous_routing_map = None
+                        routing_map_provider = getattr(self._client, "_routing_map_provider", None)
+                        if routing_map_provider is not None:
+                            routing_map_cache = getattr(routing_map_provider, "_collection_routing_map_by_item", {})
+                            if isinstance(routing_map_cache, dict):
+                                # The cache is keyed by the normalized resource id,
+                                # not the raw collection_link. Normalize via
+                                # _base.GetResourceIdOrFullNameFromLink and fall back
+                                # to the raw link only if normalization throws.
+                                # Without this the .get() almost always returns None
+                                # and the refresh below silently degrades to a full
+                                # repopulation on every 410.
+                                lookup_key = collection_link
+                                try:
+                                    lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
+                                except (AttributeError, IndexError, TypeError, ValueError):
+                                    _LOGGER.debug(
+                                        "Partition split retry (async): could not normalize "
+                                        "collection_link '%s'; using raw value for "
+                                        "previous-routing-map lookup.",
+                                        collection_link,
+                                    )
+                                previous_routing_map = routing_map_cache.get(lookup_key)
+                        await self._client.refresh_routing_map_provider(
+                            collection_link,
+                            previous_routing_map,
+                            self._options,
+                        )
+                    else:
+                        await self._client.refresh_routing_map_provider()
+
+                    # Reset execution context state for retry. If __QueryFeed already
+                    # stamped a checkpoint continuation on failure, resume from it.
+                    continuation_key = http_constants.HttpHeaders.Continuation
+                    checkpoint_continuation = self._internal_response_headers_capture.get(continuation_key)
                     self._has_started = False
-                    self._continuation = None
+                    self._continuation = checkpoint_continuation
                     # Retry immediately (no backoff needed for partition splits)
                     continue
                 raise  # Not a partition split error, propagate immediately
 
         # This should never be reached, but added for safety
-        _LOGGER.warning(
-            "Partition split retry (async): Unexpectedly exited retry loop without returning results. "
-            "This indicates a potential logic error."
-        )
         return []
 
 
@@ -204,12 +246,14 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     This is the default execution context.
     """
 
-    def __init__(self, client, options, fetch_function):
+    def __init__(self, client, options, fetch_function, resource_link=None):
         """
         :param CosmosClient client:
         :param dict options: The request options for the request.
         :param method fetch_function:
             Will be invoked for retrieving each page
+        :param str resource_link:
+            Optional collection link associated with this execution context.
 
             Example of `fetch_function`:
 
@@ -219,6 +263,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         """
         super(_DefaultQueryExecutionContext, self).__init__(client, options)
         self._fetch_function = fetch_function
+        self._resource_link = resource_link
 
     async def _fetch_next_block(self):
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:

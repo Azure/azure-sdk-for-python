@@ -21,6 +21,11 @@ _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# SDK version
+_AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+_MICROSOFT_OPENTELEMETRY_VERSION = "MICROSOFT_OPENTELEMETRY_VERSION"
+
 _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED = "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED"
 _APPLICATIONINSIGHTS_AUTHENTICATION_STRING = "APPLICATIONINSIGHTS_AUTHENTICATION_STRING"
 
@@ -33,6 +38,7 @@ _FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
 _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY = "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY"
 _AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 _KUBERNETES_SERVICE_HOST = "KUBERNETES_SERVICE_HOST"
+_APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE = "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE"
 
 # Network
 
@@ -41,6 +47,17 @@ _INVALID_STATUS_CODES = (400,)  # Invalid Instrumentation Key/data
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
     308,  # Permanent redirect
+)
+
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
+    ".livediagnostics.monitor.azure.com",
+    ".monitor.azure.com",
+    ".services.visualstudio.com",
+    ".applicationinsights.azure.com",
+    ".monitor.azure.us",
+    ".applicationinsights.azure.us",
+    ".monitor.azure.cn",
+    ".applicationinsights.azure.cn",
 )
 
 _RETRYABLE_STATUS_CODES = (
@@ -77,12 +94,20 @@ _AVAILABILITY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Availability"
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
+_MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+
+# Track Availability telemetry constants
+_MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
+_MICROSOFT_AVAILABILITY_NAME = "microsoft.availability.name"
+_MICROSOFT_AVAILABILITY_DURATION = "microsoft.availability.duration"
+_MICROSOFT_AVAILABILITY_SUCCESS = "microsoft.availability.success"
+_MICROSOFT_AVAILABILITY_RUN_LOCATION = "microsoft.availability.runLocation"
+_MICROSOFT_AVAILABILITY_MESSAGE = "microsoft.availability.message"
 
 # ONE SETTINGS
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
 _ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
-_ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
 _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
@@ -98,6 +123,8 @@ _ONE_SETTINGS_FEATURE_LIVE_METRICS = "FEATURE_LIVE_METRICS"
 _ONE_SETTINGS_FEATURE_SDK_STATS = "FEATURE_SDK_STATS"
 # Maximum refresh interval cap (24 hours in seconds)
 _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS = 24 * 60 * 60  # 86,400 seconds
+# Base delay for exponential backoff on transient change-detection errors (1 hour in seconds)
+_ONE_SETTINGS_BACKOFF_BASE_SECONDS = 3600
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
@@ -335,6 +362,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 
@@ -365,5 +393,28 @@ _GEN_AI_ATTRIBUTES = (
     "gen_ai.tool.call.result",
     "gen_ai.evaluation.explanation",
 )
+
+# Gen AI main-agent attribution constants
+# Attribute mapping for main-agent propagation in OnStart
+_MAIN_AGENT_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    (
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "gen_ai.conversation.id",
+    ),
+)
+
+# OnEnd self-attribution mapping (for root invoke_agent spans)
+_MAIN_AGENT_SELF_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    ("microsoft.gen_ai.main_agent.conversation_id", "gen_ai.conversation.id"),
+)
+
+_MAIN_AGENT_PREFIX = "microsoft.gen_ai.main_agent."
 
 # cSpell:disable

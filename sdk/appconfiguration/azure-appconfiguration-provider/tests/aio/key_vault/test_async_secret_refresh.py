@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 import functools
 import time
-import asyncio
 import unittest
 from unittest.mock import Mock, patch
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from asynctestcase import AppConfigTestCase
+from testcase import create_secret_config_setting
 from test_constants import (
     APPCONFIGURATION_ENDPOINT_STRING,
     APPCONFIGURATION_KEYVAULT_SECRET_URL,
@@ -63,16 +63,11 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
 
         # Mock the refresh method to track calls
         with patch.object(client, "refresh") as mock_refresh:
-            # Wait for the secret refresh interval to pass
-            await asyncio.sleep(2)
-
             await client.refresh()
 
             # Verify refresh was called
             assert mock_refresh.call_count >= 1
 
-            # Wait again to ensure multiple refreshes
-            await asyncio.sleep(2)
             await client.refresh()
 
             # Should have been called at least twice now
@@ -88,43 +83,43 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     ):
         """Test that secrets are refreshed with updated values."""
         mock_callback = Mock()
+        secret_key = f"{self.get_resource_name('test')}-secret"
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
+        kv_setting = create_secret_config_setting(secret_key, "prod", appconfiguration_keyvault_secret_url)
+        secret_created = False
+        try:
+            await appconfig_client.set_configuration_setting(kv_setting)
+            secret_created = True
 
-        # Create client with the mock secret resolver
-        client = await self.create_client(
-            endpoint=appconfiguration_endpoint_string,
-            selects={SettingSelector(key_filter="*", label_filter="prod")},
-            keyvault_secret_url=appconfiguration_keyvault_secret_url,
-            keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
-            on_refresh_success=mock_callback,
-            refresh_on=[WatchKey("secret", "prod")],
-            refresh_interval=1,
-            secret_refresh_interval=1,  # Using a short interval for testing
-        )
+            client = await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
+                selects={SettingSelector(key_filter=secret_key, label_filter="prod")},
+                keyvault_secret_url=appconfiguration_keyvault_secret_url,
+                keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
+                on_refresh_success=mock_callback,
+                refresh_on=[WatchKey(secret_key, "prod")],
+                refresh_interval=1,
+                secret_refresh_interval=1,
+            )
 
-        # Add a key vault reference to the client (this will use mock resolver)
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+            assert client[secret_key] == "Very secret value"
+            assert isinstance(kv_setting, SecretReferenceConfigurationSetting)
+            kv_setting.secret_id = appconfiguration_keyvault_secret_url2
+            await appconfig_client.set_configuration_setting(kv_setting)
 
-        # Get and modify a key vault reference setting
-        kv_setting = await appconfig_client.get_configuration_setting(key="secret", label="prod")
-        assert kv_setting is not None
+            # Expire the refresh timers to simulate time passing
+            client._refresh_timer._next_refresh_time = 0
+            client._secret_provider.secret_refresh_timer._next_refresh_time = 0
 
-        # Verify initial value from mock resolver
-        assert client["secret"] == "Very secret value"
-        assert kv_setting is not None
-        assert isinstance(kv_setting, SecretReferenceConfigurationSetting)
-        # Update the secret_id (which is the value for SecretReferenceConfigurationSetting)
-        kv_setting.secret_id = appconfiguration_keyvault_secret_url2
-        await appconfig_client.set_configuration_setting(kv_setting)
+            # Access the value again to trigger refresh
+            await client.refresh()
 
-        # Wait for the secret refresh interval to pass
-        await asyncio.sleep(2)
-
-        # Access the value again to trigger refresh
-        await client.refresh()
-
-        # Verify the value was updated
-        assert client["secret"] == "Very secret value 2"
-        assert mock_callback.call_count >= 1
+            # Verify the value was updated
+            assert client[secret_key] == "Very secret value 2"
+            assert mock_callback.call_count >= 1
+        finally:
+            if secret_created:
+                await appconfig_client.delete_configuration_setting(key=secret_key, label="prod")
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
@@ -150,6 +145,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
             on_refresh_success=mock_callback,
             refresh_interval=999999,
+            refresh_enabled=False,
         )
 
         # Verify initial state

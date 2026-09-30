@@ -24,11 +24,13 @@ from typing import (
 
 try:
     from uamqp import (
+        AMQPClient,
         BatchMessage,
         constants,
         MessageBodyType,
         Message,
         types,
+        c_uamqp,
         SendClient,
         ReceiveClient,
         Source,
@@ -54,11 +56,12 @@ try:
     )
     from ._base import AmqpTransport
     from ..amqp._constants import AmqpMessageBodyType
-    from .._common.utils import utc_from_timestamp, utc_now
+    from .._common.utils import utc_from_timestamp, utc_now, get_attempt_timeout
     from .._common.tracing import get_receive_links, receive_trace_context_manager
     from .._common.constants import (
         UAMQP_LIBRARY,
         DATETIMEOFFSET_EPOCH,
+        _X_OPT_PARTITION_KEY,
         RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
         RECEIVER_LINK_DEAD_LETTER_REASON,
         DEADLETTERNAME,
@@ -221,6 +224,19 @@ try:
                 return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
+    class _AMQPTimestamp(types.AMQPType):
+        """Wrap a raw millisecond int as an AMQP timestamp.
+
+        uamqp ships no ``AMQPTimestamp`` type, so a raw millisecond value (such
+        as the DateTime.MaxValue sentinel, which is year 10000 and cannot be a
+        ``datetime``) has no wrapper that tags it as a timestamp. Without this,
+        the value would be encoded as a plain integer and the service would not
+        recognise it as ``lastUpdatedTime``.
+        """
+
+        def _c_wrapper(self, value):  # pylint: disable=arguments-differ
+            return c_uamqp.timestamp_value(int(value))
+
     class UamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the sender and receiver.
@@ -258,6 +274,8 @@ try:
         AMQP_LONG_VALUE: Callable = types.AMQPLong
         AMQP_ARRAY_VALUE: Callable = types.AMQPArray
         AMQP_UINT_VALUE: Callable = types.AMQPuInt
+        AMQP_INT_VALUE: Callable = types.AMQPInt
+        AMQP_TIMESTAMP_VALUE: Callable = _AMQPTimestamp
 
         # errors
         TIMEOUT_ERROR = compat.TimeoutException
@@ -318,16 +336,17 @@ try:
             header_vals = annotated_message.header.values() if annotated_message.header else None
             # If header and non-None header values, create outgoing header.
             if header_vals and header_vals.count(None) != len(header_vals):
-                annotated_message.header = cast("AmqpMessageHeader", annotated_message.header)
+                # Bind the cast result to a local so mypy can narrow the Optional type.
+                header = cast("AmqpMessageHeader", annotated_message.header)
                 message_header = MessageHeader()
-                message_header.delivery_count = annotated_message.header.delivery_count
-                message_header.time_to_live = annotated_message.header.time_to_live
-                message_header.first_acquirer = annotated_message.header.first_acquirer
-                message_header.durable = annotated_message.header.durable
-                message_header.priority = annotated_message.header.priority
+                message_header.delivery_count = header.delivery_count
+                message_header.time_to_live = header.time_to_live
+                message_header.first_acquirer = header.first_acquirer
+                message_header.durable = header.durable
+                message_header.priority = header.priority
                 if (
-                    annotated_message.header.time_to_live
-                    and annotated_message.header.time_to_live != MAX_DURATION_VALUE
+                    header.time_to_live
+                    and header.time_to_live != MAX_DURATION_VALUE
                 ):
                     ttl_set = True
                     creation_time_from_ttl = int(
@@ -336,7 +355,7 @@ try:
                     absolute_expiry_time_from_ttl = int(
                         min(
                             MAX_ABSOLUTE_EXPIRY_TIME,
-                            creation_time_from_ttl + annotated_message.header.time_to_live,
+                            creation_time_from_ttl + header.time_to_live,
                         )
                     )
 
@@ -344,32 +363,33 @@ try:
             properties_vals = annotated_message.properties.values() if annotated_message.properties else None
             # If properties and non-None properties values, create outgoing properties.
             if properties_vals and properties_vals.count(None) != len(properties_vals):
-                annotated_message.properties = cast("AmqpMessageProperties", annotated_message.properties)
+                # Bind the cast result to a local so mypy can narrow the Optional type.
+                props = cast("AmqpMessageProperties", annotated_message.properties)
                 creation_time = None
                 absolute_expiry_time = None
                 if ttl_set:
                     creation_time = creation_time_from_ttl
                     absolute_expiry_time = absolute_expiry_time_from_ttl
                 else:
-                    if annotated_message.properties.creation_time:
-                        creation_time = int(annotated_message.properties.creation_time)
-                    if annotated_message.properties.absolute_expiry_time:
-                        absolute_expiry_time = int(annotated_message.properties.absolute_expiry_time)
+                    if props.creation_time:
+                        creation_time = int(props.creation_time)
+                    if props.absolute_expiry_time:
+                        absolute_expiry_time = int(props.absolute_expiry_time)
 
                 message_properties = MessageProperties(
-                    message_id=annotated_message.properties.message_id,
-                    user_id=annotated_message.properties.user_id,
-                    to=annotated_message.properties.to,
-                    subject=annotated_message.properties.subject,
-                    reply_to=annotated_message.properties.reply_to,
-                    correlation_id=annotated_message.properties.correlation_id,
-                    content_type=annotated_message.properties.content_type,
-                    content_encoding=annotated_message.properties.content_encoding,
+                    message_id=props.message_id,
+                    user_id=props.user_id,
+                    to=props.to,
+                    subject=props.subject,
+                    reply_to=props.reply_to,
+                    correlation_id=props.correlation_id,
+                    content_type=props.content_type,
+                    content_encoding=props.content_encoding,
                     creation_time=creation_time,
                     absolute_expiry_time=absolute_expiry_time,
-                    group_id=annotated_message.properties.group_id,
-                    group_sequence=annotated_message.properties.group_sequence,
-                    reply_to_group_id=annotated_message.properties.reply_to_group_id,
+                    group_id=props.group_id,
+                    group_sequence=props.group_sequence,
+                    reply_to_group_id=props.reply_to_group_id,
                     encoding=annotated_message._encoding,  # pylint: disable=protected-access
                 )
             elif ttl_set:
@@ -457,6 +477,23 @@ try:
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
         @staticmethod
+        def get_remote_max_message_batch_size(  # pylint: disable=unused-argument
+            handler: "AMQPClient",
+        ) -> "Optional[int]":
+            """
+            Returns the max batch size from the vendor link property
+            'com.microsoft:max-message-batch-size', or None if unavailable.
+
+            The uAMQP transport does not expose remote link properties,
+            so this always returns None (triggering the tier-based fallback).
+
+            :param ~uamqp.AMQPClient handler: Client to read link properties from.
+            :return: Remote max message batch size, or None.
+            :rtype: Optional[int]
+            """
+            return None
+
+        @staticmethod
         def get_handler_link_name(handler: "AMQPClient") -> str:
             """
             Returns link name.
@@ -506,6 +543,28 @@ try:
             :param ~uamqp.Connection connection: uamqp or pyamqp Connection.
             """
             connection.destroy()
+
+        @staticmethod
+        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+            """Creates and returns a uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuth auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClient
+            :rtype: ~uamqp.AMQPClient
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClient(
+                ("amqps://" if config.use_tls else "amqp://") + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
 
         @staticmethod
         def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint:disable=docstring-keyword-should-match-keyword-only
@@ -600,6 +659,29 @@ try:
             sb_message_batch._message._body_gen.append(outgoing_sb_message._message)
 
         @staticmethod
+        def set_batch_envelope_properties(
+            batch_message: "BatchMessage",
+            message_id: Optional[str],
+            session_id: Optional[str],
+            partition_key: Optional[str],
+        ) -> None:
+            """
+            Populate the batch envelope's message_id/session_id properties and partition_key annotation
+            on the underlying uamqp BatchMessage.
+            :param uamqp.BatchMessage batch_message: The underlying uamqp batch message.
+            :param str or None message_id: The message_id of the first message in the batch.
+            :param str or None session_id: The session_id of the first message in the batch.
+            :param str or None partition_key: The partition_key of the first message in the batch.
+            :rtype: None
+            """
+            if message_id or session_id:
+                batch_message.properties = MessageProperties(message_id=message_id, group_id=session_id)
+            if partition_key:
+                annotations = batch_message.annotations or {}
+                annotations[_X_OPT_PARTITION_KEY] = partition_key
+                batch_message.annotations = annotations
+
+        @staticmethod
         def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
             """
             Creates and returns the Source.
@@ -680,7 +762,8 @@ try:
             if receiver._session and str(source) == receiver._entity_uri:
                 # This has to live on the session object so that autorenew has access to it.
                 receiver._session._session_start = utc_now()
-                expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
+                # SESSION_LOCKED_UNTIL is a bytes constant; mypy can't infer the dict key type here.
+                expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)  # type: ignore[call-overload]
                 if expiry_in_seconds:
                     expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH) / 10000000
                     receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
@@ -709,10 +792,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = receiver._inner_next()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopIteration:
                     break
                 finally:
@@ -731,7 +818,7 @@ try:
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
-                receiver._open()
+                receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter()
                 uamqp_message = next(cast(Iterator["Message"], receiver._message_iter))
@@ -804,6 +891,15 @@ try:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
+        @staticmethod
+        def drain_and_release_messages(handler: "ReceiveClient") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default).
+            :param ~uamqp.ReceiveClient handler: The handler.
+            :rtype: None
+            """
+
         # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
         @staticmethod
@@ -813,7 +909,16 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
+                raise NotImplementedError(
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             UamqpTransport.settle_message_via_receiver_link_impl(
                 handler,
                 message,
@@ -863,14 +968,20 @@ try:
             :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
             :keyword bool is_peeked_message: Optional. For peeked messages.
             :keyword bool is_deferred_message: Optional. For deferred messages.
+            :keyword uuid.UUID lock_token: Optional. Lock token, if it is given by the message receiver.
             :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
             :return: List of ServiceBusReceivedMessage.
             :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
             """
+            is_deferred_message = kwargs.get("is_deferred_message", False)
             parsed = []
             for m in message.get_data()[b"messages"]:
                 wrapped = Message.decode_from_bytes(bytearray(m[b"message"]))
-                parsed.append(message_type(wrapped, **kwargs))
+                if is_deferred_message and b"lock-token" in m:
+                    lock_token = m[b"lock-token"]
+                else:
+                    lock_token = kwargs.pop("lock_token", None)
+                parsed.append(message_type(wrapped, lock_token=lock_token, **kwargs))
             return parsed
 
         @staticmethod

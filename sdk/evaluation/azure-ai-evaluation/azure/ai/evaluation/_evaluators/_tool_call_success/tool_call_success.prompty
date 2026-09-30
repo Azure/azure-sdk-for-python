@@ -63,13 +63,20 @@ B. Examine tool result and definition for the tool being called to check whether
 C. If one or more tool result are **failed** , then you the **evaluation process** has **failed**, otherwise , the **evaluation process** has **succeeded**
 D. You are required to return your **output** in the following format:
   {
-    "explanation": "<15-60 words explaining the logic flow of your decision>",
-    "details": {
-      "failed_tools": "<comma-separated list for the tools that has failed results if any>",
+    "reason": "<15-60 words explaining the logic flow of your decision>.",
+    "properties": {
+      "failed_tools": "<comma-separated list for the tools that has failed results if any>"
     },
-    "success": <True or False based on whether the **evaluation process** has **succeeded** or **failed**>
+    "score": <1 if all tool calls succeeded, 0 if any tool call failed>,
+    "status": "completed"
   }
-E. If no tool calls found at all , the TOOL_CALLS input is empty or the TOOL_CALLS input is not passed , the **evaluation process** has **succeeded**
+E. If no tool calls found at all , the TOOL_CALLS input is empty or the TOOL_CALLS input is not passed , return status "skipped" immediately without scoring:
+  {
+    "reason": "<explain why evaluation was skipped>",
+    "properties": null,
+    "score": null,
+    "status": "skipped"
+  }
 
 
 ## Successful Evaluation Process Examples
@@ -85,11 +92,12 @@ E. If no tool calls found at all , the TOOL_CALLS input is empty or the TOOL_CAL
 
 EXPECTED OUTPUT
 {
-  "explanation": "None of the results indicate an error",
-  "details": {
+  "reason": "None of the results indicate an error",
+  "properties": {
     "failed_tools": "",
   },
-  "success": True
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -101,11 +109,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "None of the results indicate an error",
-  "details": {
+  "reason": "None of the results indicate an error",
+  "properties": {
     "failed_tools": "",
   },
-  "success": True
+  "score": 1,
+  "status": "completed"
 }
 
 ### Example - Succeeded
@@ -117,11 +126,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "Although the returned value 7 is not the square root of 4, this is a business mistake in the tool. The tool did not return a result indicating a technical error",
-  "details": {
+  "reason": "Although the returned value 7 is not the square root of 4, this is a business mistake in the tool. The tool did not return a result indicating a technical error",
+  "properties": {
     "failed_tools": "",
   },
-  "success": True
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -134,11 +144,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool, not a technical failure. The tool did not return an error",
-  "details": {
+  "reason": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool, not a technical failure. The tool did not return an error",
+  "properties": {
     "failed_tools": "",
   },
-  "success": True
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -152,11 +163,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The tool returned empty response which is accepted given that this tool functionality does not include returning data to the caller",
-  "details": {
+  "reason": "The tool returned empty response which is accepted given that this tool functionality does not include returning data to the caller",
+  "properties": {
     "failed_tools": "",
   },
-  "success": True
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -172,11 +184,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The tool returned empty response , however , given the tool definition , it should never return empty response because there should be weather info at any given point in time. An empty response here is considered a technical failure. The conclusion is the get_weather_info failed",
-  "details": {
+  "reason": "The tool returned empty response , however , given the tool definition , it should never return empty response because there should be weather info at any given point in time. An empty response here is considered a technical failure. The conclusion is the get_weather_info failed",
+  "properties": {
     "failed_tools": "get_weather_info",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -188,11 +201,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The tool returned a string indicating that it failed",
-  "details": {
+  "reason": "The tool returned a string indicating that it failed",
+  "properties": {
     "failed_tools": "get_current_user_Info",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -204,11 +218,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The tool returned an object with empty fields and a string indicating that it failed",
-  "details": {
+  "reason": "The tool returned an object with empty fields and a string indicating that it failed",
+  "properties": {
     "failed_tools": "get_current_user_Info",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -220,11 +235,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "The call for GetWeatherInfo returned an object containing single property 'temp' that is an empty string. This means the call to GetWeatherInfo returned empty result while weather info should be available at any time",
-  "details": {
+  "reason": "The call for GetWeatherInfo returned an object containing single property 'temp' that is an empty string. This means the call to GetWeatherInfo returned empty result while weather info should be available at any time",
+  "properties": {
     "failed_tools": "GetWeatherInfo",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -236,11 +252,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "the returned result indicates that the call to get_day_of_week timed out",
-  "details": {
+  "reason": "the returned result indicates that the call to get_day_of_week timed out",
+  "properties": {
     "failed_tools": "get_day_of_week",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -253,11 +270,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "null indicates an empty result which cannot be an accepted output of the tool given the tool definition since any given date represents a day of week",
-  "details": {
+  "reason": "null indicates an empty result which cannot be an accepted output of the tool given the tool definition since any given date represents a day of week",
+  "properties": {
     "failed_tools": "get_day_of_week",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 } 
 
 
@@ -270,11 +288,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "Empty object cannot be an accepted output of the tool given the tool definition since any given date should represent a day of week",
-  "details": {
+  "reason": "Empty object cannot be an accepted output of the tool given the tool definition since any given date should represent a day of week",
+  "properties": {
     "failed_tools": "get_day_of_week",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -288,11 +307,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "GetWeatherInfo returned an empty response while it should return the weather info and BookTicket returned an error.Both tools failed.",
-  "details": {
+  "reason": "GetWeatherInfo returned an empty response while it should return the weather info and BookTicket returned an error.Both tools failed.",
+  "properties": {
     "failed_tools": "GetWeatherInfo,BookTicket",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 
@@ -306,11 +326,12 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-  "explanation": "Although GetWeatherInfo succeeded, BookTicket returned an error. The final result is failure because one of the tool calls has failed",
-  "details": {
+  "reason": "Although GetWeatherInfo succeeded, BookTicket returned an error. The final result is failure because one of the tool calls has failed",
+  "properties": {
     "failed_tools": "BookTicket",
   },
-  "success": False
+  "score": 0,
+  "status": "completed"
 }
 
 

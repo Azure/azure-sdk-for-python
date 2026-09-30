@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "condaFile": "dependencies:\n- python=3.10\n- pip:\n  - azure-ai-ml\nname: smoke\n",
+    "description": "smoke env",
+    "image": "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest",
+    "isAnonymous": false,
+    "isArchived": false,
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

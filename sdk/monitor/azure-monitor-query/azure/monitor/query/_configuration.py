@@ -27,8 +27,8 @@ class MonitorQueryLogsClientConfiguration:  # pylint: disable=too-many-instance-
     :param endpoint: The Log Analytics service endpoint. Default value is
      "https://api.loganalytics.io".
     :type endpoint: str
-    :keyword api_version: The service API version. Known values are "v1" and None. Default value is
-     "v1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The service API version. Known values are "v1". Default value is "v1".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.monitor.query.models.Versions
     """
 

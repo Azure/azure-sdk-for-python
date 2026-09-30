@@ -1,0 +1,115 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateMonitor",
+      "monitorDefinition": {
+        "computeConfiguration": {
+          "computeIdentity": {
+            "computeIdentityType": "AmlToken"
+          },
+          "computeType": "ServerlessSpark",
+          "instanceType": "standard_e8s_v3",
+          "runtimeVersion": "3.4"
+        },
+        "monitoringTarget": {
+          "deploymentId": "fake_endpoint_id",
+          "taskType": "classification"
+        },
+        "signals": {
+          "testSignal": {
+            "componentId": "fake_component:1",
+            "inputAssets": {
+              "test_fixed": {
+                "dataContext": "test",
+                "inputDataType": "Fixed",
+                "jobInputType": "mltable",
+                "uri": "Direct:1"
+              },
+              "test_static": {
+                "dataContext": "test",
+                "inputDataType": "Static",
+                "jobInputType": "mltable",
+                "uri": "Direct:1",
+                "windowEnd": "2023-07-17T00:00:00.000Z",
+                "windowStart": "2023-07-12T00:00:00.000Z"
+              },
+              "test_trailing": {
+                "dataContext": "test",
+                "inputDataType": "Trailing",
+                "jobInputType": "mltable",
+                "uri": "Direct:1",
+                "windowOffset": "P7D",
+                "windowSize": "P30D"
+              }
+            },
+            "inputs": {
+              "input_1": {
+                "jobInputType": "mltable",
+                "uri": "Direct:1"
+              },
+              "input_2": {
+                "jobInputType": "mltable",
+                "uri": "Direct:2"
+              }
+            },
+            "metricThresholds": [
+              {
+                "metric": "metric1",
+                "threshold": {
+                  "value": 0.1
+                }
+              },
+              {
+                "metric": "metric2",
+                "threshold": {
+                  "value": 0.2
+                }
+              }
+            ],
+            "mode": "Enabled",
+            "signalType": "Custom",
+            "workspaceConnection": {
+              "environmentVariables": {
+                "ENV_VAR_1": "value1",
+                "ENV_VAR_2": "value2"
+              },
+              "secrets": {
+                "SECRET_1": "secret1",
+                "SECRET_2": "secret2"
+              }
+            }
+          }
+        }
+      }
+    },
+    "properties": {
+      "prop1": "value"
+    },
+    "tags": {
+      "tag1": "tag"
+    },
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          22,
+          20
+        ],
+        "minutes": [
+          0,
+          0
+        ],
+        "weekDays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ]
+      },
+      "timeZone": "utc",
+      "triggerType": "Recurrence"
+    }
+  }
+}

@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict, Iterable
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -42,6 +42,8 @@ from azure.core.tracing import SpanKind
 from azure.core.tracing.common import change_context
 from azure.core.instrumentation import get_tracer
 from azure.core.tracing._models import TracingOptions
+from azure.core.pipeline.policies._utils import sanitize_url
+from azure.core.utils._utils import CaseInsensitiveSet
 
 if TYPE_CHECKING:
     from opentelemetry.trace import Span
@@ -74,10 +76,16 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :type tracing_attributes: dict[str, str]
     :keyword instrumentation_config: Configuration for the instrumentation providers
     :type instrumentation_config: dict[str, Any]
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+        These are added to the default set which includes "api-version".
+    :type additional_allowed_query_params: Iterable[str]
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _SUPPRESSION_TOKEN = "SUPPRESSION_TOKEN"
+
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: set[str] = set(["api-version"])
+    _REDACTED_PLACEHOLDER = "REDACTED"
 
     # Current stable HTTP semantic conventions
     _HTTP_RESEND_COUNT = "http.request.resend_count"
@@ -95,10 +103,19 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     _RESPONSE_ID = "x-ms-request-id"
     _RESPONSE_ID_ATTR = "az.service_request_id"
 
-    def __init__(self, *, instrumentation_config: Optional[Mapping[str, Any]] = None, **kwargs: Any):
+    def __init__(
+        self,
+        *,
+        instrumentation_config: Optional[Mapping[str, Any]] = None,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
+        **kwargs: Any,
+    ):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         self._instrumentation_config = instrumentation_config
+        self.allowed_query_params: set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Starts a span for the network call.
@@ -206,6 +223,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         if hasattr(span, "set_http_attributes"):
             # Plugin-based tracing
             span.set_http_attributes(request=http_request, response=response)
+            span.add_attribute(
+                "http.url", sanitize_url(http_request.url, self.allowed_query_params, self._REDACTED_PLACEHOLDER)
+            )
             for key, value in attributes.items():
                 span.add_attribute(key, value)
             if exc_info:
@@ -273,7 +293,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         """
         attributes: Dict[str, Any] = {
             self._HTTP_REQUEST_METHOD: request.method,
-            self._URL_FULL: request.url,
+            self._URL_FULL: sanitize_url(request.url, self.allowed_query_params, self._REDACTED_PLACEHOLDER),
         }
 
         parsed_url = urllib.parse.urlparse(request.url)

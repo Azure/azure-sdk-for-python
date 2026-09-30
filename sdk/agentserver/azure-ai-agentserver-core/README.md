@@ -1,105 +1,270 @@
-# Azure AI Agent Server Adapter for Python
+# Azure AI Agent Server Core client library for Python
 
+The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
 ## Getting started
+
+### Install the package
 
 ```bash
 pip install azure-ai-agentserver-core
 ```
 
+OpenTelemetry tracing with Azure Monitor and OTLP exporters is included by default.
+
+### Prerequisites
+
+- Python 3.10 or later
+
 ## Key concepts
 
-This is the core package for Azure AI Agent server. It hosts your agent as a container on the cloud.
+### AgentServerHost
 
-You can talk to your agent using azure-ai-project sdk.
+`AgentServerHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
+- **Health probe** — `GET /readiness` returns `200 OK` when the server is ready.
+- **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
+- **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
+- **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
+
+Protocol packages (e.g. `azure-ai-agentserver-invocations`) subclass `AgentServerHost` and add their endpoints in `__init__`.
+
+### Environment variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `PORT` | Listen port | `8088` |
+| `FOUNDRY_AGENT_NAME` | Agent name (used in tracing) | `""` |
+| `FOUNDRY_AGENT_VERSION` | Agent version (used in tracing) | `""` |
+| `FOUNDRY_PROJECT_ENDPOINT` | Azure AI Foundry project endpoint | `""` |
+| `FOUNDRY_PROJECT_ARM_ID` | Foundry project ARM resource ID (used in tracing) | `""` |
+| `FOUNDRY_AGENT_SESSION_ID` | Default session ID when not provided per-request | `""` |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Azure Monitor connection string | — |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
 
 ## Examples
 
-If your agent is not built using a supported framework such as LangGraph and Agent-framework, you can still make it compatible with Microsoft AI Foundry by manually implementing the predefined interface.
+`AgentServerHost` is typically used via a protocol package. The simplest setup with the invocations protocol:
 
 ```python
-import datetime
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.core import FoundryCBAgent
-from azure.ai.agentserver.core.models import (
-    CreateResponse, 
-    Response as OpenAIResponse,
-)
-from azure.ai.agentserver.core.models.projects import (
-    ItemContentOutputText,
-    ResponsesAssistantMessageItemResource,
-    ResponseTextDeltaEvent,
-    ResponseTextDoneEvent,
-)
+app = InvocationAgentServerHost()
 
+@app.invoke_handler
+async def handle(request):
+    body = await request.json()
+    return JSONResponse({"greeting": f"Hello, {body['name']}!"})
 
-def stream_events(text: str):
-    assembled = ""
-    for i, token in enumerate(text.split(" ")):
-        piece = token if i == len(text.split(" ")) - 1 else token + " "
-        assembled += piece
-        yield ResponseTextDeltaEvent(delta=piece)
-    # Done with text
-    yield ResponseTextDoneEvent(text=assembled)
-
-
-async def agent_run(request_body: CreateResponse):
-    agent = request_body.agent
-    print(f"agent:{agent}")
-
-    if request_body.stream:
-        return stream_events("I am mock agent with no intelligence in stream mode.")
-
-    # Build assistant output content
-    output_content = [
-        ItemContentOutputText(
-            text="I am mock agent with no intelligence.",
-            annotations=[],
-        )
-    ]
-
-    response = OpenAIResponse(
-        metadata={},
-        temperature=0.0,
-        top_p=0.0,
-        user="me",
-        id="id",
-        created_at=datetime.datetime.now(),
-        output=[
-            ResponsesAssistantMessageItemResource(
-                status="completed",
-                content=output_content,
-            )
-        ],
-    )
-    return response
-
-
-my_agent = FoundryCBAgent()
-my_agent.agent_run = agent_run
-
-if __name__ == "__main__":
-    my_agent.run()
-
+app.run()
 ```
+
+### Per-request identity (multi-user sessions)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Each request carries `x-agent-user-id` (the user — partition state by it) and an opaque `x-agent-foundry-call-id` (the per-request caller identity). Read both via `get_request_context()`; the SDK forwards **only** the call ID on outbound Foundry calls — `x-agent-user-id` is never echoed. Forwarding the call ID lets a tool server resolve which user made the request and act on their behalf.
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+
+
+def foundry_headers() -> dict[str, str]:
+    # Echoes x-agent-foundry-call-id only; x-agent-user-id is never forwarded.
+    return dict(get_request_context().platform_headers())
+
+
+async def call_toolbox(query: str) -> str:
+    user_id = get_request_context().user_id  # for the container's OWN per-user state
+    # Attach the call ID PER CALL — a toolbox MCP session is long-lived and serves many
+    # users/turns, so never bake one call's ID into the client's static headers.
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **foundry_headers()},
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+    return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
+```
+
+### Subclassing AgentServerHost
+
+For custom protocol implementations, subclass `AgentServerHost` and add routes:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+
+class MyAgentHost(AgentServerHost):
+    def __init__(self, **kwargs):
+        my_routes = [Route("/my-endpoint", self._handle, methods=["POST"])]
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + my_routes, **kwargs)
+
+    async def _handle(self, request: Request):
+        return JSONResponse({"status": "ok"})
+
+app = MyAgentHost()
+app.run()
+```
+
+### Shutdown handler
+
+Register a cleanup function that runs during graceful shutdown:
+
+```python
+app = AgentServerHost()
+
+@app.shutdown_handler
+async def on_shutdown():
+    # Close database connections, flush buffers, etc.
+    pass
+```
+
+### Durable state storage
+
+`FoundryStateStore` is a durable, server-backed key-value store for agent state
+— session memory, per-user preferences, counters, and checkpoints — bound to
+one explicit, caller-named store, with single-item optimistic concurrency,
+tag-filtered key listing, and store-level TTL.
+
+```python
+from azure.ai.agentserver.core.storage import FoundryStateStore
+
+# Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
+# get_or_create() resolves (or creates, on first use) the store in one call.
+store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
+async with store:
+    await store.set_item("step-1", {"done": False})
+    item = await store.get_item("step-1")
+    print(item.value)  # {"done": False}
+```
+
+> The default credential path uses `DefaultAzureCredential`, which requires the
+> optional `azure-identity` package (`pip install azure-identity`). Alternatively,
+> pass any `azure.core.credentials_async.AsyncTokenCredential` explicitly to
+> `get_or_create()` and `azure-identity` is not needed.
+
+Reads return typed `StateStoreItem` values; writes return typed item metadata and use
+single-item `If-Match` concurrency. Session/conversation scoping is expressed in
+the store name itself, and item expiry is controlled by the store's
+`item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the store lifecycle, and common gotchas, and
+[state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
+for a runnable end-to-end example.
+
+
+### Configuring tracing
+
+Tracing is enabled automatically when an Application Insights connection string is available:
+
+```python
+app = AgentServerHost(
+    applicationinsights_connection_string="InstrumentationKey=...",
+)
+```
+
+Or via environment variable:
+
+```bash
+export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
+python my_agent.py
+```
+
+Azure Monitor uses 100% trace sampling by default. Standard OpenTelemetry
+sampling configuration through `OTEL_TRACES_SAMPLER` and
+`OTEL_TRACES_SAMPLER_ARG` takes precedence when explicitly set. This controls
+sampling only; exporter queues, process termination, and transport or ingestion
+failures can still prevent trace delivery.
+
+Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
+default to avoid automatically tracing every outbound HTTP request. To enable
+selected instrumentations, configure the host's observability callback:
+
+```python
+from functools import partial
+
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
+
+app = AgentServerHost(
+    configure_observability=partial(
+        configure_observability,
+        instrumentation_options={
+            "azure_sdk": {"enabled": True},
+            "httpx": {"enabled": True},
+            "requests": {"enabled": True},
+        },
+    )
+)
+```
+
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
+
+```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
+### Resilient long-running agents
+
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+The resilient task subsystem is **opt-in**: call `set_resilient_tasks_enabled(True)` (before host startup, typically at import time) so the framework constructs the `TaskManager` and runs crash recovery. Without it, `.run()` / `.start()` raise `TaskManagerNotInitialized`.
+
+```python
+from azure.ai.agentserver.core.tasks import (
+    set_resilient_tasks_enabled,
+    task,
+    TaskContext,
+)
+
+# Opt in to the durable task subsystem (required for @task to run).
+set_resilient_tasks_enabled(True)
+
+@task(name="process_document")
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
+
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
+print(result)  # {"summary": "..."}
+```
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
 
-First run your agent with azure-ai-agentserver-core locally.
+### Logging
 
-If it works on local by failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
+Set the log level to `DEBUG` for detailed diagnostics:
 
+```python
+app = AgentServerHost(log_level="DEBUG")
+```
 
 ### Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-agents" in the title or content.
-
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Next steps
 
-Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-core/samples) folder. There are several cases for you to build your agent with azure-ai-agentserver
-
+- Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
+- See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing
 
@@ -117,3 +282,5 @@ This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
+
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

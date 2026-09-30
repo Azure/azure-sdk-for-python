@@ -24,6 +24,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
 )
+from agent_insights.sanitizers import add_agent_insights_sanitizers
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
@@ -33,7 +34,12 @@ def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
     for item in items:
-        if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
+        path = item.fspath.strpath
+        if "tests\\evaluation" in path or "tests/evaluation" in path:
+            # test_human_evaluations.py is a pure unit test with no Microsoft Foundry
+            # dependency, so it must keep running in the PR pipeline.
+            if "test_human_evaluations" in os.path.basename(path):
+                continue
             item.add_marker(
                 pytest.mark.skip(
                     reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to Microsoft Foundry project settings"
@@ -47,7 +53,10 @@ class SanitizedValues:
     ACCOUNT_NAME = "sanitized-account-name"
     PROJECT_NAME = "sanitized-project-name"
     COMPONENT_NAME = "sanitized-component-name"
+    AGENT_NAME = "sanitized-agent-name"
     AGENTS_API_VERSION = "sanitized-api-version"
+    API_KEY = "sanitized-api-key"
+    MODEL_DEPLOYMENT_NAME = "sanitized-model-deployment-name"
 
 
 @pytest.fixture(scope="session")
@@ -58,7 +67,10 @@ def sanitized_values():
         "project_name": f"{SanitizedValues.PROJECT_NAME}",
         "account_name": f"{SanitizedValues.ACCOUNT_NAME}",
         "component_name": f"{SanitizedValues.COMPONENT_NAME}",
+        "agent_name": f"{SanitizedValues.AGENT_NAME}",
         "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
+        "api_key": f"{SanitizedValues.API_KEY}",
+        "model_deployment_name": f"{SanitizedValues.MODEL_DEPLOYMENT_NAME}",
     }
 
 
@@ -69,6 +81,12 @@ def sanitized_values():
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     return
+
+
+@pytest.fixture
+def sanitizer_configuration():
+    """Expose this package's sanitizer setup without importing a conftest module."""
+    return add_sanitizers.__wrapped__
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -123,6 +141,8 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize checkpoint IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
 
+    add_agent_insights_sanitizers()
+
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
     add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
 
@@ -131,6 +151,82 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_general_regex_sanitizer(regex=r"Evaluation -\d{10}", value="Evaluation -SANITIZED-TS")
     # Pattern 2: "Eval Run for <agent_name> -<timestamp>" (agent name already sanitized)
     add_general_regex_sanitizer(regex=r"sanitized-agent-name -\d{10}", value="sanitized-agent-name -SANITIZED-TS")
+
+    # Sanitize per-recording random model name used by `.beta.models` sample tests.
+    # Live re-recordings need a unique `<name>/<version>` namespace (Foundry's
+    # asset store reserves it permanently after `delete`), so we use a random
+    # suffix at recording time and normalize it here so playback URLs match.
+    add_general_regex_sanitizer(regex=r"recsmplmdl[a-f0-9]+", value="recsmplmdl00000000")
+
+    # Sanitize Foundry project-managed Azure Storage account hostnames returned
+    # by `.beta.models.pending_upload` (shape: `sa<14 hex chars>.blob.core.windows.net`).
+    add_general_regex_sanitizer(
+        regex=r"sa[a-z0-9]{14,}\.blob\.core\.windows\.net",
+        value="sanitized-storage-account.blob.core.windows.net",
+    )
+
+    # Sanitize the per-pending-upload container name returned by Foundry
+    # (shape: `<prefix>-pr-<uuid>`).
+    add_general_regex_sanitizer(
+        regex=r"/[a-z0-9-]+-pr-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        value="/sanitized-pending-upload-container",
+    )
+
+    # Sanitize SAS-token query strings returned by `.beta.models.pending_upload`
+    # (signed URLs to a Foundry-managed Storage container). Match conservatively
+    # on the `sig=` parameter which is unique to SAS tokens and isn't used by
+    # regular Azure API URLs.
+    add_general_regex_sanitizer(
+        regex=r"sig=[A-Za-z0-9%]+",
+        value="sig=sanitized-sas-sig",
+    )
+    add_general_regex_sanitizer(
+        regex=r"skoid=[A-Fa-f0-9\-]+",
+        value="skoid=00000000-0000-0000-0000-000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"sktid=[A-Fa-f0-9\-]+",
+        value="sktid=00000000-0000-0000-0000-000000000000",
+    )
+
+    # Sanitize `/workspaces/<name>` URL segments (some Foundry asset-store URLs
+    # reference the underlying ML workspace by name, which leaks the project
+    # resource name).
+    add_general_regex_sanitizer(
+        regex=r"/workspaces/([-\w\._\(\)]+)",
+        value=sanitized_values["account_name"],
+        group_for_replace="1",
+    )
+
+    # Sanitize Foundry `azureai://` asset URIs whose `accounts/<name>` and
+    # `projects/<name>` segments embed the project resource name.
+    add_general_regex_sanitizer(
+        regex=r"azureai://accounts/([^/]+)/projects/([^/]+)",
+        value=f"azureai://accounts/{sanitized_values['account_name']}/projects/{sanitized_values['project_name']}",
+    )
+
+    # Sanitize the live Foundry project's account/project names anywhere they
+    # appear in URLs, headers, or bodies. Derived from the live endpoint shape
+    # `https://<account>.services.ai.azure.com/api/projects/<project>` so we
+    # cover trailing leaks like `<workspace>@<project>@AML/...` asset IDs and
+    # `publisherId` fields that aren't matched by URL-segment sanitizers.
+    _live_endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT") or os.environ.get("foundry_project_endpoint")
+    if _live_endpoint:
+        _ep_match = re.match(
+            r"https?://(?P<account>[^.]+)\.[^/]+/api/projects/(?P<project>[^/?#]+)",
+            _live_endpoint,
+        )
+        if _ep_match:
+            _live_account = _ep_match.group("account")
+            _live_project = _ep_match.group("project")
+            # Order matters: the longer (account) name often contains the shorter
+            # (project) name as a prefix; replace the longer one first.
+            for _name, _placeholder in (
+                (_live_account, sanitized_values["account_name"]),
+                (_live_project, sanitized_values["project_name"]),
+            ):
+                add_general_regex_sanitizer(regex=re.escape(_name), value=_placeholder)
+                add_body_string_sanitizer(target=_name, value=_placeholder)
 
     # Sanitize image-generation deployment name from live env when present.
     # This value is commonly emitted in request headers (for example
@@ -153,6 +249,50 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
         add_body_string_sanitizer(target=image_generation_model, value="sanitized-gpt-image")
 
+    model_deployment_names = {
+        value
+        for value in (
+            os.environ.get("FOUNDRY_MODEL_NAME"),
+            os.environ.get("foundry_model_name"),
+            os.environ.get("MODEL_DEPLOYMENT_NAME"),
+            os.environ.get("model_deployment_name"),
+            os.environ.get("MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"),
+            os.environ.get("memory_store_chat_model_deployment_name"),
+        )
+        if value and value != sanitized_values["model_deployment_name"]
+    }
+    agent_names = {
+        value
+        for value in (
+            os.environ.get("FOUNDRY_AGENT_NAME"),
+            os.environ.get("foundry_agent_name"),
+        )
+        if value and value != sanitized_values["agent_name"]
+    }
+    names_to_sanitize = [(name, sanitized_values["model_deployment_name"]) for name in model_deployment_names] + [
+        (name, sanitized_values["agent_name"]) for name in agent_names
+    ]
+    # Replace full names before any model or agent name contained within them.
+    for name, placeholder in sorted(names_to_sanitize, key=lambda item: len(item[0]), reverse=True):
+        add_general_regex_sanitizer(
+            regex=re.escape(name),
+            value=placeholder,
+        )
+        add_body_string_sanitizer(
+            target=name,
+            value=placeholder,
+        )
+
+    # Deterministic fallback sanitization for model deployment names returned by
+    # OpenAI-compatible endpoints. These can appear in response bodies and headers
+    # even when the live value was not supplied through a known environment variable.
+    add_general_regex_sanitizer(
+        regex=r"(?<![A-Za-z0-9._-])gpt-(?!image\b)[A-Za-z0-9][A-Za-z0-9._-]*",
+        value=sanitized_values["model_deployment_name"],
+    )
+
+    add_header_regex_sanitizer(key="api-key", value=SanitizedValues.API_KEY)
+
     # Deterministic fallback sanitization for image generation deployment/model values.
     # These do not depend on environment variables and ensure recordings are redacted even
     # when runtime values come from unexpected sources.
@@ -167,7 +307,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     )
 
     # Sanitize API key from service response (this includes Application Insights connection string)
-    add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
+    add_body_key_sanitizer(json_path="credentials.key", value=SanitizedValues.API_KEY)
 
     # Sanitize GitHub personal access tokens that may appear in connection credentials
     add_general_regex_sanitizer(regex=r"github_pat_[A-Za-z0-9_]+", value="sanitized-github-pat")
@@ -175,6 +315,24 @@ def add_sanitizers(test_proxy, sanitized_values):
         json_path="$..authorization",
         value="Bearer sanitized-github-pat",
         regex=r"(?i)^Bearer\s+github_pat_[A-Za-z0-9_]+$",
+    )
+
+    # Sanitize raw Entra-ID JWTs (no "Bearer " prefix) passed via MCPTool.authorization
+    # to match the `fake_token` value the FakeTokenCredential returns during playback.
+    add_body_key_sanitizer(
+        json_path="$..authorization",
+        value="fake_token",
+        regex=r"^eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+$",
+    )
+
+    # Sanitize Cognitive Services / Foundry account hostnames inside request and
+    # response bodies (e.g. MCPTool.server_url built from FOUNDRY_PROJECT_ENDPOINT).
+    # URL-path sanitizers above already redact /accounts/<x>, /projects/<x>, etc.,
+    # but the host is built into body fields and needs its own redaction so
+    # recordings match the playback FOUNDRY_PROJECT_ENDPOINT.
+    add_body_regex_sanitizer(
+        regex=r"https://[a-z0-9-]+\.services\.ai\.azure\.com",
+        value=f"https://{SanitizedValues.ACCOUNT_NAME}.services.ai.azure.com",
     )
 
     # Sanitize Azure Blob account host while preserving container path and SAS shape.
@@ -208,6 +366,36 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
+    add_remove_header_sanitizer(headers="openai-organization, openai-project, azureml-served-by-cluster")
+
+    # Strip Content-Encoding so playback doesn't try to decompress a body that the test-proxy
+    # has already stored decoded (notably brotli responses from openai endpoints which httpx
+    # would otherwise fail to decode -> UnicodeDecodeError).
+    add_remove_header_sanitizer(headers="Content-Encoding")
+
+    # Strip Foundry-Features from record/playback matching. Its value is a comma-joined list of
+    # preview opt-in flags that legitimately changes over time as new preview features are added
+    # (e.g. VoiceAgents=V1Preview was added later); exact-matching it against older cassettes
+    # would otherwise cause spurious playback failures unrelated to what a given test is actually
+    # validating. Some affected cassettes (test_ai_agents_instrumentor.py/_async.py) have been
+    # re-recorded and no longer need this, but others still rely on it pending re-recording (see
+    # test_responses_instrumentor_workflow.py, which currently fails to re-record live due to an
+    # unrelated pre-existing gap in its expected span-attribute list vs. actual gen_ai.usage.*
+    # token attributes now returned by the service). Tests that specifically need to assert on
+    # this header's value use a dedicated unit-test suite (tests/foundry_features_header) with a
+    # capturing transport instead of the test-proxy, so this does not reduce coverage of the
+    # header-injection behavior itself.
+    add_remove_header_sanitizer(headers="Foundry-Features")
+
+    # Strip Accept from record/playback matching. It's a content-negotiation hint set by the
+    # HTTP client/transport layer, not something the tests are validating, and its value has been
+    # observed to drift across environments independent of any SDK code change here (e.g. the
+    # azure-storage-blob generated client hardcodes "application/xml" for blob uploads, but some
+    # environments send "*/*" instead depending on transport/dependency versions). Exact-matching
+    # it would otherwise cause spurious playback failures on samples like
+    # sample_models_create_and_poll.py and sample_datasets*.py that upload blobs via
+    # container_client.upload_blob(), unrelated to what those samples actually validate.
+    add_remove_header_sanitizer(headers="Accept")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name

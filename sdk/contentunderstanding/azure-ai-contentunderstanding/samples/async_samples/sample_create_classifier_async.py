@@ -34,6 +34,12 @@ DESCRIPTION:
     - enable_segment = True: Automatically splits the file into segments by category (classify and
       segment)
 
+
+    After classification, use ``to_llm_input(result)`` to convert classification results into
+    LLM-ready text. The helper expands the parent document and renders each categorized child
+    with its category label. For advanced ``to_llm_input`` options, see
+    ``sample_to_llm_input_async.py``.
+
 USAGE:
     python sample_create_classifier_async.py
 
@@ -42,7 +48,7 @@ USAGE:
     2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
     Before using classifiers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_update_defaults.py for setup instructions.
+    resource. See sample_update_defaults_async.py for setup instructions.
 """
 
 import asyncio
@@ -52,6 +58,7 @@ from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -70,16 +77,19 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START create_classifier]
         # Generate a unique analyzer ID
         analyzer_id = f"my_classifier_{int(time.time())}"
 
         print(f"Creating classifier '{analyzer_id}'...")
 
-        # Define content categories for classification
+        # Define content categories for classification.
+        # Each category has a description that helps the AI model identify matching documents.
+        # Optionally, set analyzer_id on a category to route matched segments to a prebuilt
+        # or custom analyzer for field extraction. For example, setting
+        # analyzer_id="prebuilt-invoice" on the Invoice category will automatically extract
+        # invoice fields (vendor, line items, totals, etc.) from segments classified as Invoice.
         categories = {
             "Loan_Application": ContentCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, "
@@ -89,7 +99,8 @@ async def main() -> None:
             "Invoice": ContentCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request "
                 "payment for goods or services, detailing items, prices, taxes, totals, "
-                "and payment terms."
+                "and payment terms.",
+                analyzer_id="prebuilt-invoice",  # Route Invoice segments for field extraction
             ),
             "Bank_Statement": ContentCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity "
@@ -109,7 +120,7 @@ async def main() -> None:
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Create the classifier
@@ -144,18 +155,14 @@ async def main() -> None:
         # Display classification results
         if analyze_result.contents and len(analyze_result.contents) > 0:
             document_content = cast(DocumentContent, analyze_result.contents[0])
-            print(
-                f"Pages: {document_content.start_page_number}-{document_content.end_page_number}"
-            )
+            print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
 
             # Display segments (classification results)
             if document_content.segments and len(document_content.segments) > 0:
                 print(f"\nFound {len(document_content.segments)} segment(s):")
                 for segment in document_content.segments:
                     print(f"  Category: {segment.category or '(unknown)'}")
-                    print(
-                        f"  Pages: {segment.start_page_number}-{segment.end_page_number}"
-                    )
+                    print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
                     print(f"  Segment ID: {segment.segment_id or '(not available)'}")
                     print()
             else:
@@ -163,6 +170,19 @@ async def main() -> None:
         else:
             print("No content found in the analysis result.")
         # [END analyze_with_classifier]
+
+        # [START classifier_to_llm_input_async]
+        # Convert classification results to LLM-friendly text.
+        # to_llm_input automatically detects classification results: it expands the parent
+        # into per-segment blocks, each with its category label in the YAML front matter.
+        # Segments are separated by a ***** divider.
+        print("\n" + "=" * 60)
+        print("CLASSIFICATION RESULT AS LLM INPUT")
+        print("=" * 60)
+
+        text = to_llm_input(analyze_result)
+        print(text)
+        # [END classifier_to_llm_input_async]
 
         # Clean up - delete the classifier
         print(f"\nCleaning up: deleting classifier '{analyzer_id}'...")

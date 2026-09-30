@@ -1,9 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-changeanalysis"
-package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Change Analysis Management"
-package_doc_id = ""
-is_stable = false
-is_arm = true
-title = "AzureChangeAnalysisManagementClient"
-auto_update = false

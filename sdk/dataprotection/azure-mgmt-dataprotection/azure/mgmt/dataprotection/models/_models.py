@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DeleteOption(_Model):
+class DeleteOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delete Option.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -56,7 +56,9 @@ class DeleteOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbsoluteDeleteOption(DeleteOption, discriminator="AbsoluteDeleteOption"):
+class AbsoluteDeleteOption(
+    DeleteOption, discriminator="AbsoluteDeleteOption"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delete option with duration.
 
     :ivar duration: Duration of deletion after given timespan. Required.
@@ -89,7 +91,7 @@ class AbsoluteDeleteOption(DeleteOption, discriminator="AbsoluteDeleteOption"):
         self.object_type = "AbsoluteDeleteOption"  # type: ignore
 
 
-class AdHocBackupRuleOptions(_Model):
+class AdHocBackupRuleOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adhoc backup rules.
 
     :ivar rule_name: Required.
@@ -124,7 +126,7 @@ class AdHocBackupRuleOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdhocBackupTriggerOption(_Model):
+class AdhocBackupTriggerOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adhoc backup trigger option.
 
     :ivar retention_tag_override:
@@ -153,7 +155,7 @@ class AdhocBackupTriggerOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdhocBasedTaggingCriteria(_Model):
+class AdhocBasedTaggingCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adhoc backup tagging criteria.
 
     :ivar tag_info: Retention tag information.
@@ -183,7 +185,7 @@ class AdhocBasedTaggingCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggerContext(_Model):
+class TriggerContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger context.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -216,7 +218,9 @@ class TriggerContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdhocBasedTriggerContext(TriggerContext, discriminator="AdhocBasedTriggerContext"):
+class AdhocBasedTriggerContext(
+    TriggerContext, discriminator="AdhocBasedTriggerContext"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adhoc trigger context.
 
     :ivar tagging_criteria: Tagging Criteria containing retention tag for adhoc backup. Required.
@@ -253,12 +257,13 @@ class AdhocBasedTriggerContext(TriggerContext, discriminator="AdhocBasedTriggerC
         self.object_type = "AdhocBasedTriggerContext"  # type: ignore
 
 
-class BackupDatasourceParameters(_Model):
+class BackupDatasourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Backup Datasource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AdlsBlobBackupDatasourceParameters, BlobBackupDatasourceParameters,
-    KubernetesClusterBackupDatasourceParameters
+    AdlsBlobBackupDatasourceParameters, AdlsBlobBackupDatasourceParametersForAutoProtection,
+    BlobBackupDatasourceParameters, BlobBackupDatasourceParametersForAutoProtection,
+    GenericBackupDatasourceParameters, KubernetesClusterBackupDatasourceParameters
 
     :ivar object_type: Type of the specific object - used for deserializing. Required. Default
      value is None.
@@ -287,7 +292,9 @@ class BackupDatasourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobBackupDatasourceParameters(BackupDatasourceParameters, discriminator="BlobBackupDatasourceParameters"):
+class BlobBackupDatasourceParameters(
+    BackupDatasourceParameters, discriminator="BlobBackupDatasourceParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to be used during configuration of backup of blobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -331,7 +338,7 @@ class BlobBackupDatasourceParameters(BackupDatasourceParameters, discriminator="
 
 class AdlsBlobBackupDatasourceParameters(
     BlobBackupDatasourceParameters, discriminator="AdlsBlobBackupDatasourceParameters"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to be used during configuration of backup of azure data lake storage account blobs.
 
     :ivar containers_list: List of containers to be backed up during configuration of backup of
@@ -365,7 +372,48 @@ class AdlsBlobBackupDatasourceParameters(
         self.object_type = "AdlsBlobBackupDatasourceParameters"  # type: ignore
 
 
-class AuthCredentials(_Model):
+class AdlsBlobBackupDatasourceParametersForAutoProtection(
+    BackupDatasourceParameters, discriminator="AdlsBlobBackupDatasourceParametersForAutoProtection"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Parameters to be used during configuration of backup of azure data lake storage account blobs
+    using AutoProtection settings.
+
+    :ivar auto_protection_settings: AutoProtection settings. Required.
+    :vartype auto_protection_settings:
+     ~azure.mgmt.dataprotection.models.BlobBackupRuleBasedAutoProtectionSettings
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "AdlsBlobBackupDatasourceParametersForAutoProtection".
+    :vartype object_type: str
+    """
+
+    auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings" = rest_field(
+        name="autoProtectionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AutoProtection settings. Required."""
+    object_type: Literal["AdlsBlobBackupDatasourceParametersForAutoProtection"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"AdlsBlobBackupDatasourceParametersForAutoProtection\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "AdlsBlobBackupDatasourceParametersForAutoProtection"  # type: ignore
+
+
+class AuthCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for different types of authentication credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -398,7 +446,7 @@ class AuthCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupRecoveryPoint(_Model):
+class AzureBackupRecoveryPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup recoveryPoint.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -430,7 +478,9 @@ class AzureBackupRecoveryPoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint, discriminator="AzureBackupDiscreteRecoveryPoint"):
+class AzureBackupDiscreteRecoveryPoint(
+    AzureBackupRecoveryPoint, discriminator="AzureBackupDiscreteRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup discrete RecoveryPoint.
 
     :ivar friendly_name:
@@ -529,7 +579,9 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint, discriminator="
         self.object_type = "AzureBackupDiscreteRecoveryPoint"  # type: ignore
 
 
-class AzureBackupFindRestorableTimeRangesRequest(_Model):  # pylint: disable=name-too-long
+class AzureBackupFindRestorableTimeRangesRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """List Restore Ranges Request.
 
     :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
@@ -572,7 +624,9 @@ class AzureBackupFindRestorableTimeRangesRequest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupFindRestorableTimeRangesResponse(_Model):  # pylint: disable=name-too-long
+class AzureBackupFindRestorableTimeRangesResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """List Restore Ranges Response.
 
     :ivar restorable_time_ranges: Returns the Restore Ranges available on the Backup Instance.
@@ -632,7 +686,9 @@ class DppResource(_Model):
     """Metadata pertaining to creation and last modification of the resource."""
 
 
-class AzureBackupFindRestorableTimeRangesResponseResource(DppResource):  # pylint: disable=name-too-long
+class AzureBackupFindRestorableTimeRangesResponseResource(
+    DppResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """List Restore Ranges Response.
 
     :ivar id: Resource Id represents the complete path to the resource.
@@ -672,7 +728,7 @@ class AzureBackupFindRestorableTimeRangesResponseResource(DppResource):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupJob(_Model):
+class AzureBackupJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureBackup Job Class.
 
     :ivar activity_id: Job Activity Id. Required.
@@ -918,7 +974,7 @@ class ProxyResource(Resource):
     """
 
 
-class AzureBackupJobResource(ProxyResource):
+class AzureBackupJobResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureBackup Job Resource Class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -959,7 +1015,7 @@ class AzureBackupJobResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BackupParameters(_Model):
+class BackupParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupParameters base.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -992,7 +1048,9 @@ class BackupParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupParams(BackupParameters, discriminator="AzureBackupParams"):
+class AzureBackupParams(
+    BackupParameters, discriminator="AzureBackupParams"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup parameters.
 
     :ivar backup_type: BackupType ; Full/Incremental etc. Required.
@@ -1027,7 +1085,7 @@ class AzureBackupParams(BackupParameters, discriminator="AzureBackupParams"):
         self.object_type = "AzureBackupParams"  # type: ignore
 
 
-class AzureBackupRestoreRequest(_Model):
+class AzureBackupRestoreRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup restore request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1047,8 +1105,8 @@ class AzureBackupRestoreRequest(_Model):
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     """
 
@@ -1075,8 +1133,8 @@ class AzureBackupRestoreRequest(_Model):
     identity_details: Optional["_models.IdentityDetails"] = rest_field(
         name="identityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned."""
+    """Contains information of the Identity Details for the BI. If it is null, default will be
+     considered as System Assigned."""
 
     @overload
     def __init__(
@@ -1103,7 +1161,7 @@ class AzureBackupRestoreRequest(_Model):
 
 class AzureBackupRecoveryPointBasedRestoreRequest(
     AzureBackupRestoreRequest, discriminator="AzureBackupRecoveryPointBasedRestoreRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure backup recoveryPoint based restore request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1120,8 +1178,8 @@ class AzureBackupRecoveryPointBasedRestoreRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_id: Required.
     :vartype recovery_point_id: str
@@ -1161,7 +1219,7 @@ class AzureBackupRecoveryPointBasedRestoreRequest(
         self.object_type = "AzureBackupRecoveryPointBasedRestoreRequest"  # type: ignore
 
 
-class AzureBackupRecoveryPointResource(ProxyResource):
+class AzureBackupRecoveryPointResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup recoveryPoint resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1204,7 +1262,7 @@ class AzureBackupRecoveryPointResource(ProxyResource):
 
 class AzureBackupRecoveryTimeBasedRestoreRequest(
     AzureBackupRestoreRequest, discriminator="AzureBackupRecoveryTimeBasedRestoreRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureBackup RecoveryPointTime Based Restore Request.
 
     :ivar restore_target_info: Gets or sets the restore target information. Required.
@@ -1218,8 +1276,8 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_time: The recovery time in ISO 8601 format example -
      2020-08-14T17:30:00.0000000Z. Required.
@@ -1259,7 +1317,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(
         self.object_type = "AzureBackupRecoveryTimeBasedRestoreRequest"  # type: ignore
 
 
-class AzureBackupRehydrationRequest(_Model):
+class AzureBackupRehydrationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Backup Rehydrate Request.
 
     :ivar recovery_point_id: Id of the recovery point to be recovered. Required.
@@ -1308,7 +1366,7 @@ class AzureBackupRehydrationRequest(_Model):
 
 class AzureBackupRestoreWithRehydrationRequest(
     AzureBackupRecoveryPointBasedRestoreRequest, discriminator="AzureBackupRestoreWithRehydrationRequest"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureBackup Restore with Rehydration Request.
 
     :ivar restore_target_info: Gets or sets the restore target information. Required.
@@ -1322,8 +1380,8 @@ class AzureBackupRestoreWithRehydrationRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_id: Required.
     :vartype recovery_point_id: str
@@ -1375,7 +1433,7 @@ class AzureBackupRestoreWithRehydrationRequest(
         self.object_type = "AzureBackupRestoreWithRehydrationRequest"  # type: ignore
 
 
-class BasePolicyRule(_Model):
+class BasePolicyRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BasePolicy Rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1412,7 +1470,9 @@ class BasePolicyRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupRule(BasePolicyRule, discriminator="AzureBackupRule"):
+class AzureBackupRule(
+    BasePolicyRule, discriminator="AzureBackupRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure backup rule.
 
     :ivar name: Required.
@@ -1462,7 +1522,7 @@ class AzureBackupRule(BasePolicyRule, discriminator="AzureBackupRule"):
         self.object_type = "AzureBackupRule"  # type: ignore
 
 
-class AzureMonitorAlertSettings(_Model):
+class AzureMonitorAlertSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for Azure Monitor based alerts.
 
     :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
@@ -1492,7 +1552,7 @@ class AzureMonitorAlertSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataStoreParameters(_Model):
+class DataStoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for DataStore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1534,7 +1594,9 @@ class DataStoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureOperationalStoreParameters(DataStoreParameters, discriminator="AzureOperationalStoreParameters"):
+class AzureOperationalStoreParameters(
+    DataStoreParameters, discriminator="AzureOperationalStoreParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Operational-Tier DataStore.
 
     :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
@@ -1575,7 +1637,9 @@ class AzureOperationalStoreParameters(DataStoreParameters, discriminator="AzureO
         self.object_type = "AzureOperationalStoreParameters"  # type: ignore
 
 
-class AzureRetentionRule(BasePolicyRule, discriminator="AzureRetentionRule"):
+class AzureRetentionRule(
+    BasePolicyRule, discriminator="AzureRetentionRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure retention rule.
 
     :ivar name: Required.
@@ -1617,7 +1681,7 @@ class AzureRetentionRule(BasePolicyRule, discriminator="AzureRetentionRule"):
         self.object_type = "AzureRetentionRule"  # type: ignore
 
 
-class BackupCriteria(_Model):
+class BackupCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupCriteria base class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1650,7 +1714,7 @@ class BackupCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupInstance(_Model):
+class BackupInstance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Instance.
 
     :ivar friendly_name: Gets or sets the Backup Instance friendly name.
@@ -1685,8 +1749,8 @@ class BackupInstance(_Model):
      validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
      and "DeepValidation".
     :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1743,8 +1807,8 @@ class BackupInstance(_Model):
     identity_details: Optional["_models.IdentityDetails"] = rest_field(
         name="identityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned."""
+    """Contains information of the Identity Details for the BI. If it is null, default will be
+     considered as System Assigned."""
     object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -1774,7 +1838,7 @@ class BackupInstance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupInstanceResource(ProxyResource):
+class BackupInstanceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupInstance Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1820,7 +1884,7 @@ class BackupInstanceResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BaseBackupPolicy(_Model):
+class BaseBackupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupPolicy base.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1859,7 +1923,9 @@ class BaseBackupPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupPolicy(BaseBackupPolicy, discriminator="BackupPolicy"):
+class BackupPolicy(
+    BaseBackupPolicy, discriminator="BackupPolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule based backup policy.
 
     :ivar datasource_types: Type of datasource for the backup management. Required.
@@ -1899,24 +1965,78 @@ class BackupPolicy(BaseBackupPolicy, discriminator="BackupPolicy"):
         self.object_type = "BackupPolicy"  # type: ignore
 
 
-class BackupSchedule(_Model):
+class BackupSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule for backup.
 
-    :ivar repeating_time_intervals: Repeating time interval which only support the following ISO
-     8601 format [R/startDateTime/Duration]. Example: R/2007-03-01T13:00:00Z/P1Y2M10DT2H30M.
-     Required.
+    :ivar repeating_time_intervals: Repeating time intervals that define the backup schedule. Each
+     value must follow the format: ``R/YYYY-MM-DDThh:mm:ss[.fff][Z|(+/-)hh:mm]/Duration`` Only the
+     exact formats listed below are supported. Other ISO 8601 variations are not accepted. Supported
+     time formats:
+
+     * `Thh:mm:ss.fff` (with milliseconds)
+     * `Thh:mm:ss` (with seconds)
+     * `Thh:mm` (hours and minutes only)
+
+     A timezone indicator (``Z``, ``+hh:mm``, or ``-hh:mm``) may be appended to any of the
+     above.
+
+     Unsupported formats include compact notation such as ``T1430``, ``T143045``, or ``T14.5``.
+
+     Examples:
+
+     * `R/2023-10-15T14:30:00Z/P1W`
+     * `R/2023-10-15T14:30:45.123+05:30/P1D`
+     * `R/2023-10-15T14:30Z/P1D`. Required.
     :vartype repeating_time_intervals: list[str]
-    :ivar time_zone: Time zone for a schedule. Example: Pacific Standard Time.
+    :ivar time_zone: Time Zone for a schedule. Supported timezone indicators include:
+
+     * 'Z' for UTC
+     * '+00:00'
+     * '+05:30'
+     * '-08:00'
+
+     Examples:
+
+     * 2023-10-15T14:30:45Z
+     * 2023-10-15T14:30:45.123+05:30
+     * 2023-10-15T14:30-08:00.
     :vartype time_zone: str
     """
 
     repeating_time_intervals: list[str] = rest_field(
         name="repeatingTimeIntervals", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Repeating time interval which only support the following ISO 8601 format
-     [R/startDateTime/Duration]. Example: R/2007-03-01T13:00:00Z/P1Y2M10DT2H30M. Required."""
+    """Repeating time intervals that define the backup schedule. Each value must follow the format:
+      ``R/YYYY-MM-DDThh:mm:ss[.fff][Z|(+/-)hh:mm]/Duration`` Only the exact formats listed below are
+      supported. Other ISO 8601 variations are not accepted. Supported time formats:
+ 
+      * `Thh:mm:ss.fff` (with milliseconds)
+      * `Thh:mm:ss` (with seconds)
+      * `Thh:mm` (hours and minutes only)
+ 
+      A timezone indicator (``Z``, ``+hh:mm``, or ``-hh:mm``) may be appended to any of the
+      above.
+ 
+      Unsupported formats include compact notation such as ``T1430``, ``T143045``, or ``T14.5``.
+ 
+      Examples:
+ 
+      * `R/2023-10-15T14:30:00Z/P1W`
+      * `R/2023-10-15T14:30:45.123+05:30/P1D`
+      * `R/2023-10-15T14:30Z/P1D`. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Time zone for a schedule. Example: Pacific Standard Time."""
+    """Time Zone for a schedule. Supported timezone indicators include:
+ 
+      * 'Z' for UTC
+      * '+00:00'
+      * '+05:30'
+      * '-08:00'
+ 
+      Examples:
+ 
+      * 2023-10-15T14:30:45Z
+      * 2023-10-15T14:30:45.123+05:30
+      * 2023-10-15T14:30-08:00."""
 
     @overload
     def __init__(
@@ -1937,11 +2057,13 @@ class BackupSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupVault(_Model):
+class BackupVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Vault.
 
     :ivar monitoring_settings: Monitoring Settings.
     :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+    :ivar cost_management_settings: Cost Management Settings of the vault.
+    :vartype cost_management_settings: ~azure.mgmt.dataprotection.models.CostManagementSettings
     :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
      "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
@@ -1953,7 +2075,7 @@ class BackupVault(_Model):
     :vartype resource_move_details: ~azure.mgmt.dataprotection.models.ResourceMoveDetails
     :ivar security_settings: Security Settings.
     :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
-    :ivar storage_settings: Storage Settings. Required.
+    :ivar storage_settings: Storage Settings.
     :vartype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
     :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
     :vartype is_vault_protected_by_resource_guard: bool
@@ -1976,6 +2098,10 @@ class BackupVault(_Model):
         name="monitoringSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Monitoring Settings."""
+    cost_management_settings: Optional["_models.CostManagementSettings"] = rest_field(
+        name="costManagementSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cost Management Settings of the vault."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1995,10 +2121,10 @@ class BackupVault(_Model):
         name="securitySettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Security Settings."""
-    storage_settings: list["_models.StorageSetting"] = rest_field(
+    storage_settings: Optional[list["_models.StorageSetting"]] = rest_field(
         name="storageSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Storage Settings. Required."""
+    """Storage Settings."""
     is_vault_protected_by_resource_guard: Optional[bool] = rest_field(
         name="isVaultProtectedByResourceGuard", visibility=["read"]
     )
@@ -2028,9 +2154,10 @@ class BackupVault(_Model):
     def __init__(
         self,
         *,
-        storage_settings: list["_models.StorageSetting"],
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        cost_management_settings: Optional["_models.CostManagementSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
+        storage_settings: Optional[list["_models.StorageSetting"]] = None,
         feature_settings: Optional["_models.FeatureSettings"] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
         replicated_regions: Optional[list[str]] = None,
@@ -2047,7 +2174,7 @@ class BackupVault(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2091,7 +2218,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BackupVaultResource(TrackedResource):
+class BackupVaultResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Vault Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2148,7 +2275,7 @@ class BackupVaultResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class BaseBackupPolicyResource(ProxyResource):
+class BaseBackupPolicyResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BaseBackupPolicy resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2189,7 +2316,7 @@ class BaseBackupPolicyResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BaseResourceProperties(_Model):
+class BaseResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties which are specific to datasource/datasourceSets.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2222,7 +2349,178 @@ class BaseResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):
+class BlobBackupAutoProtectionRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Indicates a Blob Backup Auto Protection Rule.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar mode: Exclude removes candidates (after inclusion). Required. "Exclude"
+    :vartype mode: str or ~azure.mgmt.dataprotection.models.BlobBackupRuleMode
+    :ivar type: Pattern type: Prefix, only pattern type supported for now. Required. "Prefix"
+    :vartype type: str or ~azure.mgmt.dataprotection.models.BlobBackupPatternType
+    :ivar pattern: The string pattern to evaluate against container names. For now this accepts
+     literal strings only (no wildcards or regex). Required.
+    :vartype pattern: str
+    """
+
+    object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required."""
+    mode: Union[str, "_models.BlobBackupRuleMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclude removes candidates (after inclusion). Required. \"Exclude\""""
+    type: Union[str, "_models.BlobBackupPatternType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pattern type: Prefix, only pattern type supported for now. Required. \"Prefix\""""
+    pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The string pattern to evaluate against container names. For now this accepts literal strings
+     only (no wildcards or regex). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+        mode: Union[str, "_models.BlobBackupRuleMode"],
+        type: Union[str, "_models.BlobBackupPatternType"],
+        pattern: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobBackupAutoProtectionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The settings for Blob Backup Auto Protection.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobBackupRuleBasedAutoProtectionSettings
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is None.
+    :vartype object_type: str
+    :ivar enabled: Flag to enable whether auto protection. Required.
+    :vartype enabled: bool
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required. Default value is None."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to enable whether auto protection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+        enabled: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobBackupDatasourceParametersForAutoProtection(
+    BackupDatasourceParameters, discriminator="BlobBackupDatasourceParametersForAutoProtection"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Paramters to be used during configuration of backup of blobs using AutoProtection settings.
+
+    :ivar auto_protection_settings: AutoProtection settings. Required.
+    :vartype auto_protection_settings:
+     ~azure.mgmt.dataprotection.models.BlobBackupRuleBasedAutoProtectionSettings
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "BlobBackupDatasourceParametersForAutoProtection".
+    :vartype object_type: str
+    """
+
+    auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings" = rest_field(
+        name="autoProtectionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AutoProtection settings. Required."""
+    object_type: Literal["BlobBackupDatasourceParametersForAutoProtection"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"BlobBackupDatasourceParametersForAutoProtection\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "BlobBackupDatasourceParametersForAutoProtection"  # type: ignore
+
+
+class BlobBackupRuleBasedAutoProtectionSettings(
+    BlobBackupAutoProtectionSettings, discriminator="BlobBackupRuleBasedAutoProtectionSettings"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Parameters to be used for Blob Backup Rule Based Auto Protection settings.
+
+    :ivar enabled: Flag to enable whether auto protection. Required.
+    :vartype enabled: bool
+    :ivar object_type: Required. Default value is "BlobBackupRuleBasedAutoProtectionSettings".
+    :vartype object_type: str
+    :ivar rules: Rules are evaluated in the order provided. Inclusion adds candidates; exclusion
+     removes candidates. If no rules are present, all containers are considered eligible when
+     enabled = true.
+    :vartype rules: list[~azure.mgmt.dataprotection.models.BlobBackupAutoProtectionRule]
+    """
+
+    object_type: Literal["BlobBackupRuleBasedAutoProtectionSettings"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"BlobBackupRuleBasedAutoProtectionSettings\"."""
+    rules: Optional[list["_models.BlobBackupAutoProtectionRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Rules are evaluated in the order provided. Inclusion adds candidates; exclusion removes
+     candidates. If no rules are present, all containers are considered eligible when enabled =
+     true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        rules: Optional[list["_models.BlobBackupAutoProtectionRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "BlobBackupRuleBasedAutoProtectionSettings"  # type: ignore
+
+
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CheckNameAvailability Request.
 
     :ivar name: Resource name for which availability needs to be checked.
@@ -2255,7 +2553,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResult(_Model):
+class CheckNameAvailabilityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CheckNameAvailability Result.
 
     :ivar message: Gets or sets the message.
@@ -2295,7 +2593,7 @@ class CheckNameAvailabilityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from Azure Backup.
 
     :ivar error: The resource management error response.
@@ -2323,7 +2621,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CmkKekIdentity(_Model):
+class CmkKekIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the managed identity used for CMK.
 
     :ivar identity_type: The identity type. 'SystemAssigned' and 'UserAssigned' are mutually
@@ -2366,7 +2664,7 @@ class CmkKekIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CmkKeyVaultProperties(_Model):
+class CmkKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Key Vault which hosts CMK.
 
     :ivar key_uri: The key uri of the Customer Managed Key.
@@ -2394,7 +2692,7 @@ class CmkKeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyOption(_Model):
+class CopyOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options to copy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2456,7 +2754,39 @@ class CopyOnExpiryOption(CopyOption, discriminator="CopyOnExpiryOption"):
         self.object_type = "CopyOnExpiryOption"  # type: ignore
 
 
-class CrossRegionRestoreDetails(_Model):
+class CostManagementSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cost Management Settings of the vault.
+
+    :ivar granularity_level: Settings for granularity level. Known values are: "VaultLevel",
+     "ProtectedItemLevel", and "ProtectedItemWithParentTag".
+    :vartype granularity_level: str or ~azure.mgmt.dataprotection.models.GranularityLevel
+    """
+
+    granularity_level: Optional[Union[str, "_models.GranularityLevel"]] = rest_field(
+        name="granularityLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for granularity level. Known values are: \"VaultLevel\", \"ProtectedItemLevel\", and
+     \"ProtectedItemWithParentTag\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        granularity_level: Optional[Union[str, "_models.GranularityLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossRegionRestoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cross Region Restore details.
 
     :ivar source_region: Required.
@@ -2491,7 +2821,7 @@ class CrossRegionRestoreDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossRegionRestoreJobRequest(_Model):
+class CrossRegionRestoreJobRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of CRR Job to be fetched.
 
     :ivar source_region: Required.
@@ -2531,7 +2861,7 @@ class CrossRegionRestoreJobRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossRegionRestoreJobsRequest(_Model):
+class CrossRegionRestoreJobsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of Backup Vault for which CRR Jobs are to be fetched.
 
     :ivar source_region: Required.
@@ -2566,7 +2896,7 @@ class CrossRegionRestoreJobsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossRegionRestoreRequestObject(_Model):
+class CrossRegionRestoreRequestObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cross Region Restore Request Object.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.
@@ -2604,7 +2934,7 @@ class CrossRegionRestoreRequestObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossRegionRestoreSettings(_Model):
+class CrossRegionRestoreSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CrossRegionRestoreSettings.
 
     :ivar state: CrossRegionRestore state. Known values are: "Disabled" and "Enabled".
@@ -2634,7 +2964,7 @@ class CrossRegionRestoreSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossSubscriptionRestoreSettings(_Model):
+class CrossSubscriptionRestoreSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CrossSubscriptionRestore Settings.
 
     :ivar state: CrossSubscriptionRestore state. Known values are: "Disabled",
@@ -2666,7 +2996,9 @@ class CrossSubscriptionRestoreSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomCopyOption(CopyOption, discriminator="CustomCopyOption"):
+class CustomCopyOption(
+    CopyOption, discriminator="CustomCopyOption"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Duration based custom options to copy.
 
     :ivar duration: Data copied after given timespan.
@@ -2701,7 +3033,7 @@ class CustomCopyOption(CopyOption, discriminator="CustomCopyOption"):
         self.object_type = "CustomCopyOption"  # type: ignore
 
 
-class Datasource(_Model):
+class Datasource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Datasource to be backed up.
 
     :ivar datasource_type: DatasourceType of the resource.
@@ -2780,7 +3112,7 @@ class Datasource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatasourceSet(_Model):
+class DatasourceSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DatasourceSet details of datasource to be backed up.
 
     :ivar datasource_type: DatasourceType of the resource.
@@ -2859,7 +3191,7 @@ class DatasourceSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataStoreInfoBase(_Model):
+class DataStoreInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataStoreInfo base.
 
     :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
@@ -2897,7 +3229,7 @@ class DataStoreInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Day(_Model):
+class Day(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Day of the week.
 
     :ivar date: Date of the month.
@@ -2934,11 +3266,12 @@ class DefaultResourceProperties(BaseResourceProperties, discriminator="DefaultRe
     """Default source properties.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
+     DEFAULT_RESOURCE_PROPERTIES.
     :vartype object_type: str or ~azure.mgmt.dataprotection.models.DEFAULT_RESOURCE_PROPERTIES
     """
 
     object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the specific object - used for deserializing. Required."""
+    """Type of the specific object - used for deserializing. Required. DEFAULT_RESOURCE_PROPERTIES."""
 
     @overload
     def __init__(
@@ -2957,7 +3290,7 @@ class DefaultResourceProperties(BaseResourceProperties, discriminator="DefaultRe
         self.object_type = ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES  # type: ignore
 
 
-class DeletedBackupInstance(BackupInstance):
+class DeletedBackupInstance(BackupInstance):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deleted Backup Instance.
 
     :ivar friendly_name: Gets or sets the Backup Instance friendly name.
@@ -2992,8 +3325,8 @@ class DeletedBackupInstance(BackupInstance):
      validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
      and "DeepValidation".
     :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar object_type: Required.
     :vartype object_type: str
@@ -3030,7 +3363,7 @@ class DeletedBackupInstance(BackupInstance):
         super().__init__(*args, **kwargs)
 
 
-class DeletedBackupInstanceResource(ProxyResource):
+class DeletedBackupInstanceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deleted Backup Instance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3058,6 +3391,183 @@ class DeletedBackupInstanceResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.DeletedBackupInstance"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeletedBackupVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Deleted Backup Vault - uses composition with BackupVault and additional deletion metadata.
+
+    :ivar monitoring_settings: Monitoring Settings.
+    :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+    :ivar cost_management_settings: Cost Management Settings of the vault.
+    :vartype cost_management_settings: ~azure.mgmt.dataprotection.models.CostManagementSettings
+    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+     "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
+    :ivar resource_move_state: Resource move state for backup vault. Known values are: "Unknown",
+     "InProgress", "PrepareFailed", "CommitFailed", "Failed", "PrepareTimedout", "CommitTimedout",
+     "CriticalFailure", "PartialSuccess", and "MoveSucceeded".
+    :vartype resource_move_state: str or ~azure.mgmt.dataprotection.models.ResourceMoveState
+    :ivar resource_move_details: Resource move details for backup vault.
+    :vartype resource_move_details: ~azure.mgmt.dataprotection.models.ResourceMoveDetails
+    :ivar security_settings: Security Settings.
+    :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
+    :ivar storage_settings: Storage Settings.
+    :vartype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
+    :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
+    :vartype is_vault_protected_by_resource_guard: bool
+    :ivar feature_settings: Feature Settings.
+    :vartype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+    :ivar secure_score: Secure Score of Backup Vault. Known values are: "None", "Minimum",
+     "Adequate", "Maximum", and "NotSupported".
+    :vartype secure_score: str or ~azure.mgmt.dataprotection.models.SecureScoreLevel
+    :ivar bcdr_security_level: Security Level of Backup Vault. Known values are: "Poor", "Fair",
+     "Good", "Excellent", and "NotSupported".
+    :vartype bcdr_security_level: str or ~azure.mgmt.dataprotection.models.BCDRSecurityLevel
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar replicated_regions: List of replicated regions for Backup Vault.
+    :vartype replicated_regions: list[str]
+    :ivar original_backup_vault_id: Resource Id of the original backup vault. Required.
+    :vartype original_backup_vault_id: str
+    :ivar original_backup_vault_name: Resource name of the original backup vault. Required.
+    :vartype original_backup_vault_name: str
+    :ivar original_backup_vault_resource_path: Resource path of the original backup vault.
+     Required.
+    :vartype original_backup_vault_resource_path: str
+    :ivar resource_deletion_info: Deletion info for the tracked resource (Backup Vault). Required.
+    :vartype resource_deletion_info: ~azure.mgmt.dataprotection.models.ResourceDeletionInfo
+    """
+
+    monitoring_settings: Optional["_models.MonitoringSettings"] = rest_field(
+        name="monitoringSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monitoring Settings."""
+    cost_management_settings: Optional["_models.CostManagementSettings"] = rest_field(
+        name="costManagementSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cost Management Settings of the vault."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the BackupVault resource. Known values are: \"Failed\", \"Provisioning\",
+     \"Succeeded\", \"Unknown\", and \"Updating\"."""
+    resource_move_state: Optional[Union[str, "_models.ResourceMoveState"]] = rest_field(
+        name="resourceMoveState", visibility=["read"]
+    )
+    """Resource move state for backup vault. Known values are: \"Unknown\", \"InProgress\",
+     \"PrepareFailed\", \"CommitFailed\", \"Failed\", \"PrepareTimedout\", \"CommitTimedout\",
+     \"CriticalFailure\", \"PartialSuccess\", and \"MoveSucceeded\"."""
+    resource_move_details: Optional["_models.ResourceMoveDetails"] = rest_field(
+        name="resourceMoveDetails", visibility=["read"]
+    )
+    """Resource move details for backup vault."""
+    security_settings: Optional["_models.SecuritySettings"] = rest_field(
+        name="securitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Security Settings."""
+    storage_settings: Optional[list["_models.StorageSetting"]] = rest_field(
+        name="storageSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage Settings."""
+    is_vault_protected_by_resource_guard: Optional[bool] = rest_field(
+        name="isVaultProtectedByResourceGuard", visibility=["read"]
+    )
+    """Is vault protected by resource guard."""
+    feature_settings: Optional["_models.FeatureSettings"] = rest_field(
+        name="featureSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Feature Settings."""
+    secure_score: Optional[Union[str, "_models.SecureScoreLevel"]] = rest_field(name="secureScore", visibility=["read"])
+    """Secure Score of Backup Vault. Known values are: \"None\", \"Minimum\", \"Adequate\",
+     \"Maximum\", and \"NotSupported\"."""
+    bcdr_security_level: Optional[Union[str, "_models.BCDRSecurityLevel"]] = rest_field(
+        name="bcdrSecurityLevel", visibility=["read"]
+    )
+    """Security Level of Backup Vault. Known values are: \"Poor\", \"Fair\", \"Good\", \"Excellent\",
+     and \"NotSupported\"."""
+    resource_guard_operation_requests: Optional[list[str]] = rest_field(
+        name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceGuardOperationRequests on which LAC check will be performed."""
+    replicated_regions: Optional[list[str]] = rest_field(
+        name="replicatedRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of replicated regions for Backup Vault."""
+    original_backup_vault_id: str = rest_field(name="originalBackupVaultId", visibility=["read"])
+    """Resource Id of the original backup vault. Required."""
+    original_backup_vault_name: str = rest_field(name="originalBackupVaultName", visibility=["read"])
+    """Resource name of the original backup vault. Required."""
+    original_backup_vault_resource_path: str = rest_field(name="originalBackupVaultResourcePath", visibility=["read"])
+    """Resource path of the original backup vault. Required."""
+    resource_deletion_info: "_models.ResourceDeletionInfo" = rest_field(
+        name="resourceDeletionInfo", visibility=["read"]
+    )
+    """Deletion info for the tracked resource (Backup Vault). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        cost_management_settings: Optional["_models.CostManagementSettings"] = None,
+        security_settings: Optional["_models.SecuritySettings"] = None,
+        storage_settings: Optional[list["_models.StorageSetting"]] = None,
+        feature_settings: Optional["_models.FeatureSettings"] = None,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+        replicated_regions: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeletedBackupVaultResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Deleted Backup Vault Resource (available from version 2025-09-01).
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.dataprotection.models.DeletedBackupVault
+    """
+
+    properties: Optional["_models.DeletedBackupVault"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DeletedBackupVault"] = None,
     ) -> None: ...
 
     @overload
@@ -3111,7 +3621,7 @@ class DppBaseResource(ProxyResource):
     """
 
 
-class DppIdentityDetails(_Model):
+class DppIdentityDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity details.
 
     :ivar principal_id: The object ID of the service principal object for the managed identity that
@@ -3161,7 +3671,7 @@ class DppIdentityDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DppResourceList(_Model):
+class DppResourceList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ListResource.
 
     :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
@@ -3190,7 +3700,7 @@ class DppResourceList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DppTrackedResourceList(_Model):
+class DppTrackedResourceList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DppTrackedResourceList.
 
     :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
@@ -3219,7 +3729,7 @@ class DppTrackedResourceList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSettings(_Model):
+class EncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer Managed Key details of the resource.
 
     :ivar state: Encryption state of the Backup Vault. Known values are: "Enabled", "Disabled", and
@@ -3347,7 +3857,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -3398,7 +3908,7 @@ class ExportJobsResult(_Model):
     """SAS key to access the ExcelFile blob."""
 
 
-class FeatureSettings(_Model):
+class FeatureSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class containing feature settings of vault.
 
     :ivar cross_subscription_restore_settings: CrossSubscriptionRestore Settings.
@@ -3436,7 +3946,7 @@ class FeatureSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureValidationRequestBase(_Model):
+class FeatureValidationRequestBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for Backup Feature support.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3469,7 +3979,9 @@ class FeatureValidationRequestBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureValidationRequest(FeatureValidationRequestBase, discriminator="FeatureValidationRequest"):
+class FeatureValidationRequest(
+    FeatureValidationRequestBase, discriminator="FeatureValidationRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for feature object.
 
     :ivar feature_type: backup support feature type. Known values are: "Invalid" and
@@ -3514,7 +4026,7 @@ class FeatureValidationRequest(FeatureValidationRequestBase, discriminator="Feat
         self.object_type = "FeatureValidationRequest"  # type: ignore
 
 
-class FeatureValidationResponseBase(_Model):
+class FeatureValidationResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for Backup Feature support.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3547,7 +4059,9 @@ class FeatureValidationResponseBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureValidationResponse(FeatureValidationResponseBase, discriminator="FeatureValidationResponse"):
+class FeatureValidationResponse(
+    FeatureValidationResponseBase, discriminator="FeatureValidationResponse"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature Validation Response.
 
     :ivar feature_type: backup support feature type. Known values are: "Invalid" and
@@ -3592,10 +4106,9 @@ class FeatureValidationResponse(FeatureValidationResponseBase, discriminator="Fe
         self.object_type = "FeatureValidationResponse"  # type: ignore
 
 
-class FetchSecondaryRPsRequestParameters(_Model):
-    """Information about BI whose secondary RecoveryPoints are requested
-    Source region and
-    BI ARM path.
+class FetchSecondaryRPsRequestParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about BI whose secondary RecoveryPoints are requested Source region and BI ARM
+    path.
 
     :ivar source_region: Source region in which BackupInstance is located.
     :vartype source_region: str
@@ -3631,7 +4144,122 @@ class FetchSecondaryRPsRequestParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityDetails(_Model):
+class GenericBackupDatasourceParameters(
+    BackupDatasourceParameters, discriminator="GenericBackupDatasourceParameters"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Generic parameters to be used during configuration of backup.
+
+    :ivar resource_selectors: List of resource selectors to be backed up during configuration of
+     backup. Required.
+    :vartype resource_selectors: list[str]
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "GenericBackupDatasourceParameters".
+    :vartype object_type: str
+    """
+
+    resource_selectors: list[str] = rest_field(
+        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource selectors to be backed up during configuration of backup. Required."""
+    object_type: Literal["GenericBackupDatasourceParameters"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"GenericBackupDatasourceParameters\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_selectors: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "GenericBackupDatasourceParameters"  # type: ignore
+
+
+class ItemLevelRestoreCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Class to contain criteria for item level restore.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GenericRestoreDatasourceCriteria, ItemPathBasedRestoreCriteria,
+    KubernetesClusterRestoreCriteria, KubernetesClusterVaultTierRestoreCriteria,
+    KubernetesPVRestoreCriteria, KubernetesStorageClassRestoreCriteria,
+    RangeBasedItemLevelRestoreCriteria
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is None.
+    :vartype object_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GenericRestoreDatasourceCriteria(
+    ItemLevelRestoreCriteria, discriminator="GenericRestoreDatasourceCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Generic criteria to be used during restore.
+
+    :ivar resource_selectors: List of resource identifiers that need to be restored. Required.
+    :vartype resource_selectors: ~azure.mgmt.dataprotection.models.ResourceListSelectionCriteria
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "GenericRestoreDatasourceCriteria".
+    :vartype object_type: str
+    """
+
+    resource_selectors: "_models.ResourceListSelectionCriteria" = rest_field(
+        name="resourceSelectors", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource identifiers that need to be restored. Required."""
+    object_type: Literal["GenericRestoreDatasourceCriteria"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"GenericRestoreDatasourceCriteria\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_selectors: "_models.ResourceListSelectionCriteria",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "GenericRestoreDatasourceCriteria"  # type: ignore
+
+
+class IdentityDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentityDetails.
 
     :ivar use_system_assigned_identity: Specifies if the BI is protected by System Identity.
@@ -3697,7 +4325,7 @@ class ImmediateCopyOption(CopyOption, discriminator="ImmediateCopyOption"):
         self.object_type = "ImmediateCopyOption"  # type: ignore
 
 
-class ImmutabilitySettings(_Model):
+class ImmutabilitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Immutability Settings at vault level.
 
     :ivar state: Immutability state. Known values are: "Disabled", "Unlocked", and "Locked".
@@ -3727,7 +4355,7 @@ class ImmutabilitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerError(_Model):
+class InnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner Error.
 
     :ivar additional_info: Any Key value pairs that can be provided to the client for additional
@@ -3770,42 +4398,7 @@ class InnerError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemLevelRestoreCriteria(_Model):
-    """Class to contain criteria for item level restore.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ItemPathBasedRestoreCriteria, KubernetesClusterRestoreCriteria,
-    KubernetesClusterVaultTierRestoreCriteria, KubernetesPVRestoreCriteria,
-    KubernetesStorageClassRestoreCriteria, RangeBasedItemLevelRestoreCriteria
-
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is None.
-    :vartype object_type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
-    """Type of the specific object - used for deserializing. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        object_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RestoreTargetInfoBase(_Model):
+class RestoreTargetInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class common to RestoreTargetInfo and RestoreFilesTargetInfo.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3853,7 +4446,9 @@ class RestoreTargetInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase, discriminator="ItemLevelRestoreTargetInfo"):
+class ItemLevelRestoreTargetInfo(
+    RestoreTargetInfoBase, discriminator="ItemLevelRestoreTargetInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore target info for Item level restore operation.
 
     :ivar recovery_option: Recovery Option. Required. "FailIfExists"
@@ -3918,7 +4513,9 @@ class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase, discriminator="ItemLevel
         self.object_type = "ItemLevelRestoreTargetInfo"  # type: ignore
 
 
-class ItemPathBasedRestoreCriteria(ItemLevelRestoreCriteria, discriminator="ItemPathBasedRestoreCriteria"):
+class ItemPathBasedRestoreCriteria(
+    ItemLevelRestoreCriteria, discriminator="ItemPathBasedRestoreCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prefix criteria to be used to during restore.
 
     :ivar item_path: The path of the item to be restored. It could be the full path of the item or
@@ -3979,7 +4576,7 @@ class ItemPathBasedRestoreCriteria(ItemLevelRestoreCriteria, discriminator="Item
         self.object_type = "ItemPathBasedRestoreCriteria"  # type: ignore
 
 
-class JobExtendedInfo(_Model):
+class JobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended Information about the job.
 
     :ivar additional_details: Job's Additional Details.
@@ -4043,7 +4640,7 @@ class JobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobSubTask(_Model):
+class JobSubTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of Job's Sub Task.
 
     :ivar additional_details: Additional details of Sub Tasks.
@@ -4094,7 +4691,7 @@ class JobSubTask(_Model):
 
 class KubernetesClusterBackupDatasourceParameters(
     BackupDatasourceParameters, discriminator="KubernetesClusterBackupDatasourceParameters"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters for Kubernetes Cluster Backup Datasource.
 
     :ivar snapshot_volumes: Gets or sets the volume snapshot property. This property if enabled
@@ -4205,7 +4802,9 @@ class KubernetesClusterBackupDatasourceParameters(
         self.object_type = "KubernetesClusterBackupDatasourceParameters"  # type: ignore
 
 
-class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria, discriminator="KubernetesClusterRestoreCriteria"):
+class KubernetesClusterRestoreCriteria(
+    ItemLevelRestoreCriteria, discriminator="KubernetesClusterRestoreCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """kubernetes Cluster Backup target info for restore operation.
 
     :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
@@ -4340,7 +4939,7 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria, discriminator="
 
 class KubernetesClusterVaultTierRestoreCriteria(
     ItemLevelRestoreCriteria, discriminator="KubernetesClusterVaultTierRestoreCriteria"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """kubernetes Cluster Backup target info for restore operation from vault.
 
     :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
@@ -4492,7 +5091,9 @@ class KubernetesClusterVaultTierRestoreCriteria(
         self.object_type = "KubernetesClusterVaultTierRestoreCriteria"  # type: ignore
 
 
-class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria, discriminator="KubernetesPVRestoreCriteria"):
+class KubernetesPVRestoreCriteria(
+    ItemLevelRestoreCriteria, discriminator="KubernetesPVRestoreCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Item Level kubernetes persistent volume target info for restore operation.
 
     :ivar name: Selected persistent volume claim name.
@@ -4536,7 +5137,7 @@ class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria, discriminator="Kuber
 
 class KubernetesStorageClassRestoreCriteria(
     ItemLevelRestoreCriteria, discriminator="KubernetesStorageClassRestoreCriteria"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Item Level kubernetes storage class target info for restore operation.
 
     :ivar selected_storage_class_name: Selected storage class name.
@@ -4578,7 +5179,7 @@ class KubernetesStorageClassRestoreCriteria(
         self.object_type = "KubernetesStorageClassRestoreCriteria"  # type: ignore
 
 
-class MonitoringSettings(_Model):
+class MonitoringSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring Settings.
 
     :ivar azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
@@ -4609,7 +5210,7 @@ class MonitoringSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespacedNameResource(_Model):
+class NamespacedNameResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to refer resources which contains namespace and name.
 
     :ivar name: Name of the resource.
@@ -4642,7 +5243,7 @@ class NamespacedNameResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -4700,7 +5301,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -4730,7 +5331,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationExtendedInfo(_Model):
+class OperationExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Extended Info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4764,7 +5365,9 @@ class OperationExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationJobExtendedInfo(OperationExtendedInfo, discriminator="OperationJobExtendedInfo"):
+class OperationJobExtendedInfo(
+    OperationExtendedInfo, discriminator="OperationJobExtendedInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Job Extended Info.
 
     :ivar job_id: Name or Arm Id of the job created for this operation.
@@ -4799,15 +5402,14 @@ class OperationJobExtendedInfo(OperationExtendedInfo, discriminator="OperationJo
         self.object_type = "OperationJobExtendedInfo"  # type: ignore
 
 
-class OperationResource(_Model):
+class OperationResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Resource.
 
     :ivar end_time: End time of the operation.
     :vartype end_time: ~datetime.datetime
     :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
-     format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
-     The full set of optional properties (e.g. inner errors / details) can be found in the "Error
-     Response" section.
+     format, used by the RPC and will go into the v2.2 Azure REST API guidelines. The full set of
+     optional properties (e.g. inner errors / details) can be found in the "Error Response" section.
     :vartype error: ~azure.mgmt.dataprotection.models.Error
     :ivar id: It should match what is used to GET the operation result.
     :vartype id: str
@@ -4828,9 +5430,8 @@ class OperationResource(_Model):
     """End time of the operation."""
     error: Optional["_models.Error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required if status == failed or status == canceled. This is the OData v4 error format, used by
-     the RPC and will go into the v2.2 Azure REST API guidelines.
-     The full set of optional properties (e.g. inner errors / details) can be found in the \"Error
-     Response\" section."""
+     the RPC and will go into the v2.2 Azure REST API guidelines. The full set of optional
+     properties (e.g. inner errors / details) can be found in the \"Error Response\" section."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """It should match what is used to GET the operation result."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4870,7 +5471,7 @@ class OperationResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchBackupVaultInput(_Model):
+class PatchBackupVaultInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Vault Contract for Patch Backup Vault API.
 
     :ivar monitoring_settings: Monitoring Settings.
@@ -4879,6 +5480,8 @@ class PatchBackupVaultInput(_Model):
     :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
     :ivar feature_settings: Feature Settings.
     :vartype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+    :ivar cost_management_settings: Cost Management Settings of the vault.
+    :vartype cost_management_settings: ~azure.mgmt.dataprotection.models.CostManagementSettings
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
@@ -4896,6 +5499,10 @@ class PatchBackupVaultInput(_Model):
         name="featureSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Feature Settings."""
+    cost_management_settings: Optional["_models.CostManagementSettings"] = rest_field(
+        name="costManagementSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cost Management Settings of the vault."""
     resource_guard_operation_requests: Optional[list[str]] = rest_field(
         name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4908,6 +5515,7 @@ class PatchBackupVaultInput(_Model):
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
         feature_settings: Optional["_models.FeatureSettings"] = None,
+        cost_management_settings: Optional["_models.CostManagementSettings"] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -4922,7 +5530,7 @@ class PatchBackupVaultInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchResourceGuardInput(_Model):
+class PatchResourceGuardInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patch Request content for Microsoft.DataProtection Resource Guard resources.
 
     :ivar tags: Resource Guard tags.
@@ -4950,7 +5558,7 @@ class PatchResourceGuardInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchResourceRequestInput(_Model):
+class PatchResourceRequestInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patch Request content for Microsoft.DataProtection resources.
 
     :ivar identity: Input Managed Identity Details.
@@ -4992,7 +5600,7 @@ class PatchResourceRequestInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyInfo(_Model):
+class PolicyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy Info in backupInstance.
 
     :ivar policy_id: Required.
@@ -5030,7 +5638,7 @@ class PolicyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyParameters(_Model):
+class PolicyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters in Policy.
 
     :ivar data_store_parameters_list: Gets or sets the DataStore Parameters.
@@ -5069,7 +5677,7 @@ class PolicyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionStatusDetails(_Model):
+class ProtectionStatusDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection status details.
 
     :ivar error_details: Specifies the protection status error of the resource.
@@ -5110,7 +5718,9 @@ class ProtectionStatusDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RangeBasedItemLevelRestoreCriteria(ItemLevelRestoreCriteria, discriminator="RangeBasedItemLevelRestoreCriteria"):
+class RangeBasedItemLevelRestoreCriteria(
+    ItemLevelRestoreCriteria, discriminator="RangeBasedItemLevelRestoreCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Item Level target info for restore operation.
 
     :ivar min_matching_value: minimum value for range prefix match.
@@ -5154,7 +5764,7 @@ class RangeBasedItemLevelRestoreCriteria(ItemLevelRestoreCriteria, discriminator
         self.object_type = "RangeBasedItemLevelRestoreCriteria"  # type: ignore
 
 
-class RecoveryPointDataStoreDetails(_Model):
+class RecoveryPointDataStoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryPoint datastore details.
 
     :ivar creation_time:
@@ -5222,7 +5832,30 @@ class RecoveryPointDataStoreDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuard(_Model):
+class ResourceDeletionInfo(_Model):
+    """Deletion info for a tracked resource (Backup Vault).
+
+    :ivar deletion_time: Specifies time of deletion for the tracked resource (Backup Vault).
+    :vartype deletion_time: ~datetime.datetime
+    :ivar scheduled_purge_time: Specifies the scheduled purge time for the tracked resource (Backup
+     Vault).
+    :vartype scheduled_purge_time: ~datetime.datetime
+    :ivar delete_activity_id: Delete activity ID for troubleshooting the deletion of the tracked
+     resource.
+    :vartype delete_activity_id: str
+    """
+
+    deletion_time: Optional[datetime.datetime] = rest_field(name="deletionTime", visibility=["read"], format="rfc3339")
+    """Specifies time of deletion for the tracked resource (Backup Vault)."""
+    scheduled_purge_time: Optional[datetime.datetime] = rest_field(
+        name="scheduledPurgeTime", visibility=["read"], format="rfc3339"
+    )
+    """Specifies the scheduled purge time for the tracked resource (Backup Vault)."""
+    delete_activity_id: Optional[str] = rest_field(name="deleteActivityId", visibility=["read"])
+    """Delete activity ID for troubleshooting the deletion of the tracked resource."""
+
+
+class ResourceGuard(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuard.
 
     :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
@@ -5292,7 +5925,7 @@ class ResourceGuardOperation(_Model):
     """Type of resource request."""
 
 
-class ResourceGuardOperationDetail(_Model):
+class ResourceGuardOperationDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VaultCritical Operation protected by a resource guard.
 
     :ivar vault_critical_operation:
@@ -5327,7 +5960,7 @@ class ResourceGuardOperationDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardProxyBase(_Model):
+class ResourceGuardProxyBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuardProxyBase object, used in ResourceGuardProxyBaseResource.
 
     :ivar resource_guard_resource_id:
@@ -5373,7 +6006,7 @@ class ResourceGuardProxyBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardProxyBaseResource(ProxyResource):
+class ResourceGuardProxyBaseResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuardProxyBaseResource object, used for response and request bodies for
     ResourceGuardProxy APIs.
 
@@ -5415,7 +6048,7 @@ class ResourceGuardProxyBaseResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardResource(TrackedResource):
+class ResourceGuardResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -5468,7 +6101,52 @@ class ResourceGuardResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceMoveDetails(_Model):
+class ResourceListSelectionCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the list of resources to be restored.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar resource_identifiers: List of resource identifiers to restore from. Required.
+    :vartype resource_identifiers: list[str]
+    :ivar resource_name_overrides: This is a map of source resource names to target resources names
+     to restore into. Any source name not included in the map will be restored with a default naming
+     format.
+    :vartype resource_name_overrides: dict[str, str]
+    """
+
+    object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required."""
+    resource_identifiers: list[str] = rest_field(
+        name="resourceIdentifiers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource identifiers to restore from. Required."""
+    resource_name_overrides: Optional[dict[str, str]] = rest_field(
+        name="resourceNameOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This is a map of source resource names to target resources names to restore into. Any source
+     name not included in the map will be restored with a default naming format."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+        resource_identifiers: list[str],
+        resource_name_overrides: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceMoveDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceMoveDetails will be returned in response to GetResource call from ARM.
 
     :ivar operation_id: CorrelationId of latest ResourceMove operation attempted.
@@ -5529,7 +6207,7 @@ class ResourceMoveDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableTimeRange(_Model):
+class RestorableTimeRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RestorableTimeRange.
 
     :ivar start_time: Start time for the available restore range. Required.
@@ -5568,7 +6246,9 @@ class RestorableTimeRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreFilesTargetInfo(RestoreTargetInfoBase, discriminator="RestoreFilesTargetInfo"):
+class RestoreFilesTargetInfo(
+    RestoreTargetInfoBase, discriminator="RestoreFilesTargetInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class encapsulating restore as files target parameters.
 
     :ivar recovery_option: Recovery Option. Required. "FailIfExists"
@@ -5612,7 +6292,7 @@ class RestoreFilesTargetInfo(RestoreTargetInfoBase, discriminator="RestoreFilesT
         self.object_type = "RestoreFilesTargetInfo"  # type: ignore
 
 
-class RestoreJobRecoveryPointDetails(_Model):
+class RestoreJobRecoveryPointDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RestoreJobRecoveryPointDetails.
 
     :ivar recovery_point_id:
@@ -5647,7 +6327,9 @@ class RestoreJobRecoveryPointDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreTargetInfo(RestoreTargetInfoBase, discriminator="RestoreTargetInfo"):
+class RestoreTargetInfo(
+    RestoreTargetInfoBase, discriminator="RestoreTargetInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class encapsulating restore target parameters.
 
     :ivar recovery_option: Recovery Option. Required. "FailIfExists"
@@ -5705,7 +6387,7 @@ class RestoreTargetInfo(RestoreTargetInfoBase, discriminator="RestoreTargetInfo"
         self.object_type = "RestoreTargetInfo"  # type: ignore
 
 
-class RetentionTag(_Model):
+class RetentionTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Retention tag.
 
     :ivar e_tag: Retention Tag version.
@@ -5741,12 +6423,13 @@ class RetentionTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleBasedBackupCriteria(BackupCriteria, discriminator="ScheduleBasedBackupCriteria"):
+class ScheduleBasedBackupCriteria(
+    BackupCriteria, discriminator="ScheduleBasedBackupCriteria"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule based backup criteria.
 
     :ivar absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
-     "FirstOfWeek" / "FirstOfMonth"
-     and should be part of AbsoluteMarker enum.
+     "FirstOfWeek" / "FirstOfMonth" and should be part of AbsoluteMarker enum.
     :vartype absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
     :ivar days_of_month: This is day of the month from 1 to 28 other wise last of month.
     :vartype days_of_month: list[~azure.mgmt.dataprotection.models.Day]
@@ -5767,8 +6450,7 @@ class ScheduleBasedBackupCriteria(BackupCriteria, discriminator="ScheduleBasedBa
         name="absoluteCriteria", visibility=["read", "create", "update", "delete", "query"]
     )
     """it contains absolute values like \"AllBackup\" / \"FirstOfDay\" / \"FirstOfWeek\" /
-     \"FirstOfMonth\"
-     and should be part of AbsoluteMarker enum."""
+     \"FirstOfMonth\" and should be part of AbsoluteMarker enum."""
     days_of_month: Optional[list["_models.Day"]] = rest_field(
         name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5817,7 +6499,9 @@ class ScheduleBasedBackupCriteria(BackupCriteria, discriminator="ScheduleBasedBa
         self.object_type = "ScheduleBasedBackupCriteria"  # type: ignore
 
 
-class ScheduleBasedTriggerContext(TriggerContext, discriminator="ScheduleBasedTriggerContext"):
+class ScheduleBasedTriggerContext(
+    TriggerContext, discriminator="ScheduleBasedTriggerContext"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule based trigger context.
 
     :ivar schedule: Schedule for this backup. Required.
@@ -5859,7 +6543,9 @@ class ScheduleBasedTriggerContext(TriggerContext, discriminator="ScheduleBasedTr
         self.object_type = "ScheduleBasedTriggerContext"  # type: ignore
 
 
-class SecretStoreBasedAuthCredentials(AuthCredentials, discriminator="SecretStoreBasedAuthCredentials"):
+class SecretStoreBasedAuthCredentials(
+    AuthCredentials, discriminator="SecretStoreBasedAuthCredentials"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Secret store based authentication credentials.
 
     :ivar secret_store_resource: Secret store resource.
@@ -5896,7 +6582,7 @@ class SecretStoreBasedAuthCredentials(AuthCredentials, discriminator="SecretStor
         self.object_type = "SecretStoreBasedAuthCredentials"  # type: ignore
 
 
-class SecretStoreResource(_Model):
+class SecretStoreResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a secret store resource.
 
     :ivar uri: Uri to get to the resource.
@@ -5938,7 +6624,7 @@ class SecretStoreResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySettings(_Model):
+class SecuritySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class containing security settings of vault.
 
     :ivar soft_delete_settings: Soft delete related settings.
@@ -5982,7 +6668,7 @@ class SecuritySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftDeleteSettings(_Model):
+class SoftDeleteSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Soft delete related settings.
 
     :ivar state: State of soft delete. Known values are: "Off", "On", and "AlwaysOn".
@@ -6019,7 +6705,7 @@ class SoftDeleteSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceLifeCycle(_Model):
+class SourceLifeCycle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source LifeCycle.
 
     :ivar delete_after: Delete Option. Required.
@@ -6063,7 +6749,7 @@ class SourceLifeCycle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StopProtectionRequest(_Model):
+class StopProtectionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of Stop protection when MUA is Enabled.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -6094,7 +6780,7 @@ class StopProtectionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSetting(_Model):
+class StorageSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage setting.
 
     :ivar datastore_type: Gets or sets the type of the datastore. Known values are: "ArchiveStore",
@@ -6135,7 +6821,7 @@ class StorageSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedFeature(_Model):
+class SupportedFeature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elements class for feature request.
 
     :ivar feature_name: support feature type.
@@ -6181,7 +6867,7 @@ class SupportedFeature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SuspendBackupRequest(_Model):
+class SuspendBackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of Suspend backup when MUA is Enabled.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -6212,7 +6898,7 @@ class SuspendBackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncBackupInstanceRequest(_Model):
+class SyncBackupInstanceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sync BackupInstance Request.
 
     :ivar sync_type: Field indicating sync type e.g. to sync only in case of failure or in all
@@ -6244,7 +6930,7 @@ class SyncBackupInstanceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -6311,7 +6997,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaggingCriteria(_Model):
+class TaggingCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tagging criteria.
 
     :ivar criteria: Criteria which decides whether the tag can be applied to a triggered backup.
@@ -6360,7 +7046,7 @@ class TaggingCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetCopySetting(_Model):
+class TargetCopySetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target copy settings.
 
     :ivar copy_after: It can be CustomCopyOption or ImmediateCopyOption. Required.
@@ -6397,15 +7083,14 @@ class TargetCopySetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetDetails(_Model):
+class TargetDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class encapsulating target details, used where the destination is not a datasource.
 
     :ivar file_prefix: Restore operation may create multiple files inside location pointed by Url
      Below will be the common prefix for all of them. Required.
     :vartype file_prefix: str
     :ivar restore_target_location_type: Denotes the target location where the data will be
-     restored,
-     string value for the enum
+     restored, string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
      Required. Known values are: "Invalid", "AzureBlobs", and "AzureFiles".
     :vartype restore_target_location_type: str or
@@ -6414,21 +7099,19 @@ class TargetDetails(_Model):
      Required.
     :vartype url: str
     :ivar target_resource_arm_id: Full ARM Id denoting the restore destination. It is the ARM Id
-     pointing to container / file share
-     This is optional if the target subscription can be identified with the URL field. If not
-     then this is needed if CrossSubscriptionRestore field of BackupVault is in any of the disabled
-     states.
+     pointing to container / file share This is optional if the target subscription can be
+     identified with the URL field. If not then this is needed if CrossSubscriptionRestore field of
+     BackupVault is in any of the disabled states.
     :vartype target_resource_arm_id: str
     """
 
     file_prefix: str = rest_field(name="filePrefix", visibility=["read", "create", "update", "delete", "query"])
-    """Restore operation may create multiple files inside location pointed by Url
-     Below will be the common prefix for all of them. Required."""
+    """Restore operation may create multiple files inside location pointed by Url Below will be the
+     common prefix for all of them. Required."""
     restore_target_location_type: Union[str, "_models.RestoreTargetLocationType"] = rest_field(
         name="restoreTargetLocationType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Denotes the target location where the data will be restored,
-     string value for the enum
+    """Denotes the target location where the data will be restored, string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
      Required. Known values are: \"Invalid\", \"AzureBlobs\", and \"AzureFiles\"."""
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6437,8 +7120,7 @@ class TargetDetails(_Model):
         name="targetResourceArmId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Full ARM Id denoting the restore destination. It is the ARM Id pointing to container / file
-     share
-     This is optional if the target subscription can be identified with the URL field. If not
+     share This is optional if the target subscription can be identified with the URL field. If not
      then this is needed if CrossSubscriptionRestore field of BackupVault is in any of the disabled
      states."""
 
@@ -6463,7 +7145,7 @@ class TargetDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggerBackupRequest(_Model):
+class TriggerBackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger backup request.
 
     :ivar backup_rule_options: Name for the Rule of the Policy which needs to be applied for this
@@ -6494,7 +7176,7 @@ class TriggerBackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnlockDeleteRequest(_Model):
+class UnlockDeleteRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of unlock delete API.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -6531,7 +7213,7 @@ class UnlockDeleteRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnlockDeleteResponse(_Model):
+class UnlockDeleteResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of Unlock Delete API.
 
     :ivar unlock_delete_expiry_time: This is the time when unlock delete privileges will get
@@ -6577,7 +7259,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserFacingError(_Model):
+class UserFacingError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error object used by layers that have access to localized content, and propagate that to user.
 
     :ivar code: Unique code for this error.
@@ -6654,7 +7336,7 @@ class UserFacingError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserFacingWarningDetail(_Model):
+class UserFacingWarningDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Warning object used by layers that have access to localized content, and propagate that to
     user.
 
@@ -6690,7 +7372,7 @@ class UserFacingWarningDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateCrossRegionRestoreRequestObject(_Model):
+class ValidateCrossRegionRestoreRequestObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cross Region Restore Request Object.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.
@@ -6728,7 +7410,7 @@ class ValidateCrossRegionRestoreRequestObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForBackupRequest(_Model):
+class ValidateForBackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validate for backup request.
 
     :ivar backup_instance: Backup Instance. Required.
@@ -6758,7 +7440,7 @@ class ValidateForBackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateForModifyBackupRequest(_Model):
+class ValidateForModifyBackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validate for modify backup request.
 
     :ivar backup_instance: Backup Instance. Required.
@@ -6788,7 +7470,7 @@ class ValidateForModifyBackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateRestoreRequestObject(_Model):
+class ValidateRestoreRequestObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validate restore request object.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.

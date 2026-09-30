@@ -14,10 +14,12 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureQueueStorage
-from ._generated.models import KeyInfo, StorageServiceProperties
+from ._generated import QueuesClient as AzureQueueStorage
+from ._generated.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
 from ._models import (
     CorsRule,
+    Metrics,
+    QueueAnalyticsLogging,
     QueueProperties,
     QueuePropertiesPaged,
     service_properties_deserialize,
@@ -26,15 +28,25 @@ from ._models import (
 from ._queue_client import QueueClient
 from ._queue_service_client_helpers import _parse_url
 from ._serialize import get_api_version
-from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
+from ._shared.base_client import (
+    parse_connection_str,
+    StorageAccountHostsMixin,
+    TransportWrapper,
+)
 from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
-from ._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
+from ._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+)
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from datetime import datetime
-    from ._models import Metrics, QueueAnalyticsLogging
     from ._shared.models import UserDelegationKey
 
 
@@ -98,7 +110,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -116,9 +134,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline
-        )
+        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -126,7 +142,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return self
 
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         self._client.__exit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -154,7 +173,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -356,9 +381,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Setting queue service properties.
         """
         props = StorageServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=QueueAnalyticsLogging._to_generated(analytics_logging),  # pylint: disable=protected-access
+            hour_metrics=Metrics._to_generated(hour_metrics),  # pylint: disable=protected-access
+            minute_metrics=Metrics._to_generated(minute_metrics),  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
         )
         try:
@@ -411,7 +436,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         include = ["metadata"] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client.service.get_queues,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
@@ -426,7 +451,12 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-        self, name: str, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -459,7 +489,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_queue(
-        self, queue: Union["QueueProperties", str], *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 

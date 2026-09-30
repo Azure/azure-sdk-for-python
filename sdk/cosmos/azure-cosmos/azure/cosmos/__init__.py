@@ -43,6 +43,7 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
+from ._global_secondary_index import GlobalSecondaryIndexDefinition
 
 __all__ = (
     "CosmosClient",
@@ -66,6 +67,7 @@ __all__ = (
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",
-    "CosmosList"
+    "CosmosList",
+    "GlobalSecondaryIndexDefinition"
 )
 __version__ = VERSION

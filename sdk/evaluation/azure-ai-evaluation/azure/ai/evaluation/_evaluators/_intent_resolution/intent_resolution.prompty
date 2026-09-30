@@ -44,15 +44,23 @@ AGENT_RESPONSE is the agent reply to that latest user message.
 TASK
 ====
 Output a JSON object with:
-    1) a concise explanation of 15-60 words that summarizes the agent's performance in resolving the user's intent
+    1) reason: a concise explanation of 15-60 words that summarizes the agent's performance in resolving the user's intent.
     2) an integer score from 1 (very poor) to 5 (excellent) on how well the agent resolved the user's intent.
+    3) status: "completed" if evaluation was performed, or "skipped" if evaluation could not be performed.
 
-The explanation should always precede the score and should clearly justify the score based on the agent's performance in resolving the user's intent.
+**Status: Skipped**
+If the CONVERSATION_HISTORY or AGENT_RESPONSE is empty or not provided, return status "skipped" immediately without scoring:
+```json
+{"reason": "<explain why evaluation was skipped>", "score": null, "status": "skipped"}
+```
+
+The reasoning should always precede the score and should clearly justify the score based on the agent's performance in resolving the user's intent.
 Response format exactly as follows:
 
 {
-  "explanation": "<15-60 words>",
-  "score": <1-5>
+  "reason": "<15-60 words>",
+  "score": <1-5>,
+  "status": "completed"
 }
 
 EVALUATION STEPS
@@ -94,8 +102,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted a Python one-liner to reverse a string. Agent provided the correct code and a brief, helpful explanation, fully resolving the request with notable conciseness and accuracy.",
-  "score": 5
+  "reason": "User wanted a Python one-liner to reverse a string. Agent provided the correct code and a brief, helpful explanation, fully resolving the request with notable conciseness and accuracy.",
+  "score": 5,
+  "status": "completed"
 }
 
 
@@ -116,8 +125,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted to cancel a meeting. Agent first confirmed details, then successfully completed the cancellation and notified the attendee, fully resolving the intent with excellent clarity and thoroughness.",
-  "score": 5
+  "reason": "User wanted to cancel a meeting. Agent first confirmed details, then successfully completed the cancellation and notified the attendee, fully resolving the intent with excellent clarity and thoroughness.",
+  "score": 5,
+  "status": "completed"
 }
 
 
@@ -132,8 +142,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted a Portuguese translation of 'carpe diem' and a one-sentence explanation. Agent provided an accurate translation and a concise explanation, mostly resolving the intent adequately.",
-  "score": 4
+  "reason": "User wanted a Portuguese translation of 'carpe diem' and a one-sentence explanation. Agent provided an accurate translation and a concise explanation, mostly resolving the intent adequately.",
+  "score": 4,
+  "status": "completed"
 }
 
 
@@ -155,8 +166,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted three practical non-fiction book recommendations on deep work. Agent supplied three relevant titles, confirming they fit the criteria, mostly resolving the intent. Brief justifications for each pick would improve it.",
-  "score": 4
+  "reason": "User wanted three practical non-fiction book recommendations on deep work. Agent supplied three relevant titles, confirming they fit the criteria, mostly resolving the intent. Brief justifications for each pick would improve it.",
+  "score": 4,
+  "status": "completed"
 }
 
 
@@ -171,8 +183,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted a 5-bullet summary of *The Hobbit*'s plot. Agent provided only three bullets, capturing some main events but omitting several pivotal ones and failing to meet the requested count, thus only adequately addressing the intent.",
-  "score": 3
+  "reason": "User wanted a 5-bullet summary of *The Hobbit*'s plot. Agent provided only three bullets, capturing some main events but omitting several pivotal ones and failing to meet the requested count, thus only adequately addressing the intent.",
+  "score": 3,
+  "status": "completed"
 }
 
 
@@ -193,8 +206,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted tomorrow's weather in Tokyo (Celsius). Agent provided temperature and rain chance but omitted wind information, offering an adequate but incomplete resolution of the intent.",
-  "score": 3
+  "reason": "User wanted tomorrow's weather in Tokyo (Celsius). Agent provided temperature and rain chance but omitted wind information, offering an adequate but incomplete resolution of the intent.",
+  "score": 3,
+  "status": "completed"
 }
 
 
@@ -209,8 +223,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted to delete their last email draft. Agent misunderstood the request, offering irrelevant guidance on composing a new email instead of performing the deletion, resulting in a poor resolution.",
-  "score": 2
+  "reason": "User wanted to delete their last email draft. Agent misunderstood the request, offering irrelevant guidance on composing a new email instead of performing the deletion, resulting in a poor resolution.",
+  "score": 2,
+  "status": "completed"
 }
 
 
@@ -231,8 +246,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted an exact calculation of 15% of 80. Agent provided an incorrect result (10.5 instead of 12), leading to a poor resolution of the user's intent.",
-  "score": 2
+  "reason": "User wanted an exact calculation of 15% of 80. Agent provided an incorrect result (10.5 instead of 12), leading to a poor resolution of the user's intent.",
+  "score": 2,
+  "status": "completed"
 }
 
 
@@ -247,8 +263,9 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted to mute notifications for an hour. Agent responded with a completely irrelevant cake recipe, making no attempt to address the user's intent, resulting in a very poor resolution.",
-  "score": 1
+  "reason": "User wanted to mute notifications for an hour. Agent responded with a completely irrelevant cake recipe, making no attempt to address the user's intent, resulting in a very poor resolution.",
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -269,7 +286,8 @@ AGENT_RESPONSE:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "User wanted to set an alarm for 6 am. Agent was dismissive and refused to perform the requested action, completely failing to resolve the user's intent, leading to a very poor resolution.",
-  "score": 1
+  "reason": "User wanted to set an alarm for 6 am. Agent was dismissive and refused to perform the requested action, completely failing to resolve the user's intent, leading to a very poor resolution.",
+  "score": 1,
+  "status": "completed"
 }
 

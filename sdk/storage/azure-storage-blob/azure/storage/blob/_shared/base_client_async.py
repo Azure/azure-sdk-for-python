@@ -36,12 +36,17 @@ from .models import StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     QueueMessagePolicy,
-    StorageContentValidation,
+    RangeHeaderPolicy,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
+    StorageSensitiveHeaderCleanupPolicy,
 )
-from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
+from .policies_async import (
+    AsyncStorageBearerTokenCredentialPolicy,
+    AsyncContentValidationPolicy,
+    AsyncStorageResponseHook,
+)
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
 
@@ -128,9 +133,10 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
-            StorageContentValidation(),
+            AsyncContentValidationPolicy(),
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=hosts, **kwargs),
@@ -142,6 +148,7 @@ class AsyncStorageAccountHostsMixin(object):
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
+            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
@@ -169,6 +176,15 @@ class AsyncStorageAccountHostsMixin(object):
         policies = [StorageHeadersPolicy()]
         if self._credential_policy:
             policies.append(self._credential_policy)  # type: ignore
+
+        for req in reqs:
+            for header_name, header_value in req.headers.items():
+                if header_value is not None:
+                    if "\r" in header_name or "\n" in header_name or "\r" in header_value or "\n" in header_value:
+                        raise ValueError(
+                            f"Invalid header {header_name!r} in batch sub-request: the header name or its value "
+                            r"contains a '\r' or '\n' character, which is not permitted."
+                        )
 
         request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 
@@ -210,7 +226,7 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
-    if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
         return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None

@@ -34,7 +34,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle
-from .._models import ContentSettings, NTFSAttributes
+from .._models import ContentSettings, FileRange, NTFSAttributes
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
@@ -133,6 +133,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
+        data: Optional[bytes] = None,
+        validate_content: Optional[Literal["auto", "crc64", "md5"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -149,7 +152,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_change_time: Optional[Union[str, datetime]] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         max_concurrency: Optional[int] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
@@ -197,7 +200,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         length: Optional[int] = None,
         *,
         max_concurrency: Optional[int] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
         decompress: Optional[bool] = None,
@@ -268,7 +271,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         offset: int,
         length: int,
         *,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         encoding: str = "UTF-8",
@@ -303,6 +306,17 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> List[Dict[str, int]]: ...
+    @distributed_trace
+    def list_ranges(
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FileRange]: ...
     @distributed_trace_async
     async def get_ranges_diff(
         self,
@@ -315,6 +329,19 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FileRange]: ...
     @distributed_trace_async
     async def clear_range(
         self,

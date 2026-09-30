@@ -27,4 +27,3 @@ class TestPrivateDnsManagementPrivateZonesOperationsAsync(AzureMgmtRecordedTestC
         )
         result = [r async for r in response]
         assert result == []
-        

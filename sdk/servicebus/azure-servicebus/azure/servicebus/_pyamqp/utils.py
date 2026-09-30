@@ -23,6 +23,7 @@ TZ_UTC: timezone = timezone.utc
 # This is the lowest value that can be represented by an AMQP timestamp.
 CE_ZERO_SECONDS: int = -62_135_596_800
 
+
 def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param float timestamp: Timestamp in seconds to be converted to datetime.
@@ -125,6 +126,18 @@ def amqp_long_value(value):
 def amqp_uint_value(value):
     # A helper method to wrap a Python int as AMQP uint
     return {TYPE: AMQPTypes.uint, VALUE: value}
+
+
+def amqp_int_value(value):
+    # A helper method to wrap a Python int as AMQP int
+    return {TYPE: AMQPTypes.int, VALUE: value}
+
+
+def amqp_timestamp_value(value):
+    # A helper method to wrap a Python int (milliseconds since the epoch) as an
+    # AMQP timestamp. Used for wire values that fall outside the datetime range,
+    # such as the DateTime.MaxValue sentinel (year 10000).
+    return {TYPE: AMQPTypes.timestamp, VALUE: value}
 
 
 def amqp_string_value(value):

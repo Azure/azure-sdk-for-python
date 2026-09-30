@@ -1,5 +1,157 @@
 # Release History
 
+## 3.0.0b2 (2026-07-28)
+
+### Features Added
+
+  - Client `ChaosManagementClient` added operation group `connections`
+  - Model `PermissionError` added property `error_message`
+  - Model `ScenarioConfigurationProperties` added property `resource_targeting`
+  - Model `ScenarioRunProperties` added property `excluded_resources`
+  - Model `ScenarioRunProperties` added property `resource_snapshot_id`
+  - Model `ValidationProperties` added property `excluded_resources`
+  - Model `ValidationProperties` added property `resources`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_cancelled`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_failed`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_succeeded`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_to_evaluate`
+  - Model `WorkspaceEvaluationProperties` added property `resource_snapshot_id`
+  - Added model `Connection`
+  - Added enum `ConnectionKind`
+  - Added model `ConnectionProperties`
+  - Added enum `ConnectionStatus`
+  - Added model `ResourceTargeting`
+  - Added model `ResourceTargetingCriteria`
+  - Added model `TemplateEvaluationResultItem`
+  - Added model `WorkspaceDiscovery`
+  - Added model `WorkspaceDiscoveryProperties`
+  - Added enum `WorkspaceDiscoveryStatus`
+  - Operation group `ScenarioConfigurationsOperations` added method `begin_execute`
+  - Operation group `ScenarioRunsOperations` added method `begin_cancel`
+  - Operation group `WorkspacesOperations` added method `begin_discover`
+  - Operation group `WorkspacesOperations` added method `begin_evaluate`
+  - Added operation group `ConnectionsOperations`
+
+### Breaking Changes
+
+  - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `exclusions`
+  - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `filters`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_cancelled`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_failed`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_succeeded`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_to_evaluate`
+  - Deleted or renamed model `ConfigurationExclusions`
+  - Deleted or renamed model `ConfigurationFilters`
+  - Deleted or renamed model `ScenarioEvaluationResultItem`
+  - Deleted or renamed method `ScenarioConfigurationsOperations.execute`
+  - Deleted or renamed method `ScenarioRunsOperations.cancel`
+  - Deleted or renamed method `WorkspacesOperations.begin_refresh_recommendations`
+
+## 3.0.0b1 (2026-05-06)
+
+### Features Added
+
+  - Client `ChaosManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ChaosManagementClient` added method `send_request`
+  - Client `ChaosManagementClient` added operation group `private_accesses`
+  - Client `ChaosManagementClient` added operation group `actions`
+  - Client `ChaosManagementClient` added operation group `action_versions`
+  - Client `ChaosManagementClient` added operation group `workspaces`
+  - Client `ChaosManagementClient` added operation group `discovered_resources`
+  - Client `ChaosManagementClient` added operation group `scenarios`
+  - Client `ChaosManagementClient` added operation group `scenario_runs`
+  - Client `ChaosManagementClient` added operation group `scenario_configurations`
+  - Model `ExperimentExecutionDetailsProperties` added property `provisioning_state`
+  - Enum `ProvisioningState` added member `RUNNING`
+  - Added model `Action`
+  - Added model `ActionDependency`
+  - Added enum `ActionDependencyType`
+  - Added enum `ActionKind`
+  - Added enum `ActionLifecycle`
+  - Added model `ActionProperties`
+  - Added model `ActionSupportedTargetType`
+  - Added model `ActionVersion`
+  - Added model `ConfigurationExclusions`
+  - Added model `ConfigurationFilters`
+  - Added model `CustomerDataStorageProperties`
+  - Added model `DiscoveredResource`
+  - Added model `DiscoveredResourceProperties`
+  - Added model `EntraIdentity`
+  - Added model `ExternalResource`
+  - Added model `FixResourcePermissionsRequest`
+  - Added model `OperationError`
+  - Added enum `ParameterType`
+  - Added model `PermissionError`
+  - Added model `PermissionsFix`
+  - Added model `PermissionsFixProperties`
+  - Added enum `PermissionsFixState`
+  - Added model `PermissionsFixSummary`
+  - Added model `PhysicalToLogicalZoneMapping`
+  - Added model `PrivateAccess`
+  - Added model `PrivateAccessPatch`
+  - Added model `PrivateAccessProperties`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccessOption`
+  - Added model `Recommendation`
+  - Added enum `RecommendationStatus`
+  - Added model `ResourceStateError`
+  - Added model `RoleAssignmentError`
+  - Added model `RoleAssignmentResult`
+  - Added enum `RoleAssignmentStatus`
+  - Added model `RunAfter`
+  - Added enum `RunAfterBehavior`
+  - Added model `Scenario`
+  - Added model `ScenarioAction`
+  - Added model `ScenarioConfiguration`
+  - Added model `ScenarioConfigurationProperties`
+  - Added model `ScenarioErrors`
+  - Added model `ScenarioEvaluationResultItem`
+  - Added model `ScenarioParameter`
+  - Added model `ScenarioProperties`
+  - Added model `ScenarioRun`
+  - Added model `ScenarioRunProperties`
+  - Added model `ScenarioRunResource`
+  - Added enum `ScenarioRunState`
+  - Added model `ScenarioRunSummaryAction`
+  - Added enum `ScenarioSummaryState`
+  - Added enum `ScenarioValidationState`
+  - Added model `Validation`
+  - Added model `ValidationProperties`
+  - Added model `Workspace`
+  - Added model `WorkspaceEvaluation`
+  - Added model `WorkspaceEvaluationProperties`
+  - Added enum `WorkspaceEvaluationStatus`
+  - Added model `WorkspaceProperties`
+  - Added model `WorkspaceUpdate`
+  - Added model `ZoneResolutionInfo`
+  - Added model `ZoneResolutionMapping`
+  - Added enum `ZoneResolutionMode`
+  - Added operation group `ActionVersionsOperations`
+  - Added operation group `ActionsOperations`
+  - Added operation group `DiscoveredResourcesOperations`
+  - Added operation group `PrivateAccessesOperations`
+  - Added operation group `ScenarioConfigurationsOperations`
+  - Added operation group `ScenarioRunsOperations`
+  - Added operation group `ScenariosOperations`
+  - Added operation group `WorkspacesOperations`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `CapabilitiesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `CapabilityTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list` changed its parameter `running`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list_all` changed its parameter `running`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `TargetTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `TargetsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0 (2025-06-12)
 
 ### Features Added

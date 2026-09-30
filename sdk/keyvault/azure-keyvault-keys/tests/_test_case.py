@@ -12,7 +12,6 @@ from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
-
 HSM_UNSUPPORTED_VERSIONS = {ApiVersion.V2016_10_01, ApiVersion.V7_0, ApiVersion.V7_1}
 
 
@@ -62,6 +61,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
         hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
+        playback_ekm_external_id = "fake-external-key"
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
         if self.is_live:
@@ -71,9 +71,11 @@ class KeysClientPreparer(AzureRecordedTestCase):
             self.managed_hsm_url = hsm if hsm else None
             if self.managed_hsm_url:
                 self.managed_hsm_url = self.managed_hsm_url.rstrip("/")
+            self.ekm_external_id = os.getenv("EKM_EXTERNAL_ID")
         else:
             self.vault_url = vault_playback_url
             self.managed_hsm_url = hsm_playback_url
+            self.ekm_external_id = playback_ekm_external_id
 
         self._set_mgmt_settings_real_values()
 
@@ -87,7 +89,14 @@ class KeysClientPreparer(AzureRecordedTestCase):
             client = self.create_key_client(endpoint_url, api_version=api_version, **kwargs)
 
             with client:
-                fn(test_class, client, is_hsm=is_hsm, managed_hsm_url=self.managed_hsm_url, vault_url=self.vault_url)
+                fn(
+                    test_class,
+                    client,
+                    is_hsm=is_hsm,
+                    managed_hsm_url=self.managed_hsm_url,
+                    vault_url=self.vault_url,
+                    ekm_external_id=self.ekm_external_id,
+                )
 
         return _preparer
 

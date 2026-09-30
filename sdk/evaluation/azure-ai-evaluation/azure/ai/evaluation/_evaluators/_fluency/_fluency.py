@@ -7,8 +7,11 @@ from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
 
@@ -83,8 +86,8 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._threshold = threshold
         self._higher_is_better = True
 
-        # Initialize input validator
-        self._validator = ConversationValidator(
+        # Initialize input validator — accepts messages OR query/response.
+        self._validator = MessagesOrQueryResponseInputValidator(
             error_target=ErrorTarget.FLUENCY_EVALUATOR,
             requires_query=False,
         )
@@ -149,6 +152,15 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` so the base ``_derive_conversation_converter``
+        can extract per-turn q/r for the judge."""
+        hoist_messages_to_conversation(kwargs)
+        return super()._convert_kwargs_to_eval_input(**kwargs)
 
     @override
     async def _real_call(self, **kwargs):

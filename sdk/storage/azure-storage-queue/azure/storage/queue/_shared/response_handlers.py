@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,7 +21,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from .authentication import AzureSigningError
 from .models import get_enum_value, StorageErrorCode, UserDelegationKey
 from .parser import _to_utc_datetime
-
 
 SV_DOCS_URL = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-services"
 _LOGGER = logging.getLogger(__name__)
@@ -80,7 +80,10 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 
 def return_raw_deserialized(response, *_):
-    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+    return (
+        response.http_response.location_mode,
+        response.context[ContentDecodePolicy.CONTEXT_NAME],
+    )
 
 
 def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
@@ -93,10 +96,21 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         )
     if not storage_error.response or storage_error.response.status_code in [200, 204]:
         raise storage_error
-    # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(
+        # The generated layer now pre-maps 412 (Precondition Failed) responses to typed
+    # exceptions based on the request's match condition (e.g. ResourceExistsError for
+    # IfMissing, ResourceNotFoundError for IfPresent). Historically 412 was not
+    # pre-mapped and always flowed through the error-code mapping below, surfacing as
+    # ResourceModifiedError. Skip the "already serialized" shortcut for 412 so it is
+    # re-mapped from x-ms-error-code (ConditionNotMet -> ResourceModifiedError) and the
+    # public exception type is preserved for users.
+    if storage_error.response.status_code != 412 and isinstance(
         storage_error,
-        (PartialBatchErrorException, ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError),
+        (
+            PartialBatchErrorException,
+            ClientAuthenticationError,
+            ResourceNotFoundError,
+            ResourceExistsError,
+        ),
     ):
         serialized = True
     error_code = storage_error.response.headers.get("x-ms-error-code")
@@ -118,7 +132,8 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
             error_dict = error_body.get("error", {})
         elif not error_code:
             _LOGGER.warning(
-                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.", type(error_body)
+                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.",
+                type(error_body),
             )
             error_dict = {"message": str(error_body)}
 
@@ -135,9 +150,15 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         # This check would be unnecessary if we have already serialized the error
         if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
-            if error_code in [StorageErrorCode.condition_not_met, StorageErrorCode.blob_overwritten]:
+            if error_code in [
+                StorageErrorCode.condition_not_met,
+                StorageErrorCode.blob_overwritten,
+            ]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info, StorageErrorCode.authentication_failed]:
+            if error_code in [
+                StorageErrorCode.invalid_authentication_info,
+                StorageErrorCode.authentication_failed,
+            ]:
                 raise_error = ClientAuthenticationError
             if error_code in [
                 StorageErrorCode.resource_not_found,
@@ -193,11 +214,15 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     error.additional_info = additional_data
     # error.args is what's surfaced on the traceback - show error message in all cases
     error.args = (error.message,)
+
     try:
-        # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")  # pylint: disable=exec-used # nosec
-    except SyntaxError as exc:
-        raise error from exc
+        # `from None` suppresses exception chaining to prevent double printing the exception.
+        raise error from None
+    finally:
+        # Explicitly clears exception references to break circular references
+        # and allow immediate garbage collection.
+        error = None
+        storage_error = None
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
@@ -205,8 +230,16 @@ def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
     internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
     internal_user_delegation_key.signed_delegated_user_tid = service_user_delegation_key.signed_delegated_user_tid
-    internal_user_delegation_key.signed_start = _to_utc_datetime(service_user_delegation_key.signed_start)
-    internal_user_delegation_key.signed_expiry = _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    internal_user_delegation_key.signed_start = (
+        service_user_delegation_key.signed_start
+        if isinstance(service_user_delegation_key.signed_start, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_start)
+    )
+    internal_user_delegation_key.signed_expiry = (
+        service_user_delegation_key.signed_expiry
+        if isinstance(service_user_delegation_key.signed_expiry, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    )
     internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
     internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
     internal_user_delegation_key.value = service_user_delegation_key.value

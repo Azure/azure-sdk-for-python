@@ -23,30 +23,6 @@ from datetime import timezone
 TZ_UTC = timezone.utc
 
 
-class _FixedOffset(datetime.tzinfo):
-    """Fixed offset in minutes east from UTC.
-
-    Copy/pasted from Python doc
-
-    :param int offset: offset in minutes
-    """
-
-    def __init__(self, offset):
-        self.__offset = datetime.timedelta(minutes=offset)
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return str(self.__offset.total_seconds() / 3600)
-
-    def __repr__(self):
-        return "<FixedOffset {}>".format(self.tzname(None))
-
-    def dst(self, dt):
-        return datetime.timedelta(0)
-
-
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
@@ -163,6 +139,57 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+class CaseInsensitiveSet(set):
+    """A set that stores values in their original form but performs
+    case-insensitive lookups via a pre-computed lowercase cache.
+
+    The cache is rebuilt only when the set is mutated, not on every lookup.
+
+    :param data: Initial values for the set.
+    :type data: Iterable[str]
+    """
+
+    def __init__(self, data: Optional[Iterable[str]] = None) -> None:
+        self._lower_to_original: Dict[str, str] = {}
+        self.update(data or [])
+
+    def __contains__(self, item):
+        return item.lower() in self._lower_to_original
+
+    def add(self, item):
+        lower = item.lower()
+        if lower not in self._lower_to_original:
+            super().add(item)
+            self._lower_to_original[lower] = item
+
+    def discard(self, item):
+        lower = item.lower()
+        original = self._lower_to_original.pop(lower, None)
+        if original is not None:
+            super().discard(original)
+
+    def remove(self, item):
+        lower = item.lower()
+        original = self._lower_to_original.pop(lower, None)
+        if original is None:
+            raise KeyError(item)
+        super().remove(original)
+
+    def update(self, *others):
+        for other in others:
+            for item in other:
+                self.add(item)
+
+    def clear(self):
+        super().clear()
+        self._lower_to_original = {}
+
+    def pop(self):
+        result = super().pop()
+        self._lower_to_original.pop(result.lower(), None)
+        return result
 
 
 def get_running_async_lock() -> AsyncContextManager:

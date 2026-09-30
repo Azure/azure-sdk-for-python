@@ -1,0 +1,2 @@
+-e ../../eng/tools/azure-sdk-tools
+jsondiff>=1.2.0

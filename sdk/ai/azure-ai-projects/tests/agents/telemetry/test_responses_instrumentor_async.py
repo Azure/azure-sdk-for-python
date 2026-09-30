@@ -7,6 +7,14 @@
 import os
 import json
 import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_CHAT,
@@ -19,14 +27,6 @@ from azure.ai.projects.telemetry._utils import (
 )
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import RecordedTransport
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
 
 BINARY_DATA_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA"
 
@@ -34,10 +34,10 @@ BINARY_DATA_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA"
 TEST_IMAGE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
-class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
+class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable=too-many-public-methods
     """Tests for ResponsesInstrumentor with real endpoints (async)."""
 
     async def _test_async_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
@@ -59,7 +59,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -134,14 +134,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_non_streaming_with_content_recording_events(self, **kwargs):
         """Test asynchronous non-streaming responses with content recording enabled (event-based messages)."""
         await self._test_async_non_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_non_streaming_with_content_recording_attributes(self, **kwargs):
         """Test asynchronous non-streaming responses with content recording enabled (attribute-based messages)."""
         await self._test_async_non_streaming_with_content_recording_impl(False, **kwargs)
@@ -165,7 +165,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -248,21 +248,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_streaming_with_content_recording_events(self, **kwargs):
         """Test asynchronous streaming responses with content recording enabled (event-based messages)."""
         await self._test_async_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_streaming_with_content_recording_attributes(self, **kwargs):
         """Test asynchronous streaming responses with content recording enabled (attribute-based messages)."""
         await self._test_async_streaming_with_content_recording_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_conversations_create(self, **kwargs):
         """Test asynchronous conversations.create() method."""
         self.cleanup()
@@ -277,7 +277,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -309,7 +308,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
         """Test asynchronous list_conversation_items with content recording enabled."""
         self.cleanup()
@@ -325,7 +324,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -388,7 +387,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    async def _test_async_function_tool_with_content_recording_streaming_impl(
+    async def _test_async_function_tool_with_content_recording_streaming_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing asynchronous function tool usage with content recording (streaming).
@@ -417,7 +416,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -619,21 +618,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_events(self, **kwargs):
         """Test asynchronous function tool usage with content recording enabled (streaming, event-based messages)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_attributes(self, **kwargs):
         """Test asynchronous function tool usage with content recording enabled (streaming, attribute-based messages)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_simple_format_events(self, **kwargs):
         """Test async function tool with content recording, streaming, simple OTEL format (event mode)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(
@@ -642,14 +641,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_with_content_recording_streaming_simple_format_attributes(self, **kwargs):
         """Test async function tool with content recording, streaming, simple OTEL format (attribute mode)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(
             False, use_simple_tool_call_format=True, **kwargs
         )
 
-    async def _test_async_function_tool_without_content_recording_streaming_impl(
+    async def _test_async_function_tool_without_content_recording_streaming_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing asynchronous function tool usage without content recording (streaming).
@@ -678,7 +677,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -874,21 +873,21 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_events(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming, event-based messages)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming, attribute-based messages)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_simple_format_events(self, **kwargs):
         """Test async function tool without content recording, streaming, simple OTEL format (event mode)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(
@@ -897,7 +896,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_function_tool_without_content_recording_streaming_simple_format_attributes(self, **kwargs):
         """Test async function tool without content recording, streaming, simple OTEL format (attribute mode)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(
@@ -906,7 +905,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -924,7 +923,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -1003,7 +1002,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -1021,7 +1020,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -1108,7 +1107,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -1126,7 +1125,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -1209,7 +1208,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1225,7 +1224,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1281,7 +1280,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1297,7 +1296,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1352,7 +1351,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1368,7 +1367,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1423,7 +1422,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1439,7 +1438,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1498,7 +1497,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1514,7 +1513,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1574,7 +1573,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1590,7 +1589,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1649,7 +1648,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -1665,7 +1664,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1724,7 +1723,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -1740,7 +1739,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1803,7 +1802,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -1819,7 +1818,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1883,7 +1882,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -1899,7 +1898,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1962,7 +1961,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -1978,7 +1977,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2041,7 +2040,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -2057,7 +2056,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2124,7 +2123,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -2140,7 +2139,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2207,7 +2206,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -2223,7 +2222,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2290,7 +2289,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -2306,7 +2305,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2373,7 +2372,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -2389,7 +2388,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2456,7 +2455,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -2474,7 +2473,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -2565,7 +2564,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_content_recording(self, **kwargs):
         """Test async responses.stream() method with content recording enabled."""
         self.cleanup()
@@ -2582,7 +2581,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = await client.conversations.create()
 
@@ -2593,7 +2592,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -2646,7 +2645,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_without_content_recording(self, **kwargs):
         """Test async responses.stream() method without content recording."""
         self.cleanup()
@@ -2662,7 +2661,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = await client.conversations.create()
 
@@ -2673,7 +2672,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -2724,7 +2723,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    async def _test_async_responses_stream_method_with_tools_with_content_recording_impl(
+    async def _test_async_responses_stream_method_with_tools_with_content_recording_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async responses.stream() method with function tools and content recording.
@@ -2750,7 +2749,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -2780,7 +2779,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -2811,7 +2810,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -2923,32 +2922,48 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
             assert events_match == True
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_events(self, **kwargs):
         """Test async responses.stream() with tools and content recording (event-based messages)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(True, **kwargs)
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_attributes(self, **kwargs):
         """Test async responses.stream() with tools and content recording (attribute-based messages)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(False, **kwargs)
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_events(self, **kwargs):
         """Test async responses.stream() with tools, content recording, simple OTEL format (event mode)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
             True, use_simple_tool_call_format=True, **kwargs
         )
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(
         self, **kwargs
     ):
@@ -2957,7 +2972,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             False, use_simple_tool_call_format=True, **kwargs
         )
 
-    async def _test_async_responses_stream_method_with_tools_without_content_recording_impl(
+    async def _test_async_responses_stream_method_with_tools_without_content_recording_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async responses.stream() method with function tools without content recording.
@@ -2983,7 +2998,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -3013,7 +3028,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="What\\'s the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -3044,7 +3059,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                async for event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -3156,23 +3171,35 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
             assert events_match == True
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_events(self, **kwargs):
         """Test async responses.stream() with tools, without content recording (event-based messages)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(True, **kwargs)
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_attributes(self, **kwargs):
         """Test async responses.stream() with tools, without content recording (attribute-based messages)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(False, **kwargs)
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(
         self, **kwargs
     ):
@@ -3181,9 +3208,13 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             True, use_simple_tool_call_format=True, **kwargs
         )
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(
         self, **kwargs
     ):
@@ -3198,8 +3229,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_async_workflow_agent_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3213,8 +3246,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             # Create a simple workflow agent
@@ -3237,7 +3269,7 @@ trigger:
             openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
-            response = await openai_client.responses.create(
+            _ = await openai_client.responses.create(
                 conversation=conversation.id,
                 extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
@@ -3315,8 +3347,10 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_async_workflow_agent_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3330,8 +3364,7 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -3353,7 +3386,7 @@ trigger:
             openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
-            response = await openai_client.responses.create(
+            _ = await openai_client.responses.create(
                 conversation=conversation.id,
                 extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
@@ -3438,8 +3471,10 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_streaming_with_content_recording(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_async_workflow_agent_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3453,8 +3488,7 @@ trigger:
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -3559,8 +3593,10 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_streaming_without_content_recording(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_async_workflow_agent_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3574,8 +3610,7 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -3708,7 +3743,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -3793,21 +3828,21 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_events(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, event-based messages)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_attributes(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, attribute-based messages)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_simple_format_events(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, simple OTEL format, event mode)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(
@@ -3816,7 +3851,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_non_streaming_simple_format_attributes(self, **kwargs):
         """Test async prompt agent with responses (non-streaming, simple OTEL format, attribute mode)."""
         await self._test_async_prompt_agent_with_responses_non_streaming_impl(
@@ -3846,7 +3881,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -3940,21 +3975,21 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_events(self, **kwargs):
         """Test async prompt agent with responses (streaming, event-based messages)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_attributes(self, **kwargs):
         """Test async prompt agent with responses (streaming, attribute-based messages)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_simple_format_events(self, **kwargs):
         """Test async prompt agent with responses (streaming, simple OTEL format, event mode)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(
@@ -3963,9 +3998,160 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_prompt_agent_with_responses_streaming_simple_format_attributes(self, **kwargs):
         """Test async prompt agent with responses (streaming, simple OTEL format, attribute mode)."""
         await self._test_async_prompt_agent_with_responses_streaming_impl(
             False, use_simple_tool_call_format=True, **kwargs
         )
+
+    # --- with_raw_response + streaming tests ---
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
+    async def test_async_with_raw_response_streaming_with_content_recording(self, **kwargs):
+        """Test async with_raw_response.create(stream=True) with content recording enabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("foundry_model_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            conversation = await client.conversations.create()
+
+            raw = await client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            if hasattr(stream, "__await__"):
+                stream = await stream
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
+    async def test_async_with_raw_response_streaming_without_content_recording(self, **kwargs):
+        """Test async with_raw_response.create(stream=True) with content recording disabled."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "False",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("foundry_model_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            conversation = await client.conversations.create()
+
+            raw = await client.responses.with_raw_response.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input="Say hello in one word",
+                stream=True,
+            )
+
+            # Raw response interface must be preserved
+            assert hasattr(raw, "parse"), "Result should have .parse() method"
+            assert hasattr(raw, "headers"), "Result should have .headers attribute"
+
+            # Parse and consume the stream
+            stream = raw.parse()
+            if hasattr(stream, "__await__"):
+                stream = await stream
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+
+            full_content = "".join(accumulated_content)
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.input.messages", ""),
+            ("gen_ai.output.messages", ""),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Verify content is omitted when content recording is disabled
+        input_messages = json.loads(span.attributes["gen_ai.input.messages"])
+        assert len(input_messages) == 1
+        assert input_messages[0]["role"] == "user"
+        assert "content" not in input_messages[0]["parts"][0]
+
+        output_messages = json.loads(span.attributes["gen_ai.output.messages"])
+        assert len(output_messages) == 1
+        assert output_messages[0]["role"] == "assistant"
+        assert "content" not in output_messages[0]["parts"][0]

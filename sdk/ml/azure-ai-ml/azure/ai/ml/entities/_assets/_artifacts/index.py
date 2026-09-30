@@ -13,7 +13,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._system_data import RestSystemData, SystemData
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -86,9 +86,7 @@ class Index(Artifact):
             stage=index_rest_object.stage,
             path=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
-            creation_context=SystemData._from_rest_object(
-                RestSystemData.from_dict(index_rest_object.system_data.as_dict())
-            ),
+            creation_context=SystemData._from_rest_object(index_rest_object.system_data),
         )
 
     def _to_rest_object(self) -> RestIndex:

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,6 +18,11 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
 from ._operations import _ConfidentialLedgerClientOperationsMixin
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 
 class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
     """Write and retrieve ledger entries against the Confidential Ledger service.
@@ -26,9 +31,9 @@ class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
      `https://contoso.confidentialledger.azure.com <https://contoso.confidentialledger.azure.com>`_.
      Required.
     :type ledger_endpoint: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-12-09-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-02-23"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -52,9 +57,7 @@ class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(
-                    disable_redirect_cleanup=True, **kwargs
-                ) if self._config.redirect_policy else None,
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)

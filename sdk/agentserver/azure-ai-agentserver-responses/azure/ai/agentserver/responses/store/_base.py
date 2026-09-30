@@ -1,0 +1,181 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+"""Persistence abstraction for response execution and replay state."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
+
+from ..models import _generated as _generated_models
+
+if TYPE_CHECKING:
+    from .._response_context import PlatformContext
+
+
+class ResponseAlreadyExistsError(Exception):
+    """Raised by a response-store provider when ``create_response`` is called for
+    a ``response_id`` that already has a non-deleted entry.
+
+    Callers should treat this as the idempotent-create signal: the response is
+    already persisted from a prior attempt (typically a recovered handler
+    re-emitting ``response.created``), and there is no need to write again.
+    Continue execution toward the terminal ``update_response``.
+
+    :param response_id: The response identifier that already exists.
+    :type response_id: str
+    """
+
+    def __init__(self, response_id: str) -> None:
+        super().__init__(f"response '{response_id}' already exists")
+        self.response_id = response_id
+
+
+class ResponseStoreCorruptionError(RuntimeError):
+    """Raised when a persisted response envelope exists but its backing data is
+    incomplete or corrupt (e.g. an ``output[]`` item file referenced by the
+    envelope is missing).
+
+    This is deliberately **distinct from not-found**: the response WAS persisted
+    (it was resiliently created), so callers must surface a server/storage error
+    rather than a 404, and recovery must treat it as transient corruption rather
+    than the "never persisted" drop signal. Subclasses :class:`RuntimeError` so
+    existing broad ``RuntimeError`` handling continues to apply.
+    """
+
+
+@runtime_checkable
+class ResponseProviderProtocol(Protocol):
+    """Protocol for response storage providers.
+
+    Implementations provide response envelope storage plus input/history item lookup.
+
+    Every operation accepts an optional ``context`` parameter (S-018).
+    Implementations MUST use it to partition data in multi-tenant
+    deployments.  When ``None``, the provider operates without tenant
+    scoping (suitable for local development).
+    """
+
+    async def create_response(
+        self,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
+        history_item_ids: Iterable[str] | None,
+        *,
+        context: PlatformContext | None = None,
+    ) -> None:
+        """Persist a new response envelope and optional input/history references.
+
+        :param response: The response envelope to persist.
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :param input_items: Optional resolved output items to associate with the response.
+        :type input_items: Iterable[OutputItem] | None
+        :param history_item_ids: Optional history item IDs to link to the response.
+        :type history_item_ids: Iterable[str] | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :rtype: None
+        """
+
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
+        """Load one response envelope by ID.
+
+        :param response_id: The unique identifier of the response to retrieve.
+        :type response_id: str
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :returns: The response envelope matching the given ID.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :raises KeyError: If the response does not exist.
+        """
+        ...
+
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
+        """Persist an updated response envelope.
+
+        :param response: The response envelope with updated fields to persist.
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :rtype: None
+        """
+
+    async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
+        """Delete a response envelope by ID.
+
+        :param response_id: The unique identifier of the response to delete.
+        :type response_id: str
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :rtype: None
+        :raises KeyError: If the response does not exist.
+        """
+
+    async def get_input_items(
+        self,
+        response_id: str,
+        limit: int = 20,
+        ascending: bool = False,
+        after: str | None = None,
+        before: str | None = None,
+        *,
+        context: PlatformContext | None = None,
+    ) -> list[_generated_models.OutputItem]:
+        """Get response input/history items for one response ID using cursor pagination.
+
+        :param response_id: The unique identifier of the response whose items to fetch.
+        :type response_id: str
+        :param limit: Maximum number of items to return. Defaults to 20.
+        :type limit: int
+        :param ascending: Whether to return items in ascending order. Defaults to False.
+        :type ascending: bool
+        :param after: Cursor ID; only return items after this ID.
+        :type after: str | None
+        :param before: Cursor ID; only return items before this ID.
+        :type before: str | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :returns: A list of output items matching the pagination criteria.
+        :rtype: list[OutputItem]
+        """
+        ...
+
+    async def get_items(
+        self, item_ids: Iterable[str], *, context: PlatformContext | None = None
+    ) -> list[_generated_models.OutputItem | None]:
+        """Get items by ID (missing IDs produce ``None`` entries).
+
+        :param item_ids: The item identifiers to look up.
+        :type item_ids: Iterable[str]
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :returns: A list of output items in the same order as *item_ids*; missing items are ``None``.
+        :rtype: list[OutputItem | None]
+        """
+        ...
+
+    async def get_history_item_ids(
+        self,
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        limit: int,
+        *,
+        context: PlatformContext | None = None,
+    ) -> list[str]:
+        """Get history item IDs for a conversation chain scope.
+
+        :param previous_response_id: Optional response ID to chain history from.
+        :type previous_response_id: str | None
+        :param conversation_id: Optional conversation ID to scope history lookup.
+        :type conversation_id: str | None
+        :param limit: Maximum number of history item IDs to return, or -1 for all items.
+        :type limit: int
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
+        :returns: An ordered list of unique history item IDs within the given scope.
+        :rtype: list[str]
+        """
+        ...

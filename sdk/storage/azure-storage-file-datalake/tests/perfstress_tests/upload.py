@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._test_base import _FileTest
+from devtools_testutils.perfstress_tests import AsyncRandomStream, RandomStream
 
-from devtools_testutils.perfstress_tests import RandomStream
-from devtools_testutils.perfstress_tests import AsyncRandomStream
+from ._test_base import _FileTest
 
 
 class UploadTest(_FileTest):
@@ -18,15 +17,11 @@ class UploadTest(_FileTest):
     def run_sync(self):
         self.upload_stream.reset()
         self.file_client.upload_data(
-            self.upload_stream,
-            length=self.args.size,
-            overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream, length=self.args.size, overwrite=True, max_concurrency=self.args.max_concurrency
+        )
 
     async def run_async(self):
         self.upload_stream_async.reset()
         await self.async_file_client.upload_data(
-            self.upload_stream_async,
-            length=self.args.size,
-            overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream_async, length=self.args.size, overwrite=True, max_concurrency=self.args.max_concurrency
+        )

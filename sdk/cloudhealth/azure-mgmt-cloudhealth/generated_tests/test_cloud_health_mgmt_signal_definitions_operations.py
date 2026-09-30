@@ -32,8 +32,8 @@ class TestCloudHealthMgmtSignalDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_signal_definitions_create_or_update(self, resource_group):
-        response = self.client.signal_definitions.create_or_update(
+    def test_signal_definitions_begin_create_or_update(self, resource_group):
+        response = self.client.signal_definitions.begin_create_or_update(
             resource_group_name=resource_group.name,
             health_model_name="str",
             signal_definition_name="str",
@@ -51,19 +51,19 @@ class TestCloudHealthMgmtSignalDefinitionsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_signal_definitions_delete(self, resource_group):
-        response = self.client.signal_definitions.delete(
+    def test_signal_definitions_begin_delete(self, resource_group):
+        response = self.client.signal_definitions.begin_delete(
             resource_group_name=resource_group.name,
             health_model_name="str",
             signal_definition_name="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

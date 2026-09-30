@@ -7,6 +7,8 @@ description: Automatically fix pylint issues in azure-ai-ml package following Az
 
 This skill automatically fixes pylint warnings in the azure-ai-ml package by analyzing existing code patterns and applying fixes with 100% confidence based on GitHub issues.
 
+> **Scope:** Fix **only mandatory/blocking issues** — warnings that will cause CI to fail. Leave optional/informational warnings as-is.
+
 ## Overview
 
 Intelligently fixes pylint issues by:
@@ -19,29 +21,24 @@ Intelligently fixes pylint issues by:
 7. Searching codebase for existing patterns to follow
 8. Applying fixes only with 100% confidence
 9. Re-running pylint to verify fixes
-10. Creating a pull request that references the GitHub issue
-11. Providing a summary of what was fixed
+10. Providing a summary of what was fixed
 
 ## Running Pylint
 
-**Command for entire package:**
+**Command:**
 ```powershell
 cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root .
+azpysdk pylint .
 ```
 
-**Command for specific file/module:**
-```powershell
-cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- path/to/file.py
-```
+> **Note:** `azpysdk` runs at the package level only. To focus on specific files, run the full check and filter the output by file path.
 
 ## Reference Documentation
 
 - [Azure SDK Python Pylint Guidelines](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
 - [Official Pylint Documentation](https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html)
 - [Azure SDK Python Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox Formatting Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 ## Fixing Strategy
 
@@ -92,23 +89,17 @@ pip install -e .
 
 Based on the GitHub issue details, determine which files to check:
 
-**Option A - Issue specifies files:**
+**Option A - Run pylint on the package and filter output:**
 ```powershell
 # Ensure you're in azure-ai-ml directory (within activated venv)
 cd sdk/ml/azure-ai-ml
 
-# Run pylint on specific files mentioned in the issue (within activated venv)
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- path/to/specific_file.py
+# Run pylint on the full package, then filter output for files from the issue
+azpysdk pylint .
+# Review output for warnings in the specific files/modules mentioned in the issue
 ```
 
-**Option B - Issue mentions module/directory:**
-```powershell
-# Run pylint on specific module (within activated venv)
-cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- azure/ai/ml/specific_module/
-```
-
-**Option C - Check modified files (if no specific target):**
+**Option B - Check modified files (if no specific target):**
 ```powershell
 git diff --name-only HEAD | Select-String "sdk/ml/azure-ai-ml"
 git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
@@ -122,8 +113,9 @@ git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
 # Navigate to azure-ai-ml directory
 cd sdk/ml/azure-ai-ml
 
-# Run pylint targeting the specific area from the issue (within activated venv)
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- <target-from-issue>
+# Run pylint on the package (within activated venv)
+azpysdk pylint .
+# Filter output for the specific files/modules from the issue
 ```
 
 ### Step 5: Analyze Warnings
@@ -146,6 +138,8 @@ Use the existing code patterns to ensure consistency.
 
 ### Step 7: Apply Fixes (ONLY if 100% confident)
 
+> **Fix only mandatory/blocking issues.** Skip optional or informational warnings that do not cause CI failure.
+
 **ALLOWED ACTIONS:**
  Fix warnings with 100% confidence
  Use existing file patterns as reference
@@ -161,14 +155,14 @@ Use the existing code patterns to ensure consistency.
  Change code style without clear reason
  Delete code without clear justification
 
-### Step 7: Verify Fixes
+### Step 8: Verify Fixes
 
 Re-run pylint to ensure:
 - The warning is resolved
 - No new warnings were introduced
 - The code still functions correctly
 
-### Step 8: Summary
+### Step 9: Summary
 
 Provide a summary:
 - GitHub issue being addressed
@@ -176,67 +170,6 @@ Provide a summary:
 - Number of warnings remaining
 - Types of fixes applied
 - Any warnings that need manual review
-
-### Step 9: Create Pull Request
-
-After successfully fixing pylint issues, create a pull request:
-
-**Stage and commit the changes:**
-```powershell
-# Stage all modified files
-git add .
-
-# Create a descriptive commit message referencing the issue
-git commit -m "fix(azure-ai-ml): resolve pylint warnings (#<issue-number>)
-
-- Fixed <list specific types of warnings>
-- Updated <files/modules affected>
-- All pylint checks now pass
-
-Closes #<issue-number>"
-```
-
-**Create pull request using GitHub CLI or MCP server:**
-
-Option 1 - Using GitHub CLI (if available):
-```powershell
-# Create a new branch
-$branchName = "fix/azure-ai-ml-pylint-<issue-number>"
-git checkout -b $branchName
-
-# Push the branch
-git push origin $branchName
-
-# Create PR using gh CLI
-gh pr create `
-  --title "fix(azure-ai-ml): Resolve pylint warnings (#<issue-number>)" `
-  --body "## Description
-This PR fixes pylint warnings in the azure-ai-ml package as reported in #<issue-number>.
-
-## Changes
-- Fixed pylint warnings following Azure SDK Python guidelines
-- Ensured consistency with existing code patterns
-- Targeted fixes for: <specific files/modules from issue>
-- All pylint checks now pass for the affected areas
-
-## Testing
-- [x] Ran pylint on affected files and verified all warnings are resolved
-- [x] No new warnings introduced
-- [x] Verified fixes follow existing code patterns
-
-## Related Issues
-Fixes #<issue-number>" `
-  --base main `
-  --repo Azure/azure-sdk-for-python
-```
-
-Option 2 - Manual PR creation (if GitHub CLI not available):
-1. Push branch: `git push origin <branch-name>`
-2. Navigate to: https://github.com/Azure/azure-sdk-for-python/compare/main...<branch-name>
-3. Create the pull request manually with the description above
-
-Option 3 - Using GitHub MCP server (if available):
-Use the GitHub MCP tools to create a pull request programmatically against the Azure/azure-sdk-for-python repository, main branch.
 
 ## Common Pylint Issues and Fixes
 
@@ -295,35 +228,22 @@ pip install -e .
 # 2. Identify target from issue
 $targetFile = "azure/ai/ml/operations/job_operations.py"
 
-# 3. Run pylint on specific file
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- $targetFile
+# 3. Run pylint on the package and check output for target file
+azpysdk pylint .
+# Filter output for warnings in $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #12345
 
 # 5. Search for existing patterns in codebase
-grep -r "similar_pattern" azure/ai/ml/
+Get-ChildItem -Recurse azure/ai/ml/ | Select-String "similar_pattern"
 
 # 6. Apply fixes to identified files
 
 # 7. Re-run pylint to verify
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- $targetFile
+azpysdk pylint .
 
 # 8. Report results
-
-# 9. Create PR referencing the issue
-$branchName = "fix/azure-ai-ml-pylint-12345"
-git checkout -b $branchName
-git add .
-git commit -m "fix(azure-ai-ml): resolve pylint warnings (#12345)
-
-Closes #12345"
-git push origin $branchName
-gh pr create `
-  --title "fix(azure-ai-ml): Resolve pylint warnings (#12345)" `
-  --body "Fixes #12345" `
-  --base main `
-  --repo Azure/azure-sdk-for-python
 ```
 
 ## Notes
@@ -333,4 +253,3 @@ gh pr create `
 - If unsure about a fix, mark it for manual review
 - Some warnings may require architectural changes - don't force fixes
 - Test the code after fixing to ensure functionality is preserved
-- Always reference the GitHub issue in commits and PRs

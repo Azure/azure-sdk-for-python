@@ -1,5 +1,61 @@
 # Release History
 
+## 3.0.0b1 (2026-04-03)
+
+### Features Added
+
+  - Client `AzureMapsManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureMapsManagementClient` added method `send_request`
+  - Client `AzureMapsManagementClient` added operation group `private_link_resources`
+  - Client `AzureMapsManagementClient` added operation group `private_endpoint_connections`
+  - Client `AzureMapsManagementClient` added operation group `operation_result`
+  - Client `AzureMapsManagementClient` added operation group `operation_status`
+  - Model `CreatorProperties` added property `total_storage_unit_size_in_bytes`
+  - Model `CreatorProperties` added property `consumed_storage_unit_size_in_bytes`
+  - Model `CustomerManagedKeyEncryptionKeyIdentity` added property `federated_client_id`
+  - Model `MapsAccountProperties` added property `locations`
+  - Model `MapsAccountProperties` added property `private_endpoint_connections`
+  - Model `MapsAccountProperties` added property `public_network_access`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `LocationsItem`
+  - Added model `Operation`
+  - Added model `OperationStatusResult`
+  - Added enum `Origin`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `ProxyResource`
+  - Added enum `PublicNetworkAccess`
+  - Added operation group `OperationResultOperations`
+  - Added operation group `OperationStatusOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `CreatorUpdateParameters` moved instance variable `provisioning_state` and `storage_units` under property `properties` whose type is `CreatorProperties`
+  - Deleted or renamed enum value `Kind.GEN1`
+  - Model `MapsAccountUpdateParameters` moved instance variable `unique_id`, `disable_local_auth`, `provisioning_state`, `linked_resources`, `cors` and `encryption` under property `properties` whose type is `MapsAccountProperties`
+  - Deleted or renamed enum value `Name.S0`
+  - Deleted or renamed enum value `Name.S1`
+  - Deleted or renamed model `Dimension`
+  - Deleted or renamed model `MetricSpecification`
+  - Deleted or renamed model `OperationDetail`
+  - Deleted or renamed model `ServiceSpecification`
+  - Deleted or renamed method `MapsOperations.list_subscription_operations`
+
+### Other Changes
+
+  - Deleted model `CreatorList`/`MapsAccounts`/`MapsOperations` which actually were not used by SDK users
+
 ## 2.1.0 (2023-09-11)
 
 ### Features Added

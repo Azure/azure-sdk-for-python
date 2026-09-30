@@ -42,6 +42,10 @@ class _Constants:
     # whether to apply timeout to the whole logical operation or just a page request
     TimeoutScope: Literal["timeoutScope"] = "timeoutScope"
 
+    # Request options key for the container resource ID (used to set the
+    # x-ms-cosmos-intended-collection-rid header for container-recreate detection).
+    ContainerRID: Literal["containerRID"] = "containerRID"
+
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
@@ -86,6 +90,12 @@ class _Constants:
     TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT: int = 10
     # -------------------------------------------------------------------------
 
+    # Controls how the SDK handles invalid UTF-8 bytes in HTTP response bodies.
+    # Accepted values: "REPLACE", "IGNORE". Anything else (including unset)
+    # leaves strict decoding in effect, which is the historical default.
+    CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT: str = \
+        "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
+
     # Error code translations
     ERROR_TRANSLATIONS: dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",
@@ -111,6 +121,10 @@ class _Constants:
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
         AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
+        READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
+        """Socket read timeout in seconds. Used either at client level or request level."""
+        TIMEOUT: Literal["timeout"] = "timeout"
+        """Absolute timeout in seconds for the combined HTTP request and response processing."""
 
     class UserAgentFeatureFlags(IntEnum):
         """

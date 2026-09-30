@@ -80,7 +80,7 @@ authors = [
 ]
 description = "This package will be released in the near future. Stay tuned!"
 keywords = ["azure", "azure sdk"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "MIT"
 version = "{package_version}"
 classifiers = [
@@ -88,7 +88,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

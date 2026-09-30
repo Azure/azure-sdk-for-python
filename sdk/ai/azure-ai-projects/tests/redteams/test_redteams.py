@@ -4,15 +4,14 @@
 # ------------------------------------
 
 import pytest
-from azure.ai.projects import AIProjectClient
+from test_base import TestBase, servicePreparer
+from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import (
     RedTeam,
     AzureOpenAIModelConfiguration,
     AttackStrategy,
     RiskCategory,
 )
-from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy
 
 
 @pytest.mark.skip(
@@ -31,7 +30,6 @@ class TestRedTeams(TestBase):
 
         with self.create_client(**kwargs) as project_client:
 
-            # [START red_team_sample]
             print("Creating a Red Team scan for direct model testing")
 
             # Create target configuration for testing an Azure OpenAI model

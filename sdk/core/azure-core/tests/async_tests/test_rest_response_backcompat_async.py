@@ -4,14 +4,17 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
+
 import pytest
 import pytest_asyncio
+from rest_client_async import AsyncMockRestClient
+
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import Pipeline
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport, TrioRequestsTransport
-from rest_client_async import AsyncMockRestClient
 
 TRANSPORTS = [AioHttpTransport, AsyncioRequestsTransport]
 
@@ -31,7 +34,6 @@ async def get_old_response(old_request):
 
 
 @pytest.fixture
-@pytest.mark.trio
 async def get_old_response_trio(old_request):
     async def _callback(**kwargs):
         async with TrioRequestsTransport() as sender:
@@ -55,7 +57,6 @@ async def get_new_response(new_request):
 
 
 @pytest.fixture
-@pytest.mark.trio
 async def get_new_response_trio(new_request):
     async def _callback(**kwargs):
         async with TrioRequestsTransport() as sender:

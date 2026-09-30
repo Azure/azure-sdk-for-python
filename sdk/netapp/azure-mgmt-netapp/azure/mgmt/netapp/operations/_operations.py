@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import NetAppManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_net_app_resource_quota_limits_account_get_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_net_app_resource_quota_limits_account_list_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +128,7 @@ def build_volume_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +158,7 @@ def build_volume_groups_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +188,7 @@ def build_volume_groups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}"
     path_format_arguments = {
@@ -213,7 +212,7 @@ def build_volume_groups_list_by_net_app_account_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,7 +245,7 @@ def build_backups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,7 +281,7 @@ def build_backups_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -320,7 +319,7 @@ def build_backups_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -356,7 +355,7 @@ def build_backups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
     path_format_arguments = {
@@ -387,7 +386,7 @@ def build_backups_list_by_vault_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -418,7 +417,7 @@ def build_backups_get_latest_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -448,7 +447,7 @@ def build_backups_get_volume_latest_restore_status_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -478,7 +477,7 @@ def build_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -509,7 +508,7 @@ def build_volumes_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -542,7 +541,7 @@ def build_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -580,7 +579,7 @@ def build_volumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}"
     path_format_arguments = {
@@ -607,7 +606,7 @@ def build_volumes_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -636,7 +635,7 @@ def build_volumes_populate_availability_zone_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +666,7 @@ def build_volumes_revert_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/revert"
     path_format_arguments = {
@@ -695,7 +694,7 @@ def build_volumes_reset_cifs_password_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/resetCifsPassword"
     path_format_arguments = {
@@ -720,7 +719,7 @@ def build_volumes_split_clone_from_parent_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -751,7 +750,7 @@ def build_volumes_break_file_locks_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/breakFileLocks"
     path_format_arguments = {
@@ -781,7 +780,7 @@ def build_volumes_list_get_group_id_list_for_ldap_user_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -814,7 +813,7 @@ def build_volumes_break_replication_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/breakReplication"
     path_format_arguments = {
@@ -844,7 +843,7 @@ def build_volumes_reestablish_replication_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reestablishReplication"
     path_format_arguments = {
@@ -873,7 +872,7 @@ def build_volumes_replication_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +903,7 @@ def build_volumes_list_replications_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -935,7 +934,7 @@ def build_volumes_resync_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/resyncReplication"
     path_format_arguments = {
@@ -959,7 +958,7 @@ def build_volumes_delete_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/deleteReplication"
     path_format_arguments = {
@@ -985,7 +984,7 @@ def build_volumes_authorize_replication_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/authorizeReplication"
     path_format_arguments = {
@@ -1013,7 +1012,7 @@ def build_volumes_re_initialize_replication_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reinitializeReplication"
     path_format_arguments = {
@@ -1039,7 +1038,7 @@ def build_volumes_peer_external_cluster_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1071,7 +1070,7 @@ def build_volumes_authorize_external_replication_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1100,7 +1099,7 @@ def build_volumes_finalize_external_replication_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/finalizeExternalReplication"
     path_format_arguments = {
@@ -1124,7 +1123,7 @@ def build_volumes_perform_replication_transfer_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/performReplicationTransfer"
     path_format_arguments = {
@@ -1150,7 +1149,7 @@ def build_volumes_pool_change_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/poolChange"
     path_format_arguments = {
@@ -1180,7 +1179,7 @@ def build_volumes_relocate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/relocate"
     path_format_arguments = {
@@ -1208,7 +1207,7 @@ def build_volumes_finalize_relocation_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/finalizeRelocation"
     path_format_arguments = {
@@ -1232,7 +1231,7 @@ def build_volumes_revert_relocation_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/revertRelocation"
     path_format_arguments = {
@@ -1258,7 +1257,7 @@ def build_volumes_list_quota_report_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1296,7 +1295,7 @@ def build_snapshots_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1334,7 +1333,7 @@ def build_snapshots_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1374,7 +1373,7 @@ def build_snapshots_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1412,7 +1411,7 @@ def build_snapshots_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"
     path_format_arguments = {
@@ -1438,7 +1437,7 @@ def build_snapshots_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1475,7 +1474,7 @@ def build_snapshots_restore_files_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles"
     path_format_arguments = {
@@ -1505,7 +1504,7 @@ def build_snapshot_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1535,7 +1534,7 @@ def build_snapshot_policies_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1567,7 +1566,7 @@ def build_snapshot_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1597,7 +1596,7 @@ def build_snapshot_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}"
     path_format_arguments = {
@@ -1621,7 +1620,7 @@ def build_snapshot_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1649,7 +1648,7 @@ def build_snapshot_policies_list_volumes_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1678,7 +1677,7 @@ def build_backup_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1708,7 +1707,7 @@ def build_backup_policies_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1740,7 +1739,7 @@ def build_backup_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1770,7 +1769,7 @@ def build_backup_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"
     path_format_arguments = {
@@ -1794,7 +1793,7 @@ def build_backup_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1828,7 +1827,7 @@ def build_volume_quota_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1866,7 +1865,7 @@ def build_volume_quota_rules_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1906,7 +1905,7 @@ def build_volume_quota_rules_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1944,7 +1943,7 @@ def build_volume_quota_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"
     path_format_arguments = {
@@ -1970,7 +1969,7 @@ def build_volume_quota_rules_list_by_volume_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2006,7 +2005,7 @@ def build_ransomware_reports_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2037,7 +2036,7 @@ def build_ransomware_reports_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2074,7 +2073,7 @@ def build_ransomware_reports_clear_suspects_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/ransomwareReports/{ransomwareReportName}/clearSuspects"
     path_format_arguments = {
@@ -2104,7 +2103,7 @@ def build_backup_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2134,7 +2133,7 @@ def build_backup_vaults_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2166,7 +2165,7 @@ def build_backup_vaults_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2196,7 +2195,7 @@ def build_backup_vaults_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}"
     path_format_arguments = {
@@ -2220,7 +2219,7 @@ def build_backup_vaults_list_by_net_app_account_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2242,13 +2241,2039 @@ def build_backup_vaults_list_by_net_app_account_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_buckets_get_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_create_or_update_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_update_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_delete_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_buckets_list_request(
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_generate_credentials_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}/generateCredentials"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_generate_akv_credentials_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}/generateAkvCredentials"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_buckets_refresh_certificate_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    bucket_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}/refreshCertificate"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "bucketName": _SERIALIZER.url("bucket_name", bucket_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_caches_get_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_create_or_update_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_update_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_delete_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_caches_list_request(
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_list_peering_passphrases_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}/listPeeringPassphrases"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_pool_change_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}/poolChange"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_caches_reset_smb_password_request(
+    resource_group_name: str, account_name: str, pool_name: str, cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}/resetSmbPassword"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "cacheName": _SERIALIZER.url("cache_name", cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_accounts_get_request(
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_accounts_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_accounts_update_request(
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_accounts_delete_request(
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_accounts_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts"
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_accounts_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/elasticAccounts"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_get_request(
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_capacity_pools_list_by_elastic_account_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_change_zone_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/changeZone"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_capacity_pools_check_volume_file_path_availability_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/checkVolumeFilePathAvailability"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_volumes_get_request(
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_volumes_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_volumes_update_request(
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_volumes_delete_request(
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_volumes_list_by_elastic_pool_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_volumes_revert_request(
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}/revert"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshots_get_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    snapshot_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}/elasticSnapshots/{snapshotName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshots_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    snapshot_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}/elasticSnapshots/{snapshotName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshots_delete_request(
+    resource_group_name: str,
+    account_name: str,
+    pool_name: str,
+    volume_name: str,
+    snapshot_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}/elasticSnapshots/{snapshotName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_snapshots_list_by_elastic_volume_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, pool_name: str, volume_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticCapacityPools/{poolName}/elasticVolumes/{volumeName}/elasticSnapshots"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "poolName": _SERIALIZER.url("pool_name", pool_name, "str"),
+        "volumeName": _SERIALIZER.url("volume_name", volume_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshot_policies_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, snapshot_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies/{snapshotPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "snapshotPolicyName": _SERIALIZER.url("snapshot_policy_name", snapshot_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshot_policies_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, snapshot_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies/{snapshotPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "snapshotPolicyName": _SERIALIZER.url("snapshot_policy_name", snapshot_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshot_policies_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, snapshot_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies/{snapshotPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "snapshotPolicyName": _SERIALIZER.url("snapshot_policy_name", snapshot_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshot_policies_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, snapshot_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies/{snapshotPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "snapshotPolicyName": _SERIALIZER.url("snapshot_policy_name", snapshot_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_snapshot_policies_list_by_elastic_account_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_snapshot_policies_list_elastic_volumes_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, snapshot_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticSnapshotPolicies/{snapshotPolicyName}/elasticvolumes"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "snapshotPolicyName": _SERIALIZER.url("snapshot_policy_name", snapshot_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_vaults_get_request(
+    resource_group_name: str, account_name: str, backup_vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_vaults_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_vaults_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_vaults_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_backup_vaults_list_by_elastic_account_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_policies_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupPolicies/{backupPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_policies_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupPolicies/{backupPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_policies_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupPolicies/{backupPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backup_policies_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_policy_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupPolicies/{backupPolicyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_backup_policies_list_by_elastic_account_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupPolicies"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backups_get_request(
+    resource_group_name: str,
+    account_name: str,
+    backup_vault_name: str,
+    backup_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}/elasticBackups/{backupName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backups_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    account_name: str,
+    backup_vault_name: str,
+    backup_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}/elasticBackups/{backupName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backups_update_request(
+    resource_group_name: str,
+    account_name: str,
+    backup_vault_name: str,
+    backup_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}/elasticBackups/{backupName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_elastic_backups_delete_request(
+    resource_group_name: str,
+    account_name: str,
+    backup_vault_name: str,
+    backup_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}/elasticBackups/{backupName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_elastic_backups_list_by_vault_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, backup_vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/elasticAccounts/{accountName}/elasticBackupVaults/{backupVaultName}/elasticBackups"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "backupVaultName": _SERIALIZER.url("backup_vault_name", backup_vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_active_directory_configs_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, active_directory_config_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/activeDirectoryConfigs/{activeDirectoryConfigName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "activeDirectoryConfigName": _SERIALIZER.url(
+            "active_directory_config_name", active_directory_config_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_active_directory_configs_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, active_directory_config_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/activeDirectoryConfigs/{activeDirectoryConfigName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "activeDirectoryConfigName": _SERIALIZER.url(
+            "active_directory_config_name", active_directory_config_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_active_directory_configs_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, active_directory_config_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/activeDirectoryConfigs/{activeDirectoryConfigName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "activeDirectoryConfigName": _SERIALIZER.url(
+            "active_directory_config_name", active_directory_config_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_active_directory_configs_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, active_directory_config_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/activeDirectoryConfigs/{activeDirectoryConfigName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "activeDirectoryConfigName": _SERIALIZER.url(
+            "active_directory_config_name", active_directory_config_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_active_directory_configs_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/activeDirectoryConfigs"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_active_directory_configs_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/activeDirectoryConfigs"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_net_app_resource_quota_limits_get_request(  # pylint: disable=name-too-long
     location: str, quota_limit_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2278,7 +4303,7 @@ def build_net_app_resource_quota_limits_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2305,7 +4330,7 @@ def build_net_app_resource_region_infos_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2332,7 +4357,7 @@ def build_net_app_resource_region_infos_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2359,7 +4384,7 @@ def build_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2388,7 +4413,7 @@ def build_accounts_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2419,7 +4444,7 @@ def build_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2448,7 +4473,7 @@ def build_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}"
     path_format_arguments = {
@@ -2469,7 +4494,7 @@ def build_accounts_list_request(resource_group_name: str, subscription_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2498,7 +4523,7 @@ def build_accounts_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2523,7 +4548,7 @@ def build_accounts_renew_credentials_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/renewCredentials"
     path_format_arguments = {
@@ -2547,7 +4572,7 @@ def build_accounts_transition_to_cmk_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/transitiontocmk"
     path_format_arguments = {
@@ -2574,7 +4599,7 @@ def build_accounts_get_change_key_vault_information_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2603,7 +4628,7 @@ def build_accounts_change_key_vault_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/changeKeyVault"
     path_format_arguments = {
@@ -2624,6 +4649,28 @@ def build_accounts_change_key_vault_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_accounts_refresh_ldap_bind_password_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/refreshLdapBindPassword"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 def build_backups_under_account_migrate_backups_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -2631,7 +4678,7 @@ def build_backups_under_account_migrate_backups_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/migrateBackups"
     path_format_arguments = {
@@ -2658,7 +4705,7 @@ def build_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2688,7 +4735,7 @@ def build_pools_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2720,7 +4767,7 @@ def build_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2750,7 +4797,7 @@ def build_pools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}"
     path_format_arguments = {
@@ -2774,7 +4821,7 @@ def build_pools_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2808,7 +4855,7 @@ def build_backups_under_backup_vault_restore_files_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}/restoreFiles"
     path_format_arguments = {
@@ -2838,7 +4885,7 @@ def build_backups_under_volume_migrate_backups_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/migrateBackups"
     path_format_arguments = {
@@ -2873,7 +4920,7 @@ def build_subvolumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2911,7 +4958,7 @@ def build_subvolumes_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2951,7 +4998,7 @@ def build_subvolumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2989,7 +5036,7 @@ def build_subvolumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}"
     path_format_arguments = {
@@ -3015,7 +5062,7 @@ def build_subvolumes_list_by_volume_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3051,7 +5098,7 @@ def build_subvolumes_get_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3083,7 +5130,7 @@ def build_net_app_resource_check_name_availability_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3113,7 +5160,7 @@ def build_net_app_resource_check_file_path_availability_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3143,7 +5190,7 @@ def build_net_app_resource_check_quota_availability_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3172,7 +5219,7 @@ def build_net_app_resource_query_region_info_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3200,7 +5247,7 @@ def build_net_app_resource_query_network_sibling_set_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3230,7 +5277,7 @@ def build_net_app_resource_update_network_sibling_set_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3259,7 +5306,7 @@ def build_net_app_resource_usages_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3286,7 +5333,7 @@ def build_net_app_resource_usages_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3308,7 +5355,7 @@ def build_net_app_resource_usages_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3372,7 +5419,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3385,7 +5435,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3412,7 +5465,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-long
+class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3431,9 +5484,9 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-08-01",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-08-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3443,12 +5496,20 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             ]
         },
         api_versions_list=[
-            "2025-07-01-preview",
             "2025-08-01",
-            "2025-08-01-preview",
             "2025-09-01",
-            "2025-09-01-preview",
             "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def get(
@@ -3494,6 +5555,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3515,7 +5577,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaItem, response.json())
 
@@ -3526,17 +5588,25 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-08-01",
         params_added_on={
-            "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
         api_versions_list=[
-            "2025-07-01-preview",
             "2025-08-01",
-            "2025-08-01-preview",
             "2025-09-01",
-            "2025-09-01-preview",
             "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> ItemPaged["_models.QuotaItem"]:
@@ -3594,7 +5664,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3607,7 +5680,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3634,7 +5710,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         return ItemPaged(get_next, extract_data)
 
 
-class VolumeGroupsOperations:
+class VolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3695,6 +5771,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3716,7 +5793,7 @@ class VolumeGroupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VolumeGroupDetails, response.json())
 
@@ -3730,7 +5807,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: Union[_models.VolumeGroupDetails, JSON, IO[bytes]],
+        body: Union[_models.VolumeGroupDetails, _types.VolumeGroupDetails, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3770,6 +5847,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3793,7 +5871,7 @@ class VolumeGroupsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3837,7 +5915,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: JSON,
+        body: _types.VolumeGroupDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3852,7 +5930,7 @@ class VolumeGroupsOperations:
         :param volume_group_name: The name of the volumeGroup. Required.
         :type volume_group_name: str
         :param body: Volume Group object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeGroupDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3899,7 +5977,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: Union[_models.VolumeGroupDetails, JSON, IO[bytes]],
+        body: Union[_models.VolumeGroupDetails, _types.VolumeGroupDetails, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeGroupDetails]:
         """Create a volume group along with specified volumes.
@@ -3911,9 +5989,10 @@ class VolumeGroupsOperations:
         :type account_name: str
         :param volume_group_name: The name of the volumeGroup. Required.
         :type volume_group_name: str
-        :param body: Volume Group object supplied in the body of the operation. Is one of the following
-         types: VolumeGroupDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails or JSON or IO[bytes]
+        :param body: Volume Group object supplied in the body of the operation. Is either a
+         VolumeGroupDetails type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails or
+         ~azure.mgmt.netapp.types.VolumeGroupDetails or IO[bytes]
         :return: An instance of LROPoller that returns VolumeGroupDetails. The VolumeGroupDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeGroupDetails]
@@ -4006,6 +6085,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4030,7 +6110,7 @@ class VolumeGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4156,7 +6236,10 @@ class VolumeGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4169,7 +6252,10 @@ class VolumeGroupsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VolumeGroup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VolumeGroup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4196,7 +6282,7 @@ class VolumeGroupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupsOperations:
+class BackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4260,6 +6346,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4281,7 +6368,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Backup, response.json())
 
@@ -4296,7 +6383,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, JSON, IO[bytes]],
+        body: Union[_models.Backup, _types.Backup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4337,6 +6424,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4363,7 +6451,7 @@ class BackupsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4411,7 +6499,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: JSON,
+        body: _types.Backup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4428,7 +6516,7 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Backup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4479,7 +6567,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, JSON, IO[bytes]],
+        body: Union[_models.Backup, _types.Backup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Backup]:
         """Create a backup under the Backup Vault.
@@ -4493,9 +6581,9 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Backup object supplied in the body of the operation. Is one of the following
-         types: Backup, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Backup or JSON or IO[bytes]
+        :param body: Backup object supplied in the body of the operation. Is either a Backup type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Backup or ~azure.mgmt.netapp.types.Backup or IO[bytes]
         :return: An instance of LROPoller that returns Backup. The Backup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Backup]
@@ -4561,7 +6649,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BackupPatch, _types.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4606,6 +6694,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4630,7 +6719,7 @@ class BackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4678,7 +6767,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BackupPatch] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4695,7 +6784,7 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4746,7 +6835,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BackupPatch, _types.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.Backup]:
         """Patch a Backup under the Backup Vault.
@@ -4760,9 +6849,10 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Backup object supplied in the body of the operation. Is one of the following
-         types: BackupPatch, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BackupPatch or JSON or IO[bytes]
+        :param body: Backup object supplied in the body of the operation. Is either a BackupPatch type
+         or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BackupPatch or ~azure.mgmt.netapp.types.BackupPatch or
+         IO[bytes]
         :return: An instance of LROPoller that returns Backup. The Backup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Backup]
@@ -4854,6 +6944,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4878,7 +6969,7 @@ class BackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5020,7 +7111,10 @@ class BackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5033,7 +7127,10 @@ class BackupsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Backup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Backup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5106,6 +7203,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5127,7 +7225,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupStatus, response.json())
 
@@ -5183,6 +7281,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5204,7 +7303,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RestoreStatus, response.json())
 
@@ -5214,7 +7313,7 @@ class BackupsOperations:
         return deserialized  # type: ignore
 
 
-class VolumesOperations:  # pylint: disable=too-many-public-methods
+class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5278,6 +7377,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5299,7 +7399,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Volume, response.json())
 
@@ -5314,7 +7414,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.Volume, JSON, IO[bytes]],
+        body: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5355,6 +7455,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5385,7 +7486,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5433,7 +7534,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.Volume,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5450,7 +7551,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Volume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Volume
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5501,7 +7602,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.Volume, JSON, IO[bytes]],
+        body: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Volume]:
         """Create or update the specified volume within the capacity pool.
@@ -5515,9 +7616,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Volume object supplied in the body of the operation. Is one of the following
-         types: Volume, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Volume or JSON or IO[bytes]
+        :param body: Volume object supplied in the body of the operation. Is either a Volume type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Volume or ~azure.mgmt.netapp.types.Volume or IO[bytes]
         :return: An instance of LROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Volume]
@@ -5583,7 +7684,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumePatch, _types.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5624,6 +7725,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5648,7 +7750,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5696,7 +7798,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.VolumePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5713,7 +7815,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Volume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5764,7 +7866,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumePatch, _types.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Volume]:
         """Patch the specified volume.
@@ -5778,9 +7880,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Volume object supplied in the body of the operation. Is one of the following
-         types: VolumePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumePatch or JSON or IO[bytes]
+        :param body: Volume object supplied in the body of the operation. Is either a VolumePatch type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumePatch or ~azure.mgmt.netapp.types.VolumePatch or
+         IO[bytes]
         :return: An instance of LROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Volume]
@@ -5879,6 +7982,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5903,7 +8007,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6046,7 +8150,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6059,7 +8166,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Volume], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Volume],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6116,6 +8226,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6140,7 +8251,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6189,14 +8300,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6228,7 +8335,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumeRevert, JSON, IO[bytes]],
+        body: Union[_models.VolumeRevert, _types.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6269,6 +8376,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6293,7 +8401,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6340,7 +8448,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.VolumeRevert,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6357,7 +8465,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Object for snapshot to revert supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeRevert
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6406,7 +8514,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumeRevert, JSON, IO[bytes]],
+        body: Union[_models.VolumeRevert, _types.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Revert a volume to the snapshot specified in the body.
@@ -6420,9 +8528,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Object for snapshot to revert supplied in the body of the operation. Is one of the
-         following types: VolumeRevert, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeRevert or JSON or IO[bytes]
+        :param body: Object for snapshot to revert supplied in the body of the operation. Is either a
+         VolumeRevert type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeRevert or ~azure.mgmt.netapp.types.VolumeRevert or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6507,6 +8616,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6530,7 +8640,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6633,6 +8743,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6657,7 +8768,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6706,14 +8817,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6745,7 +8852,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakFileLocksRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakFileLocksRequest, _types.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6790,6 +8897,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6814,7 +8922,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6862,7 +8970,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BreakFileLocksRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6880,7 +8988,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type volume_name: str
         :param body: Optional body to provide the ability to clear file locks with selected options.
          Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BreakFileLocksRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6930,7 +9038,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakFileLocksRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakFileLocksRequest, _types.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Break all the file locks on a volume.
@@ -6945,8 +9053,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Optional body to provide the ability to clear file locks with selected options. Is
-         one of the following types: BreakFileLocksRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BreakFileLocksRequest or JSON or IO[bytes]
+         either a BreakFileLocksRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BreakFileLocksRequest or
+         ~azure.mgmt.netapp.types.BreakFileLocksRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7015,7 +9124,22 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
         self,
@@ -7023,7 +9147,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.GetGroupIdListForLDAPUserRequest, JSON, IO[bytes]],
+        body: Union[_models.GetGroupIdListForLDAPUserRequest, _types.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7064,6 +9188,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7091,7 +9216,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7140,7 +9265,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.GetGroupIdListForLDAPUserRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7157,7 +9282,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Returns group Id list for a specific LDAP user. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.GetGroupIdListForLDAPUserRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7218,7 +9343,22 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
         self,
@@ -7226,7 +9366,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.GetGroupIdListForLDAPUserRequest, JSON, IO[bytes]],
+        body: Union[_models.GetGroupIdListForLDAPUserRequest, _types.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GetGroupIdListForLDAPUserResponse]:
         """Returns the list of group Ids for a specific LDAP User.
@@ -7240,9 +9380,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Returns group Id list for a specific LDAP user. Is one of the following types:
-         GetGroupIdListForLDAPUserRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.GetGroupIdListForLDAPUserRequest or JSON or IO[bytes]
+        :param body: Returns group Id list for a specific LDAP user. Is either a
+         GetGroupIdListForLDAPUserRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.GetGroupIdListForLDAPUserRequest or
+         ~azure.mgmt.netapp.types.GetGroupIdListForLDAPUserRequest or IO[bytes]
         :return: An instance of LROPoller that returns GetGroupIdListForLDAPUserResponse. The
          GetGroupIdListForLDAPUserResponse is compatible with MutableMapping
         :rtype:
@@ -7274,17 +9415,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.GetGroupIdListForLDAPUserResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7316,7 +9450,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakReplicationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakReplicationRequest, _types.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7361,6 +9495,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7385,7 +9520,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7432,7 +9567,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BreakReplicationRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7449,7 +9584,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Optional body to force break the replication. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BreakReplicationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7498,7 +9633,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakReplicationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakReplicationRequest, _types.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Break the replication connection on the destination volume.
@@ -7512,9 +9647,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Optional body to force break the replication. Is one of the following types:
-         BreakReplicationRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BreakReplicationRequest or JSON or IO[bytes]
+        :param body: Optional body to force break the replication. Is either a BreakReplicationRequest
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BreakReplicationRequest or
+         ~azure.mgmt.netapp.types.BreakReplicationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7575,7 +9711,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.ReestablishReplicationRequest, JSON, IO[bytes]],
+        body: Union[_models.ReestablishReplicationRequest, _types.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7616,6 +9752,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7639,7 +9776,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7687,7 +9824,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.ReestablishReplicationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7705,7 +9842,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: body for the id of the source volume. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ReestablishReplicationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7755,7 +9892,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.ReestablishReplicationRequest, JSON, IO[bytes]],
+        body: Union[_models.ReestablishReplicationRequest, _types.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Re-establish a previously deleted replication between 2 volumes that have a common ad-hoc or
@@ -7770,9 +9907,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: body for the id of the source volume. Is one of the following types:
-         ReestablishReplicationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ReestablishReplicationRequest or JSON or IO[bytes]
+        :param body: body for the id of the source volume. Is either a ReestablishReplicationRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ReestablishReplicationRequest or
+         ~azure.mgmt.netapp.types.ReestablishReplicationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7873,6 +10011,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7894,7 +10033,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ReplicationStatus, response.json())
 
@@ -7943,7 +10082,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ListReplicationsRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7960,7 +10099,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ListReplicationsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8017,7 +10156,22 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def list_replications(
         self,
@@ -8025,7 +10179,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.ListReplicationsRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ListReplicationsRequest, _types.ListReplicationsRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.Replication"]:
         """List all replications for a specified volume.
@@ -8039,9 +10193,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: The content of the action request. Is one of the following types:
-         ListReplicationsRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.ListReplicationsRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a ListReplicationsRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.ListReplicationsRequest or
+         ~azure.mgmt.netapp.types.ListReplicationsRequest or IO[bytes]
         :return: An iterator like instance of Replication
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.Replication]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8103,7 +10258,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8116,7 +10274,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Replication], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Replication],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -8173,6 +10334,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8197,7 +10359,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8301,6 +10463,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8325,7 +10488,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8404,7 +10567,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.AuthorizeRequest, JSON, IO[bytes]],
+        body: Union[_models.AuthorizeRequest, _types.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8445,6 +10608,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8469,7 +10633,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8516,7 +10680,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.AuthorizeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8533,7 +10697,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Authorize request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.AuthorizeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8582,7 +10746,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.AuthorizeRequest, JSON, IO[bytes]],
+        body: Union[_models.AuthorizeRequest, _types.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Authorize the replication connection on the source volume.
@@ -8596,9 +10760,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Authorize request object supplied in the body of the operation. Is one of the
-         following types: AuthorizeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.AuthorizeRequest or JSON or IO[bytes]
+        :param body: Authorize request object supplied in the body of the operation. Is either a
+         AuthorizeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.AuthorizeRequest or
+         ~azure.mgmt.netapp.types.AuthorizeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8683,6 +10848,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8707,7 +10873,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8785,7 +10951,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PeerClusterForVolumeMigrationRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.PeerClusterForVolumeMigrationRequest, _types.PeerClusterForVolumeMigrationRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8826,6 +10994,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8847,10 +11016,13 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8898,7 +11070,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.PeerClusterForVolumeMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8915,7 +11087,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Cluster peer request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.PeerClusterForVolumeMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8966,7 +11138,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PeerClusterForVolumeMigrationRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.PeerClusterForVolumeMigrationRequest, _types.PeerClusterForVolumeMigrationRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ClusterPeerCommandResponse]:
         """Starts peering the external cluster for this migration volume.
@@ -8980,9 +11154,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Cluster peer request object supplied in the body of the operation. Is one of the
-         following types: PeerClusterForVolumeMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.PeerClusterForVolumeMigrationRequest or JSON or IO[bytes]
+        :param body: Cluster peer request object supplied in the body of the operation. Is either a
+         PeerClusterForVolumeMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PeerClusterForVolumeMigrationRequest or
+         ~azure.mgmt.netapp.types.PeerClusterForVolumeMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns ClusterPeerCommandResponse. The
          ClusterPeerCommandResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ClusterPeerCommandResponse]
@@ -9015,6 +11190,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -9077,6 +11255,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9098,10 +11277,13 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9153,6 +11335,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -9215,6 +11400,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9238,7 +11424,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9342,6 +11528,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9365,7 +11552,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9443,7 +11630,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9484,6 +11671,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9508,7 +11696,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9555,7 +11743,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.PoolChangeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9572,7 +11760,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Move volume to the pool supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.PoolChangeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9621,7 +11809,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Moves volume to another pool.
@@ -9635,9 +11823,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Move volume to the pool supplied in the body of the operation. Is one of the
-         following types: PoolChangeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or JSON or IO[bytes]
+        :param body: Move volume to the pool supplied in the body of the operation. Is either a
+         PoolChangeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or
+         ~azure.mgmt.netapp.types.PoolChangeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9697,7 +11886,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.RelocateVolumeRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RelocateVolumeRequest, _types.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9742,6 +11931,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9766,7 +11956,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9813,7 +12003,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.RelocateVolumeRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9830,7 +12020,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Relocate volume request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.RelocateVolumeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9879,7 +12069,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.RelocateVolumeRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RelocateVolumeRequest, _types.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Relocates volume to a new stamp.
@@ -9893,9 +12083,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Relocate volume request. Is one of the following types: RelocateVolumeRequest,
-         JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.RelocateVolumeRequest or JSON or IO[bytes]
+        :param body: Relocate volume request. Is either a RelocateVolumeRequest type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.RelocateVolumeRequest or
+         ~azure.mgmt.netapp.types.RelocateVolumeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9981,6 +12172,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10005,7 +12197,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10108,6 +12300,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10132,7 +12325,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10219,7 +12412,20 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def _list_quota_report_initial(
         self,
@@ -10227,7 +12433,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.QuotaReportFilterRequest, _types.QuotaReportFilterRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10272,6 +12478,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10299,7 +12506,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10347,7 +12554,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.QuotaReportFilterRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10364,7 +12571,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QuotaReportFilterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10423,7 +12630,20 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def begin_list_quota_report(
         self,
@@ -10431,7 +12651,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.QuotaReportFilterRequest, _types.QuotaReportFilterRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ListQuotaReportResult]:
         """Get quota report for volume (with filter support).
@@ -10445,9 +12665,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: The content of the action request. Is one of the following types:
-         QuotaReportFilterRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a QuotaReportFilterRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest or
+         ~azure.mgmt.netapp.types.QuotaReportFilterRequest or IO[bytes]
         :return: An instance of LROPoller that returns ListQuotaReportResult. The ListQuotaReportResult
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
@@ -10516,7 +12737,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class SnapshotsOperations:
+class SnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10589,6 +12810,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10610,7 +12832,7 @@ class SnapshotsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Snapshot, response.json())
 
@@ -10626,7 +12848,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.Snapshot, JSON, IO[bytes]],
+        body: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10668,6 +12890,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10691,7 +12914,7 @@ class SnapshotsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10743,7 +12966,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.Snapshot,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10762,7 +12985,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10817,7 +13040,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.Snapshot, JSON, IO[bytes]],
+        body: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Create the specified snapshot within the given volume.
@@ -10833,9 +13056,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation. Is one of the following
-         types: Snapshot, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Snapshot or JSON or IO[bytes]
+        :param body: Snapshot object supplied in the body of the operation. Is either a Snapshot type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Snapshot or ~azure.mgmt.netapp.types.Snapshot or
+         IO[bytes]
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
@@ -10907,7 +13131,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPatch, _types.SnapshotPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10949,6 +13173,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10973,7 +13198,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11025,7 +13250,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.SnapshotPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11044,7 +13269,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11099,7 +13324,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPatch, _types.SnapshotPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Patch a snapshot.
@@ -11115,9 +13340,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation. Is one of the following
-         types: SnapshotPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPatch or JSON or IO[bytes]
+        :param body: Snapshot object supplied in the body of the operation. Is either a SnapshotPatch
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPatch or ~azure.mgmt.netapp.types.SnapshotPatch
+         or IO[bytes]
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
@@ -11216,6 +13442,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11240,7 +13467,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11384,7 +13611,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11397,7 +13627,10 @@ class SnapshotsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Snapshot], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Snapshot],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -11430,7 +13663,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.SnapshotRestoreFiles, _types.SnapshotRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11472,6 +13705,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11496,7 +13730,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11547,7 +13781,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.SnapshotRestoreFiles,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11566,7 +13800,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Restore payload supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotRestoreFiles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11619,7 +13853,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.SnapshotRestoreFiles, _types.SnapshotRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restore the specified files from the specified snapshot to the active filesystem.
@@ -11635,9 +13869,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Restore payload supplied in the body of the operation. Is one of the following
-         types: SnapshotRestoreFiles, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles or JSON or IO[bytes]
+        :param body: Restore payload supplied in the body of the operation. Is either a
+         SnapshotRestoreFiles type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles or
+         ~azure.mgmt.netapp.types.SnapshotRestoreFiles or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11693,7 +13928,7 @@ class SnapshotsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SnapshotPoliciesOperations:
+class SnapshotPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11754,6 +13989,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11775,7 +14011,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicy, response.json())
 
@@ -11820,7 +14056,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: JSON,
+        body: _types.SnapshotPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11835,7 +14071,7 @@ class SnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11880,7 +14116,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicy, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicy, _types.SnapshotPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.SnapshotPolicy:
         """Create a snapshot policy.
@@ -11892,9 +14128,10 @@ class SnapshotPoliciesOperations:
         :type account_name: str
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation. Is one of the
-         following types: SnapshotPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicy or JSON or IO[bytes]
+        :param body: Snapshot policy object supplied in the body of the operation. Is either a
+         SnapshotPolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPolicy or ~azure.mgmt.netapp.types.SnapshotPolicy
+         or IO[bytes]
         :return: SnapshotPolicy. The SnapshotPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.SnapshotPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11936,6 +14173,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11957,7 +14195,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicy, response.json())
 
@@ -11971,7 +14209,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicyPatch, _types.SnapshotPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12011,6 +14249,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12035,7 +14274,7 @@ class SnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12079,7 +14318,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: JSON,
+        body: _types.SnapshotPolicyPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12094,7 +14333,7 @@ class SnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPolicyPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12141,7 +14380,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicyPatch, _types.SnapshotPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SnapshotPolicy]:
         """Patch a snapshot policy.
@@ -12153,9 +14392,10 @@ class SnapshotPoliciesOperations:
         :type account_name: str
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation. Is one of the
-         following types: SnapshotPolicyPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch or JSON or IO[bytes]
+        :param body: Snapshot policy object supplied in the body of the operation. Is either a
+         SnapshotPolicyPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch or
+         ~azure.mgmt.netapp.types.SnapshotPolicyPatch or IO[bytes]
         :return: An instance of LROPoller that returns SnapshotPolicy. The SnapshotPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SnapshotPolicy]
@@ -12244,6 +14484,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12268,7 +14509,7 @@ class SnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12392,7 +14633,10 @@ class SnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12405,7 +14649,10 @@ class SnapshotPoliciesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SnapshotPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SnapshotPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -12476,6 +14723,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12497,7 +14745,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicyVolumeList, response.json())
 
@@ -12507,7 +14755,7 @@ class SnapshotPoliciesOperations:
         return deserialized  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12568,6 +14816,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12589,7 +14838,7 @@ class BackupPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupPolicy, response.json())
 
@@ -12603,7 +14852,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicy, _types.BackupPolicy, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12643,6 +14892,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12673,7 +14923,7 @@ class BackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12717,7 +14967,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: JSON,
+        body: _types.BackupPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12732,7 +14982,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
         :param body: Backup policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12779,7 +15029,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicy, _types.BackupPolicy, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupPolicy]:
         """Create a backup policy for Netapp Account.
@@ -12791,9 +15041,10 @@ class BackupPoliciesOperations:
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is one of the
-         following types: BackupPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicy or JSON or IO[bytes]
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupPolicy or ~azure.mgmt.netapp.types.BackupPolicy or
+         IO[bytes]
         :return: An instance of LROPoller that returns BackupPolicy. The BackupPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupPolicy]
@@ -12857,7 +15108,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicyPatch, _types.BackupPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12897,6 +15148,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12923,7 +15175,7 @@ class BackupPoliciesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12967,7 +15219,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: JSON,
+        body: _types.BackupPolicyPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12982,7 +15234,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
         :param body: Backup policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPolicyPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13029,7 +15281,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicyPatch, _types.BackupPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupPolicy]:
         """Patch a backup policy for Netapp Account.
@@ -13041,9 +15293,10 @@ class BackupPoliciesOperations:
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is one of the
-         following types: BackupPolicyPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch or JSON or IO[bytes]
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicyPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch or
+         ~azure.mgmt.netapp.types.BackupPolicyPatch or IO[bytes]
         :return: An instance of LROPoller that returns BackupPolicy. The BackupPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupPolicy]
@@ -13132,6 +15385,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13156,7 +15410,7 @@ class BackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13280,7 +15534,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13293,7 +15550,10 @@ class BackupPoliciesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -13320,7 +15580,7 @@ class BackupPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VolumeQuotaRulesOperations:
+class VolumeQuotaRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13393,6 +15653,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13414,7 +15675,7 @@ class VolumeQuotaRulesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VolumeQuotaRule, response.json())
 
@@ -13430,7 +15691,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRule, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRule, _types.VolumeQuotaRule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13472,6 +15733,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13496,7 +15758,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13548,7 +15810,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: JSON,
+        body: _types.VolumeQuotaRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13567,7 +15829,7 @@ class VolumeQuotaRulesOperations:
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
         :param body: Quota rule object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeQuotaRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13622,7 +15884,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRule, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRule, _types.VolumeQuotaRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeQuotaRule]:
         """Create the specified quota rule within the given volume.
@@ -13638,9 +15900,10 @@ class VolumeQuotaRulesOperations:
         :type volume_name: str
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
-        :param body: Quota rule object supplied in the body of the operation. Is one of the following
-         types: VolumeQuotaRule, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule or JSON or IO[bytes]
+        :param body: Quota rule object supplied in the body of the operation. Is either a
+         VolumeQuotaRule type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule or
+         ~azure.mgmt.netapp.types.VolumeQuotaRule or IO[bytes]
         :return: An instance of LROPoller that returns VolumeQuotaRule. The VolumeQuotaRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
@@ -13708,7 +15971,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRulePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRulePatch, _types.VolumeQuotaRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13750,6 +16013,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13774,7 +16038,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13826,7 +16090,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: JSON,
+        body: _types.VolumeQuotaRulePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13845,7 +16109,7 @@ class VolumeQuotaRulesOperations:
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
         :param body: Quota rule object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeQuotaRulePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13900,7 +16164,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRulePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRulePatch, _types.VolumeQuotaRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeQuotaRule]:
         """Patch a quota rule.
@@ -13916,9 +16180,10 @@ class VolumeQuotaRulesOperations:
         :type volume_name: str
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
-        :param body: Quota rule object supplied in the body of the operation. Is one of the following
-         types: VolumeQuotaRulePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch or JSON or IO[bytes]
+        :param body: Quota rule object supplied in the body of the operation. Is either a
+         VolumeQuotaRulePatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch or
+         ~azure.mgmt.netapp.types.VolumeQuotaRulePatch or IO[bytes]
         :return: An instance of LROPoller that returns VolumeQuotaRule. The VolumeQuotaRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
@@ -14017,6 +16282,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14041,7 +16307,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14185,7 +16451,10 @@ class VolumeQuotaRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14198,7 +16467,10 @@ class VolumeQuotaRulesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VolumeQuotaRule], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VolumeQuotaRule],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -14225,7 +16497,7 @@ class VolumeQuotaRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RansomwareReportsOperations:
+class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14244,9 +16516,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14257,7 +16529,20 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def get(
         self,
@@ -14318,6 +16603,7 @@ class RansomwareReportsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14339,7 +16625,7 @@ class RansomwareReportsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RansomwareReport, response.json())
 
@@ -14350,9 +16636,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14362,7 +16648,20 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -14431,7 +16730,10 @@ class RansomwareReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14444,7 +16746,10 @@ class RansomwareReportsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RansomwareReport], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RansomwareReport],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -14471,9 +16776,9 @@ class RansomwareReportsOperations:
         return ItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14484,7 +16789,20 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def _clear_suspects_initial(
         self,
@@ -14493,7 +16811,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: Union[_models.RansomwareSuspectsClearRequest, JSON, IO[bytes]],
+        body: Union[_models.RansomwareSuspectsClearRequest, _types.RansomwareSuspectsClearRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14535,6 +16853,7 @@ class RansomwareReportsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14558,7 +16877,7 @@ class RansomwareReportsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14613,7 +16932,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: JSON,
+        body: _types.RansomwareSuspectsClearRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14636,7 +16955,7 @@ class RansomwareReportsOperations:
         :param ransomware_report_name: The name of the ransomware report. Required.
         :type ransomware_report_name: str
         :param body: Clear suspects request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.RansomwareSuspectsClearRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14687,9 +17006,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14700,7 +17019,20 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2025-12-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
     )
     def begin_clear_suspects(
         self,
@@ -14709,7 +17041,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: Union[_models.RansomwareSuspectsClearRequest, JSON, IO[bytes]],
+        body: Union[_models.RansomwareSuspectsClearRequest, _types.RansomwareSuspectsClearRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
@@ -14729,9 +17061,10 @@ class RansomwareReportsOperations:
         :type volume_name: str
         :param ransomware_report_name: The name of the ransomware report. Required.
         :type ransomware_report_name: str
-        :param body: Clear suspects request object supplied in the body of the operation. Is one of the
-         following types: RansomwareSuspectsClearRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.RansomwareSuspectsClearRequest or JSON or IO[bytes]
+        :param body: Clear suspects request object supplied in the body of the operation. Is either a
+         RansomwareSuspectsClearRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.RansomwareSuspectsClearRequest or
+         ~azure.mgmt.netapp.types.RansomwareSuspectsClearRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14787,7 +17120,7 @@ class RansomwareReportsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupVaultsOperations:
+class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14848,6 +17181,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14869,7 +17203,7 @@ class BackupVaultsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupVault, response.json())
 
@@ -14883,7 +17217,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVault, JSON, IO[bytes]],
+        body: Union[_models.BackupVault, _types.BackupVault, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14923,6 +17257,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14949,7 +17284,7 @@ class BackupVaultsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14993,7 +17328,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: JSON,
+        body: _types.BackupVault,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15008,7 +17343,7 @@ class BackupVaultsOperations:
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
         :param body: BackupVault object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupVault
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15055,7 +17390,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVault, JSON, IO[bytes]],
+        body: Union[_models.BackupVault, _types.BackupVault, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupVault]:
         """Create or update the specified Backup Vault in the NetApp account.
@@ -15067,9 +17402,10 @@ class BackupVaultsOperations:
         :type account_name: str
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
-        :param body: BackupVault object supplied in the body of the operation. Is one of the following
-         types: BackupVault, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupVault or JSON or IO[bytes]
+        :param body: BackupVault object supplied in the body of the operation. Is either a BackupVault
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupVault or ~azure.mgmt.netapp.types.BackupVault or
+         IO[bytes]
         :return: An instance of LROPoller that returns BackupVault. The BackupVault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupVault]
@@ -15133,7 +17469,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVaultPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupVaultPatch, _types.BackupVaultPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15173,6 +17509,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15197,7 +17534,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15241,7 +17578,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: JSON,
+        body: _types.BackupVaultPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15256,7 +17593,7 @@ class BackupVaultsOperations:
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
         :param body: Backup Vault object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupVaultPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15303,7 +17640,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVaultPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupVaultPatch, _types.BackupVaultPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupVault]:
         """Patch the specified NetApp Backup Vault.
@@ -15315,9 +17652,10 @@ class BackupVaultsOperations:
         :type account_name: str
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
-        :param body: Backup Vault object supplied in the body of the operation. Is one of the following
-         types: BackupVaultPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupVaultPatch or JSON or IO[bytes]
+        :param body: Backup Vault object supplied in the body of the operation. Is either a
+         BackupVaultPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupVaultPatch or
+         ~azure.mgmt.netapp.types.BackupVaultPatch or IO[bytes]
         :return: An instance of LROPoller that returns BackupVault. The BackupVault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupVault]
@@ -15406,6 +17744,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15430,7 +17769,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15556,7 +17895,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15569,7 +17911,10 @@ class BackupVaultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -15596,7 +17941,13447 @@ class BackupVaultsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NetAppResourceQuotaLimitsOperations:
+class BucketsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`buckets` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> _models.Bucket:
+        """Get the details of the specified volume's bucket. A bucket allows additional services, such as
+        AI services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :return: Bucket. The Bucket is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.Bucket
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Bucket] = kwargs.pop("cls", None)
+
+        _request = build_buckets_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Bucket, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.Bucket, _types.Bucket, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_buckets_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _models.Bucket,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Creates or updates a bucket for a volume. A bucket allows additional services, such as AI
+        services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: ~azure.mgmt.netapp.models.Bucket
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _types.Bucket,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Creates or updates a bucket for a volume. A bucket allows additional services, such as AI
+        services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: ~azure.mgmt.netapp.types.Bucket
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Creates or updates a bucket for a volume. A bucket allows additional services, such as AI
+        services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.Bucket, _types.Bucket, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Creates or updates a bucket for a volume. A bucket allows additional services, such as AI
+        services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Is either a Bucket type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Bucket or ~azure.mgmt.netapp.types.Bucket or IO[bytes]
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Bucket] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Bucket, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Bucket].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Bucket](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketPatch, _types.BucketPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_buckets_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _models.BucketPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Updates the details of a volume bucket.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _types.BucketPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Updates the details of a volume bucket.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: ~azure.mgmt.netapp.types.BucketPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Updates the details of a volume bucket.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketPatch, _types.BucketPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Bucket]:
+        """Updates the details of a volume bucket.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket details including user details, and the volume path that should be
+         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketPatch or ~azure.mgmt.netapp.types.BucketPatch or
+         IO[bytes]
+        :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Bucket] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Bucket, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Bucket].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Bucket](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_buckets_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a volume's bucket.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.Bucket"]:
+        """Describes all buckets belonging to a volume. Buckets allow additional services, such as AI
+        services, connect to the volume data contained in those buckets.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :return: An iterator like instance of Bucket
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.Bucket]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Bucket]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_buckets_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    pool_name=pool_name,
+                    volume_name=volume_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Bucket],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def generate_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _models.BucketCredentialsExpiry,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.BucketGenerateCredentials:
+        """Generate the access key and secret key used for accessing the specified volume bucket. Also
+        return expiry date and time of key pair (in UTC).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
+         days from now. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: BucketGenerateCredentials. The BucketGenerateCredentials is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.BucketGenerateCredentials
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def generate_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _types.BucketCredentialsExpiry,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.BucketGenerateCredentials:
+        """Generate the access key and secret key used for accessing the specified volume bucket. Also
+        return expiry date and time of key pair (in UTC).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
+         days from now. Required.
+        :type body: ~azure.mgmt.netapp.types.BucketCredentialsExpiry
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: BucketGenerateCredentials. The BucketGenerateCredentials is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.BucketGenerateCredentials
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def generate_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.BucketGenerateCredentials:
+        """Generate the access key and secret key used for accessing the specified volume bucket. Also
+        return expiry date and time of key pair (in UTC).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
+         days from now. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: BucketGenerateCredentials. The BucketGenerateCredentials is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.BucketGenerateCredentials
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def generate_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.BucketGenerateCredentials:
+        """Generate the access key and secret key used for accessing the specified volume bucket. Also
+        return expiry date and time of key pair (in UTC).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
+         days from now. Is either a BucketCredentialsExpiry type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or
+         ~azure.mgmt.netapp.types.BucketCredentialsExpiry or IO[bytes]
+        :return: BucketGenerateCredentials. The BucketGenerateCredentials is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.BucketGenerateCredentials
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BucketGenerateCredentials] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_buckets_generate_credentials_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.BucketGenerateCredentials, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _generate_akv_credentials_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_buckets_generate_akv_credentials_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _models.BucketCredentialsExpiry,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _types.BucketCredentialsExpiry,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.types.BucketCredentialsExpiry
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Is either a BucketCredentialsExpiry type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or
+         ~azure.mgmt.netapp.types.BucketCredentialsExpiry or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._generate_akv_credentials_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _refresh_certificate_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_buckets_refresh_certificate_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_refresh_certificate(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This operation will fetch the certificate from Azure Key Vault and install it on the bucket
+        server.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._refresh_certificate_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class CachesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`caches` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> _models.Cache:
+        """Get the details of the specified Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :return: Cache. The Cache is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.Cache
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+
+        _request = build_caches_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Cache, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.Cache, _types.Cache, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_caches_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _models.Cache,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Create or update the specified Cache within the Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.Cache
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _types.Cache,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Create or update the specified Cache within the Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.Cache
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Create or update the specified Cache within the Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.Cache, _types.Cache, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Create or update the specified Cache within the Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Resource create parameters. Is either a Cache type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Cache or ~azure.mgmt.netapp.types.Cache or IO[bytes]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Cache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.CacheUpdate, _types.CacheUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_caches_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _models.CacheUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Patch the specified Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.CacheUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _types.CacheUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Patch the specified Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.CacheUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Patch the specified Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.CacheUpdate, _types.CacheUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Patch the specified Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: The resource properties to be updated. Is either a CacheUpdate type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.CacheUpdate or ~azure.mgmt.netapp.types.CacheUpdate or
+         IO[bytes]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Cache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_caches_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01",
+        params_added_on={
+            "2026-01-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.Cache"]:
+        """List all Caches within the Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :return: An iterator like instance of Cache
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Cache]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_caches_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    pool_name=pool_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Cache],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_peering_passphrases(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> _models.PeeringPassphrases:
+        """This operation will list the cluster peering command, cluster peering passphrase and the
+        vserver peering command.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :return: PeeringPassphrases. The PeeringPassphrases is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.PeeringPassphrases
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PeeringPassphrases] = kwargs.pop("cls", None)
+
+        _request = build_caches_list_peering_passphrases_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PeeringPassphrases, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _pool_change_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_caches_pool_change_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_pool_change(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _models.PoolChangeRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Moves Cache  to another Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Move cache to the pool supplied in the body of the operation. Required.
+        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_pool_change(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: _types.PoolChangeRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Moves Cache  to another Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Move cache to the pool supplied in the body of the operation. Required.
+        :type body: ~azure.mgmt.netapp.types.PoolChangeRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_pool_change(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Moves Cache  to another Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Move cache to the pool supplied in the body of the operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_pool_change(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        cache_name: str,
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Moves Cache  to another Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :param body: Move cache to the pool supplied in the body of the operation. Is either a
+         PoolChangeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or
+         ~azure.mgmt.netapp.types.PoolChangeRequest or IO[bytes]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._pool_change_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Cache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def _reset_smb_password_initial(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_caches_reset_smb_password_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_reset_smb_password(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> LROPoller[_models.Cache]:
+        """Resets the SMB password for the cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._reset_smb_password_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Cache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_accounts` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(self, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.ElasticAccount:
+        """Get the NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: ElasticAccount. The ElasticAccount is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticAccount
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticAccount] = kwargs.pop("cls", None)
+
+        _request = build_elastic_accounts_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticAccount, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[_models.ElasticAccount, _types.ElasticAccount, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_accounts_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _models.ElasticAccount,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Create or update the specified NetApp Elastic Account within the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticAccount
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _types.ElasticAccount,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Create or update the specified NetApp Elastic Account within the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticAccount
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Create or update the specified NetApp Elastic Account within the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[_models.ElasticAccount, _types.ElasticAccount, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Create or update the specified NetApp Elastic Account within the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: Resource create parameters. Is either a ElasticAccount type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticAccount or ~azure.mgmt.netapp.types.ElasticAccount
+         or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticAccount] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticAccount, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticAccount].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticAccount](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[_models.ElasticAccountUpdate, _types.ElasticAccountUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_accounts_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _models.ElasticAccountUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Patch the specified NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticAccountUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _types.ElasticAccountUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Patch the specified NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticAccountUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Patch the specified NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[_models.ElasticAccountUpdate, _types.ElasticAccountUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticAccount]:
+        """Patch the specified NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param body: The resource properties to be updated. Is either a ElasticAccountUpdate type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticAccountUpdate or
+         ~azure.mgmt.netapp.types.ElasticAccountUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticAccount. The ElasticAccount is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticAccount] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticAccount, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticAccount].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticAccount](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(self, resource_group_name: str, account_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_accounts_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete the specified NetApp elastic account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ElasticAccount"]:
+        """List and describe all NetApp elastic accounts in the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ElasticAccount
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticAccount]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_accounts_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticAccount],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ElasticAccount"]:
+        """List and describe all NetApp elastic accounts in the subscription.
+
+        :return: An iterator like instance of ElasticAccount
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticAccount]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_accounts_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticAccount],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_capacity_pools` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
+    ) -> _models.ElasticCapacityPool:
+        """Get the NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :return: ElasticCapacityPool. The ElasticCapacityPool is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticCapacityPool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticCapacityPool] = kwargs.pop("cls", None)
+
+        _request = build_elastic_capacity_pools_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ElasticCapacityPool, _types.ElasticCapacityPool, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_capacity_pools_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _models.ElasticCapacityPool,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Create or update the specified NetApp Elastic Capacity Pool within the resource group and
+        NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticCapacityPool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _types.ElasticCapacityPool,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Create or update the specified NetApp Elastic Capacity Pool within the resource group and
+        NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticCapacityPool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Create or update the specified NetApp Elastic Capacity Pool within the resource group and
+        NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ElasticCapacityPool, _types.ElasticCapacityPool, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Create or update the specified NetApp Elastic Capacity Pool within the resource group and
+        NetApp Elastic Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: Resource create parameters. Is either a ElasticCapacityPool type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticCapacityPool or
+         ~azure.mgmt.netapp.types.ElasticCapacityPool or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticCapacityPool] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticCapacityPool].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticCapacityPool](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ElasticCapacityPoolUpdate, _types.ElasticCapacityPoolUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_capacity_pools_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _models.ElasticCapacityPoolUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Patch the specified NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticCapacityPoolUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _types.ElasticCapacityPoolUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Patch the specified NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticCapacityPoolUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Patch the specified NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ElasticCapacityPoolUpdate, _types.ElasticCapacityPoolUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Patch the specified NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The resource properties to be updated. Is either a ElasticCapacityPoolUpdate type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticCapacityPoolUpdate or
+         ~azure.mgmt.netapp.types.ElasticCapacityPoolUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticCapacityPool] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticCapacityPool].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticCapacityPool](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_capacity_pools_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified NetApp Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_account(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticCapacityPool"]:
+        """List and describe all NetApp Elastic Capacity Pools in the Elastic NetApp Account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: An iterator like instance of ElasticCapacityPool
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticCapacityPool]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_capacity_pools_list_by_elastic_account_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticCapacityPool],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _change_zone_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ChangeZoneRequest, _types.ChangeZoneRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_capacity_pools_change_zone_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_change_zone(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _models.ChangeZoneRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Moves pool to another zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.models.ChangeZoneRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_change_zone(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _types.ChangeZoneRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Moves pool to another zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.types.ChangeZoneRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_change_zone(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Moves pool to another zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_change_zone(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[_models.ChangeZoneRequest, _types.ChangeZoneRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticCapacityPool]:
+        """Moves pool to another zone.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Is either a ChangeZoneRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ChangeZoneRequest or
+         ~azure.mgmt.netapp.types.ChangeZoneRequest or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticCapacityPool. The ElasticCapacityPool is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticCapacityPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticCapacityPool] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._change_zone_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticCapacityPool].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticCapacityPool](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    def check_volume_file_path_availability(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _models.CheckElasticVolumeFilePathAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckElasticResourceAvailabilityResponse:
+        """Check if an Elastic Volume file path is available within the given Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.models.CheckElasticVolumeFilePathAvailabilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckElasticResourceAvailabilityResponse. The CheckElasticResourceAvailabilityResponse
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_volume_file_path_availability(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: _types.CheckElasticVolumeFilePathAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckElasticResourceAvailabilityResponse:
+        """Check if an Elastic Volume file path is available within the given Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.types.CheckElasticVolumeFilePathAvailabilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckElasticResourceAvailabilityResponse. The CheckElasticResourceAvailabilityResponse
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_volume_file_path_availability(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckElasticResourceAvailabilityResponse:
+        """Check if an Elastic Volume file path is available within the given Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckElasticResourceAvailabilityResponse. The CheckElasticResourceAvailabilityResponse
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def check_volume_file_path_availability(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        body: Union[
+            _models.CheckElasticVolumeFilePathAvailabilityRequest,
+            _types.CheckElasticVolumeFilePathAvailabilityRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> _models.CheckElasticResourceAvailabilityResponse:
+        """Check if an Elastic Volume file path is available within the given Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param body: The content of the action request. Is either a
+         CheckElasticVolumeFilePathAvailabilityRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.CheckElasticVolumeFilePathAvailabilityRequest or
+         ~azure.mgmt.netapp.types.CheckElasticVolumeFilePathAvailabilityRequest or IO[bytes]
+        :return: CheckElasticResourceAvailabilityResponse. The CheckElasticResourceAvailabilityResponse
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CheckElasticResourceAvailabilityResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_capacity_pools_check_volume_file_path_availability_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CheckElasticResourceAvailabilityResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_volumes` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+    ) -> _models.ElasticVolume:
+        """Get the details of the specified volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :return: ElasticVolume. The ElasticVolume is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticVolume
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticVolume] = kwargs.pop("cls", None)
+
+        _request = build_elastic_volumes_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticVolume, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolume, _types.ElasticVolume, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_volumes_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _models.ElasticVolume,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Create or update the specified volume within the capacity pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolume
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _types.ElasticVolume,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Create or update the specified volume within the capacity pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticVolume
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Create or update the specified volume within the capacity pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolume, _types.ElasticVolume, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Create or update the specified volume within the capacity pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: Resource create parameters. Is either a ElasticVolume type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolume or ~azure.mgmt.netapp.types.ElasticVolume
+         or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticVolume] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticVolume, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticVolume].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticVolume](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolumeUpdate, _types.ElasticVolumeUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_volumes_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _models.ElasticVolumeUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Patch the specified elastic volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolumeUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _types.ElasticVolumeUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Patch the specified elastic volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticVolumeUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Patch the specified elastic volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolumeUpdate, _types.ElasticVolumeUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Patch the specified elastic volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The resource properties to be updated. Is either a ElasticVolumeUpdate type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolumeUpdate or
+         ~azure.mgmt.netapp.types.ElasticVolumeUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticVolume] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticVolume, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticVolume].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticVolume](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_volumes_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified Elastic Volume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_pool(
+        self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticVolume"]:
+        """List all Elastic Volumes within the Elastic Capacity Pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :return: An iterator like instance of ElasticVolume
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticVolume]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_volumes_list_by_elastic_pool_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    pool_name=pool_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticVolume],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _revert_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolumeRevert, _types.ElasticVolumeRevert, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_volumes_revert_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_revert(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _models.ElasticVolumeRevert,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Revert an Elastic Volume to the snapshot specified in the body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolumeRevert
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_revert(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: _types.ElasticVolumeRevert,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Revert an Elastic Volume to the snapshot specified in the body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticVolumeRevert
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_revert(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Revert an Elastic Volume to the snapshot specified in the body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_revert(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Union[_models.ElasticVolumeRevert, _types.ElasticVolumeRevert, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticVolume]:
+        """Revert an Elastic Volume to the snapshot specified in the body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Is either a ElasticVolumeRevert type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticVolumeRevert or
+         ~azure.mgmt.netapp.types.ElasticVolumeRevert or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticVolume. The ElasticVolume is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticVolume] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._revert_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticVolume, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticVolume].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticVolume](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_snapshots` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "snapshot_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        **kwargs: Any
+    ) -> _models.ElasticSnapshot:
+        """Get a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :return: ElasticSnapshot. The ElasticSnapshot is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticSnapshot
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticSnapshot] = kwargs.pop("cls", None)
+
+        _request = build_elastic_snapshots_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticSnapshot, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "snapshot_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: Union[_models.ElasticSnapshot, _types.ElasticSnapshot, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_snapshots_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: _models.ElasticSnapshot,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshot]:
+        """Create a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshot
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshot. The ElasticSnapshot is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: _types.ElasticSnapshot,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshot]:
+        """Create a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticSnapshot
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshot. The ElasticSnapshot is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshot]:
+        """Create a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshot. The ElasticSnapshot is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "snapshot_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: Union[_models.ElasticSnapshot, _types.ElasticSnapshot, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshot]:
+        """Create a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :param body: Resource create parameters. Is either a ElasticSnapshot type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshot or
+         ~azure.mgmt.netapp.types.ElasticSnapshot or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticSnapshot. The ElasticSnapshot is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticSnapshot] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                snapshot_name=snapshot_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticSnapshot, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticSnapshot].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticSnapshot](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "snapshot_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_snapshots_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "snapshot_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a ElasticSnapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :param snapshot_name: The name of the ElasticSnapshot. Required.
+        :type snapshot_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                snapshot_name=snapshot_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_volume(
+        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticSnapshot"]:
+        """List ElasticSnapshot resources by ElasticVolume.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param pool_name: The name of the ElasticCapacityPool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the ElasticVolume. Required.
+        :type volume_name: str
+        :return: An iterator like instance of ElasticSnapshot
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticSnapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticSnapshot]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_snapshots_list_by_elastic_volume_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    pool_name=pool_name,
+                    volume_name=volume_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticSnapshot],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_snapshot_policies` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
+    ) -> _models.ElasticSnapshotPolicy:
+        """Get a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :return: ElasticSnapshotPolicy. The ElasticSnapshotPolicy is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticSnapshotPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticSnapshotPolicy] = kwargs.pop("cls", None)
+
+        _request = build_elastic_snapshot_policies_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            snapshot_policy_name=snapshot_policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticSnapshotPolicy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: Union[_models.ElasticSnapshotPolicy, _types.ElasticSnapshotPolicy, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_snapshot_policies_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            snapshot_policy_name=snapshot_policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: _models.ElasticSnapshotPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Create a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: _types.ElasticSnapshotPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Create a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticSnapshotPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Create a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: Union[_models.ElasticSnapshotPolicy, _types.ElasticSnapshotPolicy, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Create a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: Resource create parameters. Is either a ElasticSnapshotPolicy type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicy or
+         ~azure.mgmt.netapp.types.ElasticSnapshotPolicy or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticSnapshotPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                snapshot_policy_name=snapshot_policy_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticSnapshotPolicy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticSnapshotPolicy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticSnapshotPolicy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: Union[_models.ElasticSnapshotPolicyUpdate, _types.ElasticSnapshotPolicyUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_snapshot_policies_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            snapshot_policy_name=snapshot_policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: _models.ElasticSnapshotPolicyUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Update a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: _types.ElasticSnapshotPolicyUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Update a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticSnapshotPolicyUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Update a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        snapshot_policy_name: str,
+        body: Union[_models.ElasticSnapshotPolicyUpdate, _types.ElasticSnapshotPolicyUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticSnapshotPolicy]:
+        """Update a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :param body: The resource properties to be updated. Is either a ElasticSnapshotPolicyUpdate
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdate or
+         ~azure.mgmt.netapp.types.ElasticSnapshotPolicyUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticSnapshotPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                snapshot_policy_name=snapshot_policy_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticSnapshotPolicy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticSnapshotPolicy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticSnapshotPolicy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_snapshot_policies_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            snapshot_policy_name=snapshot_policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a ElasticSnapshotPolicy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                snapshot_policy_name=snapshot_policy_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_account(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticSnapshotPolicy"]:
+        """List ElasticSnapshotPolicy resources by ElasticAccount.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: An iterator like instance of ElasticSnapshotPolicy
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticSnapshotPolicy]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_snapshot_policies_list_by_elastic_account_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticSnapshotPolicy],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "snapshot_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_elastic_volumes(
+        self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticVolume"]:
+        """Get elastic volumes associated with Elastic Snapshot Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
+        :type snapshot_policy_name: str
+        :return: An iterator like instance of ElasticVolume
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticVolume]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_snapshot_policies_list_elastic_volumes_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    snapshot_policy_name=snapshot_policy_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticVolume],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_backup_vaults` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
+    ) -> _models.ElasticBackupVault:
+        """Get the Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :return: ElasticBackupVault. The ElasticBackupVault is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticBackupVault
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticBackupVault] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backup_vaults_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticBackupVault, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: Union[_models.ElasticBackupVault, _types.ElasticBackupVault, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backup_vaults_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: _models.ElasticBackupVault,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Create or update the specified Elastic Backup Vault in the Elastic NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVault
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: _types.ElasticBackupVault,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Create or update the specified Elastic Backup Vault in the Elastic NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackupVault
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Create or update the specified Elastic Backup Vault in the Elastic NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: Union[_models.ElasticBackupVault, _types.ElasticBackupVault, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Create or update the specified Elastic Backup Vault in the Elastic NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: Resource create parameters. Is either a ElasticBackupVault type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVault or
+         ~azure.mgmt.netapp.types.ElasticBackupVault or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackupVault] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackupVault, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackupVault].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackupVault](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: Union[_models.ElasticBackupVaultUpdate, _types.ElasticBackupVaultUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backup_vaults_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: _models.ElasticBackupVaultUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Patch the specified NetApp Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVaultUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: _types.ElasticBackupVaultUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Patch the specified NetApp Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackupVaultUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Patch the specified NetApp Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        body: Union[_models.ElasticBackupVaultUpdate, _types.ElasticBackupVaultUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupVault]:
+        """Patch the specified NetApp Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param body: The resource properties to be updated. Is either a ElasticBackupVaultUpdate type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVaultUpdate or
+         ~azure.mgmt.netapp.types.ElasticBackupVaultUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackupVault] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackupVault, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackupVault].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackupVault](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backup_vaults_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_account(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticBackupVault"]:
+        """List and describe all Elastic Backup Vaults in the elastic account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: An iterator like instance of ElasticBackupVault
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticBackupVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticBackupVault]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_backup_vaults_list_by_elastic_account_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackupVault],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_backup_policies` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
+    ) -> _models.ElasticBackupPolicy:
+        """Get the Elastic Backup Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :return: ElasticBackupPolicy. The ElasticBackupPolicy is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticBackupPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticBackupPolicy] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backup_policies_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_policy_name=backup_policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticBackupPolicy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: Union[_models.ElasticBackupPolicy, _types.ElasticBackupPolicy, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backup_policies_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_policy_name=backup_policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: _models.ElasticBackupPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Create or update the specified Elastic Backup Policy in the NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: _types.ElasticBackupPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Create or update the specified Elastic Backup Policy in the NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackupPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Create or update the specified Elastic Backup Policy in the NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: Union[_models.ElasticBackupPolicy, _types.ElasticBackupPolicy, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Create or update the specified Elastic Backup Policy in the NetApp account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: Resource create parameters. Is either a ElasticBackupPolicy type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicy or
+         ~azure.mgmt.netapp.types.ElasticBackupPolicy or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackupPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_policy_name=backup_policy_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackupPolicy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackupPolicy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackupPolicy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: Union[_models.ElasticBackupPolicyUpdate, _types.ElasticBackupPolicyUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backup_policies_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_policy_name=backup_policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: _models.ElasticBackupPolicyUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Patch the specified NetApp Elastic Backup Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: _types.ElasticBackupPolicyUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Patch the specified NetApp Elastic Backup Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackupPolicyUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Patch the specified NetApp Elastic Backup Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_policy_name: str,
+        body: Union[_models.ElasticBackupPolicyUpdate, _types.ElasticBackupPolicyUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackupPolicy]:
+        """Patch the specified NetApp Elastic Backup Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :param body: The resource properties to be updated. Is either a ElasticBackupPolicyUpdate type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdate or
+         ~azure.mgmt.netapp.types.ElasticBackupPolicyUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackupPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_policy_name=backup_policy_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackupPolicy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackupPolicy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackupPolicy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backup_policies_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_policy_name=backup_policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_policy_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified Elastic Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
+        :type backup_policy_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_policy_name=backup_policy_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_elastic_account(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticBackupPolicy"]:
+        """List and describe all Elastic Backup Policies in the elastic account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :return: An iterator like instance of ElasticBackupPolicy
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticBackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticBackupPolicy]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_backup_policies_list_by_elastic_account_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackupPolicy],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`elastic_backups` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
+    ) -> _models.ElasticBackup:
+        """Get the specified Elastic Backup under Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :return: ElasticBackup. The ElasticBackup is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ElasticBackup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ElasticBackup] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backups_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            backup_name=backup_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ElasticBackup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: Union[_models.ElasticBackup, _types.ElasticBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backups_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            backup_name=backup_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: _models.ElasticBackup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Create an elastic backup under the elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: _types.ElasticBackup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Create an elastic backup under the elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Create an elastic backup under the elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: Union[_models.ElasticBackup, _types.ElasticBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Create an elastic backup under the elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: Resource create parameters. Is either a ElasticBackup type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackup or ~azure.mgmt.netapp.types.ElasticBackup
+         or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackup] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                backup_name=backup_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: Union[_models.ElasticBackup, _types.ElasticBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_elastic_backups_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            backup_name=backup_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: _models.ElasticBackup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Patch an elastic Backup under the Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: _types.ElasticBackup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Patch an elastic Backup under the Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ElasticBackup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Patch an elastic Backup under the Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        backup_vault_name: str,
+        backup_name: str,
+        body: Union[_models.ElasticBackup, _types.ElasticBackup, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ElasticBackup]:
+        """Patch an elastic Backup under the Elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :param body: The resource properties to be updated. Is either a ElasticBackup type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackup or ~azure.mgmt.netapp.types.ElasticBackup
+         or IO[bytes]
+        :return: An instance of LROPoller that returns ElasticBackup. The ElasticBackup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ElasticBackup] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                backup_name=backup_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ElasticBackup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ElasticBackup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ElasticBackup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_backups_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            backup_vault_name=backup_vault_name,
+            backup_name=backup_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "backup_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a ElasticBackup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :param backup_name: The name of the ElasticBackup. Required.
+        :type backup_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_vault_name=backup_vault_name,
+                backup_name=backup_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "backup_vault_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_vault(
+        self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ElasticBackup"]:
+        """List all elastic backups Under an elastic Backup Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the ElasticAccount. Required.
+        :type account_name: str
+        :param backup_vault_name: The name of the ElasticBackupVault. Required.
+        :type backup_vault_name: str
+        :return: An iterator like instance of ElasticBackup
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ElasticBackup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ElasticBackup]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_elastic_backups_list_by_vault_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    backup_vault_name=backup_vault_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.NetAppManagementClient`'s
+        :attr:`active_directory_configs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def get(
+        self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
+    ) -> _models.ActiveDirectoryConfig:
+        """Get the details of the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :return: ActiveDirectoryConfig. The ActiveDirectoryConfig is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ActiveDirectoryConfig
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ActiveDirectoryConfig] = kwargs.pop("cls", None)
+
+        _request = build_active_directory_configs_get_request(
+            resource_group_name=resource_group_name,
+            active_directory_config_name=active_directory_config_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ActiveDirectoryConfig, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: Union[_models.ActiveDirectoryConfig, _types.ActiveDirectoryConfig, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_active_directory_configs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            active_directory_config_name=active_directory_config_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: _models.ActiveDirectoryConfig,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Create or update the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.models.ActiveDirectoryConfig
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: _types.ActiveDirectoryConfig,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Create or update the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: Resource create parameters. Required.
+        :type body: ~azure.mgmt.netapp.types.ActiveDirectoryConfig
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Create or update the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: Resource create parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: Union[_models.ActiveDirectoryConfig, _types.ActiveDirectoryConfig, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Create or update the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: Resource create parameters. Is either a ActiveDirectoryConfig type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ActiveDirectoryConfig or
+         ~azure.mgmt.netapp.types.ActiveDirectoryConfig or IO[bytes]
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActiveDirectoryConfig] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                active_directory_config_name=active_directory_config_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ActiveDirectoryConfig, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ActiveDirectoryConfig].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ActiveDirectoryConfig](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: Union[_models.ActiveDirectoryConfigUpdate, _types.ActiveDirectoryConfigUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_active_directory_configs_update_request(
+            resource_group_name=resource_group_name,
+            active_directory_config_name=active_directory_config_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: _models.ActiveDirectoryConfigUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Patch the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.models.ActiveDirectoryConfigUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: _types.ActiveDirectoryConfigUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Patch the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: ~azure.mgmt.netapp.types.ActiveDirectoryConfigUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Patch the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: The resource properties to be updated. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        active_directory_config_name: str,
+        body: Union[_models.ActiveDirectoryConfigUpdate, _types.ActiveDirectoryConfigUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ActiveDirectoryConfig]:
+        """Patch the specified active directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :param body: The resource properties to be updated. Is either a ActiveDirectoryConfigUpdate
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ActiveDirectoryConfigUpdate or
+         ~azure.mgmt.netapp.types.ActiveDirectoryConfigUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ActiveDirectoryConfig. The ActiveDirectoryConfig
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActiveDirectoryConfig] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                active_directory_config_name=active_directory_config_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ActiveDirectoryConfig, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ActiveDirectoryConfig].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ActiveDirectoryConfig](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_active_directory_configs_delete_request(
+            resource_group_name=resource_group_name,
+            active_directory_config_name=active_directory_config_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "active_directory_config_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def begin_delete(
+        self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete the specified Active Directory configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param active_directory_config_name: The name of the ActiveDirectoryConfig. Required.
+        :type active_directory_config_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                active_directory_config_name=active_directory_config_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ActiveDirectoryConfig"]:
+        """List all active directory configurations within the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ActiveDirectoryConfig
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ActiveDirectoryConfig]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_active_directory_configs_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ActiveDirectoryConfig],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ActiveDirectoryConfig"]:
+        """List all active directory configurations within the subscription.
+
+        :return: An iterator like instance of ActiveDirectoryConfig
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.ActiveDirectoryConfig]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ActiveDirectoryConfig]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_active_directory_configs_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ActiveDirectoryConfig],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class NetAppResourceQuotaLimitsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15651,6 +31436,7 @@ class NetAppResourceQuotaLimitsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15672,7 +31458,7 @@ class NetAppResourceQuotaLimitsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaItem, response.json())
 
@@ -15732,7 +31518,10 @@ class NetAppResourceQuotaLimitsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15745,7 +31534,10 @@ class NetAppResourceQuotaLimitsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -15772,7 +31564,7 @@ class NetAppResourceQuotaLimitsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NetAppResourceRegionInfosOperations:
+class NetAppResourceRegionInfosOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15824,6 +31616,7 @@ class NetAppResourceRegionInfosOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15845,7 +31638,7 @@ class NetAppResourceRegionInfosOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RegionInfoResource, response.json())
 
@@ -15905,7 +31698,10 @@ class NetAppResourceRegionInfosOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15918,7 +31714,10 @@ class NetAppResourceRegionInfosOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RegionInfoResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RegionInfoResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -15945,7 +31744,7 @@ class NetAppResourceRegionInfosOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AccountsOperations:
+class AccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16001,6 +31800,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16022,7 +31822,7 @@ class AccountsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetAppAccount, response.json())
 
@@ -16035,7 +31835,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccount, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccount, _types.NetAppAccount, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16074,6 +31874,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16100,7 +31901,7 @@ class AccountsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16140,7 +31941,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.NetAppAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16153,7 +31954,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: NetApp Account object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.NetAppAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16196,7 +31997,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccount, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccount, _types.NetAppAccount, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetAppAccount]:
         """Create or update the specified NetApp account within the resource group.
@@ -16206,9 +32007,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: NetApp Account object supplied in the body of the operation. Is one of the
-         following types: NetAppAccount, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccount or JSON or IO[bytes]
+        :param body: NetApp Account object supplied in the body of the operation. Is either a
+         NetAppAccount type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccount or ~azure.mgmt.netapp.types.NetAppAccount
+         or IO[bytes]
         :return: An instance of LROPoller that returns NetAppAccount. The NetAppAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetAppAccount]
@@ -16266,11 +32068,32 @@ class AccountsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccountPatch, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccountPatch, _types.NetAppAccountPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16309,6 +32132,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16333,7 +32157,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16373,7 +32197,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.NetAppAccountPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16386,7 +32210,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: NetApp Account object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.NetAppAccountPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16425,11 +32249,32 @@ class AccountsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+        ],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccountPatch, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccountPatch, _types.NetAppAccountPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetAppAccount]:
         """Patch the specified NetApp account.
@@ -16439,9 +32284,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: NetApp Account object supplied in the body of the operation. Is one of the
-         following types: NetAppAccountPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch or JSON or IO[bytes]
+        :param body: NetApp Account object supplied in the body of the operation. Is either a
+         NetAppAccountPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch or
+         ~azure.mgmt.netapp.types.NetAppAccountPatch or IO[bytes]
         :return: An instance of LROPoller that returns NetAppAccount. The NetAppAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetAppAccount]
@@ -16526,6 +32372,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16550,7 +32397,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16666,7 +32513,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16679,7 +32529,10 @@ class AccountsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetAppAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetAppAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -16753,7 +32606,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16766,7 +32622,10 @@ class AccountsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetAppAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetAppAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -16819,6 +32678,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16845,7 +32705,7 @@ class AccountsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16915,7 +32775,9 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.EncryptionTransitionRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.EncryptionTransitionRequest, _types.EncryptionTransitionRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16958,6 +32820,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16981,7 +32844,7 @@ class AccountsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17022,7 +32885,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.EncryptionTransitionRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17037,7 +32900,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: The required parameters to perform encryption transition. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.EncryptionTransitionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17080,7 +32943,9 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.EncryptionTransitionRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.EncryptionTransitionRequest, _types.EncryptionTransitionRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Transitions all volumes in a VNet to a different encryption key source (Microsoft-managed key
@@ -17092,9 +32957,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: The required parameters to perform encryption transition. Is one of the following
-         types: EncryptionTransitionRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.EncryptionTransitionRequest or JSON or IO[bytes]
+        :param body: The required parameters to perform encryption transition. Is either a
+         EncryptionTransitionRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.EncryptionTransitionRequest or
+         ~azure.mgmt.netapp.types.EncryptionTransitionRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17176,6 +33042,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17203,7 +33070,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17288,7 +33155,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.ChangeKeyVault, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ChangeKeyVault, _types.ChangeKeyVault, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17331,6 +33198,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17354,7 +33222,7 @@ class AccountsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17394,7 +33262,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ChangeKeyVault] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17408,7 +33276,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: The required parameters to perform encryption migration. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ChangeKeyVault
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17450,7 +33318,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.ChangeKeyVault, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ChangeKeyVault, _types.ChangeKeyVault, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Affects existing volumes that are encrypted with Key Vault/Managed HSM, and new volumes.
@@ -17461,9 +33329,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: The required parameters to perform encryption migration. Is one of the following
-         types: ChangeKeyVault, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.ChangeKeyVault or JSON or IO[bytes]
+        :param body: The required parameters to perform encryption migration. Is either a
+         ChangeKeyVault type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.ChangeKeyVault or ~azure.mgmt.netapp.types.ChangeKeyVault
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17516,8 +33385,144 @@ class AccountsOperations:
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-15-preview",
+        params_added_on={
+            "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
+    )
+    def _refresh_ldap_bind_password_initial(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-class BackupsUnderAccountOperations:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_accounts_refresh_ldap_bind_password_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-15-preview",
+        params_added_on={
+            "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
+    )
+    def begin_refresh_ldap_bind_password(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Refresh LDAP Bind DN password by fetching the latest password from Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._refresh_ldap_bind_password_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class BackupsUnderAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17538,7 +33543,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17577,6 +33582,7 @@ class BackupsUnderAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17600,7 +33606,7 @@ class BackupsUnderAccountOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17640,7 +33646,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.BackupsMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17654,7 +33660,7 @@ class BackupsUnderAccountOperations:
         :type account_name: str
         :param body: Migrate backups under an account payload supplied in the body of the operation.
          Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupsMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17696,7 +33702,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Migrate the backups under a NetApp account to backup vault.
@@ -17707,8 +33713,9 @@ class BackupsUnderAccountOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: Migrate backups under an account payload supplied in the body of the operation. Is
-         one of the following types: BackupsMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or JSON or IO[bytes]
+         either a BackupsMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or
+         ~azure.mgmt.netapp.types.BackupsMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17761,7 +33768,7 @@ class BackupsUnderAccountOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PoolsOperations:
+class PoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17820,6 +33827,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17841,7 +33849,7 @@ class PoolsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CapacityPool, response.json())
 
@@ -17855,7 +33863,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPool, JSON, IO[bytes]],
+        body: Union[_models.CapacityPool, _types.CapacityPool, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17895,6 +33903,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17919,7 +33928,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17963,7 +33972,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: JSON,
+        body: _types.CapacityPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17978,7 +33987,7 @@ class PoolsOperations:
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
         :param body: Capacity pool object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.CapacityPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18025,7 +34034,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPool, JSON, IO[bytes]],
+        body: Union[_models.CapacityPool, _types.CapacityPool, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CapacityPool]:
         """Create or Update a capacity pool.
@@ -18037,9 +34046,10 @@ class PoolsOperations:
         :type account_name: str
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
-        :param body: Capacity pool object supplied in the body of the operation. Is one of the
-         following types: CapacityPool, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.CapacityPool or JSON or IO[bytes]
+        :param body: Capacity pool object supplied in the body of the operation. Is either a
+         CapacityPool type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.CapacityPool or ~azure.mgmt.netapp.types.CapacityPool or
+         IO[bytes]
         :return: An instance of LROPoller that returns CapacityPool. The CapacityPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.CapacityPool]
@@ -18103,7 +34113,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPoolPatch, JSON, IO[bytes]],
+        body: Union[_models.CapacityPoolPatch, _types.CapacityPoolPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18143,6 +34153,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18167,7 +34178,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18211,7 +34222,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: JSON,
+        body: _types.CapacityPoolPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18226,7 +34237,7 @@ class PoolsOperations:
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
         :param body: Capacity pool object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.CapacityPoolPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18273,7 +34284,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPoolPatch, JSON, IO[bytes]],
+        body: Union[_models.CapacityPoolPatch, _types.CapacityPoolPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CapacityPool]:
         """Patch the specified capacity pool.
@@ -18285,9 +34296,10 @@ class PoolsOperations:
         :type account_name: str
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
-        :param body: Capacity pool object supplied in the body of the operation. Is one of the
-         following types: CapacityPoolPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch or JSON or IO[bytes]
+        :param body: Capacity pool object supplied in the body of the operation. Is either a
+         CapacityPoolPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch or
+         ~azure.mgmt.netapp.types.CapacityPoolPatch or IO[bytes]
         :return: An instance of LROPoller that returns CapacityPool. The CapacityPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.CapacityPool]
@@ -18376,6 +34388,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18400,7 +34413,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18524,7 +34537,10 @@ class PoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18537,7 +34553,10 @@ class PoolsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CapacityPool], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CapacityPool],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -18564,7 +34583,7 @@ class PoolsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupsUnderBackupVaultOperations:
+class BackupsUnderBackupVaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18587,7 +34606,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.BackupRestoreFiles, _types.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18628,6 +34647,7 @@ class BackupsUnderBackupVaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18651,7 +34671,7 @@ class BackupsUnderBackupVaultOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18698,7 +34718,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: JSON,
+        body: _types.BackupRestoreFiles,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18715,7 +34735,7 @@ class BackupsUnderBackupVaultOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Restore payload supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupRestoreFiles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18764,7 +34784,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.BackupRestoreFiles, _types.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restore the specified files from the specified backup to the active filesystem.
@@ -18778,9 +34798,10 @@ class BackupsUnderBackupVaultOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Restore payload supplied in the body of the operation. Is one of the following
-         types: BackupRestoreFiles, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or JSON or IO[bytes]
+        :param body: Restore payload supplied in the body of the operation. Is either a
+         BackupRestoreFiles type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or
+         ~azure.mgmt.netapp.types.BackupRestoreFiles or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18835,7 +34856,7 @@ class BackupsUnderBackupVaultOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupsUnderVolumeOperations:
+class BackupsUnderVolumeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18858,7 +34879,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18899,6 +34920,7 @@ class BackupsUnderVolumeOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18922,7 +34944,7 @@ class BackupsUnderVolumeOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18970,7 +34992,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.BackupsMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18988,7 +35010,7 @@ class BackupsUnderVolumeOperations:
         :type volume_name: str
         :param body: Migrate backups under volume payload supplied in the body of the operation.
          Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupsMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19038,7 +35060,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Migrate the backups under volume to backup vault.
@@ -19052,9 +35074,10 @@ class BackupsUnderVolumeOperations:
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Migrate backups under volume payload supplied in the body of the operation. Is one
-         of the following types: BackupsMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or JSON or IO[bytes]
+        :param body: Migrate backups under volume payload supplied in the body of the operation. Is
+         either a BackupsMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or
+         ~azure.mgmt.netapp.types.BackupsMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19109,7 +35132,7 @@ class BackupsUnderVolumeOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SubvolumesOperations:
+class SubvolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19182,6 +35205,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19203,7 +35227,7 @@ class SubvolumesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubvolumeInfo, response.json())
 
@@ -19219,7 +35243,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumeInfo, JSON, IO[bytes]],
+        body: Union[_models.SubvolumeInfo, _types.SubvolumeInfo, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19261,6 +35285,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19291,7 +35316,7 @@ class SubvolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19311,7 +35336,8 @@ class SubvolumesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -19343,12 +35369,13 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: JSON,
+        body: _types.SubvolumeInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -19362,7 +35389,7 @@ class SubvolumesOperations:
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
         :param body: Subvolume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SubvolumeInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19385,7 +35412,8 @@ class SubvolumesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -19417,10 +35445,11 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumeInfo, JSON, IO[bytes]],
+        body: Union[_models.SubvolumeInfo, _types.SubvolumeInfo, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -19433,9 +35462,10 @@ class SubvolumesOperations:
         :type volume_name: str
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
-        :param body: Subvolume object supplied in the body of the operation. Is one of the following
-         types: SubvolumeInfo, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SubvolumeInfo or JSON or IO[bytes]
+        :param body: Subvolume object supplied in the body of the operation. Is either a SubvolumeInfo
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SubvolumeInfo or ~azure.mgmt.netapp.types.SubvolumeInfo
+         or IO[bytes]
         :return: An instance of LROPoller that returns SubvolumeInfo. The SubvolumeInfo is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
@@ -19503,7 +35533,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumePatchRequest, JSON, IO[bytes]],
+        body: Union[_models.SubvolumePatchRequest, _types.SubvolumePatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19545,6 +35575,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19571,7 +35602,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19623,7 +35654,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: JSON,
+        body: _types.SubvolumePatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19642,7 +35673,7 @@ class SubvolumesOperations:
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
         :param body: Subvolume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SubvolumePatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19697,7 +35728,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumePatchRequest, JSON, IO[bytes]],
+        body: Union[_models.SubvolumePatchRequest, _types.SubvolumePatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
         """Patch a subvolume.
@@ -19713,9 +35744,10 @@ class SubvolumesOperations:
         :type volume_name: str
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
-        :param body: Subvolume object supplied in the body of the operation. Is one of the following
-         types: SubvolumePatchRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SubvolumePatchRequest or JSON or IO[bytes]
+        :param body: Subvolume object supplied in the body of the operation. Is either a
+         SubvolumePatchRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SubvolumePatchRequest or
+         ~azure.mgmt.netapp.types.SubvolumePatchRequest or IO[bytes]
         :return: An instance of LROPoller that returns SubvolumeInfo. The SubvolumeInfo is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
@@ -19814,6 +35846,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19840,7 +35873,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19984,7 +36017,10 @@ class SubvolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19997,7 +36033,10 @@ class SubvolumesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SubvolumeInfo], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SubvolumeInfo],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -20061,6 +36100,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20087,7 +36127,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -20181,7 +36221,7 @@ class SubvolumesOperations:
         )
 
 
-class NetAppResourceOperations:
+class NetAppResourceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20211,7 +36251,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest
@@ -20226,16 +36266,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_name_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.ResourceNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check resource name availability.
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ResourceNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20253,7 +36298,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20268,17 +36313,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, location: str, body: Union[_models.ResourceNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.ResourceNameAvailabilityRequest, _types.ResourceNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check resource name availability.
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: ResourceNameAvailabilityRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a ResourceNameAvailabilityRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest or
+         ~azure.mgmt.netapp.types.ResourceNameAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -20319,6 +36368,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20340,7 +36390,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -20362,7 +36412,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest
@@ -20377,16 +36427,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_file_path_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.FilePathAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check file path availability.
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.FilePathAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20404,7 +36459,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20419,17 +36474,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_file_path_availability(
-        self, location: str, body: Union[_models.FilePathAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.FilePathAvailabilityRequest, _types.FilePathAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check file path availability.
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: FilePathAvailabilityRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a FilePathAvailabilityRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest or
+         ~azure.mgmt.netapp.types.FilePathAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -20470,6 +36529,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20491,7 +36551,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -20513,7 +36573,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest
@@ -20528,16 +36588,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_quota_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.QuotaAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check quota availability.
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QuotaAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20555,7 +36620,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20570,17 +36635,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_quota_availability(
-        self, location: str, body: Union[_models.QuotaAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.QuotaAvailabilityRequest, _types.QuotaAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check quota availability.
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: QuotaAvailabilityRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a QuotaAvailabilityRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest or
+         ~azure.mgmt.netapp.types.QuotaAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -20621,6 +36690,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20642,7 +36712,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -20657,7 +36727,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: RegionInfo. The RegionInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
@@ -20688,6 +36758,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20709,7 +36780,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RegionInfo, response.json())
 
@@ -20731,7 +36802,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest
@@ -20745,16 +36816,21 @@ class NetAppResourceOperations:
 
     @overload
     def query_network_sibling_set(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.QueryNetworkSiblingSetRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.NetworkSiblingSet:
         """Describe a network sibling set.
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QueryNetworkSiblingSetRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20771,7 +36847,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20785,17 +36861,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def query_network_sibling_set(
-        self, location: str, body: Union[_models.QueryNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.QueryNetworkSiblingSetRequest, _types.QueryNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.NetworkSiblingSet:
         """Describe a network sibling set.
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: QueryNetworkSiblingSetRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a QueryNetworkSiblingSetRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest or
+         ~azure.mgmt.netapp.types.QueryNetworkSiblingSetRequest or IO[bytes]
         :return: NetworkSiblingSet. The NetworkSiblingSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.NetworkSiblingSet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20835,6 +36915,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20856,7 +36937,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
 
@@ -20866,7 +36947,10 @@ class NetAppResourceOperations:
         return deserialized  # type: ignore
 
     def _update_network_sibling_set_initial(
-        self, location: str, body: Union[_models.UpdateNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.UpdateNetworkSiblingSetRequest, _types.UpdateNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -20903,6 +36987,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20927,7 +37012,7 @@ class NetAppResourceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -20947,7 +37032,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest
@@ -20962,16 +37047,21 @@ class NetAppResourceOperations:
 
     @overload
     def begin_update_network_sibling_set(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.UpdateNetworkSiblingSetRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.NetworkSiblingSet]:
         """Update the network features of a network sibling set.
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.UpdateNetworkSiblingSetRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20989,7 +37079,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -21004,17 +37094,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def begin_update_network_sibling_set(
-        self, location: str, body: Union[_models.UpdateNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.UpdateNetworkSiblingSetRequest, _types.UpdateNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.NetworkSiblingSet]:
         """Update the network features of a network sibling set.
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: UpdateNetworkSiblingSetRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a UpdateNetworkSiblingSetRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest or
+         ~azure.mgmt.netapp.types.UpdateNetworkSiblingSetRequest or IO[bytes]
         :return: An instance of LROPoller that returns NetworkSiblingSet. The NetworkSiblingSet is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetworkSiblingSet]
@@ -21042,14 +37136,10 @@ class NetAppResourceOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21076,7 +37166,7 @@ class NetAppResourceOperations:
         )
 
 
-class NetAppResourceUsagesOperations:
+class NetAppResourceUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21099,7 +37189,7 @@ class NetAppResourceUsagesOperations:
 
         Get current subscription usages.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of UsageResult
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.UsageResult]
@@ -21146,7 +37236,10 @@ class NetAppResourceUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -21159,7 +37252,10 @@ class NetAppResourceUsagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UsageResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.UsageResult],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -21225,6 +37321,7 @@ class NetAppResourceUsagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21246,7 +37343,7 @@ class NetAppResourceUsagesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UsageResult, response.json())
 

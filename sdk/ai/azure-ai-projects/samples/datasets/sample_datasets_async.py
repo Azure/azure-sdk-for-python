@@ -18,7 +18,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
      2) CONNECTION_NAME - Optional. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
@@ -45,7 +45,7 @@ data_file = os.path.join(data_folder, "data_file1.txt")
 
 async def main() -> None:
 
-    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     connection_name = os.environ.get("CONNECTION_NAME")
     dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")

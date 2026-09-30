@@ -1,0 +1,50 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateJob",
+      "jobDefinition": {
+        "codeId": "./src",
+        "computeId": "smoke-spark-compute",
+        "conf": {
+          "spark.driver.cores": "1",
+          "spark.driver.memory": "2g",
+          "spark.executor.cores": "2",
+          "spark.executor.instances": "2",
+          "spark.executor.memory": "2g"
+        },
+        "entry": {
+          "file": "main.py",
+          "sparkJobEntryType": "SparkJobPythonEntry"
+        },
+        "inputs": {},
+        "isArchived": false,
+        "jobType": "Spark",
+        "outputs": {},
+        "properties": {},
+        "tags": {}
+      }
+    },
+    "displayName": "smoke-schedule-recurrence-display",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          10
+        ],
+        "minutes": [
+          15
+        ],
+        "weekDays": [
+          "monday",
+          "wednesday"
+        ]
+      },
+      "startTime": "2026-01-01T00:00:00",
+      "timeZone": "UTC",
+      "triggerType": "Recurrence"
+    }
+  }
+}

@@ -4,10 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message
+from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT
 from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 
 
@@ -16,9 +15,9 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
     # auto_connect will be triggered if connection is dropped by accident and we disable recovery
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_auto_connect(self, webpubsubclient_connection_string):
+    def test_auto_connect(self, webpubsubclient_endpoint):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             protocol_type=WebPubSubProtocolType.JSON,
             message_retry_total=10,
             reconnect_retry_total=10,
@@ -26,16 +25,16 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect"
+        connected_event, _, message_event = self.setup_events(client)
         with client:
-            time.sleep(0.001)  # wait for connection_id to be updated
+            assert connected_event.wait(timeout=30), "Timed out waiting for initial connection"
             conn_id0 = client._connection_id
-            group_name = name
-            client.subscribe("group-message", on_group_message)
-            client.join_group(group_name)
+            client.join_group(name)
+            connected_event.clear()  # reset for reconnection detection
             client._ws.sock.close(1001)  # close the connection to trigger auto connect
-            time.sleep(3)  # wait for reconnect
-            client.send_to_group(group_name, name, "text")
-            time.sleep(1)  # wait for on_group_message to be called
+            # wait for reconnect
+            assert connected_event.wait(timeout=30), "Timed out waiting for reconnection"
+            self.retry_send_until_message(client, name, name, message_event, retries=10)
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None

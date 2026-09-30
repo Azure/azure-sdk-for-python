@@ -7,6 +7,7 @@ import os
 import logging
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 from azure.messaging.webpubsubclient.models import OpenClientError, SendMessageError
 from dotenv import load_dotenv
 
@@ -17,8 +18,8 @@ _LOGGER = logging.getLogger(__name__)
 # The following code is to show how to handle exceptions in WebPubSubClient, and it
 # may not run directly
 def main():
-    service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
-        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    service_client = WebPubSubServiceClient(
+        endpoint=os.getenv("WEBPUBSUB_ENDPOINT", ""), hub="hub", credential=DefaultAzureCredential()
     )
     client = WebPubSubClient(
         credential=WebPubSubClientCredential(

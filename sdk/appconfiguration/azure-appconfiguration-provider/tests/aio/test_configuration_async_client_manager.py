@@ -4,9 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 import time
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, call, Mock, MagicMock, AsyncMock
 import pytest
-from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
+from azure.appconfiguration.provider.aio._async_client_manager import (
+    AsyncConfigurationClientManager,
+    _AsyncConfigurationClientWrapper,
+)
+from azure.appconfiguration.provider._client_manager_base import (
+    FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
+    MINIMAL_CLIENT_REFRESH_INTERVAL,
+)
+from azure.appconfiguration.provider._models import SettingSelector
 
 
 def _create_mock_credential():
@@ -23,6 +31,10 @@ class MockClient:
         self.credential = credential
         self.retry_total = retry_total
         self.retry_backoff = retry_backoff
+        self.closed = False
+
+    async def close(self):
+        self.closed = True
 
 
 @pytest.mark.usefixtures("caplog")
@@ -73,12 +85,6 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, False)
         await manager.refresh_clients()
-        int = 0
-        while len(manager._replica_clients) < 2:
-            if int > 30:
-                break
-            time.sleep(1)
-            int += 1
         assert len(manager._replica_clients) == 2
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         connection_string2 = "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret"
@@ -127,12 +133,6 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
         await manager.refresh_clients()
-        int = 0
-        while len(manager._replica_clients) < 2:
-            if int > 30:
-                break
-            time.sleep(1)
-            int += 1
         assert len(manager._replica_clients) == 2
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_has_calls(
@@ -226,6 +226,35 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
+
+    @pytest.mark.asyncio
+    @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_credential")
+    async def test_refresh_clients_closes_removed_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+        mock_update_failover_endpoints.return_value = []
+        mock_client.return_value = MockClient(endpoint, "", "fake-credential", 0, 0)
+        manager = AsyncConfigurationClientManager(
+            None, endpoint, _create_mock_credential(), "", 0, 0, True, 0, 0, False
+        )
+
+        original_client = MockClient(endpoint, "", "fake-credential", 0, 0)
+        retained_replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        removed_replica = MockClient("https://fake.endpoint3", "", "fake-credential", 0, 0)
+        manager._original_client = original_client
+        manager._replica_clients = [original_client, retained_replica, removed_replica]
+
+        # endpoint3 is no longer part of the failover set, so its client must be closed and dropped.
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        await manager.refresh_clients()
+
+        assert removed_replica.closed is True
+        assert retained_replica.closed is False
+        assert original_client.closed is False
+        assert removed_replica not in manager._replica_clients
+        assert retained_replica in manager._replica_clients
+        assert original_client in manager._replica_clients
 
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
@@ -334,6 +363,75 @@ class TestAsyncConfigurationClientManager:
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
 
+    @pytest.mark.asyncio
+    @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_credential")
+    async def test_refresh_clients_timeout_uses_fallback_interval(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # A timeout while resolving replicas falls back to the longer refresh interval
+        mock_update_failover_endpoints.side_effect = TimeoutError
+        manager._next_update_time = 0
+        before = time.time()
+        await manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        # No new clients should have been created on a timeout
+        mock_client.assert_not_called()
+        assert manager._next_update_time >= before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_update_failover_endpoints.side_effect = None
+
+        # An empty result (no timeout) refreshes at the normal minimal interval
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        before = time.time()
+        await manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        assert (
+            before + MINIMAL_CLIENT_REFRESH_INTERVAL
+            <= manager._next_update_time
+            < before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+        )
+
+    @pytest.mark.asyncio
+    @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_credential")
+    async def test_refresh_clients_empty_removes_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # Discover a replica
+        replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        mock_client.return_value = replica
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        await manager.refresh_clients()
+        assert len(manager._replica_clients) == 2
+
+        # A subsequent successful discovery with no replicas (e.g. the last replica was deleted)
+        # closes and removes the discovered client, leaving only the original.
+        replica.close = AsyncMock()
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        await manager.refresh_clients()
+        replica.close.assert_awaited_once()
+        assert len(manager._replica_clients) == 1
+        assert manager._replica_clients[0] is manager._original_client
+
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
     def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
@@ -355,3 +453,59 @@ class TestAsyncConfigurationClientManager:
         assert 30000.0 <= manager._calculate_backoff(10) <= 600000.0
 
         assert manager_invalid._calculate_backoff(0) == 600000
+
+
+@pytest.mark.asyncio
+async def test_check_page_etags_snapshot_first_then_keys():
+    """Refresh enabled without watch settings: snapshot selector first, then normal keys."""
+    mock_client = Mock()
+    wrapper = _AsyncConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(snapshot_name="my-snapshot"),
+        SettingSelector(key_filter="app/*"),
+    ]
+    page_etags = [[], ["etag1"]]
+
+    async def empty_pages():
+        return
+        yield  # noqa: unreachable
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = empty_pages()
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = await wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_page_etags_keys_first_then_snapshot():
+    """Refresh enabled without watch settings: normal keys first, then snapshot selector."""
+    mock_client = Mock()
+    wrapper = _AsyncConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(key_filter="app/*"),
+        SettingSelector(snapshot_name="my-snapshot"),
+    ]
+    page_etags = [["etag1"], []]
+
+    async def empty_pages():
+        return
+        yield  # noqa: unreachable
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = empty_pages()
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = await wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )

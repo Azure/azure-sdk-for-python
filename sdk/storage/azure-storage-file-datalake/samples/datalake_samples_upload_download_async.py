@@ -23,6 +23,7 @@ USAGE:
     1) DATALAKE_STORAGE_ACCOUNT_NAME - the storage account name
     2) DATALAKE_STORAGE_ACCOUNT_KEY - the storage account key
 """
+
 import asyncio
 import os
 import random
@@ -30,8 +31,10 @@ import random
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
+
 
 async def upload_download_sample(filesystem_client):
     # create a file before writing content to it
@@ -43,7 +46,7 @@ async def upload_download_sample(filesystem_client):
     # [END create_file]
 
     # prepare the file content with 4KB of random data
-    file_content = get_random_bytes(4*1024)
+    file_content = get_random_bytes(4 * 1024)
 
     # append data to the file
     # the data remain uncommitted until flush is performed
@@ -78,11 +81,11 @@ async def upload_download_sample(filesystem_client):
 
     # Rename the file
     # [START rename_file]
-    new_client = await file_client.rename_file(file_client.file_system_name + '/' + 'newname')
+    new_client = await file_client.rename_file(file_client.file_system_name + "/" + "newname")
     # [END rename_file]
 
     # download the renamed file in to local file
-    with open(SOURCE_FILE, 'wb') as stream:
+    with open(SOURCE_FILE, "wb") as stream:
         download = await new_client.download_file()
         await download.readinto(stream)
 
@@ -90,24 +93,24 @@ async def upload_download_sample(filesystem_client):
     await new_client.delete_file()
     # [END delete_file]
 
+
 # help method to provide random bytes to serve as file content
 def get_random_bytes(size):
     rand = random.Random()
     result = bytearray(size)
     for i in range(size):
-        result[i] = int(rand.random()*255)  # random() is consistent between python 2 and 3
+        result[i] = int(rand.random() * 255)  # random() is consistent between python 2 and 3
     return bytes(result)
 
 
 async def main():
-    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv("DATALAKE_STORAGE_ACCOUNT_NAME", "")
+    account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY", "")
 
     # set up the service client with the credentials from the environment variables
-    service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
-        "https",
-        account_name
-    ), credential=account_key)
+    service_client = DataLakeServiceClient(
+        account_url="{}://{}.dfs.core.windows.net".format("https", account_name), credential=account_key
+    )
 
     async with service_client:
         # generate a random name for testing purpose
@@ -125,5 +128,5 @@ async def main():
             await filesystem_client.delete_file_system()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

@@ -22,8 +22,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - task: PythonScript@0
@@ -91,10 +91,6 @@ steps:
     inputs:
      scriptPath: 'eng/scripts/dispatch_checks.py'
      arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks="verifysdist" ${{ parameters.AdditionalTestArgs }}'
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
 
   - task: PythonScript@0
     displayName: 'Verify whl'
@@ -102,10 +98,6 @@ steps:
     inputs:
      scriptPath: 'eng/scripts/dispatch_checks.py'
      arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks="verifywhl" ${{ parameters.AdditionalTestArgs }}'
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
 
   - template: run_mypy.yml
     parameters:
@@ -133,10 +125,6 @@ steps:
     inputs:
       scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks=verify_keywords ${{ parameters.AdditionalTestArgs }}'
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
   - template: ../steps/run_bandit.yml
@@ -156,11 +144,14 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+  - template: /eng/common/pipelines/templates/steps/create-apiview-revision.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
       ArtifactName: "packages_extended"
+      PackageInfoFiles:
+        - ${{ each artifact in parameters.Artifacts }}:
+          - $(Build.ArtifactStagingDirectory)/PackageInfo/${{ artifact.name }}.json
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:

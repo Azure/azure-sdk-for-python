@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,too-many-nested-blocks
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -19,7 +19,7 @@ from azure.ai.projects.models import (
 class TestAgentCodeInterpreter(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_code_interpreter_simple_math(self, **kwargs):
         """
         Test agent with Code Interpreter for simple Python code execution.
@@ -41,7 +41,7 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "code-interpreter-simple-agent"
 
         with (
@@ -98,7 +98,7 @@ class TestAgentCodeInterpreter(TestBase):
     @pytest.mark.skip(
         reason="Skipped due to known server bug. Enable once https://msdata.visualstudio.com/Vienna/_workitems/edit/4841313 is resolved"
     )
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_code_interpreter_file_generation(self, **kwargs):
         """
         Test agent with Code Interpreter for file upload, processing, and download.
@@ -125,7 +125,7 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /files/{file_id}                              openai_client.files.delete()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

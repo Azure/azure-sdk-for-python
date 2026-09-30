@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Any, Dict, List, Optional, cast
@@ -19,6 +20,13 @@ from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-e
     distributions,
     entry_points,
 )
+
+# Populate distro version env var so it flows to the exporter
+AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+# pylint: disable=wrong-import-position
+from azure.monitor.opentelemetry._version import VERSION
+
+os.environ[AZURE_MONITOR_DISTRO_VERSION] = VERSION
 
 from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
@@ -48,6 +56,9 @@ from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
     enable_live_metrics,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (  # pylint: disable=import-error,no-name-in-module
+    set_statsbeat_live_metrics_feature_set,
+)
 from azure.monitor.opentelemetry.exporter._performance_counters import (  # pylint: disable=import-error,no-name-in-module
     enable_performance_counters,
 )
@@ -59,6 +70,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pyl
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
 )
+from azure.monitor.opentelemetry.exporter._gen_ai._processor import (  # pylint: disable=import-error,no-name-in-module
+    _GenAIMainAgentLogRecordProcessor,
+    _GenAIMainAgentSpanProcessor,
+)
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
     AzureMonitorMetricExporter,
@@ -68,6 +83,9 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
     _is_on_functions,
+)
+from azure.monitor.opentelemetry.exporter._configuration._state import (  # pylint: disable=import-error,no-name-in-module
+    get_configuration_manager,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
@@ -79,6 +97,7 @@ from azure.monitor.opentelemetry._utils.configurations import (
     _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
+    get_dependency_conflicts,
     get_dist_dependency_conflicts,
 )
 
@@ -130,6 +149,17 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
     configurations = _get_configurations(**kwargs)
 
+    # Contribute distro-level profile fields to the OneSettings control plane before any exporter is
+    # created. initialize() is idempotent and _ConfigurationProfile.fill() is first-wins per field, so
+    # setting component="dst" and the distro version here makes the profile reflect the distro; the
+    # exporters created below still supply ikey/region without overriding these already-set fields.
+    config_manager = get_configuration_manager()
+    if config_manager:
+        config_manager.initialize(
+            component="dst",
+            version=VERSION,
+        )
+
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
@@ -145,6 +175,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Set up live metrics
     if enable_live_metrics_config:
         _setup_live_metrics(configurations)
+    else:
+        # Live metrics is enabled by default. Track explicit local disable in statsbeat.
+        set_statsbeat_live_metrics_feature_set()
 
     # Set up tracing pipeline
     if not disable_tracing:
@@ -182,6 +215,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
+    # GenAI main-agent attribution processor must be registered first
+    tracer_provider.add_span_processor(_GenAIMainAgentSpanProcessor())
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -223,7 +258,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # Use try catch while signal is experimental
     try:
         from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.instrumentation.logging.handler import LoggingHandler
         from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -234,6 +270,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        # GenAI main-agent attribution processor must be registered first
+        logger_provider.add_log_record_processor(_GenAIMainAgentLogRecordProcessor())
         for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
             logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -266,21 +304,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
                     )
             logger.addHandler(handler)
 
-        # Setup Events
-        try:
-            from opentelemetry._events import _set_event_logger_provider
-            from opentelemetry.sdk._events import EventLoggerProvider
-
-            event_provider = EventLoggerProvider(logger_provider)
-            _set_event_logger_provider(event_provider, False)
-        except ImportError as ex:
-            # If the events is not available, we will not set it up.
-            # This could possibly be due to breaking change in upstream OpenTelemetry
-            # Advise user to upgrade to latest OpenTelemetry version
-            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
-                ex,
-            )
     except ImportError as ex:
         # If the events is not available, we will not set it up.
         # This could possibly be due to breaking change in upstream OpenTelemetry
@@ -352,8 +375,18 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 continue
             # Load the instrumentor via entrypoint
             instrumentor: Any = entry_point.load()
+            instrumentor_instance = instrumentor()
+            if lib_name in ("httpx", "httpx2"):
+                conflict = get_dependency_conflicts(instrumentor_instance.instrumentation_dependencies())
+                if conflict:
+                    _logger.debug(
+                        "Skipping instrumentation %s: %s",
+                        entry_point.name,
+                        conflict,
+                    )
+                    continue
             # tell instrumentation to not run dep checks again as we already did it above
-            instrumentor().instrument(skip_dep_check=True)
+            instrumentor_instance.instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",

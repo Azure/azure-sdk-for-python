@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: File Search + Code Interpreter
 
@@ -29,7 +27,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_find_and_analyze_data(self, **kwargs):
         """
         Test finding data with File Search and analyzing with Code Interpreter.
@@ -39,7 +37,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         2. Code Interpreter: Agent calculates the average of those numbers
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -111,7 +109,7 @@ End of sensor log.
         openai_client.vector_stores.delete(vector_store.id)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_analyze_code_file(self, **kwargs):
         """
         Test finding code file and running it with Code Interpreter.
@@ -121,7 +119,7 @@ End of sensor log.
         2. Code Interpreter: Agent executes the code and returns the computed result
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

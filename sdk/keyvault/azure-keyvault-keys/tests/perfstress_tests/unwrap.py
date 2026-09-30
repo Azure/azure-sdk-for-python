@@ -13,7 +13,6 @@ from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 from azure.keyvault.keys.crypto.aio import CryptographyClient as AsyncCryptographyClient
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 
-
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 

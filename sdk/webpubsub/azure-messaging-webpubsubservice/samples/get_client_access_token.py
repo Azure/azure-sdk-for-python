@@ -35,26 +35,18 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_CONNECTION_STRING
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
 try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
-    connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
 except KeyError:
     LOG.error(
-        "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example"
+        "Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example"
     )
     exit()
 
 # Build a client through AAD
-client_aad = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential())
+client = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential())
 
 # Build authentication token
-token_aad = client_aad.get_client_access_token()
-print("token by AAD: {}".format(token_aad))
-
-# Build a client through connection string
-client_key = WebPubSubServiceClient.from_connection_string(connection_string, hub="hub")
-
-# Build authentication token
-token_key = client_key.get_client_access_token()
-print("token by access key: {}".format(token_key))
+token = client.get_client_access_token()
+print("token by AAD: {}".format(token))

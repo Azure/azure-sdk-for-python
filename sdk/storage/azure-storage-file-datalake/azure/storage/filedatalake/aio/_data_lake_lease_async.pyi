@@ -7,7 +7,9 @@
 
 from datetime import datetime
 from typing import (
-    Any, Optional, Union,
+    Any,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -18,14 +20,14 @@ from ._file_system_client_async import FileSystemClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 
-
 class DataLakeLeaseClient:
     id: str
     etag: Optional[str]
     last_modified: Optional[datetime]
     def __init__(
-        self, client: Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient],
-        lease_id: Optional[str] = None
+        self,
+        client: Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient],
+        lease_id: Optional[str] = None,
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
     async def __aexit__(
