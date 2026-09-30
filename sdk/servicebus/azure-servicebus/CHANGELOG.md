@@ -17,7 +17,7 @@
 
 ### Bugs Fixed
 
-- Bounded the nesting depth of AMQP compound types (lists, maps, arrays, and described types) in the pyAMQP decoder. A payload nested beyond a fixed limit is now rejected with a `ValueError` rather than decoded with unbounded recursion.
+- Bounded the nesting depth of AMQP compound types (lists, maps, arrays, and described types) in the pyAMQP decoder to a maximum of 64. A payload nested deeper than that is now rejected early with a `ValueError`; previously such payloads were bounded only by the Python recursion limit and raised `RecursionError`.
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
 
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))

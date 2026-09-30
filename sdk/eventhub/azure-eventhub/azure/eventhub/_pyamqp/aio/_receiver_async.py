@@ -16,8 +16,7 @@ from ..performatives import (
     DispositionFrame,
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
-from ..error import AMQPException, ErrorCondition
-
+from ..error import AMQPException, ErrorCondition, AMQPError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -72,11 +71,30 @@ class ReceiverLink(Link):
             self._received_payload.extend(frame[11])
         if not frame[5]:
             self._received_delivery_tags.add(self._first_frame[2])
-            if self._received_payload:
-                message = decode_payload(memoryview(self._received_payload))
+            try:
+                if self._received_payload:
+                    message = decode_payload(memoryview(self._received_payload))
+                    self._received_payload = bytearray()
+                else:
+                    message = decode_payload(frame[11])
+            except Exception as e:  # pylint: disable=broad-except
+                # A malformed payload must not tear down the receive loop; reject the delivery.
                 self._received_payload = bytearray()
-            else:
-                message = decode_payload(frame[11])
+                _LOGGER.error(
+                    "Failed to decode message payload; rejecting delivery. %r", e, extra=self.network_trace_params
+                )
+                if not frame[4]:
+                    await self._outgoing_disposition(
+                        first=self._first_frame[1],
+                        last=self._first_frame[1],
+                        delivery_tag=self._first_frame[2],
+                        settled=True,
+                        state=Rejected(
+                            error=AMQPError(condition=ErrorCondition.DecodeError, description=str(e), info=None)
+                        ),
+                        batchable=None,
+                    )
+                return
             delivery_state = await self._process_incoming_message(self._first_frame, message)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
