@@ -20,7 +20,10 @@ from ._version import VERSION
 __version__ = VERSION
 
 try:
-    from ._native import upload_blob as _native_upload, download_blob as _native_download
+    from ._native import (
+        upload_blob as _native_upload,
+        download_blob as _native_download,
+    )
 
     _NATIVE_AVAILABLE = True
 except ImportError:
@@ -40,7 +43,28 @@ def upload_blob(
     credential_id: "int | None" = None,
     overwrite: bool = False,
     content_type: "str | None" = None,
+    content_encoding: "str | None" = None,
+    content_language: "str | None" = None,
+    content_disposition: "str | None" = None,
+    cache_control: "str | None" = None,
+    content_md5: "bytes | bytearray | None" = None,
     metadata: "dict[str, str] | None" = None,
+    tags: "dict[str, str] | None" = None,
+    lease_id: "str | None" = None,
+    encryption_key: "str | None" = None,
+    encryption_key_sha256: "str | None" = None,
+    encryption_algorithm: "str | None" = None,
+    encryption_scope: "str | None" = None,
+    if_match: "str | None" = None,
+    if_none_match: "str | None" = None,
+    if_modified_since: "int | None" = None,
+    if_unmodified_since: "int | None" = None,
+    if_tags: "str | None" = None,
+    immutability_policy_expiry: "int | None" = None,
+    immutability_policy_mode: "str | None" = None,
+    legal_hold: "bool | None" = None,
+    tier: "str | None" = None,
+    timeout: "int | None" = None,
     max_concurrency: "int | None" = None,
     max_block_size: "int | None" = None,
 ) -> dict:
@@ -66,7 +90,28 @@ def upload_blob(
         identity share a cached token; calls with different identities use separate token caches.
     :keyword bool overwrite: Whether to overwrite an existing blob. Defaults to False.
     :keyword str content_type: The content type of the blob.
+    :keyword str content_encoding: The content encoding of the blob.
+    :keyword str content_language: The content language of the blob.
+    :keyword str content_disposition: The content disposition of the blob.
+    :keyword str cache_control: The cache control value of the blob.
+    :keyword bytes content_md5: The MD5 hash to store with the blob.
     :keyword dict metadata: Name-value pairs associated with the blob as metadata.
+    :keyword dict tags: Name-value pairs to set as blob index tags.
+    :keyword str lease_id: Lease ID required to upload to a leased blob.
+    :keyword str encryption_key: Base64-encoded customer-provided encryption key.
+    :keyword str encryption_key_sha256: Base64-encoded SHA-256 hash of the encryption key.
+    :keyword str encryption_algorithm: Customer-provided encryption algorithm.
+    :keyword str encryption_scope: Encryption scope to use for the blob.
+    :keyword str if_match: Upload only if the blob's ETag matches this value.
+    :keyword str if_none_match: Upload only if the blob's ETag does not match this value.
+    :keyword int if_modified_since: Upload only if modified since this Unix timestamp.
+    :keyword int if_unmodified_since: Upload only if unmodified since this Unix timestamp.
+    :keyword str if_tags: SQL tag condition that must match for the upload.
+    :keyword int immutability_policy_expiry: Immutability policy expiry as a Unix timestamp.
+    :keyword str immutability_policy_mode: Immutability policy mode.
+    :keyword bool legal_hold: Whether to place a legal hold on the blob.
+    :keyword str tier: Access tier to set on the blob.
+    :keyword int timeout: Server-side timeout applied to each upload request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked uploads.
     :keyword int max_block_size: Maximum size per block for chunked uploads.
     :returns: A dict with response headers (etag, last_modified, etc.).
@@ -85,7 +130,28 @@ def upload_blob(
         credential_id=credential_id,
         overwrite=overwrite,
         content_type=content_type,
+        content_encoding=content_encoding,
+        content_language=content_language,
+        content_disposition=content_disposition,
+        cache_control=cache_control,
+        content_md5=content_md5,
         metadata=metadata,
+        tags=tags,
+        lease_id=lease_id,
+        encryption_key=encryption_key,
+        encryption_key_sha256=encryption_key_sha256,
+        encryption_algorithm=encryption_algorithm,
+        encryption_scope=encryption_scope,
+        if_match=if_match,
+        if_none_match=if_none_match,
+        if_modified_since=if_modified_since,
+        if_unmodified_since=if_unmodified_since,
+        if_tags=if_tags,
+        immutability_policy_expiry=immutability_policy_expiry,
+        immutability_policy_mode=immutability_policy_mode,
+        legal_hold=legal_hold,
+        tier=tier,
+        timeout=timeout,
         max_concurrency=max_concurrency,
         max_block_size=max_block_size,
     )
