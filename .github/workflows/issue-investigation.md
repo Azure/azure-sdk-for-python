@@ -65,17 +65,40 @@ safe-outputs:
     report-as-issue: false
 
   steps:
+    - name: Checkout trusted output guard
+      uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      with:
+        ref: ${{ github.workflow_sha }}
+        persist-credentials: false
+        sparse-checkout: .github/workflows/scripts
+        path: workflow-output-guard
     - name: Defer Copilot assignment until investigation comment is applied
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       env:
         GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
+        INVESTIGATION_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
       with:
         script: |
           const fs = require('node:fs');
           const file = process.env.GH_AW_AGENT_OUTPUT;
-          const output = JSON.parse(fs.readFileSync(file, 'utf8'));
-          if (!Array.isArray(output.items)) {
-            throw new Error('Agent output is missing the items array');
+          const path = require('node:path');
+          const { validateInvestigationOutputs, ineligibleReason } = require(path.join(
+            process.env.GITHUB_WORKSPACE, 'workflow-output-guard',
+            '.github', 'workflows', 'scripts', 'issue_workflow_support.cjs'
+          ));
+          let output = validateInvestigationOutputs(
+            JSON.parse(fs.readFileSync(file, 'utf8')),
+            process.env.INVESTIGATION_ISSUE_NUMBER,
+            `${context.repo.owner}/${context.repo.repo}`
+          );
+          if (output.items.some(item => item.type !== 'noop')) {
+            const number = output.items[0].issue_number;
+            const { data: issue } = await github.rest.issues.get({ ...context.repo, issue_number: number });
+            const reason = ineligibleReason(issue, number);
+            if (reason) {
+              core.notice(`Investigation action skipped: ${reason}`);
+              output = { items: [{ type: 'noop', message: reason }], errors: [] };
+            }
           }
           const count = output.items.length;
           output.items = output.items.filter(item =>
@@ -85,6 +108,9 @@ safe-outputs:
           core.info(`Deferred ${count - output.items.length} buffered Copilot assignments`);
 
 jobs:
+  safe_outputs:
+    permissions:
+      contents: read
   copilot_assignment:
     needs: [agent, detection, safe_outputs]
     if: >-

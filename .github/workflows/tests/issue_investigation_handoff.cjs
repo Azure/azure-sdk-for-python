@@ -105,7 +105,7 @@ async function main() {
 
   const singleOwner = {
     appliedItems: [
-      { type: "assign_to_user", number: 42 },
+      { type: "assign_to_user" },
       receipt,
       { ...receipt, url: "https://github.com/example/sdk/issues/42#issuecomment-100" },
     ],
@@ -142,11 +142,15 @@ async function main() {
   }
   await assert.rejects(run({}, analysis, context, { appliedItems: [] }), /No applied triage analysis/);
   await assert.rejects(run({}, analysis, context, { agentOutput: { items: [], errors: ["failure"] } }), /Invalid triage/);
-  cases += 15;
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, appliedItems: [{ type: "assign_to_user" }, { type: "assign_to_user" }, ...singleOwner.appliedItems.slice(1)],
+  }), /assignment route/);
+  cases += 16;
 
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "investigation-handoff-"));
   const file = path.join(directory, "output.json");
   const priorOutput = process.env.GH_AW_AGENT_OUTPUT;
+  const priorWorkspace = process.env.GITHUB_WORKSPACE;
   try {
     process.env.GH_AW_AGENT_OUTPUT = file;
     const pending = [
@@ -157,19 +161,26 @@ async function main() {
       { type: "issue_investigation", issue_number: "42" },
     ];
     fs.writeFileSync(file, JSON.stringify({ items: pending, errors: [] }));
-    const execute = new Function("require", "core", deferScript);
+    const executeScript = new Function("require", "core", deferScript);
+    const requireTestModule = name => name.endsWith("issue_workflow_support.cjs")
+      ? require("../scripts/issue_workflow_support.cjs") : require(name);
+    const execute = () => executeScript(requireTestModule, { info: () => {} });
+
+    process.env.GITHUB_WORKSPACE = directory;
     execute(require, { info: () => {} });
     assert.deepEqual(JSON.parse(fs.readFileSync(file, "utf8")).items, pending.slice(1, 4));
     assert.equal((await run({ labels: [] })).output, undefined);
     assert.ok((await run()).output);
     fs.writeFileSync(file, JSON.stringify({ errors: [] }));
-    assert.throws(() => execute(require, { info: () => {} }), /items array/);
+    assert.throws(() => execute(), /nonempty terminal/);
     fs.writeFileSync(file, "{");
     assert.throws(() => execute(require, { info: () => {} }), SyntaxError);
     cases += 3;
   } finally {
     if (priorOutput === undefined) delete process.env.GH_AW_AGENT_OUTPUT;
     else process.env.GH_AW_AGENT_OUTPUT = priorOutput;
+    if (priorWorkspace === undefined) delete process.env.GITHUB_WORKSPACE;
+    else process.env.GITHUB_WORKSPACE = priorWorkspace;
     fs.rmSync(directory, { recursive: true });
   }
   console.log(`Handoff runtime cases passed: ${cases}`);

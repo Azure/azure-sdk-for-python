@@ -1,49 +1,4 @@
-// cspell:ignore ffeb
-const BLOCKING_LABELS = new Set([
-  "needs-triage",
-  "needs-team-triage",
-  "issue-addressed",
-  "needs-author-feedback",
-]);
-
-function positiveInteger(value, name) {
-  const text = String(value).trim();
-  if (!/^\+?\d+$/.test(text) || !Number.isSafeInteger(Number(text)) || Number(text) <= 0) {
-    throw new Error(`${name} must be a positive integer`);
-  }
-  return Number(text);
-}
-
-function ineligibleReason(issue, issueNumber) {
-  if (issue.number !== issueNumber || Object.hasOwn(issue, "pull_request")) {
-    return "the target is not the triggering issue";
-  }
-  if (issue.state !== "open" || issue.locked !== false) {
-    return "the issue is closed or locked";
-  }
-  if (!Array.isArray(issue.labels) || issue.labels.some(label =>
-    !label || typeof label.name !== "string" || typeof label.color !== "string"
-  )) {
-    throw new Error("Issue labels are missing names or colors");
-  }
-  const names = new Set(issue.labels.map(label => label.name.toLowerCase()));
-  if (!names.has("customer-reported")) {
-    return "the issue is not customer-reported";
-  }
-  for (const name of BLOCKING_LABELS) {
-    if (names.has(name)) {
-      return `the issue has ${name}`;
-    }
-  }
-  const colors = issue.labels.map(label => label.color.replace(/^#/, "").toUpperCase());
-  if (colors.filter(color => color === "E99695").length !== 1) {
-    return "the issue does not have exactly one service label";
-  }
-  if (colors.filter(color => color === "FFEB77").length !== 1) {
-    return "the issue does not have exactly one category label";
-  }
-  return null;
-}
+const { positiveInteger, ineligibleReason } = require("./issue_workflow_support.cjs");
 
 async function prepareHandoff({
   github, context, issueNumber, appliedItems, agentOutput, ownerNotification, normalizeAssignment,
@@ -82,9 +37,14 @@ async function prepareHandoff({
       throw new Error("The assignment request is not a single valid assignment for this issue");
     }
     const requestedOwner = normalized.assignees[0].toLowerCase();
-    const appliedAssignments = appliedItems.filter(item => item.type === "assign_to_user" && item.number === number);
+    // The pinned serializer omits assign_to_user.issueNumber. One normalized
+    // request and one receipt still bind the applied operation to this issue.
+    const appliedAssignments = appliedItems.filter(item => item.type === "assign_to_user");
+    const assignment = appliedAssignments[0];
     if (ownerNotification !== "skipped" ||
         appliedAssignments.length !== 1 ||
+        (assignment.number !== undefined && assignment.number !== number) ||
+        (assignment.repo !== undefined && assignment.repo.toLowerCase() !== `${context.repo.owner}/${context.repo.repo}`.toLowerCase()) ||
         !issue.assignees?.some(assignee => assignee.login.toLowerCase() === requestedOwner)) {
       throw new Error("The single-owner assignment route was not completed");
     }

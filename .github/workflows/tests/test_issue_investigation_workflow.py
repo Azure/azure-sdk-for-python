@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -131,6 +132,10 @@ class WorkflowIntegrationTests(unittest.TestCase):
                 self.assertIn('cp "$GH_AW_COPILOT_SRC" "$GH_AW_COPILOT_BIN"', lock)
                 self.assertIn('"${RUNNER_TEMP}/gh-aw/bin/copilot"', lock)
                 self.assertNotIn("/usr/local/bin/copilot", lock)
+                self.assertIn('GH_AW_ENGINE_VERSION: "1.0.80"', lock)
+                ci = (WORKFLOWS / "actionlint.yml").read_text(encoding="utf-8")
+                self.assertIn(f"github/gh-aw-actions/setup@{setup['sha']}", ci)
+                self.assertIn("GH_AW_RUNTIME:", ci)
 
     def test_inference_is_read_only_with_native_authentication(self):
         for name in ("issue-investigation", "issue-triage"):
@@ -227,6 +232,32 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Copilot assignment cases passed", result.stdout)
 
+    def test_pinned_workflow_runtime_contracts(self):
+        source = read_workflow("issue-investigation")
+        step = source.split("- name: Confirm Copilot assignment succeeded\n", 1)[1]
+        condition = textwrap.dedent(step.split("if: >-\n", 1)[1].split("\n        uses:", 1)[0]).strip()
+        if not os.environ.get("GH_AW_RUNTIME"):
+            self.skipTest("Set GH_AW_RUNTIME to run pinned native handler contracts")
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "issue_workflow_runtime.cjs")],
+            input=json.dumps({"assignmentCondition": condition}),
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Pinned workflow runtime contracts passed", result.stdout)
+
+    def test_output_guards_execute_before_mutations(self):
+        for name in ("issue-investigation", "issue-triage"):
+            with self.subTest(workflow=name):
+                lock = read_workflow(name, ".lock.yml")
+                section = job(lock, "safe_outputs")
+                self.assertIn("contents: read", section)
+                self.assertIn("ref: ${{ github.workflow_sha }}", section)
+                self.assertIn("issue_workflow_support.cjs", section)
+                self.assertLess(section.index("Checkout trusted output guard"), section.index("Process Safe Outputs"))
+                self.assertLess(section.index("validate"), section.index("Process Safe Outputs"))
+                self.assertIn('GH_AW_MISSING_TOOL_CREATE_ISSUE: "false"', lock)
+                self.assertIn('GH_AW_REPORT_INCOMPLETE_CREATE_ISSUE: "false"', lock)
     def test_concurrency_is_partitioned_by_issue(self):
         for name in ("issue-investigation", "issue-triage"):
             with self.subTest(workflow=name):

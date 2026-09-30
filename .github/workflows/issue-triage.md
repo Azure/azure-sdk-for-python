@@ -41,6 +41,10 @@ network:
 
 safe-outputs:
   report-failure-as-issue: false
+  report-incomplete:
+    create-issue: false
+  missing-tool:
+    create-issue: false
   add-labels:
     max: 7
     target: "*"
@@ -59,6 +63,13 @@ safe-outputs:
     workflows: [issue-investigation]
     max: 1
   steps:
+    - name: Checkout trusted output guard
+      uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      with:
+        ref: ${{ github.workflow_sha }}
+        persist-credentials: false
+        sparse-checkout: .github/workflows/scripts
+        path: workflow-output-guard
     - name: Defer investigation dispatch until triage is applied
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       env:
@@ -68,13 +79,17 @@ safe-outputs:
           const fs = require('node:fs');
           const file = process.env.GH_AW_AGENT_OUTPUT;
           const output = JSON.parse(fs.readFileSync(file, 'utf8'));
-          if (!Array.isArray(output.items)) {
-            throw new Error('Agent output is missing the items array');
-          }
+          const path = require('node:path');
+          const { validateAgentOutput } = require(path.join(
+            process.env.GITHUB_WORKSPACE, 'workflow-output-guard',
+            '.github', 'workflows', 'scripts', 'issue_workflow_support.cjs'
+          ));
+          validateAgentOutput(output);
           const count = output.items.length;
           output.items = output.items.filter(item =>
             item.type !== 'dispatch_workflow' && item.type !== 'issue_investigation'
           );
+          validateAgentOutput(output);
           fs.writeFileSync(file, JSON.stringify(output));
           core.info(`Deferred ${count - output.items.length} buffered investigation dispatches`);
   jobs:
@@ -227,6 +242,9 @@ safe-outputs:
               }
 
 jobs:
+  safe_outputs:
+    permissions:
+      contents: read
   investigation_handoff:
     needs: [agent, detection, safe_outputs, mention_owners]
     if: >-

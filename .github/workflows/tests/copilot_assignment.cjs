@@ -1,3 +1,4 @@
+// cspell:ignore ffeb
 const assert = require("node:assert/strict");
 const { prepareAssignment } = require("../scripts/copilot_assignment.cjs");
 
@@ -11,7 +12,12 @@ const context = { repo: { owner: "example", repo: "sdk" } };
 let cases = 0;
 
 async function run(changes = {}, comment = analysis, event = context, inputs = {}) {
-  const issue = { number: 42, url: issueUrl, state: "open", locked: false, ...changes };
+  const labels = [
+    { name: "customer-reported", color: "3800e0" },
+    { name: "KeyVault", color: "e99695" },
+    { name: "Client", color: "FFEB77" },
+  ];
+  const issue = { number: 42, url: issueUrl, state: "open", locked: false, labels, ...changes };
   const calls = [];
   const github = { rest: { issues: {
     get: async request => { calls.push(request); return { data: issue }; },
@@ -68,7 +74,20 @@ async function main() {
   for (const value of ["", "0", "-1", "42suffix", "1.5"]) {
     await assert.rejects(run({}, analysis, context, { issueNumber: value }), /positive integer/);
   }
-  cases += 12;
+  for (const blocker of ["needs-triage", "needs-team-triage", "issue-addressed", "needs-author-feedback"]) {
+    assert.equal((await run({ labels: [
+      { name: "customer-reported", color: "3800e0" },
+      { name: "KeyVault", color: "e99695" },
+      { name: "Client", color: "FFEB77" },
+      { name: blocker, color: "ffffff" },
+    ] })).output, undefined);
+  }
+  assert.equal((await run({ labels: [] })).output, undefined);
+  await assert.rejects(run({}, {
+    ...analysis,
+    body: "## Agentic Issue Investigation\n\n### Outcome\n\nRequires a human. Analysis provided below\n\n### Summary\nThe report mentions Recommended for Copilot automated fix but requires API design.",
+  }), /No applied investigation analysis/);
+  cases += 13;
   console.log(`Copilot assignment cases passed: ${cases}`);
 }
 

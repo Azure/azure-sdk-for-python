@@ -1,10 +1,4 @@
-function positiveInteger(value, name) {
-  const text = String(value).trim();
-  if (!/^\+?\d+$/.test(text) || !Number.isSafeInteger(Number(text)) || Number(text) <= 0) {
-    throw new Error(`${name} must be a positive integer`);
-  }
-  return Number(text);
-}
+const { positiveInteger, ineligibleReason } = require("./issue_workflow_support.cjs");
 
 async function prepareAssignment({ github, context, issueNumber, appliedItems, agentOutput }) {
   const number = positiveInteger(issueNumber, "Issue number");
@@ -37,9 +31,8 @@ async function prepareAssignment({ github, context, issueNumber, appliedItems, a
   if (issue.number !== number || Object.hasOwn(issue, "pull_request")) {
     throw new Error("The target is not the investigated issue");
   }
-  if (issue.state !== "open" || issue.locked !== false) {
-    return { reason: "the issue is closed or locked" };
-  }
+  const reason = ineligibleReason(issue, number);
+  if (reason) return { reason };
 
   const commentReceipts = appliedItems.filter(item => item.type === "add_comment");
   if (commentReceipts.length === 0) {
@@ -61,7 +54,7 @@ async function prepareAssignment({ github, context, issueNumber, appliedItems, a
     }
     if (typeof comment.body === "string" &&
         /^## .*Agentic Issue Investigation\b/m.test(comment.body) &&
-        /Recommended for Copilot automated fix/.test(comment.body)) {
+        /^### Outcome\s+Recommended for Copilot automated fix\s*(?:\n### |$)/m.test(comment.body)) {
       analysisPosted = true;
       break;
     }
