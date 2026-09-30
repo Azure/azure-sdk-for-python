@@ -14,6 +14,7 @@ These tests assert the three things the fix must guarantee:
 3. modes that cannot observe an outcome (RECEIVE_AND_DELETE, uamqp) keep the fire-and-forget
    behavior.
 """
+
 import itertools
 import threading
 
@@ -37,6 +38,7 @@ from azure.servicebus._pyamqp.constants import SEND_DISPOSITION_ACCEPT
 from azure.servicebus._pyamqp.outcomes import Accepted, Modified, Rejected
 from azure.servicebus._pyamqp.receiver import ReceiverLink, check_disposition_outcome, outcome_name
 from azure.servicebus._pyamqp.aio._receiver_async import ReceiverLink as ReceiverLinkAsync
+from azure.servicebus._pyamqp._decode import _MAX_NESTING_DEPTH
 from azure.servicebus._pyamqp.client import ReceiveClient
 from azure.servicebus._pyamqp.aio._client_async import ReceiveClientAsync
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
@@ -216,9 +218,9 @@ def test_awaited_settlement_raises_when_the_service_rejects():
         settle(link)
 
     assert exc_info.value.condition == b"com.microsoft:message-lock-lost"
-    assert not isinstance(exc_info.value, MessageSettlementUnconfirmed), (
-        "a definitive rejection must not be reported as unconfirmed"
-    )
+    assert not isinstance(
+        exc_info.value, MessageSettlementUnconfirmed
+    ), "a definitive rejection must not be reported as unconfirmed"
     assert not link._pending_dispositions
 
 
@@ -450,9 +452,7 @@ def test_peek_lock_on_pyamqp_confirms_settlements():
 def test_receive_and_delete_does_not_confirm():
     """The service settles these on delivery, so there is no outcome to wait for."""
     with ServiceBusClient.from_connection_string(CONN_STR) as client:
-        receiver = client.get_queue_receiver(
-            queue_name="q", receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        )
+        receiver = client.get_queue_receiver(queue_name="q", receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
         assert receiver._await_settlement_outcome is False
 
 
@@ -538,9 +538,7 @@ def _handler_raising(exc, is_async=False):
     return handler
 
 
-UNCONFIRMED = MessageSettlementUnconfirmed(
-    condition=ErrorCondition.ClientError, description="no outcome arrived"
-)
+UNCONFIRMED = MessageSettlementUnconfirmed(condition=ErrorCondition.ClientError, description="no outcome arrived")
 REJECTION = MessageException(condition=b"com.microsoft:message-lock-lost", description="lock lost")
 
 
@@ -583,3 +581,59 @@ async def test_async_rejected_settlement_is_not_downgraded_to_a_fallback():
             _handler_raising(REJECTION, is_async=True), _received_message(), MESSAGE_COMPLETE, await_outcome=True
         )
     assert not isinstance(exc_info.value, RuntimeError)
+
+
+def _over_depth_body():
+    # amqp-value body section whose value nests one level past the decoder limit.
+    value = b"\x40"
+    for _ in range(_MAX_NESTING_DEPTH + 1):
+        body = b"\x00\x00\x00\x01" + value
+        value = b"\xd0" + len(body).to_bytes(4, "big") + body
+    return b"\x00\x53\x77" + value
+
+
+def _transfer_frame(delivery_id, delivery_tag, payload):
+    # handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted,
+    # batchable, payload
+    return [1, delivery_id, delivery_tag, 0, False, False, None, None, None, None, False, payload]
+
+
+def test_incoming_transfer_rejects_malformed_payload():
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+
+    link._incoming_transfer(_transfer_frame(DELIVERY_ID, DELIVERY_TAG, _over_depth_body()))
+
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_called_once()
+    state = link._outgoing_disposition.call_args.kwargs["state"]
+    assert isinstance(state, Rejected)
+    assert state.error.condition == ErrorCondition.DecodeError
+
+    # A subsequent valid delivery is still processed.
+    link._outgoing_disposition.reset_mock()
+    link._incoming_transfer(_transfer_frame(DELIVERY_ID + 1, b"tag2", b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_incoming_transfer_rejects_malformed_payload_async():
+    link = build_async_link()
+    link._on_transfer = AsyncMock()
+    link._outgoing_disposition = AsyncMock()
+
+    await link._incoming_transfer(_transfer_frame(DELIVERY_ID, DELIVERY_TAG, _over_depth_body()))
+
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_awaited_once()
+    state = link._outgoing_disposition.call_args.kwargs["state"]
+    assert isinstance(state, Rejected)
+    assert state.error.condition == ErrorCondition.DecodeError
+
+    # A subsequent valid delivery is still processed.
+    link._outgoing_disposition.reset_mock()
+    await link._incoming_transfer(_transfer_frame(DELIVERY_ID + 1, b"tag2", b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_awaited_once()
