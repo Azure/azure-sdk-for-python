@@ -7,7 +7,7 @@ Asyncio Requests transport class for the asynchronous WorkloadIdentityCredential
 """
 from typing import Any, Optional
 
-from requests import Session
+from requests import Session  # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
     AsyncioRequestsTransport,
 )
