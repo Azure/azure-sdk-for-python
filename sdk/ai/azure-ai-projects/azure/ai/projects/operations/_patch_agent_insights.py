@@ -26,6 +26,13 @@ from ..models import AgentInsightRunLROPoller
 JSON = MutableMapping[str, Any]
 
 
+class _AgentInsightPolling(LROBasePolling):
+    def status(self) -> str:
+        status = super().status()
+        # Azure Core uses the single-L spelling for terminal cancellation.
+        return "canceled" if status.lower() == "cancelled" else status
+
+
 class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
     """Custom operations for beta Agent Insights monitors."""
 
@@ -128,7 +135,12 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                _AgentInsightPolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    headers=headers,
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

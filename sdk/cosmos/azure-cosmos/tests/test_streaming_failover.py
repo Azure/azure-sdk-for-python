@@ -56,7 +56,7 @@ class TestStreamingFailOver(unittest.TestCase):
             self.mock_get_read_endpoints)
         client.client_connection._global_endpoint_manager.location_cache.get_write_regional_routing_contexts = (
             self.mock_get_write_endpoints)
-        created_db = client.create_database_if_not_exists("streaming-db" + str(uuid.uuid4()))
+        created_db = client.create_database_if_not_exists(test_config.unique_database_id("streaming"))
         created_container = created_db.create_container("streaming-container" + str(uuid.uuid4()),
                                                         PartitionKey(path="/id"))
 

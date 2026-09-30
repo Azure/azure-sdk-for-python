@@ -55,6 +55,25 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                                 "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                 "image": "str",
                                 "name": "str",
+                                "probes": [
+                                    {
+                                        "failureThreshold": 0,
+                                        "httpGet": {
+                                            "port": 0,
+                                            "host": "str",
+                                            "httpHeaders": [{"name": "str", "value": "str"}],
+                                            "path": "str",
+                                            "scheme": "str",
+                                        },
+                                        "initialDelaySeconds": 0,
+                                        "periodSeconds": 0,
+                                        "successThreshold": 0,
+                                        "tcpSocket": {"port": 0, "host": "str"},
+                                        "terminationGracePeriodSeconds": 0,
+                                        "timeoutSeconds": 0,
+                                        "type": "str",
+                                    }
+                                ],
                                 "resources": {"cpu": 0.0, "memory": "str"},
                             }
                         ],
@@ -121,6 +140,25 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                                 "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                 "image": "str",
                                 "name": "str",
+                                "probes": [
+                                    {
+                                        "failureThreshold": 0,
+                                        "httpGet": {
+                                            "port": 0,
+                                            "host": "str",
+                                            "httpHeaders": [{"name": "str", "value": "str"}],
+                                            "path": "str",
+                                            "scheme": "str",
+                                        },
+                                        "initialDelaySeconds": 0,
+                                        "periodSeconds": 0,
+                                        "successThreshold": 0,
+                                        "tcpSocket": {"port": 0, "host": "str"},
+                                        "terminationGracePeriodSeconds": 0,
+                                        "timeoutSeconds": 0,
+                                        "type": "str",
+                                    }
+                                ],
                                 "resources": {"cpu": 0.0, "memory": "str"},
                             }
                         ],

@@ -33,11 +33,11 @@ def main():
     response = client.cassandra_clusters.begin_invoke_command(
         resource_group_name="cassandra-prod-rg",
         cluster_name="cassandra-prod",
-        body={"command": "nodetool status", "host": "10.0.1.12"},
+        body={"arguments": {"status": ""}, "command": "nodetool", "host": "10.0.1.12"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBManagedCassandraCommand.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBManagedCassandraCommand.json
 if __name__ == "__main__":
     main()

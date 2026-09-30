@@ -31,8 +31,9 @@ from __future__ import annotations
 import json
 from typing import Any, cast
 
-from ..models._generated import CreateResponse
+
 from .._response_context import PlatformContext
+from ..models import _generated as _generated_models
 
 
 # Keys emitted by :meth:`ResilientResponseInput.to_task_input` / consumed by
@@ -166,7 +167,7 @@ class ResilientResponseInput:
     def __init__(
         self,
         *,
-        request: CreateResponse,
+        request: _generated_models.CreateResponse,
         response_id: str,
         disposition: str,
         agent_reference: Any = None,
@@ -253,7 +254,9 @@ class ResilientResponseInput:
         raw_request = params.get(_K_REQUEST)
         if raw_request is None:
             raise ValueError("ResilientResponseInput missing required 'request'")
-        request = cast(CreateResponse, raw_request) if isinstance(raw_request, dict) else raw_request
+        request = (
+            cast("_generated_models.CreateResponse", raw_request) if isinstance(raw_request, dict) else raw_request
+        )
 
         return cls(
             request=request,
