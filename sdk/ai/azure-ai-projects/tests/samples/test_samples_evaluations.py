@@ -104,7 +104,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_groundedness.py
     - sample_intent_resolution.py
     - sample_output_quality.py
-    - sample_quality_grader.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
