@@ -59,7 +59,7 @@ VALID_CHALLENGE_AUTHORITIES = [
     ("vault.contoso.test", "contoso.test", "adfs"),
     ("TEST.VAULT.AZURE.NET", "VAULT.AZURE.NET", "tenant"),
     ("user:pass@test.vault.azure.net", "vault.azure.net", "tenant"),
-    ("täst.vault.azure.net", "vault.azure.net", "tenant"),
+    ("t" + chr(0xE4) + "st.vault.azure.net", "vault.azure.net", "tenant"),
     ("xn--tst-qla.vault.azure.net", "vault.azure.net", "tenant"),
 ]
 
