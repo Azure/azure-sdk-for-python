@@ -16,7 +16,7 @@ use std::{
 
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, OperationPlan},
-    error::{CosmosError, CosmosStatus},
+    error::{status_codes, CosmosError},
     models::{
         ActivityId, ChangeFeedStartFrom, ContainerReference, ContinuationToken, CosmosOperation,
         CosmosResponse, FeedRange, PartitionKey, SessionToken,
@@ -72,6 +72,10 @@ struct QueryRequest {
     allow_cross_partition: bool,
 }
 
+fn feed_range_from_bounds(min: &str, max: &str) -> Result<FeedRange, CosmosError> {
+    FeedRange::new(min.try_into()?, max.try_into()?)
+}
+
 impl QueryRequest {
     fn operation(&self, container: ContainerReference) -> PyResult<CosmosOperation> {
         let range = match (&self.partition_key, &self.feed_range) {
@@ -86,7 +90,7 @@ impl QueryRequest {
                 }
                 FeedRange::for_partition(key.clone(), container.partition_key_definition())
             }
-            (None, Some((min, max))) => FeedRange::new(min.clone().into(), max.clone().into())
+            (None, Some((min, max))) => feed_range_from_bounds(min, max)
                 .map_err(|error| PyValueError::new_err(error.to_string()))?,
             (None, None) => FeedRange::full(),
             _ => {
@@ -130,7 +134,7 @@ impl ChangeFeedRequest {
                 .map(|ranges| ranges.map(|ranges| ranges.len())));
         }
         let scope = match &self.feed_range {
-            Some((min, max)) => FeedRange::new(min.clone().into(), max.clone().into())
+            Some((min, max)) => feed_range_from_bounds(min, max)
                 .map_err(|error| PyValueError::new_err(error.to_string()))?,
             None => FeedRange::full(),
         };
@@ -169,7 +173,7 @@ impl ChangeFeedRequest {
             (Some(key), None) => {
                 FeedRange::for_partition(key.clone(), container.partition_key_definition())
             }
-            (None, Some((min, max))) => FeedRange::new(min.clone().into(), max.clone().into())
+            (None, Some((min, max))) => feed_range_from_bounds(min, max)
                 .map_err(|error| PyValueError::new_err(error.to_string()))?,
             (None, None) => FeedRange::full(),
             _ => {
@@ -405,10 +409,8 @@ async fn next_plan_page(
             Ok(token) => Some(token.as_str().to_owned()),
             Err(error)
                 if matches!(progress.request, FeedRequest::Query(_))
-                    && (error.status()
-                        == CosmosStatus::CLIENT_NON_STREAMING_ORDER_BY_CONTINUATION_UNSUPPORTED
-                        || error.status()
-                            == CosmosStatus::CLIENT_DISTINCT_CONTINUATION_UNSUPPORTED) =>
+                    && error.status()
+                        == status_codes::CLIENT_BUFFERED_QUERY_CONTINUATION_UNSUPPORTED =>
             {
                 state.continuation_unsupported = true;
                 None
@@ -595,6 +597,18 @@ mod tests {
         collections::{BTreeSet, HashMap},
         time::Duration,
     };
+
+    #[test]
+    fn explicit_feed_bounds_preserve_valid_hex_and_reject_invalid_values() {
+        let full = feed_range_from_bounds("", "ff").unwrap();
+        assert_eq!(full, FeedRange::full());
+        let range = feed_range_from_bounds("3f00", "7f00").unwrap();
+        assert_eq!(range.min_inclusive().to_hex(), "3F00");
+        assert_eq!(range.max_exclusive().to_hex(), "7F00");
+        for (min, max) in [("3", "7F"), ("GG", "7F"), ("3F", "7"), ("3F", "GG"), ("7F", "3F")] {
+            assert!(feed_range_from_bounds(min, max).is_err());
+        }
+    }
 
     async fn setup(count: usize) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
         setup_with_definition(
@@ -1199,7 +1213,7 @@ mod tests {
             .unwrap();
             assert_eq!(
                 result.unwrap_err().status(),
-                CosmosStatus::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
+                status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
             );
             assert!(token.is_none());
             assert!(cursor.can_retry_setup());

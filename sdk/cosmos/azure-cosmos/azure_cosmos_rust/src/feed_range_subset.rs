@@ -140,8 +140,10 @@ fn normalize_feed_range_bounds(range: &RangeDict) -> Result<(String, String), St
 /// Build a driver `FeedRange` from a normalized `[min, max)` bound pair.
 fn feed_range_from_normalized_bounds(min: String, max: String) -> Result<FeedRange, String> {
     FeedRange::new(
-        EffectivePartitionKey::from(min),
-        EffectivePartitionKey::from(max),
+        EffectivePartitionKey::try_from(min)
+            .map_err(|e| format!("invalid feed range minimum: {e}"))?,
+        EffectivePartitionKey::try_from(max)
+            .map_err(|e| format!("invalid feed range maximum: {e}"))?,
     )
     .map_err(|e| format!("invalid feed range bounds: {e}"))
 }
@@ -278,6 +280,17 @@ mod tests {
             &range_dict("3F", "7F", true, false),
         );
         assert!(compute_is_feed_range_subset(body.as_bytes()).is_err());
+    }
+
+    #[test]
+    fn subset_rejects_invalid_hex_in_normalized_bounds() {
+        for (min, max) in [("3", "7F"), ("GG", "7F"), ("3F", "7"), ("3F", "GG")] {
+            let body = subset_body(
+                &range_dict("", "FF", true, false),
+                &range_dict(min, max, true, false),
+            );
+            assert!(compute_is_feed_range_subset(body.as_bytes()).is_err());
+        }
     }
 
     #[test]

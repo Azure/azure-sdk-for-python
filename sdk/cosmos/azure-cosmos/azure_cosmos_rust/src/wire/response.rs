@@ -9,7 +9,7 @@ use pyo3::types::{PyBytes, PyDict, PyTuple};
 use serde::{Deserialize, Serialize};
 
 use azure_data_cosmos_driver::{
-    error::{CosmosError, CosmosStatus},
+    error::{status_codes, CosmosError, CosmosStatus},
     models::{CosmosResponse, ResponseBody},
 };
 
@@ -145,7 +145,7 @@ pub(super) fn tuple_from_feed_result<'py>(
             backend_response_tuple(py, 200, 0, response_headers, br#"{"Documents":[]}"#, None)
         }
         Err(cosmos_error) => {
-            if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+            if cosmos_error.status() == status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE {
                 return Err(_UnsupportedQueryFeatureError::new_err(
                     cosmos_error.to_string(),
                 ));
@@ -184,7 +184,7 @@ pub(super) fn tuple_from_query_databases_result<'py>(
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     if let Err(cosmos_error) = &response_result {
-        if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+        if cosmos_error.status() == status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE {
             return Err(_UnsupportedQueryFeatureError::new_err(
                 cosmos_error.to_string(),
             ));
@@ -214,7 +214,7 @@ pub(super) fn tuple_from_query_containers_result<'py>(
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     if let Err(cosmos_error) = &response_result {
-        if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+        if cosmos_error.status() == status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE {
             return Err(_UnsupportedQueryFeatureError::new_err(
                 cosmos_error.to_string(),
             ));
@@ -803,13 +803,15 @@ mod tests {
         feed_range_to_response_body, named_feed_response_body_to_vec,
         record_diagnostics_for_responseless, response_body_to_vec, response_headers_dict,
         tuple_from_database_feed_result, tuple_from_feed_result,
-        tuple_from_partition_key_ranges_result, tuple_from_result, tuple_from_result_with_attempts,
+        tuple_from_partition_key_ranges_result, tuple_from_query_containers_result,
+        tuple_from_query_databases_result, tuple_from_result, tuple_from_result_with_attempts,
         FeedRangeFromPartitionKeyPayload,
     };
     use azure_core::Bytes;
-    use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
+    use azure_data_cosmos_driver::error::{status_codes, CosmosError, CosmosStatus};
     use azure_data_cosmos_driver::models::{
-        partition_key_range::PartitionKeyRange, CosmosResponse, CosmosResponseHeaders, ResponseBody,
+        partition_key_range::PartitionKeyRange, CosmosResponse, CosmosResponseHeaders,
+        EffectivePartitionKey, ResponseBody,
     };
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
@@ -1456,14 +1458,18 @@ def record_unraisable(args):
     fn unsupported_query_feature_uses_typed_binding_error() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let error = CosmosError::builder()
-                .with_status(CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE)
-                .with_message("unsupported query feature: ORDER BY")
-                .build();
-
-            let py_error = tuple_from_feed_result(py, Err(error)).unwrap_err();
-
-            assert!(py_error.is_instance_of::<_UnsupportedQueryFeatureError>(py));
+            for convert in [
+                tuple_from_feed_result,
+                tuple_from_query_databases_result,
+                tuple_from_query_containers_result,
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE)
+                    .with_message("unsupported query feature: ORDER BY")
+                    .build();
+                let py_error = convert(py, Err(error)).unwrap_err();
+                assert!(py_error.is_instance_of::<_UnsupportedQueryFeatureError>(py));
+            }
         });
     }
 
@@ -1473,7 +1479,11 @@ def record_unraisable(args):
     fn read_feed_ranges_tuple_sets_minimal_headers() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
-            let ranges = vec![PartitionKeyRange::new("0".to_string(), "", "FF")];
+            let ranges = vec![PartitionKeyRange::new(
+                "0".to_string(),
+                EffectivePartitionKey::MIN,
+                EffectivePartitionKey::MAX,
+            )];
             let tuple = tuple_from_partition_key_ranges_result(py, Ok(Some(ranges)))
                 .expect("successful read_feed_ranges should map to backend tuple");
             let headers_any = tuple.get_item(2).expect("headers slot must exist");
@@ -1680,8 +1690,8 @@ def record_unraisable(args):
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
             for status in [
-                CosmosStatus::CLIENT_BAD_REQUEST,
-                CosmosStatus::SERIALIZATION_REQUEST_BODY_INVALID,
+                status_codes::CLIENT_BAD_REQUEST,
+                status_codes::SERIALIZATION_REQUEST_BODY_INVALID,
                 CosmosStatus::new(azure_core::http::StatusCode::PreconditionFailed),
             ] {
                 let error = CosmosError::builder()

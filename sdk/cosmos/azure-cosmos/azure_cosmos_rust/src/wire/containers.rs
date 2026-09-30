@@ -16,9 +16,9 @@ use pyo3::types::PyTuple;
 
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
-    error::{CosmosError, CosmosStatus},
+    error::{status_codes::substatus, CosmosError, CosmosStatus},
     models::{
-        ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken, SubStatusCode,
+        ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken,
     },
     options::{ContentResponseOnWrite, OperationOptions},
 };
@@ -348,7 +348,7 @@ async fn with_container_timeout<T>(
             CosmosError::builder()
                 .with_status(
                     CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
-                        .with_sub_status(SubStatusCode::CLIENT_OPERATION_TIMEOUT.value()),
+                        .with_sub_status(substatus::CLIENT_OPERATION_TIMEOUT.value()),
                 )
                 .with_message(timeout_message)
                 .with_source(error)
@@ -536,7 +536,7 @@ mod tests {
         );
         assert_eq!(
             error.status().sub_status(),
-            Some(SubStatusCode::CLIENT_OPERATION_TIMEOUT)
+            Some(substatus::CLIENT_OPERATION_TIMEOUT)
         );
         assert!(dropped.load(Ordering::SeqCst));
     }

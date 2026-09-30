@@ -137,7 +137,7 @@ repository as another maintained source directory.
 
 The current configuration tells Cargo to fetch a specific Git revision of the
 driver. A **Git revision** identifies a particular source snapshot. The
-selected driver is version `0.8.0`; the exact revision is recorded in the
+selected driver is preview version `1.0.0-beta.2`; the exact revision is recorded in the
 package-level `Cargo.toml` and `Cargo.lock`.
 
 
