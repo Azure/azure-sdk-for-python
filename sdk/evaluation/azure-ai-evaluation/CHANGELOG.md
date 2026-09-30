@@ -5,7 +5,7 @@
 ### Bugs Fixed
 
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
-- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined.
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
 
 ## 1.18.7 (2026-09-25)
 
