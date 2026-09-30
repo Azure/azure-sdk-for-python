@@ -22,7 +22,7 @@ import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline, PipelineContext, PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import RedirectPolicy, RetryPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import RedirectPolicy, RetryPolicy, SansIOHTTPPolicy, SensitiveHeaderCleanupPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
@@ -263,6 +263,64 @@ def test_valid_challenge_cache_reuse(domain, parameter, request_port, resource_p
     assert credential.get_token.call_count == 2
     assert credential.get_token.call_args.kwargs == {"enable_cae": True}
     assert HttpChallengeCache.get_challenge_for_url(alias) is HttpChallengeCache.get_challenge_for_url(url)
+
+
+def redirect_replay_case(warm_cache, target_cache, redirect_status):
+    url = get_random_url()
+    target = get_random_url()
+    header = 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+    if warm_cache:
+        HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, header))
+    requests = []
+
+    def send(request):
+        requests.append(request.url)
+        if warm_cache and len(requests) == 1:
+            assert request.body == b"payload"
+            HttpChallengeCache.remove_challenge_for_url(url)
+            return Mock(status_code=503, headers={})
+        if request.url == url:
+            assert not request.body
+            assert request.headers["x-sensitive"] == "private"
+            request.headers["x-current"] = "updated"
+            request.headers["x-added"] = "retained"
+            if target_cache:
+                HttpChallengeCache.set_challenge_for_url(target, HttpChallenge(target, header))
+            return Mock(status_code=redirect_status, headers={"location": target})
+        assert request.url == target
+        assert "x-sensitive" not in request.headers
+        assert request.headers["x-current"] == "updated"
+        assert request.headers["x-added"] == "retained"
+        method = "GET" if redirect_status == 303 else "PUT"
+        assert request.method == method
+        if not target_cache and requests.count(target) == 1:
+            assert not request.body
+            return Mock(status_code=401, headers={"WWW-Authenticate": header})
+        assert request.body == (None if redirect_status == 303 else b"payload")
+        assert request.headers["Content-Length"] == ("0" if redirect_status == 303 else "7")
+        return Mock(status_code=200, headers={})
+
+    request = HttpRequest("PUT", url, headers={"x-sensitive": "private", "x-current": "original"}, content=b"payload")
+    return request, send, requests
+
+
+@pytest.mark.parametrize("warm_cache", [False, True])
+@pytest.mark.parametrize("target_cache", [False, True])
+@pytest.mark.parametrize("redirect_status", [303, 307])
+def test_discovery_replay_preserves_redirect_headers(warm_cache, target_cache, redirect_status):
+    request, send, requests = redirect_replay_case(warm_cache, target_cache, redirect_status)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("token", time.time() + 3600)))
+    pipeline = Pipeline(
+        policies=[
+            RedirectPolicy(redirect_remove_headers=["x-sensitive"]),
+            RetryPolicy(retry_total=1, retry_backoff_factor=0),
+            ChallengeAuthPolicy(credential),
+            SensitiveHeaderCleanupPolicy(),
+        ],
+        transport=Mock(send=send),
+    )
+    assert pipeline.run(request).http_response.status_code == 200
+    assert len(requests) == 2 + int(warm_cache) + int(not target_cache)
 
 
 def test_cached_cae_scope_and_tenant_refresh():

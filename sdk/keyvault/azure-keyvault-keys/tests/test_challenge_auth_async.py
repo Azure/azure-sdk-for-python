@@ -20,7 +20,12 @@ import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline, PipelineContext, PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import (
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    SansIOHTTPPolicy,
+    SensitiveHeaderCleanupPolicy,
+)
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
@@ -33,6 +38,7 @@ from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
 from test_challenge_auth import (
+    redirect_replay_case,
     CACHE_RESOURCE_DOMAINS,
     INVALID_CHALLENGE_HEADERS,
     get_random_url,
@@ -1471,3 +1477,25 @@ async def test_discovery_replay_preserves_redirect_target(redirect_status):
     )
     assert (await pipeline.run(HttpRequest("PUT", url, content=b"payload"))).http_response.status_code == 200
     assert len(requests) == 4
+
+
+@pytest.mark.parametrize("warm_cache", [False, True])
+@pytest.mark.parametrize("target_cache", [False, True])
+@pytest.mark.parametrize("redirect_status", [303, 307])
+@pytest.mark.asyncio
+async def test_discovery_replay_preserves_redirect_headers(warm_cache, target_cache, redirect_status):
+    request, send, requests = redirect_replay_case(warm_cache, target_cache, redirect_status)
+    credential = Mock(
+        spec_set=["get_token"], get_token=AsyncMock(return_value=AccessToken("token", time.time() + 3600))
+    )
+    pipeline = AsyncPipeline(
+        policies=[
+            AsyncRedirectPolicy(redirect_remove_headers=["x-sensitive"]),
+            AsyncRetryPolicy(retry_total=1, retry_backoff_factor=0),
+            AsyncChallengeAuthPolicy(credential),
+            SensitiveHeaderCleanupPolicy(),
+        ],
+        transport=Mock(send=AsyncMock(side_effect=send)),
+    )
+    assert (await pipeline.run(request)).http_response.status_code == 200
+    assert len(requests) == 2 + int(warm_cache) + int(not target_cache)

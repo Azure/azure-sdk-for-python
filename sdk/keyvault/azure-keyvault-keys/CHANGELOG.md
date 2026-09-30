@@ -11,6 +11,7 @@
 - Hardened challenge cache reuse as a follow-up to [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
   Cached challenges are now verified before token use, and stale entries are cleared when challenge parsing or resource verification fails.
   Request replay and existing CAE scope/tenant precedence are preserved when concurrent requests invalidate the shared cache.
+- Preserved redirect header cleanup and header updates when restoring request bodies during authentication.
 
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 

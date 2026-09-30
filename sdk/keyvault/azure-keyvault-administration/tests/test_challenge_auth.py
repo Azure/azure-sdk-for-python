@@ -15,7 +15,13 @@ from uuid import uuid4
 import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineContext, PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, RedirectPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    SensitiveHeaderCleanupPolicy,
+)
 from azure.core.rest import HttpRequest
 from azure.keyvault.administration._internal import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.administration._internal.async_challenge_auth_policy import AsyncChallengeAuthPolicy
@@ -1348,3 +1354,83 @@ async def test_discovery_replay_preserves_redirect_target_async(redirect_status)
     )
     assert (await pipeline.run(HttpRequest("PUT", url, content=b"payload"))).http_response.status_code == 200
     assert len(requests) == 4
+
+
+def redirect_replay_case(warm_cache, target_cache, redirect_status):
+    url = get_random_url()
+    target = get_random_url()
+    header = 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+    if warm_cache:
+        HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, header))
+    requests = []
+
+    def send(request):
+        requests.append(request.url)
+        if warm_cache and len(requests) == 1:
+            assert request.body == b"payload"
+            HttpChallengeCache.remove_challenge_for_url(url)
+            return Mock(status_code=503, headers={})
+        if request.url == url:
+            assert not request.body
+            assert request.headers["x-sensitive"] == "private"
+            request.headers["x-current"] = "updated"
+            request.headers["x-added"] = "retained"
+            if target_cache:
+                HttpChallengeCache.set_challenge_for_url(target, HttpChallenge(target, header))
+            return Mock(status_code=redirect_status, headers={"location": target})
+        assert request.url == target
+        assert "x-sensitive" not in request.headers
+        assert request.headers["x-current"] == "updated"
+        assert request.headers["x-added"] == "retained"
+        method = "GET" if redirect_status == 303 else "PUT"
+        assert request.method == method
+        if not target_cache and requests.count(target) == 1:
+            assert not request.body
+            return Mock(status_code=401, headers={"WWW-Authenticate": header})
+        assert request.body == (None if redirect_status == 303 else b"payload")
+        assert request.headers["Content-Length"] == ("0" if redirect_status == 303 else "7")
+        return Mock(status_code=200, headers={})
+
+    request = HttpRequest("PUT", url, headers={"x-sensitive": "private", "x-current": "original"}, content=b"payload")
+    return request, send, requests
+
+
+@pytest.mark.parametrize("warm_cache", [False, True])
+@pytest.mark.parametrize("target_cache", [False, True])
+@pytest.mark.parametrize("redirect_status", [303, 307])
+def test_discovery_replay_preserves_redirect_headers(warm_cache, target_cache, redirect_status):
+    request, send, requests = redirect_replay_case(warm_cache, target_cache, redirect_status)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("token", time.time() + 3600)))
+    pipeline = Pipeline(
+        policies=[
+            RedirectPolicy(redirect_remove_headers=["x-sensitive"]),
+            RetryPolicy(retry_total=1, retry_backoff_factor=0),
+            ChallengeAuthPolicy(credential),
+            SensitiveHeaderCleanupPolicy(),
+        ],
+        transport=Mock(send=send),
+    )
+    assert pipeline.run(request).http_response.status_code == 200
+    assert len(requests) == 2 + int(warm_cache) + int(not target_cache)
+
+
+@pytest.mark.parametrize("warm_cache", [False, True])
+@pytest.mark.parametrize("target_cache", [False, True])
+@pytest.mark.parametrize("redirect_status", [303, 307])
+@pytest.mark.asyncio
+async def test_discovery_replay_preserves_redirect_headers_async(warm_cache, target_cache, redirect_status):
+    request, send, requests = redirect_replay_case(warm_cache, target_cache, redirect_status)
+    credential = Mock(
+        spec_set=["get_token"], get_token=AsyncMock(return_value=AccessToken("token", time.time() + 3600))
+    )
+    pipeline = AsyncPipeline(
+        policies=[
+            AsyncRedirectPolicy(redirect_remove_headers=["x-sensitive"]),
+            AsyncRetryPolicy(retry_total=1, retry_backoff_factor=0),
+            AsyncChallengeAuthPolicy(credential),
+            SensitiveHeaderCleanupPolicy(),
+        ],
+        transport=Mock(send=AsyncMock(side_effect=send)),
+    )
+    assert (await pipeline.run(request)).http_response.status_code == 200
+    assert len(requests) == 2 + int(warm_cache) + int(not target_cache)

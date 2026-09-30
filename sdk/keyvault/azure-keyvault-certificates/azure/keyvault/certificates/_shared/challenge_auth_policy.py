@@ -140,7 +140,15 @@ def _get_challenge_info(
 def _restore_request(request: PipelineRequest) -> None:
     request_copy = request.context.pop(_REQUEST_COPY_KEY, None)
     if request_copy and request_copy.method == request.http_request.method:
-        # A redirect may change the destination or method while discovery is in progress.
+        # Preserve header changes made during discovery, including redirect cleanup.
+        content_length = request_copy.headers.get("Content-Length")
+        headers = deepcopy(request.http_request.headers)
+        request_copy.headers.clear()
+        request_copy.headers.update(headers)
+        if content_length is None:
+            request_copy.headers.pop("Content-Length", None)
+        else:
+            request_copy.headers["Content-Length"] = content_length
         request_copy.url = request.http_request.url
         request.http_request = request_copy
 
