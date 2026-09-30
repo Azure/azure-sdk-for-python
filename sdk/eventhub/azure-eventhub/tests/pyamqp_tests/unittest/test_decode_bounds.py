@@ -183,3 +183,25 @@ def test_decode_shallow_value_unchanged():
     remaining, value = _decode(_nested_list(2))
     assert value == [[None]]
     assert bytes(remaining) == b""
+
+
+def _described_array_of(inner: bytes) -> bytes:
+    body = (1).to_bytes(4, "big") + b"\x00" + b"\x53\x00" + inner[0:1] + inner[1:]
+    return b"\xf0" + len(body).to_bytes(4, "big") + body
+
+
+def _nested_described_array(levels: int) -> bytes:
+    payload = b"\x40"
+    for _ in range(levels):
+        payload = _described_array_of(payload)
+    return payload
+
+
+def test_decode_rejects_described_array_depth_bypass():
+    # each described-array level is an array plus a described layer, so 33 levels = 66 layers.
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(_nested_described_array(_MAX_NESTING_DEPTH // 2 + 1))
+
+
+def test_decode_accepts_described_array_at_limit():
+    _decode(_nested_described_array(_MAX_NESTING_DEPTH // 2))

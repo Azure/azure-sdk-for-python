@@ -4,7 +4,7 @@ from azure.eventhub._pyamqp.link import Link
 from azure.eventhub._pyamqp.receiver import ReceiverLink
 from azure.eventhub._pyamqp.constants import LinkState
 from azure.eventhub._pyamqp.link import Source, Target
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import patch, AsyncMock
 from azure.eventhub._pyamqp.constants import LINK_MAX_MESSAGE_SIZE
 from azure.eventhub._pyamqp.aio._receiver_async import ReceiverLink as ReceiverLinkAsync
 from azure.eventhub._pyamqp.outcomes import Rejected

@@ -42,13 +42,13 @@ _nesting = threading.local()
 def _bounded(decoder):
     # Bound the nesting depth of a recursive compound-type decoder.
     @functools.wraps(decoder)
-    def wrapper(buffer):
+    def wrapper(*args):
         depth = getattr(_nesting, "depth", 0) + 1
         if depth > _MAX_NESTING_DEPTH:
             raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
         _nesting.depth = depth
         try:
-            return decoder(buffer)
+            return decoder(*args)
         finally:
             _nesting.depth = depth - 1
 
@@ -395,6 +395,7 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
         return buffer, value
 
 
+@_bounded
 def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
     buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
     try:
