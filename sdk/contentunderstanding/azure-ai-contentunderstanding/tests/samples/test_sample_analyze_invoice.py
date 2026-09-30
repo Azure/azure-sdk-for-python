@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -21,7 +22,10 @@ USAGE:
 import os
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import AnalysisInput, DocumentContent
 
@@ -228,7 +232,9 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
             or (usage.document_pages_minimal is not None and usage.document_pages_minimal > 0)
         )
         assert has_pages, "Usage should report at least one document page metric"
-        print(f"[PASS] Usage reports document pages (standard={usage.document_pages_standard}, basic={usage.document_pages_basic}, minimal={usage.document_pages_minimal})")
+        print(
+            f"[PASS] Usage reports document pages (standard={usage.document_pages_standard}, basic={usage.document_pages_basic}, minimal={usage.document_pages_minimal})"
+        )
 
         # Verify token usage is reported
         if usage.tokens:
@@ -245,7 +251,7 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
         assert isinstance(text, str) and text.strip(), "to_llm_input should return a non-empty string"
         assert text.startswith("---"), "to_llm_input output should start with YAML front matter delimiter"
         assert "\n---\n" in text, "to_llm_input output should contain YAML front matter closing delimiter"
-        assert "contentType: document" in text, "YAML front matter should declare 'contentType: document'"
+        assert "mimeType: application/pdf" in text, "YAML front matter should declare 'mimeType: application/pdf'"
         # Invoice fields should appear in the rendered front matter
         assert "fields:" in text, "Invoice to_llm_input output should include a 'fields:' block"
         print(f"[PASS] to_llm_input output validated ({len(text)} characters, includes invoice fields)")

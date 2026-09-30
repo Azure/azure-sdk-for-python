@@ -9,7 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_compute
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource, ImageMetadata
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
+from azure.ai.ml._restclient.arm_ml_service.models import DataFactory
 from azure.ai.ml.constants._compute import CustomApplicationDefaults
 from azure.ai.ml.entities import (
     AmlCompute,
@@ -227,7 +227,7 @@ class TestComputeEntity:
         # client, so ``_from_rest_object`` must read the 2023-08 typed attributes (enableRootAccess /
         # releaseQuotaOnStop / enableOSPatching) -- not only the arm-hybrid wire keys produced by the
         # entity's own ``_to_rest_object`` round-trip. Guards the read path that only e2e exercised.
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+        from azure.ai.ml._restclient.arm_ml_service.models import (
             ComputeInstance as MsrestComputeInstance,
             ComputeInstanceProperties as MsrestComputeInstanceProperties,
             ComputeResource as MsrestComputeResource,
@@ -237,14 +237,15 @@ class TestComputeEntity:
             name="ci-from-service",
             location="eastus",
             properties=MsrestComputeInstance(
-                properties=MsrestComputeInstanceProperties(
-                    vm_size="STANDARD_DS3_V2",
-                    enable_root_access=False,
-                    release_quota_on_stop=True,
-                    enable_os_patching=True,
-                ),
+                properties=MsrestComputeInstanceProperties(vm_size="STANDARD_DS3_V2"),
             ),
         )
+        # arm_ml_service ComputeInstanceProperties does not declare enableRootAccess / releaseQuotaOnStop /
+        # enableOSPatching as typed fields; the real response carries them as camelCase wire keys, which
+        # ``_from_rest_object`` reads via the hybrid mapping's ``.get()``.
+        rest.properties.properties["enableRootAccess"] = False
+        rest.properties.properties["releaseQuotaOnStop"] = True
+        rest.properties.properties["enableOSPatching"] = True
 
         instance = ComputeInstance._from_rest_object(rest)
         assert instance.enable_root_access is False
@@ -255,7 +256,7 @@ class TestComputeEntity:
         # ``AmlCompute._load_from_rest`` reads ``createdOn`` from the msrest ``additional_properties`` bag
         # (the v2023_08 response carries it as an undeclared field). Guards against assuming the arm-hybrid
         # mapping shape on the real ops response.
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+        from azure.ai.ml._restclient.arm_ml_service.models import (
             AmlCompute as MsrestAmlCompute,
             AmlComputeProperties as MsrestAmlComputeProperties,
             ComputeResource as MsrestComputeResource,

@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-07-01-preview/ExportTerraform.json
+# x-ms-original-file: 2026-09-01-preview/ExportTerraform.json
 if __name__ == "__main__":
     main()

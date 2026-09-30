@@ -183,7 +183,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         data1 = b"abcde" * 1024 * 1024  # 5 MiB
         data2 = b"12345" * 2 * 1024 * 1024 + b"abcdefg"  # 10 MiB + 7
-        data3 = b"12345678" * 8 * 1024 * 1024  # 64 MiB
+        data3 = b"12345678" * 4 * 1024 * 1024  # 32 MiB
         assert_method = assert_structured_message if a == "crc64" else assert_content_md5
 
         # Act

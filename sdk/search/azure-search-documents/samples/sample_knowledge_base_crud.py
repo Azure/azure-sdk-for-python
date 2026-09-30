@@ -25,7 +25,6 @@ USAGE:
     2) AZURE_SEARCH_API_KEY - the admin key for your search service
 """
 
-
 import os
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
@@ -48,9 +47,11 @@ def create_knowledge_base():
     knowledge_base = KnowledgeBase(
         name=knowledge_base_name,
         knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
+        tags={"environment": "sample", "owner": "search-team"},
     )
 
     result = index_client.create_or_update_knowledge_base(knowledge_base=knowledge_base)
+    assert result.tags == {"environment": "sample", "owner": "search-team"}
     print(f"Created: knowledge base '{result.name}'")
     # [END create_knowledge_base]
 
@@ -63,6 +64,7 @@ def get_knowledge_base():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
     result = index_client.get_knowledge_base(knowledge_base_name)
+    assert result.tags == {"environment": "sample", "owner": "search-team"}
     print(f"Retrieved: knowledge base '{result.name}'")
     # [END get_knowledge_base]
 
@@ -71,20 +73,13 @@ def update_knowledge_base():
     # [START update_knowledge_base]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
-    from azure.search.documents.indexes.models import (
-        KnowledgeBase,
-        KnowledgeSourceReference,
-    )
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    knowledge_base = KnowledgeBase(
-        name=knowledge_base_name,
-        description="Updated knowledge base",
-        knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
-    )
-
+    knowledge_base = index_client.get_knowledge_base(knowledge_base_name)
+    knowledge_base.tags = {"environment": "sample", "owner": "retrieval-team"}
     result = index_client.create_or_update_knowledge_base(knowledge_base=knowledge_base)
+    assert result.tags == {"environment": "sample", "owner": "retrieval-team"}
+    print("Tags are metadata labels; this sample does not use them for billing attribution.")
     print(f"Updated: knowledge base '{result.name}'")
     # [END update_knowledge_base]
 
@@ -93,11 +88,29 @@ def list_knowledge_bases():
     # [START list_knowledge_bases]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    for kb in index_client.list_knowledge_bases():
-        print(f"Listed: knowledge base '{kb.name}'")
+    companion_name = f"{knowledge_base_name}-page"
+    companion = KnowledgeBase(
+        name=companion_name,
+        knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
+    )
+    index_client.create_or_update_knowledge_base(companion)
+    try:
+        knowledge_bases = list(
+            index_client.list_knowledge_bases(
+                search=knowledge_base_name,
+                page_size=1,
+                search_type="prefix",
+            )
+        )
+        knowledge_base_names = [knowledge_base.name for knowledge_base in knowledge_bases]
+        assert set(knowledge_base_names) == {knowledge_base_name, companion_name}
+        assert len(knowledge_base_names) == len(set(knowledge_base_names))
+        print(f"Paged through {len(knowledge_bases)} knowledge bases without duplicates")
+    finally:
+        index_client.delete_knowledge_base(companion_name)
     # [END list_knowledge_bases]
 
 

@@ -80,7 +80,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -193,7 +193,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TagRulesOperations:
+class TagRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -964,7 +964,7 @@ class TagRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MonitoredSubscriptionsOperations:
+class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1866,7 +1866,7 @@ class MonitoredSubscriptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MonitorsOperations:  # pylint: disable=too-many-public-methods
+class MonitorsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4642,7 +4642,7 @@ class MonitorsOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class BillingInfoOperations:
+class BillingInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4735,7 +4735,7 @@ class BillingInfoOperations:
         return deserialized  # type: ignore
 
 
-class ConnectedPartnerResourcesOperations:
+class ConnectedPartnerResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4871,7 +4871,7 @@ class ConnectedPartnerResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccountsOperations:
+class AccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4992,7 +4992,7 @@ class AccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OrganizationsOperations:
+class OrganizationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5113,7 +5113,7 @@ class OrganizationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PlansOperations:
+class PlansOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5235,7 +5235,7 @@ class PlansOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SaaSOperations:
+class SaaSOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

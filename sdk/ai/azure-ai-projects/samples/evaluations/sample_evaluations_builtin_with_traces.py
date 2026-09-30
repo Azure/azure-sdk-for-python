@@ -47,7 +47,7 @@ from pprint import pprint
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.monitor.query import LogsQueryClient, LogsQueryResult
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     TestingCriterionAzureAIEvaluator,
@@ -117,7 +117,7 @@ dependencies
         print(f"Error executing query: {exc}")
         return []
 
-    if response.status == LogsQueryStatus.SUCCESS:
+    if isinstance(response, LogsQueryResult):
         trace_ids: List[str] = []
         for table in response.tables:
             for row in table.rows:

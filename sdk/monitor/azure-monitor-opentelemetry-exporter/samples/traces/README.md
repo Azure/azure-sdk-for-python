@@ -12,6 +12,7 @@ products:
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
 * Span Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
+* Custom measurements: [sample_custom_measurements.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_custom_measurements.py)
 * Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py)
 
 * Collector: [sample_collector.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/collector/sample_collector.py)
@@ -70,6 +71,17 @@ $ python sample_trace.py
 ```sh
 $ # from this directory
 $ python sample_span_event.py
+```
+
+### Custom measurements
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_custom_measurements.py
 ```
 
 ### Django instrumentation

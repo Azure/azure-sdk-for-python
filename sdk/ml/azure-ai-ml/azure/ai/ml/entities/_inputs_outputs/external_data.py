@@ -149,11 +149,12 @@ class FileSystem(DictMixin, RestTranslatableMixin):
 
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')
 
-    :param path: The path to which the input is pointing. Could be pointing to the path of file system. Default is None.
-    :type path: str
-    :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
+    :keyword path: The path to which the input is pointing. Could be pointing to the path of file system.
+        Default is None.
+    :paramtype path: str
+    :keyword connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
         connection to store these credential info. Default is None.
-    :type connection: str
+    :paramtype connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.
     """

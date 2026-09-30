@@ -249,5 +249,5 @@
         "azure.mgmt.eventhub.operations.ApplicationGroupOperations.list_by_namespace": "Microsoft.EventHub.ApplicationGroups.listByNamespace",
         "azure.mgmt.eventhub.aio.operations.ApplicationGroupOperations.list_by_namespace": "Microsoft.EventHub.ApplicationGroups.listByNamespace"
     },
-    "CrossLanguageVersion": "df34ed47a280"
+    "CrossLanguageVersion": "c0528fa2f707"
 }

@@ -10,7 +10,7 @@ from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._assets.environment import BuildContext
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import EnvironmentVersionData as RestEnvironment
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVersion as RestEnvironment
 
 
 @pytest.mark.unittest
@@ -158,7 +158,7 @@ class TestEnvironmentEntity:
             },
         }
 
-        from_rest_environment = Environment._from_rest_object(RestEnvironment.deserialize(ipp_environment))
+        from_rest_environment = Environment._from_rest_object(RestEnvironment._deserialize(ipp_environment, []))
 
         assert from_rest_environment._intellectual_property
         assert from_rest_environment._intellectual_property.protection_level == "All"

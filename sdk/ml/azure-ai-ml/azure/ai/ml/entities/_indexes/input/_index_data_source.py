@@ -18,9 +18,9 @@ class IndexDataSource:
     """Base class for configs that define data that will be processed into an ML index.
     This class should not be instantiated directly. Use one of its child classes instead.
 
-    :param input_type: A type enum describing the source of the index. Used to avoid
+    :keyword input_type: A type enum describing the source of the index. Used to avoid
         direct type checking.
-    :type input_type: Union[str, ~azure.ai.ml.constants._common.IndexInputType]
+    :paramtype input_type: Union[str, ~azure.ai.ml.constants._common.IndexInputType]
     """
 
     def __init__(self, *, input_type: Union[str, IndexInputType]):
@@ -34,12 +34,12 @@ class IndexDataSource:
 class GitSource(IndexDataSource):
     """Config class for creating an ML index from files located in a git repository.
 
-    :param url: A link to the repository to use.
-    :type url: str
-    :param branch_name: The name of the branch to use from the target repository.
-    :type branch_name: str
-    :param connection_id: The connection ID for GitHub
-    :type connection_id: str
+    :keyword url: A link to the repository to use.
+    :paramtype url: str
+    :keyword branch_name: The name of the branch to use from the target repository.
+    :paramtype branch_name: str
+    :keyword connection_id: The connection ID for GitHub
+    :paramtype connection_id: str
     """
 
     def __init__(self, *, url: str, branch_name: str, connection_id: str):
@@ -53,8 +53,8 @@ class GitSource(IndexDataSource):
 class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 
-    :param input_data: An input object describing the local location of index source files.
-    :type input_data: ~azure.ai.ml.Input
+    :keyword input_data: An input object describing the local location of index source files.
+    :paramtype input_data: ~azure.ai.ml.Input
     """
 
     def __init__(self, *, input_data: str):  # todo Make sure type of input_data is correct

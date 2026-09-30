@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-02/diskExamples/Disk_Create_FromAnExistingManagedDisk.json
+# x-ms-original-file: 2026-03-02/diskExamples/Disk_Create_FromAnExistingManagedDisk.json
 if __name__ == "__main__":
     main()

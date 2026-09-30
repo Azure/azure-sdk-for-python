@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-09-01/StorageSyncServiceCheckNameAvailability_Available.json
+# x-ms-original-file: 2025-12-01/StorageSyncServiceCheckNameAvailability_Available.json
 if __name__ == "__main__":
     main()

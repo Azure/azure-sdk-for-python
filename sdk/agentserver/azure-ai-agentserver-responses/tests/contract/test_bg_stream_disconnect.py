@@ -196,7 +196,7 @@ def _make_multi_output_handler(total_outputs: int, signal_after: int):
     ready_for_disconnect = asyncio.Event()
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -235,7 +235,7 @@ def _make_cancellation_tracking_handler():
     handler_cancelled = asyncio.Event()
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -266,7 +266,7 @@ def _make_slow_completing_handler():
     """Handler that takes a moment to complete (for bg+nostream regression test)."""
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -336,9 +336,9 @@ async def test_bg_stream_client_disconnects_handler_completes_all_events() -> No
         get_resp = await client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
         doc = get_resp.json()
-        assert doc["status"] == "completed", (
-            f"FR-012: bg+stream handler should complete after disconnect, got status '{doc['status']}'"
-        )
+        assert (
+            doc["status"] == "completed"
+        ), f"FR-012: bg+stream handler should complete after disconnect, got status '{doc['status']}'"
     finally:
         await _ensure_task_done(post_task, handler)
 
@@ -392,12 +392,12 @@ async def test_bg_stream_sse_write_failure_does_not_cancel_handler_ct() -> None:
         )
 
         # Handler should have COMPLETED, not been CANCELLED
-        assert handler.handler_completed.is_set(), (
-            "FR-013: Handler should complete normally, not be cancelled by SSE disconnect"
-        )
-        assert not handler.handler_cancelled.is_set(), (
-            "FR-013: Handler CT should NOT have been cancelled by SSE disconnect"
-        )
+        assert (
+            handler.handler_completed.is_set()
+        ), "FR-013: Handler should complete normally, not be cancelled by SSE disconnect"
+        assert (
+            not handler.handler_cancelled.is_set()
+        ), "FR-013: Handler CT should NOT have been cancelled by SSE disconnect"
     finally:
         await _ensure_task_done(post_task, handler)
 

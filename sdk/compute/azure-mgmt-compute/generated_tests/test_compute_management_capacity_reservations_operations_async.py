@@ -26,7 +26,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -47,6 +47,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                     "name": "str",
                     "properties": {
                         "instanceView": {
+                            "reservationStateInfo": {"reservationState": "str"},
                             "statuses": [
                                 {
                                     "code": "str",
@@ -56,13 +57,22 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                                     "time": "2020-02-20 00:00:00",
                                 }
                             ],
-                            "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                            "utilizationInfo": {
+                                "currentCapacity": 0,
+                                "usedReservedCountBySubscription": {"str": 0},
+                                "virtualMachinesAllocated": [{"id": "str"}],
+                            },
                         },
                         "platformFaultDomainCount": 0,
                         "provisioningState": "str",
                         "provisioningTime": "2020-02-20 00:00:00",
                         "reservationId": "str",
-                        "scheduleProfile": {"end": "str", "start": "str"},
+                        "scheduleProfile": {
+                            "end": "str",
+                            "minimumCommitmentDays": 0,
+                            "modifiableUntil": "2020-02-20 00:00:00",
+                            "start": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "virtualMachinesAssociated": [{"id": "str"}],
                     },
@@ -78,7 +88,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2026-03-01",
+                api_version="2026-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,6 +106,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                 parameters={
                     "properties": {
                         "instanceView": {
+                            "reservationStateInfo": {"reservationState": "str"},
                             "statuses": [
                                 {
                                     "code": "str",
@@ -105,20 +116,29 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                                     "time": "2020-02-20 00:00:00",
                                 }
                             ],
-                            "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                            "utilizationInfo": {
+                                "currentCapacity": 0,
+                                "usedReservedCountBySubscription": {"str": 0},
+                                "virtualMachinesAllocated": [{"id": "str"}],
+                            },
                         },
                         "platformFaultDomainCount": 0,
                         "provisioningState": "str",
                         "provisioningTime": "2020-02-20 00:00:00",
                         "reservationId": "str",
-                        "scheduleProfile": {"end": "str", "start": "str"},
+                        "scheduleProfile": {
+                            "end": "str",
+                            "minimumCommitmentDays": 0,
+                            "modifiableUntil": "2020-02-20 00:00:00",
+                            "start": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "virtualMachinesAssociated": [{"id": "str"}],
                     },
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2026-03-01",
+                api_version="2026-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -133,7 +153,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 capacity_reservation_group_name="str",
                 capacity_reservation_name="str",
-                api_version="2026-03-01",
+                api_version="2026-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,7 +166,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

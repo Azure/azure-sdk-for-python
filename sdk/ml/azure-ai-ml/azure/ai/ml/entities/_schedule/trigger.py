@@ -86,7 +86,7 @@ class RecurrencePattern(RestTranslatableMixin):
     :paramtype minutes: Union[int, List[int]]
     :keyword week_days: A list of days of the week for the recurrence schedule pattern.
         Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-    :type week_days: Optional[Union[str, List[str]]]
+    :paramtype week_days: Optional[Union[str, List[str]]]
     :keyword month_days: A list of days of the month for the recurrence schedule pattern.
     :paramtype month_days: Optional[Union[int, List[int]]]
 
@@ -190,7 +190,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # arm_ml_service.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -199,7 +199,7 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
+    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # arm_ml_service.models.CronTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
@@ -233,7 +233,7 @@ class RecurrenceTrigger(TriggerBase):
     :paramtype time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
     :keyword frequency: Specifies the frequency that the schedule should be triggered with.
      Possible values include: "minute", "hour", "day", "week", "month".
-    :type frequency: str
+    :paramtype frequency: str
     :keyword interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
         with.
     :paramtype interval: int
@@ -271,7 +271,7 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2023_04_01_preview.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # arm_ml_service.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
@@ -282,7 +282,7 @@ class RecurrenceTrigger(TriggerBase):
         )
 
     def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:
-        # v2023_04_01_preview.models.RecurrenceTrigger
+        # arm_ml_service.models.RecurrenceTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:

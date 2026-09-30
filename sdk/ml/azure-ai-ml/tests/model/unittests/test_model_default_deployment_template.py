@@ -6,8 +6,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_model
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData, ModelVersionDetails
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
@@ -71,11 +70,11 @@ class TestModelDeploymentTemplateReference:
 
         rest_object = model._to_rest_object()
 
-        # Should return ModelVersionData when default_deployment_template is present
-        assert isinstance(rest_object, ModelVersionData)
-        assert isinstance(rest_object.properties, ModelVersionDetails)
-        assert rest_object.properties.default_deployment_template is not None
-        assert rest_object.properties.default_deployment_template.asset_id == template.asset_id
+        # Returns an arm ModelVersion; the deployment-template fields are carried as camelCase wire keys.
+        assert isinstance(rest_object, ModelVersion)
+        assert isinstance(rest_object.properties, ModelVersionProperties)
+        assert rest_object.properties["defaultDeploymentTemplate"] is not None
+        assert rest_object.properties["defaultDeploymentTemplate"]["assetId"] == template.asset_id
 
     def test_model_to_rest_object_without_default_deployment_template(self) -> None:
         """Test Model._to_rest_object() without default_deployment_template."""
@@ -99,7 +98,7 @@ class TestModelDeploymentTemplateReference:
         template_asset_id = "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
 
         # Create mock REST object
-        rest_properties = Mock(spec=ModelVersionDetails)
+        rest_properties = Mock()
         rest_properties.description = "Test model"
         rest_properties.tags = {"key": "value"}
         rest_properties.properties = {}
@@ -112,7 +111,7 @@ class TestModelDeploymentTemplateReference:
         rest_properties.system_metadata = None
         rest_properties.default_deployment_template = {"asset_id": template_asset_id}
 
-        rest_object = Mock(spec=ModelVersionData)
+        rest_object = Mock()
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
 
@@ -135,7 +134,7 @@ class TestModelDeploymentTemplateReference:
         template_asset_id = "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
 
         # Create mock REST object
-        rest_properties = Mock(spec=ModelVersionDetails)
+        rest_properties = Mock()
         rest_properties.description = "Test model"
         rest_properties.tags = {"key": "value"}
         rest_properties.properties = {}
@@ -152,7 +151,7 @@ class TestModelDeploymentTemplateReference:
         template_obj.asset_id = template_asset_id
         rest_properties.default_deployment_template = template_obj
 
-        rest_object = Mock(spec=ModelVersionData)
+        rest_object = Mock()
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
 
@@ -183,6 +182,9 @@ class TestModelDeploymentTemplateReference:
         rest_properties.stage = "Production"
         rest_properties.job_name = None
         rest_properties.intellectual_property = None
+        # arm ModelVersionProperties is a MutableMapping; make the mapping ``.get()`` return None so the
+        # optional camelCase template/IP keys are treated as absent (response without those fields).
+        rest_properties.get = Mock(return_value=None)
 
         rest_object = Mock(spec=ModelVersion)
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
@@ -220,10 +222,9 @@ class TestModelDeploymentTemplateReference:
         # Serialize to REST object
         rest_object = model._to_rest_object()
 
-        # Note: When default_deployment_template is present, it uses ModelVersionDetails
-        # which doesn't support stage in the v2021_10_01_dataplanepreview API
-        # This is expected behavior - stage is only supported in workspace operations
-        assert isinstance(rest_object, ModelVersionData)
+        # When default_deployment_template is present the template fields are carried as wire keys and
+        # stage is dropped (matching the legacy registry package API behavior).
+        assert isinstance(rest_object, ModelVersion)
 
     def test_model_yaml_with_default_deployment_template(self, tmp_path: Path) -> None:
         """Test loading a Model from YAML with default_deployment_template."""

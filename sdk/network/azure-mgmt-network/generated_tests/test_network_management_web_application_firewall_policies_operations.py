@@ -25,7 +25,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                             {
                                 "ruleSetType": "str",
                                 "ruleSetVersion": "str",
-                                "computedDisabledRules": [{"ruleGroupName": "str", "rules": ["str"]}],
+                                "computedDisabledRules": [{"ruleGroupName": "str", "rules": [0]}],
                                 "ruleGroupOverrides": [
                                     {
                                         "ruleGroupName": "str",
@@ -104,6 +104,67 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                             "location": "str",
                             "name": "str",
                             "properties": {
+                                "advancedRoutingConditionSets": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "routingConditions": [
+                                                {
+                                                    "conditionType": "str",
+                                                    "propertyName": "str",
+                                                    "propertyValueMatcher": {
+                                                        "pattern": "str",
+                                                        "ignoreCase": bool,
+                                                        "negate": bool,
+                                                    },
+                                                    "propertyValues": ["str"],
+                                                }
+                                            ],
+                                            "provisioningState": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "advancedRoutingMaps": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "advancedRoutingRules": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "priority": 0,
+                                                        "advancedRoutingConditionSet": {"id": "str"},
+                                                        "authConfigs": [
+                                                            {"authenticationPolicy": {"id": "str"}, "name": "str"}
+                                                        ],
+                                                        "backendAddressPool": {"id": "str"},
+                                                        "backendHttpSettings": {"id": "str"},
+                                                        "provisioningState": "str",
+                                                        "redirectConfiguration": {"id": "str"},
+                                                        "rewriteRuleSet": {"id": "str"},
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "defaultAuthConfigs": [
+                                                {"authenticationPolicy": {"id": "str"}, "name": "str"}
+                                            ],
+                                            "defaultBackendAddressPool": {"id": "str"},
+                                            "defaultBackendHttpSettings": {"id": "str"},
+                                            "defaultRedirectConfiguration": {"id": "str"},
+                                            "defaultRewriteRuleSet": {"id": "str"},
+                                            "provisioningState": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
                                 "authenticationCertificates": [
                                     {
                                         "etag": "str",
@@ -530,6 +591,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -554,6 +618,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -626,6 +693,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                 "id": "str"
                                                                                                                             }
                                                                                                                         },
+                                                                                                                        "enableConnectionTracking": bool,
                                                                                                                         "gatewayLoadBalancer": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -730,6 +798,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -754,6 +825,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -825,6 +899,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                         "id": "str"
                                                                                                                                     }
                                                                                                                                 },
+                                                                                                                                "enableConnectionTracking": bool,
                                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -1018,6 +1093,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -1322,6 +1400,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                     "id": "str"
                                                                                                                                 }
                                                                                                                             },
+                                                                                                                            "enableConnectionTracking": bool,
                                                                                                                             "gatewayLoadBalancer": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -1420,6 +1499,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                             "id": "str"
                                                                                                                                         }
                                                                                                                                     },
+                                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                                         "id": "str"
                                                                                                                                     },
@@ -1493,6 +1573,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -1634,7 +1717,13 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         },
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -1666,6 +1755,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -1758,6 +1848,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1805,6 +1896,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2018,6 +2110,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2040,6 +2135,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2106,6 +2204,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2175,6 +2274,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2242,6 +2342,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -2327,6 +2428,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -2351,6 +2455,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -2418,6 +2525,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str"
                                                                                                                     }
                                                                                                                 },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -2487,6 +2595,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -2554,6 +2663,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -2713,6 +2823,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -3003,6 +3116,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     "id": "str"
                                                                                                                 }
                                                                                                             },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -3072,6 +3186,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -3139,6 +3254,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -3220,6 +3336,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                             "id": "str"
                                                                                                                         }
                                                                                                                     },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -3289,6 +3406,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                             },
                                                                                                                             "ipTags": [
                                                                                                                                 {
+                                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                                     "ipTagType": "str",
                                                                                                                                     "tag": "str",
                                                                                                                                 }
@@ -3356,6 +3474,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                             },
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                                            "upgradedToV2": bool,
                                                                                                                         },
                                                                                                                         "sku": {
                                                                                                                             "name": "str",
@@ -3410,6 +3529,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -3556,6 +3678,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -3890,6 +4013,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -3914,6 +4040,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -4043,6 +4172,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                                             "id": "str",
                                                                                                                                                             "name": "str",
                                                                                                                                                             "properties": {
+                                                                                                                                                                "approvalReference": {
+                                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                                },
                                                                                                                                                                 "groupIds": [
                                                                                                                                                                     "str"
                                                                                                                                                                 ],
@@ -4067,6 +4199,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                                             "id": "str",
                                                                                                                                                             "name": "str",
                                                                                                                                                             "properties": {
+                                                                                                                                                                "approvalReference": {
+                                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                                },
                                                                                                                                                                 "groupIds": [
                                                                                                                                                                     "str"
                                                                                                                                                                 ],
@@ -4271,6 +4406,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -4633,6 +4771,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -4792,6 +4933,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -4839,6 +4981,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -4932,6 +5075,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -4999,6 +5143,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -5241,6 +5386,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5265,6 +5413,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5394,6 +5545,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -5418,6 +5572,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -5618,6 +5775,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -5980,6 +6140,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -6255,6 +6418,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                     }
                                 ],
                                 "globalConfiguration": {
+                                    "disableDefaultServerHeaderInResponse": bool,
                                     "enableRequestBuffering": bool,
                                     "enableResponseBuffering": bool,
                                 },
@@ -6373,6 +6537,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -6996,6 +7161,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -7043,6 +7209,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -7135,6 +7302,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -7202,6 +7370,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -7555,6 +7724,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "id": "str"
                                                                                                     }
                                                                                                 },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -8021,6 +8191,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -8088,6 +8259,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -8198,6 +8370,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                             "ipConfiguration": ...,
                                                                                                                             "ipTags": [
                                                                                                                                 {
+                                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                                     "ipTagType": "str",
                                                                                                                                     "tag": "str",
                                                                                                                                 }
@@ -8265,6 +8438,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                             },
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                                            "upgradedToV2": bool,
                                                                                                                         },
                                                                                                                         "sku": {
                                                                                                                             "name": "str",
@@ -8912,6 +9086,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -8979,6 +9154,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -9248,6 +9424,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -9315,6 +9492,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -9682,6 +9860,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -10142,6 +10321,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -10193,6 +10373,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -10295,6 +10476,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -10362,6 +10544,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -10770,6 +10953,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -11236,6 +11420,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -11303,6 +11488,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -11409,6 +11595,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "ipConfiguration": ...,
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -11476,6 +11663,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -12446,6 +12634,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -12513,6 +12702,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -12616,6 +12806,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "ipConfiguration": ...,
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -12683,6 +12874,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -13079,6 +13271,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -13174,7 +13367,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -13217,6 +13414,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -13562,6 +13760,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -13629,6 +13828,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -13656,6 +13856,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         "id": "str"
                                                                                                                     }
                                                                                                                 },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -13725,6 +13926,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -13792,6 +13994,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -13893,6 +14096,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -13954,6 +14158,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -14021,6 +14226,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -14096,6 +14302,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     "id": "str"
                                                                                                                 }
                                                                                                             },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -14165,6 +14372,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -14232,6 +14440,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -14454,6 +14663,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -14521,6 +14731,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -14821,6 +15032,8 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                         "id": "str",
                                         "name": "str",
                                         "properties": {
+                                            "advancedRoutingMap": {"id": "str"},
+                                            "authConfigs": [{"authenticationPolicy": {"id": "str"}, "name": "str"}],
                                             "backendAddressPool": {"id": "str"},
                                             "backendHttpSettings": {"id": "str"},
                                             "entraJWTValidationConfig": {"id": "str"},
@@ -14836,6 +15049,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                         "type": "str",
                                     }
                                 ],
+                                "reservedCapacity": 0,
                                 "resourceGuid": "str",
                                 "rewriteRuleSets": [
                                     {
@@ -15086,11 +15300,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                     },
                     "provisioningState": "str",
                     "resourceState": "str",
+                    "tier": "str",
                 },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -15102,7 +15317,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.begin_delete(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15113,7 +15328,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15123,7 +15338,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     @recorded_by_proxy
     def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

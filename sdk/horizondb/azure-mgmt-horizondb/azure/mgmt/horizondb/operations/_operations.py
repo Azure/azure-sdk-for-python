@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import HorizonDBMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_horizon_db_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_horizon_db_clusters_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_horizon_db_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_horizon_db_clusters_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_horizon_db_clusters_list_by_resource_group_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +210,7 @@ def build_horizon_db_clusters_list_by_subscription_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,13 +230,97 @@ def build_horizon_db_clusters_list_by_subscription_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_horizon_db_clusters_start_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/start"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_horizon_db_clusters_stop_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/stop"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_horizon_db_clusters_restart_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/restart"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_horizon_db_pools_get_request(
     resource_group_name: str, cluster_name: str, pool_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +349,7 @@ def build_horizon_db_pools_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -293,7 +377,7 @@ def build_horizon_db_replicas_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -323,7 +407,7 @@ def build_horizon_db_replicas_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -353,7 +437,7 @@ def build_horizon_db_replicas_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +470,7 @@ def build_horizon_db_replicas_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +501,7 @@ def build_horizon_db_replicas_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/pools/{poolName}/replicas/{replicaName}"
     path_format_arguments = {
@@ -447,7 +531,7 @@ def build_horizon_db_firewall_rules_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -477,7 +561,7 @@ def build_horizon_db_firewall_rules_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -512,7 +596,7 @@ def build_horizon_db_firewall_rules_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -548,7 +632,7 @@ def build_horizon_db_firewall_rules_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/pools/{poolName}/firewallRules/{firewallRuleName}"
     path_format_arguments = {
@@ -577,7 +661,7 @@ def build_horizon_db_private_endpoint_connections_get_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -608,7 +692,7 @@ def build_horizon_db_private_endpoint_connections_list_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -630,21 +714,26 @@ def build_horizon_db_private_endpoint_connections_list_request(  # pylint: disab
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_horizon_db_private_endpoint_connections_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, private_endpoint_connection_name: str, subscription_id: str, **kwargs: Any
+def build_horizon_db_private_endpoint_connections_update_status_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    cluster_name: str,
+    private_endpoint_connection_name: str,
+    subscription_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/privateEndpointConnections/{privateEndpointConnectionName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
         "privateEndpointConnectionName": _SERIALIZER.url(
             "private_endpoint_connection_name", private_endpoint_connection_name, "str"
         ),
@@ -660,20 +749,25 @@ def build_horizon_db_private_endpoint_connections_update_request(  # pylint: dis
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_horizon_db_private_endpoint_connections_delete_request(  # pylint: disable=name-too-long
-    resource_group_name: str, private_endpoint_connection_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    cluster_name: str,
+    private_endpoint_connection_name: str,
+    subscription_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/privateEndpointConnections/{privateEndpointConnectionName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
         "privateEndpointConnectionName": _SERIALIZER.url(
             "private_endpoint_connection_name", private_endpoint_connection_name, "str"
         ),
@@ -693,7 +787,7 @@ def build_horizon_db_private_link_resources_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -722,7 +816,7 @@ def build_horizon_db_private_link_resources_list_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -750,7 +844,7 @@ def build_horizon_db_parameter_groups_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -779,7 +873,7 @@ def build_horizon_db_parameter_groups_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -810,7 +904,7 @@ def build_horizon_db_parameter_groups_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -839,7 +933,7 @@ def build_horizon_db_parameter_groups_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/parameterGroups/{parameterGroupName}"
     path_format_arguments = {
@@ -862,7 +956,7 @@ def build_horizon_db_parameter_groups_list_by_resource_group_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -889,7 +983,7 @@ def build_horizon_db_parameter_groups_list_by_subscription_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -915,7 +1009,7 @@ def build_horizon_db_parameter_groups_list_connections_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -948,7 +1042,7 @@ def build_horizon_db_parameter_groups_list_versions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -972,7 +1066,119 @@ def build_horizon_db_parameter_groups_list_versions_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+def build_horizon_db_administrators_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, object_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/administrators/{objectId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+        "objectId": _SERIALIZER.url("object_id", object_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_horizon_db_administrators_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, object_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/administrators/{objectId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+        "objectId": _SERIALIZER.url("object_id", object_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_horizon_db_administrators_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, object_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/administrators/{objectId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+        "objectId": _SERIALIZER.url("object_id", object_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_horizon_db_administrators_list_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HorizonDb/clusters/{clusterName}/administrators"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1036,7 +1242,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1079,7 +1288,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class HorizonDbClustersOperations:
+class HorizonDbClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1098,12 +1307,12 @@ class HorizonDbClustersOperations:
 
     @distributed_trace
     def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.HorizonDbCluster:
-        """Gets information about a HorizonDb cluster.
+        """Gets information about a HorizonDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :return: HorizonDbCluster. The HorizonDbCluster is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.HorizonDbCluster
@@ -1170,7 +1379,7 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        resource: Union[_models.HorizonDbCluster, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbCluster, _types.HorizonDbCluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1253,12 +1462,12 @@ class HorizonDbClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Creates a new HorizonDb cluster or updates an existing cluster.
+        """Creates a new HorizonDB cluster or updates an existing cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.models.HorizonDbCluster
@@ -1276,20 +1485,20 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        resource: JSON,
+        resource: _types.HorizonDbCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Creates a new HorizonDb cluster or updates an existing cluster.
+        """Creates a new HorizonDB cluster or updates an existing cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.horizondb.types.HorizonDbCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1309,12 +1518,12 @@ class HorizonDbClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Creates a new HorizonDb cluster or updates an existing cluster.
+        """Creates a new HorizonDB cluster or updates an existing cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -1332,19 +1541,20 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        resource: Union[_models.HorizonDbCluster, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbCluster, _types.HorizonDbCluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Creates a new HorizonDb cluster or updates an existing cluster.
+        """Creates a new HorizonDB cluster or updates an existing cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param resource: Resource create parameters. Is one of the following types: HorizonDbCluster,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.horizondb.models.HorizonDbCluster or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a HorizonDbCluster type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbCluster or
+         ~azure.mgmt.horizondb.types.HorizonDbCluster or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbCluster. The HorizonDbCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbCluster]
@@ -1406,7 +1616,7 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        properties: Union[_models.HorizonDbClusterForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HorizonDbClusterForPatchUpdate, _types.HorizonDbClusterForPatchUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1487,12 +1697,12 @@ class HorizonDbClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Updates an existing HorizonDb cluster (e.g., tags, virtual cores, replica count).
+        """Updates an existing HorizonDB cluster (e.g., tags, virtual cores, replica count).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.horizondb.models.HorizonDbClusterForPatchUpdate
@@ -1510,20 +1720,20 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        properties: JSON,
+        properties: _types.HorizonDbClusterForPatchUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Updates an existing HorizonDb cluster (e.g., tags, virtual cores, replica count).
+        """Updates an existing HorizonDB cluster (e.g., tags, virtual cores, replica count).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.horizondb.types.HorizonDbClusterForPatchUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1543,12 +1753,12 @@ class HorizonDbClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Updates an existing HorizonDb cluster (e.g., tags, virtual cores, replica count).
+        """Updates an existing HorizonDB cluster (e.g., tags, virtual cores, replica count).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
@@ -1566,20 +1776,20 @@ class HorizonDbClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        properties: Union[_models.HorizonDbClusterForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HorizonDbClusterForPatchUpdate, _types.HorizonDbClusterForPatchUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbCluster]:
-        """Updates an existing HorizonDb cluster (e.g., tags, virtual cores, replica count).
+        """Updates an existing HorizonDB cluster (e.g., tags, virtual cores, replica count).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         HorizonDbClusterForPatchUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.horizondb.models.HorizonDbClusterForPatchUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         HorizonDbClusterForPatchUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.horizondb.models.HorizonDbClusterForPatchUpdate or
+         ~azure.mgmt.horizondb.types.HorizonDbClusterForPatchUpdate or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbCluster. The HorizonDbCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbCluster]
@@ -1701,12 +1911,12 @@ class HorizonDbClustersOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes a HorizonDb cluster.
+        """Deletes a HorizonDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1758,7 +1968,7 @@ class HorizonDbClustersOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.HorizonDbCluster"]:
-        """Lists all HorizonDb clusters in a resource group.
+        """Lists all HorizonDB clusters in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1808,7 +2018,10 @@ class HorizonDbClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1852,7 +2065,7 @@ class HorizonDbClustersOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.HorizonDbCluster"]:
-        """Lists all HorizonDb clusters in a subscription.
+        """Lists all HorizonDB clusters in a subscription.
 
         :return: An iterator like instance of HorizonDbCluster
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbCluster]
@@ -1898,7 +2111,10 @@ class HorizonDbClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1940,8 +2156,407 @@ class HorizonDbClustersOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def _start_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-class HorizonDbPoolsOperations:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_horizon_db_clusters_start_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def begin_start(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Starts a stopped HorizonDB cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._start_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def _stop_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_horizon_db_clusters_stop_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def begin_stop(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Stops a running HorizonDB cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._stop_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def _restart_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_horizon_db_clusters_restart_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def begin_restart(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Restarts a HorizonDB cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._restart_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class HorizonDbPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1960,14 +2575,14 @@ class HorizonDbPoolsOperations:
 
     @distributed_trace
     def get(self, resource_group_name: str, cluster_name: str, pool_name: str, **kwargs: Any) -> _models.HorizonDbPool:
-        """Gets information about a HorizonDb pool.
+        """Gets information about a HorizonDB pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
         :return: HorizonDbPool. The HorizonDbPool is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.HorizonDbPool
@@ -2033,12 +2648,12 @@ class HorizonDbPoolsOperations:
 
     @distributed_trace
     def list(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> ItemPaged["_models.HorizonDbPool"]:
-        """Lists all HorizonDb pools in a cluster.
+        """Lists all HorizonDB pools in a cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :return: An iterator like instance of HorizonDbPool
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbPool]
@@ -2086,7 +2701,10 @@ class HorizonDbPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2129,7 +2747,7 @@ class HorizonDbPoolsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class HorizonDbReplicasOperations:
+class HorizonDbReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2150,16 +2768,16 @@ class HorizonDbReplicasOperations:
     def get(
         self, resource_group_name: str, cluster_name: str, pool_name: str, replica_name: str, **kwargs: Any
     ) -> _models.HorizonDbReplica:
-        """Gets information about a HorizonDb replica.
+        """Gets information about a HorizonDB replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :return: HorizonDbReplica. The HorizonDbReplica is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.HorizonDbReplica
@@ -2228,14 +2846,14 @@ class HorizonDbReplicasOperations:
     def list(
         self, resource_group_name: str, cluster_name: str, pool_name: str, **kwargs: Any
     ) -> ItemPaged["_models.HorizonDbReplica"]:
-        """Lists all HorizonDb replicas in a pool.
+        """Lists all HorizonDB replicas in a pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
         :return: An iterator like instance of HorizonDbReplica
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbReplica]
@@ -2284,7 +2902,10 @@ class HorizonDbReplicasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2332,7 +2953,7 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        resource: Union[_models.HorizonDbReplica, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbReplica, _types.HorizonDbReplica, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2419,16 +3040,16 @@ class HorizonDbReplicasOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Creates a new HorizonDb replica or updates an existing replica.
+        """Creates a new HorizonDB replica or updates an existing replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.models.HorizonDbReplica
@@ -2448,24 +3069,24 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        resource: JSON,
+        resource: _types.HorizonDbReplica,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Creates a new HorizonDb replica or updates an existing replica.
+        """Creates a new HorizonDB replica or updates an existing replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.horizondb.types.HorizonDbReplica
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2487,16 +3108,16 @@ class HorizonDbReplicasOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Creates a new HorizonDb replica or updates an existing replica.
+        """Creates a new HorizonDB replica or updates an existing replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -2516,23 +3137,24 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        resource: Union[_models.HorizonDbReplica, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbReplica, _types.HorizonDbReplica, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Creates a new HorizonDb replica or updates an existing replica.
+        """Creates a new HorizonDB replica or updates an existing replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
-        :param resource: Resource create parameters. Is one of the following types: HorizonDbReplica,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.horizondb.models.HorizonDbReplica or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a HorizonDbReplica type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbReplica or
+         ~azure.mgmt.horizondb.types.HorizonDbReplica or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbReplica. The HorizonDbReplica is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbReplica]
@@ -2598,7 +3220,7 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        properties: Union[_models.HorizonDbReplicaForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HorizonDbReplicaForPatchUpdate, _types.HorizonDbReplicaForPatchUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2683,16 +3305,16 @@ class HorizonDbReplicasOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Updates an existing HorizonDb replica (e.g., role).
+        """Updates an existing HorizonDB replica (e.g., role).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.horizondb.models.HorizonDbReplicaForPatchUpdate
@@ -2712,24 +3334,24 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        properties: JSON,
+        properties: _types.HorizonDbReplicaForPatchUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Updates an existing HorizonDb replica (e.g., role).
+        """Updates an existing HorizonDB replica (e.g., role).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.horizondb.types.HorizonDbReplicaForPatchUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2751,16 +3373,16 @@ class HorizonDbReplicasOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Updates an existing HorizonDb replica (e.g., role).
+        """Updates an existing HorizonDB replica (e.g., role).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
@@ -2780,24 +3402,24 @@ class HorizonDbReplicasOperations:
         cluster_name: str,
         pool_name: str,
         replica_name: str,
-        properties: Union[_models.HorizonDbReplicaForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HorizonDbReplicaForPatchUpdate, _types.HorizonDbReplicaForPatchUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbReplica]:
-        """Updates an existing HorizonDb replica (e.g., role).
+        """Updates an existing HorizonDB replica (e.g., role).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         HorizonDbReplicaForPatchUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.horizondb.models.HorizonDbReplicaForPatchUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         HorizonDbReplicaForPatchUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.horizondb.models.HorizonDbReplicaForPatchUpdate or
+         ~azure.mgmt.horizondb.types.HorizonDbReplicaForPatchUpdate or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbReplica. The HorizonDbReplica is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbReplica]
@@ -2927,16 +3549,16 @@ class HorizonDbReplicasOperations:
     def begin_delete(
         self, resource_group_name: str, cluster_name: str, pool_name: str, replica_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a HorizonDb replica.
+        """Deletes a HorizonDB replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param replica_name: The name of the HorizonDb replica. Required.
+        :param replica_name: The name of the HorizonDB replica. Required.
         :type replica_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -2989,7 +3611,7 @@ class HorizonDbReplicasOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class HorizonDbFirewallRulesOperations:
+class HorizonDbFirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3010,16 +3632,16 @@ class HorizonDbFirewallRulesOperations:
     def get(
         self, resource_group_name: str, cluster_name: str, pool_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> _models.HorizonDbFirewallRule:
-        """Gets information about a HorizonDb firewall rule.
+        """Gets information about a HorizonDB firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
         :return: HorizonDbFirewallRule. The HorizonDbFirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.HorizonDbFirewallRule
@@ -3088,14 +3710,14 @@ class HorizonDbFirewallRulesOperations:
     def list(
         self, resource_group_name: str, cluster_name: str, pool_name: str, **kwargs: Any
     ) -> ItemPaged["_models.HorizonDbFirewallRule"]:
-        """Lists all HorizonDb firewall rules in a pool.
+        """Lists all HorizonDB firewall rules in a pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
         :return: An iterator like instance of HorizonDbFirewallRule
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbFirewallRule]
@@ -3144,7 +3766,10 @@ class HorizonDbFirewallRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3192,7 +3817,7 @@ class HorizonDbFirewallRulesOperations:
         cluster_name: str,
         pool_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.HorizonDbFirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbFirewallRule, _types.HorizonDbFirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3279,16 +3904,16 @@ class HorizonDbFirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbFirewallRule]:
-        """Creates a new HorizonDb firewall rule or updates an existing rule.
+        """Creates a new HorizonDB firewall rule or updates an existing rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.models.HorizonDbFirewallRule
@@ -3308,24 +3933,24 @@ class HorizonDbFirewallRulesOperations:
         cluster_name: str,
         pool_name: str,
         firewall_rule_name: str,
-        resource: JSON,
+        resource: _types.HorizonDbFirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbFirewallRule]:
-        """Creates a new HorizonDb firewall rule or updates an existing rule.
+        """Creates a new HorizonDB firewall rule or updates an existing rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.horizondb.types.HorizonDbFirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3347,16 +3972,16 @@ class HorizonDbFirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbFirewallRule]:
-        """Creates a new HorizonDb firewall rule or updates an existing rule.
+        """Creates a new HorizonDB firewall rule or updates an existing rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -3376,23 +4001,24 @@ class HorizonDbFirewallRulesOperations:
         cluster_name: str,
         pool_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.HorizonDbFirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbFirewallRule, _types.HorizonDbFirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbFirewallRule]:
-        """Creates a new HorizonDb firewall rule or updates an existing rule.
+        """Creates a new HorizonDB firewall rule or updates an existing rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         HorizonDbFirewallRule, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.horizondb.models.HorizonDbFirewallRule or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a HorizonDbFirewallRule type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbFirewallRule or
+         ~azure.mgmt.horizondb.types.HorizonDbFirewallRule or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbFirewallRule. The HorizonDbFirewallRule
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbFirewallRule]
@@ -3522,16 +4148,16 @@ class HorizonDbFirewallRulesOperations:
     def begin_delete(
         self, resource_group_name: str, cluster_name: str, pool_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a HorizonDb firewall rule.
+        """Deletes a HorizonDB firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
-        :param pool_name: The name of the HorizonDb pool. Required.
+        :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDb firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB firewall rule. Required.
         :type firewall_rule_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -3584,7 +4210,7 @@ class HorizonDbFirewallRulesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
+class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3610,7 +4236,7 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -3682,12 +4308,12 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
     def list(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> ItemPaged["_models.PrivateEndpointConnectionResource"]:
-        """Lists private endpoint connections in a HorizonDb cluster.
+        """Lists private endpoint connections in a HorizonDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :return: An iterator like instance of PrivateEndpointConnectionResource
         :rtype:
@@ -3736,7 +4362,10 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3778,13 +4407,145 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
 
         return ItemPaged(get_next, extract_data)
 
-    def _update_initial(
+    @overload
+    def update_status(
         self,
         resource_group_name: str,
+        cluster_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnectionUpdate, JSON, IO[bytes]],
+        resource: _models.PrivateEndpointConnectionResource,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.PrivateEndpointConnectionResource:
+        """Approves or rejects a private endpoint connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateEndpointConnectionResource. The PrivateEndpointConnectionResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_status(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        private_endpoint_connection_name: str,
+        resource: _types.PrivateEndpointConnectionResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PrivateEndpointConnectionResource:
+        """Approves or rejects a private endpoint connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.horizondb.types.PrivateEndpointConnectionResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateEndpointConnectionResource. The PrivateEndpointConnectionResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_status(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        private_endpoint_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PrivateEndpointConnectionResource:
+        """Approves or rejects a private endpoint connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateEndpointConnectionResource. The PrivateEndpointConnectionResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def update_status(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        private_endpoint_connection_name: str,
+        resource: Union[_models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PrivateEndpointConnectionResource:
+        """Approves or rejects a private endpoint connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Is either a PrivateEndpointConnectionResource type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource or
+         ~azure.mgmt.horizondb.types.PrivateEndpointConnectionResource or IO[bytes]
+        :return: PrivateEndpointConnectionResource. The PrivateEndpointConnectionResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3797,17 +4558,18 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PrivateEndpointConnectionResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_horizon_db_private_endpoint_connections_update_request(
+        _request = build_horizon_db_private_endpoint_connections_update_status_request(
             resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
@@ -3822,18 +4584,19 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -3841,184 +4604,18 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateEndpointConnectionResource, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_endpoint_connection_name: str,
-        properties: _models.PrivateEndpointConnectionUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Updates a private endpoint connection.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource. Required.
-        :type private_endpoint_connection_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PrivateEndpointConnection. The
-         PrivateEndpointConnection is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_endpoint_connection_name: str,
-        properties: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Updates a private endpoint connection.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource. Required.
-        :type private_endpoint_connection_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PrivateEndpointConnection. The
-         PrivateEndpointConnection is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_endpoint_connection_name: str,
-        properties: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Updates a private endpoint connection.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource. Required.
-        :type private_endpoint_connection_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PrivateEndpointConnection. The
-         PrivateEndpointConnection is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_update(
-        self,
-        resource_group_name: str,
-        private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnectionUpdate, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Updates a private endpoint connection.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource. Required.
-        :type private_endpoint_connection_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         PrivateEndpointConnectionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.horizondb.models.PrivateEndpointConnectionUpdate or JSON or
-         IO[bytes]
-        :return: An instance of LROPoller that returns PrivateEndpointConnection. The
-         PrivateEndpointConnection is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                properties=properties,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.PrivateEndpointConnection].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.PrivateEndpointConnection](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
     def _delete_initial(
-        self, resource_group_name: str, private_endpoint_connection_name: str, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4035,6 +4632,7 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
 
         _request = build_horizon_db_private_endpoint_connections_delete_request(
             resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
@@ -4083,13 +4681,15 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def begin_delete(
-        self, resource_group_name: str, private_endpoint_connection_name: str, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a private endpoint connection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
@@ -4107,6 +4707,7 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
                 private_endpoint_connection_name=private_endpoint_connection_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -4142,7 +4743,7 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class HorizonDbPrivateLinkResourcesOperations:
+class HorizonDbPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4168,7 +4769,7 @@ class HorizonDbPrivateLinkResourcesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :param group_name: The name of the private link resource. Required.
         :type group_name: str
@@ -4239,12 +4840,12 @@ class HorizonDbPrivateLinkResourcesOperations:
     def list(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> ItemPaged["_models.HorizonDbPrivateLinkResource"]:
-        """Lists private link resources in a HorizonDb cluster.
+        """Lists private link resources in a HorizonDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param cluster_name: The name of the HorizonDb cluster. Required.
+        :param cluster_name: The name of the HorizonDB cluster. Required.
         :type cluster_name: str
         :return: An iterator like instance of HorizonDbPrivateLinkResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbPrivateLinkResource]
@@ -4292,7 +4893,10 @@ class HorizonDbPrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4335,7 +4939,7 @@ class HorizonDbPrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class HorizonDbParameterGroupsOperations:
+class HorizonDbParameterGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4356,12 +4960,12 @@ class HorizonDbParameterGroupsOperations:
     def get(
         self, resource_group_name: str, parameter_group_name: str, **kwargs: Any
     ) -> _models.HorizonDbParameterGroup:
-        """Gets information about a HorizonDb parameter group.
+        """Gets information about a HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :return: HorizonDbParameterGroup. The HorizonDbParameterGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.HorizonDbParameterGroup
@@ -4428,7 +5032,7 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        resource: Union[_models.HorizonDbParameterGroup, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbParameterGroup, _types.HorizonDbParameterGroup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4511,12 +5115,12 @@ class HorizonDbParameterGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Creates a new HorizonDb parameter group or updates an existing parameter group.
+        """Creates a new HorizonDB parameter group or updates an existing parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.models.HorizonDbParameterGroup
@@ -4534,20 +5138,20 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        resource: JSON,
+        resource: _types.HorizonDbParameterGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Creates a new HorizonDb parameter group or updates an existing parameter group.
+        """Creates a new HorizonDB parameter group or updates an existing parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.horizondb.types.HorizonDbParameterGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4567,12 +5171,12 @@ class HorizonDbParameterGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Creates a new HorizonDb parameter group or updates an existing parameter group.
+        """Creates a new HorizonDB parameter group or updates an existing parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -4590,19 +5194,20 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        resource: Union[_models.HorizonDbParameterGroup, JSON, IO[bytes]],
+        resource: Union[_models.HorizonDbParameterGroup, _types.HorizonDbParameterGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Creates a new HorizonDb parameter group or updates an existing parameter group.
+        """Creates a new HorizonDB parameter group or updates an existing parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         HorizonDbParameterGroup, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.horizondb.models.HorizonDbParameterGroup or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a HorizonDbParameterGroup type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbParameterGroup or
+         ~azure.mgmt.horizondb.types.HorizonDbParameterGroup or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbParameterGroup. The
          HorizonDbParameterGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbParameterGroup]
@@ -4664,7 +5269,9 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        properties: Union[_models.HorizonDbParameterGroupForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[
+            _models.HorizonDbParameterGroupForPatchUpdate, _types.HorizonDbParameterGroupForPatchUpdate, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4745,12 +5352,12 @@ class HorizonDbParameterGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Updates an existing HorizonDb parameter group.
+        """Updates an existing HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.horizondb.models.HorizonDbParameterGroupForPatchUpdate
@@ -4768,20 +5375,20 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        properties: JSON,
+        properties: _types.HorizonDbParameterGroupForPatchUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Updates an existing HorizonDb parameter group.
+        """Updates an existing HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.horizondb.types.HorizonDbParameterGroupForPatchUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4801,12 +5408,12 @@ class HorizonDbParameterGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Updates an existing HorizonDb parameter group.
+        """Updates an existing HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
@@ -4824,20 +5431,22 @@ class HorizonDbParameterGroupsOperations:
         self,
         resource_group_name: str,
         parameter_group_name: str,
-        properties: Union[_models.HorizonDbParameterGroupForPatchUpdate, JSON, IO[bytes]],
+        properties: Union[
+            _models.HorizonDbParameterGroupForPatchUpdate, _types.HorizonDbParameterGroupForPatchUpdate, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.HorizonDbParameterGroup]:
-        """Updates an existing HorizonDb parameter group.
+        """Updates an existing HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         HorizonDbParameterGroupForPatchUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.horizondb.models.HorizonDbParameterGroupForPatchUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         HorizonDbParameterGroupForPatchUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.horizondb.models.HorizonDbParameterGroupForPatchUpdate or
+         ~azure.mgmt.horizondb.types.HorizonDbParameterGroupForPatchUpdate or IO[bytes]
         :return: An instance of LROPoller that returns HorizonDbParameterGroup. The
          HorizonDbParameterGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbParameterGroup]
@@ -4959,12 +5568,12 @@ class HorizonDbParameterGroupsOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, parameter_group_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes a HorizonDb parameter group.
+        """Deletes a HorizonDB parameter group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -5018,7 +5627,7 @@ class HorizonDbParameterGroupsOperations:
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> ItemPaged["_models.HorizonDbParameterGroup"]:
-        """Lists all HorizonDb parameter groups in a resource group.
+        """Lists all HorizonDB parameter groups in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5068,7 +5677,10 @@ class HorizonDbParameterGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5112,7 +5724,7 @@ class HorizonDbParameterGroupsOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.HorizonDbParameterGroup"]:
-        """Lists all HorizonDb parameter groups in a subscription.
+        """Lists all HorizonDB parameter groups in a subscription.
 
         :return: An iterator like instance of HorizonDbParameterGroup
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbParameterGroup]
@@ -5158,7 +5770,10 @@ class HorizonDbParameterGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5209,7 +5824,7 @@ class HorizonDbParameterGroupsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :return: An iterator like instance of HorizonDbParameterGroupConnectionProperties
         :rtype:
@@ -5258,7 +5873,10 @@ class HorizonDbParameterGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5309,7 +5927,7 @@ class HorizonDbParameterGroupsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameter_group_name: The name of the HorizonDb parameter group. Required.
+        :param parameter_group_name: The name of the HorizonDB parameter group. Required.
         :type parameter_group_name: str
         :keyword version: The version number to filter by. Default value is None.
         :paramtype version: int
@@ -5360,7 +5978,10 @@ class HorizonDbParameterGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5375,6 +5996,645 @@ class HorizonDbParameterGroupsOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.HorizonDbParameterGroup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class HorizonDbAdministratorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.horizondb.HorizonDBMgmtClient`'s
+        :attr:`horizon_db_administrators` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "object_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get(
+        self, resource_group_name: str, cluster_name: str, object_id: str, **kwargs: Any
+    ) -> _models.HorizonDbAdministrator:
+        """Gets information about a HorizonDB administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :return: HorizonDbAdministrator. The HorizonDbAdministrator is compatible with MutableMapping
+        :rtype: ~azure.mgmt.horizondb.models.HorizonDbAdministrator
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.HorizonDbAdministrator] = kwargs.pop("cls", None)
+
+        _request = build_horizon_db_administrators_get_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            object_id=object_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.HorizonDbAdministrator, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "object_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        object_id: str,
+        resource: Union[_models.HorizonDbAdministratorAdd, _types.HorizonDbAdministratorAdd, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_horizon_db_administrators_create_or_update_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            object_id=object_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        object_id: str,
+        resource: _models.HorizonDbAdministratorAdd,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.HorizonDbAdministrator]:
+        """Creates a new HorizonDB administrator or updates an existing administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbAdministratorAdd
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns HorizonDbAdministrator. The
+         HorizonDbAdministrator is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbAdministrator]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        object_id: str,
+        resource: _types.HorizonDbAdministratorAdd,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.HorizonDbAdministrator]:
+        """Creates a new HorizonDB administrator or updates an existing administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.horizondb.types.HorizonDbAdministratorAdd
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns HorizonDbAdministrator. The
+         HorizonDbAdministrator is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbAdministrator]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        object_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.HorizonDbAdministrator]:
+        """Creates a new HorizonDB administrator or updates an existing administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns HorizonDbAdministrator. The
+         HorizonDbAdministrator is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbAdministrator]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "object_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        object_id: str,
+        resource: Union[_models.HorizonDbAdministratorAdd, _types.HorizonDbAdministratorAdd, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.HorizonDbAdministrator]:
+        """Creates a new HorizonDB administrator or updates an existing administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :param resource: Resource create parameters. Is either a HorizonDbAdministratorAdd type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.horizondb.models.HorizonDbAdministratorAdd or
+         ~azure.mgmt.horizondb.types.HorizonDbAdministratorAdd or IO[bytes]
+        :return: An instance of LROPoller that returns HorizonDbAdministrator. The
+         HorizonDbAdministrator is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.horizondb.models.HorizonDbAdministrator]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.HorizonDbAdministrator] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                object_id=object_id,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.HorizonDbAdministrator, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.HorizonDbAdministrator].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.HorizonDbAdministrator](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "object_id"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, cluster_name: str, object_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_horizon_db_administrators_delete_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            object_id=object_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "object_id"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, cluster_name: str, object_id: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a HorizonDB administrator.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :param object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). Required.
+        :type object_id: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                object_id=object_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.HorizonDbAdministrator"]:
+        """Lists all HorizonDB administrators in a cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the HorizonDB cluster. Required.
+        :type cluster_name: str
+        :return: An iterator like instance of HorizonDbAdministrator
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.horizondb.models.HorizonDbAdministrator]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.HorizonDbAdministrator]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_horizon_db_administrators_list_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.HorizonDbAdministrator],
                 deserialized.get("value", []),
             )
             if cls:

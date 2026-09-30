@@ -99,6 +99,35 @@ class DrillMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Failover mode."""
 
 
+class DrillReportFinalizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Finalization state of a Drill Run report."""
+
+    NOT_FINALIZED = "NotFinalized"
+    """The report is not finalized and may still change."""
+    FINALIZED = "Finalized"
+    """The report is finalized and immutable."""
+
+
+class DrillReportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Format of a Drill Run report."""
+
+    HTML = "Html"
+    """Human readable HTML report."""
+
+
+class DrillReportGenerationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Report generation status."""
+
+    NOT_STARTED = "NotStarted"
+    """Report generation has not been attempted yet."""
+    IN_PROGRESS = "InProgress"
+    """Report generation is currently running."""
+    SUCCEEDED = "Succeeded"
+    """Report generation completed successfully."""
+    FAILED = "Failed"
+    """Report generation failed. Details are captured in the lastError field."""
+
+
 class DrillResourceFaultState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Drill Resource Fault State."""
 
@@ -169,6 +198,19 @@ class DrillRunSubtasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FailoverReverse Subtasks."""
     REPROTECT_REVERSE = "ReprotectReverse"
     """ReprotectReverse Subtasks."""
+
+
+class DrillRunTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for DrillRun Tasks."""
+
+    FAILOVER = "Failover"
+    """Failover task."""
+    REPROTECT = "Reprotect"
+    """Reprotect task."""
+    FAILOVER_REVERSE = "FailoverReverse"
+    """FailoverReverse task."""
+    REPROTECT_REVERSE = "ReprotectReverse"
+    """ReprotectReverse task."""
 
 
 class DrillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -417,6 +459,8 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deletion in progress."""
     ACCEPTED = "Accepted"
     """Change accepted for processing."""
+    NEEDS_ATTENTION = "NeedsAttention"
+    """The resource needs attention from the user."""
 
 
 class QualificationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -567,6 +611,26 @@ class ResilienceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource is Healthy."""
 
 
+class ResourceFeasibilityReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Outcome of a resource feasibility review for a recovery resource."""
+
+    UNAVAILABLE = "Unavailable"
+    """The review could not complete. Advisory only; it never blocks failover."""
+    PASSED = "Passed"
+    """The review identified no risk."""
+    FLAGGED = "Flagged"
+    """The review identified a risk the operator should consider."""
+    NOT_APPLICABLE = "NotApplicable"
+    """The review did not apply to this resource and was skipped."""
+
+
+class ResourceFeasibilityReviewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource feasibility review category for a recovery resource."""
+
+    SKU_CAPACITY = "SkuCapacity"
+    """SKU capacity availability check in the target region or zone."""
+
+
 class ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state type that indicates inclusion of the resource with respect to the resiliency support."""
 
@@ -625,6 +689,24 @@ class ResourceTypeCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_SITE_RECOVERY_VMS_PRESENT = "AzureSiteRecoveryVMsPresent"
     """Indicates that alteast one Azure Site Recovery VMs are present."""
+
+
+class SliType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of an SLI selected for Drill monitoring."""
+
+    AVAILABILITY = "Availability"
+    """Availability SLI."""
+    LATENCY = "Latency"
+    """Latency SLI."""
+
+
+class SliTypeMatchState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the user-declared SLI type matches the SLI's actual category."""
+
+    MATCHED = "Matched"
+    """Declared type matches the SLI's actual category."""
+    MISMATCHED = "Mismatched"
+    """Declared type does not match the SLI's actual category."""
 
 
 class SolutionDisplayName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

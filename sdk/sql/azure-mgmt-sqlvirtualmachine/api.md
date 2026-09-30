@@ -2026,30 +2026,6 @@ namespace azure.mgmt.sqlvirtualmachine.types
         run_disk_config_rules: bool
 
 
-    class azure.mgmt.sqlvirtualmachine.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.sqlvirtualmachine.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.sqlvirtualmachine.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.sqlvirtualmachine.types.KeyVaultCredentialSettings(TypedDict, total=False):
         key "azureKeyVaultUrl": str
         key "credentialName": str
@@ -2081,27 +2057,6 @@ namespace azure.mgmt.sqlvirtualmachine.types
         key "sqlVirtualMachineInstance": Required[str]
         private_ip_address: PrivateIPAddress
         sql_virtual_machine_instance: str
-
-
-    class azure.mgmt.sqlvirtualmachine.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "name": str
-        key "origin": Union[str, OperationOrigin]
-        display: OperationDisplay
-        name: str
-        origin: Union[str, OperationOrigin]
-        properties: dict[str, Any]
-
-
-    class azure.mgmt.sqlvirtualmachine.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
 
 
     class azure.mgmt.sqlvirtualmachine.types.PrivateIPAddress(TypedDict, total=False):

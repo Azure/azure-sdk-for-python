@@ -8,10 +8,10 @@ import logging
 from abc import abstractmethod
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScaleType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import DefaultScaleSettings as RestDefaultScaleSettings
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineScaleSettings as RestOnlineScaleSettings
+from azure.ai.ml._restclient.arm_ml_service.models import ScaleType
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
@@ -98,15 +98,15 @@ class DefaultScaleSettings(OnlineScaleSettings):
 class TargetUtilizationScaleSettings(OnlineScaleSettings):
     """Auto scale settings.
 
-    :param min_instances: Minimum number of the instances
-    :type min_instances: int
-    :param max_instances: Maximum number of the instances
-    :type max_instances: int
-    :param polling_interval: The polling interval in ISO 8691 format. Only supports duration with
+    :keyword min_instances: Minimum number of the instances
+    :paramtype min_instances: int
+    :keyword max_instances: Maximum number of the instances
+    :paramtype max_instances: int
+    :keyword polling_interval: The polling interval in ISO 8691 format. Only supports duration with
      precision as low as Seconds.
-    :type polling_interval: str
-    :param target_utilization_percentage:
-    :type target_utilization_percentage: int
+    :paramtype polling_interval: str
+    :keyword target_utilization_percentage:
+    :paramtype target_utilization_percentage: int
     :ivar type: Target utilization scale settings type. Set automatically to "target_utilization" for this class.
     :vartype type: str
     """

@@ -38,6 +38,7 @@ def main():
             "properties": {
                 "autoPauseDelay": 0,
                 "availabilityZone": "str",
+                "currentSku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "highAvailabilityReplicaCount": 0,
                 "licenseType": "str",
                 "maintenanceConfigurationId": "str",
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/ElasticPoolUpdateMin.json
+# x-ms-original-file: 2025-08-01-preview/ElasticPoolUpdateMin.json
 if __name__ == "__main__":
     main()

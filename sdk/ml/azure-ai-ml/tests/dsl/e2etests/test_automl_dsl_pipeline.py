@@ -4,6 +4,7 @@ import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import cancel_job, get_automl_job_properties
+from azure.core.serialization import as_attribute_dict
 
 from azure.ai.ml import Input, MLClient, automl, dsl, Output
 from azure.ai.ml.automl import (
@@ -143,7 +144,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
 
-        actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
+        actual_dict = as_attribute_dict(from_rest_pipeline_job._to_rest_object())
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
 
         classification_dict = pydash.omit(actual_dict["properties"]["jobs"]["classification_node"], fields_to_omit)
@@ -170,7 +171,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
         assert classification_dict == {
             "asset_name": "classification_output_name",
-            "asset_version": "2",
+            "assetVersion": "2",
             "job_output_type": "mlflow_model",
             "mode": "ReadWriteMount",
         }

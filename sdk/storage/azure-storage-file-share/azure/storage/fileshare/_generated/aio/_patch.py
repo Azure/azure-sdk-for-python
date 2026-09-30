@@ -33,7 +33,7 @@ class FileClientConfiguration(GeneratedFileClientConfiguration):
     :param credential: Credential used to authenticate requests to the service.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
+     are "2026-10-06". Default value is "2026-10-06". Note that overriding this default value may
      result in unsupported behavior.
     :paramtype version: str
     """
@@ -42,7 +42,7 @@ class FileClientConfiguration(GeneratedFileClientConfiguration):
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
         self.url = url
-        self.version: str = kwargs.pop("version", "2026-06-06")
+        self.version: str = kwargs.pop("version", "2026-10-06")
 
 
 class FileClient(GeneratedFileClient):
@@ -62,7 +62,7 @@ class FileClient(GeneratedFileClient):
     :param credential: Credential used to authenticate requests to the service.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
+     are "2026-10-06". Default value is "2026-10-06". Note that overriding this default value may
      result in unsupported behavior.
     :paramtype version: str
     """

@@ -8,6 +8,7 @@ namespace azure.mgmt.computelimit
         operations: Operations
         shared_limit_caps: SharedLimitCapsOperations
         shared_limits: SharedLimitsOperations
+        trusted_host_subscriptions: TrustedHostSubscriptionsOperations
         vm_families: VmFamiliesOperations
 
         def __init__(
@@ -42,6 +43,7 @@ namespace azure.mgmt.computelimit.aio
         operations: Operations
         shared_limit_caps: SharedLimitCapsOperations
         shared_limits: SharedLimitsOperations
+        trusted_host_subscriptions: TrustedHostSubscriptionsOperations
         vm_families: VmFamiliesOperations
 
         def __init__(
@@ -78,7 +80,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         async def begin_disable(
                 self, 
                 location: str, 
@@ -120,7 +122,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> AsyncLROPoller[OperationStatusResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         async def get(
                 self, 
                 location: str, 
@@ -129,7 +131,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> Feature: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -247,7 +249,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> MemberCapOverride: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id']}, api_versions_list=['2026-07-01', '2026-07-31'])
         async def delete(
                 self, 
                 location: str, 
@@ -257,7 +259,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         async def get(
                 self, 
                 location: str, 
@@ -267,7 +269,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> MemberCapOverride: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def list_by_parent(
                 self, 
                 location: str, 
@@ -330,7 +332,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> SharedLimitCap: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name']}, api_versions_list=['2026-07-01', '2026-07-31'])
         async def delete(
                 self, 
                 location: str, 
@@ -339,7 +341,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         async def get(
                 self, 
                 location: str, 
@@ -348,7 +350,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> SharedLimitCap: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -454,6 +456,74 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> AsyncItemPaged[SharedLimit]: ...
 
 
+    class azure.mgmt.computelimit.aio.operations.TrustedHostSubscriptionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: TrustedHostSubscription, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @overload
+        async def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: TrustedHostSubscription, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @overload
+        async def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'host_subscription_id']}, api_versions_list=['2026-07-31'])
+        async def delete(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'host_subscription_id', 'accept']}, api_versions_list=['2026-07-31'])
+        async def get(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-31'])
+        def list_by_subscription_location_resource(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TrustedHostSubscription]: ...
+
+
     class azure.mgmt.computelimit.aio.operations.VmFamiliesOperations:
 
         def __init__(
@@ -463,7 +533,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         async def get(
                 self, 
                 location: str, 
@@ -472,7 +542,7 @@ namespace azure.mgmt.computelimit.aio.operations
             ) -> VmFamily: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'filter', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'filter', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -852,6 +922,13 @@ namespace azure.mgmt.computelimit.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.computelimit.models.TrustedHostSubscription(ProxyResource):
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
     class azure.mgmt.computelimit.models.VmFamily(ProxyResource):
         id: str
         name: str
@@ -896,7 +973,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def begin_disable(
                 self, 
                 location: str, 
@@ -938,7 +1015,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> LROPoller[OperationStatusResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'feature_name', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def get(
                 self, 
                 location: str, 
@@ -947,7 +1024,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> Feature: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-20', params_added_on={'2026-03-20': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-20', '2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -1065,7 +1142,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> MemberCapOverride: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def delete(
                 self, 
                 location: str, 
@@ -1075,7 +1152,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'member_subscription_id', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def get(
                 self, 
                 location: str, 
@@ -1085,7 +1162,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> MemberCapOverride: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def list_by_parent(
                 self, 
                 location: str, 
@@ -1148,7 +1225,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> SharedLimitCap: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def delete(
                 self, 
                 location: str, 
@@ -1157,7 +1234,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def get(
                 self, 
                 location: str, 
@@ -1166,7 +1243,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> SharedLimitCap: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-01'])
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -1272,6 +1349,74 @@ namespace azure.mgmt.computelimit.operations
             ) -> ItemPaged[SharedLimit]: ...
 
 
+    class azure.mgmt.computelimit.operations.TrustedHostSubscriptionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: TrustedHostSubscription, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @overload
+        def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: TrustedHostSubscription, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @overload
+        def create(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'host_subscription_id']}, api_versions_list=['2026-07-31'])
+        def delete(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'host_subscription_id', 'accept']}, api_versions_list=['2026-07-31'])
+        def get(
+                self, 
+                location: str, 
+                host_subscription_id: str, 
+                **kwargs: Any
+            ) -> TrustedHostSubscription: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-31', params_added_on={'2026-07-31': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-31'])
+        def list_by_subscription_location_resource(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ItemPaged[TrustedHostSubscription]: ...
+
+
     class azure.mgmt.computelimit.operations.VmFamiliesOperations:
 
         def __init__(
@@ -1281,7 +1426,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'vm_family_name', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def get(
                 self, 
                 location: str, 
@@ -1290,7 +1435,7 @@ namespace azure.mgmt.computelimit.operations
             ) -> VmFamily: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'filter', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'location', 'filter', 'accept']}, api_versions_list=['2026-04-30', '2026-06-01', '2026-07-01', '2026-07-31'])
         def list_by_subscription_location_resource(
                 self, 
                 location: str, 
@@ -1445,6 +1590,17 @@ namespace azure.mgmt.computelimit.types
         last_modified_at: str
         last_modified_by: str
         last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.computelimit.types.TrustedHostSubscription(ProxyResource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
 
 
 ```

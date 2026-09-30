@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -59,6 +59,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                     "name": "str",
                                     "properties": {
                                         "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                        "enableConnectionTracking": bool,
                                         "gatewayLoadBalancer": {"id": "str"},
                                         "inboundNatPools": [{"id": "str"}],
                                         "inboundNatRules": [{"id": "str"}],
@@ -512,6 +513,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -534,6 +538,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -655,6 +662,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -679,6 +689,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -843,6 +856,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -1340,6 +1356,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -1473,7 +1492,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                         },
                                                     },
                                                 },
-                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "ipTags": [
+                                                    {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                                ],
                                                 "linkedPublicIPAddress": ...,
                                                 "migrationPhase": "str",
                                                 "natGateway": {
@@ -1505,6 +1526,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                 "publicIPPrefix": {"id": "str"},
                                                 "resourceGuid": "str",
                                                 "servicePublicIPAddress": ...,
+                                                "upgradedToV2": bool,
                                             },
                                             "sku": {"name": "str", "tier": "str"},
                                             "tags": {"str": "str"},
@@ -1586,7 +1608,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "idleTimeoutInMinutes": 0,
                                                                     "ipAddress": "str",
                                                                     "ipConfiguration": ...,
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -1618,6 +1646,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -1944,6 +1973,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1993,6 +2023,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2061,6 +2092,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -2081,6 +2115,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -2198,6 +2235,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -2222,6 +2262,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -2377,6 +2420,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -2603,6 +2649,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2654,6 +2701,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2942,6 +2990,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -3459,6 +3510,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -3481,6 +3535,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -3547,6 +3604,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -3647,6 +3705,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -3671,6 +3732,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -3835,6 +3899,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -4125,6 +4192,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                     "id": "str"
                                                                                                                 }
                                                                                                             },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -4213,6 +4281,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -4346,7 +4417,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                         },
                                                     },
                                                 },
-                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "ipTags": [
+                                                    {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                                ],
                                                 "linkedPublicIPAddress": ...,
                                                 "migrationPhase": "str",
                                                 "natGateway": {
@@ -4378,6 +4451,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                 "publicIPPrefix": {"id": "str"},
                                                 "resourceGuid": "str",
                                                 "servicePublicIPAddress": ...,
+                                                "upgradedToV2": bool,
                                             },
                                             "sku": {"name": "str", "tier": "str"},
                                             "tags": {"str": "str"},
@@ -4458,7 +4532,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "idleTimeoutInMinutes": 0,
                                                                     "ipAddress": "str",
                                                                     "ipConfiguration": ...,
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -4490,6 +4570,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -4682,6 +4763,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -4702,6 +4786,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -4764,6 +4851,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -4825,6 +4913,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -4890,6 +4979,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -4969,6 +5059,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -4993,6 +5086,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -5148,6 +5244,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -5421,6 +5520,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5482,6 +5582,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -5549,6 +5650,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -5612,6 +5714,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -5754,7 +5859,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                     },
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5769,7 +5874,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                 resource_group_name=resource_group.name,
                 network_interface_name="str",
                 tap_configuration_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5782,7 +5887,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

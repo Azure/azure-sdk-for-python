@@ -77,7 +77,7 @@ def main():
                     },
                 },
                 "resourceGuardOperationRequests": [
-                    "/subscriptions/38304e13-357e-405e-9e9a-220351dcce8c/resourcegroups/ankurResourceGuard1/providers/Microsoft.DataProtection/resourceGuards/ResourceGuard38-1/dppModifyPolicy/default"
+                    "/subscriptions/38304e13-357e-405e-9e9a-220351dcce8c/resourceGroups/ankurResourceGuard1/providers/Microsoft.DataProtection/resourceGuards/ResourceGuard38-1/dppModifyPolicy/default"
                 ],
                 "validationType": "ShallowValidation",
             }
@@ -86,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/BackupInstanceOperations/PutBackupInstance_ResourceGuardEnabled.json
+# x-ms-original-file: 2026-06-01/BackupInstanceOperations/PutBackupInstance_ResourceGuardEnabled.json
 if __name__ == "__main__":
     main()

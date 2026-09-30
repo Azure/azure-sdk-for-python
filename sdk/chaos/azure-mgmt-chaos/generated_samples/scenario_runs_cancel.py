@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.scenario_runs.cancel(
+    response = client.scenario_runs.begin_cancel(
         resource_group_name="exampleRG",
         workspace_name="exampleWorkspace",
         scenario_name="12345678-1234-1234-1234-123456789012",
         run_id="abcd1234-5678-9012-3456-789012345678",
-    )
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ScenarioRuns_Cancel.json
+# x-ms-original-file: 2026-08-01-preview/ScenarioRuns_Cancel.json
 if __name__ == "__main__":
     main()

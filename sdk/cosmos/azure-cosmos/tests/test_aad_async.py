@@ -4,8 +4,8 @@
 import base64
 import json
 import time
-import os
 import unittest
+import uuid
 from io import StringIO
 
 import pytest
@@ -118,6 +118,46 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         print("Query result: " + str(query_results[0]))
         await self.container.delete_item(item='Item_0', partition_key='pk')
 
+    @_skip_scope_tests_on_non_emulator
+    async def test_compact_utf8_item_write_with_aad_async(self):
+        """Verify compact UTF-8 item writes with an async token credential."""
+        document = {
+            'id': 'aad-compact-utf8-async-' + str(uuid.uuid4()),
+            'pk': 'pk',
+            'content': '日本🎉',
+        }
+        captured = {}
+
+        def capture_body(request):
+            captured['body'] = request.http_request.body
+
+        async with CosmosClient(
+            self.host,
+            self.credential,
+            enable_compact_utf8_item_writes=True,
+        ) as client:
+            container = client.get_database_client(
+                self.configs.TEST_DATABASE_ID
+            ).get_container_client(
+                self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID
+            )
+            created = None
+            try:
+                created = await container.create_item(
+                    document,
+                    raw_request_hook=capture_body,
+                )
+
+                self.assertEqual(created['content'], document['content'])
+                # Compact bodies reach the transport as UTF-8 bytes, not str.
+                self.assertIsInstance(captured['body'], bytes)
+                decoded_body = captured['body'].decode('utf-8')
+                self.assertIn('日本🎉', decoded_body)
+                self.assertNotIn('\\u65e5', decoded_body)
+            finally:
+                if created is not None:
+                    await container.delete_item(document['id'], partition_key='pk')
+
 
     async def _run_with_scope_capture_async(self, credential_cls, action):
         scopes_captured = []
@@ -139,7 +179,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_override_scope_no_fallback_async(self):
         """When override scope is provided, only that scope is used and no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE=override_scope)
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         async def action(scopes_captured):
             credential = CosmosEmulatorCredential()
@@ -156,7 +197,6 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         try:
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
         finally:
-            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
                 await container.delete_item(item='Item_20', partition_key='pk')
             except Exception:
@@ -166,7 +206,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_override_scope_no_fallback_on_error_async(self):
         """When override scope is provided and auth fails, no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE=override_scope)
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         class FailingCredential(CosmosEmulatorCredential):
             async def get_token(self, *scopes, **kwargs):
@@ -190,7 +231,6 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         try:
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
         finally:
-            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
                 await container.delete_item(item='Item_21', partition_key='pk')
             except Exception:
@@ -200,7 +240,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_account_scope_only_async(self):
         """When account scope is provided, only that scope is used."""
         account_scope = "https://localhost/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE="")
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         async def action(scopes_captured):
             credential = CosmosEmulatorCredential()
@@ -227,7 +268,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
         account_scope = "https://localhost/.default"
         fallback_scope = "https://cosmos.azure.com/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE="")
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):

@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "ApiKey",
+    "credentials": {
+      "key": "smoke-generic-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {},
+    "target": "https://smoke-api.example.com/v1"
+  }
+}

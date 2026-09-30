@@ -9,26 +9,61 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, List
-from ._patch_agents_async import AgentsOperations
-from ._patch_datasets_async import DatasetsOperations
+from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
+from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
+from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
+from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from .._realtime import (
+    AsyncBetaRealtime,
+    AsyncBetaRealtimeConnection,
+    AsyncBetaRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from ._operations import (
-    BetaAgentsOperations,
-    BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
-    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+    BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
+    BetaVoiceAgentsTelephonyOperations,
 )
+
+
+class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s :attr:`beta` attribute's
+        :attr:`~azure.ai.projects.aio.operations.BetaOperations.voice_agents` attribute.
+    """
+
+    conversations: BetaVoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
+    realtime: AsyncBetaRealtime
+    """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # The generator does not emit realtime operations at all, since azure-core's HTTP
+        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
+        # hand-written client, which manages a real, long-lived connection, in its place.
+        self.realtime = AsyncBetaRealtime(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -43,6 +78,8 @@ class BetaOperations(GeneratedBetaOperations):
 
     agents: BetaAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
+    agent_insight_monitors: BetaAgentInsightMonitorsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -63,17 +100,27 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    voice_agents: BetaVoiceAgentsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that includes upload()
+        # Replace with patched class that returns AsyncEvaluatorGenerationLROPoller
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that adds file-path overload to upload_session_file
+        # Replace with patched class that returns AsyncAgentOptimizationLROPoller
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns AsyncDatasetGenerationLROPoller
+        self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns AsyncAgentInsightRunLROPoller
+        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        # Replace with patched class that wires up the hand-written realtime client
+        self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -85,6 +132,10 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AsyncBetaRealtime",
+    "AsyncBetaRealtimeConnection",
+    "AsyncBetaRealtimeConnectionManager",
+    "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -97,9 +148,15 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
+    "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -84,6 +84,9 @@ from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=imp
     _is_attach_enabled,
     _is_on_functions,
 )
+from azure.monitor.opentelemetry.exporter._configuration._state import (  # pylint: disable=import-error,no-name-in-module
+    get_configuration_manager,
+)
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
     AzureDiagnosticLogging,
@@ -94,6 +97,7 @@ from azure.monitor.opentelemetry._utils.configurations import (
     _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
+    get_dependency_conflicts,
     get_dist_dependency_conflicts,
 )
 
@@ -144,6 +148,17 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     _send_attach_warning()
 
     configurations = _get_configurations(**kwargs)
+
+    # Contribute distro-level profile fields to the OneSettings control plane before any exporter is
+    # created. initialize() is idempotent and _ConfigurationProfile.fill() is first-wins per field, so
+    # setting component="dst" and the distro version here makes the profile reflect the distro; the
+    # exporters created below still supply ikey/region without overriding these already-set fields.
+    config_manager = get_configuration_manager()
+    if config_manager:
+        config_manager.initialize(
+            component="dst",
+            version=VERSION,
+        )
 
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
@@ -360,8 +375,18 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 continue
             # Load the instrumentor via entrypoint
             instrumentor: Any = entry_point.load()
+            instrumentor_instance = instrumentor()
+            if lib_name in ("httpx", "httpx2"):
+                conflict = get_dependency_conflicts(instrumentor_instance.instrumentation_dependencies())
+                if conflict:
+                    _logger.debug(
+                        "Skipping instrumentation %s: %s",
+                        entry_point.name,
+                        conflict,
+                    )
+                    continue
             # tell instrumentation to not run dep checks again as we already did it above
-            instrumentor().instrument(skip_dep_check=True)
+            instrumentor_instance.instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",

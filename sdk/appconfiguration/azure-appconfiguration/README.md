@@ -38,40 +38,9 @@ az appconfig create --name <config-store-name> --resource-group <resource-group-
 ### Authenticate the client
 
 In order to interact with the App Configuration service, you'll need to create an instance of the
-[AzureAppConfigurationClient][configuration_client_class] class. To make this possible,
-you can either use the connection string of the Configuration Store or use an AAD token.
+[AzureAppConfigurationClient][configuration_client_class] class.
 
-#### Use connection string
-
-##### Get credentials
-
-Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store.
-
-```Powershell
-az appconfig credential list --name <config-store-name>
-```
-
-Alternatively, get the connection string from the Azure Portal.
-
-##### Create client
-
-Once you have the value of the connection string, you can create the AzureAppConfigurationClient:
-
-<!-- SNIPPET:hello_world_sample.create_app_config_client -->
-
-```python
-import os
-from azure.appconfiguration import AzureAppConfigurationClient
-
-CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
-# Create app config client
-client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
-```
-
-<!-- END SNIPPET -->
-
-#### Use Entra ID token
+#### Use Microsoft Entra ID (recommended)
 
 Here we demonstrate using [DefaultAzureCredential][default_cred_ref]
 to authenticate as a service principal. However, [AzureAppConfigurationClient][configuration_client_class]
@@ -139,6 +108,26 @@ from azure.appconfiguration import AzureAppConfigurationClient
 credential = DefaultAzureCredential()
 
 client = AzureAppConfigurationClient(base_url="your_endpoint_url", credential=credential)
+```
+
+#### Use a connection string
+
+Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store:
+
+```Powershell
+az appconfig credential list --name <config-store-name>
+```
+
+You can also get the connection string from the Azure portal.
+
+```python
+import os
+from azure.appconfiguration import AzureAppConfigurationClient
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+# Create an App Configuration client
+client = AzureAppConfigurationClient.from_connection_string(connection_string)
 ```
 
 ## Key concepts
@@ -389,11 +378,13 @@ To use the async client library, import the AzureAppConfigurationClient from pac
 ```python
 import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+credential = DefaultAzureCredential()
 
 # Create an app config client
-client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+client = AzureAppConfigurationClient(endpoint, credential)
 ```
 
 <!-- END SNIPPET -->

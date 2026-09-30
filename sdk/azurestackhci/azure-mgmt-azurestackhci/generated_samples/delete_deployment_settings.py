@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-04-01-preview/DeleteDeploymentSettings.json
+# x-ms-original-file: 2026-04-30/DeleteDeploymentSettings.json
 if __name__ == "__main__":
     main()
