@@ -11,7 +11,7 @@ DESCRIPTION:
 
       1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
+      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING_PREVIEW,
          type=simple_qna) without SDK polling.
       3. Polls the job asynchronously from application code until it reaches a
          terminal state, then prints every generated file output.

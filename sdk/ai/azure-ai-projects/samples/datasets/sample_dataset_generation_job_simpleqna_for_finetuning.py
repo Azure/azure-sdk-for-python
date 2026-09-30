@@ -11,7 +11,7 @@ DESCRIPTION:
 
       1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
+      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING_PREVIEW,
          type=simple_qna) that synthesizes short-answer and long-answer
          question / answer pairs from the file content and emits them as
          training and validation JSONL files.

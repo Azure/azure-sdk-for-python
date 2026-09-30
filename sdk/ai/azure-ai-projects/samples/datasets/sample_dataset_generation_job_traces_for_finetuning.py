@@ -10,7 +10,7 @@ DESCRIPTION:
 
       1. Creates an agent and seeds multiple short conversations against it.
       2. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=SUPERVISED_FINETUNING, source=traces) that extracts and
+         (scenario=SUPERVISED_FINETUNING_PREVIEW, source=traces) that extracts and
          formats the trace data into training/validation JSONL files.
       3. Polls the job and inspects the resulting Azure OpenAI file outputs.
       4. Cleans up the generated files, job, seeded conversations, and agent.

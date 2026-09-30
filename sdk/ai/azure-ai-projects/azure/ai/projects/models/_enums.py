@@ -632,10 +632,10 @@ class DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumM
 class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported scenarios for a data generation job."""
 
-    SUPERVISED_FINETUNING = "supervised_finetuning"
-    """Supervised Fine-tuning scenario."""
-    REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
-    """Reinforcement Fine-tuning scenario."""
+    SUPERVISED_FINETUNING_PREVIEW = "supervised_finetuning_preview"
+    """Supervised Fine-tuning preview scenario."""
+    REINFORCEMENT_FINETUNING_PREVIEW = "reinforcement_finetuning_preview"
+    """Reinforcement Fine-tuning preview scenario."""
     EVALUATION = "evaluation"
     """Evaluation scenario."""
 

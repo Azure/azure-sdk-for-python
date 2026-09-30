@@ -8372,8 +8372,8 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
      Required.
     :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
     :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
-     Required. Known values are: "supervised_finetuning", "reinforcement_finetuning", and
-     "evaluation".
+     Required. Known values are: "supervised_finetuning_preview",
+     "reinforcement_finetuning_preview", and "evaluation".
     :vartype scenario: str or ~azure.ai.projects.models.DataGenerationJobScenario
     :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
      since January 1, 1970). Required.
@@ -8405,7 +8405,8 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
     """The generation configuration for the data generation job. Required."""
     scenario: str = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])
     """The scenario of the data generation job. Either for fine-tuning or evaluation. Required. Known
-     values are: \"supervised_finetuning\", \"reinforcement_finetuning\", and \"evaluation\"."""
+     values are: \"supervised_finetuning_preview\", \"reinforcement_finetuning_preview\", and
+     \"evaluation\"."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The timestamp when the job was created, represented in Unix time (seconds since January 1,
      1970). Required."""
@@ -8449,8 +8450,8 @@ class DataGenerationJobInputs(_Model):  # pylint: disable=docstring-keyword-shou
      Required.
     :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
     :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
-     Required. Known values are: "supervised_finetuning", "reinforcement_finetuning", and
-     "evaluation".
+     Required. Known values are: "supervised_finetuning_preview",
+     "reinforcement_finetuning_preview", and "evaluation".
     :vartype scenario: str or ~azure.ai.projects.models.DataGenerationJobScenario
     """
 
@@ -8467,7 +8468,8 @@ class DataGenerationJobInputs(_Model):  # pylint: disable=docstring-keyword-shou
     """The generation configuration for the data generation job. Required."""
     scenario: str = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])
     """The scenario of the data generation job. Either for fine-tuning or evaluation. Required. Known
-     values are: \"supervised_finetuning\", \"reinforcement_finetuning\", and \"evaluation\"."""
+     values are: \"supervised_finetuning_preview\", \"reinforcement_finetuning_preview\", and
+     \"evaluation\"."""
 
     @overload
     def __init__(
@@ -21662,7 +21664,7 @@ class RedTeam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
 
 
 class ReinforcementFineTuningDataGenerationJob(
-    DataGenerationJob, discriminator="reinforcement_finetuning"
+    DataGenerationJob, discriminator="reinforcement_finetuning_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reinforcement fine-tuning data generation job resource. This is a preview feature.
 
@@ -21688,18 +21690,18 @@ class ReinforcementFineTuningDataGenerationJob(
     :ivar finished_at: The timestamp when the job was finished, represented in Unix time (seconds
      since January 1, 1970).
     :vartype finished_at: ~datetime.datetime
-    :ivar scenario: The scenario of the data generation job, which is Reinforcement Fine-tuning for
-     this model. Required. Reinforcement Fine-tuning scenario.
-    :vartype scenario: str or ~azure.ai.projects.models.REINFORCEMENT_FINETUNING
+    :ivar scenario: The scenario of the data generation job, which is Reinforcement Fine-tuning
+     preview for this model. Required. Reinforcement Fine-tuning preview scenario.
+    :vartype scenario: str or ~azure.ai.projects.models.REINFORCEMENT_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated reinforcement
      fine-tuning data.
     :vartype output_configuration:
      ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputTarget
     """
 
-    scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The scenario of the data generation job, which is Reinforcement Fine-tuning for this model.
-     Required. Reinforcement Fine-tuning scenario."""
+    scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The scenario of the data generation job, which is Reinforcement Fine-tuning preview for this
+     model. Required. Reinforcement Fine-tuning preview scenario."""
     output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -21724,11 +21726,11 @@ class ReinforcementFineTuningDataGenerationJob(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.scenario = DataGenerationJobScenario.REINFORCEMENT_FINETUNING  # type: ignore
+        self.scenario = DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW  # type: ignore
 
 
 class ReinforcementFineTuningDataGenerationJobInputs(
-    DataGenerationJobInputs, discriminator="reinforcement_finetuning"
+    DataGenerationJobInputs, discriminator="reinforcement_finetuning_preview"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Caller-supplied inputs for a reinforcement fine-tuning data generation job. This is a preview
     feature.
@@ -21740,18 +21742,18 @@ class ReinforcementFineTuningDataGenerationJobInputs(
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
     :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
-    :ivar scenario: The scenario of the data generation job, which is Reinforcement Fine-tuning for
-     this model. Required. Reinforcement Fine-tuning scenario.
-    :vartype scenario: str or ~azure.ai.projects.models.REINFORCEMENT_FINETUNING
+    :ivar scenario: The scenario of the data generation job, which is Reinforcement Fine-tuning
+     preview for this model. Required. Reinforcement Fine-tuning preview scenario.
+    :vartype scenario: str or ~azure.ai.projects.models.REINFORCEMENT_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated reinforcement
      fine-tuning data.
     :vartype output_configuration:
      ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputTarget
     """
 
-    scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The scenario of the data generation job, which is Reinforcement Fine-tuning for this model.
-     Required. Reinforcement Fine-tuning scenario."""
+    scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The scenario of the data generation job, which is Reinforcement Fine-tuning preview for this
+     model. Required. Reinforcement Fine-tuning preview scenario."""
     output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -21776,7 +21778,7 @@ class ReinforcementFineTuningDataGenerationJobInputs(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.scenario = DataGenerationJobScenario.REINFORCEMENT_FINETUNING  # type: ignore
+        self.scenario = DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW  # type: ignore
 
 
 class ReinforcementFineTuningDataGenerationJobOutputTarget(
@@ -23463,7 +23465,7 @@ class StructuredOutputDefinition(_Model):  # pylint: disable=docstring-keyword-s
 
 
 class SupervisedFineTuningDataGenerationJob(
-    DataGenerationJob, discriminator="supervised_finetuning"
+    DataGenerationJob, discriminator="supervised_finetuning_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supervised fine-tuning data generation job resource. This is a preview feature.
 
@@ -23489,18 +23491,18 @@ class SupervisedFineTuningDataGenerationJob(
     :ivar finished_at: The timestamp when the job was finished, represented in Unix time (seconds
      since January 1, 1970).
     :vartype finished_at: ~datetime.datetime
-    :ivar scenario: The scenario of the data generation job, which is Supervised Fine-tuning for
-     this model. Required. Supervised Fine-tuning scenario.
-    :vartype scenario: str or ~azure.ai.projects.models.SUPERVISED_FINETUNING
+    :ivar scenario: The scenario of the data generation job, which is Supervised Fine-tuning
+     preview for this model. Required. Supervised Fine-tuning preview scenario.
+    :vartype scenario: str or ~azure.ai.projects.models.SUPERVISED_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated supervised
      fine-tuning data.
     :vartype output_configuration:
      ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputTarget
     """
 
-    scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The scenario of the data generation job, which is Supervised Fine-tuning for this model.
-     Required. Supervised Fine-tuning scenario."""
+    scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The scenario of the data generation job, which is Supervised Fine-tuning preview for this
+     model. Required. Supervised Fine-tuning preview scenario."""
     output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23525,11 +23527,11 @@ class SupervisedFineTuningDataGenerationJob(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.scenario = DataGenerationJobScenario.SUPERVISED_FINETUNING  # type: ignore
+        self.scenario = DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW  # type: ignore
 
 
 class SupervisedFineTuningDataGenerationJobInputs(
-    DataGenerationJobInputs, discriminator="supervised_finetuning"
+    DataGenerationJobInputs, discriminator="supervised_finetuning_preview"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Caller-supplied inputs for a supervised fine-tuning data generation job. This is a preview
     feature.
@@ -23541,18 +23543,18 @@ class SupervisedFineTuningDataGenerationJobInputs(
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
     :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
-    :ivar scenario: The scenario of the data generation job, which is Supervised Fine-tuning for
-     this model. Required. Supervised Fine-tuning scenario.
-    :vartype scenario: str or ~azure.ai.projects.models.SUPERVISED_FINETUNING
+    :ivar scenario: The scenario of the data generation job, which is Supervised Fine-tuning
+     preview for this model. Required. Supervised Fine-tuning preview scenario.
+    :vartype scenario: str or ~azure.ai.projects.models.SUPERVISED_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated supervised
      fine-tuning data.
     :vartype output_configuration:
      ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputTarget
     """
 
-    scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The scenario of the data generation job, which is Supervised Fine-tuning for this model.
-     Required. Supervised Fine-tuning scenario."""
+    scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The scenario of the data generation job, which is Supervised Fine-tuning preview for this
+     model. Required. Supervised Fine-tuning preview scenario."""
     output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23577,7 +23579,7 @@ class SupervisedFineTuningDataGenerationJobInputs(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.scenario = DataGenerationJobScenario.SUPERVISED_FINETUNING  # type: ignore
+        self.scenario = DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW  # type: ignore
 
 
 class SupervisedFineTuningDataGenerationJobOutputTarget(

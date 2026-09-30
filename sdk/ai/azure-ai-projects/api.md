@@ -6613,8 +6613,8 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EVALUATION = "evaluation"
-        REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
-        SUPERVISED_FINETUNING = "supervised_finetuning"
+        REINFORCEMENT_FINETUNING_PREVIEW = "reinforcement_finetuning_preview"
+        SUPERVISED_FINETUNING_PREVIEW = "supervised_finetuning_preview"
 
 
     class azure.ai.projects.models.DataGenerationJobSource(_Model):
@@ -12287,7 +12287,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJob(DataGenerationJob, discriminator='reinforcement_finetuning'):
+    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJob(DataGenerationJob, discriminator='reinforcement_finetuning_preview'):
         created_at: datetime
         error: ApiError
         finished_at: datetime
@@ -12296,7 +12296,7 @@ namespace azure.ai.projects.models
         name: str
         output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget]
         result: DataGenerationJobResult
-        scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING]
+        scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
         status: Union[str, JobStatus]
 
@@ -12314,11 +12314,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='reinforcement_finetuning'):
+    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='reinforcement_finetuning_preview'):
         generation_configuration: DataGenerationJobOptions
         name: str
         output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget]
-        scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING]
+        scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
 
         @overload
@@ -13159,7 +13159,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJob(DataGenerationJob, discriminator='supervised_finetuning'):
+    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJob(DataGenerationJob, discriminator='supervised_finetuning_preview'):
         created_at: datetime
         error: ApiError
         finished_at: datetime
@@ -13168,7 +13168,7 @@ namespace azure.ai.projects.models
         name: str
         output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget]
         result: DataGenerationJobResult
-        scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING]
+        scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
         status: Union[str, JobStatus]
 
@@ -13186,11 +13186,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='supervised_finetuning'):
+    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='supervised_finetuning_preview'):
         generation_configuration: DataGenerationJobOptions
         name: str
         output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget]
-        scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING]
+        scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
 
         @overload
