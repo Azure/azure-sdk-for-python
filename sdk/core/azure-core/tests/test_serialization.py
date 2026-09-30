@@ -32,6 +32,7 @@ from azure.core.serialization import (
 
 from azure.core.exceptions import ODataV4Format
 
+
 def _expand_value(obj):
     try:
         try:
