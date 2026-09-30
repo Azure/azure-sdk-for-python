@@ -1,5 +1,13 @@
 # Release History
 
+## 2.3.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Preserved the canonical request `agent_reference` on lifecycle snapshots when
+  handlers emit a partial reference, preventing stored response updates from
+  losing the agent name or version.
+
 ## 2.3.0b1 (2026-09-29)
 
 ### Other Changes
