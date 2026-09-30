@@ -33,7 +33,6 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
 
         transport = kwargs.get("transport")
         requests_transport = transport if isinstance(transport, RequestsTransport) else RequestsTransport(**kwargs)
-        assert requests_transport is not None
         self._transport = requests_transport
         requests_transport.open()
 
