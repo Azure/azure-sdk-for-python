@@ -106,12 +106,12 @@ mcp-scripts:
   # Manual tests only: uncomment the block below on a trusted Azure-owned test branch,
   # compile with gh-aw v0.88.8, commit/push both files, then dispatch with --ref.
   # Comment it out and recompile before merging. Keep concurrency active in both modes.
-  # workflow_dispatch:
-  #   inputs:
-  #     pr_number:
-  #       description: Azure-owned-source SDK PR number to review and publish to
-  #       required: true
-  #       type: string
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Azure-owned-source SDK PR number to review and publish to
+        required: true
+        type: string
 permissions:
   contents: read
   copilot-requests: write
