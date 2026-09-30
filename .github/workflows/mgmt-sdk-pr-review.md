@@ -103,8 +103,9 @@ mcp-scripts:
   pull_request_target:
     types:
       - labeled
-  # Manual tests only: uncomment the block below on a trusted Azure-owned test branch,
-  # compile with gh-aw v0.88.8, commit/push both files, then dispatch with --ref.
+  # Manual tests only: use this workflow PR's existing trusted Azure-owned source branch.
+  # Do not create a separate test branch. Uncomment the block below, compile with gh-aw v0.88.8,
+  # commit/push both files to the same PR branch, then dispatch with --ref set to that branch.
   # Comment it out and recompile before merging. Keep concurrency active in both modes.
   # workflow_dispatch:
   #   inputs:
@@ -691,7 +692,8 @@ as an agent tool; do not attempt to call it. Other malformed or mixed outputs st
 ### Temporarily enable manual tests using the production pipeline
 
 Manual dispatch is **disabled by default**; `mgmt-review-needed` label events remain enabled.
-To test on a trusted Azure-owned branch, uncomment the `workflow_dispatch` block under `"on"`
+Test on the workflow PR's **existing trusted Azure-owned source branch**, not a new test branch.
+Do not create a separate branch or PR for testing. Uncomment the `workflow_dispatch` block under `"on"`
 in this source file, run `gh aw compile mgmt-sdk-pr-review --strict` with **v0.88.8**,
 and commit/push both the source and regenerated lockfile to that branch. After testing,
 comment the block out again and recompile before merging. Do not enable only the lockfile:
@@ -713,7 +715,9 @@ After pushing the enabled test revision, dispatch it explicitly:
 gh workflow run mgmt-sdk-pr-review.lock.yml --repo Azure/azure-sdk-for-python --ref mgmt-review-reliability -f pr_number=48997
 ```
 
-Replace `mgmt-review-reliability` with the trusted test branch. Omitting `--ref` uses the default
+Replace `mgmt-review-reliability` with the existing workflow PR's source branch, not the SDK PR's
+source branch. Keep all test-enabling and cleanup commits on that same workflow PR branch.
+Omitting `--ref` uses the default
 branch, where this command will not work while manual dispatch remains disabled.
 The dispatch entry point must be available on the default branch for GitHub's manual-run UI;
 adding it only to an unmerged PR is not proof that upstream dispatch is enabled.
