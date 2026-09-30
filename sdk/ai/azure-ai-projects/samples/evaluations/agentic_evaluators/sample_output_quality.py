@@ -24,6 +24,7 @@ USAGE:
 import os
 import time
 from pprint import pprint
+from typing import Any, Dict
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
@@ -63,10 +64,12 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as client,
     ):
-        for evaluation_level, item in (
+        evaluation_items: list = [
             ("turn", {"query": query, "response": response}),
             ("conversation", {"messages": messages}),
-        ):
+        ]
+        for evaluation_level, item in evaluation_items:
+            properties: Dict[str, Any]
             if evaluation_level == "turn":
                 properties = {"query": {"type": "string"}, "response": {"type": "string"}}
                 data_mapping = {"query": "{{item.query}}", "response": "{{item.response}}"}
