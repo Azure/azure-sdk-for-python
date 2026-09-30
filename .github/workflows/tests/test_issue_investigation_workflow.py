@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -30,6 +31,26 @@ def environment_json(lock, name):
 def job(lock, name):
     return re.split(r"(?m)^  [\w-]+:\n", lock.split(f"\n  {name}:\n", 1)[1], maxsplit=1)[0]
 
+
+def job_needs(block):
+    field = re.search(r"(?m)^    needs:([^\n]*)\n((?:      - [^\n]+\n)*)", block)
+    if not field:
+        return []
+    inline = field.group(1).strip()
+    return [inline] if inline else re.findall(r"(?m)^      - (.+)$", field.group(2))
+
+
+def job_condition(block):
+    field = re.search(r"(?m)^    if:([^\n]*)\n((?:      [^\n]+\n)*)", block)
+    if not field:
+        return ""
+    inline = field.group(1).strip()
+    return " ".join(line.strip() for line in field.group(2).splitlines()) if inline in (">", ">-", "|", "|-") else inline
+
+
+def job_permissions(block):
+    field = re.search(r"(?m)^    permissions:\n((?:      [\w-]+: [^\n]+\n)+)", block)
+    return dict(re.findall(r"(?m)^      ([\w-]+): (.+)$", field.group(1))) if field else {}
 
 class InvestigationWorkflowTests(unittest.TestCase):
     @classmethod
@@ -133,7 +154,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
                 self.assertIn('"${RUNNER_TEMP}/gh-aw/bin/copilot"', lock)
                 self.assertNotIn("/usr/local/bin/copilot", lock)
                 self.assertIn('GH_AW_ENGINE_VERSION: "1.0.80"', lock)
-                ci = (WORKFLOWS / "actionlint.yml").read_text(encoding="utf-8")
+                ci = (WORKFLOWS / "issue-workflow-contracts.yml").read_text(encoding="utf-8")
                 self.assertIn(f"github/gh-aw-actions/setup@{setup['sha']}", ci)
                 self.assertIn("GH_AW_RUNTIME:", ci)
 
@@ -157,48 +178,31 @@ class WorkflowIntegrationTests(unittest.TestCase):
                 self.assertIn("issue_read", github["tools"])
                 self.assertNotIn("get_issue", github["tools"])
 
-    def test_dispatch_is_single_allowlisted_workflow_on_default_branch(self):
+    def test_investigation_is_independent_and_opt_in(self):
         lock = read_workflow("issue-triage", ".lock.yml")
         config = environment_json(lock, "GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG")
-        dispatch = config["dispatch_workflow"]
-        self.assertEqual(["issue-investigation"], dispatch["workflows"])
-        self.assertEqual(1, dispatch["max"])
-        self.assertEqual(".lock.yml", dispatch["workflow_files"]["issue-investigation"])
-        self.assertEqual(["refs/heads/${{ github.event.repository.default_branch }}"], dispatch["allowed_refs"])
-        self.assertIn('"name": "issue_investigation"', lock)
-        self.assertIn("actions: write", job(lock, "safe_outputs"))
-        source = read_workflow("issue-triage")
-        self.assertIn("Do not call `dispatch_workflow` or `issue_investigation` from the agent.", source)
-        handoff = job(lock, "investigation_handoff")
-        for dependency in ("agent", "detection", "safe_outputs", "mention_owners"):
-            self.assertIn(f"- {dependency}", handoff)
-            self.assertIn(f"needs.{dependency}.result == 'success'", handoff)
-        self.assertIn("process_safe_outputs_status == 'success'", handoff)
-        self.assertIn("process_safe_outputs_items_applied", handoff)
-        self.assertIn("needs.safe_outputs.outputs.comment_id != ''", handoff)
-        self.assertIn("ref: ${{ github.workflow_sha }}", handoff)
-        self.assertIn("issues: read", handoff)
-        self.assertNotIn("issues: write", handoff)
-        self.assertIn("process_safe_outputs.cjs", handoff)
-        self.assertIn("needs.mention_owners.result == 'skipped'", handoff)
-        self.assertIn("name: safe-outputs-items", handoff)
-        self.assertIn("safe-output-items.jsonl", handoff)
-        self.assertIn("normalizeAssignment", handoff)
-        owners = job(lock, "mention_owners")
-        self.assertIn("- safe_outputs", owners)
-        self.assertIn("process_safe_outputs_status == 'success'", owners)
-        self.assertIn("process_safe_outputs_items_applied", owners)
+        self.assertNotIn("dispatch_workflow", config)
+        self.assertNotIn("issue_investigation", lock)
+        self.assertNotIn("investigation_handoff", lock)
+        self.assertNotIn("issue_workflow_support.cjs", lock)
+        relay = read_workflow("issue-investigation-handoff", ".yml")
+        self.assertIn("workflow_run:", relay)
+        self.assertIn("workflows: [Agentic Triage]", relay)
+        self.assertIn("GH_AW_ENABLE_ISSUE_INVESTIGATION == 'true'", relay)
+        self.assertIn("head_repository.full_name == github.repository", relay)
+        self.assertIn("head_branch == github.event.repository.default_branch", relay)
+        self.assertIn("ref: ${{ github.workflow_sha }}", relay)
+        self.assertIn("artifact-ids:", relay)
+        self.assertIn("run-id:", relay)
+        self.assertIn("process_safe_outputs.cjs", relay)
+        self.assertIn("issues: read", relay)
+        self.assertNotIn("issues: write", relay)
+        self.assertNotIn("copilot-requests", relay)
 
     def test_handoff_runtime(self):
-        source = read_workflow("issue-triage")
-        defer_step = source.split("- name: Defer investigation dispatch until triage is applied\n", 1)[1]
-        script = textwrap.dedent(defer_step.split("script: |\n", 1)[1].split("\n  jobs:", 1)[0])
         result = subprocess.run(
             ["node", str(WORKFLOWS / "tests" / "issue_investigation_handoff.cjs")],
-            input=json.dumps({"deferScript": script}),
-            text=True,
-            capture_output=True,
-            check=False,
+            text=True, capture_output=True, check=False,
         )
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Handoff runtime cases passed", result.stdout)
@@ -246,18 +250,49 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Pinned workflow runtime contracts passed", result.stdout)
 
-    def test_output_guards_execute_before_mutations(self):
-        for name in ("issue-investigation", "issue-triage"):
-            with self.subTest(workflow=name):
-                lock = read_workflow(name, ".lock.yml")
-                section = job(lock, "safe_outputs")
-                self.assertIn("contents: read", section)
-                self.assertIn("ref: ${{ github.workflow_sha }}", section)
-                self.assertIn("issue_workflow_support.cjs", section)
-                self.assertLess(section.index("Checkout trusted output guard"), section.index("Process Safe Outputs"))
-                self.assertLess(section.index("validate"), section.index("Process Safe Outputs"))
-                self.assertIn('GH_AW_MISSING_TOOL_CREATE_ISSUE: "false"', lock)
-                self.assertIn('GH_AW_REPORT_INCOMPLETE_CREATE_ISSUE: "false"', lock)
+    def test_investigation_guard_executes_before_its_mutations(self):
+        lock = read_workflow("issue-investigation", ".lock.yml")
+        section = job(lock, "safe_outputs")
+        self.assertIn("contents: read", section)
+        self.assertIn("ref: ${{ github.workflow_sha }}", section)
+        self.assertIn("issue_workflow_support.cjs", section)
+        self.assertLess(section.index("Checkout trusted output guard"), section.index("Process Safe Outputs"))
+        self.assertLess(section.index("validate"), section.index("Process Safe Outputs"))
+        self.assertIn('GH_AW_MISSING_TOOL_CREATE_ISSUE: "false"', lock)
+        self.assertIn('GH_AW_REPORT_INCOMPLETE_CREATE_ISSUE: "false"', lock)
+
+    def test_independent_relay_runtime(self):
+        relay = read_workflow("issue-investigation-handoff", ".yml")
+        condition = textwrap.dedent(relay.split("    if: >-\n", 1)[1].split("\n    runs-on:", 1)[0]).strip()
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "completed_triage_handoff.cjs")],
+            input=json.dumps({"source": read_workflow("issue-triage"), "relayCondition": condition}),
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Independent triage relay contracts passed", result.stdout)
+
+    def test_legacy_triage_output_and_routing_contracts_are_preserved(self):
+        baseline = json.loads((WORKFLOWS / "tests" / "fixtures" / "triage-controls.json").read_text(encoding="utf-8"))
+        source = read_workflow("issue-triage")
+        outputs = source.split("\nsafe-outputs:\n", 1)[1].split("\ntools:\n", 1)[0].strip()
+        self.assertEqual(baseline["safe_outputs_source_hash"], hashlib.sha256(outputs.encode()).hexdigest())
+        lock = read_workflow("issue-triage", ".lock.yml")
+        for name, expected in baseline["jobs"].items():
+            with self.subTest(job=name):
+                block = job(lock, name)
+                self.assertEqual(expected["needs"], job_needs(block))
+                self.assertEqual(expected["condition"], job_condition(block))
+                self.assertEqual(expected["permissions"], job_permissions(block))
+        self.assertEqual(baseline["handler_config"], environment_json(lock, "GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG"))
+        self.assertNotIn("safe_outputs", job_needs(job(lock, "mention_owners")))
+        self.assertNotIn("investigation", job(lock, "conclusion"))
+        self.assertNotIn("workflow-output-guard", job(lock, "safe_outputs"))
+        lint = (WORKFLOWS / "actionlint.yml").read_text(encoding="utf-8")
+        self.assertEqual(baseline["actionlint_source_hash"], hashlib.sha256(lint.encode()).hexdigest())
+        self.assertNotIn("workflow-contract-runtime", lint)
+        self.assertIn("paths:", (WORKFLOWS / "issue-workflow-contracts.yml").read_text(encoding="utf-8"))
+
     def test_concurrency_is_partitioned_by_issue(self):
         for name in ("issue-investigation", "issue-triage"):
             with self.subTest(workflow=name):

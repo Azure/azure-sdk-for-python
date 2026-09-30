@@ -1,10 +1,6 @@
 // cspell:ignore ffeb ededed
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
 const { prepareHandoff } = require("../scripts/issue_investigation_handoff.cjs");
-const { deferScript } = JSON.parse(fs.readFileSync(0, "utf8"));
 
 const labels = [
   { name: "customer-reported", color: "3800e0" },
@@ -147,42 +143,6 @@ async function main() {
   }), /assignment route/);
   cases += 16;
 
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "investigation-handoff-"));
-  const file = path.join(directory, "output.json");
-  const priorOutput = process.env.GH_AW_AGENT_OUTPUT;
-  const priorWorkspace = process.env.GITHUB_WORKSPACE;
-  try {
-    process.env.GH_AW_AGENT_OUTPUT = file;
-    const pending = [
-      { type: "dispatch_workflow", workflow_name: "issue-investigation" },
-      { type: "add_labels", labels: ["customer-reported", "KeyVault", "Client"] },
-      { type: "add_comment", body: analysis.body },
-      { type: "mention_owners", owners: "example" },
-      { type: "issue_investigation", issue_number: "42" },
-    ];
-    fs.writeFileSync(file, JSON.stringify({ items: pending, errors: [] }));
-    const executeScript = new Function("require", "core", deferScript);
-    const requireTestModule = name => name.endsWith("issue_workflow_support.cjs")
-      ? require("../scripts/issue_workflow_support.cjs") : require(name);
-    const execute = () => executeScript(requireTestModule, { info: () => {} });
-
-    process.env.GITHUB_WORKSPACE = directory;
-    execute(require, { info: () => {} });
-    assert.deepEqual(JSON.parse(fs.readFileSync(file, "utf8")).items, pending.slice(1, 4));
-    assert.equal((await run({ labels: [] })).output, undefined);
-    assert.ok((await run()).output);
-    fs.writeFileSync(file, JSON.stringify({ errors: [] }));
-    assert.throws(() => execute(), /nonempty terminal/);
-    fs.writeFileSync(file, "{");
-    assert.throws(() => execute(require, { info: () => {} }), SyntaxError);
-    cases += 3;
-  } finally {
-    if (priorOutput === undefined) delete process.env.GH_AW_AGENT_OUTPUT;
-    else process.env.GH_AW_AGENT_OUTPUT = priorOutput;
-    if (priorWorkspace === undefined) delete process.env.GITHUB_WORKSPACE;
-    else process.env.GITHUB_WORKSPACE = priorWorkspace;
-    fs.rmSync(directory, { recursive: true });
-  }
   console.log(`Handoff runtime cases passed: ${cases}`);
 }
 

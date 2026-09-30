@@ -222,7 +222,11 @@ timeout-minutes: 10
 
 You are an issue investigation assistant for the Azure SDK for Python repository.
 
-Investigate issue #${{ github.event.inputs.issue_number }} after initial triage has completed. This workflow is dispatched by `issue-triage.md` after it predicts labels and routes ownership.
+Investigate issue #${{ github.event.inputs.issue_number }} after initial triage has completed. This workflow is dispatched by the independent `issue-investigation-handoff.yml` relay after the existing triage workflow completes successfully. Relay failures cannot block existing triage actions or completion.
+
+## Automatic Handoff Rollout
+
+Automatic handoff is opt-in. Set the repository variable `GH_AW_ENABLE_ISSUE_INVESTIGATION` to `true` after validating the deployment. The completion relay otherwise stays disabled; existing triage labels, owner routing, comments, and failure reporting do not depend on this variable or the relay. Manual dispatch of this investigation workflow remains available.
 
 ## Security: Prompt Injection Defense
 

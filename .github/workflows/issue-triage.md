@@ -41,10 +41,6 @@ network:
 
 safe-outputs:
   report-failure-as-issue: false
-  report-incomplete:
-    create-issue: false
-  missing-tool:
-    create-issue: false
   add-labels:
     max: 7
     target: "*"
@@ -59,51 +55,9 @@ safe-outputs:
     target: "*"
   noop:
     report-as-issue: false
-  dispatch-workflow:
-    workflows: [issue-investigation]
-    max: 1
-  steps:
-    - name: Checkout trusted output guard
-      uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-      with:
-        ref: ${{ github.workflow_sha }}
-        persist-credentials: false
-        sparse-checkout: .github/workflows/scripts
-        path: workflow-output-guard
-    - name: Defer investigation dispatch until triage is applied
-      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-      env:
-        GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
-      with:
-        script: |
-          const fs = require('node:fs');
-          const file = process.env.GH_AW_AGENT_OUTPUT;
-          const output = JSON.parse(fs.readFileSync(file, 'utf8'));
-          const path = require('node:path');
-          const { validateAgentOutput } = require(path.join(
-            process.env.GITHUB_WORKSPACE, 'workflow-output-guard',
-            '.github', 'workflows', 'scripts', 'issue_workflow_support.cjs'
-          ));
-          validateAgentOutput(output);
-          const count = output.items.length;
-          output.items = output.items.filter(item =>
-            item.type !== 'dispatch_workflow' && item.type !== 'issue_investigation'
-          );
-          validateAgentOutput(output);
-          fs.writeFileSync(file, JSON.stringify(output));
-          core.info(`Deferred ${count - output.items.length} buffered investigation dispatches`);
   jobs:
     mention_owners:
       description: "Post a routing comment @mentioning team owners on the triggering issue; bypasses safe-outputs mention neutralization"
-      needs: [safe_outputs]
-      if: >-
-        needs.agent.result == 'success' &&
-        needs.detection.result == 'success' &&
-        needs.detection.outputs.detection_conclusion == 'success' &&
-        needs.safe_outputs.result == 'success' &&
-        needs.safe_outputs.outputs.process_safe_outputs_status == 'success' &&
-        fromJSON(needs.safe_outputs.outputs.process_safe_outputs_items_applied || '0') > 0 &&
-        needs.safe_outputs.outputs.comment_id != ''
       runs-on: ubuntu-latest
       output: "Owner mention comment posted"
       permissions:
@@ -240,110 +194,6 @@ safe-outputs:
                   return;
                 }
               }
-
-jobs:
-  safe_outputs:
-    permissions:
-      contents: read
-  investigation_handoff:
-    needs: [agent, detection, safe_outputs, mention_owners]
-    if: >-
-      !cancelled() &&
-      needs.agent.result == 'success' &&
-      needs.detection.result == 'success' &&
-      needs.detection.outputs.detection_conclusion == 'success' &&
-      needs.safe_outputs.result == 'success' &&
-      needs.safe_outputs.outputs.process_safe_outputs_status == 'success' &&
-      fromJSON(needs.safe_outputs.outputs.process_safe_outputs_items_applied || '0') > 0 &&
-      needs.safe_outputs.outputs.comment_id != '' &&
-      (needs.mention_owners.result == 'success' || needs.mention_owners.result == 'skipped')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: read
-      actions: write
-    steps:
-      - name: Checkout trusted handoff helper
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ github.workflow_sha }}
-          persist-credentials: false
-          sparse-checkout: .github/workflows/scripts
-          path: triage-handoff
-      - name: Setup native safe-output processor
-        uses: github/gh-aw-actions/setup@v0.88.8
-        with:
-          destination: ${{ runner.temp }}/gh-aw/actions
-      - name: Download applied triage receipts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: safe-outputs-items
-          path: ${{ runner.temp }}/triage-receipts
-      - name: Download triage routing requests
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: "{agent,agent-output-fallback}"
-          merge-multiple: true
-          path: ${{ runner.temp }}/triage-requests
-      - name: Validate applied triage and dispatch investigation
-        id: handoff
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        env:
-          TRIAGE_ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
-          TRIAGE_OWNER_NOTIFICATION: ${{ needs.mention_owners.result }}
-          GH_AW_DETECTION_CONCLUSION: ${{ needs.detection.outputs.detection_conclusion }}
-          GH_AW_WORKFLOW_ID: issue-triage
-          GH_AW_WORKFLOW_NAME: Agentic Triage
-          GH_AW_CALLER_WORKFLOW_ID: ${{ github.repository }}/issue-triage
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            const fs = require('node:fs');
-            const path = require('node:path');
-            const actionsDir = path.join(process.env.RUNNER_TEMP, 'gh-aw', 'actions');
-            require(path.join(actionsDir, 'setup_globals.cjs'))
-              .setupGlobals(core, github, context, exec, io, getOctokit);
-            const { extractAssignees, resolveIssueNumber } = require(path.join(actionsDir, 'safe_output_helpers.cjs'));
-            const { processItems } = require(path.join(actionsDir, 'safe_output_processor.cjs'));
-            const appliedItems = fs.readFileSync(
-              path.join(process.env.RUNNER_TEMP, 'triage-receipts', 'safe-output-items.jsonl'), 'utf8'
-            ).split(/\r?\n/).filter(line => line.trim()).map(line => JSON.parse(line));
-            const agentOutput = JSON.parse(fs.readFileSync(
-              path.join(process.env.RUNNER_TEMP, 'triage-requests', 'agent_output.json'), 'utf8'
-            ));
-            const helper = require(path.join(
-              process.env.GITHUB_WORKSPACE, 'triage-handoff',
-              '.github', 'workflows', 'scripts', 'issue_investigation_handoff.cjs'
-            ));
-            const handoff = await helper.prepareHandoff({
-              github, context,
-              issueNumber: process.env.TRIAGE_ISSUE_NUMBER,
-              appliedItems, agentOutput,
-              ownerNotification: process.env.TRIAGE_OWNER_NOTIFICATION,
-              normalizeAssignment: item => ({
-                ...resolveIssueNumber(item),
-                assignees: processItems(extractAssignees(item), [], 1, [])
-              })
-            });
-            if (!handoff.output) {
-              core.notice(`Investigation handoff skipped: ${handoff.reason}`);
-              return;
-            }
-            const file = path.join(process.env.RUNNER_TEMP, 'investigation-handoff.json');
-            fs.writeFileSync(file, JSON.stringify(handoff.output));
-            core.setOutput('dispatch_requested', 'true');
-            process.env.GH_AW_AGENT_OUTPUT = file;
-            process.env.GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG = JSON.stringify(handoff.config);
-            const { MANIFEST_FILE_PATH } = require(path.join(actionsDir, 'constants.cjs'));
-            fs.mkdirSync(path.dirname(MANIFEST_FILE_PATH), { recursive: true });
-            await require(path.join(actionsDir, 'process_safe_outputs.cjs')).main();
-      - name: Confirm investigation dispatch succeeded
-        if: >-
-          steps.handoff.outputs.dispatch_requested == 'true' &&
-          (steps.handoff.outputs.status != 'success' || steps.handoff.outputs.items_applied != '1')
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        with:
-          script: core.setFailed('The native safe-output processor did not apply the investigation dispatch');
 
 tools:
   bash: false
@@ -729,11 +579,3 @@ Rules for the standard sections:
   - 🔎 Debugging / Reproduction Notes: include diagnostic observations and numbered investigation steps; note similar open issues found via `search_issues` if any
   - 🏷️ Label Confidence: explain category and service label selection; state confidence as High, Medium, or Low with justification; note other labels considered and why they were rejected
   - 👥 Owner Routing: show which CODEOWNERS `# ServiceLabel:` entry matched (with line number) and why; list AzureSdkOwners and ServiceOwners found; state what routing action was taken; briefly note other entries encountered during the bottom-to-top scan and why they were skipped
-
-## Step 7: Investigation Handoff
-
-Do not call `dispatch_workflow` or `issue_investigation` from the agent. Label, comment, and routing calls are buffered: rereading the issue during this run cannot observe those pending changes.
-
-Finish the triage outputs above. The trusted `investigation_handoff` job runs after label/comment safe outputs have succeeded. It verifies the actual owner route: either successful `mention_owners` notification, or a completed assignment for the single-AzureSdkOwner path where `mention_owners` is not needed. It rereads the issue and uses applied comment receipts to find the analysis comment, even when a plain routing comment was posted first, before dispatching `issue-investigation` through the native safe-output processor.
-
-The handoff requires an open, unlocked issue with `customer-reported`, exactly one service label (color `#e99695`), exactly one category label (color `#ffeb77`), and none of `needs-triage`, `needs-team-triage`, `issue-addressed`, or `needs-author-feedback`. Failed, partial, skipped, or staged triage does not authorize a handoff. A skipped `mention_owners` job is valid only when the completed single-owner assignment route is independently verified.

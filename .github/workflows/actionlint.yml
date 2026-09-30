@@ -29,16 +29,6 @@ jobs:
       - name: Add ActionLint Problem Matcher
         run: echo "::add-matcher::.github/matchers/actionlint.json"
 
-      - name: Setup pinned workflow runtime for contract tests
-        uses: github/gh-aw-actions/setup@5e508589e03a7757a7e05b26e834292f5445bfb6 # v0.88.8
-        with:
-          destination: ${{ runner.temp }}/workflow-contract-runtime
-
-      - name: Test issue investigation workflow contracts
-        env:
-          GH_AW_RUNTIME: ${{ runner.temp }}/workflow-contract-runtime
-        run: python3 -m unittest discover -s .github/workflows/tests -p test_issue_investigation_workflow.py -v
-
       - name: Lint workflows
         uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
         with:
