@@ -57,7 +57,7 @@ class AzureAppConfigurationClient:
     :paramtype api_version: str
     :keyword audience: The audience to use for authentication with Microsoft Entra ID. If not specified, it is inferred
         from the App Configuration endpoint. If the endpoint does not contain a recognizable App Configuration domain,
-        it defaults to the public Azure App Configuration audience. An explicitly provided audience overrides detection.
+    :keyword audience: The audience to use for authentication with Microsoft Entra ID. By default, the audience is inferred from the Azure App Configuration store endpoint. If an audience can't be inferred from the store endpoint the public Azure App Configuration audience is used.
         See the supported audience list at https://aka.ms/appconfig/client-token-audience
     :paramtype audience: str
 

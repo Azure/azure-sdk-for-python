@@ -17,7 +17,7 @@ def get_audience(endpoint: str) -> str:
 
     :param endpoint: The endpoint to get the default audience for.
     :type endpoint: str
-    :return: The default audience for the given endpoint.
+    :return: The audience that should be used for the given endpoint.
     :rtype: str
     """
     hostname = urlparse(endpoint).hostname or ""
