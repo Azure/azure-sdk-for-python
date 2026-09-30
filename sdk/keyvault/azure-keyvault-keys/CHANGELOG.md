@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Reject request URLs containing backslashes in the authority before authentication.
+
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
 ### Other Changes
