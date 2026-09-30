@@ -14,10 +14,11 @@ DESCRIPTION:
 
       1. Creates a `PromptAgentDefinition` agent with domain-specific
          instructions (a small Widgets & Gizmos customer-support persona).
-      2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
-         whose source is an `Agent` reference pointing at the new agent. The
-         service fetches the agent's instructions / prompt and uses the
-         configured LLM to synthesize question / answer pairs from them.
+      2. Submits an `EvaluationDataGenerationJobInputs` job (scenario `evaluation`,
+         generation type `simple_qna`) whose source is an `Agent` reference
+         pointing at the new agent. The service fetches the agent's
+         instructions / prompt and uses the configured LLM to synthesize
+         question / answer pairs from them.
       3. Polls the job to completion and resolves the resulting `DatasetVersion`.
       4. Cleans up the data generation job, the generated dataset, and the agent version.
 
@@ -56,9 +57,11 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
 from dotenv import load_dotenv
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -130,6 +133,9 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
 
+    job_id: Optional[str] = None
+    dataset: Optional[DatasetVersion] = None
+
     try:
         # ------------------------------------------------------------------
         # 2. Submit a SimpleQnA data generation job sourced from the agent.
@@ -159,6 +165,7 @@ with (
             job=job,
             polling_interval=poll_interval_seconds,
         )
+        job_id = poller.details["job_id"]
 
         # Optional: While SDK is polling, periodically print the job status until the job is complete
         print("Periodically check job status:")
@@ -183,21 +190,33 @@ with (
         if not output_name or not output_version:
             raise RuntimeError("The data generation job did not produce a dataset output.")
 
-        dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
+        dataset = project_client.datasets.get(name=output_name, version=output_version)
         print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
         if job_result.generated_samples is not None:
             print(f"Generated samples: {job_result.generated_samples}")
 
-        # ------------------------------------------------------------------
-        # 3. Clean up the generated dataset
-        #    (the agent is deleted in the `finally` block below).
-        # ------------------------------------------------------------------
-        print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
-        project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-
-        # Note: The data generation job is implicitly cleaned up by the service
-        # when the dataset is deleted (cascade delete).
     finally:
+        # ------------------------------------------------------------------
+        # 3. Clean up (best effort, so partial failures do not leak resources).
+        # ------------------------------------------------------------------
+        # Deleting the data generation job also removes the job's generated output.
+        if job_id:
+            print(f"Delete the data generation job `{job_id}`.")
+            try:
+                project_client.datasets.delete_generation_job(job_id=job_id)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
+
+        # Delete the generated dataset explicitly, in case it was not already removed with the job.
+        if dataset is not None:
+            print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+            try:
+                project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+            except ResourceNotFoundError:
+                print("  Dataset was already removed with the data generation job.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete dataset: {exc}")
+
         # The agent is short-lived — always delete it, even if the job failed.
         print(f"Delete the prompt agent `{agent.name}` (version {agent.version}).")
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

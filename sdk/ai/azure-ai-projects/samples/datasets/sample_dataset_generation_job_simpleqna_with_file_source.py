@@ -11,13 +11,14 @@ DESCRIPTION:
 
       1. Uploads a short Markdown reference document via the Azure OpenAI Files
          API (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
-         with two sources: the uploaded `File` and a `Prompt` that adds an
-         instruction to generate expert-level, high-difficulty questions.
+      2. Submits an `EvaluationDataGenerationJobInputs` job (scenario `evaluation`,
+         generation type `simple_qna`) with two sources: the uploaded `File` and a
+         `Prompt` that adds an instruction to generate expert-level,
+         high-difficulty questions.
       3. Polls the job to completion, resolves the generated `DatasetVersion`,
          and shows that the caller-supplied output `description` and `tags` are
          propagated onto the new dataset.
-      4. Cleans up the generated dataset, the Azure OpenAI input file, and the data generation job.
+      4. Cleans up the data generation job, the generated dataset, and the Azure OpenAI input file.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
     to synthesize question / answer pairs from the combined sources.
@@ -52,9 +53,11 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
 from dotenv import load_dotenv
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -122,110 +125,134 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # ------------------------------------------------------------------
-    # 1. Upload the seed reference document as an Azure OpenAI file.
-    # ------------------------------------------------------------------
-    seed_filename = f"widgets-gizmos-seed-{run_id}.md"
-    print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
-    seed_file = openai_client.files.create(
-        file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8"))),
-        purpose="user_data",
-    )
-    print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
+    seed_file_id: Optional[str] = None
+    job_id: Optional[str] = None
+    dataset: Optional[DatasetVersion] = None
 
-    # Wait for the file to finish processing — the data generation service
-    # rejects references to files that are not yet in the `processed` state.
-    print("Wait for the Azure OpenAI file to be processed.", end="", flush=True)
-    while seed_file.status not in ("processed", "error"):
-        time.sleep(2)
-        seed_file = openai_client.files.retrieve(file_id=seed_file.id)
-        print(".", end="", flush=True)
-    print()
-    if seed_file.status != "processed":
-        raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
+    try:
+        # ------------------------------------------------------------------
+        # 1. Upload the seed reference document as an Azure OpenAI file.
+        # ------------------------------------------------------------------
+        seed_filename = f"widgets-gizmos-seed-{run_id}.md"
+        print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
+        seed_file = openai_client.files.create(
+            file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8"))),
+            purpose="user_data",
+        )
+        seed_file_id = seed_file.id
+        print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
 
-    # ------------------------------------------------------------------
-    # 2. Submit a multi-source SimpleQnA data generation job.
-    # ------------------------------------------------------------------
-    # Two sources are combined for a single job:
-    #   - The File source contributes the source material (the reference
-    #     document uploaded above).
-    #   - The Prompt source contributes a steering instruction (difficulty).
-    job = EvaluationDataGenerationJobInputs(
-        name=f"simpleqna-multisource-{run_id}",
-        sources=[
-            FileDataGenerationJobSource(
-                description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                id=seed_file.id,
+        # Wait for the file to finish processing — the data generation service
+        # rejects references to files that are not yet in the `processed` state.
+        print("Wait for the Azure OpenAI file to be processed.", end="", flush=True)
+        while seed_file.status not in ("processed", "error"):
+            time.sleep(2)
+            seed_file = openai_client.files.retrieve(file_id=seed_file.id)
+            print(".", end="", flush=True)
+        print()
+        if seed_file.status != "processed":
+            raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
+
+        # ------------------------------------------------------------------
+        # 2. Submit a multi-source SimpleQnA data generation job.
+        # ------------------------------------------------------------------
+        # Two sources are combined for a single job:
+        #   - The File source contributes the source material (the reference
+        #     document uploaded above).
+        #   - The Prompt source contributes a steering instruction (difficulty).
+        job = EvaluationDataGenerationJobInputs(
+            name=f"simpleqna-multisource-{run_id}",
+            sources=[
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
+                ),
+                PromptDataGenerationJobSource(
+                    description="Specifies the question difficulty for SimpleQnA generation.",
+                    prompt="Generate expert-level questions of high difficulty.",
+                ),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
             ),
-            PromptDataGenerationJobSource(
-                description="Specifies the question difficulty for SimpleQnA generation.",
-                prompt="Generate expert-level questions of high difficulty.",
+            output_configuration=EvaluationDataGenerationJobOutputTarget(
+                name=output_dataset_name,
+                description=EXPECTED_OUTPUT_DESCRIPTION,
+                tags=EXPECTED_OUTPUT_TAGS,
             ),
-        ],
-        generation_configuration=SimpleQnADataGenerationJobOptions(
-            # Service requires max_samples to be between 15 and 1000.
-            max_samples=15,
-            # `simple_qna` REQUIRES model_options.
-            model_options=DataGenerationModelOptions(model=model_name),
-        ),
-        output_configuration=EvaluationDataGenerationJobOutputTarget(
-            name=output_dataset_name,
-            description=EXPECTED_OUTPUT_DESCRIPTION,
-            tags=EXPECTED_OUTPUT_TAGS,
-        ),
-    )
+        )
 
-    print("Begin creating a dataset generation job.")
-    poller = project_client.datasets.begin_create_generation_job(
-        job=job,
-        polling_interval=poll_interval_seconds,
-    )
+        print("Begin creating a dataset generation job.")
+        poller = project_client.datasets.begin_create_generation_job(
+            job=job,
+            polling_interval=poll_interval_seconds,
+        )
+        job_id = poller.details["job_id"]
 
-    # Optional: While SDK is polling, periodically print the job status until the job is complete
-    print("Periodically check job status:")
-    while not poller.done():
-        print(f"\tstatus=`{poller.status()}`")
-        time.sleep(poll_interval_seconds)
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
 
-    # Since done() is true, result() returns the final deserialized job result without
-    # waiting further. It also propagates any LRO polling exception.
-    job_result = poller.result()
-    print(f"Final LRO status: `{poller.status()}`.")
-    print(f"Data generation result: {job_result}")
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        job_result = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Data generation result: {job_result}")
 
-    # Locate the Dataset output produced by the job.
-    output_name: str = ""
-    output_version: str = ""
-    for output in job_result.outputs or []:
-        if isinstance(output, DatasetDataGenerationJobOutput):
-            output_name = output.name or ""
-            output_version = output.version or ""
-            break
-    if not output_name or not output_version:
-        raise RuntimeError("The data generation job did not produce a dataset output.")
+        # Locate the Dataset output produced by the job.
+        output_name: str = ""
+        output_version: str = ""
+        for output in job_result.outputs or []:
+            if isinstance(output, DatasetDataGenerationJobOutput):
+                output_name = output.name or ""
+                output_version = output.version or ""
+                break
+        if not output_name or not output_version:
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
-    # ------------------------------------------------------------------
-    # 3. Inspect the generated dataset and show metadata propagation.
-    # ------------------------------------------------------------------
-    # The caller-supplied output `description` and `tags` are persisted onto
-    # the generated dataset. The service also automatically adds a
-    # `data_generation_job_id` tag pointing back at this job.
-    dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
-    print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
-    print(f"  description: {dataset.description}")
-    print(f"  tags:        {dataset.tags}")
-    if job_result.generated_samples is not None:
-        print(f"Generated samples: {job_result.generated_samples}")
+        # ------------------------------------------------------------------
+        # 3. Inspect the generated dataset and show metadata propagation.
+        # ------------------------------------------------------------------
+        # The caller-supplied output `description` and `tags` are persisted onto
+        # the generated dataset. The service also automatically adds a
+        # `data_generation_job_id` tag pointing back at this job.
+        dataset = project_client.datasets.get(name=output_name, version=output_version)
+        print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
+        print(f"  description: {dataset.description}")
+        print(f"  tags:        {dataset.tags}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
-    # ------------------------------------------------------------------
-    # 4. Clean up.
-    # ------------------------------------------------------------------
-    print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
-    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+    finally:
+        # ------------------------------------------------------------------
+        # 4. Clean up (best effort, so partial failures do not leak resources).
+        # ------------------------------------------------------------------
+        # Deleting the data generation job also removes the job's generated output.
+        if job_id:
+            print(f"Delete the data generation job `{job_id}`.")
+            try:
+                project_client.datasets.delete_generation_job(job_id=job_id)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
 
-    print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
-    openai_client.files.delete(file_id=seed_file.id)
+        # Delete the generated dataset explicitly, in case it was not already removed with the job.
+        if dataset is not None:
+            print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+            try:
+                project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+            except ResourceNotFoundError:
+                print("  Dataset was already removed with the data generation job.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete dataset: {exc}")
 
-    # Note: The data generation job is implicitly cleaned up by the service
-    # when the dataset is deleted (cascade delete).
+        if seed_file_id:
+            print(f"Delete the Azure OpenAI input file `{seed_file_id}`.")
+            try:
+                openai_client.files.delete(file_id=seed_file_id)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}")
