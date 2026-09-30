@@ -278,11 +278,27 @@ def main() -> None:  # pylint: disable=too-many-locals
             raise RuntimeError(f"Evaluation {run.status}, {run.result_counts.errored} errored item(s): {run.error}")
 
         # Single-turn, messages input
+        # Grounding context comes from the tool results inside the messages, so no separate context field is needed.
         messages = [
             {"role": "user", "content": [{"type": "text", "text": "What is the capital of Canada?"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "lookup_capital",
+                        "arguments": {"country": "Canada"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_1",
+                "content": [{"type": "tool_result", "tool_result": "Ottawa is the capital of Canada."}],
+            },
             {"role": "assistant", "content": [{"type": "text", "text": "The capital of Canada is Ottawa."}]},
         ]
-        messages_context = "Ottawa is the capital of Canada."
         messages_eval = client.evals.create(
             name="Test Groundedness Evaluator with messages",
             data_source_config=DataSourceConfigCustom(
@@ -303,7 +319,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                     name="groundedness_messages",
                     evaluator_name="builtin.groundedness",
                     initialization_parameters={"deployment_name": model_deployment_name},
-                    data_mapping={"messages": "{{item.messages}}", "context": "{{item.context}}"},
+                    data_mapping={"messages": "{{item.messages}}"},
                 )
             ],
         )
@@ -316,7 +332,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                     type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content=[SourceFileContentContent(item={"messages": messages, "context": messages_context})],
+                        content=[SourceFileContentContent(item={"messages": messages})],
                     ),
                 ),
             )
