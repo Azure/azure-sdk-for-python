@@ -91,7 +91,7 @@ class PreparedRequest:
     #: separate from the SQL and parameters sent in the JSON body.
     query_scope: Optional[QueryScope] = None
 
-    #: Returned resource address for a dictionary replacement target. It selects
+    #: Returned resource address for a dictionary read, replacement or patch. It selects
     #: the original resource, not a recreated item with the same user ID.
     item_self_link: Optional[str] = None
 
@@ -132,6 +132,18 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     probability: float = 1.0
     hit_limit: Optional[int] = None
     enabled: bool = True
+
+    def __post_init__(self) -> None:
+        self._check_type("id", self.id, str, optional=False)
+        self._check_type("operation_type", self.operation_type, str, optional=False)
+        self._check_type("status_code", self.status_code, int, optional=False)
+        self._check_type("sub_status", self.sub_status, int, optional=False)
+        self._check_type("container_id", self.container_id, str)
+        self._check_type("region", self.region, str)
+        self._check_type("delay_ms", self.delay_ms, int, optional=False)
+        self._check_number("probability", self.probability)
+        self._check_type("hit_limit", self.hit_limit, int)
+        self._check_type("enabled", self.enabled, bool, optional=False)
 
 
 @dataclass(frozen=True)
@@ -199,13 +211,35 @@ class PreparedClientConfig(_ValidatedSettings):
     #: clients from sharing the same driver.
     fault_injection_rules: tuple[PreparedFaultInjectionRule, ...] = ()
 
+    #: Application-header defaults, copied independently of the caller's mapping.
+    headers: Mapping[str, str] = field(default_factory=dict, repr=False)
+
     def __post_init__(self) -> None:
         for name in ("preferred_locations", "excluded_locations", "fault_injection_rules"):
             value = getattr(self, name)
             if not isinstance(value, (list, tuple)):
                 raise TypeError(f"PreparedClientConfig.{name} must be a list or tuple")
             object.__setattr__(self, name, tuple(value))
-        super().__post_init__()
+        self._check_strings("preferred_locations", self.preferred_locations)
+        self._check_strings("excluded_locations", self.excluded_locations)
+        self._check_type("throttling_max_retry_count", self.throttling_max_retry_count, int)
+        if self.throttling_max_retry_wait_time_seconds is not None:
+            self._check_number("throttling_max_retry_wait_time_seconds", self.throttling_max_retry_wait_time_seconds)
+        self._check_type("hedging_threshold_ms", self.hedging_threshold_ms, int)
+        self._check_type("user_agent_suffix", self.user_agent_suffix, str)
+        self._check_type("consistency_level", self.consistency_level, str)
+        self._check_type("proxy_allowed", self.proxy_allowed, bool)
+        if self.connection_timeout_seconds is not None:
+            self._check_number("connection_timeout_seconds", self.connection_timeout_seconds)
+        if self.read_timeout_seconds is not None:
+            self._check_number("read_timeout_seconds", self.read_timeout_seconds)
+        if any(not isinstance(rule, PreparedFaultInjectionRule) for rule in self.fault_injection_rules):
+            self._invalid_type("fault_injection_rules")
+        if not isinstance(self.headers, Mapping) or any(
+            type(key) is not str or type(value) is not str for key, value in self.headers.items()
+        ):
+            self._invalid_type("headers")
+        object.__setattr__(self, "headers", freeze_headers(self.headers))
 
 
 @dataclass(frozen=True)

@@ -285,7 +285,7 @@ class BackendComparison:
     # recorded" so the next reviewer knows whether to file a new entry
     # or strengthen an existing one.
     _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
-        26,
+        25,
         "The original HTTP response headers are discarded",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {

@@ -468,6 +468,7 @@ mod tests {
             driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2))),
             operation_timeout: None,
             availability_strategy: None,
+            read_consistency_strategy: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),
                 HeaderValue::from_static("*"),

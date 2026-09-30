@@ -817,7 +817,7 @@ mod tests {
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
     use std::sync::atomic::Ordering;
 
-    async fn create_and_conflict() -> (CosmosResponse, CosmosError) {
+    async fn create_read_and_conflict() -> (CosmosResponse, CosmosResponse, CosmosError) {
         use azure_data_cosmos_driver::{
             in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
             models::{
@@ -871,19 +871,147 @@ mod tests {
             .execute_singleton_operation(create(), Default::default())
             .await
             .unwrap();
+        let read = driver
+            .execute_singleton_operation(
+                CosmosOperation::read_item(ItemReference::from_name(
+                    &container,
+                    PartitionKey::from("customer-17"),
+                    "order-17",
+                )),
+                Default::default(),
+            )
+            .await
+            .unwrap();
         let error = driver
             .execute_singleton_operation(create(), Default::default())
             .await
             .unwrap_err();
         assert_eq!(u16::from(error.status().status_code()), 409);
         assert!(error.response().is_some());
-        (response, error)
+        (response, read, error)
+    }
+
+    fn tuple_with_rust_preparation_released<'py>(
+        py: Python<'py>,
+        response: CosmosResponse,
+    ) -> PyResult<Bound<'py, pyo3::types::PyTuple>> {
+        let (status, sub_status, diagnostics, headers, body) = py.allow_threads(move || {
+            let (status, sub_status) = super::status_code_and_sub_status(response.status());
+            let diagnostics = super::record_diagnostics(response.diagnostics());
+            let headers = response.headers().to_raw_headers();
+            (status, sub_status, diagnostics, headers, response.into_body())
+        });
+        let python_headers = PyDict::new_bound(py);
+        for (name, value) in headers.iter() {
+            python_headers.set_item(name.as_str(), value.as_str())?;
+        }
+        match body {
+            ResponseBody::Bytes(bytes) => super::backend_response_tuple(
+                py, status, sub_status, python_headers, bytes.as_ref(), Some(&diagnostics),
+            ),
+            ResponseBody::NoPayload => super::backend_response_tuple(
+                py, status, sub_status, python_headers, b"", Some(&diagnostics),
+            ),
+            ResponseBody::Items(items) => Err(pyo3::exceptions::PyRuntimeError::new_err(format!(
+                "unexpected feed response body for point operation: got {} item(s)",
+                items.len()
+            ))),
+        }
+    }
+
+    #[tokio::test]
+    async fn released_preparation_preserves_read_response_and_counters() {
+        pyo3::prepare_freethreaded_python();
+        let (_, read, _) = create_read_and_conflict().await;
+        Python::with_gil(|py| {
+            assert_eq!(u16::from(read.status().status_code()), 200);
+            let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
+            let current = super::backend_response_tuple_from_success(py, read.clone()).unwrap();
+            let proposed = tuple_with_rust_preparation_released(py, read.clone()).unwrap();
+            assert!(current.eq(&proposed).unwrap());
+            // Other native tests can update the process-wide counter concurrently.
+            assert!(BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+                >= before + 2 * read.diagnostics().request_count() as u64);
+        });
+    }
+
+    #[test]
+    #[ignore = "offline microbenchmark; run explicitly with --release --ignored --nocapture"]
+    fn measure_response_preparation_gil() {
+        use std::hint::black_box;
+        use std::time::Instant;
+
+        assert!(!cfg!(debug_assertions), "Use --release for this benchmark");
+        pyo3::prepare_freethreaded_python();
+        let runtime = tokio::runtime::Runtime::new().unwrap();
+        let (_, read, _) = runtime.block_on(create_read_and_conflict());
+        let iterations = 10_000;
+        let samples = 7;
+        let mut current_ns = Vec::new();
+        let mut released_ns = Vec::new();
+        let mut formatting_ns = Vec::new();
+        let mut diagnostics_ns = Vec::new();
+        let mut headers_ns = Vec::new();
+        Python::with_gil(|py| {
+            let current = super::backend_response_tuple_from_success(py, read.clone()).unwrap();
+            let proposed = tuple_with_rust_preparation_released(py, read.clone()).unwrap();
+            assert!(current.eq(&proposed).unwrap());
+            for _ in 0..1_000 {
+                drop(super::backend_response_tuple_from_success(py, read.clone()).unwrap());
+                drop(tuple_with_rust_preparation_released(py, read.clone()).unwrap());
+            }
+            let diag = read.diagnostics();
+            for sample in 0..samples {
+                for released in if sample % 2 == 0 { [false, true] } else { [true, false] } {
+                    let start = Instant::now();
+                    for _ in 0..iterations {
+                        let response = black_box(read.clone());
+                        let tuple = if released {
+                            tuple_with_rust_preparation_released(py, response)
+                        } else {
+                            super::backend_response_tuple_from_success(py, response)
+                        }.unwrap();
+                        drop(black_box(tuple));
+                    }
+                    let ns = start.elapsed().as_nanos() as f64 / iterations as f64;
+                    if released { released_ns.push(ns); } else { current_ns.push(ns); }
+                }
+                let start = Instant::now();
+                for _ in 0..iterations {
+                    drop(black_box(black_box(&diag).to_string()));
+                }
+                formatting_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
+                let start = Instant::now();
+                for _ in 0..iterations {
+                    drop(black_box(super::record_diagnostics(black_box(diag.clone()))));
+                }
+                diagnostics_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
+                let start = Instant::now();
+                for _ in 0..iterations {
+                    drop(black_box(black_box(read.headers()).to_raw_headers()));
+                }
+                headers_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
+            }
+            println!("RESPONSE_PREPARATION_BENCHMARK={}", serde_json::json!({
+                "scope": "Local no-network release benchmark; completed in-memory-driver read response; no GIL contender",
+                "iterations_per_sample": iterations, "samples": samples,
+                "body_bytes": match read.body() { ResponseBody::Bytes(b) => b.len(), _ => 0 },
+                "header_count": read.headers().to_raw_headers().iter().count(),
+                "request_count": diag.request_count(),
+                "response_tuple_parity": true,
+                "current_conversion_ns": current_ns,
+                "released_preparation_conversion_ns": released_ns,
+                "diag_to_string_ns": formatting_ns,
+                "record_diagnostics_ns": diagnostics_ns,
+                "rust_raw_headers_ns": headers_ns
+            }));
+        });
     }
 
     #[tokio::test]
     async fn attempt_envelope_preserves_success_and_conflict_driver_records() {
         pyo3::prepare_freethreaded_python();
-        let (success, conflict) = create_and_conflict().await;
+        let (success, _, conflict) = create_read_and_conflict().await;
         for result in [Ok(success), Err(conflict)] {
             let driver_response = match &result {
                 Ok(response) => response,
@@ -988,7 +1116,7 @@ mod tests {
     #[tokio::test]
     async fn attempt_tracing_preserves_responseless_errors_and_available_diagnostics() {
         pyo3::prepare_freethreaded_python();
-        let (_, conflict) = create_and_conflict().await;
+        let (_, _, conflict) = create_read_and_conflict().await;
         let diagnostics = conflict.diagnostics().unwrap();
         assert!(diagnostics.request_count() > 0);
         Python::with_gil(|py| {

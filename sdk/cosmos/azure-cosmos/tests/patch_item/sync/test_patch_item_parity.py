@@ -3,92 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""End-to-end parity tests for ``Container.patch_item`` across backends.
+"""Live patch comparisons using explicitly selected backends and owned resources.
 
-Sync twin of ``tests/patch_item/aio/test_patch_item_parity_async.py``, following
-the same graduated structure used by the ``create_item``, ``read_item``
-and ``delete_item`` parity suites: each group of tests adds one more variable to
-the one before it, so a failure names the narrowest thing that broke.
-
-Why this file exists at full strength: until recently it held two tests -- a
-plain ``set`` and a missing-id 404 -- and passed both. That was not evidence
-that sync ``patch_item`` was healthy; it was evidence that two tests cannot see
-much. Four confirmed rust-path gaps (listed below) sat undetected for the whole
-migration precisely because no sync test ever passed the options that expose
-them. Every one of those four reproduces on this path, so the thin suite was
-the reason they went unnoticed rather than a sign they were async-only.
-
-Sync and async are *separate* container implementations sharing only the
-option-merge helpers, so ``patch_item`` reaches the wire through ``ItemHelper``
-here and ``AsyncItemHelper`` on async. A divergence between those two helpers is
-invisible to whichever suite is weaker, which is the other reason both sides
-need the same coverage rather than one thorough suite and one token one.
-
-``patch_item`` deserves particular care for two reasons the other point
-operations do not share:
-
-* It is the only point write whose **request body is a program** -- a list of
-  operations, each with its own ``op``, ``path`` and (usually) ``value``.
-  Every operator has to survive the trip through the binding intact, so the
-  operators get a group of their own rather than being folded into the baseline.
-* ``etag`` / ``match_condition`` are **load-bearing** here, exactly as on
-  ``delete_item`` and exactly opposite to ``create_item``, where the same pair
-  is deprecated and ignored. ``filter_predicate`` adds a second, independent
-  conditional-update mechanism on top.
-
-What this file pins for sync ``patch_item``:
-
-* **Baseline.** A single ``set`` against an existing item.
-* **patch operators.** ``set``, ``add``, ``replace``, ``remove``,
-  ``incr``, a nested path, and a multi-operation program applied atomically.
-* **header-bearing kwargs**, one per test: ``pre_trigger_include``,
-  ``post_trigger_include``, ``session_token``, ``priority``,
-  ``throughput_bucket``.
-* **behavioural kwargs.** ``no_response``, ``retry_write``,
-  ``availability_strategy``, ``timeout``, and a matching ``filter_predicate``.
-* **``response_hook`` fires exactly once per backend.**
-* **error and concurrency contracts.** Patching a missing id (404), a
-  stale etag with ``IfNotModified`` (412), a current etag succeeding, a
-  non-matching ``filter_predicate``, an invalid patch path, and ``etag``
-  supplied without ``match_condition`` (a local ``ValueError`` raised before
-  any network call by the shared ``_base._get_match_headers`` gate).
-
-Note ``patch_item`` exposes no ``initial_headers`` keyword on either sync or
-async, so unlike the other point-operation suites there is no custom-header
-test here.
-
-**Four confirmed rust-path gaps are marked as skips in this file**, the same
-four carried by the async twin. Each was found by running these tests live and
-then reproducing the failure in isolation with a fresh client (2/2 deterministic
-repeats each, so none is a cross-test artifact), and each was then confirmed to
-reproduce on *both* the sync and async paths -- they are driver-level, not an
-async regression:
-
-1. ``no_response`` is ignored on patch -- rust returns the full post-image.
-2. ``pre_trigger_include`` / ``post_trigger_include`` fail with a 404/1002
-   read-session error, even for a trigger that exists.
-3. A caller-supplied ``session_token`` fails on rust where core-python
-   succeeds.
-4. A patch path that cannot be resolved surfaces as an untyped
-   ``ServiceResponseError`` with no ``status_code`` instead of a 400
-   ``CosmosHttpResponseError``.
-
-Every skip reason states the observed evidence rather than a guess, so each
-test turns back on the moment its gap is fixed. Gaps 1, 2 and 4 all point at
-the driver committing a patch as an internal read-merge-replace rather than as
-a single request; the Python and binding layers were both checked and forward
-the options correctly. All four have been raised with the driver team.
+Body suppression, service-issued session tokens and invalid-path errors run
+without historical skips. Numeric, SQL predicate, trigger and tracking-property
+differences remain visible failures rather than being hidden by relaxed checks.
+The copied-original runner adds strict stored-state and resource-address checks.
 """
 from __future__ import annotations
 
 import os
 import uuid
+from types import SimpleNamespace
 
 import pytest
 
 from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 from common._parity_helpers import BackendComparison, run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
@@ -99,27 +32,29 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
-def container_for(request):
-    """Provide an isolated container so each test targets only its own items.
-
-    Per-test rather than per-module: several tests below assert on the stored
-    item after patching, which is only meaningful when no other test can
-    have written to the same container.
-    """
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    db = client.create_database_if_not_exists("parity_db")
-    cname = "pt_" + request.node.name + "_" + uuid.uuid4().hex[:6]
-    container = db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
-    yield container
-    try:
-        db.delete_container(cname)
-    except Exception:  # pylint: disable=broad-except
-        pass
+def container_for():
+    """Own the database and verify deletion even when a comparison fails."""
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python",
+    ) as client:
+        database = client.create_database("patch_parity_" + uuid.uuid4().hex)
+        try:
+            container = database.create_container(
+                id="orders", partition_key=PartitionKey(path="/pk"),
+            )
+            yield SimpleNamespace(
+                id=container.id, database_id=database.id, scripts=container.scripts,
+            )
+        finally:
+            client.delete_database(database.id)
+            with pytest.raises(CosmosResourceNotFoundError) as error:
+                database.read()
+            assert error.value.status_code == 404
 
 
 @pytest.fixture
 def container_with_trigger(container_for):
-    """Add a real pre-trigger to the fixture container.
+    """Add observable pre-trigger and post-trigger functions.
 
     Trigger tests are only meaningful against a trigger that actually exists.
     Naming a non-existent trigger merely proves both backends can produce *an*
@@ -138,6 +73,15 @@ def container_with_trigger(container_for):
             var doc = req.getBody();
             doc['stampedBy'] = 'pre-trigger';
             req.setBody(doc);
+        }""",
+    })
+    container_for.scripts.create_trigger({
+        "id": "auditOrder", "triggerType": "Post", "triggerOperation": "All",
+        "body": """function audit() {
+            var response = getContext().getResponse();
+            var body = response.getBody();
+            body.stampedBy = 'post-trigger';
+            response.setBody(body);
         }""",
     })
     return container_for
@@ -170,20 +114,25 @@ def _seed_document(item_id: str) -> dict:
     return seeded
 
 
-def _patch_call(container_id: str, patch_operations: list, **kwargs):
+def _patch_call(container, patch_operations: list, *, use_session_token=False, **kwargs):
     """Build a seed-then-patch closure the harness runs once per backend."""
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_id)
+        cont = client.get_database_client(container.database_id).get_container_client(container.id)
         item_id = uuid.uuid4().hex
-        cont.create_item(_seed_document(item_id))
-        return cont.patch_item(
+        created = cont.create_item(_seed_document(item_id))
+        options = dict(kwargs)
+        if use_session_token:
+            options["session_token"] = created.get_response_headers()["x-ms-session-token"]
+        result = cont.patch_item(
             item=item_id,
             partition_key="customerA",
             patch_operations=patch_operations,
-            **kwargs,
+            **options,
         )
+        if options.get("no_response"):
+            assert dict(result) == {}
+        return result
     return _do
-
 
 def _run_patch(container, patch_operations: list, summary: str,
                **kwargs) -> BackendComparison:
@@ -194,7 +143,7 @@ def _run_patch(container, patch_operations: list, summary: str,
         sorted(kwargs.keys()) or "(none)",
     )
     cmp = run_on_both_backends(
-        _patch_call(container.id, patch_operations, **kwargs),
+        _patch_call(container, patch_operations, **kwargs),
         description=description,
         request_body={"patch_operations": patch_operations},
         request_kwargs=kwargs or None,
@@ -258,11 +207,7 @@ def test_op_remove_field(container_for):
 
 
 def test_op_incr(container_for):
-    """``incr`` applies a server-side numeric delta.
-
-    The result depends on the stored value rather than the request alone, so
-    this pins that both backends send the delta rather than a computed total.
-    """
+    """Compare an increment, including any extra returned tracking property."""
     cmp = _run_patch(container_for, [{"op": "incr", "path": "/n", "value": 5}],
                      summary="incr /n by 5")
     cmp.assert_functional_parity()
@@ -299,23 +244,6 @@ def test_multiple_operations_applied_in_order(container_for):
 # Header-bearing kwargs, exactly one per test
 # ---------------------------------------------------------------------------
 
-@pytest.mark.skip(reason="Confirmed rust gap: pre_trigger_include does not work on patch_item. "
-                         "Verified live against a REAL trigger that exists in the container: "
-                         "core-python applies the patch and the trigger fires (the stamped field "
-                         "is present in the stored document), while rust fails with "
-                         "CosmosResourceNotFoundError 404/sub-status 1002 'The read session is not "
-                         "available for the input session token'. Deterministic (2/2 repeats, a "
-                         "fresh client each time) and reproduced on both the sync and async paths. "
-                         "It is NOT the session-token gap despite the identical status: seeding "
-                         "the document from a separate client, so the client under test holds no "
-                         "session token and none is supplied, still fails the same way. A plain "
-                         "patch with no kwargs succeeds on both backends, and the same trigger "
-                         "works on create_item, so the failure is specific to carrying this option "
-                         "on patch. Suspected to originate in the driver's patch implementation, "
-                         "which commits a patch as an internal read-merge-replace "
-                         "(azure_data_cosmos_driver/src/driver/pipeline/patch_handler.rs) rather "
-                         "than as a single request. Un-skip once the "
-                         "driver is fixed and the extension is rebuilt.")
 def test_pre_trigger_include(container_with_trigger):
     """Baseline call plus ``pre_trigger_include`` naming a trigger that exists.
 
@@ -323,7 +251,7 @@ def test_pre_trigger_include(container_with_trigger):
     item, so a passing run proves the trigger actually executed rather than
     that the request was merely accepted.
     """
-    cmp = _run_patch(container_with_trigger, [{"op": "set", "path": "/n", "value": 2}],
+    cmp = _run_patch(container_with_trigger, [{"op": "incr", "path": "/n", "value": 1}],
                      summary="baseline + pre_trigger_include (real trigger)",
                      pre_trigger_include="stampTrigger")
     cmp.assert_functional_parity()
@@ -331,36 +259,29 @@ def test_pre_trigger_include(container_with_trigger):
         assert cmp.core_python.return_value.get("stampedBy") == "pre-trigger", (
             "the pre-trigger must actually run, not just be accepted")
 
+    assert cmp.core_python.succeeded and cmp.rust.succeeded
+    for outcome in (cmp.core_python, cmp.rust):
+        assert outcome.return_value["stampedBy"] == "pre-trigger"
 
-@pytest.mark.skip(reason="Confirmed rust gap: same failure as the pre_trigger_include test above "
-                         "(404/sub-status 1002 read-session error on the rust path while "
-                         "core-python succeeds), reproduced on both sync and async. Kept as a "
-                         "separate test so the post-trigger surface is covered independently once "
-                         "the driver gap is fixed.")
-def test_post_trigger_include(container_for):
+
+def test_post_trigger_include(container_with_trigger):
     """Baseline call plus ``post_trigger_include`` -- forwarded as a request header."""
-    cmp = _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
+    cmp = _run_patch(container_with_trigger, [{"op": "incr", "path": "/n", "value": 1}],
                      summary="baseline + post_trigger_include",
                      post_trigger_include="auditOrder")
     cmp.assert_functional_parity()
 
+    assert cmp.core_python.succeeded and cmp.rust.succeeded
+    for outcome in (cmp.core_python, cmp.rust):
+        assert outcome.return_value["stampedBy"] == "post-trigger"
 
-@pytest.mark.skip(reason="Confirmed rust divergence: a caller-supplied session_token on patch_item "
-                         "behaves differently per backend. Verified live with the token '0:1#42': "
-                         "core-python completes the patch, while rust raises "
-                         "CosmosResourceNotFoundError 404/sub-status 1002 'The read session is not "
-                         "available for the input session token'. Deterministic (2/2 repeats, a "
-                         "fresh client each time) and reproduced on both sync and async. Neither "
-                         "behaviour is obviously wrong in isolation -- core-python's session retry "
-                         "policy clears an unusable token and retries, which rust does not do -- "
-                         "but the two backends must agree before this ships. The same token is "
-                         "accepted by both backends on create_item, so the divergence is specific "
-                         "to patch.")
+
 def test_session_token(container_for):
     """Baseline call plus ``session_token`` -- forwarded as a request header."""
     cmp = _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                      summary="baseline + session_token",
-                     session_token="0:1#42")
+                     use_session_token=True)
+    assert cmp.core_python.succeeded and cmp.rust.succeeded
     cmp.assert_functional_parity()
 
 
@@ -384,19 +305,6 @@ def test_throughput_bucket(container_for):
 # Behavioural kwargs
 # ---------------------------------------------------------------------------
 
-@pytest.mark.skip(reason="Confirmed rust gap: no_response is ignored on patch_item. Verified live "
-                         "-- with no_response=True, core-python returns an empty document "
-                         "(Content-Length 0) while rust returns the full post-image. Reproduced on "
-                         "both sync and async. The same flag IS honoured by rust on create_item in "
-                         "the very same probe, so this is specific to patch. Root cause is visible "
-                         "in the driver: it commits a patch as an internal read-merge-replace and "
-                         "then synthesizes the response from its own locally-merged bytes "
-                         "(azure_data_cosmos_driver/src/driver/pipeline/from_local_body.rs, whose "
-                         "own docstring notes it does this even when content_response_on_write was "
-                         "disabled). The binding is not at fault: it passes "
-                         "honor_content_response=true for patch_item. Customer impact is wasted "
-                         "bandwidth on an opt-out that silently does nothing, plus a return value "
-                         "callers can branch on.")
 def test_no_response(container_for):
     """``no_response=True`` -- the service must not echo the item back.
 
@@ -406,6 +314,7 @@ def test_no_response(container_for):
     cmp = _run_patch(container_for, [{"op": "set", "path": "/n", "value": 2}],
                      summary="baseline + no_response",
                      no_response=True)
+    assert cmp.core_python.succeeded and cmp.rust.succeeded
     cmp.assert_functional_parity()
 
 
@@ -475,7 +384,7 @@ def test_response_hook_fires_once(container_for):
         def _hook(_headers, _body):
             fired[backend] += 1
 
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = client.get_database_client(container_for.database_id).get_container_client(container_for.id)
         item_id = uuid.uuid4().hex
         cont.create_item(_seed_document(item_id))
         return cont.patch_item(
@@ -511,7 +420,7 @@ def test_patch_missing_id_raises_not_found(container_for):
     to the exception contract.
     """
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = client.get_database_client(container_for.database_id).get_container_client(container_for.id)
         return cont.patch_item(
             item="missing-" + uuid.uuid4().hex,
             partition_key="customerA",
@@ -535,7 +444,7 @@ def test_stale_etag_raises_precondition_failed(container_for):
     overwrite a concurrent update.
     """
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = client.get_database_client(container_for.database_id).get_container_client(container_for.id)
         item_id = uuid.uuid4().hex
         created = cont.create_item(_seed_document(item_id))
         stale_etag = created["_etag"]
@@ -565,7 +474,7 @@ def test_current_etag_succeeds(container_for):
     while being completely broken for customers.
     """
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = client.get_database_client(container_for.database_id).get_container_client(container_for.id)
         item_id = uuid.uuid4().hex
         created = cont.create_item(_seed_document(item_id))
         return cont.patch_item(
@@ -601,7 +510,7 @@ def test_etag_without_match_condition_raises_value_error(container_for):
     be a local ``ValueError`` on both backends -- never a service round trip.
     """
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = client.get_database_client(container_for.database_id).get_container_client(container_for.id)
         item_id = uuid.uuid4().hex
         cont.create_item(_seed_document(item_id))
         return cont.patch_item(
@@ -619,31 +528,19 @@ def test_etag_without_match_condition_raises_value_error(container_for):
         "rust must reject etag-without-match_condition locally, at the same shared gate")
 
 
-@pytest.mark.skip(reason="Confirmed rust gap: a patch whose path cannot be resolved is not mapped "
-                         "to a typed Cosmos exception. Verified live -- core-python raises "
-                         "CosmosHttpResponseError with status_code 400 and the service's "
-                         "explanatory body, while rust raises ServiceResponseError with "
-                         "status_code None, sub_status None and the raw string 'driver "
-                         "execute_singleton_operation failed: 400: missing parent path'. "
-                         "Deterministic (2/2 repeats) and reproduced on both sync and async. This "
-                         "matters to customers: code that catches CosmosHttpResponseError or "
-                         "inspects status_code -- the documented way to handle a bad patch -- does "
-                         "not work on the rust path, and a 400 that reads as None commonly falls "
-                         "through to a retry that can never succeed. Note the 404 and 412 patch "
-                         "tests above DO produce correctly typed exceptions, so the gap is "
-                         "confined to failures the driver detects locally while merging rather "
-                         "than reporting from an HTTP response.")
 def test_invalid_patch_path_raises(container_for):
     """a patch against a path that cannot be resolved must fail on both.
 
-    ``replace`` requires an existing path, so replacing a field the item
-    does not have is a service-side error. Both backends must surface it as the
-    same typed exception rather than one succeeding silently.
+    An increment with a missing parent tests the Rust driver\'s local error
+    mapping. Both backends must return CosmosHttpResponseError with status 400.
     """
     cmp = _run_patch(
         container_for,
-        [{"op": "replace", "path": "/definitely/not/here", "value": 1}],
+        [{"op": "incr", "path": "/definitely/not/here", "value": 1}],
         summary="replace on a missing path")
     assert not cmp.core_python.succeeded
     assert not cmp.rust.succeeded
+    for outcome in (cmp.core_python, cmp.rust):
+        assert isinstance(outcome.raised, CosmosHttpResponseError)
+        assert outcome.raised.status_code == 400
     cmp.assert_functional_exception_parity()

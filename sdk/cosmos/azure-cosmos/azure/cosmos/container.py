@@ -1603,7 +1603,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs["request_options"] = request_options
         request_options["partitionKey"] = self._set_item_partition_key(partition_key)
         prepare_item_target(kwargs, item)
-        item_id = item if isinstance(item, str) else item["id"]
+        item_id = item if isinstance(item, str) else None
 
         return self._get_item_helper().patch_item(
             container_link=self.container_link,

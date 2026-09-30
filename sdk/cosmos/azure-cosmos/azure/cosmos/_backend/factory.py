@@ -19,7 +19,7 @@ If construction fails, release any async credential bridge acquired here.
 from __future__ import annotations
 
 import os
-from typing import Any, Callable, Optional, Sequence, TypeVar, Union
+from typing import Any, Callable, Mapping, Optional, Sequence, TypeVar, Union
 
 from .cosmos_backend import CosmosBackend
 from .client_config import build_client_config
@@ -86,6 +86,7 @@ def _make_backend(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
+    headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -133,6 +134,7 @@ def _make_backend(
                     connection_timeout_seconds=connection_timeout_seconds,
                     read_timeout_seconds=read_timeout_seconds,
                     fault_injection_rules=fault_injection_rules,
+                    headers=headers,
                 ),
             )
     return legacy_backend
@@ -154,6 +156,7 @@ def make_backend(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
+    headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -179,6 +182,7 @@ def make_backend(
         connection_timeout_seconds=connection_timeout_seconds,
         read_timeout_seconds=read_timeout_seconds,
         fault_injection_rules=fault_injection_rules,
+        headers=headers,
         proxy_config=proxy_config,
         proxies=proxies,
         connection_verify=connection_verify,

@@ -347,6 +347,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._consistency_level = consistency_level
         self._setup_complete = False
         self._setup_lock = threading.Lock()
+        # Retain this Python connection for remaining legacy callers, but do not
+        # read account information just because the customer app selected Rust.
+        # A retained legacy operation initializes this state before using it.
         if not is_rust_backend(self._backend):
             self._setup()
 

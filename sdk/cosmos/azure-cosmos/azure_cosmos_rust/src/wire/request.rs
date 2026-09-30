@@ -20,6 +20,7 @@ use azure_data_cosmos_driver::{
     options::{
         AvailabilityStrategy, BinaryEncodingOptions, ContentResponseOnWrite,
         EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder,
+        ReadConsistencyStrategy,
     },
 };
 
@@ -68,13 +69,13 @@ pub(crate) struct RequestHeadersAndOptions {
     // turns it on with the caller's threshold. ``None`` means the caller did
     // not set it and the driver keeps its default.
     pub(crate) availability_strategy: Option<AvailabilityStrategy>,
+    // Read-item entry points validate once, before driver lookup or async dispatch.
+    pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 
 impl RequestHeadersAndOptions {
-    pub(crate) fn read_consistency(
-        &self,
-    ) -> PyResult<Option<azure_data_cosmos_driver::options::ReadConsistencyStrategy>> {
+    pub(crate) fn parse_read_consistency(&self) -> PyResult<Option<ReadConsistencyStrategy>> {
         let Some(value) = self
             .custom_headers
             .get(&HeaderName::from_static("x-ms-consistency-level"))

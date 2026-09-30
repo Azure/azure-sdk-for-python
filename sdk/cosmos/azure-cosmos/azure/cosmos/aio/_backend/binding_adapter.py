@@ -145,9 +145,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
     As with BindingAdapter, the driver handle identifies a CosmosDriver retained
-    by the binding. First use acquires a handle; later calls reuse it. Closing
-    releases this client's acquisition, not another client's or an in-flight
-    operation's reference.
+    by the binding. Client entry acquires a handle; operations reuse it.
+    Operations without prior client entry still acquire it on first use.
+    Closing releases this client's acquisition, not another client's or an
+    in-flight operation's reference.
 
     Same-loop callers can share an acquisition attempt. Worker jobs from
     different loops take turns acquiring or reusing the stored handle.
@@ -186,6 +187,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         self._init_shared(
             endpoint, master_key, client_config, token_credential
         )
+
+    async def initialize(self) -> None:
+        """Await driver acquisition, including account setup when creating a driver."""
+        await self._ensure_driver_handle()
 
     def _acquire_driver_handle(self) -> str:
         """Return the stored driver handle or acquire one through the binding.
@@ -372,6 +377,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         """
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
+        prepared = self._with_client_headers(prepared)
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncBindingAdapter.execute: the compiled "
@@ -488,7 +494,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         if binding_function is None:
             raise BindingProtocolError("Validated page binding function is no longer available")
         driver_handle = await self._ensure_driver_handle()
-        binding_request = build_binding_request_from_page(prepared)
+        binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
         _LOGGER.debug(
             "cosmos backend=%s op=%s binding_function=%s_async",
             BACKEND_NAME_RUST,

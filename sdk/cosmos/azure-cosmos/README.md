@@ -566,6 +566,17 @@ async def create_products():
 
 Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement, as well as cache important information the SDK needs. The example below shows how to do so.
 
+The customer app can announce account-level readiness inside this block. With
+the Rust-backed client, entering `async with` waits for driver acquisition.
+Creating a driver fetches account properties, prepares account routing, and
+selects the HTTP transport before the block starts. If startup fails, the SDK
+cleans up the client and raises the error instead of entering the block.
+
+This prepares the account, not every container. In the example below, the first
+operation on `products` can still need container metadata and its partition
+map. Account initialization time moves into client entry; it is not eliminated,
+and completing entry does not guarantee a particular read duration.
+
 ```python
 from azure.cosmos.aio import CosmosClient
 import os

@@ -18,6 +18,7 @@ from common.typed_requests import key_from_legacy_header, legacy_partition_key_f
 
 import asyncio
 import concurrent.futures
+import importlib
 import inspect
 import logging
 import os
@@ -86,6 +87,114 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.partition_key import NonePartitionKeyValue
+
+
+@pytest.mark.parametrize("factory", [make_backend, make_async_backend])
+def test_client_headers_are_snapshotted_and_overridden_per_call(factory):
+    from azure.core.utils import CaseInsensitiveDict
+
+    supplied = {"X-Application": "client", "x-default-only": "retained"}
+    adapter = factory("rust", url="https://headers.example", credential="key", headers=supplied)
+    try:
+        supplied["X-Application"] = "later-mutation"
+        prepared = PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'),
+            item_id="item", headers={"x-application": "call", "X-Call-Only": "once"},
+        )
+        result = adapter._with_client_headers(prepared)
+        assert dict(CaseInsensitiveDict(result.headers)) == {
+            "x-application": "call", "x-default-only": "retained", "X-Call-Only": "once",
+        }
+        assert prepared.headers == {"x-application": "call", "X-Call-Only": "once"}
+        assert CaseInsensitiveDict(adapter._client_config.headers)["x-application"] == "client"
+        later = adapter._with_client_headers(PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'), item_id="item",
+        ))
+        assert CaseInsensitiveDict(later.headers)["x-application"] == "client"
+        assert "X-Call-Only" not in later.headers
+        with pytest.raises(TypeError):
+            adapter._client_config.headers["x-application"] = "mutated"
+    finally:
+        closed = adapter.close()
+        if inspect.isawaitable(closed):
+            asyncio.run(closed)
+
+
+@pytest.mark.parametrize("headers", [[], "", {"x-app": 1}, {1: "value"}])
+def test_client_headers_reject_invalid_mappings(headers):
+    with pytest.raises(TypeError):
+        build_client_config(headers=headers)
+
+
+def test_client_header_configuration_does_not_expose_values_in_repr():
+    config = build_client_config(headers={"x-application": "private-value"})
+    assert config is not None and "private-value" not in repr(config)
+    assert build_client_config(headers={}) is None
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("paged", [False, True], ids=["point", "page"])
+def test_client_headers_reach_point_and_page_binding_calls(monkeypatch, asynchronous, paged):
+    from azure.core.utils import CaseInsensitiveDict
+
+    factory = make_async_backend if asynchronous else make_backend
+    adapter = factory(
+        "rust", url="https://headers.example", credential="key",
+        headers={"X-Application": "client", "x-default-only": "retained"},
+    )
+    module = importlib.import_module(type(adapter).__module__)
+    binding_name = ("list_databases" if paged else "read_item") + ("_async" if asynchronous else "")
+    captured = []
+
+    def execute(handle, prepared, **kwargs):
+        assert handle == "test-handle"
+        captured.append(CaseInsensitiveDict(prepared.headers))
+        return (200, 0, {}, b"{}", None)
+
+    async def async_execute(*args, **kwargs):
+        return execute(*args, **kwargs)
+
+    monkeypatch.setattr(module._rust_module, binding_name, async_execute if asynchronous else execute)
+    monkeypatch.setattr(
+        adapter, "_ensure_driver_handle",
+        AsyncMock(return_value="test-handle") if asynchronous else MagicMock(return_value="test-handle"),
+    )
+
+    def request(headers):
+        if paged:
+            return PreparedPageRequest(op=OP_LIST_DATABASES, container_link="", headers=headers)
+        return PreparedRequest(
+            "read_item", "dbs/db/colls/c", b"", key_from_legacy_header('["pk"]'),
+            item_id="item", headers=headers,
+        )
+
+    calls = (request({"x-application": "call", "x-call-only": "once"}), request({}))
+
+    async def run_async():
+        try:
+            for prepared in calls:
+                if paged:
+                    assert len([page async for page in adapter.execute_pages(prepared)]) == 1
+                else:
+                    assert (await adapter.execute(prepared)).status_code == 200
+        finally:
+            await adapter.close()
+
+    if asynchronous:
+        asyncio.run(run_async())
+    else:
+        try:
+            for prepared in calls:
+                if paged:
+                    assert len(list(adapter.execute_pages(prepared))) == 1
+                else:
+                    assert adapter.execute(prepared).status_code == 200
+        finally:
+            adapter.close()
+    assert captured == [
+        CaseInsensitiveDict({"x-application": "call", "x-default-only": "retained", "x-call-only": "once"}),
+        CaseInsensitiveDict({"x-application": "client", "x-default-only": "retained"}),
+    ]
 
 
 @pytest.mark.parametrize(

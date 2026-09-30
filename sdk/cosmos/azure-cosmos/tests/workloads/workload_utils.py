@@ -535,21 +535,37 @@ def _build_fixed_rate_call(container, op, extra):
 async def _fixed_rate_call_async(op_name, stats, scheduled_ns, fn, *args, **kwargs):
     """Record pre-call delay, SDK-call duration and total duration by outcome."""
     _with_ru_hook(op_name, stats, kwargs)
+    trace = getattr(stats, "read_trace", None) if op_name == "ReadItem" else None
+    if trace is not None:
+        state, token = trace.begin(scheduled_ns, kwargs)
+    end_ns = None
     call_start_ns = time.perf_counter_ns()
     delay_ms = (call_start_ns - scheduled_ns) / 1_000_000
+    if trace is not None:
+        state["sdk_start_ns"] = call_start_ns
     try:
-        result = await fn(*args, **kwargs)
-    except Exception as e:
+        try:
+            result = await fn(*args, **kwargs)
+        except Exception as e:
+            end_ns = time.perf_counter_ns()
+            if trace is not None:
+                state.update(outcome="error", exception_type=type(e).__name__,
+                             status_code=getattr(e, "status_code", None))
+            _record_error(stats, op_name, e, delay_before_call_ms=delay_ms,
+                          sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
+            return None
         end_ns = time.perf_counter_ns()
-        _record_error(stats, op_name, e, delay_before_call_ms=delay_ms,
-                      sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
-        return None
-    end_ns = time.perf_counter_ns()
-    if stats is not None:
-        stats.record(op_name, (end_ns - scheduled_ns) / 1_000_000,
-                     delay_before_call_ms=delay_ms,
-                     sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
-    return result
+        if trace is not None:
+            state["outcome"] = "success"
+        if stats is not None:
+            stats.record(op_name, (end_ns - scheduled_ns) / 1_000_000,
+                         delay_before_call_ms=delay_ms,
+                         sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
+        return result
+    finally:
+        if trace is not None:
+            state["sdk_end_ns"] = end_ns if end_ns is not None else time.perf_counter_ns()
+            trace.finish(state, token)
 
 
 async def _wait_for_launch_slot(slots, stop_event):

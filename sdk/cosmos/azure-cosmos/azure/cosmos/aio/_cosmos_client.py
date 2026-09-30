@@ -305,6 +305,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_timeout_seconds=connection_timeout,
             read_timeout_seconds=read_timeout,
             fault_injection_rules=fault_injection_rules,
+            headers=kwargs.get("headers"),
             # Proxy and TLS settings, which the Rust path cannot apply yet.
             # They are read rather than removed so the legacy connection can
             # still use them. The Rust backend refuses them outright rather
@@ -338,6 +339,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             _response_state=self._item_context.response_state,
+            _defer_pipeline=is_rust_backend(self._adapter),
             url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
@@ -355,9 +357,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     async def __aenter__(self) -> "CosmosClient":
+        """Prepare account-level state before entering the customer's block.
+
+        This does not load a selected container's metadata or partition map.
+        """
         try:
-            await self.client_connection.pipeline_client.__aenter__()
-            if not is_rust_backend(self._adapter):
+            if is_rust_backend(self._adapter):
+                await self._adapter.initialize()
+            else:
+                await self.client_connection.pipeline_client.__aenter__()
                 await self.client_connection._setup()
         except BaseException:
             try:
@@ -372,7 +380,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             try:
                 await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
             finally:
-                await self.client_connection.pipeline_client.__aexit__(*args)
+                await self.client_connection._close_pipeline(*args) # pylint: disable=protected-access
         finally:
             try:
                 try:

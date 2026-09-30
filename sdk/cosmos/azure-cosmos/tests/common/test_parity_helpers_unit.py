@@ -25,7 +25,7 @@ def test_header_pushback_references_match_reviewed_contract():
         "cache-control", "pragma", "strict-transport-security",
         "transfer-encoding", "x-ms-cosmos-min-throughput",
     }
-    expected_reference = (26, "The original HTTP response headers are discarded")
+    expected_reference = (25, "The original HTTP response headers are discarded")
     assert _parity_helpers.BackendComparison._HEADER_TO_PUSHBACK == {
         header: expected_reference for header in expected_headers
     }
@@ -41,7 +41,7 @@ def test_header_verdict_references_current_pushbacks(header):
     comparison = _parity_helpers.BackendComparison(
         core_python=core, rust=rust, diffs=_parity_helpers.diff_outcomes(core, rust)
     )
-    assert "Pushback #26 (The original HTTP response headers are discarded):" in comparison._verdict()
+    assert "Pushback #25 (The original HTTP response headers are discarded):" in comparison._verdict()
     assert not comparison.is_parity
 
 

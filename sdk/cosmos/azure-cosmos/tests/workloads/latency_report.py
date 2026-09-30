@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Report pooled success-latency histograms by operation and backend.
+"""Report pooled SDK-call success latency by operation and backend.
 
 Intended for low-load, single-client probes; one timed SDK call can include
 multiple requests or retries, so its duration is not one wire round trip.
@@ -9,6 +9,10 @@ Merge available window histograms rather than averaging their percentiles.
 Results retain histogram quantization and the workload's range clamping.
 Missing histograms make pooled percentiles unavailable; omitted failures are
 not reconstructed from scalar percentiles.
+
+SDK-call duration is the primary metric, including for fixed-rate workloads.
+Their pre-call delay and scheduled-start total remain separate measurements.
+Use --latency-metric total to explicitly report the historical fixed-rate metric.
 
 Select baseline results with --profiling-session-id and --prefix after
 configuring the results container. --run-id also accepts separate capture identifiers.
@@ -263,6 +267,30 @@ def _pctile_ms(a, q):
     return a["hist"].get_value_at_percentile(q) / 1000.0
 
 
+def _latency_view(a, metric):
+    """Select the primary histogram without changing stored timing or schedule evidence."""
+    if metric == "total":
+        if a["duration_kinds"] != {"total"}:
+            raise ValueError("Total-duration latency requires asynchronous fixed-rate measurements")
+        return a
+    if metric != "sdk-call":
+        raise ValueError(f"Unknown latency metric: {metric}")
+    if a["duration_kinds"] == {"sdk_call"}:
+        return a
+    series = a["timings"]["success"]["sdk_call"]
+    missing = a["missing_timing_windows"]
+    if series["hist"].total_count != a["count"]:
+        missing = max(1, missing)
+    return {
+        **a,
+        "hist": series["hist"],
+        "duration_kinds": {"sdk_call"},
+        "no_hist_windows": missing,
+        "latency_overflow_count": series["overflow_count"],
+        "latency_overflow_unknown": bool(missing),
+    }
+
+
 def _mean_ms(a):
     """Pooled arithmetic mean in ms from the merged histogram."""
     if a["count"] <= 0 or a["no_hist_windows"] or a["latency_overflow_count"]:
@@ -275,7 +303,7 @@ def _fmt_cell(op, backend, a):
     ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else float("nan")
     non_initial = str(a["retry_calls"]) if "rust" in backend.lower() else "n/a"
     exact = a["no_hist_windows"] == 0
-    note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
+    note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked selected-duration histograms; pooled latency unavailable"
     if a["latency_overflow_unknown"]:
         note += " [!] histogram overflow evidence unavailable"
     if a["latency_overflow_count"]:
@@ -330,6 +358,11 @@ def main():
     selection.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="baseline-", help="workload_id prefix (default baseline-)")
     ap.add_argument(
+        "--latency-metric", choices=("sdk-call", "total"), default="sdk-call",
+        help="primary duration for summary, comparison and p99 gate (default sdk-call); "
+        "total reproduces the historical asynchronous fixed-rate metric",
+    )
+    ap.add_argument(
         "--point-read-gate",
         action="store_true",
         help="enforce the low-load Rust point-read gate",
@@ -344,7 +377,8 @@ def main():
         "--max-p99-ms",
         type=float,
         default=10.0,
-        help="exclusive Rust p99 ceiling for --point-read-gate (default 10)",
+        help="exclusive Rust p99 ceiling for the selected --latency-metric "
+        "with --point-read-gate (default 10)",
     )
     ap.add_argument(
         "--gate-backends",
@@ -374,9 +408,15 @@ def main():
         print(f"ERROR: no result rows found for run id {run_id}.", file=sys.stderr)
         sys.exit(2)
 
+    if args.latency_metric == "total" and any(a["duration_kinds"] != {"total"} for a in agg.values()):
+        ap.error("--latency-metric total requires asynchronous fixed-rate measurements")
+    primary = {key: _latency_view(a, args.latency_metric) for key, a in agg.items()}
+    metric_label = "SDK-call" if args.latency_metric == "sdk-call" else "total"
     backends = sorted({b for (_, b) in agg})
     print(f"=== Low-load latency baseline (prefix {args.prefix}, run id {run_id}) ===")
-    print("    Fixed-rate: total duration from scheduled start. Send-and-wait: SDK-call duration.")
+    print(f"    Primary latency metric: {args.latency_metric}. Summary, comparison and p99 gate use this duration.")
+    print("    SDK-call: invocation to result/error, including waits inside the SDK; excludes pre-call delay.")
+    print("    Fixed-rate pre-call delay, scheduled-start total and scheduling health remain separate below.")
     print("    Percentiles merge recorded success histograms; missing samples remain unavailable.")
     print()
 
@@ -385,23 +425,21 @@ def main():
         for op in _OP_ORDER:
             a = agg.get((op, backend))
             if a:
-                print(_fmt_cell(op, backend, a))
+                print(_fmt_cell(op, backend, primary[(op, backend)]))
                 _print_fixed_rate_details(a)
         print()
 
-    # Side-by-side mean/p50/p99/p99.9 when both engines are present, so a reader can
-    # see per-request cost head to head. At conc=1 the engines are expected to be
-    # close (latency is network-bound); a large gap on one op is worth a look.
+    # Compare the same selected duration for both implementations.
     if "core-python" in backends and "rust" in backends:
-        print("-- core-python vs rust (pooled ms; deltas = python - rust) --")
+        print(f"-- core-python vs rust ({args.latency_metric}; pooled ms; deltas = python - rust) --")
         print(
             f"  {'op':8s} {'mean_py':>7s} {'mean_ru':>7s} {'dmean':>6s} "
             f"{'p50_py':>7s} {'p50_ru':>7s} {'d50':>6s} "
             f"{'p99_py':>7s} {'p99_ru':>7s} {'p999_py':>8s} {'p999_ru':>8s}"
         )
         for op in _OP_ORDER:
-            py = agg.get((op, "core-python"))
-            ru = agg.get((op, "rust"))
+            py = primary.get((op, "core-python"))
+            ru = primary.get((op, "rust"))
             if not (py and ru):
                 continue
             dmean = _mean_ms(py) - _mean_ms(ru)
@@ -525,12 +563,12 @@ def main():
                     "(retry_calls comes from the Rust binding only), so this "
                     "row's retry behaviour is unverified"
                 )
-        read = agg.get(("read", "rust"))
+        read = primary.get(("read", "rust"))
         if read is not None:
             checks.append(
                 (
                     _pctile_ms(read, 99) < args.max_p99_ms,
-                    f"rust: p99 < {args.max_p99_ms:g} ms "
+                    f"rust: {metric_label} p99 < {args.max_p99_ms:g} ms "
                     f"({_pctile_ms(read, 99):.2f} ms)",
                 )
             )

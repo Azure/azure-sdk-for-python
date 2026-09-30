@@ -309,6 +309,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_timeout_seconds=connection_timeout,
             read_timeout_seconds=read_timeout,
             fault_injection_rules=fault_injection_rules,
+            headers=kwargs.get("headers"),
             # Proxy and TLS settings, which the Rust path cannot apply yet.
             # They are read rather than removed so the legacy connection can
             # still use them. The Rust backend refuses them outright rather

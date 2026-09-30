@@ -179,6 +179,8 @@ def _make_async_client(monkeypatch):
     connection._global_endpoint_manager.close = AsyncMock()
     connection.pipeline_client.__aenter__ = AsyncMock()
     connection.pipeline_client.__aexit__ = AsyncMock()
+    connection._close_pipeline = connection.pipeline_client.__aexit__
+    monkeypatch.setattr(client._adapter, "initialize", AsyncMock())
     return client
 
 

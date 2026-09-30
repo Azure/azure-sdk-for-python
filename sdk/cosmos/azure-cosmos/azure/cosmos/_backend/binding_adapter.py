@@ -178,7 +178,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
     def _ensure_driver_handle(self) -> str:
         """Acquire a handle on first use; reuse it on subsequent calls.
 
-        Two initial callers on this backend must share one acquisition::
+        Two initial callers on this adapter must share one acquisition::
 
             caller A: lock -> acquire H -> store H -> unlock
             caller B: lock -> find stored H -> reuse H -> unlock
@@ -274,6 +274,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         """
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
+        prepared = self._with_client_headers(prepared)
         if _rust_module is None:
             raise NotImplementedError(
                 "BindingAdapter.execute: the compiled "
@@ -393,7 +394,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         if binding_function is None:
             raise BindingProtocolError("Validated page binding function is no longer available")
         driver_handle = self._ensure_driver_handle()
-        binding_request = build_binding_request_from_page(prepared)
+        binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
         _LOGGER.debug(
             "cosmos backend=%s op=%s binding_function=%s",
             BACKEND_NAME_RUST,

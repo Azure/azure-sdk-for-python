@@ -19,13 +19,15 @@ import logging
 import os
 import threading
 from contextlib import contextmanager
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Callable, Iterator, Optional, Tuple, Type, Union
 
 from azure.core.exceptions import ServiceResponseError
+from azure.core.utils import CaseInsensitiveDict
 
 from ._binding_conversions import acquire_driver_handle_args
-from .contracts import PreparedClientConfig, PreparedPageRequest
+from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedRequest
 from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
@@ -331,6 +333,14 @@ class BindingAdapterShared:
         with self._driver_handle_lock:
             self._closing = True
         self._close_token_credential_bridge()
+
+    def _with_client_headers(self, prepared: PreparedRequest) -> PreparedRequest:
+        """Keep unrelated client defaults when a call overrides a header."""
+        if self._client_config is None or not self._client_config.headers:
+            return prepared
+        headers = CaseInsensitiveDict(self._client_config.headers)
+        headers.update(prepared.headers)
+        return replace(prepared, headers=headers)
 
     def _initialize_driver(self, binding: Any) -> str:
         """Ask the binding to acquire a driver handle using this client's saved inputs.

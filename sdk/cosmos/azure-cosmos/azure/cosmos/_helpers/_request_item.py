@@ -194,15 +194,16 @@ def build_replace_item_request(
 def build_patch_item_request(
     *,
     container_link: str,
-    item_id: str,
+    item_id: Optional[str],
     body_bytes: bytes,
     partition_key_value: Any,
     container_rid: Optional[str],
     request_options: Mapping[str, Any],
     no_response_on_write_default: bool = False,
+    item_self_link: Optional[str] = None,
 ) -> PreparedRequest:
-    """Build a patch with a caller If-Match guard."""
-    return _build_write_prepared(
+    """Preserve the patch target's resource address and caller If-Match guard."""
+    prepared = _build_write_prepared(
         op=OP_PATCH_ITEM,
         container_link=container_link,
         body_bytes=body_bytes,
@@ -212,3 +213,4 @@ def build_patch_item_request(
         no_response_on_write_default=no_response_on_write_default,
         item_id=item_id,
     )
+    return replace(prepared, item_self_link=item_self_link)

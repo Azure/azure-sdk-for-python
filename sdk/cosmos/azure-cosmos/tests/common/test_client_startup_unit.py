@@ -55,6 +55,143 @@ def close_backend(backend):
         asyncio.run(result)
 
 
+@pytest.mark.parametrize("enter", [False, True])
+def test_rust_client_never_constructs_unused_python_pipeline(monkeypatch, enter):
+    from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
+
+    factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
+    monkeypatch.setattr(connection_module, "AsyncPipelineClient", factory)
+    client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    initialize = AsyncMock()
+    monkeypatch.setattr(client._adapter, "initialize", initialize)
+
+    async def run():
+        try:
+            if enter:
+                async with client:
+                    assert "pipeline_client" not in vars(client.client_connection)
+        finally:
+            await client.close()
+            await client.close()
+
+    asyncio.run(run())
+    factory.assert_not_called()
+    assert initialize.await_count == int(enter)
+
+
+def test_rust_startup_does_not_import_aiohttp_in_fresh_process():
+    script = """
+import asyncio
+import sys
+from unittest.mock import AsyncMock
+from azure.cosmos.aio import CosmosClient
+assert 'aiohttp' not in sys.modules
+async def run():
+    client = CosmosClient('https://startup.invalid', 'ZmFrZQ==', _backend='rust')
+    client._adapter.initialize = AsyncMock()
+    async with client:
+        assert 'pipeline_client' not in vars(client.client_connection)
+    assert 'aiohttp' not in sys.modules
+    assert 'pipeline_client' not in vars(client.client_connection)
+asyncio.run(run())
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True, timeout=30
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("failure", [RuntimeError("driver failed"), asyncio.CancelledError()])
+def test_rust_startup_failure_does_not_construct_pipeline(monkeypatch, failure):
+    from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
+
+    factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
+    monkeypatch.setattr(connection_module, "AsyncPipelineClient", factory)
+    client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    monkeypatch.setattr(client._adapter, "initialize", AsyncMock(side_effect=failure))
+
+    async def run():
+        with pytest.raises(type(failure)) as caught:
+            await client.__aenter__()
+        assert caught.value is failure
+        assert client._adapter._closing
+        assert client.client_connection._routing_map_provider._released
+
+    asyncio.run(run())
+    factory.assert_not_called()
+
+
+def test_deferred_pipeline_is_created_once_on_retained_request(monkeypatch):
+    from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
+
+    pipeline = MagicMock()
+    pipeline.__aexit__ = AsyncMock()
+    factory = MagicMock(return_value=pipeline)
+    request = AsyncMock(return_value=({}, {}))
+    monkeypatch.setattr(connection_module, "AsyncPipelineClient", factory)
+    monkeypatch.setattr(connection_module.asynchronous_request, "AsynchronousRequest", request)
+    client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    connection = client.client_connection
+
+    async def run():
+        try:
+            factory.assert_not_called()
+            for _ in range(2):
+                await connection.GetDatabaseAccount()
+            assert connection.pipeline_client is pipeline
+            factory.assert_called_once()
+            assert request.await_count == 2
+            assert request.call_args.kwargs["pipeline_client"] is pipeline
+        finally:
+            await client.close()
+        pipeline.__aexit__.assert_awaited_once()
+
+    asyncio.run(run())
+
+
+def test_deferred_pipeline_construction_failure_is_not_cached(monkeypatch):
+    from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
+
+    pipeline = MagicMock()
+    pipeline.__aexit__ = AsyncMock()
+    error = RuntimeError("pipeline construction failed")
+    factory = MagicMock(side_effect=[error, pipeline])
+    monkeypatch.setattr(connection_module, "AsyncPipelineClient", factory)
+    client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    try:
+        with pytest.raises(RuntimeError) as caught:
+            _ = client.client_connection.pipeline_client
+        assert caught.value is error
+        assert "pipeline_client" not in vars(client.client_connection)
+        assert client.client_connection.pipeline_client is pipeline
+        assert factory.call_count == 2
+    finally:
+        asyncio.run(client.close())
+    pipeline.__aexit__.assert_awaited_once()
+
+
+def test_legacy_custom_transport_keeps_eager_lifecycle(monkeypatch):
+    from azure.core.pipeline.transport import AsyncHttpTransport
+
+    transport = MagicMock(spec=AsyncHttpTransport)
+    transport.__aenter__ = AsyncMock(return_value=transport)
+    transport.__aexit__ = AsyncMock()
+    client = async_client.CosmosClient(
+        "https://startup.invalid", "ZmFrZQ==", _backend="core-python", transport=transport
+    )
+    assert "pipeline_client" in vars(client.client_connection)
+    setup = AsyncMock()
+    monkeypatch.setattr(client.client_connection, "_setup", setup)
+
+    async def run():
+        async with client:
+            transport.__aenter__.assert_awaited_once()
+            setup.assert_awaited_once()
+        transport.__aexit__.assert_awaited_once()
+
+    asyncio.run(run())
+
+
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
 def test_factory_forwards_every_declared_option_to_shared_construction(monkeypatch, async_mode):
     from azure.cosmos._backend import factory as sync_factory
@@ -351,8 +488,8 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
     """If entering the async client fails, everything opened on the way in is closed
     again.
 
-    Legacy entry can fail during account setup; Rust entry can fail while opening
-    the retained transport. The transport, the endpoint manager, and the routing
+    Legacy entry can fail during account setup; Rust entry can fail while preparing
+    the driver. The pipeline cleanup, the endpoint manager, and the routing
     information are each closed or released exactly once, with the backend
     marked closed and no reservation left on the account.
 
@@ -369,12 +506,13 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
         _global_endpoint_manager=SimpleNamespace(close=AsyncMock()),
         _routing_map_provider=SimpleNamespace(release=MagicMock()),
     )
-    if backend_name == "rust":
-        connection.pipeline_client.__aenter__.side_effect = error
+    connection._close_pipeline = connection.pipeline_client.__aexit__
     monkeypatch.setattr(async_client, "CosmosClientConnection", MagicMock(return_value=connection))
     client = async_client.CosmosClient(
         "https://account.invalid", "ZmFrZQ==", _backend=backend_name, proxy_allowed=False
     )
+    if backend_name == "rust":
+        monkeypatch.setattr(client._adapter, "initialize", AsyncMock(side_effect=error))
     backend_close = AsyncMock(wraps=client._adapter.close)
     monkeypatch.setattr(client._adapter, "close", backend_close)
 
@@ -390,6 +528,132 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
     if backend_name == "rust":
         assert client._adapter._closing
         connection._setup.assert_not_awaited()
+        connection.pipeline_client.__aenter__.assert_not_awaited()
+
+
+@pytest.fixture
+def async_rust_startup(monkeypatch):
+    connection = SimpleNamespace(
+        url_connection="https://startup.invalid",
+        pipeline_client=SimpleNamespace(__aenter__=AsyncMock(), __aexit__=AsyncMock()),
+        _setup=AsyncMock(),
+        _global_endpoint_manager=SimpleNamespace(close=AsyncMock()),
+        _routing_map_provider=SimpleNamespace(release=MagicMock()),
+    )
+    connection._close_pipeline = connection.pipeline_client.__aexit__
+    binding = SimpleNamespace(
+        acquire_driver_handle=MagicMock(return_value="startup-handle"),
+        release_driver_handle=MagicMock(),
+        read_item_async=AsyncMock(return_value=(200, 0, {}, b'{"id":"order-42"}')),
+    )
+    monkeypatch.setattr(async_backend, "_rust_module", binding)
+    monkeypatch.setattr(async_client, "CosmosClientConnection", MagicMock(return_value=connection))
+    client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    yield SimpleNamespace(client=client, connection=connection, binding=binding)
+    asyncio.run(client.close())
+
+
+def test_async_entry_waits_for_driver_and_first_read_reuses_it(async_rust_startup):
+    env = async_rust_startup
+    started, finish = threading.Event(), threading.Event()
+
+    def acquire(*args):
+        env.connection.pipeline_client.__aenter__.assert_not_awaited()
+        started.set()
+        assert finish.wait(5)
+        return "startup-handle"
+
+    env.binding.acquire_driver_handle.side_effect = acquire
+    env.binding.acquire_driver_handle.assert_not_called()
+
+    async def run():
+        entry = asyncio.create_task(env.client.__aenter__())
+        shared_initialization = None
+        try:
+            assert await asyncio.to_thread(started.wait, 2)
+            assert not entry.done()
+            env.binding.read_item_async.assert_not_called()
+            shared_initialization = asyncio.create_task(env.client._adapter.initialize())
+            await asyncio.sleep(0)
+            assert not shared_initialization.done()
+            finish.set()
+            assert await asyncio.wait_for(entry, 5) is env.client
+            await asyncio.wait_for(shared_initialization, 5)
+            assert env.client._adapter._driver_handle == "startup-handle"
+            await asyncio.gather(*(env.client._adapter.initialize() for _ in range(3)))
+            container = env.client.get_database_client("sales").get_container_client("orders")
+            assert (await container.read_item("order-42", partition_key="order-42"))["id"] == "order-42"
+            env.binding.read_item_async.assert_awaited_once()
+            assert env.binding.read_item_async.call_args.args[0] == "startup-handle"
+            env.binding.acquire_driver_handle.assert_called_once()
+            env.connection._setup.assert_not_awaited()
+        finally:
+            finish.set()
+            await env.client.close()
+            await asyncio.gather(entry, return_exceptions=True)
+            if shared_initialization is not None:
+                await asyncio.gather(shared_initialization, return_exceptions=True)
+
+    asyncio.run(run())
+    env.binding.release_driver_handle.assert_called_once_with("startup-handle")
+
+
+def test_async_driver_failure_prevents_entry_and_cleans_up(async_rust_startup):
+    env = async_rust_startup
+    error = RuntimeError("account initialization failed")
+    env.binding.acquire_driver_handle.side_effect = error
+
+    async def run():
+        with pytest.raises(RuntimeError) as caught:
+            async with env.client:
+                pytest.fail("Customer block must not run after failed account initialization")
+        assert caught.value is error
+
+    asyncio.run(run())
+    assert env.client._adapter._closing
+    env.connection.pipeline_client.__aexit__.assert_awaited_once()
+    env.connection._global_endpoint_manager.close.assert_awaited_once()
+    env.connection._routing_map_provider.release.assert_called_once()
+    env.connection._setup.assert_not_awaited()
+    env.binding.read_item_async.assert_not_called()
+    env.binding.release_driver_handle.assert_not_called()
+
+
+def test_cancelled_async_entry_releases_late_driver(async_rust_startup):
+    env = async_rust_startup
+    started, finish = threading.Event(), threading.Event()
+
+    def acquire(*args):
+        started.set()
+        assert finish.wait(5)
+        return "late-startup-handle"
+
+    env.binding.acquire_driver_handle.side_effect = acquire
+
+    async def run():
+        entry = asyncio.create_task(env.client.__aenter__())
+        try:
+            assert await asyncio.to_thread(started.wait, 2)
+            acquisition = env.client._adapter._init_future
+            entry.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await asyncio.wait_for(entry, 2)
+            assert env.client._adapter._closing
+            env.connection.pipeline_client.__aexit__.assert_awaited_once()
+            env.connection._global_endpoint_manager.close.assert_awaited_once()
+            env.connection._routing_map_provider.release.assert_called_once()
+            finish.set()
+            with pytest.raises(RuntimeError, match="closed during initialization"):
+                await asyncio.wait_for(acquisition, 5)
+            assert env.client._adapter._driver_handle is None
+        finally:
+            finish.set()
+            await env.client.close()
+            await asyncio.gather(entry, return_exceptions=True)
+
+    asyncio.run(run())
+    env.binding.release_driver_handle.assert_called_once_with("late-startup-handle")
+    env.connection._setup.assert_not_awaited()
 
 
 def test_client_priority_defaults_are_captured(module):

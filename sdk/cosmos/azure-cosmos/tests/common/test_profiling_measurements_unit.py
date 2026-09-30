@@ -3,6 +3,7 @@
 """Offline checks of workload timing, report populations and result completeness."""
 
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import importlib
 import json
 import math
@@ -11,6 +12,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import threading
 
 import pytest
 
@@ -76,6 +78,70 @@ def test_terminal_throttles_not_limited_by_error_detail_buffer(modules):
     assert summaries[0]["throttled_429"] == summaries[0]["errors"] == 2005
     assert len(errors) == 2000
     assert stats.drain_all() == ([], [])
+
+
+@pytest.mark.parametrize("histogram,method", [
+    ("success", "get_mean_value"),
+    ("success", "get_value_at_percentile"),
+    ("success", "encode"),
+    ("server", "encode"),
+    ("component", "encode"),
+])
+def test_stats_recording_continues_during_window_serialization(modules, monkeypatch, histogram, method):
+    stats_module = modules["perf_stats"]
+    monkeypatch.setattr(stats_module.time, "time", lambda: 1000.0)
+
+    def record_window(stats, later=False):
+        sdk_ms = 60_001 if later else 7
+        stats.record_ru("ReadItem", 2 if later else 1)
+        stats.record_server_ms("ReadItem", 4 if later else 2)
+        stats.record("ReadItem", 3 + sdk_ms, delay_before_call_ms=3, sdk_call_ms=sdk_ms)
+        stats.record_error("ReadItem", "throttled", "details", 429,
+                           delay_before_call_ms=4, sdk_call_ms=5)
+        stats.record("WriteItem", 2)
+        stats.record_error("DeleteItem", "missing", "", 404)
+
+    reference = stats_module.Stats()
+    record_window(reference)
+    expected_first = reference.drain_all()
+    record_window(reference, later=True)
+    expected_second = reference.drain_all()
+    stats = stats_module.Stats()
+    record_window(stats)
+    stats.record_loop_lag(12)
+    stats.record_schedule({"launched": 1})
+    selected = {
+        "success": stats._histograms["ReadItem"],
+        "server": stats._server_histograms["ReadItem"],
+        "component": stats._timings[("ReadItem", "success")]["sdk_call"]["hist"],
+    }[histogram]
+    original = getattr(selected, method)
+    entered = threading.Event()
+    release = threading.Event()
+
+    def blocked(*args, **kwargs):
+        entered.set()
+        assert release.wait(10), "Test did not release histogram serialization"
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(selected, method, blocked)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        draining = pool.submit(stats.drain_all)
+        try:
+            assert entered.wait(5), "Reporter did not reach histogram serialization"
+            # This must finish while the old window is still blocked, not merely
+            # after serialization completes and releases the old recording lock.
+            writing = pool.submit(record_window, stats, True)
+            writing.result(timeout=2)
+            assert not draining.done()
+        finally:
+            release.set()
+        assert draining.result(timeout=5) == expected_first
+    assert stats.drain_all() == expected_second
+    assert stats.drain_all() == ([], [])
+    assert stats.first_ms_snapshot() == {"ReadItem": [10, 60_004], "WriteItem": [2, 2]}
+    assert stats.drain_loop_lag() == 12
+    assert stats.schedule_snapshot() == [{"launched": 1}]
 
 
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -1])
@@ -792,6 +858,9 @@ def test_baseline_batch_isolates_sessions_and_retains_evidence(baseline_batch, c
     assert rows[0][1] == STAMP
     calls = (folder / "launched.txt").read_text().splitlines()
     assert len(calls) == expected * len(engines)
+    report_calls = (folder / "report-calls.txt").read_text().splitlines()
+    assert len(report_calls) == expected
+    assert all("--latency-metric sdk-call" in call for call in report_calls)
     for index, row in enumerate(rows):
         number, identifier, _, status, rc = row
         assert number == str(index + 1) and status == "passed" and rc == "0"
@@ -1857,6 +1926,104 @@ def test_component_histograms_pool_across_reporting_windows(modules):
     for name in ("delay_before_call", "sdk_call", "total"):
         assert cell["timings"]["success"][name]["hist"].total_count == 2
     assert cell["schedule"]["launched_count"] == 2
+
+
+def test_primary_sdk_latency_pools_components_without_mutating_total(modules):
+    rows = [fixed_rate_row(modules, delay_ms=20, sdk_ms=2),
+            fixed_rate_row(modules, delay_ms=40, sdk_ms=8)]
+    report = modules["latency_report"]
+    original = report._aggregate(Rows(rows), "baseline-", STAMP)[0][("read", "rust")]
+    selected = report._latency_view(original, "sdk-call")
+    assert selected["hist"].total_count == 2
+    assert report._mean_ms(selected) == pytest.approx(5, rel=0.001)
+    assert report._pctile_ms(selected, 99) == pytest.approx(8, rel=0.001)
+    assert report._pctile_ms(original, 99) == pytest.approx(48, rel=0.001)
+    assert original["duration_kinds"] == {"total"}
+    assert selected["duration_kinds"] == {"sdk_call"}
+    assert report._latency_view(original, "total") is original
+
+
+@pytest.mark.parametrize("missing", ["all", "one"])
+def test_primary_sdk_latency_never_falls_back_to_total(modules, missing):
+    first = fixed_rate_row(modules)
+    del first["fixed_rate_timings"]
+    rows = [first] if missing == "all" else [first, fixed_rate_row(modules)]
+    report = modules["latency_report"]
+    cell = report._aggregate(Rows(rows), "baseline-", STAMP)[0][("read", "rust")]
+    selected = report._latency_view(cell, "sdk-call")
+    assert math.isnan(report._pctile_ms(selected, 99))
+    assert math.isnan(report._mean_ms(selected))
+    assert "pooled latency unavailable" in report._fmt_cell("read", "rust", selected)
+    assert not math.isnan(report._pctile_ms(cell, 99))
+
+
+@pytest.mark.parametrize("component", ["delay", "sdk"])
+def test_primary_sdk_latency_uses_its_own_overflow_evidence(modules, component):
+    row = fixed_rate_row(modules, delay_ms=70_000 if component == "delay" else 1,
+                         sdk_ms=70_000 if component == "sdk" else 5)
+    report = modules["latency_report"]
+    cell = report._aggregate(Rows([row]), "baseline-", STAMP)[0][("read", "rust")]
+    assert math.isnan(report._pctile_ms(cell, 99))
+    selected = report._latency_view(cell, "sdk-call")
+    if component == "sdk":
+        assert math.isnan(report._pctile_ms(selected, 99))
+    else:
+        assert report._pctile_ms(selected, 99) == pytest.approx(5, rel=0.001)
+
+
+def test_send_and_wait_primary_sdk_latency_preserves_existing_histogram(modules):
+    row = measurement(modules, config_arrival_rate=0)
+    report = modules["latency_report"]
+    cell = report._aggregate(Rows([row]), "baseline-", STAMP)[0][("read", "rust")]
+    assert report._latency_view(cell, "sdk-call") is cell
+    with pytest.raises(ValueError, match="fixed-rate"):
+        report._latency_view(cell, "total")
+
+
+@pytest.mark.parametrize("metric,expected_exit", [(None, 0), ("sdk-call", 0), ("total", 1)])
+def test_report_summary_comparison_and_gate_use_same_latency_metric(
+        modules, monkeypatch, capsys, metric, expected_exit):
+    rows = []
+    for backend, sdk_ms in (("core-python", 7), ("rust", 5)):
+        row = fixed_rate_row(
+            modules, delay_ms=20, sdk_ms=sdk_ms,
+            workload_id=f"baseline-read-{backend}-{STAMP}", config_backend=backend)
+        rows.extend([row, completion(row, fixed_rate_schedules=[schedule_record()])])
+    report = modules["latency_report"]
+    monkeypatch.setattr(report, "_connect", lambda: Rows(rows))
+    argv = ["latency_report", "--run-id", STAMP, "--point-read-gate"]
+    if metric is not None:
+        argv.extend(["--latency-metric", metric])
+    monkeypatch.setattr(sys, "argv", argv)
+    with pytest.raises(SystemExit) as result:
+        report.main()
+    assert result.value.code == expected_exit
+    output = capsys.readouterr().out
+    selected = metric or "sdk-call"
+    label = "total" if metric == "total" else "SDK-call"
+    assert f"Primary latency metric: {selected}" in output
+    assert f"core-python vs rust ({selected}; pooled ms" in output
+    assert output.count(f"duration={selected}") == 2
+    assert f"rust: {label} p99 < 10 ms" in output
+    rust_line = next(line for line in output.splitlines() if "read     rust" in line)
+    assert ("p99= 25.01" if metric == "total" else "p99=  5.00") in rust_line
+    assert "success total duration: samples=1 p99=25.007" in output
+    assert "success delay before SDK call: samples=1" in output
+    assert "limit_waits=0" in output
+
+
+@pytest.mark.parametrize("sdk_ms", [10, 12, 70_000])
+def test_sdk_call_gate_rejects_threshold_and_overflow(modules, monkeypatch, capsys, sdk_ms):
+    row = fixed_rate_row(modules, delay_ms=0, sdk_ms=sdk_ms)
+    report = modules["latency_report"]
+    monkeypatch.setattr(report, "_connect", lambda: Rows([
+        row, completion(row, fixed_rate_schedules=[schedule_record()])]))
+    monkeypatch.setattr(sys, "argv", [
+        "latency_report", "--run-id", STAMP, "--point-read-gate", "--gate-backends", "rust"])
+    with pytest.raises(SystemExit) as result:
+        report.main()
+    assert result.value.code == 1
+    assert "[FAIL] rust: SDK-call p99 < 10 ms" in capsys.readouterr().out
 
 
 def test_missing_one_clients_schedule_is_rejected(modules):

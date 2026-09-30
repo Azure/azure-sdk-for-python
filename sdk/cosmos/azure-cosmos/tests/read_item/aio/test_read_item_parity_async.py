@@ -143,8 +143,19 @@ async def _run_read(container, summary: str,
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_baseline_read_by_id(container_for):
-    """Baseline: async read by bare id + ``partition_key``, no optional kwargs.
+@pytest.mark.parametrize(
+    "read_options",
+    [
+        {},
+        {"request_options": {"consistencyLevel": "Eventual"}},
+        {"request_options": {"consistencyLevel": "Session"}},
+        {"initial_headers": {"x-ms-consistency-level": "Eventual"}},
+        {"initial_headers": {"x-ms-consistency-level": "Session"}},
+    ],
+    ids=["default", "options-eventual", "options-session", "header-eventual", "header-session"],
+)
+async def test_baseline_read_by_id(container_for, read_options):
+    """Read by bare id with default or explicitly overridden consistency.
 
     Both backends must succeed and the body's id/pk must match what was just
     written. Check Rust binding entry around the read, not setup.
@@ -156,7 +167,9 @@ async def test_baseline_read_by_id(container_for):
         expected = {"id": uuid.uuid4().hex, "pk": "customerA", "value": 1}
         await cont.create_item(dict(expected))
         actual = await run_target_operation_async(
-            client, lambda: cont.read_item(expected["id"], partition_key=expected["pk"])
+            client, lambda: cont.read_item(
+                expected["id"], partition_key=expected["pk"], **read_options
+            )
         )
         for field, value in expected.items():
             assert actual[field] == value, f"read_item returned an unexpected {field}"

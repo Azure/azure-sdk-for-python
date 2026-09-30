@@ -41,6 +41,7 @@ import threading
 import unittest
 from typing import Any, cast
 
+import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
@@ -87,6 +88,65 @@ def test_wire_string_headers_do_not_need_deepcopy(monkeypatch):
     assert state.last_response_headers["etag"] == "original"
     assert result.get_response_headers()["etag"] == "original"
     assert response.headers["etag"] == "original"
+
+
+def test_header_snapshot_does_not_build_an_intermediate_mapping(monkeypatch):
+    from azure.cosmos._helpers import _response_parse as parser
+
+    received = []
+
+    def build_snapshot(entries=None):
+        assert entries is None
+        received.append(entries)
+        return CaseInsensitiveDict(entries)
+
+    monkeypatch.setattr(parser, "CaseInsensitiveDict", build_snapshot)
+    result = parser._copy_response_headers({"ETag": "original"})
+    assert result["etag"] == "original"
+    assert len(received) == 1
+
+
+@pytest.mark.parametrize("mapping_type", [dict, CaseInsensitiveDict])
+def test_header_snapshot_preserves_case_collisions_and_nested_isolation(mapping_type):
+    from azure.cosmos._helpers import _response_parse as parser
+
+    incoming = mapping_type({"ETag": "first", "etag": "last", "Nested": {"values": [1]}})
+    result = parser._copy_response_headers(incoming)
+    assert list(result.items()) == [("etag", "last"), ("Nested", {"values": [1]})]
+    incoming["Nested"]["values"].append(2)
+    assert result["nested"] == {"values": [1]}
+    result["NESTED"]["values"].append(3)
+    assert incoming["Nested"] == {"values": [1, 2]}
+
+
+def test_header_snapshot_copies_string_subclass_state():
+    from azure.cosmos._helpers import _response_parse as parser
+
+    class HeaderValue(str):
+        pass
+
+    value = HeaderValue("original")
+    value.metadata = {"values": [1]}
+    result = parser._copy_response_headers({"etag": value})
+    assert result["ETAG"] == value
+    assert result["etag"] is not value
+    value.metadata["values"].append(2)
+    assert result["etag"].metadata == {"values": [1]}
+
+
+def test_header_snapshot_failure_does_not_publish_partial_headers():
+    class Uncopyable:
+        def __deepcopy__(self, memo):
+            raise ValueError("header cannot be copied")
+
+    state = ClientLastResponseHeaders()
+    previous = CaseInsensitiveDict({"etag": "previous"})
+    state.last_response_headers = previous
+    response = _make_response(headers={"etag": "new", "nested": Uncopyable()}, body=b"{}")
+    with pytest.raises(ValueError, match="header cannot be copied"):
+        process_backend_response(response, response_state=state)
+    assert state.last_response_headers is previous
+    assert response.headers["etag"] == "new"
 
 
 class _FakeClientConnection:

@@ -167,10 +167,10 @@ def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
 
 def _copy_response_headers(headers: Mapping[str, Any]) -> CaseInsensitiveDict:
     """Reuse string header values while copying mutable backend-response values."""
-    return CaseInsensitiveDict({
-        key: value if type(value) is str else deepcopy(value)
-        for key, value in headers.items()
-    })
+    snapshot = CaseInsensitiveDict()
+    for key, value in headers.items():
+        snapshot[key] = value if type(value) is str else deepcopy(value)
+    return snapshot
 
 
 def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:

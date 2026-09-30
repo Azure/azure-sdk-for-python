@@ -684,6 +684,7 @@ mod tests {
             driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(1))),
             operation_timeout: None,
             availability_strategy: None,
+            read_consistency_strategy: None,
             custom_headers: HashMap::from([(
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),

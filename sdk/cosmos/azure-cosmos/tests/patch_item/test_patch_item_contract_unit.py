@@ -6,8 +6,7 @@
 """Patch contract through both public clients, against the real Rust dispatch adapters.
 
 Unlike the create and read contract files, every test here runs twice --
-sync-Rust and async-Rust -- because patch is a Rust-only path in this
-migration. The legacy column is covered separately by the parity files and
+sync-Rust and async-Rust. Explicit legacy execution is covered separately by the parity files and
 by ``sync/test_container_patch_item_regression_unit.py``.
 
 Patch differs from the other single-item writes in three ways that drive
@@ -30,7 +29,7 @@ import asyncio
 import inspect
 import json
 from dataclasses import replace
-from types import MappingProxyType
+from types import MappingProxyType, SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -123,6 +122,71 @@ def point_patch(point_read, monkeypatch):
 
     context.call = call
     return context
+
+
+@pytest.mark.parametrize("id_fields", [{}, {"id": "item"}, {"id": "other"}, {"id": None}, {"id": 42}])
+def test_dictionary_patch_preserves_resource_address(point_patch, id_fields):
+    item = {
+        **id_fields,
+        "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+    }
+    before = dict(item)
+    result = point_patch.proxy.patch_item(
+        item, "pk", [{"op": "set", "path": "/n", "value": 2}],
+    )
+    if inspect.isawaitable(result):
+        asyncio.run(result)
+    assert item == before
+    assert point_patch.prepared.item_id is None
+    assert point_patch.prepared.item_self_link == item["_self"]
+
+
+@pytest.mark.parametrize("self_link", [None, 42])
+def test_dictionary_patch_rejects_invalid_address_before_binding(point_patch, self_link):
+    with pytest.raises(TypeError, match="_self"):
+        result = point_patch.proxy.patch_item(
+            {"id": "item", "_self": self_link}, "pk",
+            [{"op": "set", "path": "/n", "value": 2}],
+        )
+        if inspect.isawaitable(result):
+            asyncio.run(result)
+    assert point_patch.events == []
+
+
+def test_dictionary_patch_requires_resource_address(point_patch):
+    with pytest.raises(KeyError, match="_self"):
+        result = point_patch.proxy.patch_item(
+            {"id": "item"}, "pk", [{"op": "set", "path": "/n", "value": 2}],
+        )
+        if inspect.isawaitable(result):
+            asyncio.run(result)
+    assert point_patch.events == []
+
+
+@pytest.mark.parametrize("method", ["patch_item", "patch_item_async"])
+@pytest.mark.parametrize("self_link,error,message", [
+    ("dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+     RuntimeError, "no driver registered for handle"),
+    (None, ValueError, "item_id is required"),
+    ("", ValueError, "target _self"),
+    ("dbs/db/colls/c", ValueError, "target _self"),
+    (42, TypeError, None),
+])
+def test_binding_patch_validates_resource_target(point_read, method, self_link, error, message):
+    from azure.cosmos._helpers._request_item import build_patch_item_request
+
+    binding = pytest.importorskip("azure.cosmos._rust")
+    prepared = build_patch_item_request(
+        container_link="dbs/db/colls/c", item_id=None,
+        body_bytes=b'{"operations":[{"op":"incr","path":"/n","value":1}]}',
+        partition_key_value="pk", container_rid=None, request_options={},
+    )
+    prepared = SimpleNamespace(
+        **{**vars(prepared), "item_self_link": self_link},
+        protocol_version=prepared.protocol_version,
+    )
+    with pytest.raises(error, match=message):
+        getattr(binding, method)(driver_handle="invalid-driver-handle", prepared=prepared)
 
 
 @pytest.fixture

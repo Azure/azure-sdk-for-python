@@ -193,7 +193,7 @@ supplies its `threshold_ms`. A positive threshold enables hedging; an invalid
 threshold is rejected. Supported per-request strategies still override the
 client strategy, and the driver's `AZURE_COSMOS_HEDGING_ENABLED` and
 `AZURE_COSMOS_HEDGING_ENABLED_OVERRIDE` environment overrides retain precedence.
-Progressive `threshold_steps_ms` remains unsupported (migration pushback 25).
+Progressive `threshold_steps_ms` remains unsupported (migration pushback 24).
 
 The returned `driver_handle` is a string registry key, not a `CosmosClient`
 or the `CosmosDriver` itself. The private extension consistently names this
@@ -397,12 +397,55 @@ No character replacement or silent extraction fallback is introduced.
 This is Python/binding cleanup only: it neither extends driver capabilities nor
 establishes a measured performance improvement.
 
+## Request-settings validation
+
+For `read_item("order-42", partition_key="customer-7")`, the Python wrapper
+builds typed settings before entering the binding. Each settings class now
+checks its fields explicitly instead of resolving annotations and recursively
+interpreting their types on every construction.
+
+Validation is not disabled. For example, a throughput bucket of `True` still
+fails its integer check, a non-finite timeout is rejected, and a trigger tuple
+must contain strings. Existing field-check order, error types and messages,
+range checks, immutable settings, and snapshots of customer inputs are retained.
+Client-configuration and fault-injection records used the same reflective base;
+they now have explicit checks as well.
+
+The Python/Rust schema comparison remains separate and unchanged. The request
+field layout and protocol version are unchanged, so this optimization does not
+require a native extension rebuild. It reduces Python request preparation;
+it does not remove driver, network, or service-backend work.
+
 ## Naming and page dispatch
 
 The Python backend is the dispatch object; the Rust driver is the native
 `CosmosDriver`; the process-wide runtime has a separate lifetime and policy.
 Python construction validates initialized runtime settings without acquiring a
 native handle or recording an open-client registration.
+
+Entering the asynchronous client now awaits the adapter's internal
+`initialize()` method, which reuses `_ensure_driver_handle()`. The customer
+app's `async with` block starts only after driver acquisition succeeds.
+New driver creation includes account initialization; it does not prepare a
+selected container's metadata or partition map. Repeated acquisition uses
+the retained handle, and concurrent acquisition keeps the existing shared
+initialization and close coordination. Direct operations without prior client
+entry retain their first-use acquisition path. No public initialization method
+or startup flag is added.
+
+For a Rust-backed async client, the retained connection no longer constructs
+or opens the default Python networking pipeline during client startup.
+For example, entering the client and reading `order-42` through Rust does not
+need an `aiohttp` session. Connection settings and policies are still prepared
+and validated; the unused default transport is not.
+
+If a retained Python request later needs the pipeline, accessing it constructs
+it once, and the default transport opens its session when sending. Client
+cleanup closes an existing pipeline without creating an unused one. Explicit
+legacy clients retain their eager construction and context-entry behavior,
+including supported customer-supplied transports. Rust still rejects custom
+Python transports rather than silently ignoring them. The synchronous client
+and Rust account initialization are unchanged.
 
 The wrapper now passes synchronous `build_request` callbacks in both modes.
 Native exports retain `_async` where sync and async functions share this module.

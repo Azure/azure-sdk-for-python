@@ -28,12 +28,19 @@ fn item_target(
 
 fn extract_read_item_inputs(
     prepared: &Bound<'_, PyAny>,
-) -> PyResult<(String, BindingPartitionKey, RequestHeadersAndOptions, ItemTarget)> {
+) -> PyResult<(
+    String,
+    BindingPartitionKey,
+    RequestHeadersAndOptions,
+    ItemTarget,
+)> {
     let (container_link, partition_key, modifiers) = extract_common_prepared_inputs(prepared)?;
     if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(READ_ITEM_PARTITION_KEY_REQUIRED));
     }
-    let target = item_target(prepared, || extract_required_item_id(prepared, READ_ITEM_ID_REQUIRED))?;
+    let target = item_target(prepared, || {
+        extract_required_item_id(prepared, READ_ITEM_ID_REQUIRED)
+    })?;
     Ok((container_link, partition_key, modifiers, target))
 }
 
@@ -233,8 +240,9 @@ pub(crate) fn read_item<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_item")?;
-    let (container_link, partition_key, mut modifiers, target) = extract_read_item_inputs(prepared)?;
-    modifiers.read_consistency()?;
+    let (container_link, partition_key, mut modifiers, target) =
+        extract_read_item_inputs(prepared)?;
+    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
@@ -256,7 +264,7 @@ pub(crate) fn read_item<'py>(
 /// or override the fresh ETag protecting an internal replacement.
 ///
 /// The body contains `PatchInstructions` (`{"operations": [...]}`) rather
-/// than an item, and the URL id comes from `PreparedRequest.item_id`. The driver
+/// than an item. The target uses `item_self_link` when supplied, otherwise `item_id`. The driver
 /// chooses the execution plan for Auto; this entry point does not guarantee a
 /// particular number of service requests. `patch_precondition` accepts If-Match
 /// as a typed precondition and rejects If-None-Match and a body `condition`.
@@ -270,8 +278,10 @@ pub(crate) fn patch_item<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "patch_item")?;
-    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
-        extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
+    let target = item_target(prepared, || {
+        extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
+    })?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
     if matches!(partition_key, BindingPartitionKey::Extract) {
@@ -286,7 +296,7 @@ pub(crate) fn patch_item<'py>(
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         body_bytes,
         "patch_item",
         true,
@@ -424,8 +434,9 @@ pub(crate) fn read_item_async<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_item")?;
-    let (container_link, partition_key, mut modifiers, target) = extract_read_item_inputs(prepared)?;
-    modifiers.read_consistency()?;
+    let (container_link, partition_key, mut modifiers, target) =
+        extract_read_item_inputs(prepared)?;
+    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
@@ -444,7 +455,7 @@ pub(crate) fn read_item_async<'py>(
 }
 
 /// Async twin of `patch_item`: identical inputs and driver work (body is the
-/// PatchInstructions body, target id from the request), returns a Python
+/// PatchInstructions body, resource address or target id from the request), returns a Python
 /// awaitable instead of a ready tuple.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
@@ -455,8 +466,10 @@ pub(crate) fn patch_item_async<'py>(
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "patch_item")?;
-    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
-        extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
+    let target = item_target(prepared, || {
+        extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
+    })?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
     if matches!(partition_key, BindingPartitionKey::Extract) {
@@ -471,7 +484,7 @@ pub(crate) fn patch_item_async<'py>(
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         body_bytes,
         "patch_item",
         true,
@@ -530,7 +543,9 @@ mod tests {
                 .unwrap()
                 .call0()
                 .unwrap();
-            prepared.setattr("container_link", "dbs/db/colls/c").unwrap();
+            prepared
+                .setattr("container_link", "dbs/db/colls/c")
+                .unwrap();
             prepared.setattr("item_id", "item").unwrap();
             prepared.setattr("op", "read_item").unwrap();
             prepared.setattr("protocol_version", 3).unwrap();
@@ -569,7 +584,9 @@ mod tests {
                         read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
                     }
                     .unwrap_err();
-                    assert!(error.to_string().contains("no driver registered for handle"));
+                    assert!(error
+                        .to_string()
+                        .contains("no driver registered for handle"));
                 }
             }
             prepared.delattr("item_id").unwrap();
@@ -583,8 +600,7 @@ mod tests {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None)
-                            .map(|_| ())
+                        read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
                     } else {
                         read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
                     }
@@ -648,6 +664,7 @@ mod tests {
                 .unwrap();
             prepared.setattr("item_id", "item").unwrap();
             prepared.setattr("op", "patch_item").unwrap();
+            prepared.setattr("item_self_link", py.None()).unwrap();
             prepared.setattr("protocol_version", 3).unwrap();
             prepared
                 .setattr("settings", crate::wire::settings::test_settings(py))

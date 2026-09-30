@@ -44,6 +44,7 @@ from typing import Any, Optional, Sequence, Tuple
 from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS
 from ..documents import ConsistencyLevel
 from .contracts import PreparedClientConfig, PreparedFaultInjectionRule
+from ._immutable import freeze_headers
 
 # Levels this binding supports. Strong maps to the driver's GlobalStrong;
 # other recognized Cosmos levels are rejected rather than ignored.
@@ -124,6 +125,7 @@ def build_client_config(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
+    headers: Optional[Mapping[str, str]] = None,
 ) -> Optional[PreparedClientConfig]:
     """Build the prepared client settings retained by either Python wrapper.
 
@@ -182,6 +184,7 @@ def build_client_config(
         "read_timeout",
     )
     prepared_fault_rules = _prepare_fault_injection_rules(fault_injection_rules)
+    prepared_headers = freeze_headers(headers if headers is not None else {})
     if (
         not preferred
         and not excluded
@@ -194,6 +197,7 @@ def build_client_config(
         and connection_timeout is None
         and read_timeout is None
         and not prepared_fault_rules
+        and not prepared_headers
     ):
         return None
     return PreparedClientConfig(
@@ -208,6 +212,7 @@ def build_client_config(
         connection_timeout_seconds=connection_timeout,
         read_timeout_seconds=read_timeout,
         fault_injection_rules=prepared_fault_rules,
+        headers=prepared_headers,
     )
 
 

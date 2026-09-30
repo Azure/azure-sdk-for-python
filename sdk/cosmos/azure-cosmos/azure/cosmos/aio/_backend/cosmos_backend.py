@@ -60,6 +60,12 @@ class AsyncCosmosBackend(abc.ABC):
     #: ``BACKEND_NAME_RUST`` etc.
     name: str = "abstract"
 
+    async def initialize(self) -> None:
+        """Prepare account-level resources before the customer enters the client.
+
+        Backends with no owned startup resources can keep this empty default.
+        """
+
     async def close(self) -> None:
         """Release resources owned by this Python backend.
 

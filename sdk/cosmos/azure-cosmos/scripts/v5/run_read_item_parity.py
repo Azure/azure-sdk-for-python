@@ -1,13 +1,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Run original or legacy-derived read tests using exclusively owned resources.
+"""Run original item tests or copied reads using exclusively owned resources.
 
 The original test body is unchanged; its setUp uses TestConfig pointing to a
 fresh database and container. Shared conftest provisioning is disabled. This
 checks key authentication, not the original shared fixture or AAD setup.
 Run each backend in a separate process and save stdout for the parity reporter
-with --op read_item. The default original suite expects one test; --suite copied
-expects seven. Copied-suite baseline files change only the explicit backend.
+with the same --op. The default operation is read_item; create_item and
+replace_item select their original test or Rust copy. The original suite expects one test;
+--suite copied supports read_item only and expects seven. Copied-suite baseline
+files change only the explicit backend.
 """
 
 import argparse
@@ -25,7 +27,12 @@ sys.path.insert(0, str(ROOT))
 from azure.cosmos import CosmosClient, PartitionKey  # pylint: disable=wrong-import-position
 
 
-METHOD = "::TestNoneOptions::test_container_read_item_none_options"
+METHODS = {
+    "read_item": "::TestNoneOptions::test_container_read_item_none_options",
+    "create_item": "::TestNoneOptions::test_container_create_item_none_options",
+    "replace_item": "::TestNoneOptions::test_replace_item_none_options",
+}
+METHOD = METHODS["read_item"]
 
 
 def run_copied_suite(backend, options):
@@ -59,7 +66,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--backend", required=True, choices=("core-python", "rust"))
     parser.add_argument("--suite", choices=("original", "copied"), default="original")
+    parser.add_argument("--op", choices=tuple(METHODS), default="read_item")
     args = parser.parse_args(argv)
+    if args.suite == "copied" and args.op != "read_item":
+        parser.error("--suite copied only supports --op read_item")
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
             parser.error(f"{name} must be set explicitly for the test target")
@@ -68,7 +78,8 @@ def main(argv=None):
     sys.path.insert(0, str(ROOT / "tests"))
     os.environ["COSMOS_BACKEND"] = args.backend
     os.environ["COSMOS_TEST_DATA_AUTH_MODE"] = "key"
-    os.environ["COSMOS_PARITY_CAPTURE_OP"] = "read_item"
+    os.environ["COSMOS_PARITY_CAPTURE_OP"] = args.op
+    method = METHODS[args.op]
     options = [
         "--noconftest", "--import-mode=importlib", "-p", "common.parity_capture_plugin",
         "-p", "no:cacheprovider", "-v", "-s", "--disable-warnings", "--tb=short",
@@ -76,14 +87,14 @@ def main(argv=None):
     if args.suite == "copied":
         return run_copied_suite(args.backend, options)
     if args.backend == "rust":
-        path = ROOT / "tests" / "read_item" / "sync" / "legacy" / "test_none_options.py"
-        return pytest.main(options + [str(path) + METHOD])
+        path = ROOT / "tests" / args.op / "sync" / "legacy" / "test_none_options.py"
+        return pytest.main(options + [str(path) + method])
 
     import test_config  # pylint: disable=import-outside-toplevel
 
     config = test_config.TestConfig
     previous_ids = (config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID)
-    database_id = "read_parity_core_" + uuid.uuid4().hex
+    database_id = args.op.removesuffix("_item") + "_parity_core_" + uuid.uuid4().hex
     container_id = "orders"
     with CosmosClient(
         os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python",
@@ -95,7 +106,7 @@ def main(argv=None):
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
             path = ROOT / "tests" / "test_none_options.py"
-            return pytest.main(options + [str(path) + METHOD])
+            return pytest.main(options + [str(path) + method])
         finally:
             config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID = previous_ids
             client.delete_database(database_id)

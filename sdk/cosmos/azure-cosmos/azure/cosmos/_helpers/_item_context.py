@@ -98,6 +98,19 @@ class ItemClientContext(Generic[_BackendT]):
     retain this same context rather than copy the adapter or prepare client
     settings again.
 
+    Sharing the adapter keeps the client's saved settings, acquired driver
+    handle, and closing state together. Operations on "sales" and "orders"
+    therefore use the adapter managed by their parent CosmosClient.
+
+    Creating another Python adapter would not necessarily create another
+    CosmosDriver: the binding may reuse a driver. However, that adapter
+    would manage its own acquisition and release of a driver handle.
+    Passing the existing adapter through this context avoids introducing
+    that separate ownership for each database or container object.
+
+    ItemClientContext carries the reference; it does not acquire or release
+    the driver handle itself.
+
     The defaults hold values used when operations omit their own, and the
     response_state holds the latest published headers. For an asynchronous
     Rust-backed client, adapter refers to AsyncBindingAdapter instead.

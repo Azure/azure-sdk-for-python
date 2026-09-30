@@ -4,7 +4,8 @@
 ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in ``setUp`` and
-deletes them in ``tearDown``. The class name and method name match the
+registers cleanup after acquisition, including on setup failure.
+The class name and method name match the
 source at ``tests/test_none_options.py`` so test IDs differ only by
 path.
 
@@ -33,22 +34,15 @@ class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_none_options_" + uuid.uuid4().hex[:8]
+        self.addCleanup(self.client.close)
+        self._db_id = "legacy_none_options_" + uuid.uuid4().hex
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
+        self.addCleanup(self.client.delete_database, self._db_id)
         self.container = self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    def tearDown(self) -> None:
-        try:
-            self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            # Best-effort cleanup: the test has already produced its
-            # verdict by the time tearDown runs, and a stuck account
-            # state should not mask the test result.
-            pass
 
     def test_container_create_item_none_options(self):
         # Source: tests/test_none_options.py::TestNoneOptions.test_container_create_item_none_options
@@ -67,4 +61,3 @@ class TestNoneOptions(unittest.TestCase):
             throughput_bucket=None,
         )
         assert created["id"] == item["id"]
-

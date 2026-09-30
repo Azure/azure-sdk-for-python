@@ -275,6 +275,7 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
         driver_timeout_policy: timeout,
         operation_timeout: None,
         availability_strategy,
+        read_consistency_strategy: None,
         custom_headers,
     })
 }

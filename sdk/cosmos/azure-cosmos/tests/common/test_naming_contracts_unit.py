@@ -338,6 +338,7 @@ def executor(request, monkeypatch):
     module = async_rust if async_mode else sync_rust
     backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
+    backend._client_config = None
     state = SimpleNamespace(now=100.0, init_delay=0.0)
 
     def acquire():
@@ -669,6 +670,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     module = async_rust if async_mode else sync_rust
     backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
+    backend._client_config = None
     handle = (
         AsyncMock(return_value="handle")
         if async_mode

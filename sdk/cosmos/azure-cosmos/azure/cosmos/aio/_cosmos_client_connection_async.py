@@ -28,11 +28,10 @@ methods that depend on it. This is a Python wrapper object, not a single
 network connection or a CosmosDriver. Legacy means the Python request
 implementation that predates the Rust driver.
 
-Construction creates the asynchronous Python HTTP pipeline without
-running legacy account setup. The asynchronous CosmosClient performs
-that setup on entry to an async with block for the explicit legacy path,
-but skips it for the Rust path. A retained legacy request can initialize
-the account state later.
+Construction can defer the asynchronous Python HTTP pipeline for a Rust
+client. The explicit legacy path constructs it immediately and performs
+account setup on entry to an async with block. A retained legacy request
+can create the deferred pipeline and initialize account state later.
 
 A migrated Rust operation uses the binding and Rust driver instead of
 this legacy account setup. Retaining this object does not mean that
@@ -48,6 +47,7 @@ import logging
 import os
 from urllib.parse import urlparse
 import uuid
+from functools import cached_property
 from typing import Callable, Any, Dict, Iterable, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -187,6 +187,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
             enable_compact_utf8_item_writes: bool = False,
+            _defer_pipeline: bool = False,
             **kwargs: Any
     ) -> None:
         """
@@ -319,12 +320,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         kwargs.pop("user_agent", None)
         kwargs.pop("user_agent_overwrite", None)
 
-        transport = kwargs.pop("transport", None)
-        self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
-            base_url=url_connection,
-            transport=transport,
-            policies=policies
-        )
+        self._pipeline_transport = kwargs.pop("transport", None)
+        self._pipeline_policies = policies
+        if not _defer_pipeline or self._pipeline_transport is not None:
+            _ = self.pipeline_client
 
         self._inference_service: Optional[_InferenceService] = None
 
@@ -340,6 +339,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    @cached_property
+    def pipeline_client(self) -> AsyncPipelineClient[HttpRequest, AsyncHttpResponse]:
+        """Construct the retained Python pipeline only when it is needed."""
+        return AsyncPipelineClient(
+            base_url=self.url_connection,
+            transport=self._pipeline_transport,
+            policies=self._pipeline_policies,
+        )
+
+    async def _close_pipeline(self, *args: Any) -> None:
+        """Close an existing pipeline without constructing an unused one."""
+        pipeline = vars(self).get("pipeline_client")
+        if pipeline is not None:
+            await pipeline.__aexit__(*args)
 
     @property
     def _container_properties_cache(self) -> dict[str, dict[str, Any]]:

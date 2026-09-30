@@ -25,10 +25,12 @@ from azure.core import instrumentation
 from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.cosmos._backend.binding_adapter import BindingAdapter
 from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._backend import binding_adapter
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio import _telemetry_poc as telemetry
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceExistsError
 
@@ -123,6 +125,27 @@ def operation_spans(recording):
 
 def attempt_spans(recording):
     return [span for span in recording.exporter.get_finished_spans() if span.name == "cosmosdb.request"]
+
+
+@pytest.mark.parametrize(
+    "backend",
+    [None, SimpleNamespace(name="rust"), ASYNC_LEGACY_BACKEND, object.__new__(BindingAdapter)],
+    ids=["missing", "name-only", "async-legacy", "sync-rust"],
+)
+def test_attempt_tracing_rejects_unsupported_backends_before_create(backend):
+    create_item = AsyncMock()
+    container = SimpleNamespace(
+        _get_item_helper=lambda: SimpleNamespace(_backend=backend),
+        create_item=create_item,
+    )
+
+    async def run():
+        with pytest.raises(ValueError, match="requires the async Rust backend"):
+            await telemetry.create_item_with_attempt_tracing(container, ORDER)
+        assert telemetry._CAPTURE.get() is None
+
+    asyncio.run(run())
+    create_item.assert_not_called()
 
 
 def test_create_preserves_result_and_records_exact_sibling_attempts(create, recording):

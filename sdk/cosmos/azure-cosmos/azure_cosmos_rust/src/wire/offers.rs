@@ -303,6 +303,7 @@ mod tests {
             driver_timeout_policy: None,
             operation_timeout: None,
             availability_strategy: None,
+            read_consistency_strategy: None,
             custom_headers: HashMap::new(),
         }
     }

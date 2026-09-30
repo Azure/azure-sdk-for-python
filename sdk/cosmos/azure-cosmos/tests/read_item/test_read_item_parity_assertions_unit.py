@@ -16,6 +16,7 @@ from common import _parity_helpers
 
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])
+@pytest.mark.parametrize("read_options", [{}, {"request_options": {"consistencyLevel": "Eventual"}}])
 @pytest.mark.parametrize(
     "result",
     [
@@ -23,7 +24,7 @@ from common import _parity_helpers
         "read_error", "create_error", "setup_only_binding", "read_fallback",
     ],
 )
-def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch):
+def test_read_baseline_requires_each_expected_item(surface, read_options, result, monkeypatch):
     module_name = (
         "read_item.sync.test_read_item_parity"
         if surface == "sync"
@@ -47,9 +48,10 @@ def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch)
             stored_items.append(dict(body))
             return dict(body)
 
-        def read_item(item, *, partition_key):
+        def read_item(item, *, partition_key, **kwargs):
             assert item == stored["id"]
             assert partition_key == stored["pk"]
+            assert kwargs == read_options
             if backend == "rust":
                 if result != "setup_only_binding":
                     counters["binding"] += 1
@@ -95,7 +97,7 @@ def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch)
         monkeypatch.setattr(_parity_helpers, "AioCosmosClient", async_client)
 
     def run():
-        outcome = baseline.test_baseline_read_by_id(SimpleNamespace(id="isolated-orders"))
+        outcome = baseline.test_baseline_read_by_id(SimpleNamespace(id="isolated-orders"), read_options)
         if surface == "aio":
             asyncio.run(outcome)
 

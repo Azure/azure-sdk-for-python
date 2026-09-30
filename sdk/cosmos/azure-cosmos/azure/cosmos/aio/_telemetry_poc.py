@@ -13,6 +13,9 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional
 
+from .._backend.constants import is_rust_backend
+from ._backend.cosmos_backend import AsyncCosmosBackend
+
 if TYPE_CHECKING:
     from opentelemetry.trace import Span, SpanContext
     from ._container import ContainerProxy
@@ -41,10 +44,9 @@ async def create_item_with_attempt_tracing(
     This private helper neither installs an exporter nor enables tracing globally.
     """
     from opentelemetry import trace  # pylint: disable=import-outside-toplevel
-    from ._backend.binding_adapter import AsyncBindingAdapter  # pylint: disable=import-outside-toplevel
 
     backend = getattr(container._get_item_helper(), "_backend", None)  # pylint: disable=protected-access
-    if not isinstance(backend, AsyncBindingAdapter):
+    if not isinstance(backend, AsyncCosmosBackend) or not is_rust_backend(backend):
         raise ValueError("Attempt tracing POC requires the async Rust backend")
     token = _CAPTURE.set(
         _Capture(trace.get_current_span().get_span_context(), backend, asyncio.current_task())

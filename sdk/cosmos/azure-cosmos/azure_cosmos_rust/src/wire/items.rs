@@ -274,7 +274,7 @@ fn execute_item_on_driver(
             None
         };
         let read_consistency = if op.is_read_only() {
-            modifiers.read_consistency()?
+            modifiers.read_consistency_strategy
         } else {
             None
         };
@@ -938,13 +938,26 @@ mod tests {
         .await
         .unwrap()
         .unwrap();
-        for consistency in [Some("Eventual"), Some("Strong"), Some("Session"), None] {
+        for (consistency, retain_header) in [
+            (Some("Eventual"), true),
+            (Some("Strong"), true),
+            (Some("Session"), true),
+            (None, true),
+            (Some("Eventual"), false),
+        ] {
             let mut settings = modifiers();
             if let Some(level) = consistency {
                 settings.custom_headers.insert(
                     HeaderName::from_static("x-ms-consistency-level"),
                     HeaderValue::from_static(level),
                 );
+            }
+            settings.read_consistency_strategy = settings.parse_read_consistency().unwrap();
+            if !retain_header {
+                // Execution must use the parsed value, not parse the header again.
+                settings
+                    .custom_headers
+                    .remove(&HeaderName::from_static("x-ms-consistency-level"));
             }
             execute_item_on_driver(
                 driver.clone(),
@@ -968,6 +981,7 @@ mod tests {
                 ("GlobalStrong".into(), false),
                 ("Session".into(), true),
                 ("Session".into(), true),
+                ("Eventual".into(), false),
             ]
         );
     }

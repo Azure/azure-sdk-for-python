@@ -6,6 +6,8 @@
 #
 # Purpose: validate the test environment before any A/B claim. A point-op baseline
 # uses experiment-specific acceptance criteria, not a service SLA.
+# Primary latency is SDK-call duration, not the delay before entering the SDK.
+# Scheduled-start total duration and scheduling health remain separate evidence.
 #
 # Backend is selectable so the same workload runs both paths. Explicitly load
 # the intended profiling session before starting:
@@ -244,9 +246,9 @@ else
   echo "!! integrity gate FAILED -- inspect rows/logs before trusting the baseline." >&2
   overall_rc=1
 fi
-echo "=== Checking the point-read p99 gate ==="
+echo "=== Checking the SDK-call p99 and point-read workload-health gate ==="
 if python3 latency_report.py --prefix "baseline-" --profiling-session-id "${PROFILING_SESSION_ID}" \
-  --point-read-gate --expected-rps "${WORKLOAD_ARRIVAL_RATE}" --max-p99-ms 10 \
+  --latency-metric sdk-call --point-read-gate --expected-rps "${WORKLOAD_ARRIVAL_RATE}" --max-p99-ms 10 \
   --gate-backends "${BACKEND_CSV}" \
   | tee "${REPORT_FILE}"; then
   echo "=== point-read p99 gate PASSED ==="

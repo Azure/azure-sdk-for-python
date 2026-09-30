@@ -222,7 +222,7 @@ class Stats:
             )
 
     def drain_all(self) -> tuple[list[dict], list[dict]]:
-        """Atomically drain both summaries and error details under one lock.
+        """Detach one window atomically, then summarize it outside the recording lock.
 
         Returns (summaries, errors) where summaries is a list of dicts with:
         operation, count, errors, min_ms, max_ms, mean_ms, p50_ms, p90_ms, p99_ms,
@@ -236,133 +236,110 @@ class Stats:
         cannot give.
         """
         with self._lock:
-            summaries: list[dict] = []
-            all_ops = set(
-                list(self._histograms.keys())
-                + list(self._error_counts.keys())
-                + list(self._ru_sums.keys())
-            )
-            for op in sorted(all_ops):
-                hist = self._histograms.get(op)
-                errors = self._error_counts.get(op, 0)
-                count = hist.total_count if hist else 0
-                # Mean RU per successful op. 0.0 when no RU samples were recorded
-                # this interval. ru_sum / ru_count are also emitted raw so a
-                # cross-window average can be count-weighted.
-                ru_count = self._ru_counts.get(op, 0)
-                ru_sum = self._ru_sums.get(op, 0.0)
-                mean_ru = (ru_sum / ru_count) if ru_count else 0.0
-                # Server-reported processing time for this op this window. Emitted
-                # as pooled-able base64 plus scalar tail so the offline analyzer
-                # can compare the SERVER tail against the CLIENT tail per point.
-                shist = self._server_histograms.get(op)
-                if shist and shist.total_count > 0:
-                    server_count = shist.total_count
-                    server_p50_ms = shist.get_value_at_percentile(50.0) / 1000.0
-                    server_p99_ms = shist.get_value_at_percentile(99.0) / 1000.0
-                    server_p99_9_ms = shist.get_value_at_percentile(99.9) / 1000.0
-                    server_hist_b64 = shist.encode().decode("ascii")
-                else:
-                    server_count = 0
-                    server_p50_ms = server_p99_ms = server_p99_9_ms = 0.0
-                    server_hist_b64 = None
-                if count == 0 and errors == 0:
-                    continue
-                if count > 0:
-                    summaries.append(
-                        {
-                            "operation": op,
-                            "count": count,
-                            "errors": errors,
-                            "min_ms": hist.min_value / 1000.0,
-                            "max_ms": hist.max_value / 1000.0,
-                            "mean_ms": hist.get_mean_value() / 1000.0,
-                            "p50_ms": hist.get_value_at_percentile(50.0) / 1000.0,
-                            "p90_ms": hist.get_value_at_percentile(90.0) / 1000.0,
-                            "p99_ms": hist.get_value_at_percentile(99.0) / 1000.0,
-                            # p99.9 captures the slow tail, where the move to
-                            # the Rust backend tends to show its cost first.
-                            "p99_9_ms": hist.get_value_at_percentile(99.9) / 1000.0,
-                            # Base64 of this window's full HdrHistogram, captured
-                            # before the per-window reset below. Per-window scalar
-                            # percentiles cannot be pooled across windows, so storing
-                            # the histogram lets an offline analyzer merge windows
-                            # into a true pooled p50/p99/p99.9 for the whole point.
-                            "hist_b64": hist.encode().decode("ascii"),
-                            # Mean RU per op; ru_sum / ru_count let the aggregate be
-                            # count-weighted.
-                            "mean_ru": mean_ru,
-                            "ru_sum": ru_sum,
-                            "ru_count": ru_count,
-                            "server_count": server_count,
-                            "server_p50_ms": server_p50_ms,
-                            "server_p99_ms": server_p99_ms,
-                            "server_p99_9_ms": server_p99_9_ms,
-                            "server_hist_b64": server_hist_b64,
+            # Recorders must receive new containers, not clear the detached window.
+            histograms, self._histograms = self._histograms, {}
+            server_histograms, self._server_histograms = self._server_histograms, {}
+            error_counts, self._error_counts = self._error_counts, {}
+            throttled, self._throttled = self._throttled, {}
+            ru_sums, self._ru_sums = self._ru_sums, {}
+            ru_counts, self._ru_counts = self._ru_counts, {}
+            timings, self._timings = self._timings, {}
+            latency_overflows, self._latency_overflows = self._latency_overflows, {}
+            error_details, self._errors = self._errors, deque(maxlen=2000)
+            first_ms = {op: values[:50] for op, values in self._first_ms.items()}
+
+        summaries: list[dict] = []
+        all_ops = set(list(histograms.keys()) + list(error_counts.keys()) + list(ru_sums.keys()))
+        for op in sorted(all_ops):
+            hist = histograms.get(op)
+            errors = error_counts.get(op, 0)
+            count = hist.total_count if hist else 0
+            # RU samples and successful calls can belong to different populations.
+            ru_count = ru_counts.get(op, 0)
+            ru_sum = ru_sums.get(op, 0.0)
+            mean_ru = (ru_sum / ru_count) if ru_count else 0.0
+            shist = server_histograms.get(op)
+            if shist and shist.total_count > 0:
+                server_count = shist.total_count
+                server_p50_ms = shist.get_value_at_percentile(50.0) / 1000.0
+                server_p99_ms = shist.get_value_at_percentile(99.0) / 1000.0
+                server_p99_9_ms = shist.get_value_at_percentile(99.9) / 1000.0
+                server_hist_b64 = shist.encode().decode("ascii")
+            else:
+                server_count = 0
+                server_p50_ms = server_p99_ms = server_p99_9_ms = 0.0
+                server_hist_b64 = None
+            if count == 0 and errors == 0:
+                continue
+            if count > 0:
+                summaries.append(
+                    {
+                        "operation": op,
+                        "count": count,
+                        "errors": errors,
+                        "min_ms": hist.min_value / 1000.0,
+                        "max_ms": hist.max_value / 1000.0,
+                        "mean_ms": hist.get_mean_value() / 1000.0,
+                        "p50_ms": hist.get_value_at_percentile(50.0) / 1000.0,
+                        "p90_ms": hist.get_value_at_percentile(90.0) / 1000.0,
+                        "p99_ms": hist.get_value_at_percentile(99.0) / 1000.0,
+                        "p99_9_ms": hist.get_value_at_percentile(99.9) / 1000.0,
+                        # Preserve full histograms for pooled cross-window percentiles.
+                        "hist_b64": hist.encode().decode("ascii"),
+                        "mean_ru": mean_ru,
+                        "ru_sum": ru_sum,
+                        "ru_count": ru_count,
+                        "server_count": server_count,
+                        "server_p50_ms": server_p50_ms,
+                        "server_p99_ms": server_p99_ms,
+                        "server_p99_9_ms": server_p99_9_ms,
+                        "server_hist_b64": server_hist_b64,
+                    }
+                )
+            else:
+                # All-error windows have no successful latency; zero is a placeholder.
+                summaries.append(
+                    {
+                        "operation": op,
+                        "count": 0,
+                        "errors": errors,
+                        "min_ms": 0.0,
+                        "max_ms": 0.0,
+                        "mean_ms": 0.0,
+                        "p50_ms": 0.0,
+                        "p90_ms": 0.0,
+                        "p99_ms": 0.0,
+                        "p99_9_ms": 0.0,
+                        "hist_b64": None,
+                        "mean_ru": mean_ru,
+                        "ru_sum": ru_sum,
+                        "ru_count": ru_count,
+                        "server_count": server_count,
+                        "server_p50_ms": server_p50_ms,
+                        "server_p99_ms": server_p99_ms,
+                        "server_p99_9_ms": server_p99_9_ms,
+                        "server_hist_b64": server_hist_b64,
+                    }
+                )
+        for summary in summaries:
+            op = summary["operation"]
+            summary["throttled_429"] = throttled.get(op, 0)
+            summary["cold_first_n_ms"] = first_ms.get(op, [])
+            summary["latency_overflow_count"] = latency_overflows.get(op, 0)
+            summary["fixed_rate_timings"] = {}
+            for outcome in ("success", "failure"):
+                series = timings.get((op, outcome))
+                if series is not None:
+                    summary["fixed_rate_timings"][outcome] = {
+                        name: {
+                            "count": value["hist"].total_count,
+                            "hist_b64": value["hist"].encode().decode("ascii"),
+                            "overflow_count": value["overflow_count"],
+                            "max_observed_ms": value["max_observed_ms"],
                         }
-                    )
-                else:
-                    # count == 0 but errors > 0: every call failed, so there is no
-                    # latency. The row is still emitted to surface the errors, with
-                    # 0.0 placeholders for the latency fields. These are not fast
-                    # results: a pass/fail check must require count > 0 before
-                    # reading latency, or a fully failed op would read as p99 = 0.
-                    summaries.append(
-                        {
-                            "operation": op,
-                            "count": 0,
-                            "errors": errors,
-                            "min_ms": 0.0,
-                            "max_ms": 0.0,
-                            "mean_ms": 0.0,
-                            "p50_ms": 0.0,
-                            "p90_ms": 0.0,
-                            "p99_ms": 0.0,
-                            "p99_9_ms": 0.0,
-                            # No latency samples (all calls failed), so no histogram.
-                            "hist_b64": None,
-                            "mean_ru": mean_ru,
-                            "ru_sum": ru_sum,
-                            "ru_count": ru_count,
-                            "server_count": server_count,
-                            "server_p50_ms": server_p50_ms,
-                            "server_p99_ms": server_p99_ms,
-                            "server_p99_9_ms": server_p99_9_ms,
-                            "server_hist_b64": server_hist_b64,
-                        }
-                    )
-            for summary in summaries:
-                op = summary["operation"]
-                summary["throttled_429"] = self._throttled.get(op, 0)
-                summary["cold_first_n_ms"] = list(self._first_ms.get(op, []))[:50]
-                summary["latency_overflow_count"] = self._latency_overflows.get(op, 0)
-                summary["fixed_rate_timings"] = {}
-                for outcome in ("success", "failure"):
-                    series = self._timings.get((op, outcome))
-                    if series is not None:
-                        summary["fixed_rate_timings"][outcome] = {
-                            name: {
-                                "count": value["hist"].total_count,
-                                "hist_b64": value["hist"].encode().decode("ascii"),
-                                "overflow_count": value["overflow_count"],
-                                "max_observed_ms": value["max_observed_ms"],
-                            }
-                            for name, value in series.items()
-                        }
-            # Reset for next interval
-            self._histograms.clear()
-            self._server_histograms.clear()
-            self._error_counts.clear()
-            self._throttled.clear()
-            self._ru_sums.clear()
-            self._ru_counts.clear()
-            self._timings.clear()
-            self._latency_overflows.clear()
-            # Copy into a list so the caller gets a stable copy and the return
-            # type matches the annotation, not the internal deque.
-            error_details: list[dict] = list(self._errors)
-            self._errors = deque(maxlen=2000)
-            return summaries, error_details
+                        for name, value in series.items()
+                    }
+        return summaries, list(error_details)
 
     def drain_summaries(self) -> list[dict]:
         """Drain accumulated stats and return per-operation summaries."""

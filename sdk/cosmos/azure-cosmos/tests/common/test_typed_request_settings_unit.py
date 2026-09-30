@@ -17,19 +17,197 @@ and not a moment earlier -- a customer who never touches it should not be stoppe
 importing the package.
 """
 from common.typed_requests import key_from_legacy_header
-from dataclasses import FrozenInstanceError, replace
+from collections.abc import Mapping
+from dataclasses import FrozenInstanceError, MISSING, fields, replace
+from functools import lru_cache
+from itertools import combinations
+import math
 from types import SimpleNamespace
+from typing import Literal, Union, get_args, get_origin, get_type_hints
 
 import pytest
 
-from azure.cosmos._backend.contracts import PreparedRequest, PreparedPageRequest
+from azure.cosmos._backend.contracts import (
+    PreparedRequest, PreparedPageRequest, PreparedClientConfig, PreparedFaultInjectionRule,
+)
 from azure.cosmos._backend.request_settings import (
-    RequestSettings, ItemSettings, QuerySettings, HedgingSettings,
+    RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings,
     binding_settings_contract_error, _request_settings_schema,
 )
 from azure.cosmos._backend.binding_adapter import build_binding_request_from_page as sync_page
 from azure.cosmos.aio._backend.binding_adapter import build_binding_request_from_page as async_page
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
+
+
+_SETTINGS_TYPES = (
+    RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings,
+    PreparedClientConfig, PreparedFaultInjectionRule,
+)
+
+
+def _required_settings_values(cls):
+    if cls is HedgingSettings:
+        return {"enabled": False}
+    if cls is PreparedFaultInjectionRule:
+        return {"id": "rule", "operation_type": "ReadItem", "status_code": 500}
+    return {}
+
+
+def _reflective_matches(value, annotation):
+    """Preserve the former validator as a test-only compatibility oracle."""
+    origin, args = get_origin(annotation), get_args(annotation)
+    if origin is Union:
+        return any(_reflective_matches(value, arg) for arg in args)
+    if origin is Literal:
+        return any(type(value) is type(choice) and value == choice for choice in args)
+    if origin is tuple:
+        return isinstance(value, tuple) and all(_reflective_matches(item, args[0]) for item in value)
+    if origin is Mapping:
+        return isinstance(value, Mapping) and all(
+            _reflective_matches(key, args[0]) and _reflective_matches(item, args[1])
+            for key, item in value.items()
+        )
+    if annotation is float:
+        return type(value) is int or (type(value) is float and math.isfinite(value))
+    if annotation in (bool, int, str, type(None)):
+        return type(value) is annotation
+    return isinstance(value, annotation)
+
+
+@lru_cache
+def _reference_annotations(cls):
+    return get_type_hints(cls)
+
+
+def _reflective_settings_values(cls, kwargs):
+    values = dict(kwargs)
+    for member in fields(cls):
+        if member.name not in values:
+            values[member.name] = (
+                member.default_factory() if member.default is MISSING else member.default
+            )
+    if cls is PreparedClientConfig:
+        for name in ("preferred_locations", "excluded_locations", "fault_injection_rules"):
+            if not isinstance(values[name], (list, tuple)):
+                raise TypeError(f"PreparedClientConfig.{name} must be a list or tuple")
+            values[name] = tuple(values[name])
+    annotations = _reference_annotations(cls)
+    for name, annotation in ((member.name, annotations[member.name]) for member in fields(cls)):
+        if not _reflective_matches(values[name], annotation):
+            raise TypeError(f"{cls.__name__}.{name} has an invalid value type")
+    if cls is HedgingSettings:
+        threshold = values["threshold_ms"]
+        if values["enabled"]:
+            if threshold is None or not 0 < threshold < 2**64:
+                raise ValueError("Enabled hedging requires a positive u64 threshold_ms")
+        elif threshold is not None:
+            raise ValueError("Disabled hedging must not specify threshold_ms")
+    if cls is RequestSettings:
+        timeout, bucket = values["timeout_seconds"], values["throughput_bucket"]
+        if timeout is not None and not 0 < timeout < 2**64:
+            raise ValueError("timeout_seconds must be finite, positive and less than 2**64")
+        if bucket is not None and not 0 <= bucket < 2**32:
+            raise ValueError("throughput_bucket must be an unsigned 32-bit integer")
+    return values
+
+
+class _IntSubclass(int):
+    pass
+
+
+class _FloatSubclass(float):
+    pass
+
+
+class _StringSubclass(str):
+    pass
+
+
+class _TupleSubclass(tuple):
+    pass
+
+
+_VALIDATION_VALUES = (
+    None, False, True, -1, 0, 1, 2**32 - 1, 2**32, 2**64 - 1, 2**64, 10**500,
+    -0.5, 0.0, 0.5, float("nan"), float("inf"), float("-inf"), "",
+    "High", "Low", "Urgent", (), ("value",), ("value", 1), [], ["value"], {},
+    _IntSubclass(1), _FloatSubclass(0.5), _StringSubclass("High"),
+    _TupleSubclass(("value",)), (_StringSubclass("value"),),
+    ItemSettings(), QuerySettings(), ResourceSettings(), HedgingSettings(False),
+    HedgingSettings(True, 500), SimpleNamespace(),
+    (PreparedFaultInjectionRule("rule", "ReadItem", 500),),
+)
+
+
+@pytest.mark.parametrize("cls,field_name", [
+    (cls, member.name) for cls in _SETTINGS_TYPES for member in fields(cls)
+])
+@pytest.mark.parametrize("value", _VALIDATION_VALUES, ids=lambda value: type(value).__name__)
+def test_explicit_validation_matches_former_reflection(cls, field_name, value):
+    kwargs = {**_required_settings_values(cls), field_name: value}
+    try:
+        expected = _reflective_settings_values(cls, kwargs)
+    except (TypeError, ValueError) as error:
+        with pytest.raises(type(error)) as caught:
+            cls(**kwargs)
+        assert str(caught.value) == str(error)
+    else:
+        actual = cls(**kwargs)
+        assert {member.name: getattr(actual, member.name) for member in fields(cls)} == expected
+
+
+@pytest.mark.parametrize("cls", _SETTINGS_TYPES)
+def test_settings_construction_does_not_inspect_annotations_or_fields(monkeypatch, cls):
+    import dataclasses
+    import typing
+    from azure.cosmos._backend import request_settings
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("Settings construction must not use reflection")
+
+    for name in ("get_type_hints", "get_origin", "get_args"):
+        monkeypatch.setattr(typing, name, unexpected)
+    monkeypatch.setattr(dataclasses, "fields", unexpected)
+    monkeypatch.setattr(request_settings, "fields", unexpected)
+    cls(**_required_settings_values(cls))
+
+
+@pytest.mark.parametrize("kwargs,field_name", [
+    ({"priority": "Urgent", "throughput_bucket": True}, "priority"),
+    ({"throughput_bucket": -1, "session_token": 3}, "session_token"),
+    ({"timeout_seconds": 0, "item": None}, "item"),
+])
+def test_field_type_errors_still_precede_range_errors(kwargs, field_name):
+    with pytest.raises(TypeError, match=rf"RequestSettings\.{field_name} has an invalid value type"):
+        RequestSettings(**kwargs)
+
+
+@pytest.mark.parametrize("cls,first,second", [
+    (cls, first.name, second.name)
+    for cls in _SETTINGS_TYPES for first, second in combinations(fields(cls), 2)
+])
+def test_multiple_invalid_fields_preserve_error_order(cls, first, second):
+    kwargs = {**_required_settings_values(cls), first: object(), second: object()}
+    with pytest.raises(TypeError) as expected:
+        _reflective_settings_values(cls, kwargs)
+    with pytest.raises(TypeError) as actual:
+        cls(**kwargs)
+    assert str(actual.value) == str(expected.value)
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("threshold", [None, True, -1, 0, 1, 2**64 - 1, 2**64])
+def test_hedging_range_and_type_checks_match_original(enabled, threshold):
+    kwargs = {"enabled": enabled, "threshold_ms": threshold}
+    try:
+        expected = _reflective_settings_values(HedgingSettings, kwargs)
+    except (TypeError, ValueError) as error:
+        with pytest.raises(type(error)) as caught:
+            HedgingSettings(**kwargs)
+        assert str(caught.value) == str(error)
+    else:
+        actual = HedgingSettings(**kwargs)
+        assert (actual.enabled, actual.threshold_ms) == (expected["enabled"], expected["threshold_ms"])
 
 
 def test_settings_are_validated_and_immutable():

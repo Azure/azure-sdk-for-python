@@ -623,7 +623,10 @@ def test_read_consistency_reaches_binding_settings(point_read, source):
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
 @pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix", "Unknown"])
 @pytest.mark.parametrize("raw_header", [False, True])
-def test_native_unsupported_read_consistency_fails_before_driver_lookup(method, level, raw_header):
+@pytest.mark.parametrize("timeout_seconds", [None, float("nan")])
+def test_native_unsupported_read_consistency_fails_before_driver_lookup(
+    method, level, raw_header, timeout_seconds
+):
     from azure.cosmos._backend.contracts import PreparedRequest
     from azure.cosmos._backend.request_settings import RequestSettings
 
@@ -635,4 +638,24 @@ def test_native_unsupported_read_consistency_fails_before_driver_lookup(method, 
         settings=RequestSettings(consistency_level=None if raw_header else level),
     )
     with pytest.raises(NotImplementedError, match="per-call consistency"):
+        getattr(binding, method)(
+            driver_handle="invalid-driver-handle", prepared=prepared, timeout_seconds=timeout_seconds
+        )
+
+
+@pytest.mark.parametrize("method", ["read_item", "read_item_async"])
+@pytest.mark.parametrize("level", ["Eventual", "Session", "Strong", None])
+@pytest.mark.parametrize("raw_header", [False, True])
+def test_native_supported_read_consistency_reaches_driver_lookup(method, level, raw_header):
+    from azure.cosmos._backend.contracts import PreparedRequest
+    from azure.cosmos._backend.request_settings import RequestSettings
+
+    binding = pytest.importorskip("azure.cosmos._rust")
+    prepared = PreparedRequest(
+        "read_item", "dbs/db/colls/c", b"",
+        key_from_legacy_header('["pk"]'), item_id="item",
+        headers={"x-ms-consistency-level": level} if raw_header and level is not None else {},
+        settings=RequestSettings(consistency_level=None if raw_header else level),
+    )
+    with pytest.raises(RuntimeError, match="no driver registered for handle"):
         getattr(binding, method)(driver_handle="invalid-driver-handle", prepared=prepared)

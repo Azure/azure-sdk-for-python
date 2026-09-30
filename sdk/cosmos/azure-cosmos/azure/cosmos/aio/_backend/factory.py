@@ -17,7 +17,7 @@ call the binding and await its results.
 """
 from __future__ import annotations
 
-from typing import Any, Optional, Sequence
+from typing import Any, Mapping, Optional, Sequence
 
 from azure.cosmos._backend.factory import _make_backend
 
@@ -42,6 +42,7 @@ def make_async_backend(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
+    headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -72,6 +73,7 @@ def make_async_backend(
         connection_timeout_seconds=connection_timeout_seconds,
         read_timeout_seconds=read_timeout_seconds,
         fault_injection_rules=fault_injection_rules,
+        headers=headers,
         proxy_config=proxy_config,
         proxies=proxies,
         connection_verify=connection_verify,

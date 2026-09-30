@@ -69,10 +69,11 @@
 //! DriverOptions. See docs/V5/VOCABULARY.md for the object names and
 //! docs/V5/use-cases/01-cosmos-client-creation.md for the ownership walkthrough.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 
+use azure_core::http::headers::{HeaderName, HeaderValue};
 use parking_lot::RwLock;
 use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
@@ -240,6 +241,7 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
         "connection_timeout_seconds": finite(field!("connection_timeout_seconds", f64), "connection_timeout_seconds")?,
         "read_timeout_seconds": finite(field!("read_timeout_seconds", f64), "read_timeout_seconds")?,
         "fault_injection_rules": rules,
+        "headers": client_headers_from_config(config)?,
     });
     Ok(config_fingerprint_from_value(&value))
 }
@@ -470,7 +472,7 @@ pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Opti
 }
 
 /// Acquire a CosmosDriver object and return a driver handle for later binding calls.
-/// The Python backend requests this on first use. This function does not enforce
+/// The Python adapter requests this on first use. This function does not enforce
 /// one acquisition per Python client.
 ///
 /// A cache hit increments its count. On a miss, build outside the cache lock,
@@ -772,6 +774,15 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     let Some(config) = config else {
         return Ok(builder.build());
     };
+    let headers = client_headers_from_config(Some(config))?;
+    if !headers.is_empty() {
+        builder = builder.with_custom_headers(
+            headers
+                .into_iter()
+                .map(|(name, value)| (HeaderName::from(name), HeaderValue::from(value)))
+                .collect(),
+        );
+    }
 
     // Convert excluded_locations to the same ExcludedRegions type used by
     // per-operation settings.
@@ -851,6 +862,19 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     }
 
     Ok(builder.build())
+}
+
+fn client_headers_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<BTreeMap<String, String>> {
+    let mut headers = BTreeMap::new();
+    if let Some(config) = config {
+        if let Some(value) = get_config_opt::<PyObject>(config, "headers")? {
+            for pair in value.bind(config.py()).call_method0("items")?.iter()? {
+                let (name, value) = pair?.extract::<(String, String)>()?;
+                headers.insert(name.to_ascii_lowercase(), value);
+            }
+        }
+    }
+    Ok(headers)
 }
 
 /// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
@@ -944,6 +968,28 @@ mod tests {
     use pyo3::prelude::*;
     use pyo3::types::{PyModule, PyString};
     use std::time::Duration;
+
+    #[test]
+    fn client_headers_configure_driver_and_isolate_cached_clients() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let config = py.import_bound("types").unwrap()
+                .getattr("SimpleNamespace").unwrap().call0().unwrap();
+            let headers = pyo3::types::PyDict::new_bound(py);
+            headers.set_item("X-Application", "first").unwrap();
+            config.setattr("headers", &headers).unwrap();
+            let first = super::config_fingerprint(Some(&config)).unwrap();
+            let options = operation_options_from_config(Some(&config)).unwrap();
+            assert_eq!(options.custom_headers.unwrap()[
+                &azure_core::http::headers::HeaderName::from_static("x-application")
+            ].as_str(), "first");
+            headers.clear();
+            headers.set_item("x-application", "first").unwrap();
+            assert_eq!(first, super::config_fingerprint(Some(&config)).unwrap());
+            headers.set_item("x-application", "second").unwrap();
+            assert_ne!(first, super::config_fingerprint(Some(&config)).unwrap());
+        });
+    }
 
     #[test]
     fn client_config_rejects_invalid_retries_and_regions() {

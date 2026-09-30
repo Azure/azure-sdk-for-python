@@ -117,7 +117,7 @@ fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyI
     ))
 }
 
-/// Extract replace/patch inputs without deriving the target from the body.
+/// Extract replace inputs without deriving the target from the body.
 /// `item_id` is required here; replace may subsequently use `item_self_link`.
 /// A different id inside the body must not redirect the operation.
 fn extract_item_body_inputs(
