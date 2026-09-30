@@ -237,6 +237,21 @@ class ODataV4Format:
 
         self.innererror: Mapping[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
 
+    def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+        """Return the parsed error as a JSON-compatible dictionary.
+
+        :keyword bool exclude_readonly: Whether to exclude readonly fields.
+        :return: A dictionary representing the error.
+        :rtype: dict[str, Any]
+        """
+        return {
+            self.CODE_LABEL: self.code,
+            self.MESSAGE_LABEL: self.message,
+            self.TARGET_LABEL: self.target,
+            self.DETAILS_LABEL: [detail.as_dict(exclude_readonly=exclude_readonly) for detail in self.details],
+            self.INNERERROR_LABEL: dict(self.innererror) if self.innererror is not None else None,
+        }
+
     @property
     def error(self: SelfODataV4Format) -> SelfODataV4Format:
         import warnings

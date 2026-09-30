@@ -19,7 +19,7 @@ from azure.core.serialization import (
     is_generated_model,
     attribute_list,
 )
-from azure.core.exceptions import DeserializationError
+from azure.core.exceptions import DeserializationError, ODataV4Format
 import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
@@ -149,6 +149,56 @@ def test_dictionary_basic(json_dumps_with_encoder):
     complex_serialized = json_dumps_with_encoder(test_obj)
     assert json.dumps(test_obj) == complex_serialized
     assert json.loads(complex_serialized) == test_obj
+
+
+def test_generated_model_as_dict_with_odata_v4_format():
+    class TestModel(HybridModel):
+        name: str = rest_field()
+        count: int = rest_field()
+        enabled: bool = rest_field()
+        optional: Optional[str] = rest_field()
+        InnerError: List[ODataV4Format] = rest_field()
+        readonly: List[ODataV4Format] = rest_field(visibility=["read"])
+
+    wire_error = {
+        "code": "BadRequest",
+        "message": "Invalid request",
+        "details": [{"code": "InvalidValue", "message": "Invalid name"}],
+        "innererror": {"trace": {"id": "123", "optional": None}},
+    }
+    minimal_error = {"message": "Missing value", "innererror": None}
+    model = TestModel(
+        {
+            "name": "test",
+            "count": 0,
+            "enabled": False,
+            "optional": None,
+            "InnerError": [wire_error, minimal_error],
+            "readonly": [wire_error],
+        }
+    )
+    assert all(isinstance(error, ODataV4Format) for error in model.InnerError)
+    assert isinstance(model.readonly[0], ODataV4Format)
+    serialized_error = {
+        **wire_error,
+        "target": None,
+        "details": [
+            {"code": "InvalidValue", "message": "Invalid name", "target": None, "details": [], "innererror": {}}
+        ],
+    }
+    expected = {
+        "name": "test",
+        "count": 0,
+        "enabled": False,
+        "optional": None,
+        "InnerError": [
+            serialized_error,
+            {"code": None, "message": "Missing value", "target": None, "details": [], "innererror": None},
+        ],
+        "readonly": [serialized_error],
+    }
+
+    assert json.loads(json.dumps(model.as_dict())) == expected
 
 
 def test_dictionary_set():
