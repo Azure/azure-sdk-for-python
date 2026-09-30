@@ -32,7 +32,7 @@ cargo fetch --locked --manifest-path "${PKG_ROOT}/Cargo.toml" || exit 2
 AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT="$(python3 ./perf_build_details.py driver-commit)" || exit 2
 
 command -v maturin >/dev/null 2>&1 || {
-  echo "ERROR: maturin is not installed in the perfdrill environment." >&2
+  echo "ERROR: maturin is not installed in the selected environment: ${VIRTUAL_ENV}." >&2
   echo "       python3 -m pip install maturin" >&2
   exit 2
 }

@@ -2,12 +2,13 @@
 # Licensed under the MIT License.
 """Run original item tests or copied reads using exclusively owned resources.
 
-The original test body is unchanged; its setUp uses TestConfig pointing to a
+Runs the original test methods; their setUp uses TestConfig pointing to a
 fresh database and container. Shared conftest provisioning is disabled. This
 checks key authentication, not the original shared fixture or AAD setup.
 Run each backend in a separate process and save stdout for the parity reporter
-with the same --op. The default operation is read_item; create_item and
-replace_item select their original test or Rust copy. The original suite expects one test;
+with the same --op. The default operation is read_item; create_item,
+replace_item and delete_item select their original test or Rust copy. Upsert selects both the
+None-options test and test_document_upsert (two tests). Other original selections expect one test;
 --suite copied supports read_item only and expects seven. Copied-suite baseline
 files change only the explicit backend.
 """
@@ -31,6 +32,8 @@ METHODS = {
     "read_item": "::TestNoneOptions::test_container_read_item_none_options",
     "create_item": "::TestNoneOptions::test_container_create_item_none_options",
     "replace_item": "::TestNoneOptions::test_replace_item_none_options",
+    "upsert_item": "::TestNoneOptions::test_upsert_item_none_options",
+    "delete_item": "::TestNoneOptions::test_delete_item_none_options",
 }
 METHOD = METHODS["read_item"]
 
@@ -80,6 +83,9 @@ def main(argv=None):
     os.environ["COSMOS_TEST_DATA_AUTH_MODE"] = "key"
     os.environ["COSMOS_PARITY_CAPTURE_OP"] = args.op
     method = METHODS[args.op]
+    selections = [("test_none_options.py", method)]
+    if args.op == "upsert_item":
+        selections.append(("test_crud.py", "::TestCRUDOperations::test_document_upsert"))
     options = [
         "--noconftest", "--import-mode=importlib", "-p", "common.parity_capture_plugin",
         "-p", "no:cacheprovider", "-v", "-s", "--disable-warnings", "--tb=short",
@@ -87,13 +93,16 @@ def main(argv=None):
     if args.suite == "copied":
         return run_copied_suite(args.backend, options)
     if args.backend == "rust":
-        path = ROOT / "tests" / args.op / "sync" / "legacy" / "test_none_options.py"
-        return pytest.main(options + [str(path) + method])
+        folder = ROOT / "tests" / args.op / "sync" / "legacy"
+        return pytest.main(options + [str(folder / filename) + node for filename, node in selections])
 
     import test_config  # pylint: disable=import-outside-toplevel
 
     config = test_config.TestConfig
-    previous_ids = (config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID)
+    previous_ids = (
+        config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+        config.TEST_MULTI_PARTITION_CONTAINER_ID,
+    )
     database_id = args.op.removesuffix("_item") + "_parity_core_" + uuid.uuid4().hex
     container_id = "orders"
     with CosmosClient(
@@ -105,10 +114,14 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            path = ROOT / "tests" / "test_none_options.py"
-            return pytest.main(options + [str(path) + method])
+            if args.op == "upsert_item":
+                config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
+            return pytest.main(options + [
+                str(ROOT / "tests" / filename) + node for filename, node in selections
+            ])
         finally:
-            config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID = previous_ids
+            (config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+             config.TEST_MULTI_PARTITION_CONTAINER_ID) = previous_ids
             client.delete_database(database_id)
             print(f"Deleted owned core-python database: {database_id}")
 

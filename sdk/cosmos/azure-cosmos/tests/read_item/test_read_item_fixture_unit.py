@@ -13,12 +13,15 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 ROOT = Path(__file__).resolve().parents[2]
 OPERATION_METHODS = {
     "read_item": "test_container_read_item_none_options",
     "create_item": "test_container_create_item_none_options",
     "replace_item": "test_replace_item_none_options",
+    "upsert_item": "test_upsert_item_none_options",
+    "delete_item": "test_delete_item_none_options",
 }
 
 
@@ -81,6 +84,21 @@ def test_rust_fixture_cleanup(monkeypatch, failure, operation):
     container.read_item.side_effect = lambda item, **kwargs: {"id": item}
     container.create_item.side_effect = lambda item, **kwargs: dict(item)
     container.replace_item.side_effect = lambda item, body, **kwargs: dict(body)
+    container.upsert_item.side_effect = lambda item, **kwargs: dict(item)
+    if operation == "delete_item":
+        deleted = False
+
+        def delete_item(*args, **kwargs):
+            nonlocal deleted
+            deleted = True
+
+        def read_item(item, **kwargs):
+            if deleted:
+                raise CosmosHttpResponseError(status_code=404, message="deleted")
+            return {"id": item, "pk": "pk-value", "value": 42}
+
+        container.delete_item.side_effect = delete_item
+        container.read_item.side_effect = read_item
 
     def delete(database_id):
         events.append("delete")
@@ -186,7 +204,10 @@ def test_runner_owns_original_resources(monkeypatch, failure, operation):
     import test_config
 
     config = test_config.TestConfig
-    previous_ids = (config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID)
+    previous_ids = (
+        config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+        config.TEST_MULTI_PARTITION_CONTAINER_ID,
+    )
     client = MagicMock()
     client.__enter__.return_value = client
     monkeypatch.setattr(runner, "CosmosClient", MagicMock(return_value=client))
@@ -202,7 +223,11 @@ def test_runner_owns_original_resources(monkeypatch, failure, operation):
         assert "--noconftest" in options
         assert "common.parity_capture_plugin" in options
         method = "::TestNoneOptions::" + OPERATION_METHODS[operation]
-        assert options[-1] == str(ROOT / "tests" / "test_none_options.py") + method
+        expected_nodes = [str(ROOT / "tests" / "test_none_options.py") + method]
+        if operation == "upsert_item":
+            expected_nodes.append(str(ROOT / "tests" / "test_crud.py") + "::TestCRUDOperations::test_document_upsert")
+            assert config.TEST_MULTI_PARTITION_CONTAINER_ID == "orders"
+        assert options[-len(expected_nodes):] == expected_nodes
         assert os.environ["COSMOS_PARITY_CAPTURE_OP"] == operation
         assert config.TEST_DATABASE_ID.startswith(operation.removesuffix("_item") + "_parity_core_")
         assert config.TEST_DATABASE_ID != previous_ids[0]
@@ -232,7 +257,10 @@ def test_runner_owns_original_resources(monkeypatch, failure, operation):
     else:
         client.delete_database.assert_called_once_with(owned_id)
     client.__exit__.assert_called_once()
-    assert (config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID) == previous_ids
+    assert (
+        config.TEST_DATABASE_ID, config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+        config.TEST_MULTI_PARTITION_CONTAINER_ID,
+    ) == previous_ids
     assert len(seen) == (0 if failure in ("database", "container") else 1)
 
 
@@ -254,16 +282,22 @@ def test_runner_selects_rust_copy(monkeypatch, operation):
     assert runner.main(arguments) == 0
     selected = operation or "read_item"
     options = execute.call_args.args[0]
-    assert options[-1] == (
+    expected_nodes = [(
         str(ROOT / "tests" / selected / "sync" / "legacy" / "test_none_options.py")
         + "::TestNoneOptions::" + OPERATION_METHODS[selected]
-    )
+    )]
+    if selected == "upsert_item":
+        expected_nodes.append(
+            str(ROOT / "tests" / selected / "sync" / "legacy" / "test_crud.py")
+            + "::TestCRUDOperations::test_document_upsert"
+        )
+    assert options[-len(expected_nodes):] == expected_nodes
     assert os.environ["COSMOS_PARITY_CAPTURE_OP"] == selected
     assert "--noconftest" in options
     client_factory.assert_not_called()
 
 
-@pytest.mark.parametrize("operation", ["create_item", "replace_item"])
+@pytest.mark.parametrize("operation", ["create_item", "replace_item", "upsert_item", "delete_item"])
 def test_runner_rejects_unsupported_copied_suite(monkeypatch, operation):
     monkeypatch.setattr(sys, "path", list(sys.path))
     runner = _load("read_parity_runner", ROOT / "scripts" / "v5" / "run_read_item_parity.py")

@@ -23,7 +23,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
 source ./perf_drill_defaults.sh >/dev/null 2>&1
-source ~/venvs/perfdrill/bin/activate
+source ./profiling_common.sh
+profiling_activate_python
 perf_single_operation_shape
 
 DURATION="${1:-600}"

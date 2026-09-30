@@ -5,7 +5,7 @@
 #
 # WHY THIS EXISTS: each profiling step runs as its own process, so an
 # environment prepared by one of them disappears when it exits. A script that
-# activates the perfdrill virtual environment cannot hand that activation to
+# activates the selected Python environment cannot hand that activation to
 # the next script. If each step does not load its own environment, later steps
 # silently use the system python3 -- a different interpreter, without the built
 # _rust extension and without py-spy or Memray -- and the checks they perform
@@ -197,6 +197,12 @@ current = extension_details()
 for name in ("rust_extension_sha256", "rust_extension_python_commit", "rust_extension_driver_commit"):
     if build.get(name) != current[name]:
         bad.append(f"{name}: loaded extension differs from the session manifest")
+for name, current_value in (
+    ("python_executable", sys.executable),
+    ("python_environment", sys.prefix),
+):
+    if name in build and build[name] != current_value:
+        bad.append(f"{name}: active Python environment differs from the session manifest")
 if bad:
     print("ERROR: session manifest does not match the active session/target:", file=sys.stderr)
     for problem in bad:
@@ -209,15 +215,33 @@ PY
 }
 
 profiling_activate_python() {
-  if [[ ! -f ~/venvs/perfdrill/bin/activate ]]; then
-    echo "ERROR: ~/venvs/perfdrill/bin/activate is missing." >&2
+  local selected="${PROFILING_VENV-$HOME/venvs/perfdrill}"
+  if [[ -z "$selected" || "$selected" != /* ]]; then
+    echo "ERROR: PROFILING_VENV must be a non-empty absolute environment path." >&2
     return 2
   fi
-  source ~/venvs/perfdrill/bin/activate || return 2
-  if [[ -z "${VIRTUAL_ENV:-}" ]]; then
-    echo "ERROR: perfdrill activation did not set VIRTUAL_ENV." >&2
+  if [[ ! -f "$selected/bin/activate" ]]; then
+    echo "ERROR: selected Python environment has no activation script: $selected/bin/activate" >&2
     return 2
   fi
+  if [[ ! -x "$selected/bin/python3" ]]; then
+    echo "ERROR: selected Python environment has no executable interpreter: $selected/bin/python3" >&2
+    return 2
+  fi
+  selected="$(cd -- "$selected" && pwd -P)" || return 2
+  source "$selected/bin/activate" || {
+    echo "ERROR: could not activate selected Python environment: $selected" >&2
+    return 2
+  }
+  if [[ -z "${VIRTUAL_ENV:-}" || ! "$VIRTUAL_ENV" -ef "$selected" ]]; then
+    echo "ERROR: activation did not select the requested Python environment: $selected" >&2
+    return 2
+  fi
+  if [[ "$(type -P python3)" != "$VIRTUAL_ENV/bin/python3" ]]; then
+    echo "ERROR: activation did not put the selected environment's python3 first on PATH: $selected" >&2
+    return 2
+  fi
+  export PROFILING_VENV="$selected"
 }
 
 profiling_load_config() {

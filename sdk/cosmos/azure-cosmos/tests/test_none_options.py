@@ -123,15 +123,18 @@ class TestNoneOptions(unittest.TestCase):
 
     def test_delete_item_none_options(self):
         item = self._create_sample_item()
+        before_delete = self.container.read_item(item["id"], partition_key=item["pk"])
+        self.assertEqual({key: before_delete[key] for key in item}, item)
         self.container.delete_item(item["id"], partition_key=item["pk"], pre_trigger_include=None,
                                     post_trigger_include=None, session_token=None, initial_headers=None,
                                     etag=None, match_condition=None, priority=None, retry_write=None,
                                     throughput_bucket=None)
-        with self.assertRaises(CosmosHttpResponseError):
+        with self.assertRaises(CosmosHttpResponseError) as caught:
             self.container.read_item(item["id"], partition_key=item["pk"], post_trigger_include=None,
                                      session_token=None, initial_headers=None,
                                      max_integrated_cache_staleness_in_ms=None, priority=None,
                                      throughput_bucket=None)
+        self.assertEqual(caught.exception.status_code, 404)
 
     def test_get_throughput_none_options(self):
         # get_throughput reads the offer, which is a control-plane operation that may

@@ -90,8 +90,7 @@ def normalize_item_arguments(
             body = build_create_document(body, generate_id=generate_id)
         elif isinstance(body, dict):
             body = dict(body)
-            if op == "replace_item":
-                validate_resource(body)
+            validate_resource(body)
         args["document"] = serialize_document(
             body, operation=op, compact_utf8=compact_utf8,
         )

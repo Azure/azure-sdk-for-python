@@ -479,6 +479,8 @@ def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, 
     assert json.loads(text)["account"]["database"] == 'db"quoted'
     record = json.loads(text)
     assert record["stamp"] == STAMP
+    assert record["build"]["python_executable"] == sys.executable
+    assert record["build"]["python_environment"] == sys.prefix
     assert record.get("profiling_session_id") == profiling_session_id
     assert ("profiling_session_id" in record) == (profiling_session_id is not None)
     assert record["configuration"] == {
@@ -505,9 +507,115 @@ def bash_executable():
     return bash
 
 
+def fake_profiling_environment(tmp_path, name="venvs/perfdrill"):
+    activate = tmp_path / name / "bin" / "activate"
+    activate.parent.mkdir(parents=True)
+    activate.write_text(
+        'export VIRTUAL_ENV="$(cd -- "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"\n'
+        'export PATH="$VIRTUAL_ENV/bin:$PATH"\n',
+        encoding="utf-8",
+    )
+    interpreter = activate.with_name("python3")
+    interpreter.write_text(
+        '#!/usr/bin/env bash\nexec "$PROFILING_TEST_PYTHON" "$@"\n', encoding="utf-8",
+    )
+    interpreter.chmod(0o755)
+    return activate
+
+
 def embedded_python(script, index=0):
     heredoc = (WORKLOADS / script).read_text(encoding="utf-8").split("<<'PY'")[index + 1]
     return heredoc.split("\n", 1)[1].split("\nPY", 1)[0]
+
+
+@pytest.mark.parametrize("selection", ["default", "candidate"])
+def test_profiling_environment_selection_survives_child_processes(tmp_path, selection):
+    shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
+    for name in ("venvs/perfdrill", "candidate environment"):
+        fake_profiling_environment(tmp_path, name)
+    selected = "venvs/perfdrill" if selection == "default" else "candidate environment"
+    command = (
+        'export HOME="$PWD"\nunset PROFILING_VENV\n'
+        'export VIRTUAL_ENV="$HOME/unrelated-active-environment"\n'
+        'source ./profiling_common.sh\n'
+    )
+    if selection == "candidate":
+        command += 'PROFILING_VENV="$PWD/candidate environment"\n'
+    command += (
+        'profiling_activate_python || exit $?\n'
+        f'[[ "$VIRTUAL_ENV" -ef "$PWD/{selected}" ]] || exit 3\n'
+        '[[ "$PROFILING_VENV" == "$VIRTUAL_ENV" ]] || exit 4\n'
+        "bash --noprofile --norc -c 'source ./profiling_common.sh; "
+        'profiling_activate_python || exit $?; '
+        f'[[ "$VIRTUAL_ENV" -ef "$PWD/{selected}" ]]\'\n'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("defect", [
+    "empty", "relative", "missing", "interpreter", "failed", "wrong", "unset", "wrong_path",
+])
+def test_profiling_environment_selection_fails_without_falling_back(tmp_path, defect):
+    shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
+    activate = fake_profiling_environment(tmp_path, "candidate")
+    scripts = {
+        "failed": "return 1\n",
+        "wrong": 'export VIRTUAL_ENV="$HOME"\n',
+        "unset": "unset VIRTUAL_ENV\n",
+        "wrong_path": 'export VIRTUAL_ENV="$HOME/candidate"\n',
+    }
+    if defect in scripts:
+        activate.write_text(scripts[defect], encoding="utf-8")
+    elif defect == "missing":
+        activate.unlink()
+    elif defect == "interpreter":
+        activate.with_name("python3").unlink()
+    selected = {"empty": '""', "relative": '"candidate"'}.get(defect, '"$PWD/candidate"')
+    command = (
+        'export HOME="$PWD"\nsource ./profiling_common.sh\n'
+        'export VIRTUAL_ENV="$HOME/previous-environment"\n'
+        f'PROFILING_VENV={selected}\nprofiling_activate_python\n'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert "ERROR:" in result.stderr
+
+
+@pytest.mark.parametrize("field", ["python_executable", "python_environment"])
+@pytest.mark.parametrize("matching", [False, True])
+def test_session_validation_checks_the_recorded_python_environment(
+    modules, monkeypatch, tmp_path, field, matching
+):
+    details = importlib.import_module("perf_build_details")
+    extension = {
+        "rust_extension_sha256": "a" * 64,
+        "rust_extension_python_commit": "b" * 40,
+        "rust_extension_driver_commit": "c" * 40,
+    }
+    current = {"python_executable": sys.executable, "python_environment": sys.prefix}
+    monkeypatch.setattr(details, "extension_details", lambda: extension)
+    monkeypatch.setattr(details, "source_digest", lambda: "d" * 64)
+    manifest = {
+        "stamp": STAMP, "phase": "read-baseline",
+        "account": {"uri": "https://example.invalid", "database": "db", "container": "items"},
+        "build": {"source_sha256": "d" * 64, **extension,
+                  field: current[field] if matching else "different-environment"},
+    }
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "-", str(path), STAMP, "read-baseline", "https://example.invalid", "db", "items",
+    ])
+    code = compile(embedded_python("profiling_common.sh", index=1), "session-validation", "exec")
+    if matching:
+        exec(code, {})
+    else:
+        with pytest.raises(SystemExit) as error:
+            exec(code, {})
+        assert error.value.code == 1
 
 
 @pytest.mark.parametrize("saved_name", ["PROFILING_SESSION_ID", "RUN_ID", "both", "missing", "conflicting"])
@@ -1361,12 +1469,12 @@ def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):
     assert not (tmp_path / "contacted.txt").exists()
 
 
-def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path):
+@pytest.mark.parametrize("environment", ["venvs/perfdrill", "candidate environment"])
+def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path, environment):
     config, env, prefix = profiling_config_test_setup(tmp_path)
     config.unlink()
-    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
-    activate.parent.mkdir(parents=True)
-    activate.write_text('export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n', encoding="utf-8")
+    fake_profiling_environment(tmp_path, environment)
+    prefix += f'PROFILING_VENV="$HOME/{environment}"\n'
     script = "profiling_build_extension.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
@@ -1385,12 +1493,33 @@ def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path):
     assert commands[1] == "maturin develop --release --locked"
 
 
+@pytest.mark.parametrize("script", ["run_coldstart.sh", "run_docsize.sh", "run_mixed.sh"])
+def test_auxiliary_workloads_use_the_selected_environment(tmp_path, script):
+    for name in (script, "profiling_common.sh"):
+        shutil.copyfile(WORKLOADS / name, tmp_path / name)
+    fake_profiling_environment(tmp_path, "candidate environment")
+    (tmp_path / "perf_secrets.env").write_text("", encoding="utf-8")
+    (tmp_path / "perf_drill_defaults.sh").write_text(
+        "perf_single_operation_shape() { :; }\n"
+        "perf_require_positive() { :; }\n"
+        'perf_create_log_dir() { printf "%s\\n" "$VIRTUAL_ENV" > selected.txt; return 7; }\n',
+        encoding="utf-8",
+    )
+    command = (
+        'export HOME="$PWD"\nexport PROFILING_VENV="$HOME/candidate environment"\n'
+        f'bash ./{script} 1\n'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert (tmp_path / "selected.txt").read_text().strip().endswith("/candidate environment")
+
+
 def test_build_finds_common_helpers_after_changing_to_package_directory(tmp_path):
     _, env, _ = profiling_config_test_setup(tmp_path)
-    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
-    activate.parent.mkdir(parents=True)
+    activate = fake_profiling_environment(tmp_path)
     activate.write_text(
-        'export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n'
+        activate.read_text() +
         "git() { printf '%040d\\n' 1; }\n"
         "cargo() { :; }\nmaturin() { :; }\n"
         "python3() {\n"
@@ -1403,7 +1532,8 @@ def test_build_finds_common_helpers_after_changing_to_package_directory(tmp_path
     for name in ("profiling_build_extension.sh", "profiling_common.sh", "perf_build_details.py"):
         shutil.copyfile(WORKLOADS / name, scripts / name)
     result = subprocess.run(
-        [bash_executable(), "-c", 'export HOME="$TEST_HOME"; bash ./profiling_build_extension.sh'],
+        [bash_executable(), "-c",
+         'export HOME="$(cd "$TEST_HOME" && pwd)"; bash ./profiling_build_extension.sh'],
         cwd=scripts, env={**env, "TEST_HOME": tmp_path.as_posix()},
         capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stdout + result.stderr
@@ -1422,9 +1552,7 @@ def test_profiling_config_accepts_fractional_timeout(tmp_path):
 @pytest.mark.parametrize("rate", ["250", "333"])
 def test_credentials_file_cannot_replace_experiment_configuration(tmp_path, rate):
     _, env, prefix = profiling_config_test_setup(tmp_path)
-    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
-    activate.parent.mkdir(parents=True)
-    activate.write_text('export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n', encoding="utf-8")
+    fake_profiling_environment(tmp_path)
     (tmp_path / "perf_secrets.env").write_text(
         "export COSMOS_KEY=synthetic-test-key\nexport RESULTS_COSMOS_KEY=synthetic-results-key\n"
         f"export WORKLOAD_ARRIVAL_RATE={rate}\n", encoding="utf-8")

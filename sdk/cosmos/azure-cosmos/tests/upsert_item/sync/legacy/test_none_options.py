@@ -6,6 +6,7 @@ Copied from ``tests/test_none_options.py``; the class and method names
 match the source so the parity reporter can pair the core-python and
 Rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
 / ``ACCOUNT_KEY`` from the environment.
+Registers cleanup after acquisition, including when setup fails.
 
 Run: ``pytest --noconftest tests/upsert_item/sync/legacy/test_none_options.py -v``
 """
@@ -30,19 +31,15 @@ class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_ui_none_opts_" + uuid.uuid4().hex[:8]
+        self.addCleanup(self.client.close)
+        self._db_id = "legacy_upsert_none_opts_" + uuid.uuid4().hex
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
+        self.addCleanup(self.client.delete_database, self._db_id)
         self.container = self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    def tearDown(self) -> None:
-        try:
-            self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
 
     def test_upsert_item_none_options(self):
         """Verify upsert_item accepts None for every optional kwarg (pre_trigger_include, post_trigger_include, session_token, initial_headers, etag, match_condition, priority, no_response, retry_write, throughput_bucket) and returns the upserted item."""

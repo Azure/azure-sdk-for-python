@@ -724,6 +724,11 @@ class TestCRUDOperations(unittest.TestCase):
             before_create_documents_count + 1,
             'create should increase the number of documents')
 
+        stored_document = created_collection.read_item(item='doc', partition_key='pk')
+        self.assertEqual(
+            {key: stored_document[key] for key in ('id', 'name', 'spam', 'pk', 'key')},
+            {'id': 'doc', 'name': 'sample document', 'spam': 'eggs', 'pk': 'pk', 'key': 'value'})
+
         # update document
         created_document['name'] = 'replaced document'
         created_document['spam'] = 'not eggs'
@@ -750,6 +755,11 @@ class TestCRUDOperations(unittest.TestCase):
             len(documents),
             before_create_documents_count + 1,
             'number of documents should remain same')
+
+        stored_document = created_collection.read_item(item='doc', partition_key='pk')
+        self.assertEqual(
+            {key: stored_document[key] for key in ('id', 'name', 'spam', 'pk', 'key')},
+            {'id': 'doc', 'name': 'replaced document', 'spam': 'not eggs', 'pk': 'pk', 'key': 'value'})
 
         created_document['id'] = 'new id'
 
@@ -2261,4 +2271,3 @@ if __name__ == '__main__':
     except SystemExit as inst:
         if inst.args[0] is True:  # raised by sys.exit(True) when tests failed
             raise
-

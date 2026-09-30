@@ -26,6 +26,8 @@ def write_manifest(directory, stamp, phase):
         "rust_driver_dirty": False,
         "driver_source": "Cargo resolved locked Git dependency, not the sibling checkout",
         "python": platform.python_version(),
+        "python_executable": sys.executable,
+        "python_environment": sys.prefix,
         "rustc": subprocess.check_output(["rustc", "--version"], text=True).strip(),
         **extension_details(),
     }

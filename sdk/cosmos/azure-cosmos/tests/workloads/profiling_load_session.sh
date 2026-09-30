@@ -10,7 +10,7 @@
 # immediately, taking the settings with it. Sourcing runs it in the current
 # shell, so the values stay.
 #
-# It activates ~/venvs/perfdrill, loads ~/profiling_config.env and
+# It activates PROFILING_VENV (default: ~/venvs/perfdrill), loads ~/profiling_config.env and
 # ~/perf_secrets.env, supplies shared functions from perf_common.sh,
 # and loads the explicitly selected session opened by profiling_create_session.sh, so
 # PROFILING_SESSION_ID and PROFILING_SESSION_DIR identify saved evidence.
@@ -21,6 +21,7 @@
 # explicit --confirm-target arguments. Updating source/building are separate.
 #
 # Usage:
+#   export PROFILING_VENV="$HOME/venvs/perfdrill-candidate"
 #   source ./profiling_load_session.sh point-read-profile-20260810-180432717
 # ---------------------------------------------------------------------------
 

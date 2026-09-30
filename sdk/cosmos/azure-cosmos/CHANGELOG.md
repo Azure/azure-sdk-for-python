@@ -15,6 +15,7 @@
 
 #### Bugs Fixed
 
+* Restored legacy resource-ID validation for synchronous and asynchronous Rust-backed `upsert_item()` calls, including `TypeError` for a non-string ID, before backend execution.
 * Fixed container `get_throughput()` response-header retention, input-option ownership, missing-offer errors and recovery after container recreation.
 * Fixed `get_latest_session_token()` discarding a saved parent token when child observations leave an uncovered gap, and restored acceptance of a single simple token.
 * Restored synchronous and asynchronous `read_item()` support for mappings containing only `_self`, without requiring an additional `id` or changing the saved resource address.
