@@ -11,6 +11,7 @@
 
 use std::collections::HashMap;
 use std::num::NonZero;
+use std::str::FromStr;
 use std::sync::{Arc, Mutex, RwLock};
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
@@ -20,7 +21,8 @@ use azure_core::http::{
 };
 use azure_core::Bytes;
 use azure_storage_blob::models::{
-    BlobClientDownloadOptions, BlockBlobClientUploadOptions, HttpRange,
+    AccessTier, BlobClientDownloadOptions, BlockBlobClientUploadOptions, EncryptionAlgorithmType,
+    HttpRange, ImmutabilityPolicyMode,
 };
 use azure_storage_blob::{BlobClient, BlobClientOptions};
 use once_cell::sync::Lazy;
@@ -261,7 +263,28 @@ impl TokenCredential for PyCallbackCredential {
     credential_id = None,
     overwrite = false,
     content_type = None,
+    content_encoding = None,
+    content_language = None,
+    content_disposition = None,
+    cache_control = None,
+    content_md5 = None,
     metadata = None,
+    tags = None,
+    lease_id = None,
+    encryption_key = None,
+    encryption_key_sha256 = None,
+    encryption_algorithm = None,
+    encryption_scope = None,
+    if_match = None,
+    if_none_match = None,
+    if_modified_since = None,
+    if_unmodified_since = None,
+    if_tags = None,
+    immutability_policy_expiry = None,
+    immutability_policy_mode = None,
+    legal_hold = None,
+    tier = None,
+    timeout = None,
     max_concurrency = None,
     max_block_size = None,
 ))]
@@ -273,7 +296,28 @@ fn upload_blob<'py>(
     credential_id: Option<usize>,
     overwrite: bool,
     content_type: Option<&str>,
+    content_encoding: Option<&str>,
+    content_language: Option<&str>,
+    content_disposition: Option<&str>,
+    cache_control: Option<&str>,
+    content_md5: Option<Vec<u8>>,
     metadata: Option<HashMap<String, String>>,
+    tags: Option<HashMap<String, String>>,
+    lease_id: Option<&str>,
+    encryption_key: Option<&str>,
+    encryption_key_sha256: Option<&str>,
+    encryption_algorithm: Option<&str>,
+    encryption_scope: Option<&str>,
+    if_match: Option<&str>,
+    if_none_match: Option<&str>,
+    if_modified_since: Option<i64>,
+    if_unmodified_since: Option<i64>,
+    if_tags: Option<&str>,
+    immutability_policy_expiry: Option<i64>,
+    immutability_policy_mode: Option<&str>,
+    legal_hold: Option<bool>,
+    tier: Option<&str>,
+    timeout: Option<i32>,
     max_concurrency: Option<usize>,
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
@@ -298,7 +342,12 @@ fn upload_blob<'py>(
 
     let mut options = BlockBlobClientUploadOptions::default();
 
-    if !overwrite {
+    let has_access_conditions = if_match.is_some()
+        || if_none_match.is_some()
+        || if_modified_since.is_some()
+        || if_unmodified_since.is_some()
+        || if_tags.is_some();
+    if !overwrite && !has_access_conditions {
         options = options.if_not_exists();
     }
 
@@ -306,8 +355,73 @@ fn upload_blob<'py>(
         options.blob_content_type = Some(ct.to_string());
     }
 
+    if let Some(encoding) = content_encoding {
+        options.blob_content_encoding = Some(encoding.to_string());
+    }
+
+    if let Some(language) = content_language {
+        options.blob_content_language = Some(language.to_string());
+    }
+
+    if let Some(disposition) = content_disposition {
+        options.blob_content_disposition = Some(disposition.to_string());
+    }
+
+    if let Some(control) = cache_control {
+        options.blob_cache_control = Some(control.to_string());
+    }
+
+    options.blob_content_md5 = content_md5;
+
     if let Some(meta) = metadata {
         options.metadata = Some(meta);
+    }
+
+    if let Some(tags) = tags {
+        options = options.with_tags(tags);
+    }
+
+    options.lease_id = lease_id.map(str::to_string);
+    options.encryption_key = encryption_key.map(str::to_string);
+    options.encryption_key_sha256 = encryption_key_sha256.map(str::to_string);
+    options.encryption_scope = encryption_scope.map(str::to_string);
+    options.if_match = if_match.map(Into::into);
+    options.if_none_match = if_none_match.map(Into::into);
+    options.if_modified_since = if_modified_since
+        .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
+        .transpose()
+        .map_err(|e| PyValueError::new_err(format!("Invalid if_modified_since value: {e}")))?;
+    options.if_unmodified_since = if_unmodified_since
+        .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
+        .transpose()
+        .map_err(|e| PyValueError::new_err(format!("Invalid if_unmodified_since value: {e}")))?;
+    options.if_tags = if_tags.map(str::to_string);
+    options.immutability_policy_expiry = immutability_policy_expiry
+        .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
+        .transpose()
+        .map_err(|e| {
+            PyValueError::new_err(format!("Invalid immutability policy expiry value: {e}"))
+        })?;
+    options.legal_hold = legal_hold;
+    options.per_request_timeout = timeout;
+
+    if let Some(algorithm) = encryption_algorithm {
+        options.encryption_algorithm = Some(
+            EncryptionAlgorithmType::from_str(algorithm)
+                .map_err(|e| PyValueError::new_err(e.to_string()))?,
+        );
+    }
+
+    if let Some(mode) = immutability_policy_mode {
+        options.immutability_policy_mode = Some(
+            ImmutabilityPolicyMode::from_str(mode)
+                .map_err(|e| PyValueError::new_err(e.to_string()))?,
+        );
+    }
+
+    if let Some(tier) = tier {
+        options.tier =
+            Some(AccessTier::from_str(tier).map_err(|e| PyValueError::new_err(e.to_string()))?);
     }
 
     if let Some(concurrency) = max_concurrency {
