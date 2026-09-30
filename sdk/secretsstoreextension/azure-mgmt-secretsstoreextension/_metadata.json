@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-25-preview",
+  "apiVersions": {
+    "Microsoft.SecretSyncController": "2026-09-25-preview"
+  },
+  "commit": "7199df7b2d45312addbd2a5fea1a64199369e8cf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/ews/resource-manager/Microsoft.SecretSyncController/SecretSyncController",
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "0.38.0"
+}

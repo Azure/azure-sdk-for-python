@@ -27,7 +27,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
             gallery_name="str",
             in_vm_access_control_profile_name="str",
             in_vm_access_control_profile_version_name="str",
-            api_version="2025-12-03",
+            api_version="2026-03-03",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,16 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                                 "name": "str",
                                 "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                                 "encryption": {
-                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "dataDiskImages": [
+                                        {
+                                            "lun": 0,
+                                            "diskEncryptionSetId": "str",
+                                            "securityProfile": {
+                                                "confidentialVMEncryptionType": "str",
+                                                "secureVMDiskEncryptionSetId": "str",
+                                            },
+                                        }
+                                    ],
                                     "osDiskImage": {
                                         "diskEncryptionSetId": "str",
                                         "securityProfile": {
@@ -101,7 +110,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -149,7 +158,16 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                                 "name": "str",
                                 "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                                 "encryption": {
-                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "dataDiskImages": [
+                                        {
+                                            "lun": 0,
+                                            "diskEncryptionSetId": "str",
+                                            "securityProfile": {
+                                                "confidentialVMEncryptionType": "str",
+                                                "secureVMDiskEncryptionSetId": "str",
+                                            },
+                                        }
+                                    ],
                                     "osDiskImage": {
                                         "diskEncryptionSetId": "str",
                                         "securityProfile": {
@@ -167,7 +185,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -183,7 +201,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
                 in_vm_access_control_profile_version_name="str",
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -200,7 +218,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperationsAsyn
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         )
         result = [r async for r in response]
