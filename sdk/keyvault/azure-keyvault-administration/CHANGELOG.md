@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 
+- Fixed challenge-based authentication to correctly parse the tenant ID from DSTSv2 authority URIs ([#45326](https://github.com/Azure/azure-sdk-for-python/issues/45326)).
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
 ### Other Changes
