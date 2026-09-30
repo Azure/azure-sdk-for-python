@@ -1,5 +1,15 @@
 # Release History
 
+## 12.31.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.31.0 (2026-09-30)
 
 This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
