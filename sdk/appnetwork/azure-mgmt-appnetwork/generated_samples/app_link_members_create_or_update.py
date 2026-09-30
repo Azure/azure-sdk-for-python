@@ -41,12 +41,13 @@ def main():
                 "clusterType": "AKS",
                 "connectivityProfile": {
                     "eastWestGateway": {"visibility": "Internal"},
+                    "network": "network1",
                     "privateConnect": {
                         "subnetResourceId": "/subscriptions/bc7e0da9-5e4c-4a91-9252-9658837006cf/resourceGroups/applink-vnet-rg/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"
                     },
                 },
                 "metadata": {
-                    "resourceId": "/subscriptions/bc7e0da9-5e4c-4a91-9252-9658837006cf/resourcegroups/applink-rg/providers/Microsoft.ContainerService/managedClusters/applink-member1"
+                    "resourceId": "/subscriptions/bc7e0da9-5e4c-4a91-9252-9658837006cf/resourceGroups/applink-rg/providers/Microsoft.ContainerService/managedClusters/applink-member1"
                 },
                 "upgradeProfile": {"fullyManagedUpgradeProfile": {"releaseChannel": "Stable"}, "mode": "FullyManaged"},
             },
@@ -56,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/AppLinkMembers_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-01-preview/AppLinkMembers_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
