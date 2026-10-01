@@ -23,7 +23,9 @@ class AuthenticationRecord:
     :param str username: The user principal or service principal name of the account.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, authority: str, home_account_id: str, username: str) -> None:
+    def __init__(  # pylint: disable=too-many-positional-arguments
+        self, tenant_id: str, client_id: str, authority: str, home_account_id: str, username: str
+    ) -> None:
         self._authority = authority
         self._client_id = client_id
         self._home_account_id = home_account_id

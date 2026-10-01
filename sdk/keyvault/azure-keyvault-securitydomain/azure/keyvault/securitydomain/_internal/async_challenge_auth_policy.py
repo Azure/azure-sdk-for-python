@@ -18,7 +18,6 @@ from copy import deepcopy
 import sys
 import time
 from typing import Any, Callable, cast, Optional, overload, TypeVar, Union
-from urllib.parse import urlparse
 
 from typing_extensions import ParamSpec
 
@@ -30,7 +29,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _has_claims, _update_challenge, _REQUEST_COPY_KEY
+from .challenge_auth_policy import (
+    _enforce_tls,
+    _has_claims,
+    _update_challenge,
+    _validate_challenge_resource,
+    _REQUEST_COPY_KEY,
+)
 
 if sys.version_info < (3, 9):
     from typing import Awaitable
@@ -156,10 +161,18 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
-            # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            if self._need_new_token():
+            try:
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+                if self._verify_challenge_resource:
+                    _validate_challenge_resource(scope, request.http_request.url)
+            except ValueError:
+                self._token = None
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, challenge)
+                raise
+
+            # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
+            if self._need_new_token():
                 await self._request_kv_token(scope, challenge)
 
             bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
@@ -183,6 +196,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
+        cached_challenge: Optional[HttpChallenge] = None
         try:
             # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
             old_scope: Optional[str] = None
@@ -200,20 +215,19 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
+            self._token = None
+            if cached_challenge:
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
             return False
 
-        if self._verify_challenge_resource:
-            resource_domain = urlparse(scope).netloc
-            if not resource_domain:
-                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
-
-            request_domain = urlparse(request.http_request.url).netloc
-            if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
-                raise ValueError(
-                    f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
-                    "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
-                    "See https://aka.ms/azsdk/blog/vault-uri for more information."
-                )
+        try:
+            if self._verify_challenge_resource:
+                _validate_challenge_resource(scope, request.http_request.url)
+        except ValueError:
+            self._token = None
+            if cached_challenge:
+                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
+            raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
 

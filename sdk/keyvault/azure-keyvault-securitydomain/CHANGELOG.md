@@ -1,6 +1,19 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed an issue where cached authentication challenges could bypass challenge resource verification.
+- Reject request URLs containing backslashes in the authority before authentication.
+
+### Other Changes
+
+## 1.0.0b3 (2026-08-26)
 
 ### Features Added
 
