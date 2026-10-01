@@ -37,6 +37,25 @@ def _record(event, **fields):
     print(json.dumps({"event": event, "time": time.time(), **fields}), flush=True)
 
 
+def _error_fields(error):
+    headers = getattr(error, "headers", None) or {}
+    return {
+        "error_type": type(error).__name__,
+        "status_code": getattr(error, "status_code", None),
+        "sub_status": getattr(error, "sub_status", None),
+        "activity_id": headers.get(HttpHeaders.ActivityId),
+    }
+
+
+def _range_state(routing_map):
+    if routing_map is None:
+        return None
+    return [
+        {"id": r.id, "parents": r.parents, "status": r.status}
+        for r in routing_map.get_ordered_partition_key_ranges()
+    ]
+
+
 @pytest.mark.cosmosSplit
 @pytest.mark.cosmosAADSplit
 @pytest.mark.timeout(1500)
@@ -68,72 +87,119 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
         self.scans = 0
 
     async def _delete_database(self):
-        await asyncio.wait_for(
-            test_config.retry_control_plane_async(self.key_client.delete_database, self.database.id), timeout=120
-        )
+        try:
+            await asyncio.wait_for(
+                test_config.retry_control_plane_async(self.key_client.delete_database, self.database.id), timeout=120
+            )
+        except Exception as error:
+            _record("database_cleanup_failed", database=self.database.id, **_error_fields(error))
+            raise
         _record("database_deleted", database=self.database.id)
 
     async def _scan(self):
-        items = self.container.query_items(
-            query="SELECT * FROM c",
-            feed_range={"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}},
-            max_item_count=10,
-        )
-        ids = [item["id"] async for item in items]
+        try:
+            items = self.container.query_items(
+                query="SELECT * FROM c",
+                feed_range={"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}},
+                max_item_count=10,
+            )
+            ids = [item["id"] async for item in items]
+        except Exception as error:
+            _record("scan_failed", scans=self.scans, ranges=_range_state(self.routing_map), **_error_fields(error))
+            raise
+        if sorted(ids) != self.expected_ids:
+            _record(
+                "scan_mismatch", scans=self.scans, ranges=_range_state(self.routing_map),
+                expected_count=len(self.expected_ids), actual_count=len(ids),
+                missing=sorted(set(self.expected_ids) - set(ids)),
+                unexpected=sorted(set(ids) - set(self.expected_ids)),
+                duplicate_count=len(ids) - len(set(ids)),
+            )
         self.assertEqual(sorted(ids), self.expected_ids)
         self.scans += 1
 
     async def _split_to(self, throughput):
         old_ids = set(self.routing_map._rangeById)
         _record("scale_start", throughput=throughput, previous_ids=sorted(old_ids))
-        while True:
-            try:
-                await self.key_container.replace_throughput(throughput)
-                break
-            except CosmosHttpResponseError as error:
-                if error.status_code != 423:
-                    raise
-                _record("waiting_for_previous_scale", throughput=throughput)
-                await asyncio.sleep(5)
-        while True:
-            previous = self.routing_map
-            self.routing_map = await self.provider.get_routing_map(
-                self.container.container_link,
-                self.feed_options,
-                force_refresh=True,
-                previous_routing_map=previous,
-            )
-            if self.routing_map.change_feed_etag != previous.change_feed_etag:
-                _record(
-                    "routing_map",
-                    etag=self.routing_map.change_feed_etag,
-                    ranges=[
-                        {"id": r.id, "parents": r.parents, "status": r.status}
-                        for r in self.routing_map.get_ordered_partition_key_ranges()
-                    ],
+        start = time.monotonic()
+        phase = "replace_throughput"
+        polls = 0
+        last_progress = start
+        offer_pending = None
+        complete = False
+        try:
+            while True:
+                try:
+                    await self.key_container.replace_throughput(throughput)
+                    break
+                except CosmosHttpResponseError as error:
+                    if error.status_code != 423:
+                        raise
+                    _record("waiting_for_previous_scale", throughput=throughput, **_error_fields(error))
+                    await asyncio.sleep(5)
+            phase = "routing_refresh"
+            while True:
+                previous = self.routing_map
+                self.routing_map = await self.provider.get_routing_map(
+                    self.container.container_link,
+                    self.feed_options,
+                    force_refresh=True,
+                    previous_routing_map=previous,
                 )
-            await self._scan()
-            new_ids = set(self.routing_map._rangeById)
-            if new_ids.isdisjoint(old_ids) and len(new_ids) > len(old_ids):
-                offer = await self.key_container.get_throughput()
-                if not offer.properties["content"].get("isOfferReplacePending", False):
-                    self.assertEqual(offer.offer_throughput, throughput)
-                    _record("split_complete", throughput=throughput, ids=sorted(new_ids), scans=self.scans)
-                    return
-            await asyncio.sleep(1)
+                polls += 1
+                if self.routing_map.change_feed_etag != previous.change_feed_etag:
+                    _record("routing_map", throughput=throughput, etag=self.routing_map.change_feed_etag,
+                            ranges=_range_state(self.routing_map))
+                phase = "scan"
+                await self._scan()
+                phase = "routing_refresh"
+                new_ids = set(self.routing_map._rangeById)
+                if new_ids.isdisjoint(old_ids) and len(new_ids) > len(old_ids):
+                    phase = "read_offer"
+                    offer = await self.key_container.get_throughput()
+                    offer_pending = offer.properties["content"].get("isOfferReplacePending", False)
+                    if not offer_pending:
+                        self.assertEqual(offer.offer_throughput, throughput)
+                        _record("split_complete", throughput=throughput, ids=sorted(new_ids), scans=self.scans)
+                        complete = True
+                        return
+                    phase = "routing_refresh"
+                now = time.monotonic()
+                if now - last_progress >= 30:
+                    _record(
+                        "split_progress", throughput=throughput, phase=phase, elapsed_seconds=round(now - start, 1),
+                        polls=polls, scans=self.scans, offer_pending=offer_pending, ranges=_range_state(self.routing_map),
+                    )
+                    last_progress = now
+                await asyncio.sleep(1)
+        except Exception as error:
+            _record("split_failed", throughput=throughput, phase=phase, **_error_fields(error))
+            raise
+        finally:
+            if not complete:
+                _record(
+                    "split_incomplete", throughput=throughput, phase=phase,
+                    elapsed_seconds=round(time.monotonic() - start, 1),
+                    polls=polls, scans=self.scans, offer_pending=offer_pending, ranges=_range_state(self.routing_map),
+                )
 
     async def test_existing_child_revision_does_not_full_reload(self):
         self.assertEqual(len(self.routing_map._rangeById), 1)
         await asyncio.wait_for(self._split_to(20000), timeout=600)
+        _record("first_split_observations", ranges=_range_state(self.routing_map), scans=self.scans)
         self.assertTrue(all(r.parents for r in self.routing_map.get_ordered_partition_key_ranges()))
 
         original_read = self.client.client_connection._ReadPartitionKeyRanges
         original_process = routing_map_provider.process_fetched_ranges
         requested_etags = []
         child_updates = []
+        observed_children = []
 
         def observe_read(link, options, **kwargs):
             requested_etags.append(kwargs["headers"].get(HttpHeaders.IfNoneMatch))
+            if len(requested_etags) <= 5 or len(requested_etags) % 30 == 0:
+                _record("metadata_request", number=len(requested_etags),
+                        conditional=requested_etags[-1] is not None)
             return original_read(link, options, **kwargs)
 
         def observe_process(ranges, previous, collection_id, collection_link, new_etag):
@@ -142,6 +208,16 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                 for raw in ranges:
                     cached = previous.get_range_by_partition_key_range_id(raw["id"])
                     parents = raw.get("parents") or []
+                    if parents:
+                        observation = {
+                            "id": raw["id"], "parents": parents, "status": raw.get("status"),
+                            "previous_status": cached.status if cached else None,
+                            "was_cached": cached is not None,
+                            "parent_was_cached": any(parent in previous._rangeById for parent in parents),
+                        }
+                        if observation not in observed_children and len(observed_children) < 30:
+                            observed_children.append(observation)
+                            _record("child_range_observed", **observation)
                     if (
                         cached is not None
                         and parents
@@ -157,14 +233,24 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
             return result
 
         # Observe real service payloads and production processing; neither wrapper changes them.
-        with patch.object(self.client.client_connection, "_ReadPartitionKeyRanges", new=observe_read), patch.object(
-            routing_map_provider, "process_fetched_ranges", new=observe_process
-        ):
-            await asyncio.wait_for(self._split_to(40000), timeout=600)
-
-        self.assertTrue(child_updates, "No real existing-child status transition was observed; fix not validated.")
-        self.assertTrue(requested_etags)
-        self.assertNotIn(None, requested_etags, "A full routing-map reload occurred during the second split.")
+        try:
+            with patch.object(self.client.client_connection, "_ReadPartitionKeyRanges", new=observe_read), patch.object(
+                routing_map_provider, "process_fetched_ranges", new=observe_process
+            ):
+                await asyncio.wait_for(self._split_to(40000), timeout=600)
+        finally:
+            _record(
+                "second_split_observations", child_updates=child_updates, observed_children=observed_children,
+                metadata_requests=len(requested_etags), full_reloads=requested_etags.count(None),
+                final_ranges=_range_state(self.routing_map), scans=self.scans,
+            )
+        self.assertTrue(
+            child_updates, "No real existing-child status transition was observed; "
+            "see child_range_observed and second_split_observations for raw vs cached range statuses.")
+        self.assertTrue(requested_etags, "No partition range metadata requests were observed during second split.")
+        self.assertNotIn(
+            None, requested_etags, "A full routing-map reload occurred during the second split; "
+            "see metadata_request and second_split_observations.")
         await asyncio.wait_for(self._scan(), timeout=60)
         _record(
             "validated",
