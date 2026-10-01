@@ -27,7 +27,6 @@ from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtCl
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
 from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
-from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -79,6 +78,8 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
+MODEL_ERROR_TARGET = cast(ErrorTarget, ErrorTarget.MODEL)
+USER_ERROR_CATEGORY = cast(ErrorCategory, ErrorCategory.USER_ERROR)
 
 
 # pylint: disable=too-many-instance-attributes
@@ -111,7 +112,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
-        service_client_model_dataplane: ServiceClientModelDataPlane = None,
+        service_client_model_dataplane: Optional[ServiceClientModelDataPlane] = None,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
     ):
@@ -119,8 +120,9 @@ class ModelOperations(_ScopeDependentOperations):
         ops_logger.update_filter()
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
-        if service_client_model_dataplane is not None:
-            self._model_dataplane_operation = service_client_model_dataplane.models
+        self._model_dataplane_operation: Any = (
+            service_client_model_dataplane.models if service_client_model_dataplane is not None else None
+        )
         self._service_client = service_client
         self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._datastore_operation = datastore_operations
@@ -162,8 +164,8 @@ class ModelOperations(_ScopeDependentOperations):
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
-                target=ErrorTarget.MODEL,
-                error_category=ErrorCategory.USER_ERROR,
+                target=MODEL_ERROR_TARGET,
+                error_category=USER_ERROR_CATEGORY,
             )
         if model.name is not None:
             model_properties = self._get_model_properties(model.name)
@@ -185,14 +187,15 @@ class ModelOperations(_ScopeDependentOperations):
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
-                    target=ErrorTarget.MODEL,
-                    error_category=ErrorCategory.USER_ERROR,
+                    target=MODEL_ERROR_TARGET,
+                    error_category=USER_ERROR_CATEGORY,
                 )
         try:
             name = model.name
+            assert name is not None
             if not model.version and model._auto_increment_version:
                 model.version = _get_next_version_from_container(
-                    name=model.name,
+                    name=name,
                     container_operation=self._model_container_operation,
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -202,6 +205,7 @@ class ModelOperations(_ScopeDependentOperations):
                 )
 
             version = model.version
+            assert version is not None
 
             sas_uri = None
 
@@ -228,8 +232,8 @@ class ModelOperations(_ScopeDependentOperations):
                         raise ValidationException(
                             message=msg,
                             no_personal_data_message=msg,
-                            target=ErrorTarget.MODEL,
-                            error_category=ErrorCategory.USER_ERROR,
+                            target=MODEL_ERROR_TARGET,
+                            error_category=USER_ERROR_CATEGORY,
                         )
 
                     model_rest = model._to_rest_object()
@@ -242,7 +246,7 @@ class ModelOperations(_ScopeDependentOperations):
 
                     if not result:
                         model_rest_obj = self._get(name=str(model.name), version=model.version)
-                        return Model._from_rest_object(model_rest_obj)
+                        return Model._from_rest_object(cast(ArmModelVersion, model_rest_obj))
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._registry_service_client,
@@ -250,11 +254,11 @@ class ModelOperations(_ScopeDependentOperations):
                     version=model.version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "models", name, version),
                 )
 
             model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
-                artifact=model,
+                artifact=cast(Model, model),
                 asset_operations=self,
                 sas_uri=sas_uri,
                 artifact_type=ErrorTarget.MODEL,
@@ -266,7 +270,8 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
-                cont_token = self._scope_kwargs.pop("continuation_token", None)  # type: Optional[str]
+                cont_token: Optional[str] = self._scope_kwargs.pop("continuation_token", None)
+                result: Any
                 result = (
                     self._begin_create_or_update_registry_model(
                         name,
@@ -292,13 +297,13 @@ class ModelOperations(_ScopeDependentOperations):
                 if str(e) == ASSET_PATH_ERROR:
                     raise AssetPathException(
                         message=CHANGED_ASSET_PATH_MSG,
-                        target=ErrorTarget.MODEL,
+                        target=MODEL_ERROR_TARGET,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-                        error_category=ErrorCategory.USER_ERROR,
+                        error_category=USER_ERROR_CATEGORY,
                     ) from e
                 raise e
 
-            model = Model._from_rest_object(result)
+            model = Model._from_rest_object(cast(ArmModelVersion, result))
             if auto_increment_version and indicator_file:
                 datastore_info = _get_default_datastore_info(self._datastore_operation)
                 _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
@@ -348,7 +353,7 @@ class ModelOperations(_ScopeDependentOperations):
             [],
         )
 
-    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ArmModelVersion:  # name:latest
+    def _get_with_registry(self, name: str, version: Optional[str] = None) -> Any:  # name:latest
         if version:
             return ArmModelVersion._deserialize(
                 get_registry_versioned_asset(
@@ -373,7 +378,7 @@ class ModelOperations(_ScopeDependentOperations):
             [],
         )
 
-    def _get_with_workspace(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
+    def _get_with_workspace(self, name: str, version: Optional[str] = None) -> Any:  # name:latest
         if version:
             return self._model_versions_operation.get(
                 name=name,
@@ -384,7 +389,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return self._model_container_operation.get(name=name, workspace_name=self._workspace_name, **self._scope_kwargs)
 
-    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ArmModelVersion]:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> Any:  # name:latest
         if self._registry_name:
             return self._get_with_registry(name, version)
         return self._get_with_workspace(name, version)
@@ -408,31 +413,31 @@ class ModelOperations(_ScopeDependentOperations):
             msg = "Cannot specify both version and label."
             raise ValidationException(
                 message=msg,
-                target=ErrorTarget.MODEL,
+                target=MODEL_ERROR_TARGET,
                 no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
+                error_category=USER_ERROR_CATEGORY,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if label:
             resolved_model = _resolve_label_to_asset(self, name, label)
             if self._registry_name and resolved_model.version is not None:
-                return Model._from_rest_object(self._get(name, resolved_model.version))
-            return resolved_model
+                return Model._from_rest_object(cast(ArmModelVersion, self._get(name, resolved_model.version)))
+            return cast(Model, resolved_model)
 
         if not version:
             msg = "Must provide either version or label"
             raise ValidationException(
                 message=msg,
-                target=ErrorTarget.MODEL,
+                target=MODEL_ERROR_TARGET,
                 no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
+                error_category=USER_ERROR_CATEGORY,
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
         model_version_resource = self._get(name, version)
 
-        return Model._from_rest_object(model_version_resource)
+        return Model._from_rest_object(cast(ArmModelVersion, model_version_resource))
 
     @monitor_with_activity(ops_logger, "Model.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
@@ -448,8 +453,11 @@ class ModelOperations(_ScopeDependentOperations):
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
 
-        model_uri = self.get(name=name, version=version).path
+        raw_model_uri = self.get(name=name, version=version).path
+        assert raw_model_uri is not None
+        model_uri = str(raw_model_uri)
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
+        storage_client_factory = cast(Any, get_storage_client)
         if self._registry_name:
             sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._registry_service_client,
@@ -461,19 +469,19 @@ class ModelOperations(_ScopeDependentOperations):
                 uri=model_uri,
             )
             if auth_type == "SAS":
-                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+                storage_client = storage_client_factory(credential=None, storage_account=None, account_url=sas_uri)
             else:
                 parts = sas_uri.split("/")
                 storage_account = parts[2].split(".")[0]
                 container_name = parts[3]
-                storage_client = get_storage_client(
+                storage_client = storage_client_factory(
                     credential=None,
                     storage_account=storage_account,
                     container_name=container_name,
                 )
 
         else:
-            ds = self._datastore_operation.get(ds_name, include_secrets=True)
+            ds: Any = self._datastore_operation.get(ds_name, include_secrets=True)
             acc_name = ds.account_name
 
             if isinstance(ds.credentials, AccountKeyConfiguration):
@@ -505,7 +513,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 container = ds.container_name
             datastore_type = ds.type
-            storage_client = get_storage_client(
+            storage_client = storage_client_factory(
                 credential=credential,
                 container_name=container,
                 storage_account=acc_name,
@@ -525,7 +533,7 @@ class ModelOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs: Any,
+        **_kwargs: Any,
     ) -> None:
         """Archive a model asset.
 
@@ -545,6 +553,7 @@ class ModelOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Archive a model.
         """
+        del _kwargs
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._model_versions_operation,
@@ -564,7 +573,7 @@ class ModelOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs: Any,
+        **_kwargs: Any,
     ) -> None:
         """Restore an archived model asset.
 
@@ -584,6 +593,7 @@ class ModelOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Restore an archived model.
         """
+        del _kwargs
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._model_versions_operation,
@@ -629,6 +639,7 @@ class ModelOperations(_ScopeDependentOperations):
                         self._registry_name,
                         ArmModelVersion,
                         Model._from_rest_object,
+                        list_view_type=list_view_type,
                     )
                     if self._registry_name
                     else self._model_versions_operation.list(
@@ -729,7 +740,7 @@ class ModelOperations(_ScopeDependentOperations):
             asset_plural="models",
             arm_cls=ArmModelVersion,
         )
-        return Model._from_rest_object(result)
+        return Model._from_rest_object(cast(ArmModelVersion, result))
 
     @contextmanager
     def _set_registry_client(self, registry_name: str) -> Generator:
@@ -746,7 +757,7 @@ class ModelOperations(_ScopeDependentOperations):
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub, _model_client, _arm_client = get_registry_client(
+            _client, _rg, _sub, _, _arm_client = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name
@@ -842,8 +853,10 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
             if package_request.environment_version is not None:
+                target_environment_id = package_request.target_environment_id
+                assert isinstance(target_environment_id, str)
                 package_request.target_environment_id = (
-                    package_request.target_environment_id + f"/versions/{package_request.environment_version}"
+                    target_environment_id + f"/versions/{package_request.environment_version}"
                 )
             package_request = package_request._to_rest_object()  # type: ignore[assignment]
 
@@ -874,7 +887,7 @@ class ModelOperations(_ScopeDependentOperations):
                 package_request,
             )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
-            return package_out
+            return cast(Environment, package_out)
         if isinstance(package_out, dict):
             environment_id = package_out.get("targetEnvironmentId")
         elif hasattr(package_out, "target_environment_id"):
@@ -918,7 +931,7 @@ class ModelOperations(_ScopeDependentOperations):
                     environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
                     package_out = environment_operation.get(name=environment_name, version=environment_version)
 
-        return package_out
+        return cast(Environment, package_out)
 
     def _get_model_properties(
         self, name: str, version: Optional[str] = None, label: Optional[str] = None
