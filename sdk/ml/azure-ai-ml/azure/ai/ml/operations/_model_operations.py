@@ -237,14 +237,14 @@ class ModelOperations(_ScopeDependentOperations):
                         )
 
                     model_rest = model._to_rest_object()
-                    result = begin_import_registry_asset(
+                    import_result = begin_import_registry_asset(
                         self._registry_service_client,
                         self._resource_group_name,
                         self._registry_name,
                         model_rest,
                     )
 
-                    if not result:
+                    if not import_result:
                         model_rest_obj = self._get(name=str(model.name), version=model.version)
                         return Model._from_rest_object(cast(ArmModelVersion, model_rest_obj))
 
