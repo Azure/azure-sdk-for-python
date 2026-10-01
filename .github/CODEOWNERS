@@ -193,7 +193,7 @@
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
-/sdk/cosmos/    @Azure/azure-cosmos-python-sdk
+/sdk/cosmos/    @Azure/azure-cosmos-sdk
 
 # ServiceLabel: %Azure.Data.AI
 # PRLabel: %Azure.Data.AI
