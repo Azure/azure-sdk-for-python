@@ -99,7 +99,8 @@ def empty_challenge_cache(fn):
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_rejected_challenge_is_not_cached():
+@pytest.mark.parametrize("reuse_policy", [False, True])
+async def test_rejected_challenge_is_not_cached(reuse_policy):
     url = "https://example.net/keys/canary"
     challenge = Mock(
         status_code=401,
@@ -120,6 +121,10 @@ async def test_rejected_challenge_is_not_cached():
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
 
     for _ in range(2):
+        if not reuse_policy:
+            pipeline = AsyncPipeline(
+                policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
+            )
         request = HttpRequest("POST", url)
         request.set_bytes_body(b"secret")
         with pytest.raises(ValueError):
@@ -197,7 +202,8 @@ async def test_rejects_backslash_authority_on_challenge(authority, verify_challe
 async def test_request_url_validation_preserves_valid_urls(url):
     HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"]))
     credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
-    policy = AsyncChallengeAuthPolicy(credential)
+    # These URL-only fixtures deliberately use an unrelated challenge resource.
+    policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=False)
     policy._token = AccessToken("cached-token", time.time() + 3600)
     request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
 

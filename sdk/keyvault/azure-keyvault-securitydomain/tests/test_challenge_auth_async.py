@@ -101,7 +101,8 @@ async def test_request_url_validation_preserves_cached_urls(url):
     challenge = HttpChallenge(url, CHALLENGE)
     HttpChallengeCache.set_challenge_for_url(url, challenge)
     credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
-    policy = AsyncChallengeAuthPolicy(credential)
+    # These URL-only fixtures deliberately use an unrelated challenge resource.
+    policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=False)
     policy._token = AccessToken("cached-token", time.time() + 3600)
 
     for _ in range(2):
