@@ -196,6 +196,7 @@ This version and all future versions will require Python 3.9+.
 * Fixed bug where exclusion list was not honored before falling back to global endpoint for multi-write region accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
  
 #### Other Changes
+* Made `max_concurrency` optional for `read_items`. When omitted or set to `None`, the sync client uses Python's `ThreadPoolExecutor` default instead of 10 (unless a custom executor is provided), and the async client uses an internal default of 5 instead of the preview default of 10. Pass `max_concurrency=10` to retain the previous limit. See [PR 43269](https://github.com/Azure/azure-sdk-for-python/pull/43269).
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 * Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
 * Corrected type hints for `ConsistencyPolicy` in `DatabaseAccount` class. See [PR 43150](https://github.com/Azure/azure-sdk-for-python/pull/43150)
