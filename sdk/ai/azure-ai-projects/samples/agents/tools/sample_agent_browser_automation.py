@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Browser Automation capabilities
-    using the BrowserAutomationPreviewTool and synchronous Azure AI Projects client. The agent can
+    using the BrowserAutomationTool and synchronous Azure AI Projects client. The agent can
     perform automated web browsing tasks and provide responses based on web interactions.
 
 USAGE:
@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -34,7 +34,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BrowserAutomationPreviewTool,
+    BrowserAutomationTool,
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
@@ -45,8 +45,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
-tool = BrowserAutomationPreviewTool(
-    browser_automation_preview=BrowserAutomationToolParameters(
+tool = BrowserAutomationTool(
+    browser_automation=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
         )
@@ -90,7 +90,7 @@ with (
             print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
-            if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
+            if item.type == "browser_automation_call":
                 arguments_str = getattr(item, "arguments", "{}")
 
                 # Parse the arguments string into a dictionary
