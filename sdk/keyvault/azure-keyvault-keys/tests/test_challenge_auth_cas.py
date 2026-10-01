@@ -263,7 +263,11 @@ async def test_validation_preserves_replacement_of_evaluated_challenge(is_async,
     HttpChallengeCache.set_challenge_for_url(url, original)
     credential = Mock(spec_set=["get_token", "get_token_info"])
     policy = (AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy)(credential)
-    request = PipelineRequest(HttpRequest("PUT", url, content=b"payload"), PipelineContext(None))
+    policy._token = AccessTokenInfo("stale-token", time.time() + 3600)
+    request = PipelineRequest(
+        HttpRequest("PUT", url, headers={"Authorization": "Bearer stale-token"}, content=b"payload"),
+        PipelineContext(None),
+    )
     with pytest.raises(ValueError):
         if path.startswith("cached"):
             if is_async:
@@ -284,6 +288,7 @@ async def test_validation_preserves_replacement_of_evaluated_challenge(is_async,
             else:
                 policy.on_challenge(request, response)
     assert HttpChallengeCache.get_challenge_for_url(url) is replacement
+    assert policy._token is None
     assert "Authorization" not in request.http_request.headers
     assert request.http_request.body == b"payload"
     credential.get_token.assert_not_called()

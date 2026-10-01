@@ -178,10 +178,16 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         if challenge:
-            # A shared cache entry may have been stored by a client that disabled resource verification.
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            if self._verify_challenge_resource:
-                _validate_challenge_resource(scope, request.http_request.url, challenge)
+            try:
+                # A shared cache entry may have been stored by a client that disabled resource verification.
+                scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+                if self._verify_challenge_resource:
+                    _validate_challenge_resource(scope, request.http_request.url)
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                ChallengeCache.remove_challenge_for_url_if_matches(request.http_request.url, challenge)
+                raise
             request.context[_CHALLENGE_INFO_KEY] = (
                 _request_origin(request.http_request.url),
                 scope,
@@ -219,24 +225,37 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         try:
             challenge = _update_challenge(request, response)
         except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
             _remove_challenge_for_request(request)
             return False
 
         if challenge.claims:
             # Another request may have evicted or replaced the cache while this request was in flight.
-            old_scope, old_tenant = _get_challenge_info(
-                request.http_request.url,
-                previous_challenge,
-                self._verify_challenge_resource,
-                _get_challenge_candidate(request),
-            )
+            try:
+                old_scope, old_tenant = _get_challenge_info(
+                    request.http_request.url,
+                    previous_challenge,
+                    self._verify_challenge_resource,
+                    _get_challenge_candidate(request),
+                )
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                raise
             if old_scope:
                 challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
                 challenge.tenant_id = old_tenant
         # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-        scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-        if self._verify_challenge_resource:
-            _validate_challenge_resource(scope, request.http_request.url, _get_challenge_candidate(request))
+        try:
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            if self._verify_challenge_resource:
+                _validate_challenge_resource(scope, request.http_request.url)
+        except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
+            raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
         request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)

@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where cached authentication challenges could bypass challenge resource verification.
 - Preserve newer cached authentication challenges installed by concurrent requests when an older request fails.
   Failed requests now clear only the cache entry they observed or accepted.
 - Hardened challenge cache reuse as a follow-up to [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).

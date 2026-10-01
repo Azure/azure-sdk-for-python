@@ -95,34 +95,6 @@ def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) ->
     return challenge
 
 
-def _validate_challenge_resource(scope: str, request_url: str, expected_challenge: Optional[HttpChallenge]) -> None:
-    """Verify the challenge resource and remove cached authentication information on failure.
-
-    :param str scope: The scope derived from the challenge.
-    :param str request_url: The URL being authenticated.
-    :param expected_challenge: The cached challenge being evaluated or previously observed by this request.
-    :type expected_challenge: HttpChallenge or None
-    """
-    try:
-        resource_domain = urlparse(scope).netloc
-        if not resource_domain:
-            raise ValueError(f"The challenge contains invalid scope '{scope}'.")
-
-        # Compare authorities using the HTTPS request cache's default-port equivalence. The scope's scheme
-        # doesn't affect the suffix check, just as it didn't before normalization was needed for cache hits.
-        resource_key = ChallengeCache._get_cache_key("https://" + resource_domain)  # pylint:disable=protected-access
-        request_domain = ChallengeCache._get_cache_key(request_url)  # pylint:disable=protected-access
-        if not request_domain.lower().endswith(f".{resource_key.lower()}"):
-            raise ValueError(
-                f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
-                "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
-                "See https://aka.ms/azsdk/blog/vault-uri for more information."
-            )
-    except ValueError:
-        ChallengeCache.remove_challenge_for_url_if_matches(request_url, expected_challenge)
-        raise
-
-
 def _request_origin(url: str) -> str:
     # Use the same authority equivalence as the cache, but don't share authentication across schemes.
     authority = ChallengeCache._get_cache_key(url).lower()  # pylint:disable=protected-access
@@ -135,17 +107,21 @@ def _get_challenge_info(
     verify_resource: bool,
     expected_challenge: Optional[HttpChallenge],
 ) -> Tuple[Optional[str], Optional[str]]:
-    if previous and previous[0] == _request_origin(request_url):
-        scope, tenant = previous[1:]
-    else:
-        cached = ChallengeCache.get_challenge_for_url(request_url)
-        if not cached or _request_origin(cached.source_uri) != _request_origin(request_url):
-            return None, None
-        scope = cached.get_scope() or cached.get_resource() + "/.default"
-        tenant = cached.tenant_id
-        expected_challenge = cached
-    if verify_resource:
-        _validate_challenge_resource(scope, request_url, expected_challenge)
+    try:
+        if previous and previous[0] == _request_origin(request_url):
+            scope, tenant = previous[1:]
+        else:
+            cached = ChallengeCache.get_challenge_for_url(request_url)
+            if not cached or _request_origin(cached.source_uri) != _request_origin(request_url):
+                return None, None
+            expected_challenge = cached
+            scope = cached.get_scope() or cached.get_resource() + "/.default"
+            tenant = cached.tenant_id
+        if verify_resource:
+            _validate_challenge_resource(scope, request_url)
+    except ValueError:
+        ChallengeCache.remove_challenge_for_url_if_matches(request_url, expected_challenge)
+        raise
     return scope, tenant
 
 
@@ -174,6 +150,26 @@ def _restore_request(request: PipelineRequest) -> None:
             request_copy.headers["Content-Length"] = content_length
         request_copy.url = request.http_request.url
         request.http_request = request_copy
+
+
+def _validate_challenge_resource(scope: str, request_url: str) -> None:
+    resource_domain = urlparse(scope).netloc
+    if not resource_domain:
+        raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+
+    request_domain = urlparse(request_url).netloc
+    if request_domain.lower().endswith(f".{resource_domain.lower()}"):
+        return
+
+    # Preserve existing authority matches and HTTPS request default-port equivalence for all resource schemes.
+    request_domain = ChallengeCache._get_cache_key(request_url)  # pylint:disable=protected-access
+    resource_authority = ChallengeCache._get_cache_key("https://" + resource_domain)  # pylint:disable=protected-access
+    if not request_domain.lower().endswith(f".{resource_authority.lower()}"):
+        raise ValueError(
+            f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
+            "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
+            "See https://aka.ms/azsdk/blog/vault-uri for more information."
+        )
 
 
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
@@ -273,10 +269,16 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         if challenge:
-            # A shared cache entry may have been stored by a client that disabled resource verification.
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-            if self._verify_challenge_resource:
-                _validate_challenge_resource(scope, request.http_request.url, challenge)
+            try:
+                # A shared cache entry may have been stored by a client that disabled resource verification.
+                scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+                if self._verify_challenge_resource:
+                    _validate_challenge_resource(scope, request.http_request.url)
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                ChallengeCache.remove_challenge_for_url_if_matches(request.http_request.url, challenge)
+                raise
             request.context[_CHALLENGE_INFO_KEY] = (
                 _request_origin(request.http_request.url),
                 scope,
@@ -314,24 +316,37 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         try:
             challenge = _update_challenge(request, response)
         except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
             _remove_challenge_for_request(request)
             return False
 
         if challenge.claims:
             # Another request may have evicted or replaced the cache while this request was in flight.
-            old_scope, old_tenant = _get_challenge_info(
-                request.http_request.url,
-                previous_challenge,
-                self._verify_challenge_resource,
-                _get_challenge_candidate(request),
-            )
+            try:
+                old_scope, old_tenant = _get_challenge_info(
+                    request.http_request.url,
+                    previous_challenge,
+                    self._verify_challenge_resource,
+                    _get_challenge_candidate(request),
+                )
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                raise
             if old_scope:
                 challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
                 challenge.tenant_id = old_tenant
         # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-        scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-        if self._verify_challenge_resource:
-            _validate_challenge_resource(scope, request.http_request.url, _get_challenge_candidate(request))
+        try:
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            if self._verify_challenge_resource:
+                _validate_challenge_resource(scope, request.http_request.url)
+        except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
+            raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
         request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
