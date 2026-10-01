@@ -98,6 +98,9 @@ def _decode_zero(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Litera
 
 
 def _decode_empty(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     return buffer, []
 
 

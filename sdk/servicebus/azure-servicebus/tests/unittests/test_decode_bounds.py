@@ -213,3 +213,22 @@ def test_decode_list_large_threads_explicit_depth():
     _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH - 1)
     with pytest.raises(ValueError, match="exceeds maximum depth"):
         _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH)
+
+
+def _nested_list_to_empty(levels: int) -> bytes:
+    # `levels` list32 wrappers around an empty list0 (0x45); total compound layers = levels + 1.
+    payload = b"\x45"
+    for _ in range(levels):
+        body = b"\x00\x00\x00\x01" + payload
+        payload = b"\xd0" + len(body).to_bytes(4, "big") + body
+    return payload
+
+
+def test_decode_rejects_empty_list_past_depth_limit():
+    # the empty-list (list0) leaf is itself a compound layer and must count toward the limit.
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(_nested_list_to_empty(_MAX_NESTING_DEPTH))
+
+
+def test_decode_accepts_empty_list_at_depth_limit():
+    _decode(_nested_list_to_empty(_MAX_NESTING_DEPTH - 1))
