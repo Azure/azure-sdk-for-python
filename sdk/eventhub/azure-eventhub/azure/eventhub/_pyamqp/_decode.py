@@ -189,6 +189,8 @@ def _decode_decimal128(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, 
 
     :param buffer: The buffer containing the Decimal128 encoded value.
     :type buffer: memoryview
+    :param depth: Current nesting depth; unused here, accepted to match the decoder dispatch signature.
+    :type depth: int
     :return: A tuple containing the remaining buffer and the decoded decimal.Decimal value.
     :rtype: Tuple[memoryview, decimal.Decimal]
     """
