@@ -271,7 +271,6 @@ class ModelOperations(_ScopeDependentOperations):
             auto_increment_version = model._auto_increment_version
             try:
                 cont_token: Optional[str] = self._scope_kwargs.pop("continuation_token", None)
-                result: Any
                 result = (
                     self._begin_create_or_update_registry_model(
                         name,
