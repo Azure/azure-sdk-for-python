@@ -45,9 +45,7 @@ def test_persistent_cache_macos(options, is_cae, expected_cache_name, expected_a
             _load_persistent_cache(options, is_cae=is_cae)
 
     expected_path = os.path.expanduser(os.path.join("~", ".IdentityService", expected_cache_name))
-    keychain.assert_called_once_with(
-        expected_path, "Microsoft.Developer.IdentityService", expected_account
-    )
+    keychain.assert_called_once_with(expected_path, "Microsoft.Developer.IdentityService", expected_account)
 
 
 @mock.patch("azure.identity._persistent_cache.sys.platform", "linux2")
