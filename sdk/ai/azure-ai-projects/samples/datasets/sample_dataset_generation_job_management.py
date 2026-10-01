@@ -109,7 +109,7 @@ def main() -> None:
                     ),
                 ],
                 generation_configuration=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
+                    # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                     max_samples=15,
                     # `simple_qna` REQUIRES model_options.
                     model_options=DataGenerationModelOptions(model=model_name),

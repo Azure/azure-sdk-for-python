@@ -44,7 +44,7 @@ USAGE:
 
 import os
 import time
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -80,6 +80,13 @@ dataset_name = os.environ.get("DATASET_NAME", "dataset-generation-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 
+def _result_field(result: Any, key: str) -> Any:
+    """Read a field from an eval output item result, which may be a dict or a typed object."""
+    if isinstance(result, dict):
+        return result.get(key, "n/a")
+    return getattr(result, key, "n/a")
+
+
 def main() -> None:
     with (
         DefaultAzureCredential() as credential,
@@ -109,7 +116,7 @@ def main() -> None:
                     ),
                 ],
                 generation_configuration=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
+                    # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                     max_samples=15,
                     model_options=DataGenerationModelOptions(model=model_name),
                 ),
@@ -260,9 +267,8 @@ def main() -> None:
                 for idx, item in enumerate(output_items, start=1):
                     results = getattr(item, "results", None) or []
                     scores = ", ".join(
-                        f"{r.get('name', '?')}={r.get('score', 'n/a')} ({r.get('passed', 'n/a')})"
+                        f"{_result_field(r, 'name')}={_result_field(r, 'score')} ({_result_field(r, 'passed')})"
                         for r in results
-                        if isinstance(r, dict)
                     )
                     print(f"  item {idx}: status={item.status} | {scores}")
             else:
