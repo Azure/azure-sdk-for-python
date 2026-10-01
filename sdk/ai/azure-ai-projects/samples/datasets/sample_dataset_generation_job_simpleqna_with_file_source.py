@@ -18,7 +18,7 @@ DESCRIPTION:
       3. Polls the job to completion, resolves the generated `DatasetVersion`,
          and shows that the caller-supplied output `description` and `tags` are
          propagated onto the new dataset.
-      4. Cleans up the data generation job, the generated dataset, and the Azure OpenAI input file.
+      4. Cleans up the generated dataset and the Azure OpenAI input file.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
     to synthesize question / answer pairs from the combined sources.
@@ -57,7 +57,6 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -126,7 +125,6 @@ with (
 ):
 
     seed_file_id: Optional[str] = None
-    job_id: Optional[str] = None
     dataset: Optional[DatasetVersion] = None
 
     try:
@@ -190,7 +188,6 @@ with (
             job=job,
             polling_interval=poll_interval_seconds,
         )
-        job_id = poller.details["job_id"]
 
         # Optional: While SDK is polling, periodically print the job status until the job is complete
         print("Periodically check job status:")
@@ -232,21 +229,11 @@ with (
         # ------------------------------------------------------------------
         # 4. Clean up (best effort, so partial failures do not leak resources).
         # ------------------------------------------------------------------
-        # Deleting the data generation job also removes the job's generated output.
-        if job_id:
-            print(f"Delete the data generation job `{job_id}`.")
-            try:
-                project_client.datasets.delete_generation_job(job_id=job_id)
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
-
-        # Delete the generated dataset explicitly, in case it was not already removed with the job.
+        # Delete the generated dataset.
         if dataset is not None:
             print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
             try:
                 project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-            except ResourceNotFoundError:
-                print("  Dataset was already removed with the data generation job.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
 

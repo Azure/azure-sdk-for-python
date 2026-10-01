@@ -20,8 +20,8 @@ DESCRIPTION:
          generated rows with the latest existing dataset version and de-duplicating
          trace rows. The second job's time window covers both batches, so rows from
          the first batch are de-duplicated rather than added twice.
-      4. Prints both dataset versions, then cleans up the data generation jobs,
-         both dataset versions, the seeded conversations, and the agent.
+      4. Prints both dataset versions, then cleans up both dataset versions,
+         the seeded conversations, and the agent.
 
     Private content in the traces is redacted by default
     (`TracesDataGenerationJobOptions.redact_private_content=True`).
@@ -56,7 +56,6 @@ from typing import Any, List, Optional
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -126,7 +125,6 @@ def run_traces_job(
     job_name: str,
     start_time: datetime,
     write_mode: DataGenerationJobOutputWriteMode,
-    submitted_job_ids: List[str],
 ) -> DataGenerationJobResult:
     """Run a traces -> evaluation dataset job, retrying while recent traces are still being ingested."""
     for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
@@ -157,8 +155,6 @@ def run_traces_job(
                 ),
                 polling_interval=POLL_INTERVAL_SECONDS,
             )
-            # Track every submitted job (including failed attempts) so all of them are cleaned up.
-            submitted_job_ids.append(poller.details["job_id"])
             job_result = poller.result()
             print(f"Job succeeded (final LRO status: `{poller.status()}`).")
             return job_result
@@ -195,7 +191,6 @@ def main() -> None:
 
         created_agent = None
         created_conversation_ids: List[str] = []
-        submitted_job_ids: List[str] = []
         created_datasets: List[DatasetVersion] = []
 
         try:
@@ -219,7 +214,6 @@ def main() -> None:
                 f"traces-merge-{run_id}-1",
                 start_time,
                 DataGenerationJobOutputWriteMode.OVERWRITE,
-                submitted_job_ids,
             )
             first_dataset = get_output_dataset(project_client, first_result)
             created_datasets.append(first_dataset)
@@ -237,7 +231,6 @@ def main() -> None:
                 f"traces-merge-{run_id}-2",
                 start_time,
                 DataGenerationJobOutputWriteMode.MERGE,
-                submitted_job_ids,
             )
             second_dataset = get_output_dataset(project_client, second_result)
             created_datasets.append(second_dataset)
@@ -248,22 +241,11 @@ def main() -> None:
                 print(f"  - version=`{dataset.version}` id=`{dataset.id}`")
 
         finally:
-            # Best-effort cleanup, jobs -> outputs -> producers (jobs, datasets, conversations, agent).
-            # Deleting a data generation job also removes the job's generated output.
-            for job_id in submitted_job_ids:
-                try:
-                    project_client.datasets.delete_generation_job(job_id=job_id)
-                    print(f"Deleted data generation job `{job_id}`.")
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
-
-            # Delete the dataset versions explicitly, in case they were not already removed with the jobs.
+            # Best-effort cleanup, outputs -> producers (datasets, conversations, agent).
             for dataset in created_datasets:
                 try:
                     project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
                     print(f"Deleted dataset `{dataset.name}` v{dataset.version}.")
-                except ResourceNotFoundError:
-                    print(f"  Dataset `{dataset.name}` v{dataset.version} was already removed with its job.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete dataset `{dataset.name}` v{dataset.version}: {exc}")
 

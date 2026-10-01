@@ -18,7 +18,7 @@ DESCRIPTION:
       3. Downloads the dataset content and prints the first few rows. Each row
          includes fields such as `id`, `category`, `test_case_description`, and
          `desired_num_turns`.
-      4. Cleans up the data generation job and the generated dataset.
+      4. Cleans up the generated dataset.
 
     `SimulationSeedDataGenerationJobOptions` can be used with prompt, file, or
     agent sources. The service requires `max_samples` (1-1000) for this generation
@@ -57,7 +57,6 @@ from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import ContainerClient
 from azure.ai.projects import AIProjectClient
@@ -127,7 +126,6 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
 
-        job_id: Optional[str] = None
         dataset: Optional[DatasetVersion] = None
 
         try:
@@ -163,7 +161,6 @@ def main() -> None:
                 job=job,
                 polling_interval=poll_interval_seconds,
             )
-            job_id = poller.details["job_id"]
 
             # Optional: While SDK is polling, periodically print the job status until the job is complete
             print("Periodically check job status:")
@@ -208,21 +205,11 @@ def main() -> None:
             # ------------------------------------------------------------------
             # 4. Clean up (best effort, so partial failures do not leak resources).
             # ------------------------------------------------------------------
-            # Deleting the data generation job also removes the job's generated output.
-            if job_id:
-                print(f"Delete the data generation job `{job_id}`.")
-                try:
-                    project_client.datasets.delete_generation_job(job_id=job_id)
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
-
-            # Delete the generated dataset explicitly, in case it was not already removed with the job.
+            # Delete the generated dataset.
             if dataset is not None:
                 print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
                 try:
                     project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-                except ResourceNotFoundError:
-                    print("  Dataset was already removed with the data generation job.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete dataset: {exc}")
 

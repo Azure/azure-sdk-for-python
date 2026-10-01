@@ -16,8 +16,6 @@ DESCRIPTION:
       3. Gets the job with `get_generation_job`.
       4. Cancels the job with `cancel_generation_job` if it is still queued or
          in progress, and waits for the cancellation to complete.
-      5. Deletes the job with `delete_generation_job`. Deleting a job also
-         removes its generated output, if any.
 
 USAGE:
     python sample_dataset_generation_job_management.py
@@ -46,8 +44,6 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
-
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
@@ -88,90 +84,77 @@ def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-
-        job_id: Optional[str] = None
-
-        try:
-            # ------------------------------------------------------------------
-            # 1. Submit a data generation job without SDK polling.
-            # ------------------------------------------------------------------
-            job_inputs = EvaluationDataGenerationJobInputs(
-                name=f"datagen-management-{run_id}",
-                sources=[
-                    PromptDataGenerationJobSource(
-                        description="Contoso refund policy",
-                        prompt=(
-                            "Contoso offers a full refund within 30 days of purchase for any product "
-                            "returned in its original condition. After 30 days, store credit may be "
-                            "issued at the discretion of customer support. Digital goods are "
-                            "non-refundable once downloaded."
-                        ),
+        # ------------------------------------------------------------------
+        # 1. Submit a data generation job without SDK polling.
+        # ------------------------------------------------------------------
+        job_inputs = EvaluationDataGenerationJobInputs(
+            name=f"datagen-management-{run_id}",
+            sources=[
+                PromptDataGenerationJobSource(
+                    description="Contoso refund policy",
+                    prompt=(
+                        "Contoso offers a full refund within 30 days of purchase for any product "
+                        "returned in its original condition. After 30 days, store credit may be "
+                        "issued at the discretion of customer support. Digital goods are "
+                        "non-refundable once downloaded."
                     ),
-                ],
-                generation_configuration=SimpleQnADataGenerationJobOptions(
-                    # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
                 ),
-                output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
-            )
+            ],
+            generation_configuration=SimpleQnADataGenerationJobOptions(
+                # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
+            ),
+            output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
+        )
 
-            print("Create a data generation job without SDK polling.")
-            poller = project_client.datasets.begin_create_generation_job(job=job_inputs, polling=False)
-            job_id = poller.details["job_id"]
-            if not job_id:
-                raise RuntimeError("The create operation did not return a data generation job ID.")
-            print(f"Created data generation job (id: {job_id}).")
+        print("Create a data generation job without SDK polling.")
+        poller = project_client.datasets.begin_create_generation_job(job=job_inputs, polling=False)
+        job_id = poller.details["job_id"]
+        if not job_id:
+            raise RuntimeError("The create operation did not return a data generation job ID.")
+        print(f"Created data generation job (id: {job_id}).")
 
-            # ------------------------------------------------------------------
-            # 2. List the most recent data generation jobs.
-            # ------------------------------------------------------------------
-            # `limit` sets the page size; the returned pager fetches further pages on
-            # demand, so stop iterating after the first few jobs.
-            print(f"List up to {MAX_JOBS_TO_LIST} of the most recent data generation jobs:")
-            recent_jobs = project_client.datasets.list_generation_jobs(limit=MAX_JOBS_TO_LIST, order=PageOrder.DESC)
-            for listed_job in itertools.islice(recent_jobs, MAX_JOBS_TO_LIST):
-                print(
-                    f"  - id=`{listed_job.id}` name=`{listed_job.name}` "
-                    f"scenario=`{listed_job.scenario}` status=`{listed_job.status}`"
-                )
-
-            # ------------------------------------------------------------------
-            # 3. Get the job.
-            # ------------------------------------------------------------------
-            job = project_client.datasets.get_generation_job(job_id=job_id)
+        # ------------------------------------------------------------------
+        # 2. List the most recent data generation jobs.
+        # ------------------------------------------------------------------
+        # `limit` sets the page size; the returned pager fetches further pages on
+        # demand, so stop iterating after the first few jobs.
+        print(f"List up to {MAX_JOBS_TO_LIST} of the most recent data generation jobs:")
+        recent_jobs = project_client.datasets.list_generation_jobs(limit=MAX_JOBS_TO_LIST, order=PageOrder.DESC)
+        for listed_job in itertools.islice(recent_jobs, MAX_JOBS_TO_LIST):
             print(
-                f"Got job: id=`{job.id}` name=`{job.name}` scenario=`{job.scenario}` "
-                f"status=`{job.status}` created_at=`{job.created_at}`"
+                f"  - id=`{listed_job.id}` name=`{listed_job.name}` "
+                f"scenario=`{listed_job.scenario}` status=`{listed_job.status}`"
             )
 
-            # ------------------------------------------------------------------
-            # 4. Cancel the job if it is still running.
-            # ------------------------------------------------------------------
-            if job.status in ACTIVE_STATUSES:
-                print(f"Cancel job `{job_id}` (current status `{job.status}`).")
-                job = project_client.datasets.cancel_generation_job(job_id=job_id)
-                print(f"Status after the cancel request: `{job.status}`.")
+        # ------------------------------------------------------------------
+        # 3. Get the job.
+        # ------------------------------------------------------------------
+        job = project_client.datasets.get_generation_job(job_id=job_id)
+        print(
+            f"Got job: id=`{job.id}` name=`{job.name}` scenario=`{job.scenario}` "
+            f"status=`{job.status}` created_at=`{job.created_at}`"
+        )
 
-                print("Wait for the cancellation to complete.", end="", flush=True)
-                while job.status in ACTIVE_STATUSES:
-                    time.sleep(poll_interval_seconds)
-                    job = project_client.datasets.get_generation_job(job_id=job_id)
-                    print(".", end="", flush=True)
-                print()
-                print(f"Final job status: `{job.status}`.")
-            else:
-                print(f"Job already reached the terminal status `{job.status}`; nothing to cancel.")
+        # ------------------------------------------------------------------
+        # 4. Cancel the job if it is still running.
+        # ------------------------------------------------------------------
+        if job.status in ACTIVE_STATUSES:
+            print(f"Cancel job `{job_id}` (current status `{job.status}`).")
+            job = project_client.datasets.cancel_generation_job(job_id=job_id)
+            print(f"Status after the cancel request: `{job.status}`.")
 
-        finally:
-            # ------------------------------------------------------------------
-            # 5. Delete the job. This also removes its generated output, if any.
-            # ------------------------------------------------------------------
-            if job_id:
-                print(f"Delete data generation job `{job_id}`.")
-                project_client.datasets.delete_generation_job(job_id=job_id)
-                print("Deleted.")
+            print("Wait for the cancellation to complete.", end="", flush=True)
+            while job.status in ACTIVE_STATUSES:
+                time.sleep(poll_interval_seconds)
+                job = project_client.datasets.get_generation_job(job_id=job_id)
+                print(".", end="", flush=True)
+            print()
+            print(f"Final job status: `{job.status}`.")
+        else:
+            print(f"Job already reached the terminal status `{job.status}`; nothing to cancel.")
 
 
 if __name__ == "__main__":

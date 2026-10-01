@@ -15,9 +15,9 @@ Breaking changes in beta classes:
 
 * Updated the data generation job samples under `samples/datasets/`:
   * Docstrings now reference `EvaluationDataGenerationJobInputs` / `SupervisedFineTuningDataGenerationJobInputs` and the `evaluation` / `supervised_finetuning_preview` scenarios, and call out preview features.
-  * Created resources (uploaded files, agents, conversations, data generation jobs, generated datasets and files) are now cleaned up in `finally` blocks. Each sample deletes its data generation job(s) with `.datasets.delete_generation_job`, including jobs from failed retry attempts in the traces samples, before deleting the generated outputs.
+  * Created resources (uploaded files, agents, conversations, generated datasets and files) are now cleaned up in `finally` blocks.
   * Added `openai` to the `pip install` instructions where the OpenAI client is used.
-* Added `sample_dataset_generation_job_management.py` demonstrating `list_generation_jobs`, `get_generation_job`, `cancel_generation_job` and `delete_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
 * Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
 * Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobOptions` to generate multi-turn evaluation seeds from a prompt source.
 * Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.

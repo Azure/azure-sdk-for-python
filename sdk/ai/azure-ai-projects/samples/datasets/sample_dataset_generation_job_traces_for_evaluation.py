@@ -13,7 +13,7 @@ DESCRIPTION:
          job (scenario `evaluation`, generation type `traces`) that extracts and
          formats the trace data into an evaluation dataset.
       3. Polls the job and fetches the resulting `DatasetVersion`.
-      4. Cleans up the data generation job(s), dataset, seeded conversations, and agent.
+      4. Cleans up the dataset, seeded conversations, and agent.
 
     Prerequisite: the project must have an Application Insights resource
     connected so the agent emits server-side traces. The Foundry project's
@@ -45,7 +45,6 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -156,8 +155,6 @@ with (
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )
-                # Track every submitted job (including failed attempts) so all of them are cleaned up.
-                submitted_job_ids.append(poller.details["job_id"])
 
                 # Optional: While SDK is polling, periodically print the job status until the job is complete
                 print("Periodically check job status:")
@@ -194,16 +191,8 @@ with (
             print(f"Generated samples: {job_result.generated_samples}")
 
     finally:
-        # Best-effort cleanup, jobs -> outputs -> producers (jobs, dataset, conversations, agent).
-        # Deleting a data generation job also removes the job's generated output.
-        for job_id in submitted_job_ids:
-            try:
-                project_client.datasets.delete_generation_job(job_id=job_id)
-                print(f"Deleted data generation job `{job_id}`.")
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
-
-        # Delete the generated dataset explicitly, in case it was not already removed with the job.
+        # Best-effort cleanup, outputs -> producers (dataset, conversations, agent).
+        # Delete the generated dataset.
         if created_dataset is not None:
             try:
                 project_client.datasets.delete(
@@ -211,8 +200,6 @@ with (
                     version=created_dataset.version or "",
                 )
                 print(f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}.")
-            except ResourceNotFoundError:
-                print("  Dataset was already removed with the data generation job.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
 

@@ -16,8 +16,7 @@ DESCRIPTION:
          SDK polling.
       3. Polls the job asynchronously from application code until it reaches a
          terminal state, then prints every generated file output.
-      4. Cleans up the data generation job, the generated fine-tuning files, and the
-         Azure OpenAI input file.
+      4. Cleans up the generated fine-tuning files and the Azure OpenAI input file.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
     to synthesize the QnA pairs. Setting `train_split` triggers a split of
@@ -56,7 +55,6 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from openai import NotFoundError
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -127,7 +125,6 @@ async def main() -> None:
     ):
 
         seed_file_id: Optional[str] = None
-        job_id: Optional[str] = None
         generated_file_ids: List[str] = []
 
         try:
@@ -243,21 +240,11 @@ async def main() -> None:
             # ------------------------------------------------------------------
             # 5. Clean up (best effort, so partial failures do not leak resources).
             # ------------------------------------------------------------------
-            # Deleting the data generation job also removes the job's generated output.
-            if job_id:
-                print(f"Delete the data generation job `{job_id}`.")
-                try:
-                    await project_client.datasets.delete_generation_job(job_id=job_id)
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete data generation job `{job_id}`: {exc}")
-
-            # Delete the generated files explicitly, in case they were not already removed with the job.
+            # Delete the generated files.
             for generated_file_id in generated_file_ids:
                 print(f"Delete the generated Azure OpenAI file `{generated_file_id}`.")
                 try:
                     await openai_client.files.delete(file_id=generated_file_id)
-                except NotFoundError:
-                    print("  File was already removed with the data generation job.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete Azure OpenAI file `{generated_file_id}`: {exc}")
 
