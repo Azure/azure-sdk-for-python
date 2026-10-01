@@ -240,7 +240,11 @@ def _decode_decimal128(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, 
 
     # Create the decimal value using the context
     with decimal.localcontext(decimal_ctx) as ctx:
-        return buffer[16:], ctx.create_decimal((sign, digits, exponent))
+        try:
+            return buffer[16:], ctx.create_decimal((sign, digits, exponent))
+        except decimal.DecimalException as exc:
+            # Out-of-range decimal128 encoding is malformed wire data; raise a decode error.
+            raise ValueError(f"Invalid AMQP decimal128 encoding: {exc}") from exc
 
 def _decode_list_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
     depth += 1
