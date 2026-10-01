@@ -17,4 +17,4 @@ docstrings in changed Python source, use [the repository docstring guide](../../
   unless they cause a real error.
 - For management SDK packages, skip `generated_samples/` and apply the
   changelog, version, client-name, and README rules in
-  `management.instructions.md`.
+  [`management.instructions.md`](./management.instructions.md).

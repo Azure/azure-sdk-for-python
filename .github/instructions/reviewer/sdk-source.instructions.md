@@ -22,5 +22,5 @@ regressions to speculative style or naming concerns.
   concrete secret exposure or unsafe data flows; do not infer a vulnerability
   from the presence of a credential parameter alone.
 - For `azure-mgmt-*` packages, follow
-  `management.instructions.md` instead of reviewing excluded generated
-  implementation files.
+  [`management.instructions.md`](./management.instructions.md) instead of
+  reviewing excluded generated implementation files.

@@ -17,4 +17,4 @@ package's existing fixtures as the reference for test conventions.
 - Verify assertions exercise the behavior under review and that tests do not
   leak mutable state, skip coverage unexpectedly, or assume test order.
 - For management SDK packages, exclude `generated_tests/` from review as
-  required by `management.instructions.md`.
+  required by [`management.instructions.md`](./management.instructions.md).

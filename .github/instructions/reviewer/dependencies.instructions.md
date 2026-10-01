@@ -17,4 +17,4 @@ neighboring packages of the same type as context.
 - Check version and stability metadata against the package changelog and
   source version when changed. For management SDKs, the specific
   `pyproject.toml` stability and classifier rules in
-  `management.instructions.md` take precedence.
+  [`management.instructions.md`](./management.instructions.md) take precedence.
