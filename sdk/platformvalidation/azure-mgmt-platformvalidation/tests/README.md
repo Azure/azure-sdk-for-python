@@ -1,7 +1,7 @@
 # PlatformValidation recorded integration tests
 
-These handwritten tests follow the [management-plane testing guide](../../../../doc/dev/mgmt/tests.md)
-and the [Python SDK testing guide](../../../../doc/dev/tests.md). Do not edit the
+These handwritten tests follow the [management-plane testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md)
+and the [Python SDK testing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Do not edit the
 regeneration-owned files in `generated_tests/`.
 
 ## Coverage
@@ -29,8 +29,8 @@ repository's test tooling and the local SDK:
 python -m pip install -r dev_requirements.txt -e .
 ```
 
-Follow the repository's [feed configuration](../../../../CONTRIBUTING.md#package-index-configuration)
-and [authentication instructions](../../../../doc/dev/tests.md#configure-test-variables).
+Follow the repository's [feed configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#package-index-configuration)
+and [authentication instructions](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#configure-test-variables).
 Use an approved test subscription with `Microsoft.PlatformValidation` registered,
 a supported CloudValidation location, and permission for resource-group creation
 and deletion, resource-group existence checks, the CloudValidation lifecycle, and
@@ -40,7 +40,7 @@ Configure `AZURE_SUBSCRIPTION_ID` and `PLATFORMVALIDATION_LOCATION`.
 Live mode requires the service location; playback uses a sanitized placeholder,
 not a live target. `ResourceGroupPreparer` creates a uniquely named prerequisite
 resource group per test and requests its deletion afterward, as described in the
-[management-plane example](../../../../doc/dev/mgmt/tests.md#example-2-basic-preparer-usage).
+[management-plane example](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md#example-2-basic-preparer-usage).
 Resource-group metadata is stored in `eastus`; this does not select the
 CloudValidation service location.
 
@@ -101,7 +101,7 @@ playback; normal playback does not require Azure credentials.
 
 Before publishing, inspect all recordings for sensitive values, including
 unrelated resources returned by subscription listing. Follow the official
-[initial recording migration](../../../../doc/dev/recording_migration_guide.md)
+[initial recording migration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md)
 to upload recordings to `Azure/azure-sdk-assets` and generate `assets.json`. This
 requires asset-repository write access. Include the generated, verified pointer
 with the test PR, not secrets or an invented asset tag.
