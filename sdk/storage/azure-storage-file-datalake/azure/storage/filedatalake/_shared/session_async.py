@@ -78,7 +78,7 @@ class AsyncSessionCache:
 
         :param str container_name: The container name to look up.
         :return: A live (non-expired) session, or None on miss/expiry.
-        :rtype: ~azure.storage.filedatalake._shared.session.Session or None
+        :rtype: Session or None
         """
         cached = self._entry.get(container_name, None)
         if cached is None or cached.expired():
@@ -92,7 +92,7 @@ class AsyncSessionCache:
 
         :param str container_name: The container name the session belongs to.
         :param session: The session to cache.
-        :type session: ~azure.storage.filedatalake._shared.session.Session
+        :type session: Session
         """
         self._entry[container_name] = session
 
@@ -172,7 +172,7 @@ class AsyncContainerSessionProvider:
 
         :param ~azure.core.pipeline.PipelineRequest request: The outgoing request.
         :return: A session, or None if the caller should use bearer auth.
-        :rtype: ~azure.storage.filedatalake._shared.session.Session or None
+        :rtype: Session or None
         """
         container_name = _extract_container(request)
         if container_name is None:
@@ -190,7 +190,7 @@ class AsyncContainerSessionProvider:
 
         :param ~azure.core.pipeline.PipelineRequest request: The rejected request.
         :param current: The session that was rejected.
-        :type current: ~azure.storage.filedatalake._shared.session.Session
+        :type current: Session
         """
         container_name = _extract_container(request)
         if container_name is not None:

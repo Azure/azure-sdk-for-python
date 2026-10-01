@@ -97,7 +97,7 @@ def _apply_session_auth(request: "PipelineRequest", session_token: str, session_
     :param str session_token: The session token to embed in the Authorization header.
     :param str session_key: The HMAC signing key for the session.
     :param str account_name: Storage account name; the signer identity.
-    :raises ~azure.storage.blob._shared.authentication.AzureSigningError: if signing fails.
+    :raises AzureSigningError: if signing fails.
     """
     http_request = request.http_request
     http_request.headers["x-ms-date"] = format_date_time(time())
@@ -1008,7 +1008,7 @@ class StorageSessionPolicy(HTTPPolicy):
         :keyword str account_name: Storage account name; used as the signer
             identity when signing session-authenticated requests.
         :keyword session_provider: Creates, caches, and invalidates per-container sessions.
-        :paramtype session_provider: ~azure.storage.blob._shared.session.SessionProvider
+        :paramtype session_provider: SessionProvider
         :raises ValueError: if `account_name` is `None`.
         """
         if account_name is None:
@@ -1036,7 +1036,7 @@ class StorageSessionPolicy(HTTPPolicy):
 
         :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
         :return: The session that was applied, else None.
-        :rtype: ~azure.storage.blob._shared.session.Session or None
+        :rtype: Session or None
         """
         session = self._session_provider.get_session(request)
         if session is None or not session.session_token or not session.session_key:
@@ -1058,7 +1058,7 @@ class StorageSessionPolicy(HTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: The original request.
         :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
         :param session: The session that signed the request, or `None` if bearer was used.
-        :type session: ~azure.storage.blob._shared.session.Session or None
+        :type session: Session or None
         :return: The final response.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
