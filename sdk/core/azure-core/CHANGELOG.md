@@ -6,6 +6,10 @@
 
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- `BearerTokenCredentialPolicy` now rejects request URLs containing backslashes in the authority before attaching a bearer token.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added

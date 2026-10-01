@@ -6,6 +6,7 @@
 from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union
+from urllib.parse import urlparse
 
 from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
@@ -33,6 +34,12 @@ def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
     # True is the default setting; we needn't preserve an explicit opt in to the default behavior
     if option is False:
         request.context["enforce_https"] = option
+
+    # URL parsers used by transports can interpret backslashes as authority delimiters, so a URL
+    # such as "https://good-host\\@attacker/..." can send the bearer token to an unintended host
+    # while still looking like "good-host" to urlparse. Reject it before attaching the token.
+    if "\\" in urlparse(request.http_request.url).netloc:
+        raise ValueError("The request URL must not contain backslashes in its authority.")
 
     enforce_https = request.context.get("enforce_https", True)
     if enforce_https and not request.http_request.url.lower().startswith("https"):
