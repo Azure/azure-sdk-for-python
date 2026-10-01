@@ -67,6 +67,22 @@ def remove_challenge_for_url(url: str, expected_challenge: Optional[HttpChalleng
             _cache.pop(key, None)
 
 
+def remove_challenge_for_url_if_matches(url: str, expected_challenge: Optional[HttpChallenge]) -> None:
+    """Remove only the cached challenge observed by the caller.
+
+    :param str url: The URL for which to remove the cached challenge.
+    :param expected_challenge: The observed challenge, or None when no challenge was observed.
+    :type expected_challenge: HttpChallenge or None
+    """
+    if not url:
+        raise ValueError("URL cannot be empty")
+
+    key = _get_cache_key(url).lower()
+    with _lock:
+        if expected_challenge is not None and _cache.get(key) is expected_challenge:
+            _cache.pop(key, None)
+
+
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
     """Caches the challenge for the specified URL.
 
