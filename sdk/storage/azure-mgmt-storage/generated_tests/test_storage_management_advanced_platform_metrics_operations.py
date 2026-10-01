@@ -45,6 +45,7 @@ class TestStorageManagementAdvancedPlatformMetricsOperations(AzureMgmtRecordedTe
                     "ruleConfig": {"filterType": "str", "filterValues": ["str"]},
                     "lastModifiedTime": "2020-02-20 00:00:00",
                     "metricsEmitted": ["str"],
+                    "metricsToEmit": ["str"],
                     "ruleType": "str",
                 },
                 "systemData": {

@@ -134,6 +134,77 @@ class AllowedMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TRACE."""
 
 
+class BlobAccessPointConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of a Blob Access Point configuration."""
+
+    ACTIVE = "Active"
+    """The Blob Access Point configuration is active."""
+    INACTIVE = "Inactive"
+    """The Blob Access Point configuration is inactive."""
+
+
+class BlobAccessPointConnectionTestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the most recent connection test."""
+
+    SUCCEEDED = "Succeeded"
+    """The connection test succeeded."""
+    FAILED = "Failed"
+    """The connection test failed."""
+
+
+class BlobAccessPointConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection type used to reach a non-Azure backing data source."""
+
+    ENDPOINT = "Endpoint"
+    """Connect directly to a public or otherwise routable endpoint."""
+    PRIVATE_LINK = "PrivateLink"
+    """Connect through Azure Private Link."""
+
+
+class BlobAccessPointPrivateLinkIdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format used by a Private Link identifier."""
+
+    RESOURCE_ID = "ResourceId"
+    """The identifier is an Azure resource ID."""
+
+
+class BlobAccessPointRemoteAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How Azure Storage authenticates to a non-Azure S3-compatible source."""
+
+    ACCESS_KEY = "AccessKey"
+    """Authenticate with an S3 access key and secret access key."""
+
+
+class BlobAccessPointSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the non-Azure S3-compatible data source exposed through the Blob Access Point."""
+
+    NET_APP_ONTAP = "NetAppOntap"
+    """NetApp ONTAP."""
+    AZURE_NET_APP_FILES = "AzureNetAppFiles"
+    """Azure NetApp Files."""
+    DELL_ONE_FS = "DellOneFs"
+    """Dell OneFS."""
+    QUMULO = "Qumulo"
+    """Qumulo S3-compatible data source."""
+    COMMVAULT = "Commvault"
+    """Commvault S3-compatible data source."""
+    NASUNI = "Nasuni"
+    """Nasuni S3-compatible data source."""
+    S3_COMPATIBLE = "S3Compatible"
+    """Another S3-compatible data source."""
+
+
+class BlobAccessPointTlsVerification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TLS certificate verification behavior."""
+
+    PERFORM = "Perform"
+    """Verify the TLS certificate chain."""
+    SKIP = "Skip"
+    """Skip TLS certificate-chain verification. Use only when the backing source uses a certificate
+    that cannot be validated against a trusted root. Skipping verification exposes credentials and
+    data to an on-path attacker."""
+
+
 class BlobInventoryPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of BlobInventoryPolicyName."""
 
@@ -180,6 +251,19 @@ class ContextCacheAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Multi-region within a data zone."""
     GLOBAL = "Global"
     """All regions with global distribution."""
+
+
+class ContextCacheCheckNameAvailabilityFailureReason(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The reason why the context cache name is not available. The Reason element is only returned if
+    NameAvailable is false.
+    """
+
+    ALREADY_EXISTS = "AlreadyExists"
+    """The context cache name is already in use."""
+    CONTEXT_CACHE_NAME_INVALID = "ContextCacheNameInvalid"
+    """The context cache name is invalid."""
 
 
 class ContextCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -871,6 +955,17 @@ class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """AUDIT."""
 
 
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
 class RootSquashType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The property is for NFS share only. The default is NoRootSquash."""
 
@@ -1148,6 +1243,15 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ON_SCHEDULE."""
     MOCK_RUN = "MockRun"
     """Run the task as a mock for testing."""
+
+
+class TurboTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether Turbo Tier is enabled or disabled."""
+
+    ENABLED = "Enabled"
+    """Turbo Tier is enabled."""
+    DISABLED = "Disabled"
+    """Turbo Tier is disabled."""
 
 
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):

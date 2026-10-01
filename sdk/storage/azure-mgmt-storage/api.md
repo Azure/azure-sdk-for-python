@@ -3,6 +3,8 @@ namespace azure.mgmt.storage
 
     class azure.mgmt.storage.StorageManagementClient: implements ContextManager 
         advanced_platform_metrics: AdvancedPlatformMetricsOperations
+        blob_access_point_configurations: BlobAccessPointConfigurationsOperations
+        blob_access_point_connection_tests: BlobAccessPointConnectionTestsOperations
         blob_containers: BlobContainersOperations
         blob_inventory_policies: BlobInventoryPoliciesOperations
         blob_services: BlobServicesOperations
@@ -59,6 +61,8 @@ namespace azure.mgmt.storage.aio
 
     class azure.mgmt.storage.aio.StorageManagementClient: implements AsyncContextManager 
         advanced_platform_metrics: AdvancedPlatformMetricsOperations
+        blob_access_point_configurations: BlobAccessPointConfigurationsOperations
+        blob_access_point_connection_tests: BlobAccessPointConnectionTestsOperations
         blob_containers: BlobContainersOperations
         blob_inventory_policies: BlobInventoryPoliciesOperations
         blob_services: BlobServicesOperations
@@ -158,7 +162,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AdvancedPlatformMetricsRule: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -168,7 +172,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -178,13 +182,201 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AdvancedPlatformMetricsRule: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         def list(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[AdvancedPlatformMetricsRule]: ...
+
+
+    class azure.mgmt.storage.aio.operations.BlobAccessPointConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: BlobAccessPointConfiguration, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: BlobAccessPointConfiguration, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'blob_access_point_configuration_name']}, api_versions_list=['2026-09-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: BlobAccessPointConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        async def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: BlobAccessPointConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        async def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: BlobAccessPointConfigurationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: BlobAccessPointConfigurationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConfiguration]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'blob_access_point_configuration_name', 'accept']}, api_versions_list=['2026-09-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                **kwargs: Any
+            ) -> BlobAccessPointConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-01'])
+        def list_by_storage_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[BlobAccessPointConfiguration]: ...
+
+
+    class azure.mgmt.storage.aio.operations.BlobAccessPointConnectionTestsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: BlobAccessPointProposedConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        async def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: BlobAccessPointProposedConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        async def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[BlobAccessPointConnectionTestResponse]: ...
 
 
     class azure.mgmt.storage.aio.operations.BlobContainersOperations:
@@ -708,7 +900,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[Connector]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -790,7 +982,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[Connector]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -800,7 +992,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> Connector: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def list_by_storage_account(
                 self, 
                 resource_group_name: str, 
@@ -854,7 +1046,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[ContextCacheContainer]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name']}, api_versions_list=['2026-06-01', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -900,7 +1092,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[ContextCacheContainer]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -910,7 +1102,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> ContextCacheContainer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_context_cache(
                 self, 
                 resource_group_name: str, 
@@ -961,7 +1153,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[ContextCache]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name']}, api_versions_list=['2026-06-01', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1002,8 +1194,35 @@ namespace azure.mgmt.storage.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[ContextCache]: ...
 
+        @overload
+        async def check_name_availability(
+                self, 
+                body: ContextCacheCheckNameAvailabilityParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
+        @overload
+        async def check_name_availability(
+                self, 
+                body: ContextCacheCheckNameAvailabilityParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
+        @overload
+        async def check_name_availability(
+                self, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1012,7 +1231,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> ContextCache: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1020,7 +1239,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncItemPaged[ContextCache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ContextCache]: ...
 
 
@@ -1069,7 +1288,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[DataShare]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1115,7 +1334,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[DataShare]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1125,7 +1344,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> DataShare: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def list_by_storage_account(
                 self, 
                 resource_group_name: str, 
@@ -2506,7 +2725,7 @@ namespace azure.mgmt.storage.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'storage_task_assignment_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'storage_task_assignment_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         async def begin_stop_assignment(
                 self, 
                 resource_group_name: str, 
@@ -2944,6 +3163,7 @@ namespace azure.mgmt.storage.models
         enabled: bool
         last_modified_time: Optional[datetime]
         metrics_emitted: Optional[list[Union[str, MetricsEmitted]]]
+        metrics_to_emit: Optional[list[Union[str, MetricsEmitted]]]
         rule_config: AdvancedPlatformMetricsRuleConfig
         rule_type: Optional[Union[str, AdvancedPlatformMetricsRuleType]]
 
@@ -2952,6 +3172,7 @@ namespace azure.mgmt.storage.models
                 self, 
                 *, 
                 enabled: bool, 
+                metrics_to_emit: Optional[list[Union[str, MetricsEmitted]]] = ..., 
                 rule_config: AdvancedPlatformMetricsRuleConfig
             ) -> None: ...
 
@@ -3012,6 +3233,624 @@ namespace azure.mgmt.storage.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointAccessKeyAuthProperties(BlobAccessPointRemoteAuthProperties, discriminator='AccessKey'):
+        access_key_id: str
+        auth_type: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        host_override: Optional[str]
+        secret_access_key: str
+        signing_region: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_key_id: str, 
+                host_override: Optional[str] = ..., 
+                secret_access_key: str, 
+                signing_region: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointAccessKeyAuthPropertiesUpdate(BlobAccessPointRemoteAuthPropertiesUpdate, discriminator='AccessKey'):
+        access_key_id: Optional[str]
+        auth_type: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        host_override: Optional[str]
+        secret_access_key: Optional[str]
+        signing_region: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_key_id: Optional[str] = ..., 
+                host_override: Optional[str] = ..., 
+                secret_access_key: Optional[str] = ..., 
+                signing_region: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointAzureNetAppFilesSourceProperties(BlobAccessPointSourceProperties, discriminator='AzureNetAppFiles'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='AzureNetAppFiles'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointCommvaultSourceProperties(BlobAccessPointSourceProperties, discriminator='Commvault'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.COMMVAULT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointCommvaultSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='Commvault'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.COMMVAULT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfiguration(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: BlobAccessPointConfigurationProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: BlobAccessPointConfigurationProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfigurationConnection(_Model):
+        blob_access_point_configuration_name: Optional[str]
+        blob_access_point_configuration_unique_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_access_point_configuration_name: Optional[str] = ..., 
+                blob_access_point_configuration_unique_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfigurationProperties(_Model):
+        description: Optional[str]
+        last_connection_test_error_message: Optional[str]
+        last_connection_test_status: Optional[Union[str, BlobAccessPointConnectionTestStatus]]
+        last_connection_test_timestamp: Optional[datetime]
+        provisioning_state: Optional[Union[str, ResourceProvisioningState]]
+        source: BlobAccessPointSourceProperties
+        state: Optional[Union[str, BlobAccessPointConfigurationState]]
+        unique_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                source: BlobAccessPointSourceProperties, 
+                state: Optional[Union[str, BlobAccessPointConfigurationState]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfigurationPropertiesUpdate(_Model):
+        description: Optional[str]
+        source: Optional[BlobAccessPointSourcePropertiesUpdate]
+        state: Optional[Union[str, BlobAccessPointConfigurationState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                source: Optional[BlobAccessPointSourcePropertiesUpdate] = ..., 
+                state: Optional[Union[str, BlobAccessPointConfigurationState]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "Active"
+        INACTIVE = "Inactive"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConfigurationUpdate(_Model):
+        properties: Optional[BlobAccessPointConfigurationPropertiesUpdate]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[BlobAccessPointConfigurationPropertiesUpdate] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionProperties(_Model):
+        connection_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate(_Model):
+        connection_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionTestRequest(_Model):
+        unique_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                unique_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionTestResponse(_Model):
+        error_message: Optional[str]
+        method_name: str
+        request_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error_message: Optional[str] = ..., 
+                method_name: str, 
+                request_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionTestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENDPOINT = "Endpoint"
+        PRIVATE_LINK = "PrivateLink"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointDellOneFsSourceProperties(BlobAccessPointSourceProperties, discriminator='DellOneFs'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointDellOneFsSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='DellOneFs'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointEndpointConnectionProperties(BlobAccessPointConnectionProperties, discriminator='Endpoint'):
+        connection_type: Literal[BlobAccessPointConnectionType.ENDPOINT]
+        endpoint: str
+        tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                endpoint: str, 
+                tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointEndpointConnectionPropertiesUpdate(BlobAccessPointConnectionPropertiesUpdate, discriminator='Endpoint'):
+        connection_type: Literal[BlobAccessPointConnectionType.ENDPOINT]
+        tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointGenericS3SourceProperties(BlobAccessPointSourceProperties, discriminator='S3Compatible'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointGenericS3SourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='S3Compatible'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointNasuniSourceProperties(BlobAccessPointSourceProperties, discriminator='Nasuni'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.NASUNI]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointNasuniSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='Nasuni'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.NASUNI]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointNetAppOntapSourceProperties(BlobAccessPointSourceProperties, discriminator='NetAppOntap'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointNetAppOntapSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='NetAppOntap'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointPrivateLinkConnectionProperties(BlobAccessPointConnectionProperties, discriminator='PrivateLink'):
+        connection_type: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+        endpoint: str
+        private_endpoint_name: Optional[str]
+        private_link_group_id: Optional[str]
+        private_link_id: str
+        private_link_id_type: Union[str, BlobAccessPointPrivateLinkIdType]
+        private_link_location: str
+        request_message: str
+        tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                endpoint: str, 
+                private_link_group_id: Optional[str] = ..., 
+                private_link_id: str, 
+                private_link_id_type: Union[str, BlobAccessPointPrivateLinkIdType], 
+                private_link_location: str, 
+                request_message: str, 
+                tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointPrivateLinkConnectionPropertiesUpdate(BlobAccessPointConnectionPropertiesUpdate, discriminator='PrivateLink'):
+        connection_type: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+        tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tls_verification: Optional[Union[str, BlobAccessPointTlsVerification]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointPrivateLinkIdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RESOURCE_ID = "ResourceId"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointProposedConnectionTestRequest(_Model):
+        source: BlobAccessPointSourceProperties
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source: BlobAccessPointSourceProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointQumuloSourceProperties(BlobAccessPointSourceProperties, discriminator='Qumulo'):
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        source_type: Literal[BlobAccessPointSourceType.QUMULO]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: BlobAccessPointRemoteAuthProperties, 
+                connection: BlobAccessPointConnectionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointQumuloSourcePropertiesUpdate(BlobAccessPointSourcePropertiesUpdate, discriminator='Qumulo'):
+        auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate]
+        connection: Optional[BlobAccessPointConnectionPropertiesUpdate]
+        source_type: Literal[BlobAccessPointSourceType.QUMULO]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth: Optional[BlobAccessPointRemoteAuthPropertiesUpdate] = ..., 
+                connection: Optional[BlobAccessPointConnectionPropertiesUpdate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties(_Model):
+        auth_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate(_Model):
+        auth_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auth_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointRemoteAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCESS_KEY = "AccessKey"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointSourceProperties(_Model):
+        source_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointSourcePropertiesUpdate(_Model):
+        source_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.BlobAccessPointSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        COMMVAULT = "Commvault"
+        DELL_ONE_FS = "DellOneFs"
+        NASUNI = "Nasuni"
+        NET_APP_ONTAP = "NetAppOntap"
+        QUMULO = "Qumulo"
+        S3_COMPATIBLE = "S3Compatible"
+
+
+    class azure.mgmt.storage.models.BlobAccessPointTlsVerification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PERFORM = "Perform"
+        SKIP = "Skip"
 
 
     class azure.mgmt.storage.models.BlobContainer(ProxyResource):
@@ -3403,6 +4242,7 @@ namespace azure.mgmt.storage.models
 
 
     class azure.mgmt.storage.models.ContainerProperties(_Model):
+        blob_access_point_configuration: Optional[BlobAccessPointConfigurationConnection]
         default_encryption_scope: Optional[str]
         deleted: Optional[bool]
         deleted_time: Optional[datetime]
@@ -3427,6 +4267,7 @@ namespace azure.mgmt.storage.models
         def __init__(
                 self, 
                 *, 
+                blob_access_point_configuration: Optional[BlobAccessPointConfigurationConnection] = ..., 
                 default_encryption_scope: Optional[str] = ..., 
                 deny_encryption_scope_override: Optional[bool] = ..., 
                 enable_nfs_v3_all_squash: Optional[bool] = ..., 
@@ -3468,6 +4309,32 @@ namespace azure.mgmt.storage.models
         DATA_ZONE = "DataZone"
         GLOBAL = "Global"
         REGIONAL = "Regional"
+
+
+    class azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityFailureReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALREADY_EXISTS = "AlreadyExists"
+        CONTEXT_CACHE_NAME_INVALID = "ContextCacheNameInvalid"
+
+
+    class azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityParameters(_Model):
+        name: str
+        type: Literal["Storage/contextCaches"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityResult(_Model):
+        message: Optional[str]
+        name_available: bool
+        reason: Optional[Union[str, ContextCacheCheckNameAvailabilityFailureReason]]
 
 
     class azure.mgmt.storage.models.ContextCacheContainer(ProxyResource):
@@ -5615,6 +6482,7 @@ namespace azure.mgmt.storage.models
         direction: Optional[Union[str, NspAccessRuleDirection]]
         fully_qualified_domain_names: Optional[list[str]]
         network_security_perimeters: Optional[list[NetworkSecurityPerimeter]]
+        service_tags: Optional[list[str]]
         subscriptions: Optional[list[NspAccessRulePropertiesSubscriptionsItem]]
 
         @overload
@@ -5623,6 +6491,7 @@ namespace azure.mgmt.storage.models
                 *, 
                 address_prefixes: Optional[list[str]] = ..., 
                 direction: Optional[Union[str, NspAccessRuleDirection]] = ..., 
+                service_tags: Optional[list[str]] = ..., 
                 subscriptions: Optional[list[NspAccessRulePropertiesSubscriptionsItem]] = ...
             ) -> None: ...
 
@@ -6217,6 +7086,12 @@ namespace azure.mgmt.storage.models
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
+
+
+    class azure.mgmt.storage.models.ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.storage.models.RestorePolicyProperties(_Model):
@@ -6856,6 +7731,7 @@ namespace azure.mgmt.storage.models
         status_of_primary: Optional[Union[str, AccountStatus]]
         status_of_secondary: Optional[Union[str, AccountStatus]]
         storage_account_sku_conversion_status: Optional[StorageAccountSkuConversionStatus]
+        turbo_tier: Optional[TurboTier]
 
         @overload
         def __init__(
@@ -6884,7 +7760,8 @@ namespace azure.mgmt.storage.models
                 minimum_tls_version: Optional[Union[str, MinimumTlsVersion]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 routing_preference: Optional[RoutingPreference] = ..., 
-                storage_account_sku_conversion_status: Optional[StorageAccountSkuConversionStatus] = ...
+                storage_account_sku_conversion_status: Optional[StorageAccountSkuConversionStatus] = ..., 
+                turbo_tier: Optional[TurboTier] = ...
             ) -> None: ...
 
         @overload
@@ -6921,6 +7798,7 @@ namespace azure.mgmt.storage.models
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         routing_preference: Optional[RoutingPreference]
         sas_policy: Optional[SasPolicy]
+        turbo_tier: Optional[TurboTier]
 
         @overload
         def __init__(
@@ -6954,7 +7832,8 @@ namespace azure.mgmt.storage.models
                 network_rule_set: Optional[NetworkRuleSet] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 routing_preference: Optional[RoutingPreference] = ..., 
-                sas_policy: Optional[SasPolicy] = ...
+                sas_policy: Optional[SasPolicy] = ..., 
+                turbo_tier: Optional[TurboTier] = ...
             ) -> None: ...
 
         @overload
@@ -6989,6 +7868,7 @@ namespace azure.mgmt.storage.models
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         routing_preference: Optional[RoutingPreference]
         sas_policy: Optional[SasPolicy]
+        turbo_tier: Optional[TurboTier]
 
         @overload
         def __init__(
@@ -7020,7 +7900,8 @@ namespace azure.mgmt.storage.models
                 network_rule_set: Optional[NetworkRuleSet] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 routing_preference: Optional[RoutingPreference] = ..., 
-                sas_policy: Optional[SasPolicy] = ...
+                sas_policy: Optional[SasPolicy] = ..., 
+                turbo_tier: Optional[TurboTier] = ...
             ) -> None: ...
 
         @overload
@@ -7249,6 +8130,7 @@ namespace azure.mgmt.storage.models
 
 
     class azure.mgmt.storage.models.StorageDataCollaborationPolicyProperties(_Model):
+        allow_blob_access_points: Optional[bool]
         allow_cross_tenant_data_sharing: Optional[bool]
         allow_storage_connectors: Optional[bool]
         allow_storage_data_shares: Optional[bool]
@@ -7257,6 +8139,7 @@ namespace azure.mgmt.storage.models
         def __init__(
                 self, 
                 *, 
+                allow_blob_access_points: Optional[bool] = ..., 
                 allow_cross_tenant_data_sharing: Optional[bool] = ..., 
                 allow_storage_connectors: Optional[bool] = ..., 
                 allow_storage_data_shares: Optional[bool] = ...
@@ -7842,6 +8725,27 @@ namespace azure.mgmt.storage.models
         RUN_ONCE = "RunOnce"
 
 
+    class azure.mgmt.storage.models.TurboTier(_Model):
+        status: Optional[Union[str, TurboTierStatus]]
+        target_percent: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                status: Optional[Union[str, TurboTierStatus]] = ..., 
+                target_percent: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.TurboTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+
+
     class azure.mgmt.storage.models.UpdateHistoryProperty(_Model):
         allow_protected_append_writes: Optional[bool]
         allow_protected_append_writes_all: Optional[bool]
@@ -7960,7 +8864,7 @@ namespace azure.mgmt.storage.operations
             ) -> AdvancedPlatformMetricsRule: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -7970,7 +8874,7 @@ namespace azure.mgmt.storage.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'advanced_platform_metrics_rule_type', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7980,13 +8884,201 @@ namespace azure.mgmt.storage.operations
             ) -> AdvancedPlatformMetricsRule: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01', '2026-06-01', '2026-09-01'])
         def list(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[AdvancedPlatformMetricsRule]: ...
+
+
+    class azure.mgmt.storage.operations.BlobAccessPointConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: BlobAccessPointConfiguration, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: BlobAccessPointConfiguration, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'blob_access_point_configuration_name']}, api_versions_list=['2026-09-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: BlobAccessPointConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: BlobAccessPointConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        def begin_test_existing_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: BlobAccessPointConfigurationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: BlobAccessPointConfigurationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConfiguration]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'blob_access_point_configuration_name', 'accept']}, api_versions_list=['2026-09-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                blob_access_point_configuration_name: str, 
+                **kwargs: Any
+            ) -> BlobAccessPointConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-01'])
+        def list_by_storage_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[BlobAccessPointConfiguration]: ...
+
+
+    class azure.mgmt.storage.operations.BlobAccessPointConnectionTestsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: BlobAccessPointProposedConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: BlobAccessPointProposedConnectionTestRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
+
+        @overload
+        def begin_test_proposed_connection(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[BlobAccessPointConnectionTestResponse]: ...
 
 
     class azure.mgmt.storage.operations.BlobContainersOperations:
@@ -8510,7 +9602,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[Connector]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8592,7 +9684,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[Connector]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'connector_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8602,7 +9694,7 @@ namespace azure.mgmt.storage.operations
             ) -> Connector: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def list_by_storage_account(
                 self, 
                 resource_group_name: str, 
@@ -8656,7 +9748,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[ContextCacheContainer]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8702,7 +9794,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[ContextCacheContainer]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'context_cache_container_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8712,7 +9804,7 @@ namespace azure.mgmt.storage.operations
             ) -> ContextCacheContainer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_context_cache(
                 self, 
                 resource_group_name: str, 
@@ -8763,7 +9855,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[ContextCache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8804,8 +9896,35 @@ namespace azure.mgmt.storage.operations
                 **kwargs: Any
             ) -> LROPoller[ContextCache]: ...
 
+        @overload
+        def check_name_availability(
+                self, 
+                body: ContextCacheCheckNameAvailabilityParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
+        @overload
+        def check_name_availability(
+                self, 
+                body: ContextCacheCheckNameAvailabilityParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
+        @overload
+        def check_name_availability(
+                self, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ContextCacheCheckNameAvailabilityResult: ...
+
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'context_cache_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8814,7 +9933,7 @@ namespace azure.mgmt.storage.operations
             ) -> ContextCache: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -8822,7 +9941,7 @@ namespace azure.mgmt.storage.operations
             ) -> ItemPaged[ContextCache]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-01', '2026-09-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ContextCache]: ...
 
 
@@ -8871,7 +9990,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[DataShare]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8917,7 +10036,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[DataShare]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'data_share_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8927,7 +10046,7 @@ namespace azure.mgmt.storage.operations
             ) -> DataShare: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def list_by_storage_account(
                 self, 
                 resource_group_name: str, 
@@ -10308,7 +11427,7 @@ namespace azure.mgmt.storage.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'storage_task_assignment_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'storage_task_assignment_name']}, api_versions_list=['2025-08-01', '2026-04-01', '2026-06-01', '2026-09-01'])
         def begin_stop_assignment(
                 self, 
                 resource_group_name: str, 
@@ -10639,6 +11758,7 @@ namespace azure.mgmt.storage.types
         enabled: bool
         lastModifiedTime: str
         metricsEmitted: list[Union[str, MetricsEmitted]]
+        metricsToEmit: list[Union[str, MetricsEmitted]]
         ruleConfig: AdvancedPlatformMetricsRuleConfig
         ruleType: Union[str, AdvancedPlatformMetricsRuleType]
 
@@ -10652,6 +11772,314 @@ namespace azure.mgmt.storage.types
         defaultSharePermission: Union[str, DefaultSharePermission]
         directoryServiceOptions: Union[str, DirectoryServiceOptions]
         smbOAuthSettings: SmbOAuthSettings
+
+
+    class azure.mgmt.storage.types.BlobAccessPointAccessKeyAuthProperties(TypedDict, total=False):
+        key "accessKeyId": Required[str]
+        key "authType": Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+        key "hostOverride": str
+        key "secretAccessKey": Required[str]
+        key "signingRegion": str
+        accessKeyId: str
+        authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        hostOverride: str
+        secretAccessKey: str
+        signingRegion: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointAccessKeyAuthPropertiesUpdate(TypedDict, total=False):
+        key "accessKeyId": str
+        key "authType": Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+        key "hostOverride": str
+        key "secretAccessKey": str
+        key "signingRegion": str
+        accessKeyId: str
+        authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        hostOverride: str
+        secretAccessKey: str
+        signingRegion: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointAzureNetAppFilesSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointCommvaultSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.COMMVAULT]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.COMMVAULT]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointCommvaultSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.COMMVAULT]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.COMMVAULT]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConfiguration(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[BlobAccessPointConfigurationProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: BlobAccessPointConfigurationProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConfigurationConnection(TypedDict, total=False):
+        key "blobAccessPointConfigurationName": str
+        key "blobAccessPointConfigurationUniqueId": str
+        blobAccessPointConfigurationName: str
+        blobAccessPointConfigurationUniqueId: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConfigurationProperties(TypedDict, total=False):
+        key "description": str
+        key "lastConnectionTestErrorMessage": str
+        key "lastConnectionTestStatus": Union[str, BlobAccessPointConnectionTestStatus]
+        key "lastConnectionTestTimestamp": str
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "source": Required[BlobAccessPointSourceProperties]
+        key "state": Union[str, BlobAccessPointConfigurationState]
+        key "uniqueId": str
+        description: str
+        lastConnectionTestErrorMessage: str
+        lastConnectionTestStatus: Union[str, BlobAccessPointConnectionTestStatus]
+        lastConnectionTestTimestamp: str
+        provisioningState: Union[str, ResourceProvisioningState]
+        source: BlobAccessPointSourceProperties
+        state: Union[str, BlobAccessPointConfigurationState]
+        uniqueId: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConfigurationPropertiesUpdate(TypedDict, total=False):
+        key "description": str
+        key "source": ForwardRef('BlobAccessPointSourcePropertiesUpdate', module='types')
+        key "state": Union[str, BlobAccessPointConfigurationState]
+        description: str
+        source: BlobAccessPointSourcePropertiesUpdate
+        state: Union[str, BlobAccessPointConfigurationState]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConfigurationUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('BlobAccessPointConfigurationPropertiesUpdate', module='types')
+        properties: BlobAccessPointConfigurationPropertiesUpdate
+        tags: dict[str, str]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConnectionTestRequest(TypedDict, total=False):
+        key "uniqueId": Required[str]
+        uniqueId: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENDPOINT = "Endpoint"
+        PRIVATE_LINK = "PrivateLink"
+
+
+    class azure.mgmt.storage.types.BlobAccessPointDellOneFsSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.DELL_ONE_FS]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointDellOneFsSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.DELL_ONE_FS]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointEndpointConnectionProperties(TypedDict, total=False):
+        key "connectionType": Required[Literal[BlobAccessPointConnectionType.ENDPOINT]]
+        key "endpoint": Required[str]
+        key "tlsVerification": Union[str, BlobAccessPointTlsVerification]
+        connectionType: Literal[BlobAccessPointConnectionType.ENDPOINT]
+        endpoint: str
+        tlsVerification: Union[str, BlobAccessPointTlsVerification]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointEndpointConnectionPropertiesUpdate(TypedDict, total=False):
+        key "connectionType": Required[Literal[BlobAccessPointConnectionType.ENDPOINT]]
+        key "tlsVerification": Union[str, BlobAccessPointTlsVerification]
+        connectionType: Literal[BlobAccessPointConnectionType.ENDPOINT]
+        tlsVerification: Union[str, BlobAccessPointTlsVerification]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointGenericS3SourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.S3_COMPATIBLE]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointGenericS3SourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.S3_COMPATIBLE]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointNasuniSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.NASUNI]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.NASUNI]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointNasuniSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.NASUNI]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.NASUNI]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointNetAppOntapSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.NET_APP_ONTAP]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointNetAppOntapSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.NET_APP_ONTAP]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointPrivateLinkConnectionProperties(TypedDict, total=False):
+        key "connectionType": Required[Literal[BlobAccessPointConnectionType.PRIVATE_LINK]]
+        key "endpoint": Required[str]
+        key "privateEndpointName": str
+        key "privateLinkGroupId": str
+        key "privateLinkId": Required[str]
+        key "privateLinkIdType": Required[Union[str, BlobAccessPointPrivateLinkIdType]]
+        key "privateLinkLocation": Required[str]
+        key "requestMessage": Required[str]
+        key "tlsVerification": Union[str, BlobAccessPointTlsVerification]
+        connectionType: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+        endpoint: str
+        privateEndpointName: str
+        privateLinkGroupId: str
+        privateLinkId: str
+        privateLinkIdType: Union[str, BlobAccessPointPrivateLinkIdType]
+        privateLinkLocation: str
+        requestMessage: str
+        tlsVerification: Union[str, BlobAccessPointTlsVerification]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointPrivateLinkConnectionPropertiesUpdate(TypedDict, total=False):
+        key "connectionType": Required[Literal[BlobAccessPointConnectionType.PRIVATE_LINK]]
+        key "tlsVerification": Union[str, BlobAccessPointTlsVerification]
+        connectionType: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+        tlsVerification: Union[str, BlobAccessPointTlsVerification]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointProposedConnectionTestRequest(TypedDict, total=False):
+        key "source": Required[BlobAccessPointSourceProperties]
+        source: BlobAccessPointSourceProperties
+
+
+    class azure.mgmt.storage.types.BlobAccessPointQumuloSourceProperties(TypedDict, total=False):
+        key "auth": Required[BlobAccessPointRemoteAuthProperties]
+        key "connection": Required[BlobAccessPointConnectionProperties]
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.QUMULO]]
+        auth: BlobAccessPointRemoteAuthProperties
+        connection: BlobAccessPointConnectionProperties
+        sourceType: Literal[BlobAccessPointSourceType.QUMULO]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointQumuloSourcePropertiesUpdate(TypedDict, total=False):
+        key "auth": ForwardRef('BlobAccessPointRemoteAuthPropertiesUpdate', module='types')
+        key "connection": ForwardRef('BlobAccessPointConnectionPropertiesUpdate', module='types')
+        key "sourceType": Required[Literal[BlobAccessPointSourceType.QUMULO]]
+        auth: BlobAccessPointRemoteAuthPropertiesUpdate
+        connection: BlobAccessPointConnectionPropertiesUpdate
+        sourceType: Literal[BlobAccessPointSourceType.QUMULO]
+
+
+    class azure.mgmt.storage.types.BlobAccessPointRemoteAuthProperties(TypedDict, total=False):
+        key "accessKeyId": Required[str]
+        key "authType": Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+        key "hostOverride": str
+        key "secretAccessKey": Required[str]
+        key "signingRegion": str
+        accessKeyId: str
+        authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        hostOverride: str
+        secretAccessKey: str
+        signingRegion: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointRemoteAuthPropertiesUpdate(TypedDict, total=False):
+        key "accessKeyId": str
+        key "authType": Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+        key "hostOverride": str
+        key "secretAccessKey": str
+        key "signingRegion": str
+        accessKeyId: str
+        authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+        hostOverride: str
+        secretAccessKey: str
+        signingRegion: str
+
+
+    class azure.mgmt.storage.types.BlobAccessPointRemoteAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCESS_KEY = "AccessKey"
+
+
+    class azure.mgmt.storage.types.BlobAccessPointSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        COMMVAULT = "Commvault"
+        DELL_ONE_FS = "DellOneFs"
+        NASUNI = "Nasuni"
+        NET_APP_ONTAP = "NetAppOntap"
+        QUMULO = "Qumulo"
+        S3_COMPATIBLE = "S3Compatible"
 
 
     class azure.mgmt.storage.types.BlobContainer(ProxyResource):
@@ -10833,6 +12261,7 @@ namespace azure.mgmt.storage.types
 
 
     class azure.mgmt.storage.types.ContainerProperties(TypedDict, total=False):
+        key "blobAccessPointConfiguration": ForwardRef('BlobAccessPointConfigurationConnection', module='types')
         key "defaultEncryptionScope": str
         key "deleted": bool
         key "deletedTime": str
@@ -10851,6 +12280,7 @@ namespace azure.mgmt.storage.types
         key "publicAccess": Union[str, PublicAccess]
         key "remainingRetentionDays": int
         key "version": str
+        blobAccessPointConfiguration: BlobAccessPointConfigurationConnection
         defaultEncryptionScope: str
         deleted: bool
         deletedTime: str
@@ -10888,6 +12318,13 @@ namespace azure.mgmt.storage.types
         systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.storage.types.ContextCacheCheckNameAvailabilityParameters(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Literal["Storage/contextCaches"]]
+        name: str
+        type: Literal[Storage/contextCaches]
 
 
     class azure.mgmt.storage.types.ContextCacheContainer(ProxyResource):
@@ -12018,6 +13455,7 @@ namespace azure.mgmt.storage.types
         key "routingPreference": ForwardRef('RoutingPreference', module='types')
         key "sasPolicy": ForwardRef('SasPolicy', module='types')
         key "supportsHttpsTrafficOnly": bool
+        key "turboTier": ForwardRef('TurboTier', module='types')
         accessTier: Union[str, AccessTier]
         allowBlobPublicAccess: bool
         allowCrossTenantDelegationSas: bool
@@ -12047,6 +13485,7 @@ namespace azure.mgmt.storage.types
         routingPreference: RoutingPreference
         sasPolicy: SasPolicy
         supportsHttpsTrafficOnly: bool
+        turboTier: TurboTier
 
 
     class azure.mgmt.storage.types.StorageAccountPropertiesUpdateParameters(TypedDict, total=False):
@@ -12077,6 +13516,7 @@ namespace azure.mgmt.storage.types
         key "routingPreference": ForwardRef('RoutingPreference', module='types')
         key "sasPolicy": ForwardRef('SasPolicy', module='types')
         key "supportsHttpsTrafficOnly": bool
+        key "turboTier": ForwardRef('TurboTier', module='types')
         accessTier: Union[str, AccessTier]
         allowBlobPublicAccess: bool
         allowCrossTenantDelegationSas: bool
@@ -12104,6 +13544,7 @@ namespace azure.mgmt.storage.types
         routingPreference: RoutingPreference
         sasPolicy: SasPolicy
         supportsHttpsTrafficOnly: bool
+        turboTier: TurboTier
 
 
     class azure.mgmt.storage.types.StorageAccountRegenerateKeyParameters(TypedDict, total=False):
@@ -12217,9 +13658,11 @@ namespace azure.mgmt.storage.types
 
 
     class azure.mgmt.storage.types.StorageDataCollaborationPolicyProperties(TypedDict, total=False):
+        key "allowBlobAccessPoints": bool
         key "allowCrossTenantDataSharing": bool
         key "allowStorageConnectors": bool
         key "allowStorageDataShares": bool
+        allowBlobAccessPoints: bool
         allowCrossTenantDataSharing: bool
         allowStorageConnectors: bool
         allowStorageDataShares: bool
@@ -12528,6 +13971,13 @@ namespace azure.mgmt.storage.types
         intervalUnit: Union[str, IntervalUnit]
         startFrom: str
         startOn: str
+
+
+    class azure.mgmt.storage.types.TurboTier(TypedDict, total=False):
+        key "status": Union[str, TurboTierStatus]
+        key "targetPercent": int
+        status: Union[str, TurboTierStatus]
+        targetPercent: int
 
 
     class azure.mgmt.storage.types.UpdateHistoryProperty(TypedDict, total=False):
