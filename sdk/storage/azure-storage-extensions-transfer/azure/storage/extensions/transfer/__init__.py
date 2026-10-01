@@ -164,6 +164,17 @@ def download_blob(
     credential_id: "int | None" = None,
     offset: "int | None" = None,
     length: "int | None" = None,
+    lease_id: "str | None" = None,
+    encryption_key: "str | None" = None,
+    encryption_key_sha256: "str | None" = None,
+    encryption_algorithm: "str | None" = None,
+    if_match: "str | None" = None,
+    if_none_match: "str | None" = None,
+    if_modified_since: "int | None" = None,
+    if_unmodified_since: "int | None" = None,
+    if_tags: "str | None" = None,
+    version_id: "str | None" = None,
+    timeout: "int | None" = None,
     max_concurrency: "int | None" = None,
     max_chunk_size: "int | None" = None,
 ) -> "Iterator[bytes]":
@@ -190,6 +201,17 @@ def download_blob(
         identity share a cached token; calls with different identities use separate token caches.
     :keyword int offset: Start of byte range to download.
     :keyword int length: Number of bytes to download from offset.
+    :keyword str lease_id: Lease ID required to download a leased blob.
+    :keyword str encryption_key: Base64-encoded customer-provided encryption key.
+    :keyword str encryption_key_sha256: Base64-encoded SHA-256 hash of the encryption key.
+    :keyword str encryption_algorithm: Customer-provided encryption algorithm.
+    :keyword str if_match: Download only if the blob's ETag matches this value.
+    :keyword str if_none_match: Download only if the blob's ETag does not match this value.
+    :keyword int if_modified_since: Download only if modified since this Unix timestamp.
+    :keyword int if_unmodified_since: Download only if unmodified since this Unix timestamp.
+    :keyword str if_tags: SQL tag condition that must match for the download.
+    :keyword str version_id: Blob version to download.
+    :keyword int timeout: Server-side timeout applied to each download request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
     :keyword int max_chunk_size: Size in bytes of each download window. Defaults to 256 MiB.
         Larger windows increase intra-window parallelism at the cost of higher peak memory.
@@ -209,6 +231,17 @@ def download_blob(
         credential_id=credential_id,
         offset=offset,
         length=length,
+        lease_id=lease_id,
+        encryption_key=encryption_key,
+        encryption_key_sha256=encryption_key_sha256,
+        encryption_algorithm=encryption_algorithm,
+        if_match=if_match,
+        if_none_match=if_none_match,
+        if_modified_since=if_modified_since,
+        if_unmodified_since=if_unmodified_since,
+        if_tags=if_tags,
+        version_id=version_id,
+        timeout=timeout,
         max_concurrency=max_concurrency,
         max_chunk_size=max_chunk_size,
     )
