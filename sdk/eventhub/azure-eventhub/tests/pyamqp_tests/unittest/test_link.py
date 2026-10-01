@@ -348,3 +348,34 @@ def test_incoming_transfer_rejects_malformed_payload_async():
         link._on_transfer.assert_awaited_once()
 
     asyncio.run(run())
+
+
+def _transfer_frame_full(delivery_id, delivery_tag, settled, more, payload):
+    return [3, delivery_id, delivery_tag, 0, settled, more, None, None, None, None, False, payload]
+
+
+def test_incoming_transfer_settled_multiframe_not_rejected():
+    # A delivery settled on its first transfer must not be rejected when the continuation frame
+    # omits the settled flag (which inherits True), even if the assembled payload is malformed.
+    body = _over_depth_body()
+    half = len(body) // 2
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, True, body[:half]))
+    link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+
+
+def test_incoming_transfer_settled_multiframe_not_rejected_async():
+    async def run():
+        body = _over_depth_body()
+        half = len(body) // 2
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, True, body[:half]))
+        await link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+
+    asyncio.run(run())

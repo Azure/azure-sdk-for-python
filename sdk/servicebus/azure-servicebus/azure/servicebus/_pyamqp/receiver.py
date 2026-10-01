@@ -93,6 +93,7 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self._received_settled = False
         self._received_delivery_tags = set()
         # Awaited settlements by delivery ID; empty on the default fire-and-forget path.
         self._pending_dispositions: Dict[int, Dict[str, Any]] = {}
@@ -130,6 +131,9 @@ class ReceiverLink(Link):
         self.received_delivery_id = frame[1]  # delivery_id
         if self.received_delivery_id is not None:
             self._first_frame = frame
+            self._received_settled = frame[4] is True
+        else:
+            self._received_settled = self._received_settled or (frame[4] is True)
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:  # more
@@ -148,7 +152,7 @@ class ReceiverLink(Link):
                 _LOGGER.error(
                     "Failed to decode message payload; rejecting delivery. %r", e, extra=self.network_trace_params
                 )
-                if not frame[4]:
+                if not self._received_settled:
                     self._outgoing_disposition(
                         first=self._first_frame[1],
                         last=self._first_frame[1],
@@ -162,7 +166,7 @@ class ReceiverLink(Link):
                 return
             delivery_state = self._process_incoming_message(self._first_frame, message)
 
-            if not frame[4] and delivery_state:  # settled
+            if not self._received_settled and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
