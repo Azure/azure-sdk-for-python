@@ -1,0 +1,291 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""
+Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
+the challenge cache is global to the process.
+"""
+
+import functools
+import time
+from unittest.mock import Mock
+from uuid import uuid4
+
+import pytest
+from azure.core.credentials import AccessToken, AccessTokenInfo
+from azure.core.pipeline import Pipeline, PipelineContext, PipelineRequest
+from azure.core.rest import HttpRequest
+from azure.keyvault.certificates._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+
+TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+CHALLENGE = 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+BACKSLASH_AUTHORITIES = [
+    r"example.net\.vault.azure.net",
+    r"example.net\\.vault.azure.net",
+    r"example.net\@test.vault.azure.net",
+    r"example.net\\@test.vault.azure.net",
+]
+BACKSLASH_CACHE_CASES = [(authority, "empty") for authority in BACKSLASH_AUTHORITIES] + [
+    (BACKSLASH_AUTHORITIES[1], "challenge"),
+    (BACKSLASH_AUTHORITIES[3], "token"),
+]
+VALID_CACHED_URLS = [
+    "https://test.vault.azure.net:443/certificates/item",
+    "https://test.managedhsm.azure.net:8443/certificates/item",
+    "HTTPS://VAULT.CONTOSO.TEST:8443/certificates/item",
+    "https://localhost/certificates/item",
+    "https://[::1]/certificates/item",
+    "https://[::1]:443/certificates/item",
+    "https://[2001:db8::1]:8443/certificates/item",
+    r"https://test.vault.azure.net/certificates/a\b",
+    r"https://test.vault.azure.net/certificates/item?value=a\b",
+    r"https://test.vault.azure.net/certificates/item#fragment=a\b",
+]
+VALID_CHALLENGE_AUTHORITIES = [
+    (f"test.{domain}", domain, "tenant")
+    for domain in [
+        "vault.azure.net",
+        "vault.usgovcloudapi.net",
+        "vault.azure.cn",
+        "vault.microsoftazure.de",
+        "managedhsm.azure.net",
+        "managedhsm.usgovcloudapi.net",
+        "managedhsm.azure.cn",
+        "managedhsm.microsoftazure.de",
+    ]
+] + [
+    ("vault.contoso.test", "contoso.test", "tenant"),
+    ("vault.contoso.test", "contoso.test", "adfs"),
+    ("TEST.VAULT.AZURE.NET", "VAULT.AZURE.NET", "tenant"),
+    ("user:pass@test.vault.azure.net", "vault.azure.net", "tenant"),
+    ("t" + chr(0xE4) + "st.vault.azure.net", "vault.azure.net", "tenant"),
+    ("xn--tst-qla.vault.azure.net", "vault.azure.net", "tenant"),
+]
+
+
+def empty_challenge_cache(fn):
+    @functools.wraps(fn)
+    def wrapper(**kwargs):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        return fn(**kwargs)
+
+    return wrapper
+
+
+def get_random_url():
+    """The challenge cache is keyed on URLs. Random URLs defend against tests interfering with each other."""
+
+    return f"https://{uuid4()}.vault.azure.net/{uuid4()}".replace("-", "")
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority,cache_state", BACKSLASH_CACHE_CASES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource):
+    url = f"https://{authority}/certificates/canary"
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    transport = Mock(send=Mock(side_effect=AssertionError("unexpected transport send")))
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    pipeline = Pipeline(policies=[policy], transport=transport)
+    if cache_state != "empty":
+        HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, CHALLENGE))
+    if cache_state == "token":
+        policy._token = AccessToken("cached-token", time.time() + 3600)
+    cached = HttpChallengeCache._cache.copy()
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError, match="backslash"):
+            pipeline.run(request)
+        assert "Authorization" not in request.headers
+        assert request.body == b"secret"
+        assert HttpChallengeCache._cache == cached
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource):
+    url = f"https://{authority}/certificates/canary"
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    transport = Mock()
+    response = Mock(http_response=Mock(status_code=401, headers={"WWW-Authenticate": CHALLENGE}))
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(transport))
+        with pytest.raises(ValueError, match="backslash"):
+            policy.on_challenge(request, response)
+        assert "Authorization" not in request.http_request.headers
+        assert not HttpChallengeCache._cache
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("url", VALID_CACHED_URLS)
+def test_request_url_validation_preserves_cached_urls(url):
+    # A prevalidated challenge isolates URL validation from existing resource suffix and port rules.
+    challenge = HttpChallenge(url, CHALLENGE)
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    credential = Mock(spec_set=["get_token"])
+    policy = ChallengeAuthPolicy(credential)
+    policy._token = AccessToken("cached-token", time.time() + 3600)
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        policy.on_request(request)
+        assert request.http_request.url == url
+        assert request.http_request.headers["Authorization"] == "Bearer cached-token"
+        assert HttpChallengeCache.get_challenge_for_url(url) is challenge
+
+    credential.get_token.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority,resource,tenant", VALID_CHALLENGE_AUTHORITIES)
+def test_request_url_validation_preserves_challenge_flow(authority, resource, tenant):
+    url = f"https://{authority}/certificates/item"
+    challenge = Mock(
+        status_code=401,
+        headers={
+            "WWW-Authenticate": f'Bearer authorization="https://authority.net/{tenant}", resource=https://{resource}'
+        },
+    )
+
+    def send(request):
+        assert request.url == url
+        if "Authorization" not in request.headers:
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        assert request.headers["Authorization"] == "Bearer expected-token"
+        assert request.body == b"secret"
+        return Mock(status_code=200)
+
+    credential = Mock(
+        spec_set=["get_token"], get_token=Mock(return_value=AccessToken("expected-token", time.time() + 3600))
+    )
+    transport = Mock(send=Mock(wraps=send))
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential)], transport=transport)
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        assert pipeline.run(request).http_response.status_code == 200
+
+    assert transport.send.call_count == 3
+    credential.get_token.assert_called_once()
+    assert credential.get_token.call_args.args == (f"https://{resource}/.default",)
+    if tenant == "adfs":
+        assert "tenant_id" not in credential.get_token.call_args.kwargs
+    else:
+        assert credential.get_token.call_args.kwargs["tenant_id"] == tenant
+    assert HttpChallengeCache.get_challenge_for_url(url).get_resource() == f"https://{resource}"
+
+
+@empty_challenge_cache
+def test_rejected_challenge_is_not_cached():
+    url = "https://example.net/certificates/canary"
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    def send(request):
+        Requests.count += 1
+        assert "Authorization" not in request.headers
+        assert not request.body
+        assert request.headers["Content-Length"] == "0"
+        return challenge
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError):
+            pipeline.run(request)
+
+    assert Requests.count == 2
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+    assert credential.get_token.call_count == 0
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_request_body_not_reused_across_requests(token_type):
+    """A request's body must not leak into a later request made by the same client.
+
+    Regression test for the replay bug: the original request used to be stashed on the policy instance and was
+    never cleared, so a subsequent bodiless request (e.g. a polling GET) that triggered its own challenge would
+    have the earlier request's body (and method/URL) replayed onto it. The copy is now stored per-request on the
+    pipeline context, so it cannot leak across requests. See
+    https://github.com/Azure/azure-sdk-for-python/pull/47742.
+    """
+
+    expected_token = "expected_token"
+    first_content = b"a duck"
+    first_url = get_random_url()
+    second_url = get_random_url()
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    def send(request):
+        Requests.count += 1
+        if Requests.count == 1:
+            # first request (POST with body): the body is stripped to elicit a challenge
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        elif Requests.count == 2:
+            # first request is retried with its original body and authorization
+            assert request.body == first_content
+            assert expected_token in request.headers["Authorization"]
+            return Mock(status_code=200)
+        elif Requests.count == 3:
+            # second request (bodiless GET): elicits its own challenge and must have no body
+            assert not request.body
+            return challenge
+        elif Requests.count == 4:
+            # second request is retried: it must remain a bodiless GET, i.e. the first request's body and
+            # method/URL must NOT be replayed onto it
+            assert not request.body
+            assert request.method == "GET"
+            assert request.url == second_url
+            assert expected_token in request.headers["Authorization"]
+            return Mock(status_code=200)
+        raise ValueError("unexpected request")
+
+    def get_token(*_, **__):
+        return token_type(expected_token, time.time() + 3600)
+
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
+
+    # a single policy instance handles both requests; the fix prevents state from one request leaking into the next
+    policy = ChallengeAuthPolicy(credential=credential)
+    pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
+
+    first_request = HttpRequest("POST", first_url)
+    first_request.set_bytes_body(first_content)
+    pipeline.run(first_request)
+
+    pipeline.run(HttpRequest("GET", second_url))
