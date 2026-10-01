@@ -61,6 +61,7 @@ stages:
     variables:
       - template: /eng/pipelines/templates/variables/image.yml
       - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
+      - template: /eng/pipelines/templates/variables/globals.yml
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
     ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(parameters.SignedArtifactTargetingStage, '')) }}:
@@ -301,6 +302,7 @@ stages:
       - ${{if ne(parameters.Artifact.skipPublishDocGithubIo, 'true')}}:
           - job: PublishGitHubIODocs
             displayName: Publish Docs to GitHubIO Blob Storage
+            timeoutInMinutes: 30
             condition: >-
               and(
                 succeeded(), 
@@ -315,7 +317,11 @@ stages:
               os: windows
 
             steps:
-              - checkout: self
+              # This job only reads eng/common/scripts and eng/scripts/Language-Settings.ps1 (via
+              # publish-blobs.yml) plus the downloaded pipeline artifacts below; it never reads from
+              # sdk/, so sparse-checkout's default '/eng' + '/.config' baseline is sufficient and avoids
+              # checking out (and exposing to CodeQL/SDL scanning) the full monorepo.
+              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
               - download: current
                 artifact: ${{parameters.ArtifactName}}
