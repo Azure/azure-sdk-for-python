@@ -234,8 +234,8 @@ def create_user_delegation_sas(credential, account_name, account_url, container,
 def verify_paths(auth, account_url, container, client_kwargs):
     """Sanity-check that the native path is used when enabled and Python when disabled.
 
-    Raises if the observed behavior doesn't match, so that a benchmark isn't silently
-    comparing the Python path against itself. *auth* is the blob-client credential: either an
+    Raises if the observed behavior doesn't match, so that a benchmark cannot accidentally
+    compare the Python path against itself. *auth* is the blob-client credential: either an
     AAD credential object or a SAS token string.
     """
     print("\n=== Verifying path selection ===")
@@ -289,9 +289,11 @@ def _summarize(times, size_bytes):
 
 
 def _assert_upload_path(capture, enabled):
-    """Assert the intended upload path was taken, so a silent fallback can't turn the
-    comparison into python-vs-python. Native upload has no distinguishing return value, so we
-    rely on the dispatch logger's marker record."""
+    """Assert the intended upload path was taken.
+
+    Native upload has no distinguishing return value, so rely on the dispatch logger's marker
+    record to prevent a dispatch regression from turning the comparison into python-vs-python.
+    """
     used_native = any(_NATIVE_UPLOAD_MARKER in message for message in capture.messages())
     if enabled and not used_native:
         raise AssertionError(
