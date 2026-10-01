@@ -44,6 +44,8 @@ class TestStorageCacheManagementExpansionJobsOperations(AzureMgmtRecordedTestCas
                 "properties": {
                     "newStorageCapacityTiB": 0.0,
                     "provisioningState": "str",
+                    "rebalanceJobId": "str",
+                    "runRebalanceJob": bool,
                     "status": {
                         "completionTimeUTC": "2020-02-20 00:00:00",
                         "percentComplete": 0.0,

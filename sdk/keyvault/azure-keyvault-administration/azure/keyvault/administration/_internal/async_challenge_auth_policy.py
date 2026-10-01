@@ -183,6 +183,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
         try:
             # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
             old_scope: Optional[str] = None

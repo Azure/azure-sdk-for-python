@@ -8,17 +8,60 @@ Tests for the HTTP challenge authentication implementation.
 
 import functools
 import time
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 from uuid import uuid4
 
 import pytest
 from azure.core.credentials import AccessToken, AccessTokenInfo
-from azure.core.pipeline import AsyncPipeline, Pipeline
+from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineContext, PipelineRequest
 from azure.core.rest import HttpRequest
-from azure.keyvault.administration._internal import ChallengeAuthPolicy, HttpChallengeCache
+from azure.keyvault.administration._internal import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.administration._internal.async_challenge_auth_policy import AsyncChallengeAuthPolicy
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+CHALLENGE = 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
+BACKSLASH_AUTHORITIES = [
+    r"example.net\.vault.azure.net",
+    r"example.net\\.vault.azure.net",
+    r"example.net\@test.vault.azure.net",
+    r"example.net\\@test.vault.azure.net",
+]
+BACKSLASH_CACHE_CASES = [(authority, "empty") for authority in BACKSLASH_AUTHORITIES] + [
+    (BACKSLASH_AUTHORITIES[1], "challenge"),
+    (BACKSLASH_AUTHORITIES[3], "token"),
+]
+VALID_CACHED_URLS = [
+    "https://test.vault.azure.net:443/backup/item",
+    "https://test.managedhsm.azure.net:8443/backup/item",
+    "HTTPS://VAULT.CONTOSO.TEST:8443/backup/item",
+    "https://localhost/backup/item",
+    "https://[::1]/backup/item",
+    "https://[::1]:443/backup/item",
+    "https://[2001:db8::1]:8443/backup/item",
+    r"https://test.vault.azure.net/backup/a\b",
+    r"https://test.vault.azure.net/backup/item?value=a\b",
+    r"https://test.vault.azure.net/backup/item#fragment=a\b",
+]
+VALID_CHALLENGE_AUTHORITIES = [
+    (f"test.{domain}", domain, "tenant")
+    for domain in [
+        "vault.azure.net",
+        "vault.usgovcloudapi.net",
+        "vault.azure.cn",
+        "vault.microsoftazure.de",
+        "managedhsm.azure.net",
+        "managedhsm.usgovcloudapi.net",
+        "managedhsm.azure.cn",
+        "managedhsm.microsoftazure.de",
+    ]
+] + [
+    ("vault.contoso.test", "contoso.test", "tenant"),
+    ("vault.contoso.test", "contoso.test", "adfs"),
+    ("TEST.VAULT.AZURE.NET", "VAULT.AZURE.NET", "tenant"),
+    ("user:pass@test.vault.azure.net", "vault.azure.net", "tenant"),
+    ("t" + chr(0xE4) + "st.vault.azure.net", "vault.azure.net", "tenant"),
+    ("xn--tst-qla.vault.azure.net", "vault.azure.net", "tenant"),
+]
 
 
 def empty_challenge_cache(fn):
@@ -45,6 +88,233 @@ def get_random_url():
     """The challenge cache is keyed on URLs. Random URLs defend against tests interfering with each other."""
 
     return f"https://{uuid4()}.vault.azure.net/{uuid4()}".replace("-", "")
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority,cache_state", BACKSLASH_CACHE_CASES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource):
+    url = f"https://{authority}/backup/canary"
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    transport = Mock(send=Mock(side_effect=AssertionError("unexpected transport send")))
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    pipeline = Pipeline(policies=[policy], transport=transport)
+    if cache_state != "empty":
+        HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, CHALLENGE))
+    if cache_state == "token":
+        policy._token = AccessToken("cached-token", time.time() + 3600)
+    cached = HttpChallengeCache._cache.copy()
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError, match="backslash"):
+            pipeline.run(request)
+        assert "Authorization" not in request.headers
+        assert request.body == b"secret"
+        assert HttpChallengeCache._cache == cached
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@pytest.mark.asyncio
+@async_empty_challenge_cache
+@pytest.mark.parametrize("authority,cache_state", BACKSLASH_CACHE_CASES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_rejects_backslash_authority_async(authority, cache_state, verify_challenge_resource):
+    url = f"https://{authority}/backup/canary"
+    credential = Mock(
+        spec_set=["get_token"], get_token=AsyncMock(side_effect=AssertionError("unexpected token request"))
+    )
+    transport = Mock(send=AsyncMock(side_effect=AssertionError("unexpected transport send")))
+    policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    pipeline = AsyncPipeline(policies=[policy], transport=transport)
+    if cache_state != "empty":
+        HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, CHALLENGE))
+    if cache_state == "token":
+        policy._token = AccessToken("cached-token", time.time() + 3600)
+    cached = HttpChallengeCache._cache.copy()
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError, match="backslash"):
+            await pipeline.run(request)
+        assert "Authorization" not in request.headers
+        assert request.body == b"secret"
+        assert HttpChallengeCache._cache == cached
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource):
+    url = f"https://{authority}/backup/canary"
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    transport = Mock()
+    response = Mock(http_response=Mock(status_code=401, headers={"WWW-Authenticate": CHALLENGE}))
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(transport))
+        with pytest.raises(ValueError, match="backslash"):
+            policy.on_challenge(request, response)
+        assert "Authorization" not in request.http_request.headers
+        assert not HttpChallengeCache._cache
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@pytest.mark.asyncio
+@async_empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_rejects_backslash_authority_on_challenge_async(authority, verify_challenge_resource):
+    url = f"https://{authority}/backup/canary"
+    credential = Mock(
+        spec_set=["get_token"], get_token=AsyncMock(side_effect=AssertionError("unexpected token request"))
+    )
+    policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    transport = Mock()
+    response = Mock(http_response=Mock(status_code=401, headers={"WWW-Authenticate": CHALLENGE}))
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(transport))
+        with pytest.raises(ValueError, match="backslash"):
+            await policy.on_challenge(request, response)
+        assert "Authorization" not in request.http_request.headers
+        assert not HttpChallengeCache._cache
+
+    credential.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("url", VALID_CACHED_URLS)
+def test_request_url_validation_preserves_cached_urls(url):
+    # A prevalidated challenge isolates URL validation from existing resource suffix and port rules.
+    challenge = HttpChallenge(url, CHALLENGE)
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    credential = Mock(spec_set=["get_token"])
+    policy = ChallengeAuthPolicy(credential)
+    policy._token = AccessToken("cached-token", time.time() + 3600)
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        policy.on_request(request)
+        assert request.http_request.url == url
+        assert request.http_request.headers["Authorization"] == "Bearer cached-token"
+        assert HttpChallengeCache.get_challenge_for_url(url) is challenge
+
+    credential.get_token.assert_not_called()
+
+
+@pytest.mark.asyncio
+@async_empty_challenge_cache
+@pytest.mark.parametrize("url", VALID_CACHED_URLS)
+async def test_request_url_validation_preserves_cached_urls_async(url):
+    challenge = HttpChallenge(url, CHALLENGE)
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
+    policy = AsyncChallengeAuthPolicy(credential)
+    policy._token = AccessToken("cached-token", time.time() + 3600)
+
+    for _ in range(2):
+        request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+        await policy.on_request(request)
+        assert request.http_request.url == url
+        assert request.http_request.headers["Authorization"] == "Bearer cached-token"
+        assert HttpChallengeCache.get_challenge_for_url(url) is challenge
+
+    credential.get_token.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority,resource,tenant", VALID_CHALLENGE_AUTHORITIES)
+def test_request_url_validation_preserves_challenge_flow(authority, resource, tenant):
+    url = f"https://{authority}/backup/item"
+    challenge = Mock(
+        status_code=401,
+        headers={
+            "WWW-Authenticate": f'Bearer authorization="https://authority.net/{tenant}", resource=https://{resource}'
+        },
+    )
+
+    def send(request):
+        assert request.url == url
+        if "Authorization" not in request.headers:
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        assert request.headers["Authorization"] == "Bearer expected-token"
+        assert request.body == b"secret"
+        return Mock(status_code=200)
+
+    credential = Mock(
+        spec_set=["get_token"], get_token=Mock(return_value=AccessToken("expected-token", time.time() + 3600))
+    )
+    transport = Mock(send=Mock(wraps=send))
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential)], transport=transport)
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        assert pipeline.run(request).http_response.status_code == 200
+
+    assert transport.send.call_count == 3
+    credential.get_token.assert_called_once()
+    assert credential.get_token.call_args.args == (f"https://{resource}/.default",)
+    if tenant == "adfs":
+        assert "tenant_id" not in credential.get_token.call_args.kwargs
+    else:
+        assert credential.get_token.call_args.kwargs["tenant_id"] == tenant
+    assert HttpChallengeCache.get_challenge_for_url(url).get_resource() == f"https://{resource}"
+
+
+@pytest.mark.asyncio
+@async_empty_challenge_cache
+@pytest.mark.parametrize("authority,resource,tenant", VALID_CHALLENGE_AUTHORITIES)
+async def test_request_url_validation_preserves_challenge_flow_async(authority, resource, tenant):
+    url = f"https://{authority}/backup/item"
+    challenge = Mock(
+        status_code=401,
+        headers={
+            "WWW-Authenticate": f'Bearer authorization="https://authority.net/{tenant}", resource=https://{resource}'
+        },
+    )
+
+    async def send(request):
+        assert request.url == url
+        if "Authorization" not in request.headers:
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        assert request.headers["Authorization"] == "Bearer expected-token"
+        assert request.body == b"secret"
+        return Mock(status_code=200)
+
+    credential = Mock(
+        spec_set=["get_token"], get_token=AsyncMock(return_value=AccessToken("expected-token", time.time() + 3600))
+    )
+    transport = Mock(send=AsyncMock(wraps=send))
+    pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential)], transport=transport)
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        assert (await pipeline.run(request)).http_response.status_code == 200
+
+    assert transport.send.await_count == 3
+    credential.get_token.assert_awaited_once()
+    assert credential.get_token.call_args.args == (f"https://{resource}/.default",)
+    if tenant == "adfs":
+        assert "tenant_id" not in credential.get_token.call_args.kwargs
+    else:
+        assert credential.get_token.call_args.kwargs["tenant_id"] == tenant
+    assert HttpChallengeCache.get_challenge_for_url(url).get_resource() == f"https://{resource}"
 
 
 @empty_challenge_cache
