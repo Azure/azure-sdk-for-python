@@ -139,7 +139,8 @@ class ReceiverLink(Link):
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
-            self._received_delivery_tags.add(self._first_frame[2])
+            if not self._received_settled:
+                self._received_delivery_tags.add(self._first_frame[2])
             try:
                 if self._received_payload:
                     message = decode_payload(memoryview(self._received_payload))

@@ -655,6 +655,7 @@ def test_incoming_transfer_settled_multiframe_not_rejected():
     link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
     link._on_transfer.assert_not_called()
     link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
 
 
 @pytest.mark.asyncio
@@ -668,3 +669,58 @@ async def test_incoming_transfer_settled_multiframe_not_rejected_async():
     await link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
     link._on_transfer.assert_not_called()
     link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
+
+
+_NON_DEPTH_MALFORMED = [
+    b"\x00\x53\x77\x94\x5f" + b"\xff" * 15,  # out-of-range decimal128 -> ValueError
+    b"\x00\x53\x77\xd0\x00",  # truncated list32 size -> struct.error
+]
+
+
+@pytest.mark.parametrize("payload", _NON_DEPTH_MALFORMED)
+def test_incoming_transfer_rejects_non_depth_malformed_payload(payload):
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+    link._incoming_transfer(_transfer_frame(DELIVERY_ID, DELIVERY_TAG, payload))
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_called_once()
+    assert isinstance(link._outgoing_disposition.call_args.kwargs["state"], Rejected)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", _NON_DEPTH_MALFORMED)
+async def test_incoming_transfer_rejects_non_depth_malformed_payload_async(payload):
+    link = build_async_link()
+    link._on_transfer = AsyncMock()
+    link._outgoing_disposition = AsyncMock()
+    await link._incoming_transfer(_transfer_frame(DELIVERY_ID, DELIVERY_TAG, payload))
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_awaited_once()
+    assert isinstance(link._outgoing_disposition.call_args.kwargs["state"], Rejected)
+
+
+def test_incoming_transfer_presettled_delivery_does_not_track_tag():
+    # A pre-settled delivery needs no local disposition, so its tag must not be retained
+    # (otherwise unique pre-settled deliveries grow _received_delivery_tags without bound).
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+    link._incoming_transfer(_transfer_frame_full(DELIVERY_ID, DELIVERY_TAG, True, False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_called_once()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
+
+
+@pytest.mark.asyncio
+async def test_incoming_transfer_presettled_delivery_does_not_track_tag_async():
+    link = build_async_link()
+    link._on_transfer = AsyncMock()
+    link._outgoing_disposition = AsyncMock()
+    await link._incoming_transfer(_transfer_frame_full(DELIVERY_ID, DELIVERY_TAG, True, False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_awaited_once()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
