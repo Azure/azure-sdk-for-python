@@ -6,6 +6,32 @@ regeneration-owned files in `generated_tests/`.
 
 ## Coverage
 
+The suite contains six recorded scenarios (three per client) and ten mocked
+cleanup tests. The SDK exposes 25 service methods per client; seven currently
+have positive live-recorded coverage. An operation count is not a scenario count,
+and neither demonstrates full SDK coverage.
+
+| Operation group | Methods per client | Recorded coverage (sync and async) |
+| --- | --- | --- |
+| `cloud_validations` | 6: create/update, get, update, delete, list by RG, list by subscription | Positive lifecycle; missing GET and post-delete GET return 404 |
+| `operations` | 1: list | Positive discovery; expected CloudValidation and plan permission names, display metadata and data-action flags |
+| `validation_execution_plans` | 5: create/update, get, update, delete, list | Not recorded: prerequisite CloudValidation provisioning failed before any plan operation |
+| `execution_plan_runs` | 4: create/update, get, delete, list | Not recorded: needs a provisioned parent and approved executable workload fixture |
+| `validation_test_runs` | 2: get, list | Not recorded: needs an execution run that produces test results |
+| `validation_tests` | 2: get, list | Not recorded: list discovery returned 404 `InvalidResourceType` |
+| `validation_test_versions` | 2: get, list | Not recorded: needs an available catalog test/version |
+| `validation_test_categories` | 2: get, list | Not recorded: list discovery returned 502 `BadGatewayConnection` |
+| `operation_status` | 1: get | No direct method coverage; CloudValidation LRO polling is exercised, but does not call this SDK method |
+
+These blockers were observed in the approved live environment and are not claims
+about all deployments. The plan prerequisite failed with
+`MoboBrokerProvisioningFailed`: the service backend could not perform
+`Microsoft.Authorization/roleAssignments/write`. Provider metadata did not
+advertise the validation-test/version resource types. Failed probes are not
+passing coverage, and their recordings are not published. No execution workload
+was started. Plan CRUD alone does not execute a plan; run creation does, and
+requires approved workload inputs and a verified cleanup procedure.
+
 Both synchronous and asynchronous clients exercise CloudValidation create, get,
 list by resource group, list by subscription, update and delete. Assertions cover
 resource identity, location, provisioning state, tags, description persistence and
@@ -65,7 +91,10 @@ variables. Never commit credentials or a local `.env`.
 
 Live mode calls Azure and incurs resource creation/deletion. Only run it after the
 target and resource mutations are approved. Run serially; do not run concurrent
-copies of the same test against the same resource group.
+copies of the same lifecycle test against the same subscription. CloudValidation
+names are deterministic and their managed-group names are subscription-wide,
+even when the parent groups differ. Simultaneous-run support is still a gap
+against the SDK testing guidelines, not a verified property of this suite.
 
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "true"
@@ -105,6 +134,16 @@ unrelated resources returned by subscription listing. Follow the official
 to upload recordings to `Azure/azure-sdk-assets` and generate `assets.json`. This
 requires asset-repository write access. Include the generated, verified pointer
 with the test PR, not secrets or an invented asset tag.
+
+For subsequent recording updates, use the repository's
+[recording update workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings):
+
+```powershell
+python ..\..\..\scripts\manage_recordings.py push
+```
+
+Run from this package directory, inspect the resulting `assets.json`, and replay
+the full suite against the published tag before committing.
 
 The lifecycle tests refuse to overwrite an existing resource and check the test
 tag before deletion. Cleanup is attempted on failure. If creation fails or times
