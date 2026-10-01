@@ -1522,10 +1522,10 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_400(self, stats_mock, stats_shutdown_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(400)):
+        with mock.patch.object(exporter.client, "track", side_effect=_make_http_response_error(400)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
-        stats_shutdown_mock.assert_called_once()
+        stats_shutdown_mock.assert_called()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])

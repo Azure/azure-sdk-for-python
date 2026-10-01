@@ -76,9 +76,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _update_requests_map,
-)
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
     track_dropped_items_from_storage,
     track_dropped_items,

@@ -230,6 +230,26 @@ class TestConfigurationManager(unittest.TestCase):
 
         callback.assert_not_called()
 
+    def test_initial_configuration_callback_waits_for_completion(self):
+        manager = _ConfigurationManager()
+        callback = Mock()
+
+        manager.register_initial_configuration_callback(callback)
+
+        callback.assert_not_called()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"key": "value"})
+        manager.complete_initial_configuration()
+        callback.assert_called_once_with({"key": "value"})
+
+    def test_initial_configuration_callback_replays_empty_fallback(self):
+        manager = _ConfigurationManager()
+        manager.complete_initial_configuration()
+        callback = Mock()
+
+        manager.register_initial_configuration_callback(callback)
+
+        callback.assert_called_once_with({})
+
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_register_callback_replay_isolates_exception(self, mock_worker_class):
         """A callback that raises during the registration replay is isolated: registration still
