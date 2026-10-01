@@ -21,7 +21,9 @@ DESCRIPTION:
       4. Cleans up the data generation job and the generated dataset.
 
     `SimulationSeedDataGenerationJobOptions` can be used with prompt, file, or
-    agent sources. It does not take a `max_samples` setting.
+    agent sources. The service requires `max_samples` (1-1000) for this generation
+    type; because the options class does not expose it as a keyword argument, the
+    sample sets it through the model's mapping interface.
 
 USAGE:
     python sample_dataset_generation_job_simulation_seed_for_evaluation.py
@@ -132,6 +134,14 @@ def main() -> None:
             # ------------------------------------------------------------------
             # 1. Submit a simulation seed data generation job.
             # ------------------------------------------------------------------
+            generation_configuration = SimulationSeedDataGenerationJobOptions(
+                model_options=DataGenerationModelOptions(model=model_name),
+            )
+            # The service currently requires `max_samples` (1-1000) for `simulation_seed`
+            # jobs, but `SimulationSeedDataGenerationJobOptions` does not expose it as a
+            # keyword argument, so set it through the model's mapping interface.
+            generation_configuration["max_samples"] = 15
+
             job = EvaluationDataGenerationJobInputs(
                 name=f"simulation-seed-{run_id}",
                 sources=[
@@ -140,9 +150,7 @@ def main() -> None:
                         prompt=AGENT_PURPOSE,
                     ),
                 ],
-                generation_configuration=SimulationSeedDataGenerationJobOptions(
-                    model_options=DataGenerationModelOptions(model=model_name),
-                ),
+                generation_configuration=generation_configuration,
                 output_configuration=EvaluationDataGenerationJobOutputTarget(
                     name=output_dataset_name,
                     description="Simulation seeds for multi-turn evaluation of the Widgets & Gizmos support agent.",
