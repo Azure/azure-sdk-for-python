@@ -53,7 +53,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     EvaluatorVersion,
     JobStatus,
     PageOrder,
@@ -73,19 +72,17 @@ evaluator_name = f"lifecycle-demo-{ts}-{short}"
 operation_id = f"rubric-lifecycle-{short}"
 
 # Shared job used both for the initial create and the idempotency replay.
-job_body = EvaluatorGenerationJob(
-    inputs=EvaluatorGenerationInputs(
-        model=model_name,
-        evaluator_name=evaluator_name,
-        evaluator_display_name="Lifecycle demo",
-        evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
-        sources=[
-            PromptEvaluatorGenerationJobSource(
-                description="Inline application overview.",
-                prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
-            ),
-        ],
-    ),
+job_body = EvaluatorGenerationInputs(
+    model=model_name,
+    evaluator_name=evaluator_name,
+    evaluator_display_name="Lifecycle demo",
+    evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
+    sources=[
+        PromptEvaluatorGenerationJobSource(
+            description="Inline application overview.",
+            prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
+        ),
+    ],
 )
 
 with (
@@ -124,8 +121,10 @@ with (
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
-        entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
+    for entry in itertools.islice(
+        project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
+    ):
+        entry_name = entry.evaluator_name or "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
     # 3. Cancel a running job (not exercised here; the job above already completed).

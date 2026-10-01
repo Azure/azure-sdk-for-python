@@ -2775,7 +2775,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                job: EvaluatorGenerationJob, 
+                job: EvaluatorGenerationInputs, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -7564,11 +7564,15 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.EvaluatorGenerationJob(_Model):
         created_at: datetime
         error: Optional[ApiError]
+        evaluator_description: Optional[str]
+        evaluator_display_name: Optional[str]
+        evaluator_name: str
         finished_at: Optional[datetime]
         id: str
         input_quality_warnings: Optional[list[RubricGenerationInputQualityWarning]]
-        inputs: Optional[EvaluatorGenerationInputs]
+        model: str
         result: Optional[EvaluatorVersion]
+        sources: list[EvaluatorGenerationJobSource]
         status: Union[str, JobStatus]
         usage: Optional[EvaluatorGenerationTokenUsage]
 
@@ -7576,7 +7580,11 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                inputs: Optional[EvaluatorGenerationInputs] = ...
+                evaluator_description: Optional[str] = ..., 
+                evaluator_display_name: Optional[str] = ..., 
+                evaluator_name: str, 
+                model: str, 
+                sources: list[EvaluatorGenerationJobSource]
             ) -> None: ...
 
         @overload
@@ -20063,7 +20071,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                job: EvaluatorGenerationJob, 
+                job: EvaluatorGenerationInputs, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 

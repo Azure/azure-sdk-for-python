@@ -2,6 +2,12 @@
 
 ## 2.8.0 (Unreleased)
 
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* Flattened the rubric evaluator generation create shape: `begin_create_generation_job` now takes an `EvaluatorGenerationInputs` body directly instead of an `EvaluatorGenerationJob` wrapping the inputs under an `inputs` property. The `EvaluatorGenerationJob` resource now exposes `sources`, `model`, `evaluator_name`, `evaluator_display_name`, and `evaluator_description` as top-level properties, and no longer has an `inputs` property.
+
 ### Sample updates
 
 * Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.

@@ -10595,8 +10595,6 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
 
     :ivar id: Server-assigned unique identifier. Required.
     :vartype id: str
-    :ivar inputs: Caller-supplied inputs.
-    :vartype inputs: ~azure.ai.projects.models.EvaluatorGenerationInputs
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.EvaluatorVersion
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
@@ -10604,6 +10602,33 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
+    :ivar sources: Source materials for generation — agent descriptions, prompts, traces, or
+     datasets. Each entry is an ``EvaluatorGenerationJobSource`` variant discriminated by ``type``.
+     Required.
+    :vartype sources: list[~azure.ai.projects.models.EvaluatorGenerationJobSource]
+    :ivar model: The LLM model to use for rubric generation (e.g., 'gpt-4o'). Required — users must
+     provide their own model rather than relying on service-owned capacity. Required.
+    :vartype model: str
+    :ivar evaluator_name: The evaluator name (immutable identifier). 1-256 characters; allowed
+     characters are ASCII letters, digits, underscore (``_``), period (``.``), tilde (``~``), and
+     hyphen (``-``). The prefix ``builtin.`` is reserved for system-managed evaluators and is
+     rejected by the service. If an evaluator with this name already exists in the project (and is
+     rubric-subtype), the service creates a new version under the same name and uses the prior
+     version's ``dimensions`` as context for incremental improvement (foundation of the post-//build
+     adaptive loop). Old versions remain queryable via ``get_version(name, version)``. If the
+     existing evaluator is not a rubric-subtype evaluator (built-in, prompt-based, code-based), the
+     request is rejected with ``400 Bad Request``. Required.
+    :vartype evaluator_name: str
+    :ivar evaluator_display_name: Optional human-friendly display name for the resulting evaluator.
+     Surfaced as ``EvaluatorVersion.display_name`` on the persisted evaluator. When omitted, the
+     service uses ``evaluator_name`` as the display name. The ``evaluator_`` prefix disambiguates
+     this from the immutable ``evaluator_name`` identifier.
+    :vartype evaluator_display_name: str
+    :ivar evaluator_description: Optional human-friendly description for the resulting evaluator.
+     Surfaced as ``EvaluatorVersion.description`` on the persisted evaluator. Typically collected
+     from the UI alongside ``evaluator_display_name``. The ``evaluator_`` prefix disambiguates this
+     from any other description fields on related models.
+    :vartype evaluator_description: str
     :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
      since January 1, 1970). Required.
     :vartype created_at: ~datetime.datetime
@@ -10622,10 +10647,6 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
 
     id: str = rest_field(visibility=["read"])
     """Server-assigned unique identifier. Required."""
-    inputs: Optional["_models.EvaluatorGenerationInputs"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Caller-supplied inputs."""
     result: Optional["_models.EvaluatorVersion"] = rest_field(visibility=["read"])
     """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
@@ -10633,6 +10654,38 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
      \"succeeded\", \"failed\", and \"cancelled\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
+    sources: list["_models.EvaluatorGenerationJobSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source materials for generation — agent descriptions, prompts, traces, or datasets. Each entry
+     is an ``EvaluatorGenerationJobSource`` variant discriminated by ``type``. Required."""
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The LLM model to use for rubric generation (e.g., 'gpt-4o'). Required — users must provide
+     their own model rather than relying on service-owned capacity. Required."""
+    evaluator_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evaluator name (immutable identifier). 1-256 characters; allowed characters are ASCII
+     letters, digits, underscore (``_``), period (``.``), tilde (``~``), and hyphen (``-``). The
+     prefix ``builtin.`` is reserved for system-managed evaluators and is rejected by the service.
+     If an evaluator with this name already exists in the project (and is rubric-subtype), the
+     service creates a new version under the same name and uses the prior version's ``dimensions``
+     as context for incremental improvement (foundation of the post-//build adaptive loop). Old
+     versions remain queryable via ``get_version(name, version)``. If the existing evaluator is not
+     a rubric-subtype evaluator (built-in, prompt-based, code-based), the request is rejected with
+     ``400 Bad Request``. Required."""
+    evaluator_display_name: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional human-friendly display name for the resulting evaluator. Surfaced as
+     ``EvaluatorVersion.display_name`` on the persisted evaluator. When omitted, the service uses
+     ``evaluator_name`` as the display name. The ``evaluator_`` prefix disambiguates this from the
+     immutable ``evaluator_name`` identifier."""
+    evaluator_description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional human-friendly description for the resulting evaluator. Surfaced as
+     ``EvaluatorVersion.description`` on the persisted evaluator. Typically collected from the UI
+     alongside ``evaluator_display_name``. The ``evaluator_`` prefix disambiguates this from any
+     other description fields on related models."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The timestamp when the job was created, represented in Unix time (seconds since January 1,
      1970). Required."""
@@ -10652,7 +10705,11 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
     def __init__(
         self,
         *,
-        inputs: Optional["_models.EvaluatorGenerationInputs"] = None,
+        sources: list["_models.EvaluatorGenerationJobSource"],
+        model: str,
+        evaluator_name: str,
+        evaluator_display_name: Optional[str] = None,
+        evaluator_description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -22288,7 +22345,7 @@ class RubricGenerationInputQualityWarning(_Model):  # pylint: disable=docstring-
      cross-source warnings. Required. Known values are: "prompt", "agent", "dataset", and
      "aggregate".
     :vartype source: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSource
-    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the
+    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.sources`` when the
      warning applies to a specific source. Omitted for aggregate warnings and for warnings not tied
      to one source.
     :vartype source_index: int
@@ -22314,7 +22371,7 @@ class RubricGenerationInputQualityWarning(_Model):  # pylint: disable=docstring-
     """Which source category the warning applies to. ``aggregate`` is used only for cross-source
      warnings. Required. Known values are: \"prompt\", \"agent\", \"dataset\", and \"aggregate\"."""
     source_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the warning applies to a
+    """Zero-based index into ``EvaluatorGenerationJob.sources`` when the warning applies to a
      specific source. Omitted for aggregate warnings and for warnings not tied to one source."""
 
     @overload
