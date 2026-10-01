@@ -160,6 +160,9 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                     if not claims_challenge:
                         return await self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 await await_result(self.on_response, request, response)
+        if response.http_response.status_code == 401 and "WWW-Authenticate" not in response.http_response.headers:
+            self._token = None
+            ChallengeCache.remove_challenge_for_url(request.http_request.url)
         return response
 
     async def on_request(self, request: PipelineRequest) -> None:
@@ -203,6 +206,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
         previous_challenge = request.context.pop(_CHALLENGE_INFO_KEY, None)
         try:
             challenge = _update_challenge(request, response)

@@ -45,6 +45,9 @@ _ChallengeInfo = Tuple[str, str, Optional[str]]
 
 
 def _enforce_tls(request: PipelineRequest) -> None:
+    # URL parsers used by transports can interpret backslashes as authority delimiters.
+    if "\\" in urlparse(request.http_request.url).netloc:
+        raise ValueError("Key Vault request URL must not contain backslashes in its authority.")
     if not request.http_request.url.lower().startswith("https"):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
@@ -239,6 +242,9 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                     if not claims_challenge:
                         return self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 self.on_response(request, response)
+        if response.http_response.status_code == 401 and "WWW-Authenticate" not in response.http_response.headers:
+            self._token = None
+            ChallengeCache.remove_challenge_for_url(request.http_request.url)
         return response
 
     def on_request(self, request: PipelineRequest) -> None:
@@ -282,6 +288,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
         previous_challenge = request.context.pop(_CHALLENGE_INFO_KEY, None)
         try:
             challenge = _update_challenge(request, response)

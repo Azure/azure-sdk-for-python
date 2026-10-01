@@ -12,20 +12,30 @@ import functools
 from itertools import product
 import os
 import time
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 from urllib.parse import urlparse
 from uuid import uuid4
 
 from devtools_testutils import recorded_by_proxy
 
 import pytest
+import requests
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline, PipelineContext, PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import RedirectPolicy, RetryPolicy, SansIOHTTPPolicy, SensitiveHeaderCleanupPolicy
+from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineContext, PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import (
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    SansIOHTTPPolicy,
+    SensitiveHeaderCleanupPolicy,
+)
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared.async_challenge_auth_policy import AsyncChallengeAuthPolicy
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
 from _shared.helpers import Request, mock_response, validating_transport
@@ -36,6 +46,41 @@ from _keys_test_case import KeysTestCase
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+BACKSLASH_AUTHORITIES = [
+    r"example.net\.vault.azure.net",
+    r"example.net\\.vault.azure.net",
+    r"example.net\@test.vault.azure.net",
+    r"example.net\\@test.vault.azure.net",
+]
+VALID_REQUEST_URLS = [
+    "https://test.vault.azure.net/keys/key",
+    "https://TEST.VAULT.AZURE.NET/keys/key",
+    "https://test.vault.azure.net:443/keys/key",
+    "https://test.managedhsm.azure.net:8443/keys/key",
+    "https://test.vault.usgovcloudapi.net/keys/key",
+    "https://test.managedhsm.usgovcloudapi.net/keys/key",
+    "https://test.vault.azure.cn/keys/key",
+    "https://test.managedhsm.azure.cn/keys/key",
+    "https://test.vault.microsoftazure.de/keys/key",
+    "https://test.vault.custom.example/keys/key",
+    "https://test.vault.azure.net./keys/key",
+    "https://xn--bcher-kva.example/keys/key",
+    "https://[::1]:8443/keys/key",
+    "https://user%5Cname@test.vault.azure.net/keys/key",
+    r"https://test.vault.azure.net/keys/a\b",
+    r"https://test.vault.azure.net/keys/key?value=a\b",
+    r"https://test.vault.azure.net/keys/key#value=a\b",
+]
+CHALLENGE_RESOURCE_DOMAINS = [
+    "vault.azure.net",
+    "managedhsm.azure.net",
+    "vault.usgovcloudapi.net",
+    "managedhsm.usgovcloudapi.net",
+    "vault.azure.cn",
+    "managedhsm.azure.cn",
+    "vault.microsoftazure.de",
+    "vault.custom.example",
+]
 
 
 # These domains include the public/China/US Government cloud tables in eng/common/TestResources/clouds,
@@ -263,6 +308,160 @@ def test_valid_challenge_cache_reuse(domain, parameter, request_port, resource_p
     assert credential.get_token.call_count == 2
     assert credential.get_token.call_args.kwargs == {"enable_cae": True}
     assert HttpChallengeCache.get_challenge_for_url(alias) is HttpChallengeCache.get_challenge_for_url(url)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+@pytest.mark.parametrize("cached_token", [False, True])
+@pytest.mark.parametrize("challenge_sequence", ["", "kv", "cae", "kv-cae"])
+@pytest.mark.parametrize("fresh_policy", [False, True])
+@pytest.mark.parametrize("verify_challenge_resource", [False, True])
+async def test_missing_challenge_header_clears_cache_and_rediscovers(
+    is_async, token_type, cached_token, challenge_sequence, fresh_policy, verify_challenge_resource
+):
+    url = get_random_url()
+    header = 'Bearer authorization="https://authority.net/old-tenant", resource=' + (
+        "https://vault.azure.net" if verify_challenge_resource else "https://other.example"
+    )
+    new_header = 'Bearer authorization="https://authority.net/new-tenant", resource=https://vault.azure.net'
+    claims_header = 'Bearer authorization="https://authority.net/old-tenant", claims="e30="'
+    challenges = {"": [], "kv": [header], "cae": [claims_header], "kv-cae": [header, claims_header]}[challenge_sequence]
+    HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, header))
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    token_mock = (AsyncMock if is_async else Mock)(return_value=token_type("accepted-token", time.time() + 3600))
+    credential = Mock(spec_set=[token_method], **{token_method: token_mock})
+    policy_type = AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy
+    policy = policy_type(credential, verify_challenge_resource=verify_challenge_resource)
+    if cached_token:
+        policy._token = token_type("accepted-token", time.time() + 3600)
+    recovery_policy = (
+        policy_type(credential, verify_challenge_resource=verify_challenge_resource) if fresh_policy else policy
+    )
+    if fresh_policy:
+        recovery_policy._token = token_type("warm-token", time.time() + 3600)
+    missing = Mock(status_code=401, headers={})
+    sent_requests = []
+
+    def send(request):
+        sent_requests.append(request)
+        attempt = len(sent_requests)
+        if attempt <= 1 + len(challenges):
+            assert request.headers["Authorization"] == "Bearer accepted-token"
+            assert request.body == b"payload"
+            return (
+                Mock(status_code=401, headers={"WWW-Authenticate": challenges[attempt - 1]})
+                if attempt <= len(challenges)
+                else missing
+            )
+        if attempt == 2 + len(challenges):
+            assert "Authorization" not in request.headers
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            assert request.headers["x-current"] == "latest"
+            request.headers["x-added"] = "retained"
+            return Mock(status_code=401, headers={"WWW-Authenticate": new_header})
+        assert request.url == url
+        assert request.headers["Authorization"] == "Bearer accepted-token"
+        assert request.body == b"payload"
+        assert request.headers["Content-Length"] == "7"
+        assert request.headers["x-current"] == "latest"
+        assert request.headers["x-added"] == "retained"
+        return Mock(status_code=200, headers={})
+
+    transport = Mock(send=AsyncMock(wraps=send) if is_async else Mock(wraps=send))
+
+    def pipeline(auth_policy):
+        return (AsyncPipeline if is_async else Pipeline)(
+            policies=[
+                AsyncRedirectPolicy() if is_async else RedirectPolicy(),
+                AsyncRetryPolicy(retry_total=0) if is_async else RetryPolicy(retry_total=0),
+                auth_policy,
+                SensitiveHeaderCleanupPolicy(),
+            ],
+            transport=transport,
+        )
+
+    response = (
+        await pipeline(policy).run(HttpRequest("PUT", url, content=b"payload"))
+        if is_async
+        else pipeline(policy).run(HttpRequest("PUT", url, content=b"payload"))
+    )
+    assert response.http_response is missing
+    assert policy._token is None
+    assert len(sent_requests) == 1 + len(challenges)
+    assert token_mock.call_count == int(not cached_token) + len(challenges)
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+    next_request = HttpRequest(
+        "PUT", url, headers={"Authorization": "Bearer stale", "x-current": "latest"}, content=b"payload"
+    )
+    response = (
+        await pipeline(recovery_policy).run(next_request) if is_async else pipeline(recovery_policy).run(next_request)
+    )
+    assert response.http_response.status_code == 200
+    assert len(sent_requests) == 3 + len(challenges)
+    assert token_mock.call_count == int(not cached_token) + len(challenges) + 1
+    assert token_mock.call_args.args == ("https://vault.azure.net/.default",)
+    assert token_mock.call_args.kwargs.get("options", token_mock.call_args.kwargs)["tenant_id"] == "new-tenant"
+    assert HttpChallengeCache.get_challenge_for_url(url).tenant_id == "new-tenant"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+@pytest.mark.parametrize("cache_change", ["evict", "replace-valid", "replace-invalid"])
+async def test_missing_challenge_header_preserves_inflight_cae_snapshot(is_async, token_type, cache_change):
+    url = get_random_url()
+    scope = "https://vault.azure.net/.default"
+    HttpChallengeCache.set_challenge_for_url(
+        url, HttpChallenge(url, f'Bearer authorization="https://authority.net/old-tenant", scope={scope}')
+    )
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    token_mock = (AsyncMock if is_async else Mock)(return_value=token_type("token", time.time() + 3600))
+    credential = Mock(spec_set=[token_method], **{token_method: token_mock})
+    policy_type = AsyncChallengeAuthPolicy if is_async else ChallengeAuthPolicy
+    active, other = policy_type(credential), policy_type(credential)
+    request = PipelineRequest(HttpRequest("PUT", url, content=b"payload"), PipelineContext(None))
+    other_request = PipelineRequest(HttpRequest("GET", url + "/other"), PipelineContext(None))
+    if is_async:
+        await active.on_request(request)
+        await other.on_request(other_request)
+    else:
+        active.on_request(request)
+        other.on_request(other_request)
+    missing = PipelineResponse(other_request.http_request, Mock(status_code=401, headers={}), other_request.context)
+    result = (
+        await other.handle_challenge_flow(other_request, missing)
+        if is_async
+        else other.handle_challenge_flow(other_request, missing)
+    )
+    assert result is missing
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+    if cache_change != "evict":
+        replacement = scope if cache_change == "replace-valid" else "https://other.example/.default"
+        HttpChallengeCache.set_challenge_for_url(
+            url, HttpChallenge(url, f'Bearer authorization="https://authority.net/other-tenant", scope={replacement}')
+        )
+    claims = PipelineResponse(
+        request.http_request,
+        Mock(
+            status_code=401,
+            headers={
+                "WWW-Authenticate": (
+                    'Bearer authorization="https://authority.net/new-tenant", '
+                    'scope=https://vault.azure.net/new-scope, claims="e30="'
+                )
+            },
+        ),
+        request.context,
+    )
+    authorized = await active.on_challenge(request, claims) if is_async else active.on_challenge(request, claims)
+    assert authorized
+    assert request.http_request.body == b"payload"
+    assert token_mock.call_args.args == (scope,)
+    options = token_mock.call_args.kwargs.get("options", token_mock.call_args.kwargs)
+    assert options["tenant_id"] == "old-tenant"
+    assert options["claims"] == "{}"
 
 
 def redirect_replay_case(warm_cache, target_cache, redirect_status):
@@ -502,6 +701,126 @@ def test_enforces_tls():
     pipeline = Pipeline(transport=Mock(), policies=[ChallengeAuthPolicy(credential)])
     with pytest.raises(ServiceRequestError):
         pipeline.run(HttpRequest("GET", url))
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("cache_state", ["empty", "challenge", "token"])
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_rejects_backslash_authority(authority, cache_state, verify_challenge_resource, token_type):
+    url = f"https://{authority}"
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method])
+    transport = Mock()
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+    if cache_state != "empty":
+        HttpChallengeCache.set_challenge_for_url(
+            url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"])
+        )
+    if cache_state == "token":
+        client._client._config.authentication_policy._token = token_type("cached-token", time.time() + 3600)
+
+    for _ in range(2):
+        with pytest.raises(ValueError, match="backslash"):
+            client.get_key("key")
+
+    getattr(credential, token_method).assert_not_called()
+    transport.send.assert_not_called()
+    assert bool(HttpChallengeCache.get_challenge_for_url(url)) == (cache_state != "empty")
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_rejects_backslash_authority_on_challenge(authority, verify_challenge_resource, token_type):
+    url = f"https://{authority}/keys/key"
+    token_method = "get_token" if token_type == AccessToken else "get_token_info"
+    credential = Mock(spec_set=[token_method])
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge_resource)
+    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+    response = Mock(http_response=KV_CHALLENGE_RESPONSE)
+
+    with pytest.raises(ValueError, match="backslash"):
+        policy.on_challenge(request, response)
+
+    getattr(credential, token_method).assert_not_called()
+    assert "Authorization" not in request.http_request.headers
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("authority", BACKSLASH_AUTHORITIES)
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+def test_rejects_backslash_authority_with_requests_transport(authority, verify_challenge_resource):
+    url = f"https://{authority}"
+    prepared = requests.Request("GET", url).prepare()
+    assert urlparse(url).netloc.endswith(".vault.azure.net")
+    assert urlparse(prepared.url).hostname == "example.net"
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    with requests.Session() as session:
+        session.trust_env = False
+        session.send = Mock(side_effect=AssertionError("unexpected network send"))
+        with KeyClient(
+            url,
+            credential,
+            transport=RequestsTransport(session=session, session_owner=False),
+            verify_challenge_resource=verify_challenge_resource,
+        ) as client:
+            with pytest.raises(ValueError, match="backslash"):
+                client.get_key("key")
+        session.send.assert_not_called()
+
+    credential.get_token.assert_not_called()
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("url", VALID_REQUEST_URLS)
+def test_request_url_validation_preserves_valid_urls(url):
+    HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"]))
+    credential = Mock(spec_set=["get_token"])
+    # Isolate authority validation: this fixture's resource deliberately doesn't match every URL.
+    policy = ChallengeAuthPolicy(credential, verify_challenge_resource=False)
+    policy._token = AccessToken("cached-token", time.time() + 3600)
+    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+
+    policy.on_request(request)
+
+    assert request.http_request.url == url
+    assert "cached-token" in request.http_request.headers["Authorization"]
+    credential.get_token.assert_not_called()
+
+
+@empty_challenge_cache
+@pytest.mark.parametrize("resource_domain", CHALLENGE_RESOURCE_DOMAINS)
+def test_request_url_validation_preserves_challenge_flow(resource_domain):
+    url = f"https://test.{resource_domain}/keys/key"
+    scope = f"https://{resource_domain}/.default"
+    challenge_header = f'Bearer authorization="{ENDPOINT}", resource="https://{resource_domain}"'
+    token = AccessToken("expected-token", time.time() + 3600)
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    transport = validating_transport(
+        requests=(
+            Request(url),
+            Request(url, required_headers={"Authorization": "Bearer expected-token"}),
+            Request(url, required_headers={"Authorization": "Bearer expected-token"}),
+        ),
+        responses=(
+            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_header}),
+            mock_response(status_code=200),
+            mock_response(status_code=200),
+        ),
+    )
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential)], transport=transport)
+
+    for _ in range(2):
+        pipeline.run(HttpRequest("GET", url))
+
+    assert HttpChallengeCache.get_challenge_for_url(url).get_resource() == f"https://{resource_domain}"
+    credential.get_token.assert_called_once_with(scope, claims=None, tenant_id=KV_CHALLENGE_TENANT, enable_cae=True)
 
 
 def test_challenge_cache():
@@ -1512,7 +1831,7 @@ def test_cae_request_snapshot_is_origin_bound(target):
         policies=[RetryPolicy(), ChallengeAuthPolicy(credential), RedirectPolicy()], transport=Mock(send=send)
     )
     if target.startswith("other"):
-        with pytest.raises(ValueError):
+        with pytest.raises(ServiceRequestError if target == "other-scheme" else ValueError):
             pipeline.run(HttpRequest("GET", url))
         assert credential.get_token.call_count == 1
     else:
