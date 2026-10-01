@@ -171,7 +171,26 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## How to use `enable_cross_partition_query`
 
-The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
+When the customer app asks for orders across all customers, it cannot restrict the query to
+one customer's partition key. Both synchronous and asynchronous `query_items()` enable
+cross-partition execution automatically when neither a partition key nor a feed range is
+supplied and `enable_cross_partition_query` is omitted or `None`.
+
+For an existing `orders` container, the synchronous customer app can consume all orders with:
+
+```python
+for order in orders_container.query_items(query="SELECT * FROM orders"):
+    print(order["id"])
+```
+
+The SDK enables cross-partition execution for this unscoped request and returns the service
+backend's results through the loop. Explicit `True` also permits cross-partition execution;
+explicit `False` keeps it disabled. Enabling it does not override a supplied partition scope:
+`partition_key="customer-501"` still restricts the request to that customer's logical partition.
+
+This changes the legacy synchronous default: an unscoped query that previously required an
+explicit opt-in can now execute. Keep `False` when the customer app must prohibit cross-partition
+execution. It does not select a customer's partition key on the customer app's behalf.
 
 ## Note on using queries by id
 
@@ -240,7 +259,7 @@ This SDK uses the [query_items](https://learn.microsoft.com/python/api/azure-cos
 
 Cosmos DB SQL language allows you to [get subitems by using the FROM clause](https://learn.microsoft.com/azure/cosmos-db/sql-query-from#get-subitems-by-using-the-from-clause), to reduce the source to a smaller subset. As an example, you can use `select * from Families.children` instead of `select * from Families`. But please note that:
 
-* For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag.
+* SQL queries using `query_items` automatically enable cross-partition execution when neither a partition key nor a feed range is supplied, unless explicitly disabled.
 * If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
 
 ## Max Item Count
@@ -601,7 +620,9 @@ async def create_products():
 
 ### Queries with the asynchronous client
 
-Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
+The asynchronous client uses the same `enable_cross_partition_query` default as the synchronous
+client. See [How to use `enable_cross_partition_query`](#how-to-use-enable_cross_partition_query)
+for automatic execution and explicit opt-out behavior.
 
 Query results can be iterated, but the query's raw output returns an asynchronous iterator. This means that each object from the iterator is an awaitable object, and does not yet contain the true query result. In order to obtain the query results you can use an async for loop, which awaits each result as you iterate on the object, or manually await each query result as you iterate over the asynchronous iterator.
 

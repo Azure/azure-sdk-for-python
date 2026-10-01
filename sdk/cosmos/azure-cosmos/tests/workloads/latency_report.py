@@ -376,9 +376,9 @@ def main():
     ap.add_argument(
         "--max-p99-ms",
         type=float,
-        default=10.0,
-        help="exclusive Rust p99 ceiling for the selected --latency-metric "
-        "with --point-read-gate (default 10)",
+        default=4.0,
+        help="inclusive Rust p99 ceiling for the selected --latency-metric "
+        "with --point-read-gate (default 4)",
     )
     ap.add_argument(
         "--gate-backends",
@@ -567,9 +567,9 @@ def main():
         if read is not None:
             checks.append(
                 (
-                    _pctile_ms(read, 99) < args.max_p99_ms,
-                    f"rust: {metric_label} p99 < {args.max_p99_ms:g} ms "
-                    f"({_pctile_ms(read, 99):.2f} ms)",
+                    _pctile_ms(read, 99) <= args.max_p99_ms,
+                    f"rust: {metric_label} p99 <= {args.max_p99_ms:g} ms "
+                    f"({_pctile_ms(read, 99):.3f} ms)",
                 )
             )
         latency_ok = latency_ok and all(ok for ok, _ in checks)

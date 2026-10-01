@@ -36,7 +36,16 @@ def container_for(request):
         pass
 
 
-def test_partition_query_baseline(container_for):
+@pytest.mark.parametrize(
+    "query_options",
+    [
+        pytest.param({}, id="omitted"),
+        pytest.param({"enable_cross_partition_query": None}, id="none"),
+        pytest.param({"enable_cross_partition_query": True}, id="true"),
+        pytest.param({"enable_cross_partition_query": False}, id="false"),
+    ],
+)
+def test_partition_query_baseline(container_for, query_options):
     """Baseline: partition-scoped query returns the same item ids."""
     # Without this, a basic partition query returning different items or a different order
     # on rust would go unnoticed.
@@ -54,6 +63,7 @@ def test_partition_query_baseline(container_for):
                     query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']",
                     parameters=[{"name": "@pk", "value": pk_value}],
                     partition_key=pk_value,
+                    **query_options,
                 )
             ],
         )
@@ -64,6 +74,8 @@ def test_partition_query_baseline(container_for):
     )
     comparison.print_report()
     comparison.assert_functional_parity()
+    assert comparison.core_python.return_value == [0, 1, 2]
+    assert comparison.rust.return_value == [0, 1, 2]
 
 
 def test_partition_query_continuation_replay(container_for):
@@ -108,7 +120,15 @@ def test_partition_query_continuation_replay(container_for):
     comparison.assert_functional_parity()
 
 
-def test_cross_partition_query_fallback(container_for):
+@pytest.mark.parametrize(
+    "query_options",
+    [
+        pytest.param({}, id="omitted"),
+        pytest.param({"enable_cross_partition_query": None}, id="none"),
+        pytest.param({"enable_cross_partition_query": True}, id="true"),
+    ],
+)
+def test_cross_partition_query_fallback(container_for, query_options):
     """Cross-partition query (no partition key) stays behaviorally equivalent."""
     # Without this, the rust cross-partition path could drop or duplicate items unnoticed.
 
@@ -124,7 +144,8 @@ def test_cross_partition_query_fallback(container_for):
                 for item in container.query_items(
                     query="SELECT * FROM c WHERE c.run_id = @run_id",
                     parameters=[{"name": "@run_id", "value": run_id}],
-                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    **query_options,
                 )
             ),
         )
@@ -135,6 +156,8 @@ def test_cross_partition_query_fallback(container_for):
     )
     comparison.print_report()
     comparison.assert_functional_parity()
+    assert comparison.core_python.return_value == ["a", "b"]
+    assert comparison.rust.return_value == ["a", "b"]
 
 
 def test_invalid_query_raises_same_type(container_for):

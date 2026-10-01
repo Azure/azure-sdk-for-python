@@ -76,3 +76,23 @@ class TestQuery(unittest.TestCase):
         replay_second_page = list(replay_pager.next())[0]
         self.assertEqual(second_page["id"], replay_second_page["id"])
 
+    def test_cross_partition_query_with_continuation_token(self):
+        """Original cross-partition continuation replay, using this test's isolated container."""
+        # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token
+        created_collection = self.container
+        created_collection.create_item(body={"pk": "pk1", "id": str(uuid.uuid4())})
+        created_collection.create_item(body={"pk": "pk2", "id": str(uuid.uuid4())})
+
+        query_iterable = created_collection.query_items(
+            query="SELECT * from c",
+            enable_cross_partition_query=True,
+            max_item_count=1,
+        )
+        pager = query_iterable.by_page()
+        pager.next()
+        token = pager.continuation_token
+        second_page = list(pager.next())[0]
+
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = list(pager.next())[0]
+        self.assertEqual(second_page["id"], second_page_fetched_with_continuation_token["id"])

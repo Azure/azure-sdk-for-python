@@ -855,6 +855,8 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
         ]
         assert (tmp_path / "manifest-rate.txt").read_text().strip() == "100"
         assert "--expected-rps 100" in (tmp_path / "report-arguments.txt").read_text()
+        assert "--latency-metric sdk-call" in (tmp_path / "report-arguments.txt").read_text()
+        assert "--max-p99-ms 4 " in (tmp_path / "report-arguments.txt").read_text()
 
 
 @pytest.fixture
@@ -2112,7 +2114,7 @@ def test_send_and_wait_primary_sdk_latency_preserves_existing_histogram(modules)
 def test_report_summary_comparison_and_gate_use_same_latency_metric(
         modules, monkeypatch, capsys, metric, expected_exit):
     rows = []
-    for backend, sdk_ms in (("core-python", 7), ("rust", 5)):
+    for backend, sdk_ms in (("core-python", 7), ("rust", 3)):
         row = fixed_rate_row(
             modules, delay_ms=20, sdk_ms=sdk_ms,
             workload_id=f"baseline-read-{backend}-{STAMP}", config_backend=backend)
@@ -2132,16 +2134,16 @@ def test_report_summary_comparison_and_gate_use_same_latency_metric(
     assert f"Primary latency metric: {selected}" in output
     assert f"core-python vs rust ({selected}; pooled ms" in output
     assert output.count(f"duration={selected}") == 2
-    assert f"rust: {label} p99 < 10 ms" in output
+    assert f"rust: {label} p99 <= 4 ms" in output
     rust_line = next(line for line in output.splitlines() if "read     rust" in line)
-    assert ("p99= 25.01" if metric == "total" else "p99=  5.00") in rust_line
-    assert "success total duration: samples=1 p99=25.007" in output
+    assert ("p99= 23.01" if metric == "total" else "p99=  3.00") in rust_line
+    assert "success total duration: samples=1 p99=23.007" in output
     assert "success delay before SDK call: samples=1" in output
     assert "limit_waits=0" in output
 
 
-@pytest.mark.parametrize("sdk_ms", [10, 12, 70_000])
-def test_sdk_call_gate_rejects_threshold_and_overflow(modules, monkeypatch, capsys, sdk_ms):
+@pytest.mark.parametrize("sdk_ms", [4.002, 5, 70_000])
+def test_sdk_call_gate_rejects_above_target_and_overflow(modules, monkeypatch, capsys, sdk_ms):
     row = fixed_rate_row(modules, delay_ms=0, sdk_ms=sdk_ms)
     report = modules["latency_report"]
     monkeypatch.setattr(report, "_connect", lambda: Rows([
@@ -2151,7 +2153,25 @@ def test_sdk_call_gate_rejects_threshold_and_overflow(modules, monkeypatch, caps
     with pytest.raises(SystemExit) as result:
         report.main()
     assert result.value.code == 1
-    assert "[FAIL] rust: SDK-call p99 < 10 ms" in capsys.readouterr().out
+    assert "[FAIL] rust: SDK-call p99 <= 4 ms" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("p99,expected_exit", [(3.999, 0), (4.0, 0), (4.001, 1)])
+def test_sdk_call_gate_uses_inclusive_unrounded_target(modules, monkeypatch, capsys, p99, expected_exit):
+    row = fixed_rate_row(modules, delay_ms=0, sdk_ms=3)
+    report = modules["latency_report"]
+    monkeypatch.setattr(report, "_connect", lambda: Rows([
+        row, completion(row, fixed_rate_schedules=[schedule_record()])]))
+    original_pctile = report._pctile_ms
+    monkeypatch.setattr(report, "_pctile_ms",
+                        lambda cell, percentile: p99 if percentile == 99 else original_pctile(cell, percentile))
+    monkeypatch.setattr(sys, "argv", [
+        "latency_report", "--run-id", STAMP, "--point-read-gate", "--gate-backends", "rust"])
+    with pytest.raises(SystemExit) as result:
+        report.main()
+    assert result.value.code == expected_exit
+    verdict = "PASS" if expected_exit == 0 else "FAIL"
+    assert f"[{verdict}] rust: SDK-call p99 <= 4 ms ({p99:.3f} ms)" in capsys.readouterr().out
 
 
 def test_missing_one_clients_schedule_is_rejected(modules):

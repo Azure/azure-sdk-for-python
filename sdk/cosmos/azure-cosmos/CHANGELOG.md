@@ -10,6 +10,7 @@
 
 #### Breaking Changes
 
+* Synchronous `ContainerProxy.query_items()` now enables cross-partition execution by default when no partition key or feed range is supplied, matching async; explicit `enable_cross_partition_query=False` remains honored.
 * For v5, removed `DatabaseProxy.read_offer()` and `ContainerProxy.read_offer()`; use `get_throughput()` to read the same configured throughput.
 * Container `get_throughput()` now rejects unsupported Rust inputs instead of using legacy Python and isolates returned throughput from response-hook mutations.
 

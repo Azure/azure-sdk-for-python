@@ -845,9 +845,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :param bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
+        :param bool enable_cross_partition_query: Allows execution across partitions.
+            If omitted or None, queries without a partition key or feed range enable this automatically.
+            Explicit False is preserved. True does not override the supplied partition scope.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
@@ -942,9 +942,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_cross_partition_query: Allows execution across partitions.
+            If omitted or None, queries without a partition key or feed range enable this automatically.
+            Explicit False is preserved. True does not override the supplied partition scope.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1032,9 +1032,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_cross_partition_query: Allows execution across partitions.
+            If omitted or None, queries without a partition key or feed range enable this automatically.
+            Explicit False is preserved. True does not override the supplied partition scope.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1165,6 +1165,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
                 feed_options["partitionKey"] = partition_key_value
+        elif (
+            not utils.valid_key_value_exist(kwargs, "feed_range")
+            and "enableCrossPartitionQuery" not in feed_options
+        ):
+            feed_options["enableCrossPartitionQuery"] = True
         kwargs.pop("partition_key", None)
 
         # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set

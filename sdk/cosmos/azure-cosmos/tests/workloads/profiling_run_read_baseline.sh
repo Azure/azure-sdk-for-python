@@ -248,7 +248,7 @@ else
 fi
 echo "=== Checking the SDK-call p99 and point-read workload-health gate ==="
 if python3 latency_report.py --prefix "baseline-" --profiling-session-id "${PROFILING_SESSION_ID}" \
-  --latency-metric sdk-call --point-read-gate --expected-rps "${WORKLOAD_ARRIVAL_RATE}" --max-p99-ms 10 \
+  --latency-metric sdk-call --point-read-gate --expected-rps "${WORKLOAD_ARRIVAL_RATE}" --max-p99-ms 4 \
   --gate-backends "${BACKEND_CSV}" \
   | tee "${REPORT_FILE}"; then
   echo "=== point-read p99 gate PASSED ==="

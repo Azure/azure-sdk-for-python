@@ -961,9 +961,9 @@ class ContainerProxy:
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_cross_partition_query: Allows execution across partitions.
+            If omitted or None, queries without a partition key or feed range enable this automatically.
+            Explicit False is preserved. True does not override the supplied partition scope.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations

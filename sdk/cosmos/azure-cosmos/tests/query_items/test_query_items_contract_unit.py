@@ -775,7 +775,83 @@ def test_hook_failure_does_not_advance_public_bookmark(query):
         query.next_page(pages)
 
 
-def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(query):
+@pytest.fixture
+def legacy_query(query):
+    query.proxy._item_context = None
+    query.connection._backend = SimpleNamespace(name="core-python")
+    query.proxy._get_properties_with_options = MagicMock(
+        return_value={
+            "_rid": "rid",
+            "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+        }
+    )
+    properties = query.proxy._get_properties_with_options.return_value
+    query.proxy._get_properties = (
+        AsyncMock(return_value=properties) if query.async_mode else MagicMock(return_value=properties)
+    )
+    return query
+
+
+@pytest.mark.parametrize(
+    "scope,unscoped",
+    [
+        pytest.param({}, True, id="omitted-scope"),
+        pytest.param({"partition_key": None}, True, id="none-key"),
+        pytest.param({"feed_range": None}, True, id="none-range"),
+        pytest.param({"partition_key": "customer-501"}, False, id="complete-key"),
+        pytest.param({"partition_key": False}, False, id="false-key"),
+        pytest.param({"partition_key": 0}, False, id="zero-key"),
+        pytest.param({"partition_key": NullPartitionKeyValue}, False, id="null-key"),
+        pytest.param({"partition_key": NonePartitionKeyValue}, False, id="undefined-key"),
+        pytest.param(
+            {"feed_range": {"Range": {"min": "", "max": "FF"}}},
+            False,
+            id="feed-range",
+        ),
+    ],
+)
+@pytest.mark.parametrize(
+    "query_options",
+    [
+        pytest.param({}, id="omitted-flag"),
+        pytest.param({"enable_cross_partition_query": None}, id="none-flag"),
+        pytest.param({"enable_cross_partition_query": True}, id="true-flag"),
+        pytest.param({"enable_cross_partition_query": False}, id="false-flag"),
+    ],
+)
+def test_legacy_query_cross_partition_defaults(legacy_query, scope, unscoped, query_options):
+    """Both public clients default only unscoped queries and retain explicit flags."""
+    result = legacy_query.proxy.query_items("SELECT * FROM c", **scope, **query_options)
+    assert result is legacy_query.connection.QueryItems.return_value
+    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+    if inspect.isawaitable(options.get("partitionKey")):
+        asyncio.run(options["partitionKey"])
+    explicit = query_options.get("enable_cross_partition_query")
+    expected = explicit if explicit is not None else (True if unscoped else None)
+    if expected is None:
+        assert "enableCrossPartitionQuery" not in options
+    else:
+        assert options["enableCrossPartitionQuery"] is expected
+    assert not legacy_query.calls
+
+
+@pytest.mark.parametrize(
+    "query_options,expected",
+    [
+        pytest.param({}, True, id="omitted"),
+        pytest.param({"enable_cross_partition_query": None}, True, id="none"),
+        pytest.param({"enable_cross_partition_query": True}, True, id="true"),
+        pytest.param({"enable_cross_partition_query": False}, False, id="false"),
+    ],
+)
+def test_rust_query_cross_partition_defaults(query, query_options, expected):
+    from azure.cosmos._helpers._query_items import QueryConfig
+
+    config = QueryConfig(query.proxy, {"query": "SELECT * FROM c", **query_options})
+    assert config.scope.allow_cross_partition is expected
+
+
+def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(legacy_query):
     """On the core-python backend queries run the legacy path and refuse Rust tokens.
 
     With the legacy backend selected, the query returns the legacy iterable
@@ -788,14 +864,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(query)
     differently, so reading the wrong kind could restart the query or skip
     rows.
     """
-    query.proxy._item_context = None
-    query.connection._backend = SimpleNamespace(name="core-python")
-    query.proxy._get_properties_with_options = MagicMock(
-        return_value={
-            "_rid": "rid",
-            "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
-        }
-    )
+    query = legacy_query
     result = query.proxy.query_items("SELECT * FROM c", read_timeout=5)
     assert result is query.connection.QueryItems.return_value
     assert not query.calls

@@ -80,3 +80,22 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         replay_second_page = [item async for item in await replay_pager.__anext__()][0]
         assert second_page["id"] == replay_second_page["id"]
 
+    async def test_cross_partition_query_with_continuation_token_async(self):
+        """Original async cross-partition replay, without an explicit enable flag."""
+        # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async
+        created_collection = self.container
+        await created_collection.create_item(body={"pk": "pk1", "id": str(uuid.uuid4())})
+        await created_collection.create_item(body={"pk": "pk2", "id": str(uuid.uuid4())})
+
+        query_iterable = created_collection.query_items(
+            query="SELECT * from c",
+            max_item_count=1,
+        )
+        pager = query_iterable.by_page()
+        await pager.__anext__()
+        token = pager.continuation_token
+        second_page = [item async for item in await pager.__anext__()][0]
+
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
+        assert second_page["id"] == second_page_fetched_with_continuation_token["id"]

@@ -37,7 +37,16 @@ def container_for(request):
 
 
 @pytest.mark.asyncio
-async def test_partition_query_baseline_async(container_for):
+@pytest.mark.parametrize(
+    "query_options",
+    [
+        pytest.param({}, id="omitted"),
+        pytest.param({"enable_cross_partition_query": None}, id="none"),
+        pytest.param({"enable_cross_partition_query": True}, id="true"),
+        pytest.param({"enable_cross_partition_query": False}, id="false"),
+    ],
+)
+async def test_partition_query_baseline_async(container_for, query_options):
     """Baseline async partition query returns the same item ids."""
     # Without this, a basic partition query returning different items or a different order
     # on rust would go unnoticed.
@@ -54,6 +63,7 @@ async def test_partition_query_baseline_async(container_for):
                     query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']",
                     parameters=[{"name": "@pk", "value": pk_value}],
                     partition_key=pk_value,
+                    **query_options,
                 )
             ]
 
@@ -65,6 +75,8 @@ async def test_partition_query_baseline_async(container_for):
     )
     comparison.print_report()
     comparison.assert_functional_parity()
+    assert comparison.core_python.return_value == [0, 1, 2]
+    assert comparison.rust.return_value == [0, 1, 2]
 
 
 @pytest.mark.asyncio
@@ -116,7 +128,15 @@ async def test_partition_query_continuation_replay_async(container_for):
 
 
 @pytest.mark.asyncio
-async def test_cross_partition_query_fallback_async(container_for):
+@pytest.mark.parametrize(
+    "query_options",
+    [
+        pytest.param({}, id="omitted"),
+        pytest.param({"enable_cross_partition_query": None}, id="none"),
+        pytest.param({"enable_cross_partition_query": True}, id="true"),
+    ],
+)
+async def test_cross_partition_query_fallback_async(container_for, query_options):
     """Async cross-partition query (no partition key) stays equivalent."""
     # Without this, the rust cross-partition path could drop or duplicate items unnoticed.
 
@@ -131,7 +151,8 @@ async def test_cross_partition_query_fallback_async(container_for):
                 async for item in container.query_items(
                     query="SELECT * FROM c WHERE c.run_id = @run_id",
                     parameters=[{"name": "@run_id", "value": run_id}],
-                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    **query_options,
                 )
             ])
 
@@ -143,6 +164,8 @@ async def test_cross_partition_query_fallback_async(container_for):
     )
     comparison.print_report()
     comparison.assert_functional_parity()
+    assert comparison.core_python.return_value == ["a", "b"]
+    assert comparison.rust.return_value == ["a", "b"]
 
 
 @pytest.mark.asyncio
