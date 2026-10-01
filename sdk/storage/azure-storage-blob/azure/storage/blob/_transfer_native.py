@@ -7,7 +7,7 @@
 """Internal module for native transfer acceleration dispatch.
 
 This module provides the bridge between azure-storage-blob's Python upload/download
-paths and the optional azure-storage-extensions-transfer Rust extension. Uploads use
+paths and the optional azure-storage-extensions-transfer Rust extension. Transfers use
 the Rust backend whenever the extension is available and raise for unsupported native
 inputs rather than silently falling back to Python.
 """
@@ -161,54 +161,42 @@ def _can_use_native_download(
     credential: Any,
     **kwargs: Any,
 ) -> bool:
-    """Determine if native download acceleration can be used for this call."""
+    """Validate native download support.
+
+    Returns ``False`` only when the native extension is unavailable or explicitly disabled.
+    If the extension is available, unsupported download options raise :class:`ValueError`
+    with a reason-specific message instead of silently falling back to the Python download path.
+    """
     if not _is_native_available():
         return False
 
-    # No encryption support
-    if encryption_options.get("key") or encryption_options.get("required"):
-        return False
+    if (
+        encryption_options.get("key")
+        or encryption_options.get("required")
+        or encryption_options.get("resolver")
+    ):
+        raise ValueError("Native download does not support client-side encryption.")
 
-    # No content validation support
     if validate_content not in (None, False):
-        return False
+        raise ValueError(
+            "Native download does not support transactional content validation."
+        )
 
-    # No decompression support — if explicitly requested
     if kwargs.get("decompress", None) is True:
-        return False
+        raise ValueError("Native download does not support decompression.")
 
-    # No encoding (text mode) support
     if kwargs.get("encoding"):
-        return False
+        raise ValueError("Native download does not support text encoding.")
 
-    # No CPK support
-    if kwargs.get("cpk"):
-        return False
-
-    # Credential must be TokenCredential or SAS
     if credential is not None and not hasattr(credential, "get_token"):
         if not isinstance(credential, (str, AzureSasCredential)):
-            return False
+            raise ValueError(
+                "Native download requires a token credential or SAS credential; "
+                f"received {type(credential).__name__}."
+            )
 
-    # No conditional access support
-    if any(
-        kwargs.get(k)
-        for k in (
-            "if_modified_since",
-            "if_unmodified_since",
-            "etag",
-            "if_tags_match_condition",
-        )
-    ):
-        return False
-
-    # No lease support
-    if kwargs.get("lease"):
-        return False
-
-    # No progress hook support
     if kwargs.get("progress_hook"):
-        return False
+        raise ValueError("Native download does not support progress hooks.")
 
     return True
 
@@ -280,9 +268,7 @@ def try_native_upload(
     immutability_policy_expiry = None
     immutability_policy_mode = None
     if immutability_policy:
-        immutability_policy_expiry = _to_unix_timestamp(
-            immutability_policy.expiry_time
-        )
+        immutability_policy_expiry = _to_unix_timestamp(immutability_policy.expiry_time)
         immutability_policy_mode = immutability_policy.policy_mode
         if hasattr(immutability_policy_mode, "value"):
             immutability_policy_mode = immutability_policy_mode.value
@@ -313,9 +299,7 @@ def try_native_upload(
         if_match=conditions.get("if_match"),
         if_none_match=conditions.get("if_none_match"),
         if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
-        if_unmodified_since=_to_unix_timestamp(
-            conditions.get("if_unmodified_since")
-        ),
+        if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
         if_tags=if_tags,
         immutability_policy_expiry=immutability_policy_expiry,
         immutability_policy_mode=immutability_policy_mode,
@@ -426,14 +410,15 @@ def try_native_download_eager(
     validate_content: Any,
     **kwargs: Any,
 ) -> Optional["NativeStorageStreamDownloader"]:
-    """Attempt to download the blob via the native Rust extension.
+    """Download through the native Rust extension when it is available.
 
     If successful, returns a NativeStorageStreamDownloader wrapping the native windowed
     download stream. The stream fetches one window at a time using the Rust SDK's parallel
     ``download_into``, so peak memory is bounded to a single window for the streaming paths.
 
-    Returns None if conditions aren't met or native download fails, allowing
-    the caller to fall back to the standard StorageStreamDownloader path.
+    Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
+    extension is available, unsupported inputs and native execution failures are raised rather
+    than falling back to the Python download path.
     """
     if not _can_use_native_download(
         encryption_options=encryption_options,
@@ -441,35 +426,44 @@ def try_native_download_eager(
         credential=blob_client.credential,
         **kwargs,
     ):
-        _LOGGER.debug("Native download not eligible; using Python download path.")
-        return None
-
-    try:
-        from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
-            download_blob as native_download,
-        )
-
-        token_provider = _build_token_provider(blob_client.credential)
-        max_concurrency = kwargs.get("max_concurrency", None)
-
-        stream = native_download(
-            url=blob_client.url,
-            token_provider=token_provider,
-            credential_id=id(blob_client.credential) if token_provider else None,
-            offset=offset,
-            length=length,
-            max_concurrency=max_concurrency,
-        )
-        _LOGGER.info("Used native Rust extension for blob download.")
-        return NativeStorageStreamDownloader(
-            stream=stream,
-            name=blob_client.blob_name,
-            container=blob_client.container_name,
-        )
-
-    except Exception:  # pylint: disable=broad-except
-        _LOGGER.warning(
-            "Native download failed; falling back to Python download path.",
-            exc_info=True,
+        _LOGGER.debug(
+            "Native download extension unavailable; using Python download path."
         )
         return None
+
+    from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
+        download_blob as native_download,
+    )
+
+    token_provider = _build_token_provider(blob_client.credential)
+    max_concurrency = kwargs.get("max_concurrency", None)
+    cpk = kwargs.get("cpk", None)
+    lease = get_lease_id(kwargs.get("lease", None))
+    conditions = get_blob_modify_conditions(dict(kwargs))
+    version_id = kwargs.get("version_id", getattr(blob_client, "version_id", None))
+
+    stream = native_download(
+        url=blob_client.url,
+        token_provider=token_provider,
+        credential_id=id(blob_client.credential) if token_provider else None,
+        offset=offset,
+        length=length,
+        lease_id=lease,
+        encryption_key=getattr(cpk, "key_value", None),
+        encryption_key_sha256=getattr(cpk, "key_hash", None),
+        encryption_algorithm=getattr(cpk, "algorithm", None),
+        if_match=conditions.get("if_match"),
+        if_none_match=conditions.get("if_none_match"),
+        if_modified_since=_to_unix_timestamp(conditions.get("if_modified_since")),
+        if_unmodified_since=_to_unix_timestamp(conditions.get("if_unmodified_since")),
+        if_tags=kwargs.get("if_tags_match_condition", None),
+        version_id=version_id,
+        timeout=kwargs.get("timeout", None),
+        max_concurrency=max_concurrency,
+    )
+    _LOGGER.info("Used native Rust extension for blob download.")
+    return NativeStorageStreamDownloader(
+        stream=stream,
+        name=blob_client.blob_name,
+        container=blob_client.container_name,
+    )

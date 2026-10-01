@@ -21,8 +21,8 @@ How native usage is verified:
   - Direct API: is_available() must be True and the round-trip must succeed.
   - Through the SDK: the dispatch module (azure.storage.blob._transfer_native)
     logs an INFO record "Used native Rust extension for ..." when the native
-    path is taken, and a WARNING if it fails and falls back. This script
-    installs a handler on that logger and asserts those records appear.
+    path is taken. Native failures propagate when the extension is enabled.
+    This script installs a handler on that logger and asserts the INFO records appear.
     Additionally, download returns a 'NativeStorageStreamDownloader' object
     only when native acceleration was used.
 """
@@ -130,8 +130,8 @@ def test_direct_extension(credential):
 def test_through_blob_sdk(credential):
     """Exercise the transparent acceleration path via azure-storage-blob.
 
-    Verifies the native path was actually taken (not a silent Python fallback)
-    by inspecting the dispatch logger and the returned downloader type.
+    Verifies the native path was actually taken by inspecting the dispatch logger
+    and the returned downloader type.
     """
     print("\n=== Through azure-storage-blob (transparent acceleration) ===")
     from azure.storage.blob import BlobClient
@@ -152,8 +152,7 @@ def test_through_blob_sdk(credential):
         upload_msgs = capture.messages()
         print(f"  Dispatch log: {upload_msgs}")
         assert any("Used native Rust extension for blob upload." in m for m in upload_msgs), (
-            "Upload did NOT use the native path (it fell back to Python). "
-            f"Dispatch log: {upload_msgs}"
+            f"Upload did not report successful native dispatch. Dispatch log: {upload_msgs}"
         )
         print("  VERIFIED: upload used native path")
 
@@ -164,7 +163,7 @@ def test_through_blob_sdk(credential):
         print(f"  Dispatch log: {download_msgs}")
         print(f"  Downloader type: {type(downloader).__name__}")
         assert type(downloader).__name__ == "NativeStorageStreamDownloader", (
-            "Download did NOT use the native path (returned a Python "
+            "Download did not return the native downloader (returned "
             f"StorageStreamDownloader). Dispatch log: {download_msgs}"
         )
         assert any("Used native Rust extension for blob download." in m for m in download_msgs), (

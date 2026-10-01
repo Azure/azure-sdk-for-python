@@ -18,6 +18,7 @@ from azure.storage.blob._transfer_native import (
     _can_use_native_download,
     _can_use_native_upload,
     _is_native_available,
+    try_native_download_eager,
     try_native_upload,
 )
 
@@ -193,47 +194,196 @@ class TestCanUseNativeDownload(unittest.TestCase):
         return cred
 
     def test_rejects_encryption(self):
-        result = _can_use_native_download(
-            encryption_options={"key": "somekey"},
-            validate_content=None,
-            credential=self._make_credential(),
-        )
-        self.assertFalse(result)
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "client-side encryption"):
+            _can_use_native_download(
+                encryption_options={"key": "somekey"},
+                validate_content=None,
+                credential=self._make_credential(),
+            )
 
     def test_rejects_content_validation(self):
-        result = _can_use_native_download(
-            encryption_options={},
-            validate_content="crc64",
-            credential=self._make_credential(),
-        )
-        self.assertFalse(result)
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "content validation"):
+            _can_use_native_download(
+                encryption_options={},
+                validate_content="crc64",
+                credential=self._make_credential(),
+            )
 
     def test_rejects_decompression(self):
-        result = _can_use_native_download(
-            encryption_options={},
-            validate_content=None,
-            credential=self._make_credential(),
-            decompress=True,
-        )
-        self.assertFalse(result)
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "decompression"):
+            _can_use_native_download(
+                encryption_options={},
+                validate_content=None,
+                credential=self._make_credential(),
+                decompress=True,
+            )
 
     def test_rejects_encoding(self):
-        result = _can_use_native_download(
-            encryption_options={},
-            validate_content=None,
-            credential=self._make_credential(),
-            encoding="utf-8",
-        )
-        self.assertFalse(result)
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "text encoding"):
+            _can_use_native_download(
+                encryption_options={},
+                validate_content=None,
+                credential=self._make_credential(),
+                encoding="utf-8",
+            )
 
     def test_rejects_progress_hook(self):
-        result = _can_use_native_download(
-            encryption_options={},
-            validate_content=None,
-            credential=self._make_credential(),
-            progress_hook=lambda x, y: None,
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "progress hooks"):
+            _can_use_native_download(
+                encryption_options={},
+                validate_content=None,
+                credential=self._make_credential(),
+                progress_hook=lambda x, y: None,
+            )
+
+    def test_rejects_unsupported_credential(self):
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), self.assertRaisesRegex(ValueError, "token credential or SAS credential"):
+            _can_use_native_download(
+                encryption_options={},
+                validate_content=None,
+                credential=self._make_credential(has_get_token=False),
+            )
+
+    def test_accepts_supported_blob_options(self):
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ):
+            result = _can_use_native_download(
+                encryption_options={},
+                validate_content=None,
+                credential=self._make_credential(),
+                cpk=MagicMock(),
+                lease="lease-id",
+                etag='"etag"',
+                match_condition=MatchConditions.IfNotModified,
+                if_modified_since=datetime(2024, 1, 1, tzinfo=timezone.utc),
+                if_unmodified_since=datetime(2024, 2, 1, tzinfo=timezone.utc),
+                if_tags_match_condition="\"tag\" = 'value'",
+                version_id="version",
+                timeout=30,
+            )
+        self.assertTrue(result)
+
+
+class TestNativeDownloadDispatch(unittest.TestCase):
+    """Tests for native download dispatch and option forwarding."""
+
+    def test_download_returns_none_only_when_extension_is_unavailable(self):
+        client = MagicMock()
+
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=False,
+        ):
+            result = try_native_download_eager(client, None, None, {}, None)
+
+        self.assertIsNone(result)
+
+    def test_download_propagates_native_extension_failure(self):
+        native_download = MagicMock(side_effect=ValueError("native failure"))
+        native_module = ModuleType("azure.storage.extensions.transfer")
+        native_module.download_blob = native_download
+        client = MagicMock(
+            credential=MagicMock(),
+            url="https://account.blob.core.windows.net/container/blob",
         )
-        self.assertFalse(result)
+
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), patch.dict(
+            "sys.modules", {"azure.storage.extensions.transfer": native_module}
+        ), self.assertRaisesRegex(
+            ValueError, "native failure"
+        ):
+            try_native_download_eager(client, None, None, {}, None)
+
+        native_download.assert_called_once()
+
+    def test_download_forwards_supported_blob_options(self):
+        stream = MagicMock(size=4, etag='"etag"', last_modified=None)
+        stream.__iter__.return_value = iter([b"data"])
+        native_download = MagicMock(return_value=stream)
+        native_module = ModuleType("azure.storage.extensions.transfer")
+        native_module.download_blob = native_download
+
+        credential = MagicMock()
+        client = MagicMock(
+            credential=credential,
+            url="https://account.blob.core.windows.net/container/blob",
+            blob_name="blob",
+            container_name="container",
+            version_id="client-version",
+        )
+        cpk = MagicMock(key_value="key", key_hash="hash", algorithm="AES256")
+        lease = MagicMock(id="lease-id")
+        modified_since = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+        unmodified_since = datetime(2024, 2, 3, 4, 5, 6, tzinfo=timezone.utc)
+
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), patch.dict(
+            "sys.modules", {"azure.storage.extensions.transfer": native_module}
+        ):
+            result = try_native_download_eager(
+                client,
+                10,
+                20,
+                {},
+                None,
+                cpk=cpk,
+                lease=lease,
+                etag='"etag"',
+                match_condition=MatchConditions.IfNotModified,
+                if_modified_since=modified_since,
+                if_unmodified_since=unmodified_since,
+                if_tags_match_condition="\"tag\" = 'value'",
+                version_id="requested-version",
+                timeout=30,
+                max_concurrency=4,
+            )
+
+        self.assertIsNotNone(result)
+        native_download.assert_called_once()
+        forwarded = native_download.call_args.kwargs
+        self.assertEqual(forwarded["offset"], 10)
+        self.assertEqual(forwarded["length"], 20)
+        self.assertEqual(forwarded["lease_id"], "lease-id")
+        self.assertEqual(forwarded["encryption_key"], "key")
+        self.assertEqual(forwarded["encryption_key_sha256"], "hash")
+        self.assertEqual(forwarded["encryption_algorithm"], "AES256")
+        self.assertEqual(forwarded["if_match"], '"etag"')
+        self.assertIsNone(forwarded["if_none_match"])
+        self.assertEqual(
+            forwarded["if_modified_since"], int(modified_since.timestamp())
+        )
+        self.assertEqual(
+            forwarded["if_unmodified_since"], int(unmodified_since.timestamp())
+        )
+        self.assertEqual(forwarded["if_tags"], "\"tag\" = 'value'")
+        self.assertEqual(forwarded["version_id"], "requested-version")
+        self.assertEqual(forwarded["timeout"], 30)
+        self.assertEqual(forwarded["max_concurrency"], 4)
 
 
 class TestBuildTokenProvider(unittest.TestCase):
@@ -334,9 +484,7 @@ class TestNativeCredentialIdentity(unittest.TestCase):
             "azure.storage.blob._transfer_native._is_native_available",
             return_value=False,
         ):
-            result = try_native_upload(
-                client, b"data", "BlockBlob", {}, None, config
-            )
+            result = try_native_upload(client, b"data", "BlockBlob", {}, None, config)
 
         self.assertIsNone(result)
 
@@ -355,7 +503,9 @@ class TestNativeCredentialIdentity(unittest.TestCase):
             return_value=True,
         ), patch.dict(
             "sys.modules", {"azure.storage.extensions.transfer": native_module}
-        ), self.assertRaisesRegex(ValueError, "native failure"):
+        ), self.assertRaisesRegex(
+            ValueError, "native failure"
+        ):
             try_native_upload(client, b"data", "BlockBlob", {}, None, config)
 
         native_upload.assert_called_once()

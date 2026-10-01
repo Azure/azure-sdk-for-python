@@ -804,6 +804,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             length=length,
             encryption_options=encryption_options,
             validate_content=validate_content,
+            encoding=encoding,
             **kwargs,
         )
         if native_result is not None:
