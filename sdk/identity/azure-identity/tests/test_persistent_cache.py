@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
+import sys
+
 from azure.identity import InteractiveBrowserCredential, TokenCachePersistenceOptions
 import pytest
 import msal_extensions
@@ -21,6 +24,30 @@ def test_token_cache_persistence_options():
         # configure the cache to fall back to unencrypted storage when encryption isn't available
         TokenCachePersistenceOptions(allow_unencrypted_storage=True)
         # [END snippet]
+
+
+@pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="requires macOS")
+@pytest.mark.parametrize(
+    "options,is_cae,expected_cache_name,expected_account",
+    (
+        (TokenCachePersistenceOptions(), False, "msal.cache.nocae", "MSALCache"),
+        (TokenCachePersistenceOptions(), True, "msal.cache.cae", "msal.cache.cae"),
+        (TokenCachePersistenceOptions(name="app-alice"), False, "app-alice.nocae", "app-alice.nocae"),
+        (TokenCachePersistenceOptions(name="app-alice"), True, "app-alice.cae", "app-alice.cae"),
+        (TokenCachePersistenceOptions(name="app-bob"), False, "app-bob.nocae", "app-bob.nocae"),
+    ),
+)
+def test_persistent_cache_macos(options, is_cae, expected_cache_name, expected_account):
+    from azure.identity._persistent_cache import _load_persistent_cache
+
+    with mock.patch("msal_extensions.PersistedTokenCache"):
+        with mock.patch("msal_extensions.KeychainPersistence") as keychain:
+            _load_persistent_cache(options, is_cae=is_cae)
+
+    expected_path = os.path.expanduser(os.path.join("~", ".IdentityService", expected_cache_name))
+    keychain.assert_called_once_with(
+        expected_path, "Microsoft.Developer.IdentityService", expected_account
+    )
 
 
 @mock.patch("azure.identity._persistent_cache.sys.platform", "linux2")
