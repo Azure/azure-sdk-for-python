@@ -43,6 +43,9 @@ _REQUEST_COPY_KEY = "key_vault_request_copy"
 
 
 def _enforce_tls(request: PipelineRequest) -> None:
+    # URL parsers used by transports can interpret backslashes as authority delimiters.
+    if "\\" in urlparse(request.http_request.url).netloc:
+        raise ValueError("Key Vault request URL must not contain backslashes in its authority.")
     if not request.http_request.url.lower().startswith("https"):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
@@ -229,6 +232,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
         cached_challenge: Optional[HttpChallenge] = None
         try:
             # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary

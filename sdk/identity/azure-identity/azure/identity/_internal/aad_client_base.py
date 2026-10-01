@@ -39,7 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     _POST = ["POST"]
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-positional-arguments
         self,
         tenant_id: str,
         client_id: str,

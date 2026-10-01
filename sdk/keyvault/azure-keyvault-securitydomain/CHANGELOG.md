@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed an issue where cached authentication challenges could bypass challenge resource verification.
+- Reject request URLs containing backslashes in the authority before authentication.
 
 ### Other Changes
 
