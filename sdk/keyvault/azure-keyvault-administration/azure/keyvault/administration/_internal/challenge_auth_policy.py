@@ -16,7 +16,7 @@ protocol again.
 
 from copy import deepcopy
 import time
-from typing import Any, cast, Optional, Union
+from typing import Any, cast, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 from azure.core.credentials import (
@@ -40,6 +40,11 @@ from . import http_challenge_cache as ChallengeCache
 # Storing this per-request (rather than on the policy instance) prevents the body of one request from leaking into a
 # subsequent request made by the same client.
 _REQUEST_COPY_KEY = "key_vault_request_copy"
+_CHALLENGE_INFO_KEY = "key_vault_challenge_info"
+_ChallengeInfo = Tuple[str, str, Optional[str]]
+# Eviction identity is separate from the immutable accepted scope and tenant.
+_CHALLENGE_CACHE_KEY = "key_vault_challenge_cache"
+_ChallengeCacheEntry = Tuple[str, Optional[HttpChallenge]]
 
 
 def _enforce_tls(request: PipelineRequest) -> None:
@@ -62,8 +67,8 @@ def _has_claims(challenge: str) -> bool:
     :rtype: bool
     """
     # Split the challenge into its scheme and parameters, then check if any parameter contains claims
-    split_challenge = challenge.strip().split(" ", 1)
-    return any("claims=" in item for item in split_challenge[1].split(","))
+    parameters = challenge.strip().partition(" ")[2]
+    return any("claims=" in item for item in parameters.split(","))
 
 
 def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
@@ -78,12 +83,73 @@ def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) ->
     :rtype: HttpChallenge
     """
 
+    challenge_header = challenger.http_response.headers.get("WWW-Authenticate")
+    # HttpChallenge expects a scheme followed by a space and parameters.
+    if not challenge_header or " " not in challenge_header.strip():
+        raise ValueError("Invalid challenge header")
     challenge = HttpChallenge(
         request.http_request.url,
-        challenger.http_response.headers.get("WWW-Authenticate"),
+        challenge_header,
         response_headers=challenger.http_response.headers,
     )
     return challenge
+
+
+def _request_origin(url: str) -> str:
+    # Use the same authority equivalence as the cache, but don't share authentication across schemes.
+    authority = ChallengeCache._get_cache_key(url).lower()  # pylint:disable=protected-access
+    return urlparse(url).scheme.lower() + "://" + authority
+
+
+def _get_challenge_info(
+    request_url: str,
+    previous: Optional[_ChallengeInfo],
+    verify_resource: bool,
+    expected_challenge: Optional[HttpChallenge],
+) -> Tuple[Optional[str], Optional[str]]:
+    try:
+        if previous and previous[0] == _request_origin(request_url):
+            scope, tenant = previous[1:]
+        else:
+            cached = ChallengeCache.get_challenge_for_url(request_url)
+            if not cached or _request_origin(cached.source_uri) != _request_origin(request_url):
+                return None, None
+            expected_challenge = cached
+            scope = cached.get_scope() or cached.get_resource() + "/.default"
+            tenant = cached.tenant_id
+        if verify_resource:
+            _validate_challenge_resource(scope, request_url)
+    except ValueError:
+        ChallengeCache.remove_challenge_for_url_if_matches(request_url, expected_challenge)
+        raise
+    return scope, tenant
+
+
+def _get_challenge_candidate(request: PipelineRequest) -> Optional[HttpChallenge]:
+    entry: Optional[_ChallengeCacheEntry] = request.context.get(_CHALLENGE_CACHE_KEY)
+    if entry and entry[0] == _request_origin(request.http_request.url):
+        return entry[1]
+    return None
+
+
+def _remove_challenge_for_request(request: PipelineRequest) -> None:
+    ChallengeCache.remove_challenge_for_url_if_matches(request.http_request.url, _get_challenge_candidate(request))
+
+
+def _restore_request(request: PipelineRequest) -> None:
+    request_copy = request.context.pop(_REQUEST_COPY_KEY, None)
+    if request_copy and request_copy.method == request.http_request.method:
+        # Preserve header changes made during discovery, including redirect cleanup.
+        content_length = request_copy.headers.get("Content-Length")
+        headers = deepcopy(request.http_request.headers)
+        request_copy.headers.clear()
+        request_copy.headers.update(headers)
+        if content_length is None:
+            request_copy.headers.pop("Content-Length", None)
+        else:
+            request_copy.headers["Content-Length"] = content_length
+        request_copy.url = request.http_request.url
+        request.http_request = request_copy
 
 
 def _validate_challenge_resource(scope: str, request_url: str) -> None:
@@ -95,9 +161,9 @@ def _validate_challenge_resource(scope: str, request_url: str) -> None:
     if request_domain.lower().endswith(f".{resource_domain.lower()}"):
         return
 
-    # Preserve existing authority matches and the cache's HTTPS default-port equivalence.
+    # Preserve existing authority matches and HTTPS request default-port equivalence for all resource schemes.
     request_domain = ChallengeCache._get_cache_key(request_url)  # pylint:disable=protected-access
-    resource_authority = ChallengeCache._get_cache_key(scope)  # pylint:disable=protected-access
+    resource_authority = ChallengeCache._get_cache_key("https://" + resource_domain)  # pylint:disable=protected-access
     if not request_domain.lower().endswith(f".{resource_authority.lower()}"):
         raise ValueError(
             f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
@@ -171,6 +237,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             # If the previous challenge was a KV challenge and this one is too, return the 401
             claims_challenge = _has_claims(response.http_response.headers["WWW-Authenticate"])
             if consecutive_challenge and not claims_challenge:
+                _remove_challenge_for_request(request)
                 return response
 
             request_authorized = self.on_challenge(request, response)
@@ -191,26 +258,37 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                     if not claims_challenge:
                         return self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 self.on_response(request, response)
+        if response.http_response.status_code == 401 and "WWW-Authenticate" not in response.http_response.headers:
+            self._token = None
+            _remove_challenge_for_request(request)
         return response
 
     def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
+        request.context.pop(_CHALLENGE_INFO_KEY, None)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         if challenge:
             try:
-                # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+                # A shared cache entry may have been stored by a client that disabled resource verification.
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 if self._verify_challenge_resource:
                     _validate_challenge_resource(scope, request.http_request.url)
             except ValueError:
                 self._token = None
-                ChallengeCache.remove_challenge_for_url(request.http_request.url, challenge)
+                request.http_request.headers.pop("Authorization", None)
+                ChallengeCache.remove_challenge_for_url_if_matches(request.http_request.url, challenge)
                 raise
-
+            request.context[_CHALLENGE_INFO_KEY] = (
+                _request_origin(request.http_request.url),
+                scope,
+                challenge.tenant_id,
+            )
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             if self._need_new_token:
                 self._request_kv_token(scope, challenge)
 
+            _restore_request(request)
             bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
             request.http_request.headers["Authorization"] = f"Bearer {bearer_token}"
             return
@@ -220,8 +298,9 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         # on_challenge will parse that challenge, use the original request including the body, authorize the
         # request, and tell super to send it again.
         # The original request is stashed on the request's context (per-request), so it cannot leak into a later
-        # request made by the same client. Don't overwrite a previously stashed copy if this is a retry.
-        if request.http_request.content and _REQUEST_COPY_KEY not in request.context:
+        # request made by the same client. A restored request must be stripped again if the cache is evicted on retry.
+        request.http_request.headers.pop("Authorization", None)
+        if request.http_request.content:
             request.context[_REQUEST_COPY_KEY] = request.http_request
             bodiless_request = HttpRequest(
                 method=request.http_request.method,
@@ -233,44 +312,48 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         _enforce_tls(request)
-        cached_challenge: Optional[HttpChallenge] = None
+        previous_challenge = request.context.pop(_CHALLENGE_INFO_KEY, None)
         try:
-            # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
-            old_scope: Optional[str] = None
-            old_tenant: Optional[str] = None
-            cached_challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
-            if cached_challenge:
-                old_scope = cached_challenge.get_scope() or cached_challenge.get_resource() + "/.default"
-                old_tenant = cached_challenge.tenant_id
-
             challenge = _update_challenge(request, response)
-            # CAE challenges may not include a scope or tenant; use the previous challenge's values if necessary
-            if challenge.claims and old_scope:
-                challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
-                challenge.tenant_id = old_tenant
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
             self._token = None
-            if cached_challenge:
-                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
             return False
 
+        if challenge.claims:
+            # Another request may have evicted or replaced the cache while this request was in flight.
+            try:
+                old_scope, old_tenant = _get_challenge_info(
+                    request.http_request.url,
+                    previous_challenge,
+                    self._verify_challenge_resource,
+                    _get_challenge_candidate(request),
+                )
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                raise
+            if old_scope:
+                challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
+                challenge.tenant_id = old_tenant
+        # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
         try:
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
             if self._verify_challenge_resource:
                 _validate_challenge_resource(scope, request.http_request.url)
         except ValueError:
             self._token = None
-            if cached_challenge:
-                ChallengeCache.remove_challenge_for_url(request.http_request.url, cached_challenge)
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
             raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
+        request.context[_CHALLENGE_INFO_KEY] = (_request_origin(request.http_request.url), scope, challenge.tenant_id)
 
         # If we stashed the original request in on_request, use it now to send along the original body content
-        request_copy = request.context.get(_REQUEST_COPY_KEY)
-        if request_copy:
-            request.http_request = request_copy
+        _restore_request(request)
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
