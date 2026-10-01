@@ -1,5 +1,48 @@
 # Release History
 
+## 3.0.0b1 (2026-10-01)
+
+### Features Added
+
+  - Client `ElasticSanMgmtClient` added method `begin_restore_volume`
+  - Model `ElasticSanProperties` added property `total_reserved_iops`
+  - Model `ElasticSanProperties` added property `total_reserved_m_bps`
+  - Model `ElasticSanProperties` added property `used_capacity_gi_b`
+  - Model `ElasticSanProperties` added property `version`
+  - Model `ElasticSanUpdateProperties` added property `total_iops`
+  - Model `ElasticSanUpdateProperties` added property `total_m_bps`
+  - Model `ElasticSanUpdateProperties` added property `total_size_ti_b`
+  - Enum `ProvisioningStates` added member `SOFT_DELETING`
+  - Model `SkuLocationInfo` added property `zone_details`
+  - Enum `SkuName` added member `ELASTIC_SAN_LRS`
+  - Model `SnapshotProperties` added property `completion_percent`
+  - Model `SnapshotProperties` added property `snapshot_access_state`
+  - Enum `StorageTargetType` added member `DIRECT_ATTACH`
+  - Model `VolumeGroupProperties` added property `delete_retention_policy`
+  - Model `VolumeGroupProperties` added property `encryption_in_transit`
+  - Model `VolumeGroupProperties` added property `quality_of_service`
+  - Model `VolumeGroupProperties` added property `reserved_iops`
+  - Model `VolumeGroupProperties` added property `reserved_m_bps`
+  - Model `VolumeGroupUpdateProperties` added property `delete_retention_policy`
+  - Model `VolumeGroupUpdateProperties` added property `reserved_iops`
+  - Model `VolumeGroupUpdateProperties` added property `reserved_m_bps`
+  - Added model `DeleteRetentionPolicy`
+  - Added enum `DeleteType`
+  - Added enum `ElasticSanVersion`
+  - Added model `ManagedByResources`
+  - Added enum `PolicyState`
+  - Added enum `QualityOfService`
+  - Added model `SkuZoneDetails`
+  - Added enum `SnapshotAccessState`
+  - Added enum `XMsAccessSoftDeletedResources`
+  - Model `VolumeGroupsOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_elastic_san`
+  - Model `VolumesOperations` added parameter `delete_type` in method `begin_delete`
+  - Model `VolumesOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_volume_group`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagedByInfo`
+
 ## 2.0.0 (2026-01-29)
 
 ### Features Added

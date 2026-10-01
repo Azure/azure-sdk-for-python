@@ -15,7 +15,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_get_minimum_set_gen.py
+    python volume_groups_general_purpose_create_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,34 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.elastic_sans.get(
+    response = client.volume_groups.begin_create(
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
-    )
+        volume_group_name="volumegroupname",
+        parameters={
+            "identity": {"type": "None", "userAssignedIdentities": {"key2350": {}}},
+            "properties": {
+                "deleteRetentionPolicy": {"policyState": "Enabled", "retentionPeriodDays": 14},
+                "encryption": "EncryptionAtRestWithPlatformKey",
+                "encryptionInTransit": True,
+                "encryptionProperties": {
+                    "identity": {"userAssignedIdentity": "vgbeephfgecgg"},
+                    "keyVaultProperties": {
+                        "keyName": "rommjwp",
+                        "keyVaultUri": "https://microsoft.com/at",
+                        "keyVersion": "ulmxxgzgsuhalwesmhfslq",
+                    },
+                },
+                "enforceDataIntegrityCheckForIscsi": True,
+                "networkAcls": {"virtualNetworkRules": [{"action": "Allow", "id": "fhhawhc"}]},
+                "protocolType": "Iscsi",
+                "qualityOfService": "GeneralPurpose",
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ElasticSans_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/VolumeGroups_GeneralPurpose_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
