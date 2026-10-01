@@ -434,3 +434,54 @@ def test_incoming_transfer_presettled_delivery_does_not_track_tag_async():
         assert link._received_delivery_tags == set()
 
     asyncio.run(run())
+
+
+def _aborted_frame(delivery_id, delivery_tag, more, payload):
+    return [3, delivery_id, delivery_tag, 0, False, more, None, None, None, True, False, payload]
+
+
+def test_incoming_transfer_aborted_is_discarded():
+    # An aborted delivery is discarded and implicitly settled: no callback, no disposition.
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_aborted_frame(7, b"/tag", False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+    assert link._received_delivery_tags == set()
+
+
+def test_incoming_transfer_aborted_multiframe_is_not_rejected():
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame_full(7, b"/tag", False, True, b"\x00\x53\x77"))
+    link._incoming_transfer(_aborted_frame(None, None, False, b""))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+
+
+def test_incoming_transfer_aborted_is_discarded_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_aborted_frame(7, b"/tag", False, b"\x00\x53\x77\x50\x01"))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_payload == bytearray()
+        assert link._received_delivery_tags == set()
+
+    asyncio.run(run())
+
+
+def test_incoming_transfer_aborted_multiframe_is_not_rejected_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame_full(7, b"/tag", False, True, b"\x00\x53\x77"))
+        await link._incoming_transfer(_aborted_frame(None, None, False, b""))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_payload == bytearray()
+
+    asyncio.run(run())

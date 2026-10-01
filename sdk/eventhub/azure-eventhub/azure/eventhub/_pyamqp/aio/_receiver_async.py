@@ -61,8 +61,8 @@ class ReceiverLink(Link):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.received_delivery_id = frame[1]  # delivery_id
-        # If more is false --> this is the last frame of the message
-        if not frame[5]:
+        # The last frame (more is false) or an aborted frame completes the delivery
+        if not frame[5] or frame[9]:
             self.delivery_count += 1
             self.current_link_credit -= 1
         if self.received_delivery_id is not None:
@@ -70,6 +70,9 @@ class ReceiverLink(Link):
             self._received_settled = frame[4] is True
         else:
             self._received_settled = self._received_settled or (frame[4] is True)
+        if frame[9]:  # aborted takes precedence over `more`: discard payload, implicitly settled, no decode/disposition
+            self._received_payload = bytearray()
+            return
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:  # more

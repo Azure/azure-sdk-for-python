@@ -728,3 +728,60 @@ async def test_incoming_transfer_presettled_delivery_does_not_track_tag_async():
     link._on_transfer.assert_awaited_once()
     link._outgoing_disposition.assert_not_called()
     assert link._received_delivery_tags == set()
+
+
+def _aborted_frame(delivery_id, delivery_tag, more, payload):
+    return [1, delivery_id, delivery_tag, 0, False, more, None, None, None, True, False, payload]
+
+
+def test_incoming_transfer_aborted_is_discarded():
+    # An aborted delivery is discarded and implicitly settled: no callback and no disposition,
+    # even when the carried payload would otherwise decode.
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+    link._received_delivery_tags.clear()
+    link._incoming_transfer(_aborted_frame(DELIVERY_ID, DELIVERY_TAG, False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+    assert link._received_delivery_tags == set()
+
+
+def test_incoming_transfer_aborted_multiframe_is_not_rejected():
+    # An aborted multi-frame delivery with an incomplete payload must not be decoded or rejected.
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+    link._received_delivery_tags.clear()
+    link._incoming_transfer(_transfer_frame_full(DELIVERY_ID, DELIVERY_TAG, False, True, b"\x00\x53\x77"))
+    link._incoming_transfer(_aborted_frame(None, None, False, b""))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+
+
+@pytest.mark.asyncio
+async def test_incoming_transfer_aborted_is_discarded_async():
+    link = build_async_link()
+    link._on_transfer = AsyncMock()
+    link._outgoing_disposition = AsyncMock()
+    link._received_delivery_tags.clear()
+    await link._incoming_transfer(_aborted_frame(DELIVERY_ID, DELIVERY_TAG, False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+    assert link._received_delivery_tags == set()
+
+
+@pytest.mark.asyncio
+async def test_incoming_transfer_aborted_multiframe_is_not_rejected_async():
+    link = build_async_link()
+    link._on_transfer = AsyncMock()
+    link._outgoing_disposition = AsyncMock()
+    link._received_delivery_tags.clear()
+    await link._incoming_transfer(_transfer_frame_full(DELIVERY_ID, DELIVERY_TAG, False, True, b"\x00\x53\x77"))
+    await link._incoming_transfer(_aborted_frame(None, None, False, b""))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
