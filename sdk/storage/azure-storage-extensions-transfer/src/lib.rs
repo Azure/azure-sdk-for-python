@@ -482,6 +482,7 @@ fn parse_content_range_total(value: &str) -> Option<u64> {
 #[pyclass]
 struct NativeDownloadStream {
     client: BlobClient,
+    download_options: BlobClientDownloadOptions<'static>,
     max_concurrency: Option<usize>,
     window_size: u64,
     /// Absolute blob offset of the next window to fetch.
@@ -503,12 +504,13 @@ impl NativeDownloadStream {
     /// the network/IO operation.
     fn fetch_window<'py>(
         client: &BlobClient,
+        download_options: &BlobClientDownloadOptions<'static>,
         max_concurrency: Option<usize>,
         py: Python<'py>,
         offset: u64,
         len: u64,
     ) -> PyResult<(Bound<'py, PyBytes>, u64)> {
-        let mut options = BlobClientDownloadOptions::default();
+        let mut options = download_options.clone();
         options.range = Some(HttpRange::new(offset, len));
         if let Some(concurrency) = max_concurrency {
             options.parallel = NonZero::new(concurrency);
@@ -566,6 +568,7 @@ impl NativeDownloadStream {
         let len = remaining.min(self.window_size);
         let (chunk, written) = NativeDownloadStream::fetch_window(
             &self.client,
+            &self.download_options,
             self.max_concurrency,
             py,
             self.next_offset,
@@ -593,6 +596,17 @@ impl NativeDownloadStream {
     credential_id = None,
     offset = None,
     length = None,
+    lease_id = None,
+    encryption_key = None,
+    encryption_key_sha256 = None,
+    encryption_algorithm = None,
+    if_match = None,
+    if_none_match = None,
+    if_modified_since = None,
+    if_unmodified_since = None,
+    if_tags = None,
+    version_id = None,
+    timeout = None,
     max_concurrency = None,
     max_chunk_size = None,
 ))]
@@ -603,6 +617,17 @@ fn download_blob(
     credential_id: Option<usize>,
     offset: Option<u64>,
     length: Option<u64>,
+    lease_id: Option<&str>,
+    encryption_key: Option<&str>,
+    encryption_key_sha256: Option<&str>,
+    encryption_algorithm: Option<&str>,
+    if_match: Option<&str>,
+    if_none_match: Option<&str>,
+    if_modified_since: Option<i64>,
+    if_unmodified_since: Option<i64>,
+    if_tags: Option<&str>,
+    version_id: Option<&str>,
+    timeout: Option<i32>,
     max_concurrency: Option<usize>,
     max_chunk_size: Option<u64>,
 ) -> PyResult<NativeDownloadStream> {
@@ -618,10 +643,35 @@ fn download_blob(
         None => window_size,
     };
 
-    let mut options = BlobClientDownloadOptions::default();
-    options.range = Some(HttpRange::new(start, first_len));
+    let mut download_options = BlobClientDownloadOptions::default();
+    download_options.lease_id = lease_id.map(str::to_string);
+    download_options.encryption_key = encryption_key.map(str::to_string);
+    download_options.encryption_key_sha256 = encryption_key_sha256.map(str::to_string);
+    download_options.if_match = if_match.map(Into::into);
+    download_options.if_none_match = if_none_match.map(Into::into);
+    download_options.if_modified_since = if_modified_since
+        .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
+        .transpose()
+        .map_err(|e| PyValueError::new_err(format!("Invalid if_modified_since value: {e}")))?;
+    download_options.if_unmodified_since = if_unmodified_since
+        .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
+        .transpose()
+        .map_err(|e| PyValueError::new_err(format!("Invalid if_unmodified_since value: {e}")))?;
+    download_options.if_tags = if_tags.map(str::to_string);
+    download_options.version_id = version_id.map(str::to_string);
+    download_options.timeout = timeout;
+
+    if let Some(algorithm) = encryption_algorithm {
+        download_options.encryption_algorithm = Some(
+            EncryptionAlgorithmType::from_str(algorithm)
+                .map_err(|e| PyValueError::new_err(e.to_string()))?,
+        );
+    }
+
+    let mut first_options = download_options.clone();
+    first_options.range = Some(HttpRange::new(start, first_len));
     if let Some(concurrency) = max_concurrency {
-        options.parallel = NonZero::new(concurrency);
+        first_options.parallel = NonZero::new(concurrency);
     }
 
     // Fetch the first window and, from its response, learn the total blob size and properties.
@@ -632,7 +682,7 @@ fn download_blob(
             RUNTIME.block_on(async {
                 let mut buffer = vec![0u8; first_len as usize];
                 let result = blob_client
-                    .download_into(&mut buffer, Some(options))
+                    .download_into(&mut buffer, Some(first_options))
                     .await
                     .map_err(AzureError::from)?;
                 buffer.truncate(result.len);
@@ -670,6 +720,7 @@ fn download_blob(
 
     Ok(NativeDownloadStream {
         client: blob_client,
+        download_options,
         max_concurrency,
         window_size,
         next_offset: start + written,
