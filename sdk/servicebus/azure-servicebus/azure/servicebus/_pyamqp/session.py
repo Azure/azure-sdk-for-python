@@ -339,7 +339,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     """Handle is not currently associated with an attached link""",
                 )
             )
-            return
 
     def _outgoing_disposition(self, frame):
         self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
