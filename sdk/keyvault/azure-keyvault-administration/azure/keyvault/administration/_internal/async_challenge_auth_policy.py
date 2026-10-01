@@ -36,8 +36,11 @@ from .challenge_auth_policy import (
     _validate_challenge_resource,
     _request_origin,
     _get_challenge_info,
+    _get_challenge_candidate,
+    _remove_challenge_for_request,
     _restore_request,
     _CHALLENGE_INFO_KEY,
+    _CHALLENGE_CACHE_KEY,
     _REQUEST_COPY_KEY,
 )
 
@@ -139,7 +142,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             # If the previous challenge was a KV challenge and this one is too, return the 401
             claims_challenge = _has_claims(response.http_response.headers["WWW-Authenticate"])
             if consecutive_challenge and not claims_challenge:
-                ChallengeCache.remove_challenge_for_url(request.http_request.url)
+                _remove_challenge_for_request(request)
                 return response
 
             request_authorized = await self.on_challenge(request, response)
@@ -162,18 +165,19 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                 await await_result(self.on_response, request, response)
         if response.http_response.status_code == 401 and "WWW-Authenticate" not in response.http_response.headers:
             self._token = None
-            ChallengeCache.remove_challenge_for_url(request.http_request.url)
+            _remove_challenge_for_request(request)
         return response
 
     async def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
         request.context.pop(_CHALLENGE_INFO_KEY, None)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         if challenge:
             # A shared cache entry may have been stored by a client that disabled resource verification.
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
             if self._verify_challenge_resource:
-                _validate_challenge_resource(scope, request.http_request.url)
+                _validate_challenge_resource(scope, request.http_request.url, challenge)
             request.context[_CHALLENGE_INFO_KEY] = (
                 _request_origin(request.http_request.url),
                 scope,
@@ -211,13 +215,16 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         try:
             challenge = _update_challenge(request, response)
         except ValueError:
-            ChallengeCache.remove_challenge_for_url(request.http_request.url)
+            _remove_challenge_for_request(request)
             return False
 
         if challenge.claims:
             # Another request may have evicted or replaced the cache while this request was in flight.
             old_scope, old_tenant = _get_challenge_info(
-                request.http_request.url, previous_challenge, self._verify_challenge_resource
+                request.http_request.url,
+                previous_challenge,
+                self._verify_challenge_resource,
+                _get_challenge_candidate(request),
             )
             if old_scope:
                 challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
@@ -225,9 +232,10 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
         scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         if self._verify_challenge_resource:
-            _validate_challenge_resource(scope, request.http_request.url)
+            _validate_challenge_resource(scope, request.http_request.url, _get_challenge_candidate(request))
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         request.context[_CHALLENGE_INFO_KEY] = (_request_origin(request.http_request.url), scope, challenge.tenant_id)
 
         # If we stashed the original request in on_request, use it now to send along the original body content

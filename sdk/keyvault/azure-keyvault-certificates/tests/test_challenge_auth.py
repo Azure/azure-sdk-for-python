@@ -416,16 +416,17 @@ def test_opt_out_cache_is_not_trusted_by_strict_policy(cached_token):
 
 
 @pytest.mark.parametrize("header", INVALID_CHALLENGE_HEADERS)
-def test_rejected_response_clears_cached_challenge(header):
+def test_rejected_response_preserves_concurrent_challenge(header):
     url = get_random_url()
     credential = Mock(spec_set=["get_token"])
     policy = ChallengeAuthPolicy(credential)
     request = PipelineRequest(HttpRequest("POST", url, content=b"secret"), PipelineContext(None))
     policy.on_request(request)
     assert not request.http_request.body
-    HttpChallengeCache.set_challenge_for_url(
-        url, HttpChallenge(url, 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net')
+    replacement = HttpChallenge(
+        url, 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'
     )
+    HttpChallengeCache.set_challenge_for_url(url, replacement)
     response = PipelineResponse(
         request.http_request, Mock(status_code=401, headers={"WWW-Authenticate": header}), request.context
     )
@@ -434,7 +435,7 @@ def test_rejected_response_clears_cached_challenge(header):
             policy.on_challenge(request, response)
     else:
         assert policy.on_challenge(request, response) is False
-    assert HttpChallengeCache.get_challenge_for_url(url) is None
+    assert HttpChallengeCache.get_challenge_for_url(url) is replacement
     assert "Authorization" not in request.http_request.headers
     assert not request.http_request.body
     credential.get_token.assert_not_called()
@@ -445,6 +446,8 @@ def test_rejected_response_clears_cached_challenge(header):
         assert fresh_request.headers["Content-Length"] == "0"
         return Mock(status_code=401, headers={})
 
+    # Start a separate cold-discovery scenario, independent of the concurrent cache entry.
+    HttpChallengeCache.remove_challenge_for_url(url)
     fresh = Pipeline(policies=[ChallengeAuthPolicy(credential)], transport=Mock(send=send))
     assert fresh.run(HttpRequest("POST", url, content=b"new secret")).http_response.status_code == 401
     credential.get_token.assert_not_called()
@@ -460,6 +463,8 @@ def test_malformed_challenge_flow_clears_cache(header, consecutive):
     credential = Mock(spec_set=["get_token"])
     policy = ChallengeAuthPolicy(credential)
     request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
+    policy._token = AccessToken("token", time.time() + 3600)
+    policy.on_request(request)
     response = PipelineResponse(
         request.http_request, Mock(status_code=401, headers={"WWW-Authenticate": header}), request.context
     )
