@@ -98,6 +98,44 @@ def empty_challenge_cache(fn):
 
 @pytest.mark.asyncio
 @empty_challenge_cache
+@pytest.mark.parametrize("reuse_policy", [False, True])
+async def test_rejected_challenge_is_not_cached(reuse_policy):
+    url = "https://example.net/keys/canary"
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    async def send(request):
+        Requests.count += 1
+        assert "Authorization" not in request.headers
+        assert not request.body
+        assert request.headers["Content-Length"] == "0"
+        return challenge
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+
+    for _ in range(2):
+        if not reuse_policy:
+            pipeline = AsyncPipeline(
+                policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
+            )
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError):
+            await pipeline.run(request)
+
+    assert Requests.count == 2
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+    assert credential.get_token.call_count == 0
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
 async def test_enforces_tls():
     url = "http://not.secure"
     HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, "Bearer authorization=_, resource=_"))
@@ -163,7 +201,8 @@ async def test_rejects_backslash_authority_on_challenge(authority, verify_challe
 async def test_request_url_validation_preserves_valid_urls(url):
     HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, KV_CHALLENGE_RESPONSE.headers["WWW-Authenticate"]))
     credential = Mock(spec_set=["get_token"], get_token=AsyncMock())
-    policy = AsyncChallengeAuthPolicy(credential)
+    # These URL-only fixtures deliberately use an unrelated challenge resource.
+    policy = AsyncChallengeAuthPolicy(credential, verify_challenge_resource=False)
     policy._token = AccessToken("cached-token", time.time() + 3600)
     request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
 
