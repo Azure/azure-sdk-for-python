@@ -785,3 +785,15 @@ async def test_incoming_transfer_aborted_multiframe_is_not_rejected_async():
     link._on_transfer.assert_not_called()
     link._outgoing_disposition.assert_not_called()
     assert link._received_payload == bytearray()
+
+
+def test_incoming_transfer_aborted_completes_delivery_for_credit():
+    # Aborted takes precedence over `more`: the delivery still completes for flow-control accounting.
+    link = build_sync_link()
+    link._on_transfer = MagicMock()
+    link._outgoing_disposition = MagicMock()
+    link.current_link_credit = 5
+    link.delivery_count = 0
+    link._incoming_transfer(_aborted_frame(DELIVERY_ID, DELIVERY_TAG, True, b"\x00\x53\x77"))
+    assert link.current_link_credit == 4
+    assert link.delivery_count == 1

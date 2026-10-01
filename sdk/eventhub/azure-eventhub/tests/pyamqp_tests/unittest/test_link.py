@@ -485,3 +485,14 @@ def test_incoming_transfer_aborted_multiframe_is_not_rejected_async():
         assert link._received_payload == bytearray()
 
     asyncio.run(run())
+
+
+def test_incoming_transfer_aborted_completes_delivery_for_credit():
+    # Aborted takes precedence over `more`: the delivery still completes for flow-control accounting.
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link.current_link_credit = 5
+    link.delivery_count = 0
+    link._incoming_transfer(_aborted_frame(7, b"/tag", True, b"\x00\x53\x77"))
+    assert link.current_link_credit == 4
+    assert link.delivery_count == 1
