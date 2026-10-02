@@ -1,5 +1,14 @@
 # Release History
 
+## 4.11.3 (2026-10-02)
+
+### Bugs Fixed
+
+- Reject request URLs containing backslashes in the authority before authentication.
+- Verify cached authentication challenges before token use and clear rejected or malformed challenges without removing newer entries installed by concurrent requests.
+- Preserve redirect header updates and cleanup when restoring request bodies during authentication.
+- Remove stale request authorization and clear the observed cached challenge when a 401 response omits `WWW-Authenticate`, without retrying authentication.
+
 ## 4.11.2 (2026-08-25)
 
 ### Bugs Fixed
