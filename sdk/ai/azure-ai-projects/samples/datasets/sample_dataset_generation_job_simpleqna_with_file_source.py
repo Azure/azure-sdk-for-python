@@ -94,7 +94,7 @@ if len(output_dataset_name) > 50:
 SEED_REFERENCE_PATH = Path(__file__).with_name("simpleqna_seed_reference.txt")
 
 EXPECTED_OUTPUT_DESCRIPTION = (
-    "QnA pairs generated from the Lakeview Science Center visitor reference."
+    "QnA pairs generated from synthetic primary care conversations."
 )
 EXPECTED_OUTPUT_TAGS = {
     "sample": "dataset-generation-simpleqna-with-file-source",
@@ -150,7 +150,7 @@ with (
             name=f"simpleqna-multisource-{run_id}",
             sources=[
                 FileDataGenerationJobSource(
-                    description="Lakeview Science Center visitor reference (Azure OpenAI file).",
+                    description="Synthetic primary care conversation reference (Azure OpenAI file).",
                     id=seed_file.id,
                 ),
                 PromptDataGenerationJobSource(

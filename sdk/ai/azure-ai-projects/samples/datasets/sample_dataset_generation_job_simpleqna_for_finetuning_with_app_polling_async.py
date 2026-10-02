@@ -142,7 +142,7 @@ async def main() -> None:
                 name=f"simpleqna-finetuning-{run_id}",
                 sources=[
                     FileDataGenerationJobSource(
-                        description="Lakeview Science Center visitor reference (Azure OpenAI file).",
+                        description="Synthetic primary care conversation reference (Azure OpenAI file).",
                         id=seed_file.id,
                     ),
                 ],
