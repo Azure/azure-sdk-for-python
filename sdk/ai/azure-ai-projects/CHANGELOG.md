@@ -32,6 +32,12 @@ Breaking changes in preview classes:
 * `DataGenerationJobInputs` now uses `generation_configuration` and the scenario-specific input models for output configuration.
 * Renamed the supervised and reinforcement fine-tuning `DataGenerationJobScenario` values with a `_PREVIEW` suffix. Their wire values now also end in `_preview`.
 
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* Flattened the rubric evaluator generation create shape: `begin_create_generation_job` now takes an `EvaluatorGenerationInputs` body directly instead of an `EvaluatorGenerationJob` wrapping the inputs under an `inputs` property. The `EvaluatorGenerationJob` resource now exposes `sources`, `model`, `evaluator_name`, `evaluator_display_name`, and `evaluator_description` as top-level properties, and no longer has an `inputs` property.
+
 ### Sample updates
 
 * Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.

@@ -90,11 +90,7 @@ SECOND_BATCH_PROMPTS = [
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment = os.environ["FOUNDRY_MODEL_NAME"]
-trace_ids = [
-    trace_id.strip()
-    for trace_id in os.environ.get("TRACE_IDS", "").split(",")
-    if trace_id.strip()
-]
+trace_ids = [trace_id.strip() for trace_id in os.environ.get("TRACE_IDS", "").split(",") if trace_id.strip()]
 DATASET_NAME = "traces-eval-merge"
 POLL_INTERVAL_SECONDS = 10
 INGEST_WAIT_SECONDS = 60
@@ -104,20 +100,14 @@ RETRY_WAIT_SECONDS = 60
 # Per-run id suffixed on the agent, output dataset, and job-input names so
 # repeated runs don't collide. Kept short (timestamp + 4 hex) to stay under
 # the 50-char service limit on output names.
-run_id = (
-    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-)
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
 if len(output_dataset_name) > 50:
-    raise ValueError(
-        f"Output dataset name `{output_dataset_name}` exceeds the 50-character service limit."
-    )
+    raise ValueError(f"Output dataset name `{output_dataset_name}` exceeds the 50-character service limit.")
 
 
-def seed_conversations(
-    openai_client: Any, prompts: List[str], conversation_ids: List[str]
-) -> None:
+def seed_conversations(openai_client: Any, prompts: List[str], conversation_ids: List[str]) -> None:
     """Run one short conversation per prompt against the agent, recording the conversation IDs."""
     for prompt in prompts:
         conversation = openai_client.conversations.create()
@@ -126,9 +116,7 @@ def seed_conversations(
         openai_client.responses.create(
             conversation=conversation.id,
             input=prompt,
-            extra_body={
-                "agent_reference": {"name": agent_name, "type": "agent_reference"}
-            },
+            extra_body={"agent_reference": {"name": agent_name, "type": "agent_reference"}},
         )
 
 
@@ -159,9 +147,7 @@ def run_traces_job(
                         ),
                     ],
                     # max_samples is omitted, so sampling is turned off and every matching trace is used.
-                    generation_configuration=TracesDataGenerationJobConfiguration(
-                        redact_private_content=True
-                    ),
+                    generation_configuration=TracesDataGenerationJobConfiguration(redact_private_content=True),
                     output_configuration=EvaluationDataGenerationJobOutputConfiguration(
                         name=output_dataset_name,
                         write_mode=write_mode,
@@ -174,33 +160,21 @@ def run_traces_job(
             return job_result
         except Exception as e:  # pylint: disable=broad-exception-caught
             if attempt == MAX_JOB_ATTEMPTS:
-                raise RuntimeError(
-                    f"Job `{job_name}` failed after {MAX_JOB_ATTEMPTS} attempts: {e}"
-                ) from e
-            print(
-                f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry."
-            )
+                raise RuntimeError(f"Job `{job_name}` failed after {MAX_JOB_ATTEMPTS} attempts: {e}") from e
+            print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
             time.sleep(RETRY_WAIT_SECONDS)
     raise RuntimeError(f"Job `{job_name}` did not run.")
 
 
-def get_output_dataset(
-    project_client: AIProjectClient, job_result: DataGenerationJobResult
-) -> DatasetVersion:
+def get_output_dataset(project_client: AIProjectClient, job_result: DataGenerationJobResult) -> DatasetVersion:
     """Resolve the dataset version produced by a data generation job."""
     dataset_output = next(
-        (
-            o
-            for o in job_result.outputs or []
-            if isinstance(o, DatasetDataGenerationJobOutput)
-        ),
+        (o for o in job_result.outputs or [] if isinstance(o, DatasetDataGenerationJobOutput)),
         None,
     )
     if dataset_output is None or not dataset_output.name or not dataset_output.version:
         raise RuntimeError("The data generation job did not produce a dataset output.")
-    dataset = project_client.datasets.get(
-        name=dataset_output.name, version=dataset_output.version
-    )
+    dataset = project_client.datasets.get(name=dataset_output.name, version=dataset_output.version)
     print(
         f"Dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}` "
         f"(generated samples in this job: {job_result.generated_samples})"
@@ -224,21 +198,13 @@ def main() -> None:
             print(f"Create agent `{agent_name}` (model: `{model_deployment}`).")
             created_agent = project_client.agents.create_version(
                 agent_name=agent_name,
-                definition=PromptAgentDefinition(
-                    model=model_deployment, instructions=AGENT_INSTRUCTIONS
-                ),
+                definition=PromptAgentDefinition(model=model_deployment, instructions=AGENT_INSTRUCTIONS),
             )
-            print(
-                f"Agent created (id: {created_agent.id}, version: {created_agent.version})."
-            )
+            print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
             start_time = datetime.now(tz=timezone.utc) - timedelta(minutes=5)
-            print(
-                f"Seed the first batch of {len(FIRST_BATCH_PROMPTS)} conversation(s)."
-            )
-            seed_conversations(
-                openai_client, FIRST_BATCH_PROMPTS, created_conversation_ids
-            )
+            print(f"Seed the first batch of {len(FIRST_BATCH_PROMPTS)} conversation(s).")
+            seed_conversations(openai_client, FIRST_BATCH_PROMPTS, created_conversation_ids)
             print(
                 f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
                 flush=True,
@@ -256,12 +222,8 @@ def main() -> None:
             created_datasets.append(first_dataset)
 
             # 3. Seed more traces, then merge them into the next dataset version.
-            print(
-                f"Seed the second batch of {len(SECOND_BATCH_PROMPTS)} conversation(s)."
-            )
-            seed_conversations(
-                openai_client, SECOND_BATCH_PROMPTS, created_conversation_ids
-            )
+            print(f"Seed the second batch of {len(SECOND_BATCH_PROMPTS)} conversation(s).")
+            seed_conversations(openai_client, SECOND_BATCH_PROMPTS, created_conversation_ids)
             print(
                 f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
                 flush=True,
@@ -288,14 +250,10 @@ def main() -> None:
             # Best-effort cleanup, outputs -> producers (datasets, conversations, agent).
             for dataset in created_datasets:
                 try:
-                    project_client.datasets.delete(
-                        name=dataset.name or "", version=dataset.version or ""
-                    )
+                    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
                     print(f"Deleted dataset `{dataset.name}` v{dataset.version}.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(
-                        f"  (warning) could not delete dataset `{dataset.name}` v{dataset.version}: {exc}"
-                    )
+                    print(f"  (warning) could not delete dataset `{dataset.name}` v{dataset.version}: {exc}")
 
             for cid in created_conversation_ids:
                 try:
@@ -310,9 +268,7 @@ def main() -> None:
                         agent_name=created_agent.name,
                         agent_version=created_agent.version,
                     )
-                    print(
-                        f"Deleted agent `{created_agent.name}` v{created_agent.version}."
-                    )
+                    print(f"Deleted agent `{created_agent.name}` v{created_agent.version}.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete agent: {exc}")
 

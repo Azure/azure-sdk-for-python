@@ -151,17 +151,11 @@ def main() -> None:
                     output_version = output.version or ""
                     break
             if not output_name or not output_version:
-                raise RuntimeError(
-                    "The data generation job did not produce a dataset output."
-                )
+                raise RuntimeError("The data generation job did not produce a dataset output.")
 
             # Resolve the DatasetVersion so we can use its id as the eval run's file_id.
-            dataset = project_client.datasets.get(
-                name=output_name, version=output_version
-            )
-            print(
-                f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`"
-            )
+            dataset = project_client.datasets.get(name=output_name, version=output_version)
+            print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
 
             # ------------------------------------------------------------------
             # 2. Create an evaluation that scores the model's answers to the
@@ -249,29 +243,23 @@ def main() -> None:
                 input_messages=input_message,
                 model=model_name,
             )
-            eval_run: Union[RunCreateResponse, RunRetrieveResponse] = (
-                openai_client.evals.runs.create(
-                    eval_id=eval_object.id,
-                    name="generated-qna-evaluation-run",
-                    data_source=data_source,
-                )
+            eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
+                eval_id=eval_object.id,
+                name="generated-qna-evaluation-run",
+                data_source=data_source,
             )
             print(f"Evaluation run created (id: {eval_run.id}).")
 
             while eval_run.status not in ("completed", "failed", "canceled"):
                 time.sleep(poll_interval_seconds)
-                eval_run = openai_client.evals.runs.retrieve(
-                    run_id=eval_run.id, eval_id=eval_object.id
-                )
+                eval_run = openai_client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
             print(f"Final eval run status: `{eval_run.status}`.")
 
             if eval_run.status == "completed":
                 print(f"Result counts: {eval_run.result_counts}")
                 print(f"Eval run report URL: {eval_run.report_url}")
                 output_items = list(
-                    openai_client.evals.runs.output_items.list(
-                        run_id=eval_run.id, eval_id=eval_object.id
-                    )
+                    openai_client.evals.runs.output_items.list(run_id=eval_run.id, eval_id=eval_object.id)
                 )
                 print(f"Output items (total: {len(output_items)}):")
                 # Print a per-item summary (avoid pprint on the full payload to keep the
@@ -299,13 +287,9 @@ def main() -> None:
 
             # Delete the generated dataset.
             if dataset is not None:
-                print(
-                    f"Delete the generated dataset `{dataset.name}` v{dataset.version}."
-                )
+                print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
                 try:
-                    project_client.datasets.delete(
-                        name=dataset.name or "", version=dataset.version or ""
-                    )
+                    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete dataset: {exc}")
 

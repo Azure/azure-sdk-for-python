@@ -70,9 +70,7 @@ ACTIVE_STATUSES = {JobStatus.QUEUED, JobStatus.IN_PROGRESS}
 
 # Unique per-run names so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
-run_id = (
-    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-)
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
     raise ValueError(
@@ -108,20 +106,14 @@ def main() -> None:
                 # `simple_qna` REQUIRES model_options.
                 model_options=DataGenerationModelOptions(model=model_name),
             ),
-            output_configuration=EvaluationDataGenerationJobOutputConfiguration(
-                name=output_dataset_name
-            ),
+            output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
         )
 
         print("Create a data generation job without SDK polling.")
-        poller = project_client.datasets.begin_create_generation_job(
-            job=job_inputs, polling=False
-        )
+        poller = project_client.datasets.begin_create_generation_job(job=job_inputs, polling=False)
         job_id = poller.details["job_id"]
         if not job_id:
-            raise RuntimeError(
-                "The create operation did not return a data generation job ID."
-            )
+            raise RuntimeError("The create operation did not return a data generation job ID.")
         print(f"Created data generation job (id: {job_id}).")
 
         # ------------------------------------------------------------------
@@ -130,9 +122,7 @@ def main() -> None:
         # `limit` sets the page size; the returned pager fetches further pages on
         # demand, so stop iterating after the first few jobs.
         print(f"List up to {MAX_JOBS_TO_LIST} of the most recent data generation jobs:")
-        recent_jobs = project_client.datasets.list_generation_jobs(
-            limit=MAX_JOBS_TO_LIST, order=PageOrder.DESC
-        )
+        recent_jobs = project_client.datasets.list_generation_jobs(limit=MAX_JOBS_TO_LIST, order=PageOrder.DESC)
         for listed_job in itertools.islice(recent_jobs, MAX_JOBS_TO_LIST):
             print(
                 f"  - id=`{listed_job.id}` name=`{listed_job.name}` "
@@ -164,9 +154,7 @@ def main() -> None:
             print()
             print(f"Final job status: `{job.status}`.")
         else:
-            print(
-                f"Job already reached the terminal status `{job.status}`; nothing to cancel."
-            )
+            print(f"Job already reached the terminal status `{job.status}`; nothing to cancel.")
 
 
 if __name__ == "__main__":
