@@ -137,5 +137,5 @@
         "azure.mgmt.elasticsan.ElasticSanMgmtClient.begin_restore_volume": "Microsoft.ElasticSan.restoreVolume",
         "azure.mgmt.elasticsan.aio.ElasticSanMgmtClient.begin_restore_volume": "Microsoft.ElasticSan.restoreVolume"
     },
-    "CrossLanguageVersion": "c124b40f0295"
+    "CrossLanguageVersion": "1fe82f8d3435"
 }
