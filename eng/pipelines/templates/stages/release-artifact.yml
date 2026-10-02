@@ -317,10 +317,7 @@ stages:
               os: windows
 
             steps:
-              # This job only reads eng/common/scripts and eng/scripts/Language-Settings.ps1 (via
-              # publish-blobs.yml) plus the downloaded pipeline artifacts below; it never reads from
-              # sdk/, so sparse-checkout's default '/eng' + '/.config' baseline is sufficient and avoids
-              # checking out (and exposing to CodeQL/SDL scanning) the full monorepo.
+              # Job only reads from eng/, so the default sparse-checkout baseline is sufficient.
               - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
               - download: current
