@@ -62,7 +62,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
@@ -89,30 +88,28 @@ with (
     # 1. Generate an evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
     poller = project_client.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
-            inputs=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=evaluator_name,
-                evaluator_display_name="Reservation Quality (Generated)",
-                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-                sources=[
-                    PromptEvaluatorGenerationJobSource(
-                        description="Application overview - purpose, capabilities, and tools.",
-                        prompt=(
-                            "You are evaluating a restaurant reservation assistant. The assistant helps "
-                            "users create, modify, and cancel reservations at participating restaurants. "
-                            "It can:\n"
-                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                            "  - Check table availability for a requested date, time, and party size.\n"
-                            "  - Create, update, and cancel reservations on behalf of the user.\n"
-                            "  - Send SMS or email confirmations through a notifications tool.\n"
-                            "It must always confirm the user's intent before committing changes, "
-                            "ask follow-up questions when details are missing, and maintain a polite "
-                            "restaurant-host tone."
-                        ),
+        job=EvaluatorGenerationInputs(
+            model=model_name,
+            evaluator_name=evaluator_name,
+            evaluator_display_name="Reservation Quality (Generated)",
+            evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+            sources=[
+                PromptEvaluatorGenerationJobSource(
+                    description="Application overview - purpose, capabilities, and tools.",
+                    prompt=(
+                        "You are evaluating a restaurant reservation assistant. The assistant helps "
+                        "users create, modify, and cancel reservations at participating restaurants. "
+                        "It can:\n"
+                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                        "  - Check table availability for a requested date, time, and party size.\n"
+                        "  - Create, update, and cancel reservations on behalf of the user.\n"
+                        "  - Send SMS or email confirmations through a notifications tool.\n"
+                        "It must always confirm the user's intent before committing changes, "
+                        "ask follow-up questions when details are missing, and maintain a polite "
+                        "restaurant-host tone."
                     ),
-                ],
-            ),
+                ),
+            ],
         ),
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
@@ -171,39 +168,47 @@ with (
     )
 
     # 3. Run the evaluation against inline JSONL sample data.
-    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
-        eval_id=eval_object.id,
-        name=f"{evaluator.name}-run",
-        metadata={"sample": "rubric_evaluator_generation_basic"},
-        data_source=CreateEvalJSONLRunDataSourceParam(
-            type="jsonl",
-            source=SourceFileContent(
-                type="file_content",
-                content=[
-                    SourceFileContentContent(
-                        item={
-                            "query": "Book a table for 4 tomorrow at 7 PM.",
-                            "response": "Booked - table for 4 tomorrow at 7:00 PM. A confirmation SMS is on its way.",
-                        }
-                    ),
-                    SourceFileContentContent(
-                        item={
-                            "query": "Cancel my reservation for Friday night.",
-                            "response": "Sure.",
-                        }
-                    ),
-                ],
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = (
+        openai_client.evals.runs.create(
+            eval_id=eval_object.id,
+            name=f"{evaluator.name}-run",
+            metadata={"sample": "rubric_evaluator_generation_basic"},
+            data_source=CreateEvalJSONLRunDataSourceParam(
+                type="jsonl",
+                source=SourceFileContent(
+                    type="file_content",
+                    content=[
+                        SourceFileContentContent(
+                            item={
+                                "query": "Book a table for 4 tomorrow at 7 PM.",
+                                "response": "Booked - table for 4 tomorrow at 7:00 PM. A confirmation SMS is on its way.",
+                            }
+                        ),
+                        SourceFileContentContent(
+                            item={
+                                "query": "Cancel my reservation for Friday night.",
+                                "response": "Sure.",
+                            }
+                        ),
+                    ],
+                ),
             ),
-        ),
+        )
     )
 
     print(f"Waiting for eval run `{eval_run.id}` to complete...")
     while eval_run.status not in TERMINAL_RUN_STATUSES:
         time.sleep(poll_interval_seconds)
-        eval_run = openai_client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
-    print(f"Eval run finished with status `{eval_run.status}`. Result counts: {eval_run.result_counts}.")
+        eval_run = openai_client.evals.runs.retrieve(
+            run_id=eval_run.id, eval_id=eval_object.id
+        )
+    print(
+        f"Eval run finished with status `{eval_run.status}`. Result counts: {eval_run.result_counts}."
+    )
 
     # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(
+        name=evaluator.name, version=evaluator.version
+    )

@@ -61,7 +61,6 @@ from azure.ai.projects.models import (
     AgentEvaluatorGenerationJobSource,
     DatasetEvaluatorGenerationJobSource,
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     EvaluatorGenerationJobSource,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
@@ -123,19 +122,19 @@ with (
             )
         )
     else:
-        print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
+        print(
+            "Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set)."
+        )
 
     print("Begin creating an evaluator generation job.")
     try:
         poller = project_client.evaluators.begin_create_generation_job(
-            job=EvaluatorGenerationJob(
-                inputs=EvaluatorGenerationInputs(
-                    model=model_name,
-                    evaluator_name=multi_name,
-                    evaluator_display_name="Customer Support Quality (multi-source)",
-                    evaluator_description="Generated from prompt, agent, and dataset signals.",
-                    sources=multi_sources,
-                ),
+            job=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=multi_name,
+                evaluator_display_name="Customer Support Quality (multi-source)",
+                evaluator_description="Generated from prompt, agent, and dataset signals.",
+                sources=multi_sources,
             ),
             operation_id=f"rubric-multi-{short}",
             polling_interval=poll_interval_seconds,
@@ -167,7 +166,9 @@ with (
     # The traces source requires a companion source because the service rejects
     # sources arrays consisting only of traces. The Agent source is the typical companion.
     if not agent_name:
-        print("Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion).")
+        print(
+            "Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion)."
+        )
     else:
         now = datetime.now(tz=timezone.utc)
         start_time = now - timedelta(days=traces_window_days)
@@ -176,25 +177,23 @@ with (
         print("Begin creating an evaluator generation job.")
         try:
             poller = project_client.evaluators.begin_create_generation_job(
-                job=EvaluatorGenerationJob(
-                    inputs=EvaluatorGenerationInputs(
-                        model=model_name,
-                        evaluator_name=traces_name,
-                        evaluator_display_name="Customer Support Quality (from traces)",
-                        evaluator_description="Generated from real Application Insights conversation traces.",
-                        sources=[
-                            TracesEvaluatorGenerationJobSource(
-                                description="Application Insights conversation traces for the agent.",
-                                agent_name=agent_name,
-                                start_time=start_time,
-                                end_time=end_time,
-                            ),
-                            AgentEvaluatorGenerationJobSource(
-                                description="Companion source (service rejects traces-only).",
-                                agent_name=agent_name,
-                            ),
-                        ],
-                    ),
+                job=EvaluatorGenerationInputs(
+                    model=model_name,
+                    evaluator_name=traces_name,
+                    evaluator_display_name="Customer Support Quality (from traces)",
+                    evaluator_description="Generated from real Application Insights conversation traces.",
+                    sources=[
+                        TracesEvaluatorGenerationJobSource(
+                            description="Application Insights conversation traces for the agent.",
+                            agent_name=agent_name,
+                            start_time=start_time,
+                            end_time=end_time,
+                        ),
+                        AgentEvaluatorGenerationJobSource(
+                            description="Companion source (service rejects traces-only).",
+                            agent_name=agent_name,
+                        ),
+                    ],
                 ),
                 operation_id=f"rubric-traces-{short}",
                 polling_interval=poll_interval_seconds,
@@ -225,6 +224,10 @@ with (
     # 3. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     if multi_evaluator_version:
-        project_client.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
+        project_client.evaluators.delete_version(
+            name=multi_name, version=multi_evaluator_version
+        )
     if traces_evaluator_version:
-        project_client.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)
+        project_client.evaluators.delete_version(
+            name=traces_name, version=traces_evaluator_version
+        )

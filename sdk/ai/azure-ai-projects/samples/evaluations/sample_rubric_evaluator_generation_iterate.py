@@ -49,7 +49,6 @@ from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
 )
@@ -72,24 +71,22 @@ with (
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
     poller = project_client.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
-            inputs=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=evaluator_name,
-                evaluator_display_name="Reservation Quality (iterate)",
-                evaluator_description="Starting point for human-in-the-loop iteration.",
-                sources=[
-                    PromptEvaluatorGenerationJobSource(
-                        description="Inline application overview.",
-                        prompt=(
-                            "You are evaluating a restaurant reservation assistant that creates, "
-                            "modifies, and cancels reservations. It uses tools for restaurant "
-                            "lookup, availability checking, and notifications. It must confirm "
-                            "user intent before committing changes."
-                        ),
+        job=EvaluatorGenerationInputs(
+            model=model_name,
+            evaluator_name=evaluator_name,
+            evaluator_display_name="Reservation Quality (iterate)",
+            evaluator_description="Starting point for human-in-the-loop iteration.",
+            sources=[
+                PromptEvaluatorGenerationJobSource(
+                    description="Inline application overview.",
+                    prompt=(
+                        "You are evaluating a restaurant reservation assistant that creates, "
+                        "modifies, and cancels reservations. It uses tools for restaurant "
+                        "lookup, availability checking, and notifications. It must confirm "
+                        "user intent before committing changes."
                     ),
-                ],
-            ),
+                ),
+            ],
         ),
         operation_id=f"rubric-iterate-{short}",
         polling_interval=poll_interval_seconds,
@@ -168,7 +165,10 @@ with (
         evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
             # Narrow each category to its enum value (the categories list is Union[str, EvaluatorCategory]).
-            "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],
+            "categories": [
+                c.value if isinstance(c, EvaluatorCategory) else c
+                for c in v1.categories
+            ],
             "display_name": v1.display_name,
             "description": (v1.description or "") + " (edited)",
             "definition": {
@@ -195,4 +195,6 @@ with (
     print("Cleaning up.")
     for version in (v2.version, v1.version):
         if version:
-            project_client.evaluators.delete_version(name=evaluator_name, version=version)
+            project_client.evaluators.delete_version(
+                name=evaluator_name, version=version
+            )
