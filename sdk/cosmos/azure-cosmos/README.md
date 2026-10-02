@@ -981,11 +981,6 @@ This is done by passing in a list of weights to the RRF function in the query. *
 - `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [-0.5, 0.3, 0.2])`
 
 These queries must always use a TOP or LIMIT clause within the query since hybrid search queries have to look through a lot of data otherwise and may become too expensive or long-running.
-
-The [`ORDER BY RANK` documentation](https://learn.microsoft.com/cosmos-db/query/order-by-rank)
-specifies ordering by scoring-function rank, but does not specify a secondary order for equal scores.
-Do not depend on a particular document order within a tie, including which tied document appears at a
-`TOP` or `OFFSET LIMIT` boundary. The SDK's internal tie handling is not a public ordering guarantee.
 Since these queries are relatively expensive, the SDK sets a default limit of 1000 max items per query - if you'd like to raise that further, you
 can use the `AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS` environment variable to do so. However, be advised that queries with too many vector results
 may have additional latencies associated with searching in the service.
