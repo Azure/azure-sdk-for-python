@@ -114,7 +114,7 @@ def upload_blob(
     :keyword int timeout: Server-side timeout applied to each upload request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked uploads.
     :keyword int max_block_size: Maximum size per block for chunked uploads.
-    :returns: A dict with response headers (etag, last_modified, etc.).
+    :returns: A dict containing available upload response values.
     :rtype: dict
     :raises ValueError: If the native module is not available.
     """
@@ -216,7 +216,7 @@ def download_blob(
     :keyword int max_chunk_size: Size in bytes of each download window. Defaults to 256 MiB.
         Larger windows increase intra-window parallelism at the cost of higher peak memory.
     :returns: A lazy iterator yielding the blob content one window at a time. The object also
-        exposes ``size`` (total bytes to be delivered), ``etag``, and ``last_modified``.
+        exposes ``size`` (total bytes to be delivered).
     :rtype: Iterator[bytes]
     :raises ValueError: If the native module is not available.
     """
