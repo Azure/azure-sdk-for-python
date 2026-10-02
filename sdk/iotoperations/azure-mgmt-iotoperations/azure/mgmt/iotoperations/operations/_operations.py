@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_instance_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_instance_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_instance_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_instance_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_instance_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +212,7 @@ def build_instance_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +238,7 @@ def build_broker_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +268,7 @@ def build_broker_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +298,7 @@ def build_broker_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}"
     path_format_arguments = {
@@ -322,7 +322,7 @@ def build_broker_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_broker_listener_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -391,7 +391,7 @@ def build_broker_listener_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -427,7 +427,7 @@ def build_broker_listener_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/listeners/{listenerName}"
     path_format_arguments = {
@@ -452,7 +452,7 @@ def build_broker_listener_list_by_resource_group_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +486,7 @@ def build_broker_authentication_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -522,7 +522,7 @@ def build_broker_authentication_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -558,7 +558,7 @@ def build_broker_authentication_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/authentications/{authenticationName}"
     path_format_arguments = {
@@ -583,7 +583,7 @@ def build_broker_authentication_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -617,7 +617,7 @@ def build_broker_authorization_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -653,7 +653,7 @@ def build_broker_authorization_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -689,7 +689,7 @@ def build_broker_authorization_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/authorizations/{authorizationName}"
     path_format_arguments = {
@@ -714,7 +714,7 @@ def build_broker_authorization_list_by_resource_group_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -743,7 +743,7 @@ def build_dataflow_profile_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -773,7 +773,7 @@ def build_dataflow_profile_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -803,7 +803,7 @@ def build_dataflow_profile_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}"
     path_format_arguments = {
@@ -827,7 +827,7 @@ def build_dataflow_profile_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -860,7 +860,7 @@ def build_dataflow_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -896,7 +896,7 @@ def build_dataflow_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -932,7 +932,7 @@ def build_dataflow_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}/dataflows/{dataflowName}"
     path_format_arguments = {
@@ -957,7 +957,7 @@ def build_dataflow_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -986,7 +986,7 @@ def build_dataflow_endpoint_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1016,7 +1016,7 @@ def build_dataflow_endpoint_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1046,7 +1046,7 @@ def build_dataflow_endpoint_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowEndpoints/{dataflowEndpointName}"
     path_format_arguments = {
@@ -1070,7 +1070,7 @@ def build_dataflow_endpoint_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1103,7 +1103,7 @@ def build_dataflow_graph_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1139,7 +1139,7 @@ def build_dataflow_graph_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1175,7 +1175,7 @@ def build_dataflow_graph_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}/dataflowGraphs/{dataflowGraphName}"
     path_format_arguments = {
@@ -1200,7 +1200,7 @@ def build_dataflow_graph_list_by_dataflow_profile_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1229,7 +1229,7 @@ def build_registry_endpoint_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1259,7 +1259,7 @@ def build_registry_endpoint_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1289,7 +1289,7 @@ def build_registry_endpoint_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/registryEndpoints/{registryEndpointName}"
     path_format_arguments = {
@@ -1313,7 +1313,7 @@ def build_registry_endpoint_list_by_instance_resource_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1341,7 +1341,7 @@ def build_akri_connector_template_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1373,7 +1373,7 @@ def build_akri_connector_template_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1405,7 +1405,7 @@ def build_akri_connector_template_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriConnectorTemplates/{akriConnectorTemplateName}"
     path_format_arguments = {
@@ -1431,7 +1431,7 @@ def build_akri_connector_template_list_by_instance_resource_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1464,7 +1464,7 @@ def build_akri_connector_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1502,7 +1502,7 @@ def build_akri_connector_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1540,7 +1540,7 @@ def build_akri_connector_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriConnectorTemplates/{akriConnectorTemplateName}/connectors/{connectorName}"
     path_format_arguments = {
@@ -1567,7 +1567,7 @@ def build_akri_connector_list_by_template_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1598,7 +1598,7 @@ def build_akri_service_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1628,7 +1628,7 @@ def build_akri_service_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1658,7 +1658,7 @@ def build_akri_service_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriServices/{akriServiceName}"
     path_format_arguments = {
@@ -1682,7 +1682,7 @@ def build_akri_service_list_by_instance_resource_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1704,7 +1704,7 @@ def build_akri_service_list_by_instance_resource_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1814,7 +1814,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class InstanceOperations:
+class InstanceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2616,7 +2616,7 @@ class InstanceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BrokerOperations:
+class BrokerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3187,7 +3187,7 @@ class BrokerOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BrokerListenerOperations:
+class BrokerListenerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3783,7 +3783,7 @@ class BrokerListenerOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BrokerAuthenticationOperations:
+class BrokerAuthenticationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4385,7 +4385,7 @@ class BrokerAuthenticationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BrokerAuthorizationOperations:
+class BrokerAuthorizationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4987,7 +4987,7 @@ class BrokerAuthorizationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataflowProfileOperations:
+class DataflowProfileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5558,7 +5558,7 @@ class DataflowProfileOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataflowOperations:
+class DataflowOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6169,7 +6169,7 @@ class DataflowOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataflowEndpointOperations:
+class DataflowEndpointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6745,7 +6745,7 @@ class DataflowEndpointOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataflowGraphOperations:
+class DataflowGraphOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6776,7 +6776,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def get(
         self,
@@ -6874,7 +6874,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _create_or_update_initial(
         self,
@@ -7074,7 +7074,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_create_or_update(
         self,
@@ -7171,7 +7171,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _delete_initial(
         self,
@@ -7254,7 +7254,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_delete(
         self,
@@ -7338,7 +7338,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_dataflow_profile(
         self, resource_group_name: str, instance_name: str, dataflow_profile_name: str, **kwargs: Any
@@ -7445,7 +7445,7 @@ class DataflowGraphOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RegistryEndpointOperations:
+class RegistryEndpointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7475,7 +7475,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7565,7 +7565,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _create_or_update_initial(
         self,
@@ -7756,7 +7756,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_create_or_update(
         self,
@@ -7849,7 +7849,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7925,7 +7925,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7994,7 +7994,7 @@ class RegistryEndpointOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -8098,7 +8098,7 @@ class RegistryEndpointOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AkriConnectorTemplateOperations:
+class AkriConnectorTemplateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8128,7 +8128,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8218,7 +8218,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _create_or_update_initial(
         self,
@@ -8409,7 +8409,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_create_or_update(
         self,
@@ -8502,7 +8502,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8578,7 +8578,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8647,7 +8647,7 @@ class AkriConnectorTemplateOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -8752,7 +8752,7 @@ class AkriConnectorTemplateOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AkriConnectorOperations:
+class AkriConnectorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8783,7 +8783,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def get(
         self,
@@ -8881,7 +8881,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _create_or_update_initial(
         self,
@@ -9081,7 +9081,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_create_or_update(
         self,
@@ -9178,7 +9178,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _delete_initial(
         self,
@@ -9261,7 +9261,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_delete(
         self,
@@ -9345,7 +9345,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_template(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -9452,7 +9452,7 @@ class AkriConnectorOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AkriServiceOperations:
+class AkriServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9482,7 +9482,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9571,7 +9571,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _create_or_update_initial(
         self,
@@ -9759,7 +9759,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_create_or_update(
         self,
@@ -9851,7 +9851,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9927,7 +9927,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9996,7 +9996,7 @@ class AkriServiceOperations:
         params_added_on={
             "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
