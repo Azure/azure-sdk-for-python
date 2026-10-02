@@ -86,32 +86,79 @@ if len(output_name) > 50:
         f"Lower DATASET_NAME (currently `{dataset_name}`) so that `<DATASET_NAME>-<run id>` fits within 50 characters."
     )
 
-# Reference document the sample uploads as an Azure OpenAI file. The service
-# requires the file to contain at least 1 KB of content to generate QnA from.
-SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
-
-## Products
-- Widget: blue, manufactured at Factory 7 in Acme, carbon-fiber, rated to 80 C, sold in packs of 4, 250 g each.
-- Gizmo: red, manufactured at Factory 12 in Bedrock, carbon-fiber, rated to 80 C, sold individually, 1.2 kg each.
-- Sprocket: green, manufactured at Factory 3 in Acme, stainless steel, rated to 200 C, sold individually, 500 g each.
-
-## Operations
-- Factory operates weekdays 0700-1900 local time.
-- Closed on public holidays, except for the annual maintenance run on December 27.
-- ISO 9001 certified; audited annually by an independent third party.
-- Quality control samples every 100th unit and runs full destructive testing on every 5000th unit.
-
-## Customer support
-- Warranty claims: email support@example.com with the serial number printed on the underside of the product.
-- Returns: accepted within 30 days if unopened; opened items are eligible for repair only.
-- Bulk orders (50+ units): contact sales@example.com for volume pricing and an extended 90-day return window.
-- Replacement parts: orderable directly from the support portal using the original order number.
-
-## Pricing and SLAs
-- Widget pack: USD 24.99 per 4-pack; free shipping on orders over USD 75.
-- Gizmo unit: USD 49.99; free shipping on orders over USD 75.
-- Sprocket unit: USD 14.99; ships from regional warehouses in 1-2 business days.
-- Standard support response: within one business day. Priority support response: within four hours.
+# Reference data the sample uploads as an Azure OpenAI file.
+SEED_REFERENCE_DOCUMENT = """{
+  "disclaimer": "Synthetic data only. Not medical advice and not based on real patients.",
+  "doctor": {
+    "name": "Dr. Taylor",
+    "specialty": "Primary Care",
+    "style": "empathetic, concise, asks one question at a time"
+  },
+  "scenarios": [
+    {
+      "id": "seasonal_cold",
+      "patient": {
+        "name": "Alex",
+        "age": 34
+      },
+      "reason_for_visit": "Cough, congestion, and fatigue for three days",
+      "medical_context": {
+        "allergies": ["penicillin"],
+        "medications": [],
+        "conditions": []
+      },
+      "conversation_seed": [
+        {
+          "speaker": "doctor",
+          "text": "What symptoms are bothering you most today?"
+        },
+        {
+          "speaker": "patient",
+          "text": "I have a dry cough, a stuffy nose, and I feel more tired than usual."
+        },
+        {
+          "speaker": "doctor",
+          "text": "Have you had a fever, trouble breathing, or chest pain?"
+        },
+        {
+          "speaker": "patient",
+          "text": "No chest pain or breathing trouble. My temperature was slightly elevated last night."
+        }
+      ]
+    },
+    {
+      "id": "recurring_headache",
+      "patient": {
+        "name": "Jordan",
+        "age": 42
+      },
+      "reason_for_visit": "Recurring headaches during the workweek",
+      "medical_context": {
+        "allergies": [],
+        "medications": ["daily multivitamin"],
+        "conditions": []
+      },
+      "conversation_seed": [
+        {
+          "speaker": "doctor",
+          "text": "When did the headaches begin, and where do you feel the pain?"
+        },
+        {
+          "speaker": "patient",
+          "text": "They started about two weeks ago and usually feel like pressure around my forehead."
+        },
+        {
+          "speaker": "doctor",
+          "text": "Do you notice any triggers, such as screen time, stress, missed meals, or poor sleep?"
+        },
+        {
+          "speaker": "patient",
+          "text": "They seem worse after long video meetings and on days when I skip lunch."
+        }
+      ]
+    }
+  ]
+}
 """
 
 with (
@@ -127,10 +174,10 @@ with (
         # ------------------------------------------------------------------
         # 1. Upload the seed reference document as an Azure OpenAI file.
         # ------------------------------------------------------------------
-        seed_filename = f"widgets-gizmos-seed-{run_id}.md"
+        seed_filename = f"synthetic-primary-care-conversations-{run_id}.json"
         print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
         seed_file = openai_client.files.create(
-            file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8"))),
+            file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8")), "application/json"),
             purpose="user_data",
         )
         seed_file_id = seed_file.id
