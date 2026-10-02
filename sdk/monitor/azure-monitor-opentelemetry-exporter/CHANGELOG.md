@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b58 (2026-10-03)
+## 1.0.0b58 (2026-10-07)
 
 ### Features Added
 - Map the `session.id` attribute on spans and logs to the Azure Monitor session context
