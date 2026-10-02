@@ -125,9 +125,13 @@ with (
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
-        entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
-        print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
+    for entry in itertools.islice(
+        project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
+    ):
+        print(
+            f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` "
+            f"evaluator_name=`{entry.evaluator_name}`"
+        )
 
     # 3. Cancel a running job (not exercised here; the job above already completed).
     # cancelled = project_client.evaluators.cancel_generation_job(some_running_job_id)

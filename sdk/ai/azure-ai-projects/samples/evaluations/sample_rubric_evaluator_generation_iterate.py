@@ -165,10 +165,7 @@ with (
         evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
             # Narrow each category to its enum value (the categories list is Union[str, EvaluatorCategory]).
-            "categories": [
-                c.value if isinstance(c, EvaluatorCategory) else c
-                for c in v1.categories
-            ],
+            "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],
             "display_name": v1.display_name,
             "description": (v1.description or "") + " (edited)",
             "definition": {
@@ -195,6 +192,4 @@ with (
     print("Cleaning up.")
     for version in (v2.version, v1.version):
         if version:
-            project_client.evaluators.delete_version(
-                name=evaluator_name, version=version
-            )
+            project_client.evaluators.delete_version(name=evaluator_name, version=version)

@@ -27,7 +27,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.EvaluatorGenerationJob,
+        job: _models.EvaluatorGenerationInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -64,8 +64,8 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
     ) -> EvaluatorGenerationLROPoller:
         """Create an evaluator generation job.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The evaluator generation inputs. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
