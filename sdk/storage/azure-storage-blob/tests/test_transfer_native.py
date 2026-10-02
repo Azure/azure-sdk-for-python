@@ -320,7 +320,7 @@ class TestNativeDownloadDispatch(unittest.TestCase):
         native_download.assert_called_once()
 
     def test_download_forwards_supported_blob_options(self):
-        stream = MagicMock(size=4, etag='"etag"', last_modified=None)
+        stream = MagicMock(size=4)
         stream.__iter__.return_value = iter([b"data"])
         native_download = MagicMock(return_value=stream)
         native_module = ModuleType("azure.storage.extensions.transfer")
@@ -646,15 +646,13 @@ class TestNativeCredentialIdentity(unittest.TestCase):
 class _FakeNativeStream:
     """Minimal stand-in for the native windowed download stream.
 
-    Yields the provided windows and exposes ``size``/``etag``/``last_modified`` like the real
-    native object. Single-pass, matching the native stream's semantics.
+    Yields the provided windows and exposes ``size`` like the real native object. Single-pass,
+    matching the native stream's semantics.
     """
 
     def __init__(self, windows, size=None):
         self._windows = iter(windows)
         self.size = size if size is not None else sum(len(w) for w in windows)
-        self.etag = None
-        self.last_modified = None
 
     def __iter__(self):
         return self
