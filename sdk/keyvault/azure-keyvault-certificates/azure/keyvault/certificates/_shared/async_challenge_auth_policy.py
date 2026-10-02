@@ -18,7 +18,6 @@ from copy import deepcopy
 import sys
 import time
 from typing import Any, Callable, cast, Optional, overload, TypeVar, Union
-from urllib.parse import urlparse
 
 from typing_extensions import ParamSpec
 
@@ -30,7 +29,20 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _has_claims, _update_challenge
+from .challenge_auth_policy import (
+    _enforce_tls,
+    _has_claims,
+    _update_challenge,
+    _validate_challenge_resource,
+    _request_origin,
+    _get_challenge_info,
+    _get_challenge_candidate,
+    _remove_challenge_for_request,
+    _restore_request,
+    _CHALLENGE_INFO_KEY,
+    _CHALLENGE_CACHE_KEY,
+    _REQUEST_COPY_KEY,
+)
 
 if sys.version_info < (3, 9):
     from typing import Awaitable
@@ -66,7 +78,6 @@ async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args,
     return result
 
 
-
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """Policy for handling HTTP authentication challenges.
 
@@ -81,11 +92,8 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         self._credential: AsyncTokenProvider = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
-        self._request_copy: Optional[HttpRequest] = None
 
-    async def send(
-        self, request: PipelineRequest[HttpRequest]
-    ) -> PipelineResponse[HttpRequest, AsyncHttpResponse]:
+    async def send(self, request: PipelineRequest[HttpRequest]) -> PipelineResponse[HttpRequest, AsyncHttpResponse]:
         """Authorize request with a bearer token and send it to the next policy.
 
         We implement this method to account for the valid scenario where a Key Vault authentication challenge is
@@ -134,6 +142,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             # If the previous challenge was a KV challenge and this one is too, return the 401
             claims_challenge = _has_claims(response.http_response.headers["WWW-Authenticate"])
             if consecutive_challenge and not claims_challenge:
+                _remove_challenge_for_request(request)
                 return response
 
             request_authorized = await self.on_challenge(request, response)
@@ -154,19 +163,37 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                     if not claims_challenge:
                         return await self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 await await_result(self.on_response, request, response)
+        if response.http_response.status_code == 401 and "WWW-Authenticate" not in response.http_response.headers:
+            self._token = None
+            _remove_challenge_for_request(request)
         return response
-
 
     async def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
+        request.context.pop(_CHALLENGE_INFO_KEY, None)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
         if challenge:
+            try:
+                # A shared cache entry may have been stored by a client that disabled resource verification.
+                scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+                if self._verify_challenge_resource:
+                    _validate_challenge_resource(scope, request.http_request.url)
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                ChallengeCache.remove_challenge_for_url_if_matches(request.http_request.url, challenge)
+                raise
+            request.context[_CHALLENGE_INFO_KEY] = (
+                _request_origin(request.http_request.url),
+                scope,
+                challenge.tenant_id,
+            )
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
             if self._need_new_token():
-                # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-                scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 await self._request_kv_token(scope, challenge)
 
+            _restore_request(request)
             bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
             request.http_request.headers["Authorization"] = f"Bearer {bearer_token}"
             return
@@ -175,8 +202,11 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
         # on_challenge will parse that challenge, use the original request including the body, authorize the
         # request, and tell super to send it again.
+        # The original request is stashed on the request's context (per-request), so it cannot leak into a later
+        # request made by the same client. A restored request must be stripped again if the cache is evicted on retry.
+        request.http_request.headers.pop("Authorization", None)
         if request.http_request.content:
-            self._request_copy = request.http_request
+            request.context[_REQUEST_COPY_KEY] = request.http_request
             bodiless_request = HttpRequest(
                 method=request.http_request.method,
                 url=request.http_request.url,
@@ -186,52 +216,56 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             request.http_request = bodiless_request
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+        _enforce_tls(request)
+        previous_challenge = request.context.pop(_CHALLENGE_INFO_KEY, None)
         try:
-            # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
-            old_scope: Optional[str] = None
-            old_tenant: Optional[str] = None
-            cached_challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
-            if cached_challenge:
-                old_scope = cached_challenge.get_scope() or cached_challenge.get_resource() + "/.default"
-                old_tenant = cached_challenge.tenant_id
-
             challenge = _update_challenge(request, response)
-            # CAE challenges may not include a scope or tenant; use the previous challenge's values if necessary
-            if challenge.claims and old_scope:
-                challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
-                challenge.tenant_id = old_tenant
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
             return False
 
-        if self._verify_challenge_resource:
-            resource_domain = urlparse(scope).netloc
-            if not resource_domain:
-                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
-
-            request_domain = urlparse(request.http_request.url).netloc
-            if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
-                raise ValueError(
-                    f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
-                    "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
-                    "See https://aka.ms/azsdk/blog/vault-uri for more information."
+        if challenge.claims:
+            # Another request may have evicted or replaced the cache while this request was in flight.
+            try:
+                old_scope, old_tenant = _get_challenge_info(
+                    request.http_request.url,
+                    previous_challenge,
+                    self._verify_challenge_resource,
+                    _get_challenge_candidate(request),
                 )
+            except ValueError:
+                self._token = None
+                request.http_request.headers.pop("Authorization", None)
+                raise
+            if old_scope:
+                challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
+                challenge.tenant_id = old_tenant
+        # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+        try:
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            if self._verify_challenge_resource:
+                _validate_challenge_resource(scope, request.http_request.url)
+        except ValueError:
+            self._token = None
+            request.http_request.headers.pop("Authorization", None)
+            _remove_challenge_for_request(request)
+            raise
 
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+        request.context[_CHALLENGE_CACHE_KEY] = (_request_origin(request.http_request.url), challenge)
+        request.context[_CHALLENGE_INFO_KEY] = (_request_origin(request.http_request.url), scope, challenge.tenant_id)
 
-        # If we had created a request copy in on_request, use it now to send along the original body content
-        if self._request_copy:
-            request.http_request = self._request_copy
+        # If we stashed the original request in on_request, use it now to send along the original body content
+        _restore_request(request)
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
         if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
             await self.authorize_request(request, scope, claims=challenge.claims)
         else:
-            await self.authorize_request(
-                request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id
-            )
+            await self.authorize_request(request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id)
 
         return True
 

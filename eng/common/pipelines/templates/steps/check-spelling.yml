@@ -24,6 +24,9 @@ parameters:
   - name: ScriptToValidateUpgrade
     type: string
     default: ''
+  - name: NpmConfigUserConfig
+    type: string
+    default: ''
 
 steps:
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -38,6 +41,9 @@ steps:
           -CspellConfigPath ${{ parameters.CspellConfigPath }}
           -ExitWithError:(!$${{ parameters.ContinueOnError }})
         pwsh: true
+      env:
+        ${{ if ne(parameters.NpmConfigUserConfig, '') }}:
+          npm_config_userconfig: ${{ parameters.NpmConfigUserConfig }}
     - ${{ if ne('', parameters.ScriptToValidateUpgrade) }}:
       - pwsh: |
           $changedFiles = ./eng/common/scripts/get-changedfiles.ps1
