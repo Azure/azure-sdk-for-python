@@ -51,9 +51,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputTarget,
+    EvaluationDataGenerationJobOutputConfiguration,
     PromptAgentDefinition,
-    TracesDataGenerationJobOptions,
+    TracesDataGenerationJobConfiguration,
     TracesDataGenerationJobSource,
 )
 
@@ -86,7 +86,9 @@ RETRY_WAIT_SECONDS = 60
 # Per-run id suffixed on the agent, output dataset, and job-input names so
 # repeated runs don't collide. Kept short (timestamp + 4 hex) to stay under
 # the 50-char service limit on output names.
-run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+run_id = (
+    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+)
 output_dataset_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
 
@@ -106,9 +108,13 @@ with (
         print(f"Create agent `{agent_name}` (model: `{model_deployment}`).")
         created_agent = project_client.agents.create_version(
             agent_name=agent_name,
-            definition=PromptAgentDefinition(model=model_deployment, instructions=AGENT_INSTRUCTIONS),
+            definition=PromptAgentDefinition(
+                model=model_deployment, instructions=AGENT_INSTRUCTIONS
+            ),
         )
-        print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
+        print(
+            f"Agent created (id: {created_agent.id}, version: {created_agent.version})."
+        )
 
         seed_start = datetime.now(tz=timezone.utc)
         print(f"Seed {len(SEED_PROMPTS)} conversation(s) against the agent.")
@@ -119,10 +125,18 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                extra_body={
+                    "agent_reference": {
+                        "name": created_agent.name,
+                        "type": "agent_reference",
+                    }
+                },
             )
 
-        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        print(
+            f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
+            flush=True,
+        )
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
         start_time = seed_start - timedelta(minutes=5)
@@ -150,8 +164,12 @@ with (
                         ],
                         # max_samples is optional and caps the output dataset size. If omitted,
                         # sampling is turned off. Private content is redacted by default.
-                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15),
-                        output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
+                        generation_configuration=TracesDataGenerationJobConfiguration(
+                            max_samples=15
+                        ),
+                        output_configuration=EvaluationDataGenerationJobOutputConfiguration(
+                            name=output_dataset_name
+                        ),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )
@@ -170,19 +188,33 @@ with (
                 break
             except Exception as e:  # pylint: disable=broad-exception-caught
                 if attempt == MAX_JOB_ATTEMPTS:
-                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}") from e
-                print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
+                    raise RuntimeError(
+                        f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}"
+                    ) from e
+                print(
+                    f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry."
+                )
                 time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve the generated dataset.
         if job_result is None:
             raise RuntimeError("The data generation job did not return a result.")
         outputs = job_result.outputs or []
-        dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
-        if dataset_output is None or not dataset_output.name or not dataset_output.version:
-            raise RuntimeError("The data generation job did not produce a dataset output.")
+        dataset_output = next(
+            (o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None
+        )
+        if (
+            dataset_output is None
+            or not dataset_output.name
+            or not dataset_output.version
+        ):
+            raise RuntimeError(
+                "The data generation job did not produce a dataset output."
+            )
 
-        created_dataset = project_client.datasets.get(name=dataset_output.name, version=dataset_output.version)
+        created_dataset = project_client.datasets.get(
+            name=dataset_output.name, version=dataset_output.version
+        )
         print(
             f"Generated dataset: name=`{created_dataset.name}` "
             f"version=`{created_dataset.version}` id=`{created_dataset.id}`"
@@ -199,7 +231,9 @@ with (
                     name=created_dataset.name or "",
                     version=created_dataset.version or "",
                 )
-                print(f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}.")
+                print(
+                    f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}."
+                )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
 

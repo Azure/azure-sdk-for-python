@@ -20,7 +20,7 @@ DESCRIPTION:
          `desired_num_turns`.
       4. Cleans up the generated dataset.
 
-    `SimulationSeedDataGenerationJobOptions` can be used with prompt, file, or
+    `SimulationSeedDataGenerationJobConfiguration` can be used with prompt, file, or
     agent sources. The service requires `max_samples` (1-1000) for this generation
     type; because the options class does not expose it as a keyword argument, the
     sample sets it through the model's mapping interface.
@@ -65,9 +65,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputTarget,
+    EvaluationDataGenerationJobOutputConfiguration,
     PromptDataGenerationJobSource,
-    SimulationSeedDataGenerationJobOptions,
+    SimulationSeedDataGenerationJobConfiguration,
 )
 
 load_dotenv()
@@ -81,7 +81,9 @@ MAX_ROWS_TO_PRINT = 5
 
 # Unique per-run names so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
-run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+run_id = (
+    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+)
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
     raise ValueError(
@@ -99,19 +101,31 @@ requests outside this scope and never share other customers' order details.
 """
 
 
-def read_dataset_rows(project_client: AIProjectClient, dataset: DatasetVersion, max_rows: int) -> List[Dict[str, Any]]:
+def read_dataset_rows(
+    project_client: AIProjectClient, dataset: DatasetVersion, max_rows: int
+) -> List[Dict[str, Any]]:
     """Download the dataset's JSON Lines content via a SAS credential and return up to `max_rows` rows."""
-    dataset_credential = project_client.datasets.get_credentials(name=dataset.name, version=dataset.version)
+    dataset_credential = project_client.datasets.get_credentials(
+        name=dataset.name, version=dataset.version
+    )
     sas_uri = dataset_credential.blob_reference.credential.sas_uri
     # Blobs belonging to this dataset version are addressed relative to the SAS container.
     container_path = urlsplit(sas_uri).path.rstrip("/")
     data_path = urlsplit(dataset.data_uri).path
-    blob_prefix = data_path[len(container_path) :].lstrip("/") if data_path.startswith(container_path) else ""
+    blob_prefix = (
+        data_path[len(container_path) :].lstrip("/")
+        if data_path.startswith(container_path)
+        else ""
+    )
 
     rows: List[Dict[str, Any]] = []
     with ContainerClient.from_container_url(container_url=sas_uri) as container_client:
-        for blob_name in container_client.list_blob_names(name_starts_with=blob_prefix or None):
-            content = container_client.download_blob(blob_name).readall().decode("utf-8")
+        for blob_name in container_client.list_blob_names(
+            name_starts_with=blob_prefix or None
+        ):
+            content = (
+                container_client.download_blob(blob_name).readall().decode("utf-8")
+            )
             for line in content.splitlines():
                 if line.strip():
                     rows.append(json.loads(line))
@@ -132,11 +146,11 @@ def main() -> None:
             # ------------------------------------------------------------------
             # 1. Submit a simulation seed data generation job.
             # ------------------------------------------------------------------
-            generation_configuration = SimulationSeedDataGenerationJobOptions(
+            generation_configuration = SimulationSeedDataGenerationJobConfiguration(
                 model_options=DataGenerationModelOptions(model=model_name),
             )
             # The service currently requires `max_samples` (1-1000) for `simulation_seed`
-            # jobs, but `SimulationSeedDataGenerationJobOptions` does not expose it as a
+            # jobs, but `SimulationSeedDataGenerationJobConfiguration` does not expose it as a
             # keyword argument, so set it through the model's mapping interface.
             generation_configuration["max_samples"] = 15
 
@@ -149,7 +163,7 @@ def main() -> None:
                     ),
                 ],
                 generation_configuration=generation_configuration,
-                output_configuration=EvaluationDataGenerationJobOutputTarget(
+                output_configuration=EvaluationDataGenerationJobOutputConfiguration(
                     name=output_dataset_name,
                     description="Simulation seeds for multi-turn evaluation of the Widgets & Gizmos support agent.",
                     tags={"sample": "dataset-generation-simulation-seed"},
@@ -178,14 +192,28 @@ def main() -> None:
             # 2. Resolve the generated dataset.
             # ------------------------------------------------------------------
             dataset_output = next(
-                (o for o in job_result.outputs or [] if isinstance(o, DatasetDataGenerationJobOutput)),
+                (
+                    o
+                    for o in job_result.outputs or []
+                    if isinstance(o, DatasetDataGenerationJobOutput)
+                ),
                 None,
             )
-            if dataset_output is None or not dataset_output.name or not dataset_output.version:
-                raise RuntimeError("The data generation job did not produce a dataset output.")
+            if (
+                dataset_output is None
+                or not dataset_output.name
+                or not dataset_output.version
+            ):
+                raise RuntimeError(
+                    "The data generation job did not produce a dataset output."
+                )
 
-            dataset = project_client.datasets.get(name=dataset_output.name, version=dataset_output.version)
-            print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
+            dataset = project_client.datasets.get(
+                name=dataset_output.name, version=dataset_output.version
+            )
+            print(
+                f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`"
+            )
             if job_result.generated_samples is not None:
                 print(f"Generated samples: {job_result.generated_samples}")
 
@@ -207,9 +235,13 @@ def main() -> None:
             # ------------------------------------------------------------------
             # Delete the generated dataset.
             if dataset is not None:
-                print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+                print(
+                    f"Delete the generated dataset `{dataset.name}` v{dataset.version}."
+                )
                 try:
-                    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+                    project_client.datasets.delete(
+                        name=dataset.name or "", version=dataset.version or ""
+                    )
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete dataset: {exc}")
 
