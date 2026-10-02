@@ -71,7 +71,7 @@ jobs:
 
           echo "Installing setuptools runtime dependency for Python SDK common_tasks.py"
           python -m pip install "setuptools<81"
-          python -c "import apistub, azpysdk.main, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
+          (cd "$source_repo" && python -c "import apistub, azpysdk.main, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')")
         displayName: 'Install Python API review tooling'
         env:
           SOURCE_REPO: $(LanguageRepo)
