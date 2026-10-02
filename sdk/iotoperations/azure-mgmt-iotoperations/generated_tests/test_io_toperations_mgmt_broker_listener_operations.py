@@ -54,7 +54,7 @@ class TestIoTOperationsMgmtBrokerListenerOperations(AzureMgmtRecordedTestCase):
                             "tls": {
                                 "mode": "str",
                                 "certManagerCertificateSpec": {
-                                    "issuerRef": {"group": "str", "kind": "str", "name": "str"},
+                                    "issuerRef": {"kind": "str", "name": "str", "group": "str"},
                                     "duration": "str",
                                     "privateKey": {"algorithm": "str", "rotationPolicy": "str"},
                                     "renewBefore": "str",

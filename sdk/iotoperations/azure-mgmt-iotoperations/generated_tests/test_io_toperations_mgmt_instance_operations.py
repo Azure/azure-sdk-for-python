@@ -56,6 +56,7 @@ class TestIoTOperationsMgmtInstanceOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "version": "str",
                 },
+                "sku": {"name": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
