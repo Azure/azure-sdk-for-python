@@ -232,9 +232,16 @@ jobs:
 
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+        parameters:
+          npmrcPath: $(Agent.BuildDirectory)/cspell/.npmrc
+          CustomCondition: and(succeeded(), ne(variables['Skip.SpellCheck'],'true'))
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
+        NpmConfigUserConfig: $(Agent.BuildDirectory)/cspell/.npmrc
 
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
