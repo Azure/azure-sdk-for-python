@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/Endpoint-PUT-External-WithAlwaysServe.json
+# x-ms-original-file: 2026-09-01/Endpoint-PUT-External-WithAlwaysServe.json
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ It is also validated here, independently of the agent-side tool/collector.
 """
 
 import argparse
+import copy
+import hashlib
 import html
 import json
 import os
@@ -14,17 +16,19 @@ import re
 import unicodedata
 from urllib.parse import quote, unquote, urlsplit
 
+from mgmt_sdk_review_context import GitHubApiError, authorize_current_run
+from mgmt_sdk_review_evidence import (
+    CHECKS,
+    SEMANTIC_CHECKS,
+    allowed_sdk_file,
+    citation,
+    deterministic_checks,
+    entry_id,
+)
+
 MARKER = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
 SUBMISSION = "Structured management SDK review."
-CHECKS = (
-    "Version consistency",
-    "Preview version",
-    "Changelog date",
-    "Stability flags",
-    "Client signature",
-    "Client name consistency",
-    "README snippets",
-)
+INCOMPLETE = "Management SDK review incomplete: "
 SEVERITIES = ("Blocking", "Warning", "Suggestion")
 MAX_BYTES = 2 * 1024 * 1024
 
@@ -54,7 +58,7 @@ SOURCE = obj(
         "reason": TEXT,
     }
 )
-SCHEMA = obj(
+RENDER_SCHEMA = obj(
     {
         "schema_version": enum("1"),
         "outcome": enum("reviewed", "not_applicable"),
@@ -98,6 +102,7 @@ SCHEMA = obj(
                                         "confidence": enum("high", "not_applicable"),
                                         "explanation": TEXT,
                                         "sources": array(SOURCE),
+                                        "sdk_context": array(SOURCE),
                                     }
                                 )
                             ),
@@ -109,10 +114,76 @@ SCHEMA = obj(
     }
 )
 
+REFERENCE = obj(
+    {
+        "source_id": {"type": "string", "pattern": r"^[0-9a-f]{64}$"},
+        "start_line": {"type": "integer", "minimum": 0},
+        "end_line": {"type": "integer", "minimum": 0},
+        "reason": TEXT,
+    }
+)
+CHECK = obj({"outcome": enum("completed", "unverified", "not_applicable"), "reason": TEXT, "sources": array(REFERENCE)})
+FINDING = copy.deepcopy(RENDER_SCHEMA["properties"]["packages"]["items"]["properties"]["findings"]["items"])
+FINDING["properties"]["check"] = enum(*SEMANTIC_CHECKS)
+FINDING["properties"]["sources"] = array(REFERENCE)
+DRAFT_SCHEMA = obj(
+    {
+        "schema_version": enum("2"),
+        "outcome": enum("reviewed", "not_applicable"),
+        "packages": array(
+            obj(
+                {
+                    "package": {"type": "string", "pattern": r"^sdk/[^/]+/azure-mgmt-[a-z0-9-]+$"},
+                    "checks": obj({name: CHECK for name in SEMANTIC_CHECKS}),
+                    "findings": array(FINDING),
+                    "attribution": array(
+                        obj(
+                            {
+                                "entry_id": {"type": "string", "pattern": r"^[0-9a-f]{24}$"},
+                                "cause": enum("typespec_api", "human_review"),
+                                "explanation": TEXT,
+                                "sources": array(REFERENCE),
+                                "sdk_context": array(REFERENCE),
+                            }
+                        )
+                    ),
+                }
+            )
+        ),
+    }
+)
+REGISTRATION = obj(
+    {
+        "package": TEXT,
+        "repository": TEXT,
+        "revision": TEXT,
+        "path": TEXT,
+        "sha256": TEXT,
+    }
+)
+SCHEMA = obj(
+    {
+        **DRAFT_SCHEMA["properties"],
+        "registrations": array(REGISTRATION),
+        "preflight": obj(
+            {
+                "attempt": {"type": "integer", "minimum": 1},
+                "digest": {"type": "string", "pattern": r"^[0-9a-f]{64}$"},
+            }
+        ),
+    }
+)
 
-def require(condition, path, message):
+
+class ReviewError(ValueError):
+    def __init__(self, path, message, code="invalid_value"):
+        super().__init__(f"{path}: {message} [{code}]")
+        self.diagnostic = {"code": code, "path": path, "message": message}
+
+
+def require(condition, path, message, code="invalid_value"):
     if not condition:
-        raise ValueError(f"{path}: {message}")
+        raise ReviewError(path, message, code)
 
 
 def validate_characters(value, path):
@@ -235,7 +306,7 @@ def source_identity(source, path):
         r"([^?#\s<>\"\\]+)(?:#L([1-9][0-9]*)(?:-L([1-9][0-9]*))?)?",
         url,
     )
-    require(match, path + ".url", "expected an immutable GitHub blob URL with a full commit SHA")
+    require(match, path + ".url", "expected an immutable GitHub blob URL with a full commit SHA", "invalid_citation")
     repository, revision, filename, start, end = match.groups()
     decoded = unquote(filename)
     normalized_text(decoded, path + ".url")
@@ -246,9 +317,10 @@ def source_identity(source, path):
     )
     require(not end or int(end) >= int(start), path + ".url", "line range ends before it starts")
     if source["line_status"] == "verified":
-        require(start and not source["reason"], path, "verified lines require an anchor and an empty reason")
+        require(start, path, "verified lines require an anchor", "missing_anchor")
+        require(not source["reason"], path, "verified lines require an empty reason", "citation_state_conflict")
     else:
-        require(not start, path, "unavailable lines must not invent an anchor")
+        require(not start, path, "unavailable lines must not invent an anchor", "citation_state_conflict")
         reason(source["reason"], path + ".reason")
     return repository, revision, decoded
 
@@ -276,22 +348,23 @@ def validate_sources(sources, path, context, breaking, package, required=False, 
             (repo, revision) in (specs if specification else allowed | specs),
             field,
             "source repository/revision is not in the trusted SDK or specification context",
+            "wrong_evidence_role" if specification and (repo, revision) in allowed else "wrong_revision",
         )
         if repo == context["repository"]:
+            if check is not None:
+                require(
+                    revision == context["latestRevision"],
+                    field,
+                    "Check and finding evidence must use the latest SDK revision; historical evidence is attribution context only.",
+                    "wrong_revision",
+                )
             require(filename.startswith(package + "/"), field, "source belongs to another package")
             relative = filename[len(package) + 1 :]
-            version_metadata = relative.endswith("/_version.py") and check in {
-                "Version consistency",
-                "Preview version",
-                "Stability flags",
-            }
             require(
-                not relative.startswith(("generated_samples/", "generated_tests/"))
-                and not (
-                    relative.startswith("azure/mgmt/") and not relative.endswith("/_client.py") and not version_metadata
-                ),
+                allowed_sdk_file(relative, check),
                 field,
                 "source is excluded by management SDK review rules",
+                "excluded_file",
             )
         if specification:
             require(
@@ -324,7 +397,7 @@ def validate_context(context, repository, pr_number, head, tooling_revision):
 
 
 def validate_review(data, context):
-    validate_schema(data)
+    validate_schema(data, RENDER_SCHEMA)
     packages = unique_index(data["packages"], "package", "data.packages")
     require(
         set(packages) == set(context["affectedPackages"]),
@@ -338,7 +411,7 @@ def validate_review(data, context):
             "not_applicable requires complete trusted discovery with no management packages",
         )
         return
-    require(packages, "data.packages", "no package checks completed; report_incomplete instead")
+    require(packages, "data.packages", "no package checks completed; use the incomplete operation instead")
     breaking_by_package = unique_index(context["breakingChangeContext"], "packagePath", "context.breakingChangeContext")
     completed = 0
     for package, review in packages.items():
@@ -441,6 +514,7 @@ def validate_review(data, context):
             validate_sources(
                 entry["sources"], row + ".sources", context, breaking, package, required=direct, specification=direct
             )
+            validate_sources(entry["sdk_context"], row + ".sdk_context", context, breaking, package)
     require(completed, "data.packages[].checks", "diagnostic-only review: no rule checks completed")
 
 
@@ -468,11 +542,11 @@ def link(url, label):
     return f"[{text(label)}]({destination})"
 
 
-def sources(values):
+def sources(values, render_link=link):
     result = []
     for source in values:
         label = unquote(urlsplit(source["url"]).path.rsplit("/", 1)[-1])
-        rendered = link(source["url"], label)
+        rendered = render_link(source["url"], label)
         if source["line_status"] == "unavailable":
             rendered += " (lines unverified: " + text(source["reason"]) + ")"
         result.append(rendered)
@@ -503,6 +577,15 @@ def render(data, context):
             + "\n\n## Management SDK review not applicable\n\n"
             + ("This pull request does not change a package matching `sdk/*/azure-mgmt-*`.\n")
         )
+    references = {}
+
+    def evidence_link(url, label):
+        if len(data["packages"]) == 1:
+            return link(url, label)
+        if url not in references:
+            references[url] = len(references) + 1
+        return f"{text(label)} [E{references[url]}]"
+
     findings, unverified, summary, attribution_sections = [], [], [], []
     if context["packageDiscovery"]["status"] == "unverified":
         unverified.append(["All packages", "Management package discovery", text(context["packageDiscovery"]["error"])])
@@ -510,6 +593,9 @@ def render(data, context):
     breaking_by_package = {item["packagePath"]: item for item in context["breakingChangeContext"]}
     for package in sorted(data["packages"], key=lambda item: item["package"]):
         name = package["package"]
+        for issue in context.get("sourceCollectionIssues", []):
+            if issue.startswith((name + ":", name + "/")):
+                unverified.append([text(name), "Source collection", text(issue)])
         completed = []
         for check in sorted(package["checks"], key=lambda item: CHECKS.index(item["name"])):
             if check["outcome"] == "unverified":
@@ -517,21 +603,22 @@ def render(data, context):
                     [
                         text(name),
                         text(check["name"]),
-                        text(check["reason"]) + ("<br>" + sources(check["sources"]) if check["sources"] else ""),
+                        text(check["reason"])
+                        + ("<br>" + sources(check["sources"], evidence_link) if check["sources"] else ""),
                     ]
                 )
             else:
                 label = text(check["name"])
                 if check["outcome"] == "not_applicable":
                     label += " (not applicable: " + text(check["reason"]) + ")"
-                label += " " + sources(check["sources"])
+                label += " " + sources(check["sources"], evidence_link)
                 completed.append(label)
         for finding in package["findings"]:
             findings.append(
                 [
                     finding["severity"],
                     text(finding["title"]),
-                    text(name) + "<br>" + sources(finding["sources"]),
+                    text(name) + "<br>" + sources(finding["sources"], evidence_link),
                     text(finding["observation"]),
                     text(finding["check"]),
                     text(finding["remediation"]),
@@ -549,19 +636,21 @@ def render(data, context):
             completed.append("API-version drift")
             if drift["status"] == "changed":
                 evidence = "<br>".join(
-                    link(file_url(context, drift["metadataPath"], drift[which + "Revision"]), drift[which + "Revision"])
+                    evidence_link(
+                        file_url(context, drift["metadataPath"], drift[which + "Revision"]), drift[which + "Revision"]
+                    )
                     + ": "
-                    + text(drift[which + "ApiVersion"])
+                    + text(json.dumps(drift[which + "ApiVersions"], ensure_ascii=False, sort_keys=True))
                     for which in ("first", "latest")
                 )
                 findings.append(
                     [
                         "Blocking",
-                        "API version changed",
+                        "API versions changed",
                         text(name),
                         evidence + "<br>Line anchors unavailable in collector summary.",
                         "API-version drift",
-                        "Restore the original API version or explain the change and obtain approval.",
+                        "Restore the original service-to-API-version mapping or explain the change and obtain approval.",
                     ]
                 )
         if context["packageDiscovery"]["status"] == "complete":
@@ -578,12 +667,12 @@ def render(data, context):
             explanation = text(entry["explanation"])
             if entry["cause"] == "human_review":
                 explanation = "**Needs human review:** " + explanation
-            if entry["sources"]:
-                explanation += "<br>" + sources(entry["sources"])
+            if entry["sources"] or entry["sdk_context"]:
+                explanation += "<br>" + sources(entry["sources"] + entry["sdk_context"], evidence_link)
             release = trusted["release"] if trusted["release"] is not None else "Unverified release (missing heading)"
             groups.setdefault(release, []).append(
                 [
-                    link(url, trusted["text"]) + "<br>Change: " + text(trusted["changeKind"]),
+                    evidence_link(url, trusted["text"]) + "<br>Change: " + text(trusted["changeKind"]),
                     "TypeSpec/API" if entry["cause"] == "typespec_api" else "Human review",
                     explanation,
                     "High" if entry["confidence"] == "high" else "N/A",
@@ -627,11 +716,21 @@ def render(data, context):
                 + "<br>".join(text(issue) for issue in issues)
             )
     findings.sort(key=lambda row: (SEVERITIES.index(row[0]), row[2], row[1]))
+    partial = bool(unverified) or any(
+        package["attribution"]["outcome"] == "incomplete"
+        or any(entry["cause"] == "human_review" for entry in package["attribution"]["entries"])
+        for package in data["packages"]
+    )
     body = (
         "\n\n".join(
             [
                 MARKER,
                 "## Management SDK PR review",
+                (
+                    "**Review completeness: partial - human review required.** No package-wide approval is implied."
+                    if partial
+                    else "**Review completeness: complete.** Advisory only; not approval to merge."
+                ),
                 (
                     table(["Severity", "Finding", "Location", "Evidence", "Rule", "Remediation"], findings)
                     if findings
@@ -647,11 +746,29 @@ def render(data, context):
         )
         + "\n"
     )
-    require(len(body.encode("utf-8")) <= 60000, "rendered.body", "review exceeds publication size limit")
+    if references:
+        body += (
+            "\n### Evidence references\n\n"
+            + table(
+                ["Reference", "Source"],
+                [
+                    [f"E{number}", link(url, unquote(urlsplit(url).path.rsplit("/", 1)[-1]))]
+                    for url, number in references.items()
+                ],
+            )
+            + "\n"
+        )
+    require(
+        len(body.encode("utf-8")) <= 60000,
+        "rendered.body",
+        "review exceeds publication size limit",
+        "publication_size_budget",
+    )
     require(
         len(re.findall(r"https?://[^\s]+", body)) <= 48,
         "rendered.body",
         "review exceeds the 48-link budget (two reserved for gh-aw metadata); reduce redundant references",
+        "publication_link_budget",
     )
     return body
 
@@ -664,13 +781,26 @@ def strict_object(pairs):
     return result
 
 
-def load_json(path):
+def load_json(path, max_bytes=MAX_BYTES):
     raw = Path(path).read_bytes()
-    require(len(raw) <= MAX_BYTES, str(path), "JSON exceeds size limit")
+    require(len(raw) <= max_bytes, str(path), "JSON exceeds size limit")
     return json.loads(raw.decode("utf-8"), object_pairs_hook=strict_object)
 
 
-def prepare_output(payload, context):
+def validate_submission_target(item, context):
+    if "item_number" not in item:
+        return
+    number = item["item_number"]
+    expected = context["pullRequestNumber"]
+    require(
+        (type(number) is int and number == expected) or (isinstance(number, str) and number == str(expected)),
+        "output.items[0].item_number",
+        "must exactly match the trusted PR number as an integer or canonical decimal string",
+        "conflicting_target",
+    )
+
+
+def prepare_rendered_output(payload, context):
     require(isinstance(payload, dict), "output", "expected an agent output object")
     require(
         payload.get("errors") == [] and isinstance(payload.get("errors"), list),
@@ -690,10 +820,12 @@ def prepare_output(payload, context):
         "expected add_comment; report_incomplete reason/details remain in the agent artifact",
     )
     require(
-        set(item) <= {"type", "body", "data", "temporary_id"},
+        set(item) <= {"type", "body", "data", "temporary_id", "item_number"},
         "output.items[0]",
         "unexpected target or publication fields",
+        "unsupported_publication_field",
     )
+    validate_submission_target(item, context)
     # v0.88.8 appends a pretty-printed data block during ingestion. It is not review Markdown.
     data = item.get("data")
     expected = SUBMISSION + "\n\nStructured data:\n```json\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n```"
@@ -706,6 +838,354 @@ def prepare_output(payload, context):
     return {"items": [{"type": "add_comment", "body": body}], "errors": []}
 
 
+def digest(data):
+    return hashlib.sha256(
+        json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def schema_errors(data, schema=DRAFT_SCHEMA, path="data"):
+    """Report structurally independent errors without continuing into unsafe types."""
+    errors = []
+    kind = schema["type"]
+    if kind == "object" and isinstance(data, dict) and set(data) == set(schema["properties"]):
+        for key, child in schema["properties"].items():
+            errors.extend(schema_errors(data[key], child, f"{path}.{key}"))
+    elif kind == "array" and isinstance(data, list) and len(data) <= 1000:
+        for index, item in enumerate(data):
+            errors.extend(schema_errors(item, schema["items"], f"{path}[{index}]"))
+    else:
+        try:
+            validate_schema(data, schema, path)
+        except ReviewError as error:
+            error.diagnostic["code"] = "schema_mismatch"
+            errors.append(error.diagnostic)
+    return errors
+
+
+def draft_template(context):
+    """Supply structure and trusted identities, never prepopulate review conclusions."""
+    return {
+        "schema_version": "2",
+        "outcome": "reviewed" if context["affectedPackages"] else "not_applicable",
+        "packages": [
+            {
+                "package": item["packagePath"],
+                "checks": {name: {"outcome": "unverified", "reason": "", "sources": []} for name in SEMANTIC_CHECKS},
+                "findings": [],
+                "attribution": [
+                    {
+                        "entry_id": entry_id(entry),
+                        "cause": "human_review",
+                        "explanation": "",
+                        "sources": [],
+                        "sdk_context": [],
+                    }
+                    for entry in item["introducedEntries"]
+                ],
+            }
+            for item in context["breakingChangeContext"]
+        ],
+    }
+
+
+def incomplete_submission(message):
+    validate_schema(message, TEXT, "incomplete.reason")
+    reason(message, "incomplete.reason")
+    return {"message": INCOMPLETE + message}
+
+
+def expand_draft(data, context):
+    """Convert the only public schema into renderer data using trusted facts."""
+    validate_schema(data, DRAFT_SCHEMA)
+    errors = []
+    records = {(item["id"], item["package"]): item for item in context["sources"]}
+
+    def refs(values, path, package, role="sdk", check=None):
+        result = []
+        for index, value in enumerate(values):
+            field = f"{path}[{index}]"
+            try:
+                record = records.get((value["source_id"], package))
+                require(
+                    record is not None,
+                    field + ".source_id",
+                    "Use an ID returned by the evidence tool.",
+                    "unknown_source",
+                )
+                require(
+                    record["package"] == package, field, "Source belongs to another package.", "wrong_evidence_role"
+                )
+                require(role in record["roles"], field, f"This list requires {role} evidence.", "wrong_evidence_role")
+                if role == "sdk":
+                    if check is not None:
+                        require(
+                            record["revision"] == context["latestRevision"],
+                            field,
+                            "Check and finding evidence must use the latest SDK revision; historical evidence is attribution context only.",
+                            "wrong_revision",
+                        )
+                    require(
+                        allowed_sdk_file(record["path"][len(package) + 1 :], check),
+                        field,
+                        "Generated source is excluded for this evidence role.",
+                        "excluded_file",
+                    )
+                start, end = value["start_line"], value["end_line"]
+                if start == 0 and end == 0:
+                    reason(value["reason"], field + ".reason")
+                else:
+                    require(
+                        start > 0 and end >= start,
+                        field,
+                        "Provide a positive ordered range, or two zeros.",
+                        "missing_anchor",
+                    )
+                    require(
+                        not value["reason"],
+                        field,
+                        "A verified range cannot carry an unavailable reason.",
+                        "citation_state_conflict",
+                    )
+                    require(
+                        record["status"] == "available",
+                        field,
+                        "Unavailable content cannot verify lines.",
+                        "citation_state_conflict",
+                    )
+                    require(
+                        end <= record["lineCount"],
+                        field + ".end_line",
+                        "Range exceeds the pinned file.",
+                        "line_out_of_bounds",
+                    )
+                result.append(citation(record, start, end, value["reason"]))
+            except ReviewError as error:
+                errors.append(error.diagnostic)
+        return result
+
+    normalized = {"schema_version": "1", "outcome": data["outcome"], "packages": []}
+    breaking = {item["packagePath"]: item for item in context["breakingChangeContext"]}
+    for index, package in enumerate(data["packages"]):
+        path = f"data.packages[{index}]"
+        name = package["package"]
+        if name not in breaking:
+            errors.append(
+                {"code": "package_coverage", "path": path + ".package", "message": "Not a trusted affected package."}
+            )
+            continue
+        record = breaking[name]
+        checks, findings = deterministic_checks(context, name)
+        for label, check in package["checks"].items():
+            field = path + f".checks.{label}"
+            resolved = refs(check["sources"], field + ".sources", name, check=label)
+            try:
+                if check["outcome"] == "completed":
+                    require(
+                        not check["reason"],
+                        field + ".reason",
+                        "Completed checks require an empty reason.",
+                        "citation_state_conflict",
+                    )
+                    require(
+                        resolved and all(item["line_status"] == "verified" for item in resolved),
+                        field + ".sources",
+                        "Completed checks require verified evidence; otherwise report unverified.",
+                        "missing_verified_evidence",
+                    )
+                else:
+                    reason(check["reason"], field + ".reason")
+            except ReviewError as error:
+                errors.append(error.diagnostic)
+            checks.append({**check, "name": label, "sources": resolved})
+        for i, finding in enumerate(package["findings"]):
+            findings.append(
+                {
+                    **finding,
+                    "sources": refs(finding["sources"], path + f".findings[{i}].sources", name, check=finding["check"]),
+                }
+            )
+        trusted_entries = {entry_id(entry): (i, entry) for i, entry in enumerate(record["introducedEntries"])}
+        entries = []
+        seen = set()
+        for i, entry in enumerate(package["attribution"]):
+            field = path + f".attribution[{i}]"
+            identity = entry["entry_id"]
+            if identity not in trusted_entries or identity in seen:
+                errors.append(
+                    {
+                        "code": "entry_coverage",
+                        "path": field + ".entry_id",
+                        "message": "Use each trusted introduced entry ID exactly once.",
+                    }
+                )
+                continue
+            seen.add(identity)
+            position, trusted = trusted_entries[identity]
+            spec_sources = refs(entry["sources"], field + ".sources", name, "specification")
+            sdk_sources = refs(entry["sdk_context"], field + ".sdk_context", name)
+            try:
+                validate_sources(sdk_sources, field + ".sdk_context", context, record, name)
+                reason(entry["explanation"], field + ".explanation")
+                if entry["cause"] == "typespec_api":
+                    require(
+                        record["releaseBaseline"]["status"] == "available",
+                        field + ".cause",
+                        "Direct attribution needs an available release baseline.",
+                        "missing_baseline",
+                    )
+                    require(
+                        spec_sources and all(source["line_status"] == "verified" for source in spec_sources),
+                        field + ".sources",
+                        "Direct attribution requires verified specification evidence.",
+                        "missing_verified_evidence",
+                    )
+            except ReviewError as error:
+                errors.append(error.diagnostic)
+            entries.append(
+                {
+                    "entry_index": position,
+                    "release": trusted["release"] or "",
+                    "cause": entry["cause"],
+                    "confidence": "high" if entry["cause"] == "typespec_api" else "not_applicable",
+                    "explanation": entry["explanation"],
+                    "sources": spec_sources,
+                }
+            )
+            # SDK context is separately validated, then rendered as literal supporting prose links.
+            entries[-1]["sdk_context"] = sdk_sources
+        if seen != set(trusted_entries):
+            errors.append(
+                {
+                    "code": "entry_coverage",
+                    "path": path + ".attribution",
+                    "message": "Account for all trusted introduced entry IDs.",
+                }
+            )
+        issues = list(record["collectionIssues"])
+        if record["status"] != "complete" and not issues:
+            issues.append("Breaking-change collection is incomplete.")
+        if record["emptyBreakingChangeSections"]:
+            issues.append("Empty Breaking Changes sections require human review.")
+        for key in ("packageDiscovery", "commitDiscovery"):
+            if context[key]["status"] != "complete":
+                issues.append(context[key]["error"])
+        normalized["packages"].append(
+            {
+                "package": name,
+                "checks": checks,
+                "findings": findings,
+                "attribution": {
+                    "outcome": "incomplete" if issues else ("entries" if trusted_entries else "no_entries"),
+                    "initial_release": record["releaseBaseline"]["status"] == "not_applicable",
+                    "reason": "; ".join(issues),
+                    "entries": entries,
+                },
+            }
+        )
+    return normalized, errors
+
+
+def preflight(data, context):
+    errors = schema_errors(data)
+    if errors:
+        return {"ok": False, "errors": errors, "schemaVersion": "2", "toolingRevision": context["toolingRevision"]}
+    normalized, errors = expand_draft(data, context)
+    if not errors:
+        try:
+            body = render(normalized, context)
+        except ReviewError as error:
+            errors.append(error.diagnostic)
+    return {
+        "ok": not errors,
+        "errors": errors,
+        **(
+            {
+                "bodyBytes": len(body.encode()),
+                "links": len(re.findall(r"https?://", body)),
+                "reviewCompleteness": (
+                    "not_applicable"
+                    if data["outcome"] == "not_applicable"
+                    else "partial" if "**Review completeness: partial" in body else "complete"
+                ),
+            }
+            if not errors
+            else {}
+        ),
+        "schemaVersion": "2",
+        "toolingRevision": context["toolingRevision"],
+    }
+
+
+def prepare_output(payload, context, resolver=None):
+    # Validate the transport independently before any dynamic evidence retrieval.
+    shell = copy.deepcopy(payload)
+    require(
+        context.get("schemaVersion") == "2",
+        "context.schemaVersion",
+        "Collect a version-2 snapshot with the executing tooling.",
+        "schema_mismatch",
+    )
+    require(isinstance(shell, dict), "output", "expected an agent output object")
+    require(shell.get("errors") == [], "output.errors", "expected empty collector errors")
+    items = shell.get("items")
+    require(
+        isinstance(items, list) and len(items) == 1 and isinstance(items[0], dict),
+        "output.items",
+        "expected exactly one review",
+    )
+    item = items[0]
+    if item.get("type") == "noop":
+        require(set(item) == {"type", "message"}, "output.items[0]", "expected only incomplete diagnostic fields")
+        message = item["message"]
+        require(
+            isinstance(message, str) and message.startswith(INCOMPLETE),
+            "output.items[0].message",
+            "expected explicit incomplete review diagnostic, not a clean-review noop",
+        )
+        incomplete_submission(message[len(INCOMPLETE) :])
+        return {"items": [item], "errors": []}
+    require(item.get("type") == "add_comment", "output.items[0].type", "expected add_comment")
+    require(
+        set(item) <= {"type", "body", "data", "temporary_id", "item_number"},
+        "output.items[0]",
+        "unsupported publication fields",
+        "unsupported_publication_field",
+    )
+    validate_submission_target(item, context)
+    data = item.get("data")
+    validate_schema(data)
+    expected = SUBMISSION + "\n\nStructured data:\n```json\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n```"
+    require(
+        item.get("body") == expected,
+        "output.items[0].body",
+        "expected fixed transport label and ingested structured data",
+    )
+    stamp = data.pop("preflight")
+    require(
+        stamp["attempt"] <= 3,
+        "data.preflight.attempt",
+        "At most an initial attempt and two corrections.",
+        "correction_limit",
+    )
+    require(
+        stamp["digest"] == digest(data),
+        "data.preflight.digest",
+        "Payload changed after preflight.",
+        "preflight_changed",
+    )
+    registrations = data.pop("registrations")
+    context = copy.deepcopy(context)
+    if registrations:
+        require(resolver is not None, "data.registrations", "Independent specification retrieval is required.")
+        for registration in registrations:
+            resolver(context, registration)
+    result = preflight(data, context)
+    require(result["ok"], "preflight", json.dumps(result["errors"]), "semantic_rejection")
+    normalized, _ = expand_draft(data, context)
+    return {"items": [{"type": "add_comment", "body": render(normalized, context)}], "errors": []}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("schema", "publish"))
@@ -714,7 +1194,8 @@ def main():
         print(json.dumps(SCHEMA, separators=(",", ":")))
         return
     try:
-        context = load_json(os.environ["REVIEW_CONTEXT"])
+        authorize_current_run()
+        context = load_json(os.environ["REVIEW_CONTEXT"], 64 * 1024 * 1024)
         validate_context(
             context,
             os.environ["GH_REPOSITORY"],
@@ -723,12 +1204,49 @@ def main():
             os.environ["REVIEW_TOOLING_SHA"],
         )
         output = Path(os.environ["GH_AW_AGENT_OUTPUT"])
-        prepared = prepare_output(load_json(output), context)
+        from mgmt_sdk_review_service import EvidenceRegistry
+
+        registry = EvidenceRegistry(context)
+        prepared = prepare_output(load_json(output), context, registry.resolve)
         # Leave the original artifact untouched on any validation/rendering failure.
         temporary = output.with_suffix(".validated.json")
         temporary.write_text(json.dumps(prepared, ensure_ascii=False), encoding="utf-8")
         temporary.replace(output)
-    except (OSError, ValueError, KeyError, TypeError) as error:
+        if prepared["items"][0]["type"] == "noop":
+            message = prepared["items"][0]["message"]
+            print(
+                json.dumps(
+                    {
+                        "automation": "incomplete",
+                        "publication": "skipped",
+                        "reason": message,
+                        "schemaVersion": "2",
+                        "toolingRevision": context["toolingRevision"],
+                    }
+                )
+            )
+            print(
+                "::warning::Management SDK review incomplete. No review was published or hidden; human review required."
+            )
+            if os.environ.get("GITHUB_STEP_SUMMARY"):
+                with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
+                    summary.write(
+                        "## Management SDK review incomplete\n\n"
+                        "**No review published or hidden. Human review required; this is not a clean review.**\n\n"
+                        f"<pre>{html.escape(message)}</pre>\n"
+                    )
+            return
+        print(
+            json.dumps(
+                {
+                    "automation": "validated",
+                    "publication": "pending_builtin_handler",
+                    "schemaVersion": "2",
+                    "toolingRevision": context["toolingRevision"],
+                }
+            )
+        )
+    except (OSError, ValueError, KeyError, TypeError, GitHubApiError) as error:
         message = str(error).replace("\r", " ").replace("\n", " ")
         raise SystemExit(
             f"Management SDK review rejected: {message}. No review will be published or hidden. "

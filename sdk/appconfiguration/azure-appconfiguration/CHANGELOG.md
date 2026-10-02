@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Improved Microsoft Entra ID authentication audience detection for sovereign clouds. When `audience` is not set, the client now derives it from the App Configuration endpoint hostname. An explicitly configured audience continues to override detection.
+
 ## 1.9.0 (2026-06-18)
 
 ### Features Added
