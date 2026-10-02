@@ -7,6 +7,19 @@
 
 ### Bugs Fixed
 - Fixed directory uploads not propagating errors when progress reporting is disabled.
+- Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
+- Fixed artifact cache reads failing on transient Windows checksum-sharing errors during initial validation.
+- Improved the missing Azure CLI error reported when initializing the artifact cache.
+- Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
+- Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
+- Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.
+- Fixed Azure DevOps artifact tool downloads to validate request URLs and extracted executables before installing an override.
+
+## 1.35.0 (2026-09-08)
+
+### Features Added
+
+### Bugs Fixed
 - Fixed slow iteration over `MLClient.jobs.list()` (issue [#48415](https://github.com/Azure/azure-sdk-for-python/issues/48415)) caused by `_append_tid_to_studio_url` calling `credential.get_token()` on every job to extract the tenant id from a JWT. The tenant id is now decoded once per `JobOperations` instance and reused for subsequent jobs.
 - Simplified schedule validation errors so invalid local job paths report the relevant file error instead of errors from every supported job schema.
 - Fixed internal pipeline `Command` node dropping node-level interactive `services` (SSH, JupyterLab, TensorBoard, VS Code, etc.) during serialization, which prevented interactive endpoints from being created for Singularity jobs. The `services` are now serialized into the pipeline REST request and round-tripped on deserialization, matching the public `Command` node behavior.
