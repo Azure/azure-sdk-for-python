@@ -11,6 +11,8 @@ parameters:
   - name: repositoryOwner
     type: string
     default: 'Azure'
+  - name: languageRepoResource
+    type: string
   - name: pythonVersion
     type: string
     default: '3.12'
@@ -25,6 +27,7 @@ jobs:
     displayName: 'Create Python API review artifacts'
     poolName: ${{ parameters.poolName }}
     imageOverride: ${{ parameters.imageOverride }}
+    languageRepoResource: ${{ parameters.languageRepoResource }}
     sourceRepositoryFullName: ${{ format('{0}/azure-sdk-for-python', parameters.repositoryOwner) }}
     sourceCheckoutDir: $(Pipeline.Workspace)/apireview/source
     variables:
