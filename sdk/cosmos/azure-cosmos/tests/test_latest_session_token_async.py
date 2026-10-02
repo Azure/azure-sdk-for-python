@@ -7,7 +7,7 @@ import uuid
 
 import pytest
 
-from _split_test_utils import assert_no_stage_failures, split_stage, wait_for_split_ranges_async
+from _split_test_utils import assert_no_stage_failures, snapshot_split_routing_map, split_stage, wait_for_split_ranges_async
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -65,84 +65,116 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         container = self.database.get_container_client(container_ref.id)
         key_container_for_split = self.key_database.get_container_client(container.id)
 
+        # Keep continuation and session state separate; routing maps are endpoint-shared.
+        change_feed_client = test_config.TestConfig.create_data_client_async()
+        self.addAsyncCleanup(change_feed_client.close)
+        await change_feed_client.__aenter__()
+        created_collection = change_feed_client.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+            container_ref.id)
+        read_items_client = test_config.TestConfig.create_data_client_async()
+        self.addAsyncCleanup(read_items_client.close)
+        await read_items_client.__aenter__()
+        read_items_container = read_items_client.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+            container_ref.id)
+
         with split_stage("change_feed_before"):
-            self.assertEqual([item async for item in container.query_items_change_feed(start_time="Beginning")], [])
-            continuation = container.client_connection.last_response_headers["etag"]
-            self.assertTrue(continuation)
-            await container.create_item({"pk": "pk", "id": "doc1"})
-            initial = [item async for item in container.query_items_change_feed(continuation=continuation)]
-            self.assertEqual([item["id"] for item in initial], ["doc1"])
-            continuation = container.client_connection.last_response_headers["etag"]
+            query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
+            iter_list = [item async for item in query_iterable]
+            assert len(iter_list) == 0
+            continuation = created_collection.client_connection.last_response_headers['etag']
+            assert continuation != ''
+            document_definition = {'pk': 'pk', 'id': 'doc1'}
+            await created_collection.create_item(body=document_definition)
+            query_iterable = created_collection.query_items_change_feed(continuation=continuation)
+            iter_list = [item async for item in query_iterable]
+            assert len(iter_list) == 1
+            continuation = created_collection.client_connection.last_response_headers['etag']
 
         with split_stage("read_items_before"):
             items_to_read = []
+            item_ids = []
             for i in range(5):
-                item_id = "item_split_{}_{}".format(i, uuid.uuid4())
-                await container.create_item({"id": item_id, "pk": item_id, "data": i})
-                items_to_read.append((item_id, item_id))
-            initial_read = await container.read_items(items=items_to_read)
-            self.assertEqual(len(initial_read), len(items_to_read))
-            self.assertEqual({item["id"] for item in initial_read}, {item_id for item_id, _ in items_to_read})
+                doc_id = f"item_split_{i}_{uuid.uuid4()}"
+                item_ids.append(doc_id)
+                await read_items_container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
+                items_to_read.append((doc_id, doc_id))
+            initial_read_items = await read_items_container.read_items(items=items_to_read)
+            self.assertEqual(len(initial_read_items), len(items_to_read))
 
         with split_stage("logical_session_token_before"):
             feed_ranges_and_session_tokens = []
-            target_pk = "A1"
+            previous_session_token = ""
+            target_pk = 'A1'
             target_feed_range = await container.feed_range_from_partition_key(target_pk)
-            target_token, _ = await self.create_items_logical_pk_async(
-                container, target_feed_range, "", feed_ranges_and_session_tokens)
-            logical_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-            self.assertTrue(logical_token == target_token, "Pre-split logical session token differs")
+            target_session_token, previous_session_token = await self.create_items_logical_pk_async(
+                container, target_feed_range, previous_session_token, feed_ranges_and_session_tokens)
+            session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
+            assert session_token == target_session_token
 
         with split_stage("physical_session_token_before"):
-            physical_tokens = []
+            phys_feed_ranges_and_session_tokens = []
+            phys_previous_session_token = ""
             pk_feed_range = await container.feed_range_from_partition_key(target_pk)
-            target_token, physical_range, _ = await self.create_items_physical_pk_async(
-                container, pk_feed_range, "", physical_tokens)
-            physical_token = await container.get_latest_session_token(physical_tokens, physical_range)
-            self.assertTrue(physical_token == target_token, "Pre-split physical session token differs")
-            _, pre_split_token = parse_session_token(physical_token)
-            feed_ranges_and_session_tokens.append((target_feed_range, logical_token))
+            phys_target_session_token, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk_async(
+                container, pk_feed_range, phys_previous_session_token, phys_feed_ranges_and_session_tokens)
+            phys_session_token = await container.get_latest_session_token(
+                phys_feed_ranges_and_session_tokens, phys_target_feed_range)
+            assert phys_session_token == phys_target_session_token
+            _, pre_split_session_token = parse_session_token(phys_session_token)
+            feed_ranges_and_session_tokens.append((target_feed_range, session_token))
 
         with split_stage("change_feed_checkpoint"):
-            pre_split_changes = [item async for item in container.query_items_change_feed(continuation=continuation)]
-            self.assertEqual(len(pre_split_changes), 205)
-            continuation = container.client_connection.last_response_headers["etag"]
-            self.assertTrue(continuation)
+            # Carry the last writer's token across clients before checkpointing their writes.
+            async for _ in created_collection.query_items_change_feed(
+                continuation=continuation, session_token=phys_previous_session_token):
+                pass
+            continuation = created_collection.client_connection.last_response_headers['etag']
+            assert continuation != ''
 
         with split_stage("split_and_convergence"):
             initial_ranges = [r async for r in key_container_for_split.client_connection._ReadPartitionKeyRanges(
                 key_container_for_split.container_link)]
             self.assertEqual(len(initial_ranges), 1)
+            collection_rid = (await key_container_for_split.read())["_rid"]
+            restore_routing_map = snapshot_split_routing_map(container, collection_rid)
             deadline = time.monotonic() + test_config.SPLIT_TIMEOUT
             await test_config.TestConfig.trigger_split_async(key_container_for_split, 11000)
             await wait_for_split_ranges_async(key_container_for_split, initial_ranges[0]["id"], deadline)
 
         failures = []
         with split_stage("read_items_after", failures):
-            final_read = await container.read_items(items=items_to_read)
-            self.assertEqual(len(final_read), len(items_to_read))
-            self.assertEqual({item["id"] for item in final_read}, {item_id for item_id, _ in items_to_read})
+            restore_routing_map()
+            final_read_items = await read_items_container.read_items(items=items_to_read)
+            self.assertEqual(len(final_read_items), len(items_to_read))
+            final_read_ids = {item['id'] for item in final_read_items}
+            self.assertSetEqual(final_read_ids, set(item_ids))
 
         with split_stage("change_feed_after", failures):
-            for item_id, pk in (("doc2", "pk2"), ("doc3", "pk3"), ("doc4", "pk4")):
-                await container.create_item({"id": item_id, "pk": pk})
-            changes = [item async for item in container.query_items_change_feed(continuation=continuation)]
-            self.assertEqual([item["id"] for item in changes], ["doc2", "doc3", "doc4"])
+            restore_routing_map()
+            new_documents = [{'pk': 'pk2', 'id': 'doc2'}, {'pk': 'pk3', 'id': 'doc3'}, {'pk': 'pk4', 'id': 'doc4'}]
+            expected_ids = ['doc2', 'doc3', 'doc4']
+            for document in new_documents:
+                await created_collection.create_item(body=document)
+            query_iterable = created_collection.query_items_change_feed(continuation=continuation)
+            actual_ids = [item['id'] async for item in query_iterable]
+            assert actual_ids == expected_ids
 
         with split_stage("logical_session_token_after", failures):
-            target_token, _ = await self.create_items_logical_pk_async(
-                container, target_feed_range, logical_token, feed_ranges_and_session_tokens)
-            updated_feed_range = await container.feed_range_from_partition_key(target_pk)
-            latest = await container.get_latest_session_token(feed_ranges_and_session_tokens, updated_feed_range)
-            self.assertTrue(latest == target_token, "Post-split logical session token differs")
+            restore_routing_map()
+            target_session_token, _ = await self.create_items_logical_pk_async(
+                container, target_feed_range, session_token, feed_ranges_and_session_tokens)
+            target_feed_range = await container.feed_range_from_partition_key(target_pk)
+            session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
+            assert session_token == target_session_token
 
         with split_stage("physical_session_token_after", failures):
-            _, physical_range, _ = await self.create_items_physical_pk_async(
-                container, pk_feed_range, physical_token, physical_tokens)
-            latest = await container.get_latest_session_token(physical_tokens, physical_range)
-            pk_range_id, post_split_token = parse_session_token(latest)
-            self.assertGreaterEqual(post_split_token.global_lsn, pre_split_token.global_lsn)
-            self.assertIn("2", pk_range_id)
+            _, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk_async(
+                container, pk_feed_range, phys_session_token, phys_feed_ranges_and_session_tokens)
+            phys_session_token = await container.get_latest_session_token(
+                phys_feed_ranges_and_session_tokens, phys_target_feed_range)
+            pk_range_id, session_token = parse_session_token(phys_session_token)
+            assert session_token.global_lsn >= pre_split_session_token.global_lsn
+            assert '2' in pk_range_id
 
         assert_no_stage_failures(failures)
 

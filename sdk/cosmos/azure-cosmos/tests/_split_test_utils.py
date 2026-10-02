@@ -9,6 +9,7 @@ import time
 import unittest
 from contextlib import contextmanager
 
+from azure.cosmos import _base
 from azure.cosmos.http_constants import HttpHeaders
 
 
@@ -55,6 +56,30 @@ def assert_no_stage_failures(failures):
             "{} ({})".format(name, type(error).__name__) for name, error in failures
         )
         raise AssertionError("Post-split checks failed: " + summary) from failures[0][1]
+
+
+def snapshot_split_routing_map(container, collection_rid):
+    """Return a reset callback scoped to this container's name/RID cache entries."""
+    cache = (
+        container.client_connection._routing_map_provider._collection_routing_map_by_item
+    )
+    keys = (
+        _base.GetResourceIdOrFullNameFromLink(container.container_link),
+        collection_rid,
+    )
+    previous = {key: cache[key] for key in keys if key in cache}
+    if not previous:
+        raise AssertionError(
+            "The split test must warm this container's routing map before taking a snapshot"
+        )
+
+    def restore():
+        # Endpoint-shared maps would otherwise let one behavior refresh routing for the next.
+        for key in keys:
+            cache.pop(key, None)
+        cache.update(previous)
+
+    return restore
 
 
 def _split_observed(ranges, parent_id):

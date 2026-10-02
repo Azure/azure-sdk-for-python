@@ -19,8 +19,12 @@ Use this package if you are creating an application or exploring data.
 
 The live partition-split checks in `azure-cosmos/tests/test_latest_session_token.py` and
 `test_latest_session_token_async.py` share one 400-to-11,000 RU/s split per sync/async
-scenario. Each checks change-feed continuation, latest session tokens, and bulk
-`read_items` before and after the split. Their `split_test_stage` records identify
+scenario. Separate data clients isolate continuation and session state for
+change feed, latest session tokens, and bulk `read_items`. Routing maps are
+endpoint-shared, so the test restores only this container's pre-split name/RID
+cache entries before each behavior, letting normal SDK split handling run again.
+The change feed is checkpointed using the last setup writer's session token and
+checked before post-split session-token writes. Their `split_test_stage` records identify
 individual checks in the test output; a timeout waiting for the offer or physical
 children skips the dependent checks. The two-stage child-range regression in
 `test_pk_range_child_update_live_async.py` remains independent and emits

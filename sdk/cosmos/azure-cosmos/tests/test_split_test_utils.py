@@ -14,6 +14,7 @@ from azure.cosmos.http_constants import HttpHeaders
 
 from _split_test_utils import (
     assert_no_stage_failures,
+    snapshot_split_routing_map,
     split_stage,
     wait_for_split_ranges,
     wait_for_split_ranges_async,
@@ -33,6 +34,42 @@ def _container(read_ranges):
 
 @pytest.mark.cosmosEmulator
 class TestSplitTestUtils(unittest.TestCase):
+    def test_restores_only_this_containers_name_and_rid_entries(self):
+        link = "dbs/test/colls/split"
+        parent_map = object()
+        children_map = object()
+        cache = {"container-rid": parent_map, "unrelated-rid": object()}
+        container = SimpleNamespace(
+            container_link=link,
+            client_connection=SimpleNamespace(
+                _routing_map_provider=SimpleNamespace(
+                    _collection_routing_map_by_item=cache
+                )
+            ),
+        )
+        restore = snapshot_split_routing_map(container, "container-rid")
+        for _ in range(2):
+            cache["container-rid"] = children_map
+            cache[link] = children_map
+            unrelated_map = object()
+            cache["unrelated-rid"] = unrelated_map
+            restore()
+            self.assertIs(cache["container-rid"], parent_map)
+            self.assertNotIn(link, cache)
+            self.assertIs(cache["unrelated-rid"], unrelated_map)
+
+    def test_snapshot_requires_a_warmed_routing_map(self):
+        container = SimpleNamespace(
+            container_link="dbs/test/colls/split",
+            client_connection=SimpleNamespace(
+                _routing_map_provider=SimpleNamespace(
+                    _collection_routing_map_by_item={}
+                )
+            ),
+        )
+        with self.assertRaisesRegex(AssertionError, "warm"):
+            snapshot_split_routing_map(container, "container-rid")
+
     def test_waits_for_both_children(self):
         snapshots = iter(([PARENT], [CHILDREN[0]], CHILDREN))
         container = _container(lambda link: iter(next(snapshots)))
