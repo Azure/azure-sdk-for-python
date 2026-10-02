@@ -302,7 +302,6 @@ stages:
       - ${{if ne(parameters.Artifact.skipPublishDocGithubIo, 'true')}}:
           - job: PublishGitHubIODocs
             displayName: Publish Docs to GitHubIO Blob Storage
-            timeoutInMinutes: 30
             condition: >-
               and(
                 succeeded(), 
