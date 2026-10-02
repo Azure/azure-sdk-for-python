@@ -1699,7 +1699,7 @@ class TestCheckpointRoundTripOnException:
 class TestWriteQueryOutboundContinuation:
     """Outbound continuation format selection should match request scope policy."""
 
-    def test_full_pk_scope_always_emits_legacy(self):
+    def test_single_partition_scope_emits_legacy(self):
         state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
             _HEAD_FEEDRANGE,
             _BACKEND_CONT,
@@ -1713,33 +1713,12 @@ class TestWriteQueryOutboundContinuation:
             _RID,
             _QUERY,
             _FEED_RANGE,
-            is_full_pk_scope=True,
-            emit_legacy_for_single_partition=False,
-        )
-
-        assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
-
-    def test_non_full_pk_single_partition_scope_emits_legacy(self):
-        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
-            _HEAD_FEEDRANGE,
-            _BACKEND_CONT,
-            page_size_hint=5,
-        )
-        headers: dict = {}
-
-        _write_query_outbound_continuation(
-            headers,
-            state,
-            _RID,
-            _QUERY,
-            _FEED_RANGE,
-            is_full_pk_scope=False,
             emit_legacy_for_single_partition=True,
         )
 
         assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
 
-    def test_non_full_pk_multi_partition_scope_emits_structured(self):
+    def test_multi_partition_scope_emits_structured(self):
         state = _FeedRangePaginationState(
             [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
             page_size_hint=5,
@@ -1752,48 +1731,12 @@ class TestWriteQueryOutboundContinuation:
             _RID,
             _QUERY,
             _FEED_RANGE,
-            is_full_pk_scope=False,
             emit_legacy_for_single_partition=False,
         )
 
         decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
         assert decoded is not None
         assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
-
-    def test_full_pk_scope_with_multi_entry_queue_falls_through_to_structured(self, caplog):
-        """Defense in depth: if the queue somehow has >1 entries while the
-        caller claims ``is_full_pk_scope=True`` (a structural impossibility
-        in normal operation, but a possible caller-side bug surface), the
-        writer must NOT silently discard tail entries via legacy emission.
-        It falls through to the structured envelope and logs a warning.
-        """
-        state = _FeedRangePaginationState(
-            [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
-            page_size_hint=5,
-        )
-        headers: dict = {}
-
-        with caplog.at_level("WARNING", logger="azure.cosmos._routing.feed_range_continuation"):
-            _write_query_outbound_continuation(
-                headers,
-                state,
-                _RID,
-                _QUERY,
-                _FEED_RANGE,
-                is_full_pk_scope=True,
-                emit_legacy_for_single_partition=False,
-            )
-
-        # Defense: queue has 2 entries, so the writer falls through to structured.
-        decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
-        assert decoded is not None
-        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
-        # And it surfaces the caller-side inconsistency as a WARNING.
-        assert any(
-            "Pagination queue has 2 entries" in record.getMessage()
-            and record.levelname == "WARNING"
-            for record in caplog.records
-        )
 
     def test_emit_legacy_with_multi_entry_queue_falls_through_to_structured(self, caplog):
         """Defense in depth: a stale single-partition cache after a mid-page
@@ -1814,7 +1757,6 @@ class TestWriteQueryOutboundContinuation:
                 _RID,
                 _QUERY,
                 _FEED_RANGE,
-                is_full_pk_scope=False,
                 emit_legacy_for_single_partition=True,
             )
 
@@ -1832,31 +1774,26 @@ class TestLegacyBridgeDecision:
     """Legacy inbound continuation is bridged only when scope is safely single-partition."""
 
     @pytest.mark.parametrize(
-        "inbound_serialized_continuation,inbound_token_payload,is_full_pk_scope,"
-        "is_single_partition_scope,expected",
+        "inbound_serialized_continuation,inbound_token_payload,is_single_partition_scope,expected",
         [
-            (None, None, False, True, False),
-            ("", None, False, True, False),
-            ("legacy", {"v": 1}, False, True, False),
-            ("legacy", None, True, False, True),
-            ("legacy", None, False, True, True),
-            ("legacy", None, False, False, False),
+            (None, None, True, False),
+            ("", None, True, False),
+            ("legacy", {"v": 1}, True, False),
+            ("legacy", None, True, True),
+            ("legacy", None, False, False),
         ],
     )
     def test_should_bridge_legacy_continuation_policy(
         self,
         inbound_serialized_continuation,
         inbound_token_payload,
-        is_full_pk_scope,
         is_single_partition_scope,
         expected,
     ):
         assert _should_bridge_legacy_continuation(
             inbound_serialized_continuation,
             inbound_token_payload,
-            is_full_pk_scope,
             is_single_partition_scope,
         ) is expected
-
 
 

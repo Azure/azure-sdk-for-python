@@ -88,43 +88,6 @@ class AssignmentReport(TypedDict, total=False):
     """The list of resources for which guest configuration assignment compliance is checked."""
 
 
-class AssignmentReportDetails(TypedDict, total=False):
-    """Details of the guest configuration assignment report.
-
-    :ivar compliance_status: A value indicating compliance status of the machine for the assigned
-     guest configuration. Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype compliance_status: Union[str, "ComplianceStatus"]
-    :ivar start_time: Start date and time of the guest configuration assignment compliance status
-     check.
-    :vartype start_time: str
-    :ivar end_time: End date and time of the guest configuration assignment compliance status
-     check.
-    :vartype end_time: str
-    :ivar job_id: GUID of the report.
-    :vartype job_id: str
-    :ivar operation_type: Type of report, Consistency or Initial. Known values are: "Consistency"
-     and "Initial".
-    :vartype operation_type: Union[str, "Type"]
-    :ivar resources: The list of resources for which guest configuration assignment compliance is
-     checked.
-    :vartype resources: list["AssignmentReportResource"]
-    """
-
-    complianceStatus: Union[str, "ComplianceStatus"]
-    """A value indicating compliance status of the machine for the assigned guest configuration. Known
-     values are: \"Compliant\", \"NonCompliant\", and \"Pending\"."""
-    startTime: str
-    """Start date and time of the guest configuration assignment compliance status check."""
-    endTime: str
-    """End date and time of the guest configuration assignment compliance status check."""
-    jobId: str
-    """GUID of the report."""
-    operationType: Union[str, "Type"]
-    """Type of report, Consistency or Initial. Known values are: \"Consistency\" and \"Initial\"."""
-    resources: list["AssignmentReportResource"]
-    """The list of resources for which guest configuration assignment compliance is checked."""
-
-
 class AssignmentReportResource(TypedDict, total=False):
     """The guest configuration assignment resource.
 
@@ -252,31 +215,6 @@ class ConfigurationSetting(TypedDict, total=False):
      ignored if the ConfigurationMode property is set to ApplyOnly. The default value is 15."""
 
 
-class ErrorResponse(TypedDict, total=False):
-    """Error response of an operation failure.
-
-    :ivar error:
-    :vartype error: "ErrorResponseError"
-    """
-
-    error: "ErrorResponseError"
-
-
-class ErrorResponseError(TypedDict, total=False):
-    """ErrorResponseError.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Detail error message indicating why the operation failed.
-    :vartype message: str
-    """
-
-    code: str
-    """Error code."""
-    message: str
-    """Detail error message indicating why the operation failed."""
-
-
 class ProxyResource(TypedDict, total=False):
     """ARM proxy resource.
 
@@ -383,90 +321,6 @@ class GuestConfigurationAssignmentProperties(TypedDict, total=False):
     """The list of VM Compliance data for VMSS."""
 
 
-class GuestConfigurationAssignmentReport(TypedDict, total=False):
-    """Report for the guest configuration assignment. Report contains information such as compliance
-    status, reason, and more.
-
-    :ivar id: ARM resource id of the report for the guest configuration assignment.
-    :vartype id: str
-    :ivar name: GUID that identifies the guest configuration assignment report under a
-     subscription, resource group.
-    :vartype name: str
-    :ivar properties: Properties of the guest configuration report.
-    :vartype properties: "GuestConfigurationAssignmentReportProperties"
-    """
-
-    id: str
-    """ARM resource id of the report for the guest configuration assignment."""
-    name: str
-    """GUID that identifies the guest configuration assignment report under a subscription, resource
-     group."""
-    properties: "GuestConfigurationAssignmentReportProperties"
-    """Properties of the guest configuration report."""
-
-
-class GuestConfigurationAssignmentReportList(TypedDict, total=False):
-    """List of guest configuration assignment reports.
-
-    :ivar value: List of reports for the guest configuration. Report contains information such as
-     compliance status, reason and more.
-    :vartype value: list["GuestConfigurationAssignmentReport"]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    value: list["GuestConfigurationAssignmentReport"]
-    """List of reports for the guest configuration. Report contains information such as compliance
-     status, reason and more."""
-    nextLink: str
-
-
-class GuestConfigurationAssignmentReportProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Report for the guest configuration assignment. Report contains information such as compliance
-    status, reason, and more.
-
-    :ivar compliance_status: A value indicating compliance status of the machine for the assigned
-     guest configuration. Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype compliance_status: Union[str, "ComplianceStatus"]
-    :ivar report_id: GUID that identifies the guest configuration assignment report under a
-     subscription, resource group.
-    :vartype report_id: str
-    :ivar assignment: Configuration details of the guest configuration assignment.
-    :vartype assignment: "AssignmentInfo"
-    :ivar vm: Information about the VM.
-    :vartype vm: "VMInfo"
-    :ivar start_time: Start date and time of the guest configuration assignment compliance status
-     check.
-    :vartype start_time: str
-    :ivar end_time: End date and time of the guest configuration assignment compliance status
-     check.
-    :vartype end_time: str
-    :ivar details: Details of the assignment report.
-    :vartype details: "AssignmentReportDetails"
-    :ivar vmss_resource_id: Azure resource Id of the VMSS.
-    :vartype vmss_resource_id: str
-    """
-
-    complianceStatus: Union[str, "ComplianceStatus"]
-    """A value indicating compliance status of the machine for the assigned guest configuration. Known
-     values are: \"Compliant\", \"NonCompliant\", and \"Pending\"."""
-    reportId: str
-    """GUID that identifies the guest configuration assignment report under a subscription, resource
-     group."""
-    assignment: "AssignmentInfo"
-    """Configuration details of the guest configuration assignment."""
-    vm: "VMInfo"
-    """Information about the VM."""
-    startTime: str
-    """Start date and time of the guest configuration assignment compliance status check."""
-    endTime: str
-    """End date and time of the guest configuration assignment compliance status check."""
-    details: Optional["AssignmentReportDetails"]
-    """Details of the assignment report."""
-    vmssResourceId: str
-    """Azure resource Id of the VMSS."""
-
-
 class GuestConfigurationNavigation(TypedDict, total=False):
     """Guest configuration is an artifact that encapsulates DSC configuration and its dependencies.
     The artifact is a zip file containing DSC configuration (as MOF) and dependent resources and
@@ -531,61 +385,6 @@ class GuestConfigurationNavigation(TypedDict, total=False):
     """The protected configuration parameters for the guest configuration."""
     configurationSetting: "ConfigurationSetting"
     """The configuration setting for the guest configuration."""
-
-
-class Operation(TypedDict, total=False):
-    """GuestConfiguration REST API operation.
-
-    :ivar name: Operation name: For example,
-     providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/write or read.
-    :vartype name: str
-    :ivar display: Provider, Resource, Operation, and description values.
-    :vartype display: "OperationDisplay"
-    :ivar properties: Additional properties of the operation.
-    :vartype properties: "OperationProperties"
-    """
-
-    name: str
-    """Operation name: For example,
-     providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/write or read."""
-    display: "OperationDisplay"
-    """Provider, Resource, Operation, and description values."""
-    properties: "OperationProperties"
-    """Additional properties of the operation."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Provider, Resource, Operation, and description values.
-
-    :ivar provider: Service provider: Microsoft.GuestConfiguration.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
-    :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
-    :vartype operation: str
-    :ivar description: Description about the operation.
-    :vartype description: str
-    """
-
-    provider: str
-    """Service provider: Microsoft.GuestConfiguration."""
-    resource: str
-    """Resource on which the operation is performed."""
-    operation: str
-    """Operation type: Read, write, delete, etc."""
-    description: str
-    """Description about the operation."""
-
-
-class OperationProperties(TypedDict, total=False):
-    """Provider, Resource, Operation and description values.
-
-    :ivar status_code: Service provider: Microsoft.GuestConfiguration.
-    :vartype status_code: str
-    """
-
-    statusCode: str
-    """Service provider: Microsoft.GuestConfiguration."""
 
 
 class SystemData(TypedDict, total=False):

@@ -80,6 +80,13 @@ class AgentDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The underlying infra is provisioned by the deployer (BYO)."""
 
 
+class AgentHostingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of infrastructure used to host Foundry agents."""
+
+    MANAGED_CLUSTER = "ManagedCluster"
+    """Agents are hosted on an Azure Kubernetes Service managed cluster."""
+
+
 class AgenticApplicationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of an agentic application."""
 
@@ -106,6 +113,31 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent2Agent standard."""
     RESPONSES = "Responses"
     """OpenAI-compatible."""
+
+
+class ArcDeploymentComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compute type for an Arc deployment."""
+
+    GPU = "gpu"
+    """GPU compute."""
+    CPU = "cpu"
+    """CPU compute."""
+
+
+class ArcDeploymentRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Inference runtime for an Arc deployment."""
+
+    VLLM = "vllm"
+    """vLLM runtime."""
+    ONNX = "onnx-genai"
+    """ONNX runtime."""
+
+
+class ArcDeploymentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SKU for an Arc deployment."""
+
+    ARC = "Arc"
+    """Arc SKU."""
 
 
 class BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -927,6 +959,8 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CANCELED."""
     RESOLVING_DNS = "ResolvingDNS"
     """RESOLVING_DNS."""
+    EXTENSION_UNREACHABLE = "ExtensionUnreachable"
+    """EXTENSION_UNREACHABLE."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1277,5 +1311,5 @@ class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGULAR = "Regular"
     """Regular VM priority."""
-    LOW_PRIORITY = "LowPriority"
-    """Low-priority VM."""
+    SPOT = "Spot"
+    """Spot VM priority."""

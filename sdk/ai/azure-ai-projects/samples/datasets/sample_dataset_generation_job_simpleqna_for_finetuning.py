@@ -15,7 +15,7 @@ DESCRIPTION:
          type=simple_qna) that synthesizes short-answer and long-answer
          question / answer pairs from the file content and emits them as
          training and validation JSONL files.
-      3. Polls the job to completion and prints every generated file output.
+      3. Waits for job completion and prints every generated file output.
       4. Cleans up the generated fine-tuning files, the Azure OpenAI input file, and the data generation job.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
@@ -27,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -141,7 +141,7 @@ with (
     # ------------------------------------------------------------------
     # 2. Submit a fine-tuning data generation job that consumes the file.
     # ------------------------------------------------------------------
-    print("Create a fine-tuning data generation job from the Azure OpenAI file.")
+
     job = DataGenerationJob(
         inputs=DataGenerationJobInputs(
             name=f"simpleqna-finetuning-{run_id}",
@@ -168,11 +168,24 @@ with (
             output_options=DataGenerationJobOutputOptions(name=output_name),
         ),
     )
-    print("Create a fine-tuning data generation job and wait for it to complete.")
-    job_result = project_client.beta.datasets.begin_create_generation_job(
+
+    print("Begin creating a dataset generation job.")
+    poller = project_client.beta.datasets.begin_create_generation_job(
         job=job,
         polling_interval=poll_interval_seconds,
-    ).result()
+    )
+
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
+        time.sleep(poll_interval_seconds)
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    job_result = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Data generation result: {job_result}")
 
     # ------------------------------------------------------------------
     # 3. Inspect the generated fine-tuning file outputs.

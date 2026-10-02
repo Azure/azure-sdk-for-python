@@ -7,9 +7,8 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
+# pylint: disable=line-too-long,useless-suppression
 import io
-import pytest
-import sys
 import os
 
 try:
@@ -17,19 +16,21 @@ try:
 except ImportError:
     import collections  # type: ignore
 
+import pytest
+from rest_client import MockRestClient
+from utils import NamedIo
+
 from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 from azure.core.pipeline._tools import is_rest
-from rest_client import MockRestClient
 from azure.core import PipelineClient
-from utils import NamedIo
 
 
 @pytest.fixture
 def assert_iterator_body():
     def _comparer(request, final_value):
-        content = b"".join([p for p in request.content])
+        content = b"".join(list(request.content))
         assert content == final_value
 
     return _comparer
@@ -56,7 +57,7 @@ def test_iterable_content(assert_iterator_body):
             yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {}
+    assert not request.headers
     assert_iterator_body(request, b"test 123")
 
 
@@ -65,7 +66,7 @@ def test_generator_with_transfer_encoding_header(assert_iterator_body):
         yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=content())
-    assert request.headers == {}
+    assert not request.headers
     assert_iterator_body(request, b"test 123")
 
 
@@ -184,21 +185,21 @@ def test_iterator_content(assert_iterator_body):
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
     # transfer encoding should still be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
 
 def test_json_content():
@@ -293,7 +294,7 @@ def test_multipart_invalid_value(value):
 def test_empty_request():
     request = HttpRequest("POST", url="http://example.org", data={}, files={})
 
-    assert request.headers == {}
+    assert not request.headers
     assert not request.content  # in core, we don't convert urlencoded dict to bytes representation in content
 
 

@@ -35,3 +35,7 @@ extends:
       safeName: azuremgmtcontainerservicefleet
     - name: azure-mgmt-containerservicesafeguards
       safeName: azuremgmtcontainerservicesafeguards
+    - name: azure-mgmt-containerserviceaimanager
+      safeName: azuremgmtcontainerserviceaimanager
+    - name: azure-mgmt-containerservicepreparedimgspec
+      safeName: azuremgmtcontainerservicepreparedimgspec

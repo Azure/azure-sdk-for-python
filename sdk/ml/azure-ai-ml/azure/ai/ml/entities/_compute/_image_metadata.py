@@ -7,12 +7,12 @@ from typing import Optional
 class ImageMetadata:
     """Metadata about the operating system image for the compute instance.
 
-    :param is_latest_os_image_version: Specifies if the compute instance is running on the latest OS image version.
-    :type is_latest_os_image_version: bool
-    :param current_image_version: Version of the current image.
-    :type current_image_version: str
-    :param latest_image_version: The latest image version.
-    :type latest_image_version: str
+    :keyword is_latest_os_image_version: Specifies if the compute instance is running on the latest OS image version.
+    :paramtype is_latest_os_image_version: bool
+    :keyword current_image_version: Version of the current image.
+    :paramtype current_image_version: str
+    :keyword latest_image_version: The latest image version.
+    :paramtype latest_image_version: str
 
     .. admonition:: Example:
 

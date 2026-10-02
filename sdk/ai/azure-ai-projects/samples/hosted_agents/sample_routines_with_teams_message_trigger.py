@@ -86,7 +86,7 @@ def parse_teams_channel_url(channel_url: str) -> tuple[str | None, str | None]:
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME") or "MyHostedAgent"
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 teams_connection_name = os.environ.get("TEAMS_CONNECTION_NAME", "teams-conn")
 teams_channel_url = os.environ["TEAMS_CHANNEL_URL"]

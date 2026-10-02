@@ -53,6 +53,7 @@ USAGE:
 """
 
 import os
+import time
 import uuid
 from datetime import datetime, timezone
 
@@ -158,11 +159,23 @@ with (
                 output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
             ),
         )
-        print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
-        job_result = project_client.beta.datasets.begin_create_generation_job(
+        print("Begin creating a dataset generation job.")
+        poller = project_client.beta.datasets.begin_create_generation_job(
             job=job,
             polling_interval=poll_interval_seconds,
-        ).result()
+        )
+
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
+
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        job_result = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Data generation result: {job_result}")
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""

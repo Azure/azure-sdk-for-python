@@ -65,10 +65,10 @@ def _to_rest_inference_config(inference_config: Any) -> Any:
 class BuildContext:
     """Docker build context for Environment.
 
-    :param path: The local or remote path to the the docker build context directory.
-    :type path: Union[str, os.PathLike]
-    :param dockerfile_path: The path to the dockerfile relative to root of docker build context directory.
-    :type dockerfile_path: str
+    :keyword path: The local or remote path to the the docker build context directory.
+    :paramtype path: Union[str, os.PathLike]
+    :keyword dockerfile_path: The path to the dockerfile relative to root of docker build context directory.
+    :paramtype dockerfile_path: str
 
     .. admonition:: Example:
 
@@ -110,24 +110,24 @@ class BuildContext:
 class Environment(Asset, LocalizableMixin):
     """Environment for training.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the asset.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param image: URI of a custom base image.
-    :type image: str
-    :param build: Docker build context to create the environment. Mutually exclusive with "image"
-    :type build: ~azure.ai.ml.entities._assets.environment.BuildContext
-    :param conda_file: Path to configuration file listing conda packages to install.
-    :type conda_file: typing.Union[str, os.PathLike]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param datastore: The datastore to upload the local artifact to.
-    :type datastore: str
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the asset.
+    :paramtype version: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword image: URI of a custom base image.
+    :paramtype image: str
+    :keyword build: Docker build context to create the environment. Mutually exclusive with "image"
+    :paramtype build: ~azure.ai.ml.entities._assets.environment.BuildContext
+    :keyword conda_file: Path to configuration file listing conda packages to install.
+    :paramtype conda_file: typing.Union[str, os.PathLike]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword datastore: The datastore to upload the local artifact to.
+    :paramtype datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

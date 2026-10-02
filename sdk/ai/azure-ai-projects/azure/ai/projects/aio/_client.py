@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient:  # pylint: disable=too-many-instance-attributes
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """AIProjectClient.
 
     :ivar beta: BetaOperations operations

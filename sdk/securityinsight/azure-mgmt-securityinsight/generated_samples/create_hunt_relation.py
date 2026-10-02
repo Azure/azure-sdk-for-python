@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/hunts/CreateHuntRelation.json
+# x-ms-original-file: 2025-10-01-preview/hunts/CreateHuntRelation.json
 if __name__ == "__main__":
     main()

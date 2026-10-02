@@ -48,6 +48,7 @@ USAGE:
 """
 
 import os
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List
@@ -124,9 +125,9 @@ with (
     else:
         print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
 
-    print("Waiting for multi-source job to complete (polling is handled by the SDK)...")
+    print("Begin creating an evaluator generation job.")
     try:
-        evaluator = project_client.beta.evaluators.begin_create_generation_job(
+        poller = project_client.beta.evaluators.begin_create_generation_job(
             job=EvaluatorGenerationJob(
                 inputs=EvaluatorGenerationInputs(
                     model=model_name,
@@ -138,7 +139,19 @@ with (
             ),
             operation_id=f"rubric-multi-{short}",
             polling_interval=poll_interval_seconds,
-        ).result()
+        )
+
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
+
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        evaluator = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Evaluator generation result: {evaluator}")
         # `isinstance` narrows the discriminated `definition` to the rubric subtype.
         definition = evaluator.definition
         assert isinstance(definition, RubricBasedEvaluatorDefinition)
@@ -160,9 +173,9 @@ with (
         start_time = now - timedelta(days=traces_window_days)
         end_time = now + timedelta(seconds=600)  # small padding for clock skew
 
-        print("Waiting for traces job to complete (polling is handled by the SDK)...")
+        print("Begin creating an evaluator generation job.")
         try:
-            evaluator = project_client.beta.evaluators.begin_create_generation_job(
+            poller = project_client.beta.evaluators.begin_create_generation_job(
                 job=EvaluatorGenerationJob(
                     inputs=EvaluatorGenerationInputs(
                         model=model_name,
@@ -185,7 +198,19 @@ with (
                 ),
                 operation_id=f"rubric-traces-{short}",
                 polling_interval=poll_interval_seconds,
-            ).result()
+            )
+
+            # Optional: While SDK is polling, periodically print the job status until the job is complete
+            print("Periodically check job status:")
+            while not poller.done():
+                print(f"\tstatus=`{poller.status()}`")
+                time.sleep(poll_interval_seconds)
+
+            # Since done() is true, result() returns the final deserialized job result without
+            # waiting further. It also propagates any LRO polling exception.
+            evaluator = poller.result()
+            print(f"Final LRO status: `{poller.status()}`.")
+            print(f"Evaluator generation result: {evaluator}")
             # `isinstance` narrows the discriminated `definition` to the rubric subtype.
             definition = evaluator.definition
             assert isinstance(definition, RubricBasedEvaluatorDefinition)

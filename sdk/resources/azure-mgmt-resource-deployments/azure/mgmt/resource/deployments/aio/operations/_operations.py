@@ -100,7 +100,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class DeploymentsOperations:  # pylint: disable=too-many-public-methods
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5800,7 +5800,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class DeploymentOperationsOperations:
+class DeploymentOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

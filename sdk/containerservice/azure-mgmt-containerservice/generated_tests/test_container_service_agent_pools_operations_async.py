@@ -144,6 +144,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "networkProfile": {
                             "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                             "applicationSecurityGroups": ["str"],
+                            "dranet": {"mode": "str"},
                             "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                         },
                         "nodeImageVersion": "str",

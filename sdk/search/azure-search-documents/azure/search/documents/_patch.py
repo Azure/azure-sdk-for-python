@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Union, List, Dict, Optional, cast
 from enum import Enum
 import time
@@ -41,10 +42,10 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2024_07_01 = "2024-07-01"
     V2025_09_01 = "2025-09-01"
     V2026_04_01 = "2026-04-01"
-    V2026_05_01_PREVIEW = "2026-05-01-preview"
+    V2026_08_01_PREVIEW = "2026-08-01-preview"
 
 
-DEFAULT_VERSION = ApiVersion.V2026_05_01_PREVIEW
+DEFAULT_VERSION = ApiVersion.V2026_08_01_PREVIEW
 
 
 class SearchClient(_SearchClient):
@@ -59,9 +60,9 @@ class SearchClient(_SearchClient):
     :param index_name: The name of the index. Required.
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-     ``ApiVersion.V2026_05_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -165,7 +166,7 @@ class SearchIndexingBufferedSender:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: list[IndexAction]
+        :rtype: list[~azure.search.documents.types.IndexAction]
         """
         return self._index_documents_batch.actions if self._index_documents_batch.actions else []
 
@@ -327,7 +328,7 @@ class SearchIndexingBufferedSender:
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :return: Indexing result of each action in the batch.
-        :rtype: list[IndexingResult]
+        :rtype: list[~azure.search.documents.types.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)

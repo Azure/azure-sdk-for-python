@@ -80,8 +80,8 @@ class TestPackageInstallation:
         ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should not be installed in PyPy 3.10 or above environment."
 
     @pytest.mark.skipif(
-        not (IS_PYPY and sys.version_info < (3, 10)),
-        reason="Skipping because environment is not below pypy 3.10",
+        not (IS_PYPY and sys.version_info < (3, 10)) or IS_MACOS_ARM64,
+        reason="Skipping because environment is not below pypy 3.10, or is macOS arm64 (no rslex wheels)",
     )
     def test_package_installed_below_pypy_3_10(self):
         assert is_package_installed(

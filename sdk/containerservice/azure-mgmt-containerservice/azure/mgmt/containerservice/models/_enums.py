@@ -80,6 +80,9 @@ class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Can SSH onto the node as a local user using private key."""
     DISABLED = "Disabled"
     """SSH service will be turned off on the node."""
+    ENTRA_ID = "EntraId"
+    """SSH to node with EntraId integration. More information can be found under
+    `https://aka.ms/aks/ssh/aad <https://aka.ms/aks/ssh/aad>`_."""
 
 
 class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -137,6 +140,19 @@ class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connection is disconnected."""
 
 
+class ContainerNetworkLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for container network logs ingestion with Azure Monitor. When ``Enabled``, the
+    specific log types ingested are controlled by the associated CRD; defaults to ``Disabled``. See
+    `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_ and
+    `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_ for details.
+    """
+
+    DISABLED = "Disabled"
+    """Azure monitor ingestion of container network logs is disabled."""
+    ENABLED = "Enabled"
+    """Azure monitor ingestion of container network logs is enabled."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -158,6 +174,15 @@ class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     label."""
     DELETE = "Delete"
     """Delete both the ARM resource and the Kubernetes namespace together."""
+
+
+class DRANETMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The DRANET mode for the agent pool."""
+
+    UNMANAGED = "Unmanaged"
+    """DRANET is not managed by AKS."""
+    MANAGED = "Managed"
+    """DRANET is managed by AKS."""
 
 
 class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,6 +274,19 @@ class IdentityBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """The identity binding is being updated."""
     DELETING = "Deleting"
     """The identity binding is being deleted."""
+
+
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
+    More information on this can be found under
+    `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
+    """
+
+    ENABLED = "Enabled"
+    """Encryption at rest of Kubernetes resource objects using service-managed keys is enabled. More
+    information on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
+    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
 
 
 class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -410,6 +448,16 @@ class LocalDNSState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """localDNS is enabled."""
     DISABLED = "Disabled"
     """localDNS is disabled."""
+
+
+class ManagedClusterNATGatewaySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of a managed cluster NAT Gateway."""
+
+    STANDARD = "Standard"
+    """Use a Standard SKU NAT Gateway."""
+    STANDARD_V2 = "StandardV2"
+    """Use a StandardV2 SKU NAT Gateway. This is the default for new clusters in regions where it is
+    available."""
 
 
 class ManagedClusterPodIdentityProvisioningState(  # pylint: disable=name-too-long

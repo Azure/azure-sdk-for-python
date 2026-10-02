@@ -4,7 +4,9 @@
 ``from tests._helpers import …`` works regardless of how pytest is invoked."""
 
 import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -16,10 +18,77 @@ if _PROJECT_ROOT not in sys.path:
 
 
 def pytest_configure(config):
+    """Register custom pytest markers used by this package."""
+    config.addinivalue_line(
+        "markers",
+        "live: end-to-end tests that hit a real external SDK (e.g. gh copilot). "
+        "Skipped by default; opt in with `-m live` or `--run-live`.",
+    )
     config.addinivalue_line(
         "markers",
         "tracing_e2e: end-to-end tracing tests against live Application Insights",
     )
+
+
+@pytest.fixture(autouse=True)
+def _reset_resilient_tasks_global_state():
+    """Contain process-global resilient-tasks state per test.
+
+    The resilient-tasks enable switch and the ``TaskManager`` singleton are
+    process-global. A test that enables resilient tasks — e.g. constructs a
+    ``resilient_background=True`` host, which auto-enables the switch, or calls
+    ``set_resilient_tasks_enabled(True)`` — would otherwise leak that state into
+    subsequent tests in the same pytest process (a plain host would then build a
+    manager and behave durably). Snapshot both at test start and restore at the
+    end so each test is isolated.
+    """
+    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+        _manager as _mgr_mod,
+    )
+    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+        resilient_tasks_enabled,
+        set_resilient_tasks_enabled,
+    )
+    from azure.ai.agentserver.core.tasks._manager import (  # pylint: disable=import-outside-toplevel
+        set_task_manager,
+    )
+
+    saved_flag = resilient_tasks_enabled()
+    saved_mgr = _mgr_mod._manager  # noqa: SLF001  # pylint: disable=protected-access
+    try:
+        yield
+    finally:
+        set_task_manager(saved_mgr)
+        set_resilient_tasks_enabled(saved_flag)
+
+
+@pytest.fixture(autouse=True)
+def _isolated_resilient_tasks_root(tmp_path):
+    """Isolate the LocalFileTaskProvider's default storage per test.
+
+    (Spec 013) Without this, the LocalFileTaskProvider defaults to
+    ``~/.agentserver-tasks`` which is shared across all test runs and lets
+    in-progress task state leak between tests — when resilient_background
+    actually works, recovery on startup fires for these stale tasks and
+    breaks tests that assume a clean slate.
+
+    Per-test scope (autouse) so every test starts with a clean resilient
+    task store.
+
+    (Spec 024 Phase 3a) Uses ``AGENTSERVER_STATE_ROOT`` — the unified
+    env var that controls tasks/responses/streams subdirs together.
+    """
+    root = tmp_path / "resilient-tasks-isolated"
+    root.mkdir(parents=True, exist_ok=True)
+    prior = os.environ.get("AGENTSERVER_STATE_ROOT")
+    os.environ["AGENTSERVER_STATE_ROOT"] = str(root)
+    try:
+        yield
+    finally:
+        if prior is None:
+            os.environ.pop("AGENTSERVER_STATE_ROOT", None)
+        else:
+            os.environ["AGENTSERVER_STATE_ROOT"] = prior
 
 
 @pytest.fixture(autouse=True, scope="session")

@@ -1,12 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Strongly-typed return type assertions for every public emit_* method.
+"""Wire-event return assertions for every public emit_* method.
 
-Every builder ``emit_*`` method must return the specific ``ResponseStreamEvent``
-subtype per spec (e.g. ``emit_added()`` on a message
-builder returns ``ResponseOutputItemAddedEvent``, not the base
-``ResponseStreamEvent``).  These tests assert the ``isinstance`` contract for
-every public emit method on every builder class.
+Every builder ``emit_*`` method must return a dict-native ``ResponseStreamEvent``
+with the specific wire ``type`` per spec (e.g. ``emit_added()`` on a message
+builder returns a payload with ``type == "response.output_item.added"``).
 
 Builder classes covered:
   - ResponseEventStream (lifecycle: queued, created, in_progress, completed, failed, incomplete)
@@ -33,59 +31,131 @@ Builder classes covered:
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses.models._generated import (
-    ResponseCodeInterpreterCallCodeDeltaEvent,
-    ResponseCodeInterpreterCallCodeDoneEvent,
-    ResponseCodeInterpreterCallCompletedEvent,
-    ResponseCodeInterpreterCallInProgressEvent,
-    ResponseCodeInterpreterCallInterpretingEvent,
-    ResponseCompletedEvent,
-    ResponseContentPartAddedEvent,
-    ResponseContentPartDoneEvent,
-    ResponseCreatedEvent,
-    ResponseCustomToolCallInputDeltaEvent,
-    ResponseCustomToolCallInputDoneEvent,
-    ResponseFailedEvent,
-    ResponseFileSearchCallCompletedEvent,
-    ResponseFileSearchCallInProgressEvent,
-    ResponseFileSearchCallSearchingEvent,
-    ResponseFunctionCallArgumentsDeltaEvent,
-    ResponseFunctionCallArgumentsDoneEvent,
-    ResponseImageGenCallCompletedEvent,
-    ResponseImageGenCallGeneratingEvent,
-    ResponseImageGenCallInProgressEvent,
-    ResponseImageGenCallPartialImageEvent,
-    ResponseIncompleteEvent,
-    ResponseInProgressEvent,
-    ResponseMCPCallArgumentsDeltaEvent,
-    ResponseMCPCallArgumentsDoneEvent,
-    ResponseMCPCallCompletedEvent,
-    ResponseMCPCallFailedEvent,
-    ResponseMCPCallInProgressEvent,
-    ResponseMCPListToolsCompletedEvent,
-    ResponseMCPListToolsFailedEvent,
-    ResponseMCPListToolsInProgressEvent,
-    ResponseOutputItemAddedEvent,
-    ResponseOutputItemDoneEvent,
-    ResponseOutputTextAnnotationAddedEvent,
-    ResponseQueuedEvent,
-    ResponseReasoningSummaryPartAddedEvent,
-    ResponseReasoningSummaryPartDoneEvent,
-    ResponseReasoningSummaryTextDeltaEvent,
-    ResponseReasoningSummaryTextDoneEvent,
-    ResponseRefusalDeltaEvent,
-    ResponseRefusalDoneEvent,
-    ResponseTextDeltaEvent,
-    ResponseTextDoneEvent,
-    ResponseWebSearchCallCompletedEvent,
-    ResponseWebSearchCallInProgressEvent,
-    ResponseWebSearchCallSearchingEvent,
+from typing import Any
+
+from azure.ai.agentserver.responses.models import (
     StructuredOutputsOutputItem,
     UrlCitationBody,
 )
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 # ---- helper ----
+
+
+def _event_type_checker(name: str, event_type: str) -> type:
+    class _EventTypeMeta(type):
+        def __instancecheck__(cls, instance: Any) -> bool:  # pylint: disable=unused-argument
+            return isinstance(instance, dict) and instance.get("type") == event_type
+
+    return _EventTypeMeta(name, (), {})
+
+
+ResponseCodeInterpreterCallCodeDeltaEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCodeDeltaEvent", "response.code_interpreter_call_code.delta"
+)
+ResponseCodeInterpreterCallCodeDoneEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCodeDoneEvent", "response.code_interpreter_call_code.done"
+)
+ResponseCodeInterpreterCallCompletedEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCompletedEvent", "response.code_interpreter_call.completed"
+)
+ResponseCodeInterpreterCallInProgressEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallInProgressEvent", "response.code_interpreter_call.in_progress"
+)
+ResponseCodeInterpreterCallInterpretingEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallInterpretingEvent", "response.code_interpreter_call.interpreting"
+)
+ResponseCompletedEvent = _event_type_checker("ResponseCompletedEvent", "response.completed")
+ResponseContentPartAddedEvent = _event_type_checker("ResponseContentPartAddedEvent", "response.content_part.added")
+ResponseContentPartDoneEvent = _event_type_checker("ResponseContentPartDoneEvent", "response.content_part.done")
+ResponseCreatedEvent = _event_type_checker("ResponseCreatedEvent", "response.created")
+ResponseCustomToolCallInputDeltaEvent = _event_type_checker(
+    "ResponseCustomToolCallInputDeltaEvent", "response.custom_tool_call_input.delta"
+)
+ResponseCustomToolCallInputDoneEvent = _event_type_checker(
+    "ResponseCustomToolCallInputDoneEvent", "response.custom_tool_call_input.done"
+)
+ResponseFailedEvent = _event_type_checker("ResponseFailedEvent", "response.failed")
+ResponseFileSearchCallCompletedEvent = _event_type_checker(
+    "ResponseFileSearchCallCompletedEvent", "response.file_search_call.completed"
+)
+ResponseFileSearchCallInProgressEvent = _event_type_checker(
+    "ResponseFileSearchCallInProgressEvent", "response.file_search_call.in_progress"
+)
+ResponseFileSearchCallSearchingEvent = _event_type_checker(
+    "ResponseFileSearchCallSearchingEvent", "response.file_search_call.searching"
+)
+ResponseFunctionCallArgumentsDeltaEvent = _event_type_checker(
+    "ResponseFunctionCallArgumentsDeltaEvent", "response.function_call_arguments.delta"
+)
+ResponseFunctionCallArgumentsDoneEvent = _event_type_checker(
+    "ResponseFunctionCallArgumentsDoneEvent", "response.function_call_arguments.done"
+)
+ResponseImageGenCallCompletedEvent = _event_type_checker(
+    "ResponseImageGenCallCompletedEvent", "response.image_generation_call.completed"
+)
+ResponseImageGenCallGeneratingEvent = _event_type_checker(
+    "ResponseImageGenCallGeneratingEvent", "response.image_generation_call.generating"
+)
+ResponseImageGenCallInProgressEvent = _event_type_checker(
+    "ResponseImageGenCallInProgressEvent", "response.image_generation_call.in_progress"
+)
+ResponseImageGenCallPartialImageEvent = _event_type_checker(
+    "ResponseImageGenCallPartialImageEvent", "response.image_generation_call.partial_image"
+)
+ResponseIncompleteEvent = _event_type_checker("ResponseIncompleteEvent", "response.incomplete")
+ResponseInProgressEvent = _event_type_checker("ResponseInProgressEvent", "response.in_progress")
+ResponseMCPCallArgumentsDeltaEvent = _event_type_checker(
+    "ResponseMCPCallArgumentsDeltaEvent", "response.mcp_call_arguments.delta"
+)
+ResponseMCPCallArgumentsDoneEvent = _event_type_checker(
+    "ResponseMCPCallArgumentsDoneEvent", "response.mcp_call_arguments.done"
+)
+ResponseMCPCallCompletedEvent = _event_type_checker("ResponseMCPCallCompletedEvent", "response.mcp_call.completed")
+ResponseMCPCallFailedEvent = _event_type_checker("ResponseMCPCallFailedEvent", "response.mcp_call.failed")
+ResponseMCPCallInProgressEvent = _event_type_checker(
+    "ResponseMCPCallInProgressEvent", "response.mcp_call.in_progress"
+)
+ResponseMCPListToolsCompletedEvent = _event_type_checker(
+    "ResponseMCPListToolsCompletedEvent", "response.mcp_list_tools.completed"
+)
+ResponseMCPListToolsFailedEvent = _event_type_checker(
+    "ResponseMCPListToolsFailedEvent", "response.mcp_list_tools.failed"
+)
+ResponseMCPListToolsInProgressEvent = _event_type_checker(
+    "ResponseMCPListToolsInProgressEvent", "response.mcp_list_tools.in_progress"
+)
+ResponseOutputItemAddedEvent = _event_type_checker("ResponseOutputItemAddedEvent", "response.output_item.added")
+ResponseOutputItemDoneEvent = _event_type_checker("ResponseOutputItemDoneEvent", "response.output_item.done")
+ResponseOutputTextAnnotationAddedEvent = _event_type_checker(
+    "ResponseOutputTextAnnotationAddedEvent", "response.output_text.annotation.added"
+)
+ResponseQueuedEvent = _event_type_checker("ResponseQueuedEvent", "response.queued")
+ResponseReasoningSummaryPartAddedEvent = _event_type_checker(
+    "ResponseReasoningSummaryPartAddedEvent", "response.reasoning_summary_part.added"
+)
+ResponseReasoningSummaryPartDoneEvent = _event_type_checker(
+    "ResponseReasoningSummaryPartDoneEvent", "response.reasoning_summary_part.done"
+)
+ResponseReasoningSummaryTextDeltaEvent = _event_type_checker(
+    "ResponseReasoningSummaryTextDeltaEvent", "response.reasoning_summary_text.delta"
+)
+ResponseReasoningSummaryTextDoneEvent = _event_type_checker(
+    "ResponseReasoningSummaryTextDoneEvent", "response.reasoning_summary_text.done"
+)
+ResponseRefusalDeltaEvent = _event_type_checker("ResponseRefusalDeltaEvent", "response.refusal.delta")
+ResponseRefusalDoneEvent = _event_type_checker("ResponseRefusalDoneEvent", "response.refusal.done")
+ResponseTextDeltaEvent = _event_type_checker("ResponseTextDeltaEvent", "response.output_text.delta")
+ResponseTextDoneEvent = _event_type_checker("ResponseTextDoneEvent", "response.output_text.done")
+ResponseWebSearchCallCompletedEvent = _event_type_checker(
+    "ResponseWebSearchCallCompletedEvent", "response.web_search_call.completed"
+)
+ResponseWebSearchCallInProgressEvent = _event_type_checker(
+    "ResponseWebSearchCallInProgressEvent", "response.web_search_call.in_progress"
+)
+ResponseWebSearchCallSearchingEvent = _event_type_checker(
+    "ResponseWebSearchCallSearchingEvent", "response.web_search_call.searching"
+)
 
 
 def _stream() -> ResponseEventStream:
@@ -171,9 +241,9 @@ class TestGenericOutputItemBuilderReturnTypes:
         builder = s.add_output_item_structured_outputs()
         item = StructuredOutputsOutputItem(id=builder.item_id, output="data")
         event = builder.emit_added(item)
-        assert isinstance(event, ResponseOutputItemAddedEvent), (
-            f"Expected ResponseOutputItemAddedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseOutputItemAddedEvent
+        ), f"Expected ResponseOutputItemAddedEvent, got {type(event)}"
 
     def test_emit_done_returns_output_item_done_event(self) -> None:
         s = _stream()
@@ -182,9 +252,9 @@ class TestGenericOutputItemBuilderReturnTypes:
         item = StructuredOutputsOutputItem(id=builder.item_id, output="data")
         builder.emit_added(item)
         event = builder.emit_done(item)
-        assert isinstance(event, ResponseOutputItemDoneEvent), (
-            f"Expected ResponseOutputItemDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseOutputItemDoneEvent
+        ), f"Expected ResponseOutputItemDoneEvent, got {type(event)}"
 
 
 # =====================================================================
@@ -235,9 +305,9 @@ class TestTextContentBuilderReturnTypes:
     def test_emit_added(self) -> None:
         _, _, tc = self._setup()
         event = tc.emit_added()
-        assert isinstance(event, ResponseContentPartAddedEvent), (
-            f"Expected ResponseContentPartAddedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseContentPartAddedEvent
+        ), f"Expected ResponseContentPartAddedEvent, got {type(event)}"
 
     def test_emit_delta(self) -> None:
         _, _, tc = self._setup()
@@ -258,9 +328,9 @@ class TestTextContentBuilderReturnTypes:
         tc.emit_delta("hello")
         tc.emit_text_done()
         event = tc.emit_done()
-        assert isinstance(event, ResponseContentPartDoneEvent), (
-            f"Expected ResponseContentPartDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseContentPartDoneEvent
+        ), f"Expected ResponseContentPartDoneEvent, got {type(event)}"
 
     def test_emit_annotation_added(self) -> None:
         _, _, tc = self._setup()
@@ -274,9 +344,9 @@ class TestTextContentBuilderReturnTypes:
             title="Example",
         )
         event = tc.emit_annotation_added(annotation)
-        assert isinstance(event, ResponseOutputTextAnnotationAddedEvent), (
-            f"Expected ResponseOutputTextAnnotationAddedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseOutputTextAnnotationAddedEvent
+        ), f"Expected ResponseOutputTextAnnotationAddedEvent, got {type(event)}"
 
 
 # =====================================================================
@@ -343,9 +413,9 @@ class TestFunctionCallBuilderReturnTypes:
         fc = s.add_output_item_function_call("fn", "call_1")
         fc.emit_added()
         event = fc.emit_arguments_delta('{"k":')
-        assert isinstance(event, ResponseFunctionCallArgumentsDeltaEvent), (
-            f"Expected ResponseFunctionCallArgumentsDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseFunctionCallArgumentsDeltaEvent
+        ), f"Expected ResponseFunctionCallArgumentsDeltaEvent, got {type(event)}"
 
     def test_emit_arguments_done(self) -> None:
         s = _stream()
@@ -353,9 +423,9 @@ class TestFunctionCallBuilderReturnTypes:
         fc = s.add_output_item_function_call("fn", "call_1")
         fc.emit_added()
         event = fc.emit_arguments_done('{"k":"v"}')
-        assert isinstance(event, ResponseFunctionCallArgumentsDoneEvent), (
-            f"Expected ResponseFunctionCallArgumentsDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseFunctionCallArgumentsDoneEvent
+        ), f"Expected ResponseFunctionCallArgumentsDoneEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -438,34 +508,34 @@ class TestReasoningSummaryPartBuilderReturnTypes:
     def test_emit_added(self) -> None:
         _, _, sp = self._setup()
         event = sp.emit_added()
-        assert isinstance(event, ResponseReasoningSummaryPartAddedEvent), (
-            f"Expected ResponseReasoningSummaryPartAddedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseReasoningSummaryPartAddedEvent
+        ), f"Expected ResponseReasoningSummaryPartAddedEvent, got {type(event)}"
 
     def test_emit_text_delta(self) -> None:
         _, _, sp = self._setup()
         sp.emit_added()
         event = sp.emit_text_delta("thinking")
-        assert isinstance(event, ResponseReasoningSummaryTextDeltaEvent), (
-            f"Expected ResponseReasoningSummaryTextDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseReasoningSummaryTextDeltaEvent
+        ), f"Expected ResponseReasoningSummaryTextDeltaEvent, got {type(event)}"
 
     def test_emit_text_done(self) -> None:
         _, _, sp = self._setup()
         sp.emit_added()
         event = sp.emit_text_done("thinking")
-        assert isinstance(event, ResponseReasoningSummaryTextDoneEvent), (
-            f"Expected ResponseReasoningSummaryTextDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseReasoningSummaryTextDoneEvent
+        ), f"Expected ResponseReasoningSummaryTextDoneEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         _, _, sp = self._setup()
         sp.emit_added()
         sp.emit_text_done("thinking")
         event = sp.emit_done()
-        assert isinstance(event, ResponseReasoningSummaryPartDoneEvent), (
-            f"Expected ResponseReasoningSummaryPartDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseReasoningSummaryPartDoneEvent
+        ), f"Expected ResponseReasoningSummaryPartDoneEvent, got {type(event)}"
 
 
 # =====================================================================
@@ -489,9 +559,9 @@ class TestFileSearchCallBuilderReturnTypes:
         fs = s.add_output_item_file_search_call()
         fs.emit_added()
         event = fs.emit_in_progress()
-        assert isinstance(event, ResponseFileSearchCallInProgressEvent), (
-            f"Expected ResponseFileSearchCallInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseFileSearchCallInProgressEvent
+        ), f"Expected ResponseFileSearchCallInProgressEvent, got {type(event)}"
 
     def test_emit_searching(self) -> None:
         s = _stream()
@@ -500,9 +570,9 @@ class TestFileSearchCallBuilderReturnTypes:
         fs.emit_added()
         fs.emit_in_progress()
         event = fs.emit_searching()
-        assert isinstance(event, ResponseFileSearchCallSearchingEvent), (
-            f"Expected ResponseFileSearchCallSearchingEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseFileSearchCallSearchingEvent
+        ), f"Expected ResponseFileSearchCallSearchingEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -510,9 +580,9 @@ class TestFileSearchCallBuilderReturnTypes:
         fs = s.add_output_item_file_search_call()
         fs.emit_added()
         event = fs.emit_completed()
-        assert isinstance(event, ResponseFileSearchCallCompletedEvent), (
-            f"Expected ResponseFileSearchCallCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseFileSearchCallCompletedEvent
+        ), f"Expected ResponseFileSearchCallCompletedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -544,9 +614,9 @@ class TestWebSearchCallBuilderReturnTypes:
         ws = s.add_output_item_web_search_call()
         ws.emit_added()
         event = ws.emit_in_progress()
-        assert isinstance(event, ResponseWebSearchCallInProgressEvent), (
-            f"Expected ResponseWebSearchCallInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseWebSearchCallInProgressEvent
+        ), f"Expected ResponseWebSearchCallInProgressEvent, got {type(event)}"
 
     def test_emit_searching(self) -> None:
         s = _stream()
@@ -554,9 +624,9 @@ class TestWebSearchCallBuilderReturnTypes:
         ws = s.add_output_item_web_search_call()
         ws.emit_added()
         event = ws.emit_searching()
-        assert isinstance(event, ResponseWebSearchCallSearchingEvent), (
-            f"Expected ResponseWebSearchCallSearchingEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseWebSearchCallSearchingEvent
+        ), f"Expected ResponseWebSearchCallSearchingEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -564,9 +634,9 @@ class TestWebSearchCallBuilderReturnTypes:
         ws = s.add_output_item_web_search_call()
         ws.emit_added()
         event = ws.emit_completed()
-        assert isinstance(event, ResponseWebSearchCallCompletedEvent), (
-            f"Expected ResponseWebSearchCallCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseWebSearchCallCompletedEvent
+        ), f"Expected ResponseWebSearchCallCompletedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -598,9 +668,9 @@ class TestCodeInterpreterCallBuilderReturnTypes:
         ci = s.add_output_item_code_interpreter_call()
         ci.emit_added()
         event = ci.emit_in_progress()
-        assert isinstance(event, ResponseCodeInterpreterCallInProgressEvent), (
-            f"Expected ResponseCodeInterpreterCallInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCodeInterpreterCallInProgressEvent
+        ), f"Expected ResponseCodeInterpreterCallInProgressEvent, got {type(event)}"
 
     def test_emit_interpreting(self) -> None:
         s = _stream()
@@ -608,9 +678,9 @@ class TestCodeInterpreterCallBuilderReturnTypes:
         ci = s.add_output_item_code_interpreter_call()
         ci.emit_added()
         event = ci.emit_interpreting()
-        assert isinstance(event, ResponseCodeInterpreterCallInterpretingEvent), (
-            f"Expected ResponseCodeInterpreterCallInterpretingEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCodeInterpreterCallInterpretingEvent
+        ), f"Expected ResponseCodeInterpreterCallInterpretingEvent, got {type(event)}"
 
     def test_emit_code_delta(self) -> None:
         s = _stream()
@@ -618,9 +688,9 @@ class TestCodeInterpreterCallBuilderReturnTypes:
         ci = s.add_output_item_code_interpreter_call()
         ci.emit_added()
         event = ci.emit_code_delta("print('hello')")
-        assert isinstance(event, ResponseCodeInterpreterCallCodeDeltaEvent), (
-            f"Expected ResponseCodeInterpreterCallCodeDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCodeInterpreterCallCodeDeltaEvent
+        ), f"Expected ResponseCodeInterpreterCallCodeDeltaEvent, got {type(event)}"
 
     def test_emit_code_done(self) -> None:
         s = _stream()
@@ -628,9 +698,9 @@ class TestCodeInterpreterCallBuilderReturnTypes:
         ci = s.add_output_item_code_interpreter_call()
         ci.emit_added()
         event = ci.emit_code_done("print('hello')")
-        assert isinstance(event, ResponseCodeInterpreterCallCodeDoneEvent), (
-            f"Expected ResponseCodeInterpreterCallCodeDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCodeInterpreterCallCodeDoneEvent
+        ), f"Expected ResponseCodeInterpreterCallCodeDoneEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -638,9 +708,9 @@ class TestCodeInterpreterCallBuilderReturnTypes:
         ci = s.add_output_item_code_interpreter_call()
         ci.emit_added()
         event = ci.emit_completed()
-        assert isinstance(event, ResponseCodeInterpreterCallCompletedEvent), (
-            f"Expected ResponseCodeInterpreterCallCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCodeInterpreterCallCompletedEvent
+        ), f"Expected ResponseCodeInterpreterCallCompletedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -672,9 +742,9 @@ class TestImageGenCallBuilderReturnTypes:
         ig = s.add_output_item_image_gen_call()
         ig.emit_added()
         event = ig.emit_in_progress()
-        assert isinstance(event, ResponseImageGenCallInProgressEvent), (
-            f"Expected ResponseImageGenCallInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseImageGenCallInProgressEvent
+        ), f"Expected ResponseImageGenCallInProgressEvent, got {type(event)}"
 
     def test_emit_generating(self) -> None:
         s = _stream()
@@ -682,9 +752,9 @@ class TestImageGenCallBuilderReturnTypes:
         ig = s.add_output_item_image_gen_call()
         ig.emit_added()
         event = ig.emit_generating()
-        assert isinstance(event, ResponseImageGenCallGeneratingEvent), (
-            f"Expected ResponseImageGenCallGeneratingEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseImageGenCallGeneratingEvent
+        ), f"Expected ResponseImageGenCallGeneratingEvent, got {type(event)}"
 
     def test_emit_partial_image(self) -> None:
         s = _stream()
@@ -692,9 +762,9 @@ class TestImageGenCallBuilderReturnTypes:
         ig = s.add_output_item_image_gen_call()
         ig.emit_added()
         event = ig.emit_partial_image("base64data")
-        assert isinstance(event, ResponseImageGenCallPartialImageEvent), (
-            f"Expected ResponseImageGenCallPartialImageEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseImageGenCallPartialImageEvent
+        ), f"Expected ResponseImageGenCallPartialImageEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -702,9 +772,9 @@ class TestImageGenCallBuilderReturnTypes:
         ig = s.add_output_item_image_gen_call()
         ig.emit_added()
         event = ig.emit_completed()
-        assert isinstance(event, ResponseImageGenCallCompletedEvent), (
-            f"Expected ResponseImageGenCallCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseImageGenCallCompletedEvent
+        ), f"Expected ResponseImageGenCallCompletedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -736,9 +806,9 @@ class TestMcpCallBuilderReturnTypes:
         mcp = s.add_output_item_mcp_call("server", "tool")
         mcp.emit_added()
         event = mcp.emit_in_progress()
-        assert isinstance(event, ResponseMCPCallInProgressEvent), (
-            f"Expected ResponseMCPCallInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPCallInProgressEvent
+        ), f"Expected ResponseMCPCallInProgressEvent, got {type(event)}"
 
     def test_emit_arguments_delta(self) -> None:
         s = _stream()
@@ -746,9 +816,9 @@ class TestMcpCallBuilderReturnTypes:
         mcp = s.add_output_item_mcp_call("server", "tool")
         mcp.emit_added()
         event = mcp.emit_arguments_delta('{"key":')
-        assert isinstance(event, ResponseMCPCallArgumentsDeltaEvent), (
-            f"Expected ResponseMCPCallArgumentsDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPCallArgumentsDeltaEvent
+        ), f"Expected ResponseMCPCallArgumentsDeltaEvent, got {type(event)}"
 
     def test_emit_arguments_done(self) -> None:
         s = _stream()
@@ -756,9 +826,9 @@ class TestMcpCallBuilderReturnTypes:
         mcp = s.add_output_item_mcp_call("server", "tool")
         mcp.emit_added()
         event = mcp.emit_arguments_done('{"key":"val"}')
-        assert isinstance(event, ResponseMCPCallArgumentsDoneEvent), (
-            f"Expected ResponseMCPCallArgumentsDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPCallArgumentsDoneEvent
+        ), f"Expected ResponseMCPCallArgumentsDoneEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -766,9 +836,9 @@ class TestMcpCallBuilderReturnTypes:
         mcp = s.add_output_item_mcp_call("server", "tool")
         mcp.emit_added()
         event = mcp.emit_completed()
-        assert isinstance(event, ResponseMCPCallCompletedEvent), (
-            f"Expected ResponseMCPCallCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPCallCompletedEvent
+        ), f"Expected ResponseMCPCallCompletedEvent, got {type(event)}"
 
     def test_emit_failed(self) -> None:
         s = _stream()
@@ -785,15 +855,6 @@ class TestMcpCallBuilderReturnTypes:
         mcp.emit_added()
         mcp.emit_completed()
         event = mcp.emit_done()
-        assert isinstance(event, ResponseOutputItemDoneEvent)
-
-    def test_emit_done_with_output_and_error(self) -> None:
-        s = _stream()
-        s.emit_created()
-        mcp = s.add_output_item_mcp_call("server", "tool", item_id="mcp_test")
-        mcp.emit_added()
-        mcp.emit_failed()
-        event = mcp.emit_done(output="ok", error={"reason": "failed"})
         assert isinstance(event, ResponseOutputItemDoneEvent)
 
 
@@ -818,9 +879,9 @@ class TestMcpListToolsBuilderReturnTypes:
         mlt = s.add_output_item_mcp_list_tools("server")
         mlt.emit_added()
         event = mlt.emit_in_progress()
-        assert isinstance(event, ResponseMCPListToolsInProgressEvent), (
-            f"Expected ResponseMCPListToolsInProgressEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPListToolsInProgressEvent
+        ), f"Expected ResponseMCPListToolsInProgressEvent, got {type(event)}"
 
     def test_emit_completed(self) -> None:
         s = _stream()
@@ -828,9 +889,9 @@ class TestMcpListToolsBuilderReturnTypes:
         mlt = s.add_output_item_mcp_list_tools("server")
         mlt.emit_added()
         event = mlt.emit_completed()
-        assert isinstance(event, ResponseMCPListToolsCompletedEvent), (
-            f"Expected ResponseMCPListToolsCompletedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPListToolsCompletedEvent
+        ), f"Expected ResponseMCPListToolsCompletedEvent, got {type(event)}"
 
     def test_emit_failed(self) -> None:
         s = _stream()
@@ -838,9 +899,9 @@ class TestMcpListToolsBuilderReturnTypes:
         mlt = s.add_output_item_mcp_list_tools("server")
         mlt.emit_added()
         event = mlt.emit_failed()
-        assert isinstance(event, ResponseMCPListToolsFailedEvent), (
-            f"Expected ResponseMCPListToolsFailedEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseMCPListToolsFailedEvent
+        ), f"Expected ResponseMCPListToolsFailedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()
@@ -872,9 +933,9 @@ class TestCustomToolCallBuilderReturnTypes:
         ct = s.add_output_item_custom_tool_call("call_1", "my_tool")
         ct.emit_added()
         event = ct.emit_input_delta('{"key":')
-        assert isinstance(event, ResponseCustomToolCallInputDeltaEvent), (
-            f"Expected ResponseCustomToolCallInputDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCustomToolCallInputDeltaEvent
+        ), f"Expected ResponseCustomToolCallInputDeltaEvent, got {type(event)}"
 
     def test_emit_input_done(self) -> None:
         s = _stream()
@@ -882,9 +943,9 @@ class TestCustomToolCallBuilderReturnTypes:
         ct = s.add_output_item_custom_tool_call("call_1", "my_tool")
         ct.emit_added()
         event = ct.emit_input_done('{"key":"val"}')
-        assert isinstance(event, ResponseCustomToolCallInputDoneEvent), (
-            f"Expected ResponseCustomToolCallInputDoneEvent, got {type(event)}"
-        )
+        assert isinstance(
+            event, ResponseCustomToolCallInputDoneEvent
+        ), f"Expected ResponseCustomToolCallInputDoneEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()

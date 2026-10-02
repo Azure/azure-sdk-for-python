@@ -71,7 +71,7 @@ from hosted_agents_util import create_version_from_code, select_basic_agent_code
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME") or "MyHostedAgent"
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "15"))
 dependency_resolution, code_zip_stream = select_basic_agent_code_zip(True)

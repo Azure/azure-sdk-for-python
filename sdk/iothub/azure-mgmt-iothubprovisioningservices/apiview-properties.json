@@ -2,11 +2,11 @@
     "CrossLanguagePackageId": "Microsoft.Devices",
     "CrossLanguageDefinitionId": {
         "azure.mgmt.iothubprovisioningservices.models.AsyncOperationResult": "Microsoft.Devices.AsyncOperationResult",
+        "azure.mgmt.iothubprovisioningservices.models.CertificateListDescription": "Microsoft.Devices.CertificateListDescription",
         "azure.mgmt.iothubprovisioningservices.models.CertificateProperties": "Microsoft.Devices.CertificateProperties",
         "azure.mgmt.iothubprovisioningservices.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.iothubprovisioningservices.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.iothubprovisioningservices.models.CertificateResponse": "Microsoft.Devices.CertificateResponse",
-        "azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceDescription": "Microsoft.Devices.DeviceRegistryNamespaceDescription",
         "azure.mgmt.iothubprovisioningservices.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.iothubprovisioningservices.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.iothubprovisioningservices.models.ErrorDetails": "Microsoft.Devices.ErrorDetails",
@@ -27,6 +27,7 @@
         "azure.mgmt.iothubprovisioningservices.models.PrivateEndpoint": "Microsoft.Devices.PrivateEndpoint",
         "azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnection": "Microsoft.Devices.PrivateEndpointConnection",
         "azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnectionProperties": "Microsoft.Devices.PrivateEndpointConnectionProperties",
+        "azure.mgmt.iothubprovisioningservices.models.PrivateLinkResources": "Microsoft.Devices.PrivateLinkResources",
         "azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionState": "Microsoft.Devices.PrivateLinkServiceConnectionState",
         "azure.mgmt.iothubprovisioningservices.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription": "Microsoft.Devices.ProvisioningServiceDescription",
@@ -44,7 +45,7 @@
         "azure.mgmt.iothubprovisioningservices.models.IpFilterActionType": "Microsoft.Devices.IpFilterActionType",
         "azure.mgmt.iothubprovisioningservices.models.IpFilterTargetType": "Microsoft.Devices.IpFilterTargetType",
         "azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionStatus": "Microsoft.Devices.PrivateLinkServiceConnectionStatus",
-        "azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceAuthenticationType": "Microsoft.Devices.DeviceRegistryNamespaceAuthenticationType",
+        "azure.mgmt.iothubprovisioningservices.models.IotHubAuthenticationType": "Microsoft.Devices.IotHubAuthenticationType",
         "azure.mgmt.iothubprovisioningservices.models.AllocationPolicy": "Microsoft.Devices.AllocationPolicy",
         "azure.mgmt.iothubprovisioningservices.models.AccessRightsDescription": "Microsoft.Devices.AccessRightsDescription",
         "azure.mgmt.iothubprovisioningservices.models.IotDpsSku": "Microsoft.Devices.IotDpsSku",
@@ -98,5 +99,6 @@
         "azure.mgmt.iothubprovisioningservices.aio.operations.IotDpsResourceOperations.list_private_endpoint_connections": "Microsoft.Devices.PrivateEndpointConnections.listPrivateEndpointConnections",
         "azure.mgmt.iothubprovisioningservices.operations.IotDpsResourceOperations.check_provisioning_service_name_availability": "Microsoft.Devices.IotDpsResourceOperationGroup.checkProvisioningServiceNameAvailability",
         "azure.mgmt.iothubprovisioningservices.aio.operations.IotDpsResourceOperations.check_provisioning_service_name_availability": "Microsoft.Devices.IotDpsResourceOperationGroup.checkProvisioningServiceNameAvailability"
-    }
+    },
+    "CrossLanguageVersion": "f4a4a83aeda1"
 }

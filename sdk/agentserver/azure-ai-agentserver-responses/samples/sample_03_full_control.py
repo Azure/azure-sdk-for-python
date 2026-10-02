@@ -12,7 +12,7 @@ This sample shows three ways to emit the same greeting — all produce the
 identical SSE event sequence:
 
   1. **Convenience** — ``output_item_message(text)``
-  2. **Streaming**  — ``aoutput_item_message(async_iterable)``
+  2. **Streaming**  — ``aio.ResponseEventStream.output_item_message(async_iterable)``
   3. **Builder**    — ``add_output_item_message()`` → ``add_text_content()``
      → ``emit_delta()`` / ``emit_done()``
 
@@ -51,6 +51,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
 
 app = ResponsesAgentServerHost()
 
@@ -70,8 +71,8 @@ async def handler(
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     # Configure Response properties BEFORE emit_created().
-    stream.response.temperature = 0.7
-    stream.response.max_output_tokens = 1024
+    stream.response["temperature"] = 0.7
+    stream.response["max_output_tokens"] = 1024
 
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -86,7 +87,7 @@ async def handler(
 
 # ── Variant 2: Streaming ────────────────────────────────────────────────
 # When your handler calls an LLM that produces tokens incrementally, pass
-# an ``AsyncIterable[str]`` to ``aoutput_item_message()``.  Each chunk
+# an ``AsyncIterable[str]`` to ``aio.ResponseEventStream.output_item_message()``.  Each chunk
 # becomes a separate ``response.output_text.delta`` SSE event.
 
 
@@ -96,13 +97,13 @@ async def handler_streaming(
     cancellation_signal: asyncio.Event,
 ):
     """Stream tokens using the async convenience generator."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
 
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
     # Stream tokens as they arrive — each chunk becomes a delta event.
-    async for evt in stream.aoutput_item_message(
+    async for evt in stream.output_item_message(
         _generate_tokens(await context.get_input_text()),
     ):
         yield evt
@@ -133,8 +134,8 @@ async def handler_builder(
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     # Configure Response properties BEFORE emit_created().
-    stream.response.temperature = 0.7
-    stream.response.max_output_tokens = 1024
+    stream.response["temperature"] = 0.7
+    stream.response["max_output_tokens"] = 1024
 
     yield stream.emit_created()
     yield stream.emit_in_progress()

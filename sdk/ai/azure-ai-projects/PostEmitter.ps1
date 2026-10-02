@@ -73,6 +73,63 @@ foreach ($line in $lines) {
 }
 Set-Content $f $out
 
+# Normalize generated reStructuredText bullet lists in model and enum docstrings.
+# Join incorrectly indented continuations, then reflow long bullets with valid continuation indentation.
+$files = 'azure\ai\projects\models\_models.py', 'azure\ai\projects\models\_enums.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    $inDocstring = $false
+    $inBulletList = $false
+    for ($i = 0; $i -lt $lines.Length; $i++) {
+        $line = $lines[$i]
+        $trimmed = $line.TrimStart()
+        $quoteCount = ([regex]::Matches($line, '"""')).Count
+        $isClosingQuote = $trimmed -eq '"""'
+        $isContinuation = $trimmed -match '^[a-z0-9`(]'
+        if ($inDocstring -and $inBulletList -and $isContinuation -and $line -match '^\s{4}\S') {
+            while ($out.Count -gt 0 -and -not $out[-1].Trim()) { $out = $out[0..($out.Count - 2)] }
+            if ($out.Count -gt 0) {
+                $out[-1] = $out[-1].TrimEnd() + ' ' + $trimmed
+                continue
+            }
+        }
+        if ($inDocstring -and $inBulletList -and $trimmed -match '^\:') {
+            if ($out.Count -gt 0 -and $out[-1].Trim()) { $out += '' }
+            $inBulletList = $false
+        }
+        $out += $line
+        if ($trimmed -match '^\*\s') { $inBulletList = $true }
+        if ($quoteCount % 2 -eq 1 -and -not $isClosingQuote) { $inDocstring = -not $inDocstring }
+        if ($isClosingQuote) { $inDocstring = $false; $inBulletList = $false }
+    }
+    $wrapped = @()
+    foreach ($line in $out) {
+        if ($line.Length -le 120 -or $line -notmatch '^(\s*)\*\s+(.+)$') {
+            $wrapped += $line
+            continue
+        }
+
+        $firstPrefix = $Matches[1] + '* '
+        $continuationPrefix = $Matches[1] + '  '
+        $prefix = $firstPrefix
+        $currentLine = $prefix
+        foreach ($word in $Matches[2] -split '\s+') {
+            if ($currentLine.Length -gt $prefix.Length -and $currentLine.Length + 1 + $word.Length -gt 120) {
+                $wrapped += $currentLine
+                $prefix = $continuationPrefix
+                $currentLine = $prefix + $word
+            }
+            else {
+                $separator = if ($currentLine.Length -eq $prefix.Length) { '' } else { ' ' }
+                $currentLine += $separator + $word
+            }
+        }
+        $wrapped += $currentLine
+    }
+    Set-Content $f $wrapped
+}
+
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
 # The emitter wraps bullet/code-block lines with insufficient indentation.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
@@ -86,81 +143,49 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# A block of code in the implementation of "list_memories", in both sync 
-# and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
-# in the inline function named "prepare_request". Instead it should be moved up into the
-# main body of the "list_memories" method, right after the line `error_map.update(kwargs.pop("error_map", {}) or {})`.
-# If you don't do this, the PR pipeline will show failures in Pyright (`error: "body" is unbound (reportUnboundVariable)`)
-# and some tests will fail. This is the block of code that needs to move up:
-#            if body is _Unset:
-#                if scope is _Unset:
-#                    raise TypeError("missing required argument: scope")
-#                body = {"scope": scope}
-#                body = {k: v for k, v in body.items() if v is not None}
-# The block inside prepare_request has 12-space indentation; after moving to the main function body it needs 8-space indentation.
-# Strategy: Find the last list_memories method, then do a targeted string replacement that moves the block right after error_map.update.
-$oldPattern = @"
-        error_map.update(kwargs.pop("error_map", {}) or {})
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+# Wrap forward-reference-only aliases in Union so they are valid runtime type aliases.
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
+# Remove the duplicate VoiceAgentToolChoice alias emitted by some TypeSpec versions.
+$duplicateVoiceAgentToolChoice = '(?ms)\r?\nVoiceAgentToolChoice = Union\[\r?\n    Literal\["none"\], Literal\["auto"\], Literal\["required"\], "_models\.ToolChoiceFunction", "_models\.ToolChoiceMCP"\r?\n\]'
+$firstVoiceAgentToolChoice = [regex]::Match($c, $duplicateVoiceAgentToolChoice)
+if ($firstVoiceAgentToolChoice.Success) {
+    $secondStart = $firstVoiceAgentToolChoice.Index + $firstVoiceAgentToolChoice.Length
+    $second = [regex]::Match($c.Substring($secondStart), $duplicateVoiceAgentToolChoice)
+    if ($second.Success) {
+        $removeStart = $secondStart + $second.Index
+        $c = $c.Remove($removeStart, $second.Length)
+    }
+}
+Set-Content $f $c -NoNewline
 
-        def prepare_request(_continuation_token=None):
-            if body is _Unset:
-                if scope is _Unset:
-                    raise TypeError("missing required argument: scope")
-                body = {"scope": scope}
-                body = {k: v for k, v in body.items() if v is not None}
-
-            _request = build_beta_memory_stores_list_memories_request(
-"@
-$newPattern = @"
-        error_map.update(kwargs.pop("error_map", {}) or {})
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        def prepare_request(_continuation_token=None):
-            _request = build_beta_memory_stores_list_memories_request(
-"@
+# Remove invalid single overload stubs for BetaAgentsOperations.generate/create_from_prompt.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $c = Get-Content $f -Raw
-    # Find all occurrences of "def list_memories(" and get the index of the last one
-    $methodMatches = [regex]::Matches($c, 'def list_memories\(')
-    if ($methodMatches.Count -eq 0) { continue }
-    $lastMethodStart = $methodMatches[$methodMatches.Count - 1].Index
-    
-    # Find the pattern to replace - first occurrence after the last list_memories method
-    $patternEscaped = [regex]::Escape($oldPattern)
-    $patternMatches = [regex]::Matches($c, $patternEscaped)
-    $matchToReplace = $null
-    foreach ($m in $patternMatches) {
-        if ($m.Index -gt $lastMethodStart) {
-            $matchToReplace = $m
-            break
-        }
-    }
-    if ($matchToReplace -eq $null) { continue }
-    
-    # Replace only that specific occurrence
-    $c = $c.Substring(0, $matchToReplace.Index) + $newPattern + $c.Substring($matchToReplace.Index + $matchToReplace.Length)
-    
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    (?:async )?def (?:generate|create_from_prompt)\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace)', "`r`n"
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    async def (?:generate|create_from_prompt)\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace_async)', "`r`n"
     Set-Content $f $c -NoNewline
 }
 
+# Complete generated MatchConditions support for TypeSpec Azure.Core.eTag parameters.
+# The emitter generates prep_if_match(etag, match_condition), but omits the helper,
+# imports, match_condition parameters, and arguments that the generated call path needs.
+& (Join-Path $PSScriptRoot 'scripts\FixMatchConditions.ps1') -PackageRoot $PSScriptRoot
 
-# Finishing by running 'black' tool to format code. 
-pip install black
+# Finishing by running 'black' tool to format code.
 black --config ../../../eng/black-pyproject.toml .
+
+# Regenerate API review artifacts and the public method inventory.
+$pythonExecutable = (Get-Command python -ErrorAction Stop).Source
+& $pythonExecutable -m pip install --no-deps --editable .
+if ($LASTEXITCODE -ne 0) {
+    throw "Editable package installation failed with exit code $LASTEXITCODE."
+}
+azpysdk apistub .
+$apiStubExitCode = $LASTEXITCODE
+.\docs\GeneratePublicMethodsDoc.ps1 -PythonExecutable $pythonExecutable
+if ($apiStubExitCode -ne 0) {
+    throw "API stub generation failed with exit code $apiStubExitCode."
+}

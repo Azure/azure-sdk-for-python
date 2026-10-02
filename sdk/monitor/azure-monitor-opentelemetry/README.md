@@ -19,7 +19,7 @@ OpenTelemetry instrumentations allow automatic collection of requests sent from 
 | [OpenTelemetry Django Instrumentation][ot_instrumentation_django] | [django][pypi_django] | [link][ot_instrumentation_django_version]
 | [OpenTelemetry FastApi Instrumentation][ot_instrumentation_fastapi] | [fastapi][pypi_fastapi] | [link][ot_instrumentation_fastapi_version]
 | [OpenTelemetry Flask Instrumentation][ot_instrumentation_flask] | [flask][pypi_flask] | [link][ot_instrumentation_flask_version]
-| [OpenTelemetry Httpx Instrumentation][ot_instrumentation_httpx] | [httpx][pypi_httpx] | [link][ot_instrumentation_httpx_version]
+| [OpenTelemetry Httpx Instrumentation][ot_instrumentation_httpx] | [httpx][pypi_httpx], [httpx2][pypi_httpx2] | [link][ot_instrumentation_httpx_version]
 | [OpenTelemetry Psycopg2 Instrumentation][ot_instrumentation_psycopg2] | [psycopg2][pypi_psycopg2] | [link][ot_instrumentation_psycopg2_version]
 | [OpenTelemetry Requests Instrumentation][ot_instrumentation_requests] | [requests][pypi_requests] | [link][ot_instrumentation_requests_version]
 | [OpenTelemetry UrlLib Instrumentation][ot_instrumentation_urllib] | [urllib][pypi_urllib] | All
@@ -264,6 +264,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [pypi_fastapi]: https://pypi.org/project/fastapi/
 [pypi_flask]: https://pypi.org/project/Flask/
 [pypi_httpx]: https://pypi.org/project/httpx/
+[pypi_httpx2]: https://pypi.org/project/httpx2/
 [pypi_psycopg2]: https://pypi.org/project/psycopg2/
 [pypi_requests]: https://pypi.org/project/requests/
 [pypi_urllib]: https://docs.python.org/3/library/urllib.html

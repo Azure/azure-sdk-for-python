@@ -70,11 +70,13 @@ def is_json_content_type(content_type: str) -> bool:
 
 
 def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
-    try:
-        key, label = setting  # type:ignore
-    except (IndexError, ValueError):
-        key = str(setting)  # Ensure key is a string
-        label = NULL_CHAR
+    if isinstance(setting, str):
+        key, label = setting, NULL_CHAR
+    else:
+        try:
+            key, label = setting
+        except (TypeError, ValueError):
+            key, label = str(setting), NULL_CHAR
     if "*" in key or "*" in label:
         raise ValueError("Wildcard key or label filters are not supported for refresh.")
     return key, label
@@ -370,7 +372,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         processed_feature_flags: List[Dict[str, Any]],
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
     ) -> Dict[str, Any]:
-        if feature_flags:
+        if feature_flags is not None:
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
             processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]

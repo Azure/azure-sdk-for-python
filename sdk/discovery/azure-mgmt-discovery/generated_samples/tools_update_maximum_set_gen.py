@@ -33,7 +33,7 @@ def main():
 
     response = client.tools.begin_update(
         resource_group_name="rgdiscovery",
-        tool_name="f1972d0fc9531d424c",
+        tool_name="f1f7503773093a8c1e",
         properties={
             "properties": {
                 "definitionContent": {
@@ -73,15 +73,15 @@ def main():
                     "name": "discovery",
                     "tool_id": "discovery-m1",
                 },
-                "environmentVariables": {"key3840": "snaxrtkryhwqw"},
-                "version": "jittnzvso",
+                "environmentVariables": {"key8857": "egddkscfebieioknriklhsrl"},
+                "version": "jtpp",
             },
-            "tags": {"key4187": "vbirsnehukndlpioqtsmqyoqhklg"},
+            "tags": {"key1372": "ihmhpkujjlitavkabscrrpjwsaks"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Tools_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Tools_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,12 +32,12 @@ def main():
 
     response = client.bookshelf_private_endpoint_connections.get(
         resource_group_name="rgdiscovery",
-        bookshelf_name="ca2ea71fd0a5838c7f",
+        bookshelf_name="b9893e75cf964912a2",
         private_endpoint_connection_name="connection",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/BookshelfPrivateEndpointConnections_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/BookshelfPrivateEndpointConnections_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

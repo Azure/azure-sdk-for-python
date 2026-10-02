@@ -1,5 +1,48 @@
 # Release History
 
+## 15.0.0b5 (2026-08-27)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `arc_deployments`
+  - Model `AccountProperties` added property `a365_logging_enabled`
+  - Model `AccountProperties` added property `agent_hosting_configurations`
+  - Model `AccountProperties` added property `capability_settings`
+  - Model `ClusterComputeProperties` added property `location`
+  - Model `ComputeProperties` added property `location`
+  - Model `ContainerInstanceComputeProperties` added property `location`
+  - Model `DeploymentProperties` added property `context_cache_container_id`
+  - Model `ProjectProperties` added property `capability_settings`
+  - Enum `ProvisioningState` added member `EXTENSION_UNREACHABLE`
+  - Enum `VmPriority` added member `SPOT`
+  - Added model `AgentHostingConfiguration`
+  - Added enum `AgentHostingType`
+  - Added model `ArcDeployment`
+  - Added enum `ArcDeploymentComputeType`
+  - Added model `ArcDeploymentCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentKubernetesResources`
+  - Added model `ArcDeploymentModel`
+  - Added model `ArcDeploymentPatchCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentPatchKubernetesResources`
+  - Added model `ArcDeploymentProperties`
+  - Added model `ArcDeploymentProvisioningDetails`
+  - Added model `ArcDeploymentResourceRequirements`
+  - Added enum `ArcDeploymentRuntime`
+  - Added model `ArcDeploymentSku`
+  - Added enum `ArcDeploymentSkuName`
+  - Added model `ArcDeploymentUpdate`
+  - Added model `ArcDeploymentUpdateProperties`
+  - Added model `ArcDeploymentVllmParameters`
+  - Added model `CapabilitySettings`
+  - Added model `ManagedClusterAgentHostingConfiguration`
+  - Added operation group `ArcDeploymentsOperations`
+
+### Breaking Changes
+
+  - Model `Compute` deleted or renamed its instance variable `location`
+  - Deleted or renamed enum value `VmPriority.LOW_PRIORITY`
+  - Deleted or renamed method `ComputesOperations.begin_update`
+
 ## 15.0.0b4 (2026-07-21)
 
 ### Bugs Fixed

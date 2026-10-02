@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-06-16-preview/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationList.json
+# x-ms-original-file: 2026-07-15/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationList.json
 if __name__ == "__main__":
     main()

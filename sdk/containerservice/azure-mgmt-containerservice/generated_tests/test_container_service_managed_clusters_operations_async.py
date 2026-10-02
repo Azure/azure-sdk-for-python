@@ -179,6 +179,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "networkProfile": {
                                     "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                                     "applicationSecurityGroups": ["str"],
+                                    "dranet": {"mode": "str"},
                                     "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                                 },
                                 "nodeImageVersion": "str",
@@ -265,7 +266,18 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "autoUpgradeProfile": {"nodeOSUpgradeChannel": "str", "upgradeChannel": "str"},
                         "azureMonitorProfile": {
-                            "appMonitoring": {"autoInstrumentation": {"enabled": bool}},
+                            "appMonitoring": {
+                                "autoInstrumentation": {"enabled": bool},
+                                "openTelemetryLogsAndTraces": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
+                                "openTelemetryMetrics": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
+                            },
+                            "containerInsights": {
+                                "containerNetworkLogs": "str",
+                                "disablePrometheusMetricsScraping": bool,
+                                "enabled": bool,
+                                "logAnalyticsWorkspaceResourceId": "str",
+                                "syslogPort": 0,
+                            },
                             "metrics": {
                                 "enabled": bool,
                                 "controlPlane": {"enabled": bool},
@@ -281,6 +293,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "disableLocalAccounts": bool,
                         "diskEncryptionSetID": "str",
                         "dnsPrefix": "str",
+                        "enableFIPS": bool,
                         "enableRBAC": bool,
                         "fqdn": "str",
                         "fqdnSubdomain": "str",
@@ -334,7 +347,10 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "natGatewayProfile": {
                                 "effectiveOutboundIPs": [{"id": "str"}],
                                 "idleTimeoutInMinutes": 0,
-                                "managedOutboundIPProfile": {"count": 0},
+                                "managedOutboundIPProfile": {"count": 0, "countIPv6": 0},
+                                "outboundIPPrefixes": {"publicIPPrefixes": ["str"]},
+                                "outboundIPs": {"publicIPs": ["str"]},
+                                "sku": "str",
                             },
                             "networkDataplane": "str",
                             "networkMode": "str",
@@ -417,6 +433,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "securityMonitoring": {"enabled": bool},
                             },
                             "imageCleaner": {"enabled": bool, "intervalHours": 0},
+                            "kubernetesResourceObjectEncryptionProfile": {"infrastructureEncryption": "str"},
                             "workloadIdentity": {"enabled": bool},
                         },
                         "serviceMeshProfile": {

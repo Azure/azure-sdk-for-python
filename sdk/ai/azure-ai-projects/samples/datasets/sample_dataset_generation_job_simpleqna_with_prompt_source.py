@@ -11,8 +11,8 @@ DESCRIPTION:
 
       1. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna) that
          synthesizes question/answer pairs from an inline prompt and writes them
-         to a new versioned Dataset. Uses `begin_create_generation_job` which returns
-         `LROPoller[DataGenerationJobResult]`; `.result()` polls automatically.
+         to a new versioned Dataset. Uses `begin_create_generation_job` and
+         reports the standard LRO poller's status until the operation completes.
       2. Resolves the resulting `DatasetVersion` from the job result.
       3. Creates an OpenAI evaluation (`client.evals.create`) with builtin
          Azure AI evaluators.
@@ -117,11 +117,23 @@ def main() -> None:
                 ),
             ),
         )
-        print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
-        job_result = project_client.beta.datasets.begin_create_generation_job(
+        print("Begin creating a dataset generation job.")
+        poller = project_client.beta.datasets.begin_create_generation_job(
             job=job,
             polling_interval=poll_interval_seconds,
-        ).result()
+        )
+
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
+
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        job_result = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Data generation result: {job_result}")
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""

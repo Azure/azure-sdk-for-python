@@ -46,7 +46,7 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 tripadvisor_asset_file_path = Path(__file__).resolve().parent / "../assets/tripadvisor_openapi.json"
 openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(tripadvisor_asset_file_path.read_text(encoding="utf-8")))
 

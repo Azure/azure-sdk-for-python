@@ -116,7 +116,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class AgentPoolsOperations:
+class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1424,7 +1424,7 @@ class AgentPoolsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
+class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4762,7 +4762,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class MaintenanceConfigurationsOperations:
+class MaintenanceConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5213,7 +5213,7 @@ class MaintenanceConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedNamespacesOperations:
+class ManagedNamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6062,7 +6062,7 @@ class ManagedNamespacesOperations:
         return deserialized  # type: ignore
 
 
-class MachinesOperations:
+class MachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6263,7 +6263,7 @@ class MachinesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6752,7 +6752,7 @@ class PrivateEndpointConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class SnapshotsOperations:
+class SnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7429,7 +7429,7 @@ class SnapshotsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TrustedAccessRoleBindingsOperations:
+class TrustedAccessRoleBindingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8013,7 +8013,7 @@ class TrustedAccessRoleBindingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IdentityBindingsOperations:
+class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8043,7 +8043,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8132,7 +8132,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -8321,7 +8321,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def begin_create_or_update(
         self,
@@ -8413,7 +8413,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8492,7 +8492,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -8561,7 +8561,7 @@ class IdentityBindingsOperations:
         params_added_on={
             "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-04-01", "2026-05-01"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -8666,7 +8666,7 @@ class IdentityBindingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8777,7 +8777,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8872,7 +8872,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class ResolvePrivateLinkServiceIdOperations:
+class ResolvePrivateLinkServiceIdOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9061,7 +9061,7 @@ class ResolvePrivateLinkServiceIdOperations:
         return deserialized  # type: ignore
 
 
-class TrustedAccessRolesOperations:
+class TrustedAccessRolesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

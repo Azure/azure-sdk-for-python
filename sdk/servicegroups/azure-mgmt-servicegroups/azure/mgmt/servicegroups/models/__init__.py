@@ -17,17 +17,21 @@ from ._models import (  # type: ignore
     ErrorAdditionalInfo,
     ErrorDetail,
     ErrorResponse,
+    Operation,
+    OperationDisplay,
     ParentServiceGroupProperties,
     ProxyResource,
     Resource,
     ServiceGroup,
-    ServiceGroupCollectionResponse,
+    ServiceGroupAttributes,
     ServiceGroupProperties,
     SystemData,
 )
 
 from ._enums import (  # type: ignore
+    ActionType,
     CreatedByType,
+    Origin,
     ProvisioningState,
 )
 from ._patch import __all__ as _patch_all
@@ -38,14 +42,18 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "Operation",
+    "OperationDisplay",
     "ParentServiceGroupProperties",
     "ProxyResource",
     "Resource",
     "ServiceGroup",
-    "ServiceGroupCollectionResponse",
+    "ServiceGroupAttributes",
     "ServiceGroupProperties",
     "SystemData",
+    "ActionType",
     "CreatedByType",
+    "Origin",
     "ProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

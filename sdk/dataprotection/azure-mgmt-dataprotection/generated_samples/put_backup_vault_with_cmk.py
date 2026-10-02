@@ -42,7 +42,7 @@ def main():
                     "encryptionSettings": {
                         "infrastructureEncryption": "Enabled",
                         "kekIdentity": {
-                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
+                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourceGroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
                             "identityType": "UserAssigned",
                         },
                         "keyVaultProperties": {
@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/VaultCRUD/PutBackupVaultWithCMK.json
+# x-ms-original-file: 2026-06-01/VaultCRUD/PutBackupVaultWithCMK.json
 if __name__ == "__main__":
     main()

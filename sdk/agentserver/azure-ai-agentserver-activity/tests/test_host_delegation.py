@@ -3,10 +3,14 @@
 # ---------------------------------------------------------
 """Tests for the host exposing the underlying M365 AgentApplication."""
 
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
+from azure.ai.agentserver.activity import _foundry_storage as foundry_storage_module
 
 
 class _StubAgentApp:
@@ -183,3 +187,57 @@ def test_agent_app_rejects_build_overrides():
             storage=object(),
             configure_observability=None,
         )
+
+
+def _host_for_storage_resolution(*, is_hosted: bool) -> ActivityAgentServerHost:
+    host = object.__new__(ActivityAgentServerHost)
+    host.config = SimpleNamespace(is_hosted=is_hosted)
+    host._owned_storage = None
+    return host
+
+
+def test_explicit_storage_overrides_hosted_default():
+    """Caller-supplied storage always takes precedence."""
+    host = _host_for_storage_resolution(is_hosted=True)
+    storage = object()
+
+    assert host._resolve_storage(storage) is storage
+    assert host._owned_storage is None
+
+
+def test_hosted_default_uses_foundry_storage(monkeypatch):
+    """Hosted agents default to durable Foundry storage."""
+    host = _host_for_storage_resolution(is_hosted=True)
+    storage = MagicMock()
+    storage_factory = MagicMock(return_value=storage)
+    monkeypatch.setattr(foundry_storage_module, "FoundryStorage", storage_factory)
+
+    assert host._resolve_storage(None) is storage
+    assert host._owned_storage is storage
+    storage_factory.assert_called_once_with()
+
+
+def test_local_default_uses_memory_storage():
+    """Local development retains the in-memory default."""
+    from microsoft_agents.hosting.core import MemoryStorage
+
+    host = _host_for_storage_resolution(is_hosted=False)
+
+    assert isinstance(host._resolve_storage(None), MemoryStorage)
+    assert host._owned_storage is None
+
+
+@pytest.mark.asyncio
+async def test_shutdown_closes_host_owned_storage():
+    """The host closes the Foundry storage instance that it created."""
+    host = _host_for_storage_resolution(is_hosted=True)
+    host._shutdown_fn = AsyncMock()
+    storage = MagicMock()
+    storage.aclose = AsyncMock()
+    host._owned_storage = storage
+
+    await host._dispatch_shutdown()
+
+    host._shutdown_fn.assert_awaited_once_with()
+    storage.aclose.assert_awaited_once_with()
+    assert host._owned_storage is None

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -25,22 +25,66 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_bulk_create_cancel_request,
+    build_bulk_create_create_or_update_request,
+    build_bulk_create_custom_cancel_request,
+    build_bulk_create_custom_create_or_update_request,
+    build_bulk_create_custom_delete_request,
+    build_bulk_create_custom_get_async_operation_status_request,
+    build_bulk_create_custom_get_request,
+    build_bulk_create_custom_list_by_resource_group_request,
+    build_bulk_create_custom_list_by_subscription_request,
+    build_bulk_create_custom_virtual_machines_get_operation_status_request,
+    build_bulk_create_delete_request,
+    build_bulk_create_get_async_operation_status_request,
+    build_bulk_create_get_request,
+    build_bulk_create_list_by_resource_group_request,
+    build_bulk_create_list_by_subscription_request,
+    build_bulk_create_virtual_machines_get_operation_status_request,
+    build_occurrence_extension_list_occurrence_by_vms_request,
+    build_occurrences_cancel_request,
+    build_occurrences_delay_request,
+    build_occurrences_get_request,
+    build_occurrences_list_by_scheduled_action_request,
+    build_occurrences_list_resources_request,
     build_operations_list_request,
+    build_scheduled_action_extension_list_by_vms_request,
+    build_scheduled_action_operation_status_get_request,
+    build_scheduled_actions_attach_resources_request,
+    build_scheduled_actions_cancel_next_occurrence_request,
+    build_scheduled_actions_create_or_update_request,
+    build_scheduled_actions_delete_request,
+    build_scheduled_actions_detach_resources_request,
+    build_scheduled_actions_disable_request,
+    build_scheduled_actions_enable_request,
+    build_scheduled_actions_get_request,
+    build_scheduled_actions_list_by_resource_group_request,
+    build_scheduled_actions_list_by_subscription_request,
+    build_scheduled_actions_list_resources_request,
+    build_scheduled_actions_patch_resources_request,
+    build_scheduled_actions_trigger_manual_occurrence_request,
+    build_scheduled_actions_update_request,
+    build_virtual_machine_bulk_operations_bulk_acknowledge_operation_errors_request,
     build_virtual_machine_bulk_operations_bulk_cancel_operations_request,
     build_virtual_machine_bulk_operations_bulk_deallocate_operation_request,
     build_virtual_machine_bulk_operations_bulk_delete_operation_request,
     build_virtual_machine_bulk_operations_bulk_get_operations_status_request,
     build_virtual_machine_bulk_operations_bulk_hibernate_operation_request,
+    build_virtual_machine_bulk_operations_bulk_list_operation_errors_request,
+    build_virtual_machine_bulk_operations_bulk_reimage_operation_request,
     build_virtual_machine_bulk_operations_bulk_start_operation_request,
 )
 from .._configuration import ComputeBulkActionsMgmtClientConfiguration
@@ -50,7 +94,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -163,7 +207,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachineBulkOperationsOperations:
+class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -192,15 +236,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -221,15 +267,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -250,15 +298,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -277,16 +327,17 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.ExecuteDeallocateContent, _types.ExecuteDeallocateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeallocateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Is either a ExecuteDeallocateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent or IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
@@ -371,15 +422,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -400,15 +453,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -429,15 +484,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -456,16 +513,17 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.ExecuteHibernateContent, _types.ExecuteHibernateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteHibernateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Is either a ExecuteHibernateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent or IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
@@ -550,15 +608,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -579,15 +639,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -608,15 +670,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -635,16 +699,17 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.ExecuteStartContent, _types.ExecuteStartContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteStartContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Is either a ExecuteStartContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
@@ -729,15 +794,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -758,15 +825,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -787,15 +856,17 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -814,16 +885,17 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.ExecuteDeleteContent, _types.ExecuteDeleteContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeleteContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Is either a ExecuteDeleteContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent or IO[bytes]
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
@@ -908,15 +980,15 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -937,15 +1009,15 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -966,15 +1038,15 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -993,16 +1065,16 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.GetOperationStatusContent, _types.GetOperationStatusContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a GetOperationStatusContent type or a
-         IO[bytes] type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Is either a GetOperationStatusContent type or a IO[bytes]
+         type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent or
          ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent or IO[bytes]
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
@@ -1087,14 +1159,16 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1115,14 +1189,16 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1143,14 +1219,16 @@ class VirtualMachineBulkOperationsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1169,15 +1247,16 @@ class VirtualMachineBulkOperationsOperations:
         request_body: Union[_models.CancelOperationsContent, _types.CancelOperationsContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a CancelOperationsContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel. Is
+         either a CancelOperationsContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent or
          ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent or IO[bytes]
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
@@ -1251,3 +1330,6579 @@ class VirtualMachineBulkOperationsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def bulk_reimage_operation(
+        self,
+        resource_group_name: str,
+        location: str,
+        request_body: _models.ExecuteReimageRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ReimageResourceOperationResponse:
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
+        :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ReimageResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def bulk_reimage_operation(
+        self,
+        resource_group_name: str,
+        location: str,
+        request_body: _types.ExecuteReimageRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ReimageResourceOperationResponse:
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
+        :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ReimageResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def bulk_reimage_operation(
+        self,
+        resource_group_name: str,
+        location: str,
+        request_body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ReimageResourceOperationResponse:
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
+        :type request_body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ReimageResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def bulk_reimage_operation(
+        self,
+        resource_group_name: str,
+        location: str,
+        request_body: Union[_models.ExecuteReimageRequest, _types.ExecuteReimageRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ReimageResourceOperationResponse:
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Is either a ExecuteReimageRequest type or a IO[bytes] type. Required.
+        :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest or
+         ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest or IO[bytes]
+        :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ReimageResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ReimageResourceOperationResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(request_body, (IOBase, bytes)):
+            _content = request_body
+        else:
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_bulk_operations_bulk_reimage_operation_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ReimageResourceOperationResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "lookback_in_minutes",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-10-06-preview"],
+    )
+    def bulk_list_operation_errors(
+        self, resource_group_name: str, location: str, *, lookback_in_minutes: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ResourceOperation"]:
+        """List recent errors for operations in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :keyword lookback_in_minutes: The number of minutes before the current time to include when
+         listing bulk action errors. Default value is None.
+        :paramtype lookback_in_minutes: int
+        :return: An iterator like instance of ResourceOperation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_virtual_machine_bulk_operations_bulk_list_operation_errors_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    lookback_in_minutes=lookback_in_minutes,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceOperation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def bulk_acknowledge_operation_errors(
+        self,
+        resource_group_name: str,
+        location: str,
+        body: _models.AcknowledgeBulkOperationErrorsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AcknowledgeBulkOperationErrorsResponse:
+        """Acknowledge errors for specified operations in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param body: The Bulk Action Operation Ids that identify operations for which errors should be
+         acknowledged. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AcknowledgeBulkOperationErrorsResponse. The AcknowledgeBulkOperationErrorsResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def bulk_acknowledge_operation_errors(
+        self,
+        resource_group_name: str,
+        location: str,
+        body: _types.AcknowledgeBulkOperationErrorsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AcknowledgeBulkOperationErrorsResponse:
+        """Acknowledge errors for specified operations in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param body: The Bulk Action Operation Ids that identify operations for which errors should be
+         acknowledged. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.AcknowledgeBulkOperationErrorsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AcknowledgeBulkOperationErrorsResponse. The AcknowledgeBulkOperationErrorsResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def bulk_acknowledge_operation_errors(
+        self,
+        resource_group_name: str,
+        location: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AcknowledgeBulkOperationErrorsResponse:
+        """Acknowledge errors for specified operations in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param body: The Bulk Action Operation Ids that identify operations for which errors should be
+         acknowledged. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AcknowledgeBulkOperationErrorsResponse. The AcknowledgeBulkOperationErrorsResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-10-06-preview"],
+    )
+    async def bulk_acknowledge_operation_errors(
+        self,
+        resource_group_name: str,
+        location: str,
+        body: Union[
+            _models.AcknowledgeBulkOperationErrorsRequest, _types.AcknowledgeBulkOperationErrorsRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.AcknowledgeBulkOperationErrorsResponse:
+        """Acknowledge errors for specified operations in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param body: The Bulk Action Operation Ids that identify operations for which errors should be
+         acknowledged. Is either a AcknowledgeBulkOperationErrorsRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsRequest or
+         ~azure.mgmt.compute.bulkaction.types.AcknowledgeBulkOperationErrorsRequest or IO[bytes]
+        :return: AcknowledgeBulkOperationErrorsResponse. The AcknowledgeBulkOperationErrorsResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AcknowledgeBulkOperationErrorsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_virtual_machine_bulk_operations_bulk_acknowledge_operation_errors_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AcknowledgeBulkOperationErrorsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`bulk_create_custom` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> _models.LocationBasedBulkCreateCustom:
+        """Gets an instance of BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :return: LocationBasedBulkCreateCustom. The LocationBasedBulkCreateCustom is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LocationBasedBulkCreateCustom] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_custom_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LocationBasedBulkCreateCustom, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get_async_operation_status(
+        self, location: str, async_operation_id: str, **kwargs: Any
+    ) -> _models.OperationStatusResult:
+        """Get the status of an async operation of a BulkCreateCustom.
+
+        :param location: The location name. Required.
+        :type location: str
+        :param async_operation_id: The async operation id. Required.
+        :type async_operation_id: str
+        :return: OperationStatusResult. The OperationStatusResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.OperationStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_custom_get_async_operation_status_request(
+            location=location,
+            async_operation_id=async_operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: Union[_models.LocationBasedBulkCreateCustom, _types.LocationBasedBulkCreateCustom, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_bulk_create_custom_create_or_update_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: _models.LocationBasedBulkCreateCustom,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreateCustom]:
+        """Creates or updates BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreateCustom. The
+         LocationBasedBulkCreateCustom is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: _types.LocationBasedBulkCreateCustom,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreateCustom]:
+        """Creates or updates BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreateCustom
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreateCustom. The
+         LocationBasedBulkCreateCustom is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreateCustom]:
+        """Creates or updates BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreateCustom. The
+         LocationBasedBulkCreateCustom is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: Union[_models.LocationBasedBulkCreateCustom, _types.LocationBasedBulkCreateCustom, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreateCustom]:
+        """Creates or updates BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Is either a LocationBasedBulkCreateCustom type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom or
+         ~azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreateCustom or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreateCustom. The
+         LocationBasedBulkCreateCustom is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LocationBasedBulkCreateCustom] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.LocationBasedBulkCreateCustom, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.LocationBasedBulkCreateCustom].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.LocationBasedBulkCreateCustom](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "delete_instances",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        *,
+        delete_instances: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_custom_delete_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            delete_instances=delete_instances,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "delete_instances",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        *,
+        delete_instances: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes BulkCreateCustoms.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :keyword delete_instances: When true, deletes all virtual machines created by this BulkAction
+         Operation. Default value is None.
+        :paramtype delete_instances: bool
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                delete_instances=delete_instances,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _cancel_initial(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_custom_cancel_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_cancel(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancels BulkCreateCustom instances that have not yet launched.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._cancel_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-06-preview",
+        params_added_on={
+            "2026-08-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def virtual_machines_get_operation_status(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ResourceOperation"]:
+        """Gets the operation status for virtual machines in a BulkCreateCustom operation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreateCustom. The value must be an UUID. Required.
+        :type name: str
+        :return: An iterator like instance of ResourceOperation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_custom_virtual_machines_get_operation_status_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceOperation],
+                deserialized.get("results", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, location: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LocationBasedBulkCreateCustom"]:
+        """List BulkCreateCustom resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of LocationBasedBulkCreateCustom
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LocationBasedBulkCreateCustom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_custom_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LocationBasedBulkCreateCustom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_subscription(
+        self, location: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LocationBasedBulkCreateCustom"]:
+        """List BulkCreateCustom resources by subscriptionId.
+
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of LocationBasedBulkCreateCustom
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LocationBasedBulkCreateCustom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_custom_list_by_subscription_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LocationBasedBulkCreateCustom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class BulkCreateOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`bulk_create` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> _models.LocationBasedBulkCreate:
+        """Gets an instance of BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :return: LocationBasedBulkCreate. The LocationBasedBulkCreate is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LocationBasedBulkCreate] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LocationBasedBulkCreate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get_async_operation_status(
+        self, location: str, async_operation_id: str, **kwargs: Any
+    ) -> _models.OperationStatusResult:
+        """Get the status of an async operation of a BulkCreate.
+
+        :param location: The location name. Required.
+        :type location: str
+        :param async_operation_id: The async operation id. Required.
+        :type async_operation_id: str
+        :return: OperationStatusResult. The OperationStatusResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.OperationStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_get_async_operation_status_request(
+            location=location,
+            async_operation_id=async_operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: Union[_models.LocationBasedBulkCreate, _types.LocationBasedBulkCreate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_bulk_create_create_or_update_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: _models.LocationBasedBulkCreate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreate]:
+        """Creates or updates BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreate. The
+         LocationBasedBulkCreate is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: _types.LocationBasedBulkCreate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreate]:
+        """Creates or updates BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreate. The
+         LocationBasedBulkCreate is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreate]:
+        """Creates or updates BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreate. The
+         LocationBasedBulkCreate is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        resource: Union[_models.LocationBasedBulkCreate, _types.LocationBasedBulkCreate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LocationBasedBulkCreate]:
+        """Creates or updates BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :param resource: Resource create parameters. Is either a LocationBasedBulkCreate type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate or
+         ~azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns LocationBasedBulkCreate. The
+         LocationBasedBulkCreate is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LocationBasedBulkCreate] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.LocationBasedBulkCreate, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.LocationBasedBulkCreate].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.LocationBasedBulkCreate](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "delete_instances",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        *,
+        delete_instances: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_delete_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            delete_instances=delete_instances,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "delete_instances",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        location: str,
+        name: str,
+        *,
+        delete_instances: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes BulkCreates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :keyword delete_instances: When true, deletes all virtual machines created by this BulkAction
+         Operation. Default value is None.
+        :paramtype delete_instances: bool
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                delete_instances=delete_instances,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _cancel_initial(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_bulk_create_cancel_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_cancel(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancels BulkCreate instances that have not yet launched.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._cancel_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                name=name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def virtual_machines_get_operation_status(
+        self, resource_group_name: str, location: str, name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ResourceOperation"]:
+        """Gets the operation status for virtual machines in a BulkCreate operation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :param name: The name of the BulkCreate. The value must be an UUID. Required.
+        :type name: str
+        :return: An iterator like instance of ResourceOperation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_virtual_machines_get_operation_status_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceOperation],
+                deserialized.get("results", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={
+            "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
+        },
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, location: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LocationBasedBulkCreate"]:
+        """List BulkCreate resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of LocationBasedBulkCreate
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LocationBasedBulkCreate]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LocationBasedBulkCreate],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-06-preview",
+        params_added_on={"2026-09-06-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_subscription(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.LocationBasedBulkCreate"]:
+        """List BulkCreate resources by subscriptionId.
+
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of LocationBasedBulkCreate
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LocationBasedBulkCreate]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_bulk_create_list_by_subscription_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LocationBasedBulkCreate],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`scheduled_actions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
+        """Gets the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScheduledAction] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_get_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ScheduledAction, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: Union[_models.ScheduledAction, _types.ScheduledAction, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_create_or_update_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: _models.ScheduledAction,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Creates or updates a scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param resource: The scheduled action to create or update. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.ScheduledAction
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: _types.ScheduledAction,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Creates or updates a scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param resource: The scheduled action to create or update. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.types.ScheduledAction
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Creates or updates a scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param resource: The scheduled action to create or update. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: Union[_models.ScheduledAction, _types.ScheduledAction, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Creates or updates a scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param resource: The scheduled action to create or update. Is either a ScheduledAction type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.compute.bulkaction.models.ScheduledAction or
+         ~azure.mgmt.compute.bulkaction.types.ScheduledAction or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ScheduledAction] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ScheduledAction, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ScheduledAction].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ScheduledAction](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: Union[_models.ScheduledActionUpdate, _types.ScheduledActionUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_update_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: _models.ScheduledActionUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Updates the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param properties: The scheduled action properties to update. Omitted properties keep their
+         current values. Required.
+        :type properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: _types.ScheduledActionUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Updates the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param properties: The scheduled action properties to update. Omitted properties keep their
+         current values. Required.
+        :type properties: ~azure.mgmt.compute.bulkaction.types.ScheduledActionUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Updates the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param properties: The scheduled action properties to update. Omitted properties keep their
+         current values. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: Union[_models.ScheduledActionUpdate, _types.ScheduledActionUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Updates the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param properties: The scheduled action properties to update. Omitted properties keep their
+         current values. Is either a ScheduledActionUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionUpdate or
+         ~azure.mgmt.compute.bulkaction.types.ScheduledActionUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_delete_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScheduledAction"]:
+        """Lists scheduled actions in the specified resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ScheduledAction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledAction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
+        """Lists scheduled actions in the specified subscription.
+
+        :return: An iterator like instance of ScheduledAction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledAction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_resources(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScheduledActionResource"]:
+        """Lists resources associated with the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An iterator like instance of ScheduledActionResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ScheduledActionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledActionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_resources_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _attach_resources_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceAttachRequest, _types.ResourceAttachRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_attach_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourceAttachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Adds resources to the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to add to the scheduled action. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourceAttachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _types.ResourceAttachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Adds resources to the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to add to the scheduled action. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.ResourceAttachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Adds resources to the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to add to the scheduled action. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceAttachRequest, _types.ResourceAttachRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Adds resources to the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to add to the scheduled action. Is either a ResourceAttachRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourceAttachRequest or
+         ~azure.mgmt.compute.bulkaction.types.ResourceAttachRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._attach_resources_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ResourceOperationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _detach_resources_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceDetachRequest, _types.ResourceDetachRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_detach_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourceDetachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Removes resources from the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to remove from the scheduled action. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourceDetachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _types.ResourceDetachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Removes resources from the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to remove from the scheduled action. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.ResourceDetachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Removes resources from the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to remove from the scheduled action. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceDetachRequest, _types.ResourceDetachRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Removes resources from the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to remove from the scheduled action. Is either a
+         ResourceDetachRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourceDetachRequest or
+         ~azure.mgmt.compute.bulkaction.types.ResourceDetachRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._detach_resources_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ResourceOperationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourcePatchRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceOperationResponse:
+        """Updates resource-specific settings for the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resource-specific settings to update. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourcePatchRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _types.ResourcePatchRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceOperationResponse:
+        """Updates resource-specific settings for the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resource-specific settings to update. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.ResourcePatchRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceOperationResponse:
+        """Updates resource-specific settings for the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resource-specific settings to update. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourcePatchRequest, _types.ResourcePatchRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ResourceOperationResponse:
+        """Updates resource-specific settings for the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resource-specific settings to update. Is either a ResourcePatchRequest type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.ResourcePatchRequest or
+         ~azure.mgmt.compute.bulkaction.types.ResourcePatchRequest or IO[bytes]
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_patch_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _disable_initial(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_disable_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_disable(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Disables the specified scheduled action so future occurrences do not run.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._disable_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _enable_initial(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_enable_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_enable(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Enables the specified scheduled action so new occurrences run.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._enable_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _cancel_next_occurrence_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.CancelOccurrenceRequest, _types.CancelOccurrenceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_cancel_next_occurrence_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the next occurrence of the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
+         the occurrence is canceled for all resources. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _types.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the next occurrence of the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
+         the occurrence is canceled for all resources. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the next occurrence of the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
+         the occurrence is canceled for all resources. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.CancelOccurrenceRequest, _types.CancelOccurrenceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the next occurrence of the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
+         the occurrence is canceled for all resources. Is either a CancelOccurrenceRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.CancelOccurrenceRequest or
+         ~azure.mgmt.compute.bulkaction.types.CancelOccurrenceRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._cancel_next_occurrence_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ResourceOperationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _trigger_manual_occurrence_initial(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_trigger_manual_occurrence_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_trigger_manual_occurrence(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.Occurrence]:
+        """Runs the specified scheduled action immediately.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An instance of AsyncLROPoller that returns Occurrence. The Occurrence is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.Occurrence]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Occurrence] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._trigger_manual_occurrence_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Occurrence, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Occurrence].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Occurrence](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ScheduledActionExtensionOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`scheduled_action_extension` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_vms(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledActionResources"]:
+        """Lists scheduled actions associated with the specified VM.
+
+        :param resource_uri: The fully qualified Azure resource ID of the compute resource. Required.
+        :type resource_uri: str
+        :return: An iterator like instance of ScheduledActionResources
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.ScheduledActionResources]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledActionResources]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_action_extension_list_by_vms_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResources],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ScheduledActionOperationStatusOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`scheduled_action_operation_status` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": ["api_version", "subscription_id", "location", "operation_id", "accept"]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
+        """Gets the status of the specified scheduled action operation.
+
+        :param location: The Azure region where the operation is running. Required.
+        :type location: str
+        :param operation_id: The operation ID in UUID format. Required.
+        :type operation_id: str
+        :return: OperationStatusResult. The OperationStatusResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.OperationStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_action_operation_status_get_request(
+            location=location,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class OccurrencesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`occurrences` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+    ) -> _models.Occurrence:
+        """Gets the specified occurrence.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :return: Occurrence. The Occurrence is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.bulkaction.models.Occurrence
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Occurrence] = kwargs.pop("cls", None)
+
+        _request = build_occurrences_get_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Occurrence, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_by_scheduled_action(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Occurrence"]:
+        """Lists occurrences for the specified scheduled action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :return: An iterator like instance of Occurrence
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.Occurrence]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Occurrence]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrences_list_by_scheduled_action_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Occurrence],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_resources(
+        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.OccurrenceResource"]:
+        """Lists resources for the specified occurrence.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :return: An iterator like instance of OccurrenceResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.OccurrenceResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OccurrenceResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrences_list_resources_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    occurrence_id=occurrence_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _cancel_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.CancelOccurrenceRequest, _types.CancelOccurrenceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_occurrences_cancel_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _models.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The resources to cancel in the occurrence. If no resource IDs are provided, the
+         occurrence is canceled for all resources. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _types.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The resources to cancel in the occurrence. If no resource IDs are provided, the
+         occurrence is canceled for all resources. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The resources to cancel in the occurrence. If no resource IDs are provided, the
+         occurrence is canceled for all resources. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.CancelOccurrenceRequest, _types.CancelOccurrenceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Cancels the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The resources to cancel in the occurrence. If no resource IDs are provided, the
+         occurrence is canceled for all resources. Is either a CancelOccurrenceRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.CancelOccurrenceRequest or
+         ~azure.mgmt.compute.bulkaction.types.CancelOccurrenceRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._cancel_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                occurrence_id=occurrence_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ResourceOperationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def _delay_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.DelayRequest, _types.DelayRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_occurrences_delay_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _models.DelayRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Delays the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The new scheduled time and resources to delay in the occurrence. If no resource
+         IDs are provided, all resources are delayed. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.DelayRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _types.DelayRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Delays the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The new scheduled time and resources to delay in the occurrence. If no resource
+         IDs are provided, all resources are delayed. Required.
+        :type body: ~azure.mgmt.compute.bulkaction.types.DelayRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Delays the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The new scheduled time and resources to delay in the occurrence. If no resource
+         IDs are provided, all resources are delayed. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={
+            "2026-07-06-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.DelayRequest, _types.DelayRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+        """Delays the specified occurrence for the specified resource IDs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
+         and can contain only letters, numbers, and hyphens. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The occurrence ID in UUID format. Required.
+        :type occurrence_id: str
+        :param body: The new scheduled time and resources to delay in the occurrence. If no resource
+         IDs are provided, all resources are delayed. Is either a DelayRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.compute.bulkaction.models.DelayRequest or
+         ~azure.mgmt.compute.bulkaction.types.DelayRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.bulkaction.models.ResourceOperationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delay_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                occurrence_id=occurrence_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ResourceOperationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class OccurrenceExtensionOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient`'s
+        :attr:`occurrence_extension` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-06-preview",
+        params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
+    )
+    def list_occurrence_by_vms(
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.OccurrenceExtensionResource"]:
+        """Lists scheduled action occurrences associated with the specified VM.
+
+        :param resource_uri: The fully qualified Azure resource ID of the compute resource. Required.
+        :type resource_uri: str
+        :return: An iterator like instance of OccurrenceExtensionResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.bulkaction.models.OccurrenceExtensionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OccurrenceExtensionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrence_extension_list_occurrence_by_vms_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceExtensionResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

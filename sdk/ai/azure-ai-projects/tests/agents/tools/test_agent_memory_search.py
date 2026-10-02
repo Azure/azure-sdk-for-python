@@ -25,7 +25,7 @@ class TestAgentMemorySearch(TestBase):
         reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
     )
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_memory_search(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test agent with Memory Search tool for contextual memory retrieval.

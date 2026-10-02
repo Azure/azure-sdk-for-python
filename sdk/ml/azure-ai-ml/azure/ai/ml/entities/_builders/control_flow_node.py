@@ -87,8 +87,8 @@ class LoopNode(ControlFlowNode, ABC):
 
     Please do not directly use this class.
 
-    :param body: The body of the loop node.
-    :type body: ~azure.ai.ml.entities._builders.BaseNode
+    :keyword body: The body of the loop node.
+    :paramtype body: ~azure.ai.ml.entities._builders.BaseNode
     :param kwargs: Additional keyword arguments.
     :type kwargs: Dict[str, Union[Any]]
     """

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Live tests for ``SearchIndexClient`` synonym map operations."""
+
 from __future__ import annotations
 
 import pytest

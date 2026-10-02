@@ -32,13 +32,13 @@ def main():
 
     response = client.node_pools.begin_update(
         resource_group_name="rgdiscovery",
-        supercomputer_name="f674a0697b0c54044e",
-        node_pool_name="12ceb04d31658f1ec7",
-        properties={"properties": {"maxNodeCount": 21, "minNodeCount": 0}, "tags": {"key5366": "uyhhzfhedjkqanudogu"}},
+        supercomputer_name="8e65e3461b33b01369",
+        node_pool_name="2e50b6da812ce89198",
+        properties={"properties": {"maxNodeCount": 24, "minNodeCount": 0}, "tags": {"key101": "dnegxftfhcehhkgcn"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/NodePools_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NodePools_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

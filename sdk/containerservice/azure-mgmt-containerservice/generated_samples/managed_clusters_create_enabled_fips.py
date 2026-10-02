@@ -53,6 +53,7 @@ def main():
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
                 "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
+                "enableFIPS": True,
                 "enableRBAC": True,
                 "kubernetesVersion": "",
                 "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
@@ -71,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/ManagedClustersCreate_EnabledFIPS.json
+# x-ms-original-file: 2026-07-01/ManagedClustersCreate_EnabledFIPS.json
 if __name__ == "__main__":
     main()

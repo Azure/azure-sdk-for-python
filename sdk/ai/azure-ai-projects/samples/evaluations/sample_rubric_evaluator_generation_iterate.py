@@ -37,6 +37,7 @@ USAGE:
 """
 
 import os
+import time
 import uuid
 from datetime import datetime, timezone
 
@@ -69,10 +70,8 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
-    # The LRO polls automatically; `.result()` blocks until the job reaches a terminal state
-    # and returns the produced EvaluatorVersion directly.
-    print("Waiting for generation job to complete (polling is handled by the SDK)...")
-    v1 = project_client.beta.evaluators.begin_create_generation_job(
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -94,7 +93,19 @@ with (
         ),
         operation_id=f"rubric-iterate-{short}",
         polling_interval=poll_interval_seconds,
-    ).result()
+    )
+
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
+        time.sleep(poll_interval_seconds)
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    v1 = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {v1}")
 
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
     v1_definition = v1.definition

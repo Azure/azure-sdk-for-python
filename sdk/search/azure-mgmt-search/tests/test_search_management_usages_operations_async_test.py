@@ -8,10 +8,8 @@
 import pytest
 from azure.mgmt.search.aio import SearchManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-
-AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
@@ -19,9 +17,9 @@ class TestSearchManagementUsagesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(SearchManagementClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
-    async def test_usages_list_by_subscription(self, resource_group):
+    async def test_usages_list_by_subscription(self):
         response = self.client.usages.list_by_subscription(
             location="eastus",
         )

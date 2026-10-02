@@ -20,17 +20,17 @@ from azure.ai.ml.entities._util import load_from_dict
 class VirtualMachineSshSettings:
     """SSH settings for a virtual machine.
 
-    :param admin_username: The admin user name. Defaults to None.
-    :type admin_username: str
-    :param admin_password: The admin user password. Defaults to None.
+    :keyword admin_username: The admin user name. Defaults to None.
+    :paramtype admin_username: str
+    :keyword admin_password: The admin user password. Defaults to None.
         Required if `ssh_private_key_file` is not specified.
-    :type admin_password: Optional[str]
-    :param ssh_port: The ssh port number. Default is 22.
-    :type ssh_port: int
-    :param ssh_private_key_file: Path to the file containing the SSH rsa private key.
+    :paramtype admin_password: Optional[str]
+    :keyword ssh_port: The ssh port number. Default is 22.
+    :paramtype ssh_port: int
+    :keyword ssh_private_key_file: Path to the file containing the SSH rsa private key.
         Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.
         Required if admin_password is not specified.
-    :type ssh_private_key_file: Optional[str]
+    :paramtype ssh_private_key_file: Optional[str]
 
     .. admonition:: Example:
 
@@ -59,16 +59,16 @@ class VirtualMachineSshSettings:
 class VirtualMachineCompute(Compute):
     """Virtual Machine Compute resource.
 
-    :param name: Name of the compute resource.
-    :type name: str
-    :param description: Description of the resource. Defaults to None.
-    :type description: Optional[str]
-    :param resource_id: ARM resource ID of the underlying compute resource.
-    :type resource_id: str
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict]
-    :param ssh_settings: SSH settings. Defaults to None.
-    :type ssh_settings: Optional[~azure.ai.ml.entities.VirtualMachineSshSettings]
+    :keyword name: Name of the compute resource.
+    :paramtype name: str
+    :keyword description: Description of the resource. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword resource_id: ARM resource ID of the underlying compute resource.
+    :paramtype resource_id: str
+    :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :paramtype tags: Optional[dict]
+    :keyword ssh_settings: SSH settings. Defaults to None.
+    :paramtype ssh_settings: Optional[~azure.ai.ml.entities.VirtualMachineSshSettings]
 
     .. admonition:: Example:
 

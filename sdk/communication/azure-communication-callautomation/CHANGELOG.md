@@ -6,6 +6,7 @@
 
 - Added support for moving a participant from one call to another, enabling seamless participant transfer between active calls.
 - Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
+- Added `operation_callback_url` keyword argument to `start_continuous_dtmf_recognition`, allowing the default callback URL set by `create_call`/`answer_call` to be overridden for this operation.
 
 ## 1.5.0 (2025-09-10)
 

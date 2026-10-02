@@ -38,12 +38,21 @@ class TestHorizonDBMgmtHorizonDbClustersOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "administratorLogin": "str",
                     "administratorLoginPassword": "str",
+                    "authConfig": {"entraIdAuth": "str", "passwordAuth": "str", "tenantId": "str"},
+                    "computeModel": {"maxvCores": 0.0, "minvCores": 0.0, "type": "str", "vCores": 0},
                     "createMode": "str",
                     "fullyQualifiedDomainName": "str",
+                    "mirroring": {"databaseNames": ["str"], "userAssignedIdentityId": "str"},
                     "network": {"publicNetworkAccess": "str"},
                     "parameterGroup": {"applyImmediately": bool, "id": "str", "syncStatus": "str"},
                     "pointInTimeUTC": "2020-02-20 00:00:00",
@@ -81,8 +90,17 @@ class TestHorizonDBMgmtHorizonDbClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             properties={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "administratorLoginPassword": "str",
+                    "authConfig": {"entraIdAuth": "str", "passwordAuth": "str", "tenantId": "str"},
+                    "computeModel": {"maxvCores": 0.0, "minvCores": 0.0, "type": "str", "vCores": 0},
+                    "mirroring": {"databaseNames": ["str"], "userAssignedIdentityId": "str"},
                     "parameterGroup": {"applyImmediately": bool, "id": "str", "syncStatus": "str"},
                     "vCores": 0,
                 },
@@ -119,5 +137,38 @@ class TestHorizonDBMgmtHorizonDbClustersOperations(AzureMgmtRecordedTestCase):
     def test_horizon_db_clusters_list_by_subscription(self, resource_group):
         response = self.client.horizon_db_clusters.list_by_subscription()
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_horizon_db_clusters_begin_start(self, resource_group):
+        response = self.client.horizon_db_clusters.begin_start(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_horizon_db_clusters_begin_stop(self, resource_group):
+        response = self.client.horizon_db_clusters.begin_stop(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_horizon_db_clusters_begin_restart(self, resource_group):
+        response = self.client.horizon_db_clusters.begin_restart(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

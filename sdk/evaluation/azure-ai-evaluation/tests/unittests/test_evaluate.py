@@ -5,8 +5,12 @@ import math
 import os
 import pathlib
 import numpy as np
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
+from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.rest import HttpRequest
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -53,11 +57,12 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _is_inverse_metric,
     _create_result_object,
     emit_eval_result_events_to_app_insights,
+    _get_app_insights_exporter_options,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
@@ -3549,6 +3554,83 @@ class TestUpdateMetricValuePreservesExplicitPassed:
         assert results[0]["label"] == "Pass"
 
 
+@pytest.mark.unittest
+class TestEvaluationPerTurnNotRoutedToScalar:
+    """Tests for the root-cause fix: per-turn breakdown columns (``evaluation_per_turn.*``)
+    must NOT be suffix-routed into scalar AOAI result fields.
+
+    Multi-turn (conversation-level) evaluators such as retrieval aggregate per-turn results,
+    producing both a top-level scalar metric (e.g. ``retrieval_total_tokens``) and a flattened
+    per-turn breakdown column (``evaluation_per_turn.retrieval_total_tokens``) whose value is a
+    *list*. The latter ends with ``_total_tokens`` and previously got routed into the scalar
+    ``sample.usage.total_tokens`` slot, double-writing over the real scalar and crashing the
+    converter with ``TypeError: float() argument must be a string or a real number, not 'list'``.
+    """
+
+    @staticmethod
+    def _extract(metrics):
+        return _extract_metric_values(
+            criteria_name="retrieval",
+            criteria_type="azure_ai_evaluator",
+            metrics=metrics,
+            expected_metrics=["retrieval"],
+            logger=logging.getLogger("test"),
+        )
+
+    def test_per_turn_token_list_does_not_reach_usage(self):
+        """The per-turn token list must be dropped from scalar routing (no crash, no list in usage)."""
+        metrics = {
+            "score": 4.0,
+            "retrieval_total_tokens": 300,
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        # Scalar top-level value populates usage; per-turn list is not present anywhere in usage.
+        assert usage["total_tokens"] == 300
+        assert [100, 200] not in usage.values()
+
+    def test_scalar_token_survives_regardless_of_order(self):
+        """Whichever order the columns iterate, the scalar (not the per-turn list) wins usage."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+            "retrieval_total_tokens": 300,
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["sample"]["usage"]["total_tokens"] == 300
+
+    def test_per_turn_prompt_and_completion_tokens_skipped(self):
+        """All *_tokens per-turn breakdowns are skipped, only scalars reach usage."""
+        metrics = {
+            "retrieval_prompt_tokens": 12,
+            "retrieval_completion_tokens": 8,
+            "evaluation_per_turn.retrieval_prompt_tokens": [5, 7],
+            "evaluation_per_turn.retrieval_completion_tokens": [3, 5],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        assert usage["prompt_tokens"] == 12
+        assert usage["completion_tokens"] == 8
+
+    def test_per_turn_score_does_not_clobber_scalar_score(self):
+        """A per-turn score list must not overwrite the scalar score."""
+        metrics = {
+            "score": 4.0,
+            "evaluation_per_turn.retrieval_score": [3, 5],
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["score"] == 4.0
+
+    def test_per_turn_columns_absent_when_no_scalar(self):
+        """With only per-turn columns present, nothing is routed (no spurious scalar metric)."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        # No usable scalar metric was produced from the per-turn-only input.
+        assert "retrieval" not in result or "sample" not in result.get("retrieval", {})
+
+
 @pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
 class TestEmitEvalResultShutdown:
     """Tests that emit_eval_result_events_to_app_insights shuts down the LoggerProvider."""
@@ -3613,3 +3695,211 @@ class TestEmitEvalResultShutdown:
 
         emit_eval_result_events_to_app_insights(config, [])
         mock_lp_cls.assert_not_called()
+
+
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
+class TestAppInsightsAuthentication:
+    """Tests for Application Insights exporter authentication configuration."""
+
+    _RESULTS = [
+        {
+            "results": [{"metric": "coherence", "score": 4.5}],
+            "datasource_item": {},
+        }
+    ]
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_project_managed_identity_credential_and_scope_are_passed_to_exporter(self, mock_lp_cls, caplog):
+        mock_lp_cls.return_value.force_flush.return_value = True
+        credential = MagicMock(spec=TokenCredential)
+        exporter_module = MagicMock()
+        config = {
+            "connection_string": "InstrumentationKey=fake-key",
+            "credential_type": "ProjectManagedIdentity",
+            "credential": credential,
+        }
+
+        with caplog.at_level(logging.INFO), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
+            emit_eval_result_events_to_app_insights(config, self._RESULTS)
+
+        exporter_options = exporter_module.AzureMonitorLogExporter.call_args.kwargs
+        assert exporter_options["connection_string"] == "InstrumentationKey=fake-key"
+        assert exporter_options["credential_scopes"] == ["https://monitor.azure.com/.default"]
+        assert exporter_options["credential"] is not credential
+        assert "token" not in config
+        assert "Successfully logged 1 evaluation results to App Insights" in caplog.text
+
+    def test_exporter_credential_refresh_uses_monitor_scope(self):
+        credential = MagicMock(spec=TokenCredential)
+        credential.get_token.side_effect = [
+            AccessToken("token-1", 0),
+            AccessToken("token-2", 0),
+        ]
+        exporter_options = _get_app_insights_exporter_options(
+            {
+                "connection_string": "InstrumentationKey=fake-key",
+                "credential_type": "ProjectManagedIdentity",
+                "credential": credential,
+            }
+        )
+        policy = BearerTokenCredentialPolicy(
+            exporter_options["credential"],
+            "https://monitor.azure.com//.default",
+        )
+        request = PipelineRequest(
+            HttpRequest("POST", "https://example.test"),
+            PipelineContext(None),
+        )
+
+        policy.on_request(request)
+        policy.on_request(request)
+
+        assert credential.get_token.call_args_list == [
+            call("https://monitor.azure.com/.default"),
+            call("https://monitor.azure.com/.default"),
+        ]
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_project_managed_identity_exporter_failure_is_logged(self, mock_lp_cls, caplog):
+        credential = MagicMock(spec=TokenCredential)
+        exporter_module = MagicMock()
+        exporter_module.AzureMonitorLogExporter.side_effect = RuntimeError("authentication failed")
+
+        with caplog.at_level(logging.ERROR), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
+
+        assert "Failed to emit evaluation results to App Insights: authentication failed" in caplog.text
+        mock_lp_cls.return_value.shutdown.assert_called_once()
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_project_managed_identity_batch_export_failure_is_logged(self, mock_lp_cls, caplog):
+        from opentelemetry.sdk._logs.export import LogExportResult
+
+        mock_lp_cls.return_value.force_flush.return_value = True
+        credential = MagicMock(spec=TokenCredential)
+        exporter = MagicMock()
+        exporter.export.return_value = LogExportResult.FAILURE
+        exporter_module = MagicMock()
+        exporter_module.AzureMonitorLogExporter.return_value = exporter
+
+        def create_processor(tracked_exporter, **_kwargs):
+            tracked_exporter.export([])
+            return MagicMock()
+
+        with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}), patch(
+            "opentelemetry.sdk._logs.export.BatchLogRecordProcessor",
+            side_effect=create_processor,
+        ), caplog.at_level(logging.ERROR):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
+
+        assert "Failed to export evaluation results to App Insights." in caplog.text
+        assert "Successfully logged" not in caplog.text
+        exporter.export.assert_called_once_with([])
+        mock_lp_cls.return_value.force_flush.assert_called_once()
+        mock_lp_cls.return_value.shutdown.assert_called_once()
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_project_managed_identity_flush_timeout_is_logged(self, mock_lp_cls, caplog):
+        mock_lp_cls.return_value.force_flush.return_value = False
+        credential = MagicMock(spec=TokenCredential)
+        exporter_module = MagicMock()
+
+        with caplog.at_level(logging.WARNING), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
+
+        assert "App Insights force_flush timed out after 60000ms" in caplog.text
+        mock_lp_cls.return_value.shutdown.assert_called_once()
+
+    @patch("azure.identity.DefaultAzureCredential")
+    def test_entra_authentication_requires_credential_without_fallback(self, mock_default_credential):
+        environment = {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=environment-key",
+            "AZURE_CLIENT_ID": "environment-client-id",
+        }
+        with patch.dict(os.environ, environment, clear=False):
+            original_environment = os.environ.copy()
+            with pytest.raises(
+                ValueError,
+                match="ProjectManagedIdentity authentication requires a TokenCredential",
+            ):
+                emit_eval_result_events_to_app_insights(
+                    {
+                        "connection_string": "InstrumentationKey=fake-key",
+                        "credential_type": "ProjectManagedIdentity",
+                    },
+                    self._RESULTS,
+                )
+            assert os.environ == original_environment
+        mock_default_credential.assert_not_called()
+
+    def test_unknown_credential_type_does_not_fall_back_to_api_key(self):
+        with pytest.raises(EvaluationException, match="Unsupported App Insights credential type") as exc_info:
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "FutureCredential",
+                },
+                self._RESULTS,
+            )
+        assert exc_info.value.target == ErrorTarget.EVALUATE
+        assert exc_info.value.category == ErrorCategory.INVALID_VALUE
+        assert exc_info.value.blame == ErrorBlame.SYSTEM_ERROR
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_missing_credential_type_configuration_remains_compatible(self, mock_lp_cls):
+        mock_lp_cls.return_value.force_flush.return_value = True
+        exporter_module = MagicMock()
+        config = {"connection_string": "InstrumentationKey=fake-key"}
+
+        with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
+            emit_eval_result_events_to_app_insights(config, self._RESULTS)
+
+        exporter_module.AzureMonitorLogExporter.assert_called_once_with(connection_string="InstrumentationKey=fake-key")
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_api_key_configuration_disables_environment_fallback(self, mock_lp_cls):
+        mock_lp_cls.return_value.force_flush.return_value = True
+        exporter_module = MagicMock()
+        config = {
+            "connection_string": "InstrumentationKey=fake-key",
+            "credential_type": "ApiKey",
+        }
+
+        with patch.dict(
+            os.environ,
+            {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"},
+            clear=False,
+        ), patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
+            emit_eval_result_events_to_app_insights(config, self._RESULTS)
+
+        exporter_module.AzureMonitorLogExporter.assert_called_once_with(
+            connection_string="InstrumentationKey=fake-key",
+            credential=None,
+        )

@@ -25,7 +25,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -76,6 +76,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                     "sourceMetadata": {
                         "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                         "hardwareProfile": {
+                            "processorMode": "str",
                             "vmSize": "str",
                             "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                         },
@@ -135,10 +136,18 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                             "proxyAgentSettings": {
                                 "addProxyAgentExtension": bool,
                                 "enabled": bool,
-                                "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                "imds": {
+                                    "inVMAccessControlProfileReferenceId": "str",
+                                    "mode": "str",
+                                    "useLocalFileRules": bool,
+                                },
                                 "keyIncarnationId": 0,
                                 "mode": "str",
-                                "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                "wireServer": {
+                                    "inVMAccessControlProfileReferenceId": "str",
+                                    "mode": "str",
+                                    "useLocalFileRules": bool,
+                                },
                             },
                             "securityType": "str",
                             "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
@@ -155,6 +164,21 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                                     "diskSizeGB": 0,
                                     "lun": 0,
                                     "managedDisk": {
+                                        "additionalDiskProperties": {
+                                            "managedDiskProperties": {
+                                                "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                "burstingEnabled": bool,
+                                                "diskAccessId": "str",
+                                                "diskIOPSReadOnly": 0,
+                                                "diskMBpsReadOnly": 0,
+                                                "logicalSectorSize": 0,
+                                                "maxShares": 0,
+                                                "networkAccessPolicy": "str",
+                                                "optimizedForFrequentAttach": bool,
+                                                "performancePlus": bool,
+                                                "tier": "str",
+                                            }
+                                        },
                                         "diskEncryptionSet": {"id": "str"},
                                         "id": "str",
                                         "securityProfile": {
@@ -182,6 +206,21 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                                     "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
                                 },
                                 "managedDisk": {
+                                    "additionalDiskProperties": {
+                                        "managedDiskProperties": {
+                                            "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                            "burstingEnabled": bool,
+                                            "diskAccessId": "str",
+                                            "diskIOPSReadOnly": 0,
+                                            "diskMBpsReadOnly": 0,
+                                            "logicalSectorSize": 0,
+                                            "maxShares": 0,
+                                            "networkAccessPolicy": "str",
+                                            "optimizedForFrequentAttach": bool,
+                                            "performancePlus": bool,
+                                            "tier": "str",
+                                        }
+                                    },
                                     "diskEncryptionSet": {"id": "str"},
                                     "id": "str",
                                     "securityProfile": {
@@ -211,7 +250,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -224,7 +263,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
