@@ -43,7 +43,7 @@ servicePreparer = functools.partial(
     foundry_project_api_key="sanitized-api-key",
     foundry_agent_name="sanitized-agent-name",
     foundry_model_name="sanitized-model-deployment-name",
-    foundry_voice_model_name="sanitized-model-deployment-name",
+    foundry_voice_agent_model="sanitized-model-deployment-name",
     llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
@@ -101,6 +101,18 @@ modelsServicePreparer = functools.partial(
     "",
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+)
+
+# Slim preparer for the Voice Agents realtime live tests
+# (tests/agents/test_voice_agent_realtime_livetest*.py). These only open a live WebSocket
+# connection against a Foundry project and a managed realtime model, so -- unlike the shared
+# `servicePreparer` above -- this doesn't require blank placeholders for its ~40 other, unrelated
+# variables (fine-tuning, Bing, SharePoint, ...) to be present in the environment.
+voiceAgentRealtimeServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_voice_agent_model="sanitized-model-deployment-name",
 )
 
 # Fine-tuning job type constants

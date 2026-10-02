@@ -140,7 +140,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
 
         async with project_client:
             if is_live():
-                model = kwargs.get("foundry_voice_model_name")
+                model = kwargs.get("foundry_voice_agent_model")
                 assert model is not None
                 conversation_id = await _create_live_conversation(project_client, model)
                 add_general_regex_sanitizer(

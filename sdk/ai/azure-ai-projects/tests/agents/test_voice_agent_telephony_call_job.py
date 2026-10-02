@@ -85,7 +85,7 @@ class TestVoiceAgentTelephonyCallJob(TestBase):
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         # Voice-agent operations require the preview opt-in.
         project_client = self.create_client(allow_preview=True, **kwargs)

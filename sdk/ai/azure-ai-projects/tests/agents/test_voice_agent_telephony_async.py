@@ -101,7 +101,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         # Voice-agent operations require the preview opt-in.
         project_client = self.create_async_client(allow_preview=True, **kwargs)
@@ -217,7 +217,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         project_client = self.create_async_client(allow_preview=True, **kwargs)
         agent_name = "VoiceAgentTelephonyCallsTest"
@@ -280,7 +280,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         DELETE /agents/{agent_name}                                                                       project_client.agents.delete()
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         project_client = self.create_async_client(allow_preview=True, **kwargs)
         agent_name = "VoiceAgentGeneratedAudioTest"

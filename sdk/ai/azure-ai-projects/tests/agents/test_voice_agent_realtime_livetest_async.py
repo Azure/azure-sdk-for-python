@@ -6,28 +6,21 @@
 # cSpell:disable
 
 """
-Live-only tests for the hand-written sync ``client.beta.voice_agents.realtime`` WebSocket streaming client.
+Live-only tests for the hand-written async ``async_client.beta.voice_agents.realtime`` WebSocket streaming client.
 
-Unlike ``tests/agents/test_realtime_client.py`` (which mocks the transport to unit-test URL
-construction, auth, and error paths without a live service), these tests open a REAL WebSocket
-connection to a live voice agent and assert on the actual streamed server events. They are
-modeled on the live realtime test pattern used by the ``azure-ai-voicelive`` package
-(``sdk/voicelive/azure-ai-voicelive/tests/live/``): skip entirely unless running live, use
-generous per-event timeouts, and assert on event *types* and content presence/length rather than
-exact audio bytes (the model's actual audio/text output is not deterministic).
-
-These tests do not use ``store=True`` / read back a persisted conversation -- that surface
-(``project_client.beta.voice_agents.conversations.*``) is covered by the separate recorded
-tests in ``test_voice_agent_conversations.py``, which need a real conversation id but replay
-against a recorded cassette rather than opening a live WebSocket connection on every run.
+Async counterpart of ``test_voice_agent_realtime_livetest.py``. See that module's docstring for the
+overall rationale (modeled on the ``azure-ai-voicelive`` package's live realtime test pattern:
+skip entirely unless running live, generous per-event timeouts, assert on event types and
+content presence/length rather than exact audio bytes).
 """
 
+import asyncio
 import json
 import time
 from typing import Any, cast, Final, List, Tuple
 
 import pytest
-from test_base import TestBase, servicePreparer
+from test_base import TestBase, voiceAgentRealtimeServicePreparer
 from devtools_testutils import is_live
 from azure.ai.projects.models import (
     RealtimeConversationItemFunctionCallOutput,
@@ -67,22 +60,23 @@ def _get_weather(city: str) -> str:
 
 
 @pytest.mark.live_test_only
+@pytest.mark.live_test_only_async
 @pytest.mark.skipif(
     not is_live(),
     reason="Live-only: opens a real WebSocket connection to the realtime service, which cannot "
     "be captured/replayed by the test proxy.",
 )
-class TestVoiceAgentRealtimeLive(TestBase):
+class TestVoiceAgentRealtimeLivetestAsync(TestBase):
     """
-    Live tests covering ``client.beta.voice_agents.realtime.connect()`` (the hand-written sync WebSocket streaming
-    client) against a real voice agent and a real service connection.
+    Live tests covering ``async_client.beta.voice_agents.realtime.connect()`` (the hand-written async WebSocket
+    streaming client) against a real voice agent and a real service connection.
     """
 
     def _make_agent_name(self, suffix: str) -> str:
-        return f"test-realtime-live-{suffix}"
+        return f"test-realtime-live-async-{suffix}"
 
-    def _create_basic_agent(self, project_client, agent_name: str, model: str) -> None:
-        project_client.agents.create_version(
+    async def _create_basic_agent(self, project_client, agent_name: str, model: str) -> None:
+        await project_client.agents.create_version(
             agent_name=agent_name,
             definition=VoiceAgentDefinition(
                 model_type=VoiceModelType.MANAGED,
@@ -96,35 +90,42 @@ class TestVoiceAgentRealtimeLive(TestBase):
         )
 
     # To run only this test:
-    # pytest tests\agents\test_voice_agent_realtime_live.py::TestVoiceAgentRealtimeLive::test_realtime_session_lifecycle -s
-    @servicePreparer()
-    def test_realtime_session_lifecycle(self, **kwargs):
+    # pytest tests\agents\test_voice_agent_realtime_livetest_async.py::TestVoiceAgentRealtimeLivetestAsync::test_realtime_session_lifecycle_async -s
+    @voiceAgentRealtimeServicePreparer()
+    async def test_realtime_session_lifecycle_async(self, **kwargs):
         """
         Test opening and cleanly closing a realtime WebSocket session, and receiving the initial
         ``session.created`` handshake event.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
-        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("lifecycle")
 
+        # Track whether the agent was actually created so a failure in _create_basic_agent (e.g.
+        # the model isn't supported in this project's region) isn't masked by a follow-on
+        # ResourceNotFoundError from deleting an agent that was never created.
+        agent_created = False
         try:
-            self._create_basic_agent(project_client, agent_name, model)
+            await self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
-                event = conn.recv(timeout=_EVENT_TIMEOUT)
+            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+                event = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(event, RealtimeServerEventSessionCreated)
                 assert event.type == "session.created"
-            # The `with` block above closes the connection; a second `recv()` after close
+            # The `async with` block above closes the connection; a second `recv()` after close
             # would raise, so we don't attempt one -- clean exit from the block is the assertion.
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
+            await project_client.close()
 
     # To run only this test:
-    # pytest tests\agents\test_voice_agent_realtime_live.py::TestVoiceAgentRealtimeLive::test_realtime_text_turn_produces_audio_and_transcript -s
-    @servicePreparer()
-    def test_realtime_text_turn_produces_audio_and_transcript(self, **kwargs):
+    # pytest tests\agents\test_voice_agent_realtime_livetest_async.py::TestVoiceAgentRealtimeLivetestAsync::test_realtime_text_turn_produces_audio_and_transcript_async -s
+    @voiceAgentRealtimeServicePreparer()
+    async def test_realtime_text_turn_produces_audio_and_transcript_async(self, **kwargs):
         """
         Test sending one typed user turn and receiving a streamed audio + transcript reply.
 
@@ -135,19 +136,21 @@ class TestVoiceAgentRealtimeLive(TestBase):
         size/non-emptiness are checked, matching the ``azure-ai-voicelive`` live test convention.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
-        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("text-turn")
 
+        agent_created = False
         try:
-            self._create_basic_agent(project_client, agent_name, model)
+            await self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
-                session_created = conn.recv(timeout=_EVENT_TIMEOUT)
+            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+                session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 
-                conn.conversation.item.create(
+                await conn.conversation.item.create(
                     item=RealtimeConversationItemMessageUser(
                         type=RealtimeConversationItemType.MESSAGE,
                         content=[
@@ -157,7 +160,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
                         ],
                     )
                 )
-                conn.response.create()
+                await conn.response.create()
 
                 audio_delta_count = 0
                 audio_bytes = 0
@@ -166,7 +169,8 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 deadline = time.monotonic() + _RESPONSE_TIMEOUT
 
                 while time.monotonic() < deadline and not got_response_done:
-                    event = conn.recv(timeout=_EVENT_TIMEOUT)
+                    remaining = max(deadline - time.monotonic(), 0.1)
+                    event = await asyncio.wait_for(conn.recv(), timeout=min(_EVENT_TIMEOUT, remaining))
                     if isinstance(event, RealtimeServerEventResponseAudioDelta):
                         audio_delta_count += 1
                         audio_bytes += len(event.delta)
@@ -183,26 +187,29 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 assert audio_bytes > 0, "Expected non-empty streamed audio"
                 assert transcript_done_count == 1, "Expected exactly one audio-transcript-done event"
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
+            await project_client.close()
 
     # To run only this test:
-    # pytest tests\agents\test_voice_agent_realtime_live.py::TestVoiceAgentRealtimeLive::test_realtime_function_tool_call -s
-    @servicePreparer()
-    def test_realtime_function_tool_call(self, **kwargs):
+    # pytest tests\agents\test_voice_agent_realtime_livetest_async.py::TestVoiceAgentRealtimeLivetestAsync::test_realtime_function_tool_call_async -s
+    @voiceAgentRealtimeServicePreparer()
+    async def test_realtime_function_tool_call_async(self, **kwargs):
         """
         Test a client-executed function-tool round trip during a live realtime session.
 
         Configures the agent with a ``get_weather`` function tool, sends a prompt that should
         trigger it, executes the tool call locally when the service asks for it, and sends the
-        result back so the agent can finish its reply -- mirroring
-        ``samples/agents/voice/sample_voice_agent_live_function_tool.py``, which this test
-        adapts into an automated assertion-based form.
+        result back so the agent can finish its reply -- the async counterpart of
+        ``sample_voice_agent_realtime_function_tool.py``'s pattern, adapted into an automated
+        assertion-based test.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
-        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("tool-call")
+        agent_created = False
 
         get_weather_tool = VoiceAgentFunctionTool(
             name="get_weather",
@@ -218,7 +225,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
         )
 
         try:
-            project_client.agents.create_version(
+            await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
@@ -231,12 +238,13 @@ class TestVoiceAgentRealtimeLive(TestBase):
                     tools=[get_weather_tool],
                 ),
             )
+            agent_created = True
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
-                session_created = conn.recv(timeout=_EVENT_TIMEOUT)
+            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+                session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 
-                conn.conversation.item.create(
+                await conn.conversation.item.create(
                     item=RealtimeConversationItemMessageUser(
                         type=RealtimeConversationItemType.MESSAGE,
                         content=[
@@ -246,7 +254,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
                         ],
                     )
                 )
-                conn.response.create()
+                await conn.response.create()
 
                 tool_call_count = 0
                 final_text = ""
@@ -259,7 +267,8 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 pending_tool_outputs: List[Tuple[str, str]] = []
 
                 while time.monotonic() < deadline and not done:
-                    event = conn.recv(timeout=_EVENT_TIMEOUT)
+                    remaining = max(deadline - time.monotonic(), 0.1)
+                    event = await asyncio.wait_for(conn.recv(), timeout=min(_EVENT_TIMEOUT, remaining))
                     if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
                         tool_call_count += 1
                         assert event.name == "get_weather"
@@ -282,11 +291,11 @@ class TestVoiceAgentRealtimeLive(TestBase):
                             # The function-call response has now fully completed, so it's safe to
                             # submit its tool output(s) and ask for a new response.
                             for call_id, result in pending_tool_outputs:
-                                conn.conversation.item.create(
+                                await conn.conversation.item.create(
                                     item=RealtimeConversationItemFunctionCallOutput(call_id=call_id, output=result)
                                 )
                             pending_tool_outputs = []
-                            conn.response.create()
+                            await conn.response.create()
                         elif not is_function_call:
                             done = True
                     elif isinstance(event, RealtimeServerEventError):
@@ -296,4 +305,6 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 assert tool_call_count >= 1, "Expected the agent to invoke the get_weather tool at least once"
                 assert final_text is not None and len(final_text.strip()) > 0
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
+            await project_client.close()

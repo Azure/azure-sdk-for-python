@@ -1,5 +1,14 @@
 # Release History
 
+## 2.8.0 (Unreleased)
+
+### Sample updates
+
+* Renamed realtime Voice Agent samples `sample_voice_agent_live_text_conversation.py` and `sample_voice_agent_live_text_conversation_async.py` to `sample_voice_agent_realtime_text_conversation.py` and `sample_voice_agent_realtime_text_conversation_async.py`.
+* Renamed `sample_voice_agent_live_audio_conversation_async.py` to `sample_voice_agent_realtime_audio_conversation_async.py`.
+* Renamed `sample_voice_agent_live_function_tool.py` to `sample_voice_agent_realtime_function_tool.py`.
+* Renamed environment variable `FOUNDRY_VOICE_MODEL` to `FOUNDRY_VOICE_AGENT_MODEL` in all Voice Agent samples (`FOUNDRY_VOICE_MODEL` is still read as a deprecated fallback in `sample_voice_agent_with_tools.py`, so existing self-deployed (BYOM) configurations keep working).
+
 ## 2.7.0 (2026-09-18)
 
 ### Features Added

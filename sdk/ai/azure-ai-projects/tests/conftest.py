@@ -30,6 +30,16 @@ if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "live_test_only: mark test to be a live test only")
+    config.addinivalue_line(
+        "markers",
+        "live_test_only_async: live_test_only, further excluded from the live-test CI pipeline "
+        "(tests.yml) pending an azure-core fix for aiohttp Brotli decompression -- see "
+        "tests/agents/test_voice_agent_realtime_livetest_async.py",
+    )
+
+
 def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
