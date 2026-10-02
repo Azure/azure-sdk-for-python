@@ -34,10 +34,12 @@ Breaking changes in preview classes:
 
 ### Sample updates
 
-* Updated Agent Optimization and data generation samples for the GA APIs and typed models.
-* Updated evaluator catalog, endpoint, rubric generation, and agentic evaluator samples for GA APIs and current data contracts.
-* Added `sample_output_quality.py` and `sample_tool_use_quality.py` for composite evaluators. Removed deprecated `sample_quality_grader.py`.
-* Updated multi-turn evaluation, simulation, synthetic data, and trace samples for GA data source types and current evaluation contracts.
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
+* Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobOptions` to generate multi-turn evaluation seeds from a prompt source.
+* Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
+* Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
+* Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
 
 ## 2.7.0 (2026-09-18)
 

@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from collections.abc import MutableMapping
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
@@ -16,6 +17,7 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.utils import case_insensitive_dict
 from ._patch_evaluation_typeddicts import (
     AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -80,6 +82,35 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
+
+
+_DATA_GENERATION_JOBS_FEATURE_HEADER: Final[str] = _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value
+"""Foundry-Features header value sent by the data generation job methods on the `.datasets` sub-client."""
+
+
+def _merge_foundry_features_header(headers: Any, foundry_features_value: str) -> MutableMapping[str, Any]:
+    """Return a copy of *headers* whose Foundry-Features header includes *foundry_features_value*.
+
+    A caller-supplied Foundry-Features value is preserved; the new value is appended to it
+    (comma-separated) unless it is already present.
+
+    :param headers: Caller-supplied request headers, or None.
+    :type headers: Any
+    :param foundry_features_value: The Foundry-Features opt-in value to add, e.g. "DataGenerationJobs=V1Preview".
+    :type foundry_features_value: str
+    :return: A case-insensitive headers dictionary including the merged Foundry-Features header.
+    :rtype: MutableMapping[str, Any]
+    """
+    merged = case_insensitive_dict(headers or {})
+    existing = merged.get(_FOUNDRY_FEATURES_HEADER_NAME)
+    if not existing:
+        merged[_FOUNDRY_FEATURES_HEADER_NAME] = foundry_features_value
+        return merged
+    values = [value.strip() for value in str(existing).split(",") if value.strip()]
+    if foundry_features_value.lower() not in (value.lower() for value in values):
+        values.append(foundry_features_value)
+    merged[_FOUNDRY_FEATURES_HEADER_NAME] = ",".join(values)
+    return merged
 
 
 def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
