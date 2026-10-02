@@ -71,6 +71,14 @@ def _should_refresh_token(token: Optional[Union["AccessToken", "AccessTokenInfo"
     return time_until_expiry < (DEFAULT_REFRESH_WINDOW_SECONDS - refresh_jitter)
 
 
+def _enforce_safe_authority(url: str) -> None:
+    # URL parsers used by transports can interpret backslashes as authority delimiters, so a URL
+    # such as "https://good-host\\@attacker/..." can send the bearer token to an unintended host
+    # while still looking like "good-host" to urlparse. Reject it before attaching the token.
+    if "\\" in urlparse(url).netloc:
+        raise ValueError("The request URL must not contain backslashes in its authority.")
+
+
 def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
     # move 'enforce_https' from options to context so it persists
     # across retries but isn't passed to a transport implementation
@@ -80,11 +88,7 @@ def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
     if option is False:
         request.context["enforce_https"] = option
 
-    # URL parsers used by transports can interpret backslashes as authority delimiters, so a URL
-    # such as "https://good-host\\@attacker/..." can send the bearer token to an unintended host
-    # while still looking like "good-host" to urlparse. Reject it before attaching the token.
-    if "\\" in urlparse(request.http_request.url).netloc:
-        raise ValueError("The request URL must not contain backslashes in its authority.")
+    _enforce_safe_authority(request.http_request.url)
 
     enforce_https = request.context.get("enforce_https", True)
     if enforce_https and not request.http_request.url.lower().startswith("https"):
@@ -184,6 +188,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        _enforce_safe_authority(request.http_request.url)
         self._request_token(*scopes, **kwargs)
         bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
         self._update_headers(request.http_request.headers, bearer_token)
