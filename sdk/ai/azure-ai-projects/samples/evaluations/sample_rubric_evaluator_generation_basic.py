@@ -30,7 +30,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -88,7 +88,7 @@ with (
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
-    poller = project_client.beta.evaluators.begin_create_generation_job(
+    poller = project_client.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -206,4 +206,4 @@ with (
     # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)

@@ -1,5 +1,29 @@
 # Release History
 
+## 2.8.0 (Unreleased)
+
+### Breaking Changes
+
+Breaking changes in beta classes:
+* Enum members `DataGenerationJobScenario.SUPERVISED_FINETUNING` and `DataGenerationJobScenario.REINFORCEMENT_FINETUNING` renamed to `SUPERVISED_FINETUNING_PREVIEW` and `REINFORCEMENT_FINETUNING_PREVIEW`. Their wire values changed to `supervised_finetuning_preview` and `reinforcement_finetuning_preview`.
+
+### Bugs Fixed
+
+* The data generation job methods on `.datasets` (`begin_create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job` and `delete_generation_job`) now send the `Foundry-Features: DataGenerationJobs=V1Preview` opt-in HTTP request header, which the service requires for preview data generation features (supervised and reinforcement fine-tuning scenarios, `question_types`, `tool_use` and Azure OpenAI file outputs). The value is appended to any caller-supplied `Foundry-Features` header. Other `.datasets` methods are not affected.
+
+### Sample updates
+
+* Updated the data generation job samples under `samples/datasets/`:
+  * Docstrings now reference `EvaluationDataGenerationJobInputs` / `SupervisedFineTuningDataGenerationJobInputs` and the `evaluation` / `supervised_finetuning_preview` scenarios, and call out preview features.
+  * Created resources (uploaded files, agents, conversations, generated datasets and files) are now cleaned up in `finally` blocks.
+  * Added `openai` to the `pip install` instructions where the OpenAI client is used.
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
+* Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobOptions` to generate multi-turn evaluation seeds from a prompt source.
+* Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
+* Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
+* Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
+
 ## 2.7.0 (2026-09-18)
 
 ### Features Added
