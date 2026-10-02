@@ -17,7 +17,11 @@ from typing import (
 )
 from urllib.parse import parse_qs, quote
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
+from azure.core.credentials import (
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    TokenCredential,
+)
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
@@ -57,18 +61,19 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageSensitiveHeaderCleanupPolicy,
-    StorageSessionPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
 from .._version import VERSION
 from .._shared_access_signature import _is_credential_sastoken
-from .session import ContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
+    from azure.core.pipeline.transport import (  # pylint: disable=C4756
+        HttpRequest,
+        HttpResponse,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -270,12 +275,27 @@ class StorageAccountHostsMixin(object):
         self,
         sas_token: Optional[str],
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                TokenCredential,
+            ]
         ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
-        str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]
+        str,
+        Optional[
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                TokenCredential,
+            ]
+        ],
     ]:
         query_str = "?"
         if snapshot:
@@ -297,18 +317,23 @@ class StorageAccountHostsMixin(object):
     def _create_pipeline(
         self,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
-        audience = kwargs.pop("audience", None)
         if hasattr(credential, "get_token"):
-            if audience:
-                scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE
+            if kwargs.get("audience"):
+                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
-                scope = STORAGE_OAUTH_SCOPE
-            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), scope)
+                audience = STORAGE_OAUTH_SCOPE
+            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -338,39 +363,12 @@ class StorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
+            config.logging_policy,
+            StorageResponseHook(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
-        use_session = bool(kwargs.pop("use_session", False))
-        session_provider = kwargs.pop("session_provider", None)
-        session_account_name = kwargs.pop("session_account_name", None)
-        if use_session:
-            if session_provider is None:
-                sub_kwargs = dict(kwargs)
-                sub_kwargs.pop("_configuration", None)
-                sub_kwargs.pop("pipeline", None)
-                sub_kwargs.pop("sdk_moniker", None)
-                sub_kwargs["transport"] = transport
-                session_provider = ContainerSessionProvider(
-                    f"{self.scheme}://{self.primary_hostname}",
-                    cast(TokenCredential, credential),
-                    audience=audience,
-                    **sub_kwargs,
-                )
-
-            policies.append(
-                StorageSessionPolicy(
-                    account_name=session_account_name or self.account_name,
-                    session_provider=session_provider,
-                )
-            )
-        policies.extend(
-            [
-                config.logging_policy,
-                StorageResponseHook(**kwargs),
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs),
-            ]
-        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
@@ -423,7 +421,9 @@ class StorageAccountHostsMixin(object):
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.", response=response, parts=parts
+                        message="There is a partial failure in the batch operation.",
+                        response=response,
+                        parts=parts,
                     )
                     raise error
                 return iter(parts)
@@ -460,7 +460,14 @@ class TransportWrapper(HttpTransport):
 def _format_shared_key_credential(
     account_name: Optional[str],
     credential: Optional[
-        Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]
+        Union[
+            str,
+            Dict[str, str],
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            "AsyncTokenCredential",
+            TokenCredential,
+        ]
     ] = None,
 ) -> Any:
     if isinstance(credential, str):
@@ -480,12 +487,28 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
+    credential: Optional[
+        Union[
+            str,
+            Dict[str, str],
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            TokenCredential,
+        ]
+    ],
     service: str,
 ) -> Tuple[
     str,
     Optional[str],
-    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
+    Optional[
+        Union[
+            str,
+            Dict[str, str],
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            TokenCredential,
+        ]
+    ],
 ]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
@@ -499,7 +522,10 @@ def parse_connection_str(
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
+            credential = {
+                "account_name": conn_settings["ACCOUNTNAME"],
+                "account_key": conn_settings["ACCOUNTKEY"],
+            }
         except KeyError:
             credential = conn_settings.get("SHAREDACCESSSIGNATURE")
     if endpoints["primary"] in conn_settings:
