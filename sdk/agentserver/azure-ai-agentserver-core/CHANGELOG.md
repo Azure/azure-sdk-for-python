@@ -6,7 +6,7 @@
 
 - Failed steering queue appends no longer retain an unreturned acknowledgment
   future. Per-slot acknowledgment IDs prevent a committed append with a lost
-  response from misrouting the next accepted input's result.
+  response from routing the next accepted input's result incorrectly.
 
 ## 2.2.0 (2026-09-23)
 
