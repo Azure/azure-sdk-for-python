@@ -30,7 +30,7 @@ _This package supports the following service API versions: 3.0, 3.1, 2022-05-01 
 
 ### Prerequisites
 
-- Python 3.7 later is required to use this package.
+- Python 3.9 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
   [Cognitive Services or Language service resource][ta_or_cs_resource] to use this package.
 

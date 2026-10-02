@@ -16,7 +16,7 @@ python -m pip install azure-developer-devcenter
 
 ### Prerequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - For Dev Box operations you must have [configured](https://learn.microsoft.com/azure/dev-box/quickstart-configure-dev-box-service) a DevCenter, Project, Network Connection, Dev Box Definition, and Pool.
 - For Deployment Environments operations you must have [configured](https://learn.microsoft.com/azure/deployment-environments/) a DevCenter, Project, Catalog, Environment Definition and Environment Type.
