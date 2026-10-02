@@ -121,9 +121,7 @@ with (
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(
-        project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
-    ):
+    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
         entry_name = entry.evaluator_name or "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 

@@ -63,10 +63,13 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as client,
     ):
-        for evaluation_level, item in (
+        cases: list[tuple[str, dict[str, object]]] = [
             ("turn", {"query": query, "response": response}),
             ("conversation", {"messages": messages}),
-        ):
+        ]
+        for evaluation_level, item in cases:
+            properties: dict[str, object]
+            data_mapping: dict[str, str]
             if evaluation_level == "turn":
                 properties = {"query": {"type": "string"}, "response": {"type": "string"}}
                 data_mapping = {"query": "{{item.query}}", "response": "{{item.response}}"}

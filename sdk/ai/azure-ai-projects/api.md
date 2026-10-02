@@ -6509,7 +6509,7 @@ namespace azure.ai.projects.models
         created_at: datetime
         error: Optional[ApiError]
         finished_at: Optional[datetime]
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         id: str
         name: str
         result: Optional[DataGenerationJobResult]
@@ -6521,7 +6521,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
                 scenario: str, 
                 sources: list[DataGenerationJobSource]
@@ -6531,27 +6531,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.DataGenerationJobInputs(_Model):
-        generation_configuration: DataGenerationJobOptions
-        name: str
-        scenario: str
-        sources: list[DataGenerationJobSource]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobOptions, 
-                name: str, 
-                scenario: str, 
-                sources: list[DataGenerationJobSource]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.DataGenerationJobOptions(_Model):
+    class azure.ai.projects.models.DataGenerationJobConfiguration(_Model):
         model_options: Optional[DataGenerationModelOptions]
         train_split: Optional[float]
         type: str
@@ -6563,6 +6543,26 @@ namespace azure.ai.projects.models
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 train_split: Optional[float] = ..., 
                 type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobInputs(_Model):
+        generation_configuration: DataGenerationJobConfiguration
+        name: str
+        scenario: str
+        sources: list[DataGenerationJobSource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                generation_configuration: DataGenerationJobConfiguration, 
+                name: str, 
+                scenario: str, 
+                sources: list[DataGenerationJobSource]
             ) -> None: ...
 
         @overload
@@ -7176,10 +7176,10 @@ namespace azure.ai.projects.models
         created_at: datetime
         error: ApiError
         finished_at: datetime
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         id: str
         name: str
-        output_configuration: Optional[EvaluationDataGenerationJobOutputTarget]
+        output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration]
         result: DataGenerationJobResult
         scenario: Literal[DataGenerationJobScenario.EVALUATION]
         sources: list[DataGenerationJobSource]
@@ -7189,9 +7189,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[EvaluationDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -7200,9 +7200,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EvaluationDataGenerationJobInputs(DataGenerationJobInputs, discriminator='evaluation'):
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         name: str
-        output_configuration: Optional[EvaluationDataGenerationJobOutputTarget]
+        output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration]
         scenario: Literal[DataGenerationJobScenario.EVALUATION]
         sources: list[DataGenerationJobSource]
 
@@ -7210,9 +7210,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[EvaluationDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -7220,7 +7220,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.EvaluationDataGenerationJobOutputTarget(_Model):
+    class azure.ai.projects.models.EvaluationDataGenerationJobOutputConfiguration(_Model):
         description: Optional[str]
         name: Optional[str]
         tags: Optional[dict[str, str]]
@@ -12299,10 +12299,10 @@ namespace azure.ai.projects.models
         created_at: datetime
         error: ApiError
         finished_at: datetime
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         id: str
         name: str
-        output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget]
+        output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration]
         result: DataGenerationJobResult
         scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
@@ -12312,9 +12312,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -12323,9 +12323,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='reinforcement_finetuning_preview'):
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         name: str
-        output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget]
+        output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration]
         scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
 
@@ -12333,9 +12333,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -12343,7 +12343,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputTarget(_Model):
+    class azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputConfiguration(_Model):
         merge_file_id: Optional[str]
         name: str
         write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]]
@@ -12919,7 +12919,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator='simple_qna'):
+    class azure.ai.projects.models.SimpleQnADataGenerationJobConfiguration(DataGenerationJobConfiguration, discriminator='simple_qna'):
         max_samples: int
         model_options: DataGenerationModelOptions
         question_types: Optional[list[Union[str, SimpleQnAFineTuningQuestionType]]]
@@ -12945,7 +12945,7 @@ namespace azure.ai.projects.models
         SHORT_ANSWER = "short_answer"
 
 
-    class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator='simulation_seed'):
+    class azure.ai.projects.models.SimulationSeedDataGenerationJobConfiguration(DataGenerationJobConfiguration, discriminator='simulation_seed'):
         model_options: DataGenerationModelOptions
         train_split: float
         type: Literal[DataGenerationJobType.SIMULATION_SEED]
@@ -13171,10 +13171,10 @@ namespace azure.ai.projects.models
         created_at: datetime
         error: ApiError
         finished_at: datetime
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         id: str
         name: str
-        output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget]
+        output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration]
         result: DataGenerationJobResult
         scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
@@ -13184,9 +13184,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -13195,9 +13195,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SupervisedFineTuningDataGenerationJobInputs(DataGenerationJobInputs, discriminator='supervised_finetuning_preview'):
-        generation_configuration: DataGenerationJobOptions
+        generation_configuration: DataGenerationJobConfiguration
         name: str
-        output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget]
+        output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration]
         scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW]
         sources: list[DataGenerationJobSource]
 
@@ -13205,9 +13205,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                generation_configuration: DataGenerationJobOptions, 
+                generation_configuration: DataGenerationJobConfiguration, 
                 name: str, 
-                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputTarget] = ..., 
+                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ..., 
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -13215,7 +13215,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputTarget(_Model):
+    class azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputConfiguration(_Model):
         merge_file_id: Optional[str]
         name: str
         write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]]
@@ -14465,7 +14465,7 @@ namespace azure.ai.projects.models
         WORK_IQ_PREVIEW = "work_iq_preview"
 
 
-    class azure.ai.projects.models.ToolUseFineTuningDataGenerationJobOptions(DataGenerationJobOptions, discriminator='tool_use'):
+    class azure.ai.projects.models.ToolUseFineTuningDataGenerationJobConfiguration(DataGenerationJobConfiguration, discriminator='tool_use'):
         max_samples: int
         model_options: DataGenerationModelOptions
         train_split: float
@@ -14728,7 +14728,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator='traces'):
+    class azure.ai.projects.models.TracesDataGenerationJobConfiguration(DataGenerationJobConfiguration, discriminator='traces'):
         max_samples: Optional[int]
         model_options: DataGenerationModelOptions
         redact_private_content: Optional[bool]

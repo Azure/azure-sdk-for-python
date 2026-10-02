@@ -9,11 +9,11 @@ DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
 
       1. Creates an agent and seeds spans with a sample conversation.
-      2. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=EVALUATION, source=traces) that extracts and formats the
-         trace data into an evaluation dataset.
+      2. Waits for ingestion, then submits an `EvaluationDataGenerationJobInputs`
+         job (scenario `evaluation`, generation type `traces`) that extracts and
+         formats the trace data into an evaluation dataset.
       3. Polls the job and fetches the resulting `DatasetVersion`.
-      4. Cleans up the dataset, job, seeded conversations, and agent.
+      4. Cleans up the dataset, seeded conversations, and agent.
 
     Prerequisite: the project must have an Application Insights resource
     connected so the agent emits server-side traces. The Foundry project's
@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
@@ -148,7 +148,8 @@ with (
                                 end_time=end_time,
                             ),
                         ],
-                        # max_samples must be in [15, 1000]; caps output dataset size.
+                        # max_samples is optional and caps the output dataset size. If omitted,
+                        # sampling is turned off. Private content is redacted by default.
                         generation_configuration=TracesDataGenerationJobOptions(max_samples=15),
                         output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
                     ),
@@ -167,9 +168,9 @@ with (
                 print(f"Final LRO status: `{poller.status()}`.")
                 print(f"Data generation result: {job_result}")
                 break
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 if attempt == MAX_JOB_ATTEMPTS:
-                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}")
+                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}") from e
                 print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
                 time.sleep(RETRY_WAIT_SECONDS)
 
@@ -190,7 +191,8 @@ with (
             print(f"Generated samples: {job_result.generated_samples}")
 
     finally:
-        # Best-effort cleanup, outputs -> producers (dataset, job, conversations, agent).
+        # Best-effort cleanup, outputs -> producers (dataset, conversations, agent).
+        # Delete the generated dataset.
         if created_dataset is not None:
             try:
                 project_client.datasets.delete(
@@ -200,10 +202,6 @@ with (
                 print(f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
-
-        # Note: The data generation jobs are implicitly cleaned up by the service
-        # when the dataset is deleted (cascade delete). Attempting explicit deletion
-        # is not supported for LRO-based jobs.
 
         if created_conversation_ids:
             for cid in created_conversation_ids:
