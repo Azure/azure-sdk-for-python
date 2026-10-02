@@ -6,7 +6,7 @@ is a cloud-based service that helps your applications choose the best content it
 ## Getting started
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package.
+* Python 3.9 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Personalizer resource][personalizer_account] to use this package.
 

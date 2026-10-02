@@ -66,7 +66,7 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.30.0",
+        "azure-core>=1.38.0",
         "typing-extensions>=4.6.0",
     ],
     project_urls={

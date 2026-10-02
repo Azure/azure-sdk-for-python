@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.6, 3.7, and 3.8 are no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0b2 (2023-02-23)
 ### Features Added
 - Adding clients for Sensor Integration which includes crud operations on DeviceDataModels, Devices, SensorDataModels, Sensors, SensorMappings, SensorPartnerIntegration and get Sensor events.

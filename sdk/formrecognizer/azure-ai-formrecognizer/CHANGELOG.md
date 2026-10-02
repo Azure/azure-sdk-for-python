@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
 ## 3.3.3 (2024-04-09)
 
 ### Other Changes

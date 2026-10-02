@@ -1,5 +1,17 @@
 # Release History
 
+## 5.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
 ## 5.4.0 (2026-02-25)
 
 ### Breaking Changes

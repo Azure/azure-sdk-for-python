@@ -20,7 +20,7 @@ These sample programs show common scenarios for the Health Insights Cancer Profi
 |[sample_infer_cancer_profiling.py][sample_infer_cancer_profiling] and [sample_infer_cancer_profiling_async.py][sample_infer_cancer_profiling_async]|Infer cancer profiling.|
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package.
+* Python 3.9 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and an [Azure Health Insights account][azure_healthinsights_account] to run these samples.
 
 ## Setup
