@@ -15,7 +15,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_create_maximum_set_gen.py
+    python elastic_sans_v2_list_by_subscription_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,32 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.elastic_sans.begin_create(
-        resource_group_name="resourcegroupname",
-        elastic_san_name="elasticsanname",
-        parameters={
-            "location": "France Central",
-            "properties": {
-                "autoScaleProperties": {
-                    "scaleUpProperties": {
-                        "autoScalePolicyEnforcement": "None",
-                        "capacityUnitScaleUpLimitTiB": 17,
-                        "increaseCapacityUnitByTiB": 4,
-                        "unusedSizeTiB": 24,
-                    }
-                },
-                "availabilityZones": ["1"],
-                "baseSizeTiB": 5,
-                "extendedCapacitySizeTiB": 25,
-                "publicNetworkAccess": "Enabled",
-                "sku": {"name": "Premium_LRS", "tier": "Premium"},
-            },
-            "tags": {"key9316": "ihndtieqibtob"},
-        },
-    ).result()
-    print(response)
+    response = client.elastic_sans.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-09-01/ElasticSans_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ElasticSans_V2_ListBySubscription_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
