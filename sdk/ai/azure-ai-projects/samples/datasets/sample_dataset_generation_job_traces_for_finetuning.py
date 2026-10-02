@@ -9,11 +9,16 @@ DESCRIPTION:
     Generates a supervised fine-tuning dataset from an agent's conversation traces.
 
       1. Creates an agent and seeds multiple short conversations against it.
-      2. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=SUPERVISED_FINETUNING_PREVIEW, source=traces) that extracts and
-         formats the trace data into training/validation JSONL files.
+      2. Waits for ingestion, then submits a `SupervisedFineTuningDataGenerationJobInputs`
+         job (scenario `supervised_finetuning_preview`, generation type `traces`) that
+         extracts and formats the trace data into training/validation JSONL files.
       3. Polls the job and inspects the resulting Azure OpenAI file outputs.
-      4. Cleans up the generated files, job, seeded conversations, and agent.
+      4. Cleans up the generated files, seeded conversations, and agent.
+
+    Supervised fine-tuning data generation (scenario `supervised_finetuning_preview`)
+    and Azure OpenAI file outputs are preview features. The client automatically
+    sends the required `Foundry-Features: DataGenerationJobs=V1Preview` opt-in
+    header on all data generation job operations.
 
     Prerequisite: the project must have an Application Insights resource
     connected so the agent emits server-side traces. The Foundry project's
@@ -28,7 +33,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
@@ -88,7 +93,9 @@ RETRY_WAIT_SECONDS = 60
 # Per-run id suffixed on the agent, output file, and job-input names so
 # repeated runs don't collide. Kept short (timestamp + 4 hex) to stay under
 # the 50-char service limit on output names.
-run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+run_id = (
+    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+)
 output_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
 
@@ -107,9 +114,13 @@ with (
         print(f"Create agent `{agent_name}` (model: `{model_deployment}`).")
         created_agent = project_client.agents.create_version(
             agent_name=agent_name,
-            definition=PromptAgentDefinition(model=model_deployment, instructions=AGENT_INSTRUCTIONS),
+            definition=PromptAgentDefinition(
+                model=model_deployment, instructions=AGENT_INSTRUCTIONS
+            ),
         )
-        print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
+        print(
+            f"Agent created (id: {created_agent.id}, version: {created_agent.version})."
+        )
 
         seed_start = datetime.now(tz=timezone.utc)
         print(f"Seed {len(SEED_PROMPTS)} conversation(s) against the agent.")
@@ -120,17 +131,26 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                extra_body={
+                    "agent_reference": {
+                        "name": created_agent.name,
+                        "type": "agent_reference",
+                    }
+                },
             )
+        seed_end = datetime.now(tz=timezone.utc)
 
-        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        print(
+            f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
+            flush=True,
+        )
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
         start_time = seed_start - timedelta(minutes=5)
+        end_time = seed_end + timedelta(minutes=5)
 
         job_result = None
         for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
-            end_time = datetime.now(tz=timezone.utc)
             print(
                 f"Create fine-tuning data generation job from traces for agent `{agent_name}` "
                 f"(attempt {attempt}/{MAX_JOB_ATTEMPTS}, "
@@ -149,11 +169,15 @@ with (
                                 end_time=end_time,
                             ),
                         ],
-                        # max_samples must be in [15, 1000]; caps output dataset size.
-                        # train_split=0.8 splits generated samples into a training
+                        # max_samples is optional and caps the number of generated samples. If
+                        # omitted, sampling is turned off. train_split=0.8 splits generated samples into a training
                         # and a validation Azure OpenAI file.
-                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15, train_split=0.8),
-                        output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
+                        generation_configuration=TracesDataGenerationJobOptions(
+                            max_samples=15, train_split=0.8
+                        ),
+                        output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(
+                            name=output_name
+                        ),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )
@@ -170,19 +194,29 @@ with (
                 print(f"Final LRO status: `{poller.status()}`.")
                 print(f"Data generation result: {job_result}")
                 break
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                if "no traces found" not in str(e).lower():
+                    raise
                 if attempt == MAX_JOB_ATTEMPTS:
-                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}")
-                print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
+                    raise RuntimeError(
+                        f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}"
+                    ) from e
+                print(
+                    f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry."
+                )
                 time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve generated fine-tuning files.
         if job_result is None:
             raise RuntimeError("The data generation job did not return a result.")
         outputs = job_result.outputs or []
-        file_outputs = [o for o in outputs if isinstance(o, FileDataGenerationJobOutput)]
+        file_outputs = [
+            o for o in outputs if isinstance(o, FileDataGenerationJobOutput)
+        ]
         if not file_outputs:
-            raise RuntimeError("The data generation job did not produce any file outputs.")
+            raise RuntimeError(
+                "The data generation job did not produce any file outputs."
+            )
 
         print(f"Generated {len(file_outputs)} fine-tuning file(s):")
         for output in file_outputs:
@@ -190,23 +224,21 @@ with (
                 raise RuntimeError("A file output was returned without an id.")
             created_file_ids.append(output.id)
             file_info = openai_client.files.retrieve(file_id=output.id)
-            print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
+            print(
+                f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}"
+            )
         if job_result.generated_samples is not None:
             print(f"Generated samples: {job_result.generated_samples}")
 
     finally:
-        # Best-effort cleanup, outputs -> producers (files, job, conversations, agent).
-        if created_file_ids:
-            for fid in created_file_ids:
-                try:
-                    openai_client.files.delete(file_id=fid)
-                    print(f"Deleted Azure OpenAI file `{fid}`.")
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete file `{fid}`: {exc}")
-
-        # Note: The data generation jobs are implicitly cleaned up by the service
-        # when the files are deleted (cascade delete). Attempting explicit deletion
-        # is not supported for LRO-based jobs.
+        # Best-effort cleanup, outputs -> producers (files, conversations, agent).
+        # Delete the generated files.
+        for fid in created_file_ids:
+            try:
+                openai_client.files.delete(file_id=fid)
+                print(f"Deleted Azure OpenAI file `{fid}`.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete file `{fid}`: {exc}")
 
         if created_conversation_ids:
             for cid in created_conversation_ids:
