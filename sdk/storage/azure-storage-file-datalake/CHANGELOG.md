@@ -3,6 +3,7 @@
 ## 12.27.0b1 (Unreleased)
 
 ### Features Added
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible file read requests are authenticated with a short-lived, per-file-system session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ## 12.26.0b1 (2026-08-10)
 
