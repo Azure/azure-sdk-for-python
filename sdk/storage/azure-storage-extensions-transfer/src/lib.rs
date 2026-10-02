@@ -445,6 +445,21 @@ fn upload_blob<'py>(
     if let Some(last_modified) = result.last_modified {
         dict.set_item("last_modified", last_modified.to_string())?;
     }
+    if let Some(content_md5) = result.content_md5 {
+        dict.set_item("content_md5", PyBytes::new(py, &content_md5))?;
+    }
+    if let Some(content_crc64) = result.content_crc64 {
+        dict.set_item("content_crc64", PyBytes::new(py, &content_crc64))?;
+    }
+    if let Some(encryption_key_sha256) = result.encryption_key_sha256 {
+        dict.set_item("encryption_key_sha256", encryption_key_sha256)?;
+    }
+    if let Some(encryption_scope) = result.encryption_scope {
+        dict.set_item("encryption_scope", encryption_scope)?;
+    }
+    if let Some(version_id) = result.version_id {
+        dict.set_item("version_id", version_id)?;
+    }
 
     Ok(dict)
 }
@@ -494,8 +509,6 @@ struct NativeDownloadStream {
     /// First window, downloaded eagerly during construction so `size` is known immediately
     /// and the first chunk is ready without another round trip.
     pending: Option<Py<PyBytes>>,
-    etag: Option<String>,
-    last_modified: Option<String>,
 }
 
 impl NativeDownloadStream {
@@ -538,18 +551,6 @@ impl NativeDownloadStream {
     #[getter]
     fn size(&self) -> u64 {
         self.size
-    }
-
-    /// The blob's ETag, if reported by the service.
-    #[getter]
-    fn etag(&self) -> Option<String> {
-        self.etag.clone()
-    }
-
-    /// The blob's last-modified timestamp, if reported by the service.
-    #[getter]
-    fn last_modified(&self) -> Option<String> {
-        self.last_modified.clone()
     }
 
     fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
@@ -674,35 +675,30 @@ fn download_blob(
         first_options.parallel = NonZero::new(concurrency);
     }
 
-    // Fetch the first window and, from its response, learn the total blob size and properties.
+    // Fetch the first window and, from its response, learn the total blob size.
     // The closure borrows `blob_client` (only `&self` is needed by `download_into`) so we retain
     // ownership afterwards for the returned stream.
-    let (buffer, written, content_range_total, content_length, etag, last_modified) =
-        py.detach(|| {
-            RUNTIME.block_on(async {
-                let mut buffer = vec![0u8; first_len as usize];
-                let result = blob_client
-                    .download_into(&mut buffer, Some(first_options))
-                    .await
-                    .map_err(AzureError::from)?;
-                buffer.truncate(result.len);
-                let content_range_total = result
-                    .headers
-                    .get_optional_str(&CONTENT_RANGE)
-                    .and_then(parse_content_range_total);
-                let content_length = result.properties.content_length;
-                let etag = result.properties.etag.map(|e| e.to_string());
-                let last_modified = result.properties.last_modified.map(|d| d.to_string());
-                Ok::<_, PyErr>((
-                    buffer,
-                    result.len as u64,
-                    content_range_total,
-                    content_length,
-                    etag,
-                    last_modified,
-                ))
-            })
-        })?;
+    let (buffer, written, content_range_total, content_length) = py.detach(|| {
+        RUNTIME.block_on(async {
+            let mut buffer = vec![0u8; first_len as usize];
+            let result = blob_client
+                .download_into(&mut buffer, Some(first_options))
+                .await
+                .map_err(AzureError::from)?;
+            buffer.truncate(result.len);
+            let content_range_total = result
+                .headers
+                .get_optional_str(&CONTENT_RANGE)
+                .and_then(parse_content_range_total);
+            let content_length = result.properties.content_length;
+            Ok::<_, PyErr>((
+                buffer,
+                result.len as u64,
+                content_range_total,
+                content_length,
+            ))
+        })
+    })?;
 
     // The total addressable size of the blob. Prefer the `Content-Range` total; fall back to
     // the response `Content-Length`, then to what we actually read.
@@ -727,8 +723,6 @@ fn download_blob(
         end_offset,
         size,
         pending,
-        etag,
-        last_modified,
     })
 }
 
