@@ -27,6 +27,7 @@
     - [verifysdist](#verifysdist)
     - [verify\_keywords](#verify_keywords)
   - [Install and Test Checks](#install-and-test-checks)
+    - [Core generated-client compatibility](#core-generated-client-compatibility)
     - [PR Validation](#pr-validation)
       - [whl](#whl)
       - [sdist](#sdist)
@@ -423,6 +424,75 @@ azpysdk verify_keywords .
 ```
 
 ## Install and Test Checks
+
+### Core generated-client compatibility
+
+This consumer check complements the
+[Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
+and the normal SDK package checks.
+
+The separate core PR pipeline, `eng/pipelines/autorest_checks.yml`, runs only for
+the existing `sdk/core/` PR path filter. Its historical YAML path is retained
+because Azure Pipelines definition 1248 points to it; it no longer clones the
+deprecated `Azure/autorest.python` repository.
+
+`eng/scripts/core_compatibility.py` checks out
+[`microsoft/typespec` at `06e398a022bd46bb93d283b1f975ddf005e86729`](https://github.com/microsoft/typespec/tree/06e398a022bd46bb93d283b1f975ddf005e86729/packages/http-client-python)
+(standalone Python emitter 0.38.0, reviewed 2026-10-02). Node.js 24 and Python
+3.12 match the modern tooling and upstream Python CI. The standalone package's
+`npm ci`, build, and Azure-only regeneration run in a temporary copy, not in
+the SDK checkout or the upstream source checkout. Locked npm tarball URLs are
+redirected to the authenticated CFS feed without changing versions/integrities.
+Python tools/dependencies follow the requirements at the pinned upstream ref,
+including its version ranges; they are not a fully frozen Python lockfile.
+
+An SDK-owned temporary overlay runs upstream `test-azure` with both Azure and
+shared mock API suites. It replaces the two released core requirements with
+editable SDK PR sources **inside tox**, and constrains both pip and uv to those
+sources during subsequent installs. The installed distributions' versions,
+editable direct URLs, and imported source files are verified before/after
+generated package installation and in every pytest/xdist worker. Changed
+upstream requirements or test commands require reviewing the overlay, rather
+than silently changing coverage. Spector serves both spec sets on port 3000;
+the runner refuses an occupied port, checks readiness, and stops its owned
+process on success or failure. A nearer SDK-owned fixture in the temporary
+`mock_api` copy checks health instead of allowing upstream's fixture to
+auto-start an unmanaged background server. The upstream checkout is unchanged.
+JUnit results and failure diagnostics are
+published by the pipeline.
+
+Focused checked-in regressions retain sync/async legacy transport and REST
+request/response compatibility, testserver clients, and ARM polling without
+depending on the abandoned generator. Normal `sdk/core/ci.yml` coverage,
+including the TypeSpec-generated `modeltypes` serialization fixture, remains
+unchanged.
+
+The orchestration tests are `eng/scripts/tests/test_core_compatibility.py`.
+Run them with the existing Python test tooling (`pytest`, PyYAML, tox, tox-uv,
+uv, and the core runtime/test dependencies). Their offline tox-uv smoke
+repackages already-installed dependencies locally; it performs no downloads.
+It checks real editable-source provenance, forced reinstall, conflicting core
+requirements, same-version released-wheel rejection, and sync/async ARM polling:
+
+```powershell
+python -m pytest eng/scripts/tests/test_core_compatibility.py -q
+```
+
+For local reproduction, authenticate npm and set `PIP_INDEX_URL` using the
+[CFS authentication instructions](../CONTRIBUTING.md#authentication-for-upstream-pull-through),
+then run with Python 3.12 and Node.js 24:
+
+```powershell
+python eng/scripts/core_compatibility.py run --sdk-root . --work-dir <new-temporary-directory>
+```
+
+Use a new work directory for each run. To update the upstream pin, review its
+standalone lockfile, setup/build/regeneration scripts, requirements, tox commands
+and Spector fixture contract, run the orchestration tests and the full
+compatibility command, then update `TYPESPEC_REF` and this documentation.
+Deployment separately requires reviewing the definition's historical
+`python - autorest - pr` display name and any branch-policy/status-name references;
+the repository change does not rename or modify the live Azure DevOps definition.
 
 Install and test checks build a distribution of the package (or are provided an artifact from the `Build` phase),  install it into a clean virtual environment, and drive the test suite with `pytest`. The set that runs is gated on the build trigger — PRs run a lean subset while nightly builds run the full set (see the [CI organization table](#how-ci-checks-are-organized) above).
 

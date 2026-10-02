@@ -14,15 +14,13 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '18.x'
-  PythonVersion: '3.10'
-  auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
-  source_path_azure_core: 'sdk/core/azure-core'
-  source_path_azure_mgmt_core: 'sdk/core/azure-mgmt-core'
+  NodeVersion: '24.x'
+  PythonVersion: '3.12'
 
 jobs:
-  - job: 'Run_AutoRest'
-    displayName: 'Run AutoRest'
+  - job: 'Core_Compatibility'
+    displayName: 'Generated client core compatibility'
+    timeoutInMinutes: 60
 
     pool:
       name: azsdk-pool
@@ -30,6 +28,9 @@ jobs:
 
     steps:
       - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+        parameters:
+          EnableTwineAuth: false
       - task: NodeTool@0
         displayName: 'Install Node.js $(NodeVersion)'
         inputs:
@@ -40,25 +41,24 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: |
-          npm install -g pnpm
-          git clone $(auto_rest_clone_url)
-          cd autorest.python
-          pnpm install
-        displayName: 'Prepare Environment'
+      - script: >
+          python eng/scripts/core_compatibility.py run
+          --sdk-root "$(Build.SourcesDirectory)"
+          --work-dir "$(Agent.TempDirectory)/core-compatibility"
+        displayName: 'Test TypeSpec Azure clients and legacy core compatibility'
 
-      - script: |
-          cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
-          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
-          python -m pip install -r requirements.txt
-          pip freeze
-          pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
-        displayName: 'Install azure-core and Test Vanilla Legacy'
+      - task: PublishTestResults@2
+        displayName: 'Publish core compatibility results'
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: '$(Agent.TempDirectory)/core-compatibility/results/*.xml'
+          testRunTitle: 'Generated client core compatibility'
+          failTaskOnFailedTests: true
 
-      - script: |
-          cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
-          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
-          python -m pip install -r requirements.txt
-          pip freeze
-          pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
-        displayName: 'Install azure-mgmt-core and Test Azure Legacy'
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish compatibility diagnostics'
+        condition: failed()
+        inputs:
+          targetPath: '$(Agent.TempDirectory)/core-compatibility/results'
+          artifact: 'core-compatibility-diagnostics'
