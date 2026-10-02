@@ -11,9 +11,6 @@ parameters:
   - name: repositoryOwner
     type: string
     default: 'Azure'
-  - name: toolRef
-    type: string
-    default: 'main'
   - name: pythonVersion
     type: string
     default: '3.12'
@@ -51,11 +48,6 @@ jobs:
           requirements_file="$source_repo/eng/apiview_reqs.txt"
           azpysdk_package="$source_repo/eng/tools/azure-sdk-tools[build]"
 
-          echo "Checking out Python API review tooling requirements from $TOOL_REF"
-          git -C "$source_repo" fetch --depth=1 origin "$TOOL_REF"
-          git -C "$source_repo" checkout --force FETCH_HEAD
-          git -C "$source_repo" clean -ffd
-
           if [ ! -f "$requirements_file" ]; then
             echo "Expected Python API review requirements file was not found at $requirements_file" >&2
             exit 1
@@ -71,15 +63,14 @@ jobs:
           echo "Installing Python API review requirements from $requirements_file"
           python -m pip install -r "$requirements_file" --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 
-          echo "Installing azpysdk tooling from $TOOL_REF"
+          echo "Installing azpysdk tooling from the checked-out language repository"
           python -m pip install "$azpysdk_package"
 
           echo "Installing setuptools runtime dependency for Python SDK common_tasks.py"
           python -m pip install "setuptools<81"
-          PYTHONPATH="$source_repo/scripts/devops_tasks${PYTHONPATH:+:$PYTHONPATH}" python -c "import apistub, azpysdk.main, common_tasks, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
+          python -c "import apistub, azpysdk.main, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
         displayName: 'Install Python API review tooling'
         env:
-          SOURCE_REPO: $(ApiReviewSourceDir)
+          SOURCE_REPO: $(LanguageRepo)
           TOOLING_DIR: $(ApiReviewToolingDir)
-          TOOL_REF: ${{ parameters.toolRef }}
     steps: ${{ parameters.steps }}
