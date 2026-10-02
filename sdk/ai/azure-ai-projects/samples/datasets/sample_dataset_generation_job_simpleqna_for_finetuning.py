@@ -6,10 +6,10 @@
 
 """
 DESCRIPTION:
-    Generates supervised fine-tuning data from a Markdown reference document
+    Generates supervised fine-tuning data from a JSON reference document
     uploaded as an Azure OpenAI File. The sample:
 
-      1. Uploads a short reference document via the Azure OpenAI Files API
+      1. Uploads `synthetic_primary_care_conversations.json` via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
       2. Submits a `SupervisedFineTuningDataGenerationJobInputs` job (scenario
          `supervised_finetuning_preview`, generation type `simple_qna`) that
@@ -48,11 +48,11 @@ USAGE:
        polls for the data generation job. Defaults to 10.
 """
 
-import io
 import os
 import time
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import List, Optional
 
 from dotenv import load_dotenv
@@ -86,80 +86,7 @@ if len(output_name) > 50:
         f"Lower DATASET_NAME (currently `{dataset_name}`) so that `<DATASET_NAME>-<run id>` fits within 50 characters."
     )
 
-# Reference data the sample uploads as an Azure OpenAI file.
-SEED_REFERENCE_DOCUMENT = """{
-  "disclaimer": "Synthetic data only. Not medical advice and not based on real patients.",
-  "doctor": {
-    "name": "Dr. Taylor",
-    "specialty": "Primary Care",
-    "style": "empathetic, concise, asks one question at a time"
-  },
-  "scenarios": [
-    {
-      "id": "seasonal_cold",
-      "patient": {
-        "name": "Alex",
-        "age": 34
-      },
-      "reason_for_visit": "Cough, congestion, and fatigue for three days",
-      "medical_context": {
-        "allergies": ["penicillin"],
-        "medications": [],
-        "conditions": []
-      },
-      "conversation_seed": [
-        {
-          "speaker": "doctor",
-          "text": "What symptoms are bothering you most today?"
-        },
-        {
-          "speaker": "patient",
-          "text": "I have a dry cough, a stuffy nose, and I feel more tired than usual."
-        },
-        {
-          "speaker": "doctor",
-          "text": "Have you had a fever, trouble breathing, or chest pain?"
-        },
-        {
-          "speaker": "patient",
-          "text": "No chest pain or breathing trouble. My temperature was slightly elevated last night."
-        }
-      ]
-    },
-    {
-      "id": "recurring_headache",
-      "patient": {
-        "name": "Jordan",
-        "age": 42
-      },
-      "reason_for_visit": "Recurring headaches during the workweek",
-      "medical_context": {
-        "allergies": [],
-        "medications": ["daily multivitamin"],
-        "conditions": []
-      },
-      "conversation_seed": [
-        {
-          "speaker": "doctor",
-          "text": "When did the headaches begin, and where do you feel the pain?"
-        },
-        {
-          "speaker": "patient",
-          "text": "They started about two weeks ago and usually feel like pressure around my forehead."
-        },
-        {
-          "speaker": "doctor",
-          "text": "Do you notice any triggers, such as screen time, stress, missed meals, or poor sleep?"
-        },
-        {
-          "speaker": "patient",
-          "text": "They seem worse after long video meetings and on days when I skip lunch."
-        }
-      ]
-    }
-  ]
-}
-"""
+SEED_REFERENCE_PATH = Path(__file__).with_name("synthetic_primary_care_conversations.json")
 
 with (
     DefaultAzureCredential() as credential,
@@ -174,12 +101,13 @@ with (
         # ------------------------------------------------------------------
         # 1. Upload the seed reference document as an Azure OpenAI file.
         # ------------------------------------------------------------------
-        seed_filename = f"synthetic-primary-care-conversations-{run_id}.json"
+        seed_filename = SEED_REFERENCE_PATH.name
         print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
-        seed_file = openai_client.files.create(
-            file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8")), "application/json"),
-            purpose="user_data",
-        )
+        with SEED_REFERENCE_PATH.open("rb") as seed_stream:
+            seed_file = openai_client.files.create(
+                file=(seed_filename, seed_stream, "application/json"),
+                purpose="user_data",
+            )
         seed_file_id = seed_file.id
         print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
 
@@ -202,7 +130,7 @@ with (
             name=f"simpleqna-finetuning-{run_id}",
             sources=[
                 FileDataGenerationJobSource(
-                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    description="Synthetic primary care conversation reference (Azure OpenAI file).",
                     id=seed_file.id,
                 ),
             ],
