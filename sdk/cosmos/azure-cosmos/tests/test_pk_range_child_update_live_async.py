@@ -11,8 +11,10 @@ From the package directory with a provisioned-throughput test account configured
     PYTHONPATH=.:tests python -m unittest tests.test_pk_range_child_update_live_async -v
 
 This standalone runner avoids the package conftest's unrelated provisioning.
-Each split has a ten-minute deadline. Missing the real child-update transition
-fails the test rather than claiming that a split alone validates the fix.
+The first split has a ten-minute deadline; the second has fifteen minutes to
+allow for slower physical splits and offer replacement. Missing the real
+child-update transition fails the test rather than claiming that a split alone
+validates the fix.
 """
 
 import asyncio
@@ -58,7 +60,7 @@ def _range_state(routing_map):
 
 @pytest.mark.cosmosSplit
 @pytest.mark.cosmosAADSplit
-@pytest.mark.timeout(1500)
+@pytest.mark.timeout(1800)
 class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         configs = test_config.TestConfig
@@ -160,7 +162,13 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                     offer_pending = offer.properties["content"].get("isOfferReplacePending", False)
                     if not offer_pending:
                         self.assertEqual(offer.offer_throughput, throughput)
-                        _record("split_complete", throughput=throughput, ids=sorted(new_ids), scans=self.scans)
+                        _record(
+                            "split_complete",
+                            throughput=throughput,
+                            elapsed_seconds=round(time.monotonic() - start, 1),
+                            ids=sorted(new_ids),
+                            scans=self.scans,
+                        )
                         complete = True
                         return
                     phase = "routing_refresh"
@@ -237,7 +245,7 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
             with patch.object(self.client.client_connection, "_ReadPartitionKeyRanges", new=observe_read), patch.object(
                 routing_map_provider, "process_fetched_ranges", new=observe_process
             ):
-                await asyncio.wait_for(self._split_to(40000), timeout=600)
+                await asyncio.wait_for(self._split_to(40000), timeout=900)
         finally:
             _record(
                 "second_split_observations", child_updates=child_updates, observed_children=observed_children,
