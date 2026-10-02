@@ -2877,23 +2877,24 @@ class AgentOptimizationCostEstimate(_Model):  # pylint: disable=docstring-keywor
 
 
 class AgentOptimizationEstimateBand(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A low/typical/ceiling range for an estimated quantity. Expected values may be fractional,
-    including estimated model-call counts.
+    """A low/typical/ceiling range for an estimated quantity. Cost values apply average per-call usage
+    assumptions to each call-count scenario. Expected values may be fractional, including estimated
+    model-call counts.
 
-    :ivar low: Lower bound. Required.
+    :ivar low: Lower estimate based on model calls required for every run. Required.
     :vartype low: float
-    :ivar typical: Central estimate. Required.
+    :ivar typical: Expected estimate based on model calls consumed by a typical run. Required.
     :vartype typical: float
-    :ivar ceiling: Upper bound. Required.
+    :ivar ceiling: Upper bound calculated from the maximum number of model calls. Required.
     :vartype ceiling: float
     """
 
     low: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Lower bound. Required."""
+    """Lower estimate based on model calls required for every run. Required."""
     typical: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Central estimate. Required."""
+    """Expected estimate based on model calls consumed by a typical run. Required."""
     ceiling: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Upper bound. Required."""
+    """Upper bound calculated from the maximum number of model calls. Required."""
 
     @overload
     def __init__(
@@ -8370,7 +8371,7 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
      Required. Known values are: "supervised_finetuning_preview",
      "reinforcement_finetuning_preview", and "evaluation".
@@ -8399,7 +8400,7 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sources used for the data generation job. Required."""
-    generation_configuration: "_models.DataGenerationJobOptions" = rest_field(
+    generation_configuration: "_models.DataGenerationJobConfiguration" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The generation configuration for the data generation job. Required."""
@@ -8420,7 +8421,7 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
+        generation_configuration: "_models.DataGenerationJobConfiguration",
         scenario: str,
     ) -> None: ...
 
@@ -8435,69 +8436,12 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class DataGenerationJobInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Caller-supplied inputs for a data generation job.
+class DataGenerationJobConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    EvaluationDataGenerationJobInputs, ReinforcementFineTuningDataGenerationJobInputs,
-    SupervisedFineTuningDataGenerationJobInputs
-
-    :ivar name: The display name of the data generation job. Required.
-    :vartype name: str
-    :ivar sources: The sources used for the data generation job. Required.
-    :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
-    :ivar generation_configuration: The generation configuration for the data generation job.
-     Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
-    :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
-     Required. Known values are: "supervised_finetuning_preview",
-     "reinforcement_finetuning_preview", and "evaluation".
-    :vartype scenario: str or ~azure.ai.projects.models.DataGenerationJobScenario
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The display name of the data generation job. Required."""
-    sources: list["_models.DataGenerationJobSource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sources used for the data generation job. Required."""
-    generation_configuration: "_models.DataGenerationJobOptions" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The generation configuration for the data generation job. Required."""
-    scenario: str = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])
-    """The scenario of the data generation job. Either for fine-tuning or evaluation. Required. Known
-     values are: \"supervised_finetuning_preview\", \"reinforcement_finetuning_preview\", and
-     \"evaluation\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        scenario: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Options for managing data generation jobs.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, SimulationSeedDataGenerationJobOptions,
-    ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
+    SimpleQnADataGenerationJobConfiguration, SimulationSeedDataGenerationJobConfiguration,
+    ToolUseFineTuningDataGenerationJobConfiguration, TracesDataGenerationJobConfiguration
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
      "tool_use", and "simulation_seed".
@@ -8528,6 +8472,63 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
         type: str,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationJobInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Caller-supplied inputs for a data generation job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EvaluationDataGenerationJobInputs, ReinforcementFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobInputs
+
+    :ivar name: The display name of the data generation job. Required.
+    :vartype name: str
+    :ivar sources: The sources used for the data generation job. Required.
+    :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
+    :ivar generation_configuration: The generation configuration for the data generation job.
+     Required.
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
+    :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
+     Required. Known values are: "supervised_finetuning_preview",
+     "reinforcement_finetuning_preview", and "evaluation".
+    :vartype scenario: str or ~azure.ai.projects.models.DataGenerationJobScenario
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The display name of the data generation job. Required."""
+    sources: list["_models.DataGenerationJobSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sources used for the data generation job. Required."""
+    generation_configuration: "_models.DataGenerationJobConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The generation configuration for the data generation job. Required."""
+    scenario: str = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])
+    """The scenario of the data generation job. Either for fine-tuning or evaluation. Required. Known
+     values are: \"supervised_finetuning_preview\", \"reinforcement_finetuning_preview\", and
+     \"evaluation\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        sources: list["_models.DataGenerationJobSource"],
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        scenario: str,
     ) -> None: ...
 
     @overload
@@ -9813,7 +9814,7 @@ class EvaluationDataGenerationJob(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
      since January 1, 1970). Required.
     :vartype created_at: ~datetime.datetime
@@ -9826,13 +9827,13 @@ class EvaluationDataGenerationJob(
     :ivar output_configuration: Optional dataset output configuration for the generated evaluation
      data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.EvaluationDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.EvaluationDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.EVALUATION] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Evaluation for this model. Required.
      Evaluation scenario."""
-    output_configuration: Optional["_models.EvaluationDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.EvaluationDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional dataset output configuration for the generated evaluation data."""
@@ -9843,8 +9844,8 @@ class EvaluationDataGenerationJob(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.EvaluationDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.EvaluationDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -9870,20 +9871,20 @@ class EvaluationDataGenerationJobInputs(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar scenario: The scenario of the data generation job, which is Evaluation for this model.
      Required. Evaluation scenario.
     :vartype scenario: str or ~azure.ai.projects.models.EVALUATION
     :ivar output_configuration: Optional dataset output configuration for the generated evaluation
      data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.EvaluationDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.EvaluationDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.EVALUATION] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Evaluation for this model. Required.
      Evaluation scenario."""
-    output_configuration: Optional["_models.EvaluationDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.EvaluationDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional dataset output configuration for the generated evaluation data."""
@@ -9894,8 +9895,8 @@ class EvaluationDataGenerationJobInputs(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.EvaluationDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.EvaluationDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -9910,8 +9911,10 @@ class EvaluationDataGenerationJobInputs(
         self.scenario = DataGenerationJobScenario.EVALUATION  # type: ignore
 
 
-class EvaluationDataGenerationJobOutputTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Dataset output target for an evaluation data generation job.
+class EvaluationDataGenerationJobOutputConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dataset output configuration for an evaluation data generation job.
 
     :ivar name: Dataset name to assign to the output.
     :vartype name: str
@@ -10654,38 +10657,6 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
      \"succeeded\", \"failed\", and \"cancelled\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
-    sources: list["_models.EvaluatorGenerationJobSource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source materials for generation — agent descriptions, prompts, traces, or datasets. Each entry
-     is an ``EvaluatorGenerationJobSource`` variant discriminated by ``type``. Required."""
-    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The LLM model to use for rubric generation (e.g., 'gpt-4o'). Required — users must provide
-     their own model rather than relying on service-owned capacity. Required."""
-    evaluator_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The evaluator name (immutable identifier). 1-256 characters; allowed characters are ASCII
-     letters, digits, underscore (``_``), period (``.``), tilde (``~``), and hyphen (``-``). The
-     prefix ``builtin.`` is reserved for system-managed evaluators and is rejected by the service.
-     If an evaluator with this name already exists in the project (and is rubric-subtype), the
-     service creates a new version under the same name and uses the prior version's ``dimensions``
-     as context for incremental improvement (foundation of the post-//build adaptive loop). Old
-     versions remain queryable via ``get_version(name, version)``. If the existing evaluator is not
-     a rubric-subtype evaluator (built-in, prompt-based, code-based), the request is rejected with
-     ``400 Bad Request``. Required."""
-    evaluator_display_name: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional human-friendly display name for the resulting evaluator. Surfaced as
-     ``EvaluatorVersion.display_name`` on the persisted evaluator. When omitted, the service uses
-     ``evaluator_name`` as the display name. The ``evaluator_`` prefix disambiguates this from the
-     immutable ``evaluator_name`` identifier."""
-    evaluator_description: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional human-friendly description for the resulting evaluator. Surfaced as
-     ``EvaluatorVersion.description`` on the persisted evaluator. Typically collected from the UI
-     alongside ``evaluator_display_name``. The ``evaluator_`` prefix disambiguates this from any
-     other description fields on related models."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The timestamp when the job was created, represented in Unix time (seconds since January 1,
      1970). Required."""
@@ -21740,7 +21711,7 @@ class ReinforcementFineTuningDataGenerationJob(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
      since January 1, 1970). Required.
     :vartype created_at: ~datetime.datetime
@@ -21753,13 +21724,13 @@ class ReinforcementFineTuningDataGenerationJob(
     :ivar output_configuration: Optional file output configuration for the generated reinforcement
      fine-tuning data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Reinforcement Fine-tuning preview for this
      model. Required. Reinforcement Fine-tuning preview scenario."""
-    output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional file output configuration for the generated reinforcement fine-tuning data."""
@@ -21770,8 +21741,8 @@ class ReinforcementFineTuningDataGenerationJob(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -21798,20 +21769,20 @@ class ReinforcementFineTuningDataGenerationJobInputs(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar scenario: The scenario of the data generation job, which is Reinforcement Fine-tuning
      preview for this model. Required. Reinforcement Fine-tuning preview scenario.
     :vartype scenario: str or ~azure.ai.projects.models.REINFORCEMENT_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated reinforcement
      fine-tuning data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.ReinforcementFineTuningDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Reinforcement Fine-tuning preview for this
      model. Required. Reinforcement Fine-tuning preview scenario."""
-    output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional file output configuration for the generated reinforcement fine-tuning data."""
@@ -21822,8 +21793,8 @@ class ReinforcementFineTuningDataGenerationJobInputs(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.ReinforcementFineTuningDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -21838,11 +21809,11 @@ class ReinforcementFineTuningDataGenerationJobInputs(
         self.scenario = DataGenerationJobScenario.REINFORCEMENT_FINETUNING_PREVIEW  # type: ignore
 
 
-class ReinforcementFineTuningDataGenerationJobOutputTarget(
+class ReinforcementFineTuningDataGenerationJobOutputConfiguration(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """File output target for a reinforcement fine-tuning data generation job. This is a preview
-    feature.
+    """File output configuration for a reinforcement fine-tuning data generation job. This is a
+    preview feature.
 
     :ivar name: Filename to assign to the generated fine-tuning file. Required.
     :vartype name: str
@@ -22345,7 +22316,7 @@ class RubricGenerationInputQualityWarning(_Model):  # pylint: disable=docstring-
      cross-source warnings. Required. Known values are: "prompt", "agent", "dataset", and
      "aggregate".
     :vartype source: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSource
-    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.sources`` when the
+    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the
      warning applies to a specific source. Omitted for aggregate warnings and for warnings not tied
      to one source.
     :vartype source_index: int
@@ -22371,7 +22342,7 @@ class RubricGenerationInputQualityWarning(_Model):  # pylint: disable=docstring-
     """Which source category the warning applies to. ``aggregate`` is used only for cross-source
      warnings. Required. Known values are: \"prompt\", \"agent\", \"dataset\", and \"aggregate\"."""
     source_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Zero-based index into ``EvaluatorGenerationJob.sources`` when the warning applies to a
+    """Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the warning applies to a
      specific source. Omitted for aggregate warnings and for warnings not tied to one source."""
 
     @overload
@@ -22897,10 +22868,10 @@ class ShellToolboxTool(
         self.type = ToolboxToolType.SHELL  # type: ignore
 
 
-class SimpleQnADataGenerationJobOptions(
-    DataGenerationJobOptions, discriminator="simple_qna"
+class SimpleQnADataGenerationJobConfiguration(
+    DataGenerationJobConfiguration, discriminator="simple_qna"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The options for a data generation job with SimpleQnA type.
+    """The configuration for a data generation job with SimpleQnA type.
 
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
@@ -22949,12 +22920,12 @@ class SimpleQnADataGenerationJobOptions(
         self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
-class SimulationSeedDataGenerationJobOptions(
-    DataGenerationJobOptions, discriminator="simulation_seed"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
-    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
-    ``category``, ``test_case_description``, and ``desired_num_turns``.
+class SimulationSeedDataGenerationJobConfiguration(
+    DataGenerationJobConfiguration, discriminator="simulation_seed"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The configuration for a task generation data generation job. Use with multiturn evaluation
+    scenarios and with prompt, file, or agent sources. Generated dataset rows include fields such
+    as ``id``, ``category``, ``test_case_description``, and ``desired_num_turns``.
 
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
@@ -23541,7 +23512,7 @@ class SupervisedFineTuningDataGenerationJob(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
      since January 1, 1970). Required.
     :vartype created_at: ~datetime.datetime
@@ -23554,13 +23525,13 @@ class SupervisedFineTuningDataGenerationJob(
     :ivar output_configuration: Optional file output configuration for the generated supervised
      fine-tuning data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Supervised Fine-tuning preview for this
      model. Required. Supervised Fine-tuning preview scenario."""
-    output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional file output configuration for the generated supervised fine-tuning data."""
@@ -23571,8 +23542,8 @@ class SupervisedFineTuningDataGenerationJob(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -23599,20 +23570,20 @@ class SupervisedFineTuningDataGenerationJobInputs(
     :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
     :ivar generation_configuration: The generation configuration for the data generation job.
      Required.
-    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobOptions
+    :vartype generation_configuration: ~azure.ai.projects.models.DataGenerationJobConfiguration
     :ivar scenario: The scenario of the data generation job, which is Supervised Fine-tuning
      preview for this model. Required. Supervised Fine-tuning preview scenario.
     :vartype scenario: str or ~azure.ai.projects.models.SUPERVISED_FINETUNING_PREVIEW
     :ivar output_configuration: Optional file output configuration for the generated supervised
      fine-tuning data.
     :vartype output_configuration:
-     ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputTarget
+     ~azure.ai.projects.models.SupervisedFineTuningDataGenerationJobOutputConfiguration
     """
 
     scenario: Literal[DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW] = rest_discriminator(name="scenario", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The scenario of the data generation job, which is Supervised Fine-tuning preview for this
      model. Required. Supervised Fine-tuning preview scenario."""
-    output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = rest_field(
+    output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional file output configuration for the generated supervised fine-tuning data."""
@@ -23623,8 +23594,8 @@ class SupervisedFineTuningDataGenerationJobInputs(
         *,
         name: str,
         sources: list["_models.DataGenerationJobSource"],
-        generation_configuration: "_models.DataGenerationJobOptions",
-        output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputTarget"] = None,
+        generation_configuration: "_models.DataGenerationJobConfiguration",
+        output_configuration: Optional["_models.SupervisedFineTuningDataGenerationJobOutputConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -23639,10 +23610,11 @@ class SupervisedFineTuningDataGenerationJobInputs(
         self.scenario = DataGenerationJobScenario.SUPERVISED_FINETUNING_PREVIEW  # type: ignore
 
 
-class SupervisedFineTuningDataGenerationJobOutputTarget(
+class SupervisedFineTuningDataGenerationJobOutputConfiguration(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """File output target for a supervised fine-tuning data generation job. This is a preview feature.
+    """File output configuration for a supervised fine-tuning data generation job. This is a preview
+    feature.
 
     :ivar name: Filename to assign to the generated fine-tuning file. Required.
     :vartype name: str
@@ -26492,11 +26464,11 @@ class ToolSearchToolParam(
         self.type = ToolType.TOOL_SEARCH  # type: ignore
 
 
-class ToolUseFineTuningDataGenerationJobOptions(
-    DataGenerationJobOptions, discriminator="tool_use"
+class ToolUseFineTuningDataGenerationJobConfiguration(
+    DataGenerationJobConfiguration, discriminator="tool_use"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The options for a data generation job with ToolUse type. This is a preview feature used only
-    for fine-tuning scenarios.
+    """The configuration for a data generation job with ToolUse type. This is a preview feature used
+    only for fine-tuning scenarios.
 
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
@@ -26538,10 +26510,10 @@ class ToolUseFineTuningDataGenerationJobOptions(
         self.type = DataGenerationJobType.TOOL_USE  # type: ignore
 
 
-class TracesDataGenerationJobOptions(
-    DataGenerationJobOptions, discriminator="traces"
+class TracesDataGenerationJobConfiguration(
+    DataGenerationJobConfiguration, discriminator="traces"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The options for a data generation job with Traces type.
+    """The configuration for a data generation job with Traces type.
 
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.

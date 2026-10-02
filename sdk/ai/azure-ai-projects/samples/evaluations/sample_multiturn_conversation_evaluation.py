@@ -44,7 +44,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
+from azure.ai.projects.models import DatasetVersion, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -120,6 +120,7 @@ with (
     print(f"Evaluation created (id: {eval_object.id})")
 
     # Upload the conversation dataset
+    dataset: DatasetVersion
     try:
         dataset = project_client.datasets.upload_file(
             name="multiturn-conversation-data",

@@ -122,7 +122,9 @@ with (
             )
         )
     else:
-        print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
+        print(
+            "Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set)."
+        )
 
     print("Begin creating an evaluator generation job.")
     try:
@@ -164,7 +166,9 @@ with (
     # The traces source requires a companion source because the service rejects
     # sources arrays consisting only of traces. The Agent source is the typical companion.
     if not agent_name:
-        print("Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion).")
+        print(
+            "Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion)."
+        )
     else:
         now = datetime.now(tz=timezone.utc)
         start_time = now - timedelta(days=traces_window_days)
@@ -220,6 +224,10 @@ with (
     # 3. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     if multi_evaluator_version:
-        project_client.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
+        project_client.evaluators.delete_version(
+            name=multi_name, version=multi_evaluator_version
+        )
     if traces_evaluator_version:
-        project_client.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)
+        project_client.evaluators.delete_version(
+            name=traces_name, version=traces_evaluator_version
+        )

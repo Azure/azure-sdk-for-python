@@ -7651,7 +7651,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         from the provided source materials asynchronously.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationInputs
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -7673,7 +7673,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
+        :param job: The evaluator generation job inputs to create. Required.
         :type job: JSON
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
@@ -7701,7 +7701,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
+        :param job: The evaluator generation job inputs to create. Required.
         :type job: IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
@@ -7728,9 +7728,9 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationInputs, JSON,
+        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
          IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationInputs or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
