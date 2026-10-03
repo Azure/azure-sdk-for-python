@@ -200,7 +200,7 @@ def _get_target_and_path_for_http_dependency(
             target = attributes[server_attributes.SERVER_ADDRESS]
             server_port = attributes.get(server_attributes.SERVER_PORT)
             # if not default port, include port in target
-            if server_port != default_port:
+            if server_port and server_port != default_port:
                 target = "{}:{}".format(target, server_port)
         # Target from peer.service
         elif SpanAttributes.PEER_SERVICE in attributes:
