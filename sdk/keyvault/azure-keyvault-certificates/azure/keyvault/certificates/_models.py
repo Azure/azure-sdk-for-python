@@ -690,7 +690,7 @@ class CertificateOperation(object):
         return self._preserve_order
 
 
-class CertificatePolicy(object):
+class CertificatePolicy(object):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Management policy for a certificate.
 
     :param issuer_name: Optional. Name of the referenced issuer object or reserved names; for example,
@@ -1484,7 +1484,7 @@ class LifetimeAction(object):
         return self._action
 
 
-class DeletedCertificate(KeyVaultCertificate):
+class DeletedCertificate(KeyVaultCertificate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted Certificate consisting of its previous ID, attributes, tags, and information on when it will be purged.
 
     :param properties: Properties of the deleted certificate.
