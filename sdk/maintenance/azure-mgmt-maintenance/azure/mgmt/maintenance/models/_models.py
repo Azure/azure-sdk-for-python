@@ -62,7 +62,7 @@ class ProxyResource(Resource):
     """
 
 
-class ApplyUpdate(ProxyResource):
+class ApplyUpdate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Apply Update request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -123,7 +123,7 @@ class ApplyUpdate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplyUpdateProperties(_Model):
+class ApplyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for apply update.
 
     :ivar status: The status. Known values are: "Pending", "InProgress", "Completed", "RetryNow",
@@ -169,7 +169,7 @@ class ApplyUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationAssignment(ProxyResource):
+class ConfigurationAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -235,7 +235,7 @@ class ConfigurationAssignment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConfigurationAssignmentFilterProperties(_Model):
+class ConfigurationAssignmentFilterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure query for the update configuration.
 
     :ivar resource_types: List of allowed resources.
@@ -291,7 +291,7 @@ class ConfigurationAssignmentFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationAssignmentProperties(_Model):
+class ConfigurationAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for configuration assignment.
 
     :ivar maintenance_configuration_id: The maintenance configuration Id.
@@ -335,7 +335,7 @@ class ConfigurationAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetails(_Model):
+class ErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response details received from the Azure Maintenance service.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -370,7 +370,7 @@ class ErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputLinuxParameters(_Model):
+class InputLinuxParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input properties for patching a Linux machine.
 
     :ivar package_name_masks_to_exclude: Package names to be excluded for patching.
@@ -416,7 +416,7 @@ class InputLinuxParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputPatchConfiguration(_Model):
+class InputPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input configuration for a patch run.
 
     :ivar reboot_setting: Possible reboot preference as defined by the user based on which it would
@@ -468,7 +468,7 @@ class InputPatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputWindowsParameters(_Model):
+class InputWindowsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input properties for patching a Windows machine.
 
     :ivar kb_numbers_to_exclude: Windows KBID to be excluded for patching.
@@ -522,7 +522,7 @@ class InputWindowsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceConfiguration(ProxyResource):
+class MaintenanceConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance configuration record type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -573,7 +573,7 @@ class MaintenanceConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceConfigurationProperties(_Model):
+class MaintenanceConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for maintenance configuration.
 
     :ivar namespace: Gets or sets namespace of the resource.
@@ -660,7 +660,7 @@ class MaintenanceConfigurationProperties(_Model):
             super().__setattr__(key, value)
 
 
-class MaintenanceError(_Model):
+class MaintenanceError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response received from the Azure Maintenance service.
 
     :ivar error: Details of the error.
@@ -688,7 +688,7 @@ class MaintenanceError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of a MaintenanceWindow.
 
     :ivar start_date_time: Effective start date of the maintenance window in YYYY-MM-DD hh:mm
@@ -781,7 +781,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -867,8 +867,49 @@ class OperationInfo(_Model):
      views."""
 
 
-class ScheduledEventApproveResponse(_Model):
-    """Response of scheduled event acknowledge.
+class ScheduledEventsAcknowledgeErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An error response details received from the Azure Maintenance service for each ScheduledEvents.
+
+    :ivar target: ScheduledEvents Id. This is a GUID-formatted string (e.g.
+     00000000-0000-0000-0000-000000000000).
+    :vartype target: str
+    :ivar code: Status code for the ScheduledEvents acknowledge operation on the target
+     ScheduledEvents Id.
+    :vartype code: str
+    :ivar message: Human-readable representation of the error.
+    :vartype message: str
+    """
+
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ScheduledEvents Id. This is a GUID-formatted string (e.g.
+     00000000-0000-0000-0000-000000000000)."""
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status code for the ScheduledEvents acknowledge operation on the target ScheduledEvents Id."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable representation of the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: Optional[str] = None,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledEventsApproveResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response of ScheduledEvents acknowledge.
 
     :ivar value: Successfully Approved.
     :vartype value: str
@@ -895,7 +936,109 @@ class ScheduledEventApproveResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class ScheduledEventsIdList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ScheduledEvents Id List.
+
+    :ivar value: The list of ScheduledEvents Id. Required.
+    :vartype value: list[str]
+    """
+
+    value: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of ScheduledEvents Id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledEventsListAcknowledgeError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An error response received from the Azure Maintenance service.
+
+    :ivar error: Error response.
+    :vartype error: ~azure.mgmt.maintenance.models.ScheduledEventsListAcknowledgeErrorDetails
+    """
+
+    error: Optional["_models.ScheduledEventsListAcknowledgeErrorDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error response."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ScheduledEventsListAcknowledgeErrorDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledEventsListAcknowledgeErrorDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """An error response details received from the Azure Maintenance service.
+
+    :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
+     code specified in the response.
+    :vartype code: str
+    :ivar message: Human-readable representation of the error.
+    :vartype message: str
+    :ivar details: Error details for each ScheduledEvents.
+    :vartype details: list[~azure.mgmt.maintenance.models.ScheduledEventsAcknowledgeErrorDetails]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Service-defined error code. This code serves as a sub-status for the HTTP error code specified
+     in the response."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable representation of the error."""
+    details: Optional[list["_models.ScheduledEventsAcknowledgeErrorDetails"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error details for each ScheduledEvents."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        details: Optional[list["_models.ScheduledEventsAcknowledgeErrorDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -962,7 +1105,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagSettingsProperties(_Model):
+class TagSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag filter information for the VM.
 
     :ivar tags: Dictionary of tags with its list of values.
@@ -998,7 +1141,7 @@ class TagSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Update(_Model):
+class Update(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance update on a resource.
 
     :ivar maintenance_scope: The impact area. Known values are: "Host", "Resource", "OSImage",
@@ -1089,7 +1232,7 @@ class Update(_Model):
             super().__setattr__(key, value)
 
 
-class UpdateProperties(_Model):
+class UpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for update.
 
     :ivar resource_id: The resourceId.

@@ -31,9 +31,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_apply_update_for_resource_group_list_request,
     build_apply_updates_create_or_update_or_cancel_request,
@@ -68,7 +69,8 @@ from ...operations._operations import (
     build_operations_list_request,
     build_public_maintenance_configurations_get_request,
     build_public_maintenance_configurations_list_request,
-    build_scheduled_event_acknowledge_request,
+    build_scheduled_events_acknowledge_list_request,
+    build_scheduled_events_acknowledge_request,
     build_updates_list_parent_request,
     build_updates_list_request,
 )
@@ -76,11 +78,10 @@ from .._configuration import MaintenanceManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -194,7 +195,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MaintenanceConfigurationsOperations:
+class MaintenanceConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -319,7 +320,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        configuration: JSON,
+        configuration: _types.MaintenanceConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -332,7 +333,7 @@ class MaintenanceConfigurationsOperations:
         :param resource_name: The name of the MaintenanceConfiguration. Required.
         :type resource_name: str
         :param configuration: The configuration. Required.
-        :type configuration: JSON
+        :type configuration: ~azure.mgmt.maintenance.types.MaintenanceConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -375,7 +376,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        configuration: Union[_models.MaintenanceConfiguration, JSON, IO[bytes]],
+        configuration: Union[_models.MaintenanceConfiguration, _types.MaintenanceConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.MaintenanceConfiguration:
         """Create or Update configuration record.
@@ -385,10 +386,10 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the MaintenanceConfiguration. Required.
         :type resource_name: str
-        :param configuration: The configuration. Is one of the following types:
-         MaintenanceConfiguration, JSON, IO[bytes] Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or JSON or
-         IO[bytes]
+        :param configuration: The configuration. Is either a MaintenanceConfiguration type or a
+         IO[bytes] type. Required.
+        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or
+         ~azure.mgmt.maintenance.types.MaintenanceConfiguration or IO[bytes]
         :return: MaintenanceConfiguration. The MaintenanceConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
@@ -494,7 +495,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        configuration: JSON,
+        configuration: _types.MaintenanceConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -507,7 +508,7 @@ class MaintenanceConfigurationsOperations:
         :param resource_name: The name of the MaintenanceConfiguration. Required.
         :type resource_name: str
         :param configuration: The configuration. Required.
-        :type configuration: JSON
+        :type configuration: ~azure.mgmt.maintenance.types.MaintenanceConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -550,7 +551,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        configuration: Union[_models.MaintenanceConfiguration, JSON, IO[bytes]],
+        configuration: Union[_models.MaintenanceConfiguration, _types.MaintenanceConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.MaintenanceConfiguration:
         """Patch configuration record.
@@ -560,10 +561,10 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the MaintenanceConfiguration. Required.
         :type resource_name: str
-        :param configuration: The configuration. Is one of the following types:
-         MaintenanceConfiguration, JSON, IO[bytes] Required.
-        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or JSON or
-         IO[bytes]
+        :param configuration: The configuration. Is either a MaintenanceConfiguration type or a
+         IO[bytes] type. Required.
+        :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration or
+         ~azure.mgmt.maintenance.types.MaintenanceConfiguration or IO[bytes]
         :return: MaintenanceConfiguration. The MaintenanceConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
@@ -806,7 +807,7 @@ class MaintenanceConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ApplyUpdatesOperations:
+class ApplyUpdatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1051,7 +1052,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        apply_update: JSON,
+        apply_update: _types.ApplyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1070,7 +1071,7 @@ class ApplyUpdatesOperations:
         :param apply_update_name: The name of the ApplyUpdate. Required.
         :type apply_update_name: str
         :param apply_update: The ApplyUpdate. Required.
-        :type apply_update: JSON
+        :type apply_update: ~azure.mgmt.maintenance.types.ApplyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1123,7 +1124,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        apply_update: Union[_models.ApplyUpdate, JSON, IO[bytes]],
+        apply_update: Union[_models.ApplyUpdate, _types.ApplyUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplyUpdate:
         """Apply maintenance updates to resource.
@@ -1139,9 +1140,10 @@ class ApplyUpdatesOperations:
         :type resource_name: str
         :param apply_update_name: The name of the ApplyUpdate. Required.
         :type apply_update_name: str
-        :param apply_update: The ApplyUpdate. Is one of the following types: ApplyUpdate, JSON,
-         IO[bytes] Required.
-        :type apply_update: ~azure.mgmt.maintenance.models.ApplyUpdate or JSON or IO[bytes]
+        :param apply_update: The ApplyUpdate. Is either a ApplyUpdate type or a IO[bytes] type.
+         Required.
+        :type apply_update: ~azure.mgmt.maintenance.models.ApplyUpdate or
+         ~azure.mgmt.maintenance.types.ApplyUpdate or IO[bytes]
         :return: ApplyUpdate. The ApplyUpdate is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ApplyUpdate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1491,7 +1493,7 @@ class ApplyUpdatesOperations:
         return deserialized  # type: ignore
 
 
-class ConfigurationAssignmentsOperations:
+class ConfigurationAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1657,7 +1659,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1680,7 +1682,7 @@ class ConfigurationAssignmentsOperations:
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1741,7 +1743,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
@@ -1761,10 +1763,10 @@ class ConfigurationAssignmentsOperations:
         :type resource_name: str
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2192,7 +2194,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2211,7 +2213,7 @@ class ConfigurationAssignmentsOperations:
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2264,7 +2266,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
@@ -2280,10 +2282,10 @@ class ConfigurationAssignmentsOperations:
         :type resource_name: str
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2560,7 +2562,7 @@ class ConfigurationAssignmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=name-too-long
+class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2672,7 +2674,7 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
     async def create_or_update(
         self,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2682,7 +2684,7 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2718,17 +2720,17 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
     async def create_or_update(
         self,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
 
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2826,7 +2828,7 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
     async def update(
         self,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2836,7 +2838,7 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2872,17 +2874,17 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
     async def update(
         self,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
 
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3025,7 +3027,7 @@ class ConfigurationAssignmentsForSubscriptionsOperations:  # pylint: disable=nam
         return deserialized  # type: ignore
 
 
-class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=name-too-long
+class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3148,7 +3150,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3161,7 +3163,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3202,7 +3204,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
@@ -3212,10 +3214,10 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         :type resource_group_name: str
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3319,7 +3321,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: JSON,
+        configuration_assignment: _types.ConfigurationAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3332,7 +3334,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: JSON
+        :type configuration_assignment: ~azure.mgmt.maintenance.types.ConfigurationAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3373,7 +3375,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, JSON, IO[bytes]],
+        configuration_assignment: Union[_models.ConfigurationAssignment, _types.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Register configuration for resource.
@@ -3383,10 +3385,10 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         :type resource_group_name: str
         :param configuration_assignment_name: The name of the ConfigurationAssignment. Required.
         :type configuration_assignment_name: str
-        :param configuration_assignment: The configurationAssignment. Is one of the following types:
-         ConfigurationAssignment, JSON, IO[bytes] Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or JSON
-         or IO[bytes]
+        :param configuration_assignment: The configurationAssignment. Is either a
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~azure.mgmt.maintenance.types.ConfigurationAssignment or IO[bytes]
         :return: ConfigurationAssignment. The ConfigurationAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3534,7 +3536,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=nam
         return deserialized  # type: ignore
 
 
-class PublicMaintenanceConfigurationsOperations:  # pylint: disable=name-too-long
+class PublicMaintenanceConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3715,7 +3717,7 @@ class PublicMaintenanceConfigurationsOperations:  # pylint: disable=name-too-lon
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MaintenanceConfigurationsForResourceGroupOperations:  # pylint: disable=name-too-long
+class MaintenanceConfigurationsForResourceGroupOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3833,7 +3835,7 @@ class MaintenanceConfigurationsForResourceGroupOperations:  # pylint: disable=na
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConfigurationAssignmentsWithinSubscriptionOperations:  # pylint: disable=name-too-long
+class ConfigurationAssignmentsWithinSubscriptionOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3948,14 +3950,14 @@ class ConfigurationAssignmentsWithinSubscriptionOperations:  # pylint: disable=n
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ScheduledEventOperations:
+class ScheduledEventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.maintenance.aio.MaintenanceManagementClient`'s
-        :attr:`scheduled_event` attribute.
+        :attr:`scheduled_events` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3970,10 +3972,10 @@ class ScheduledEventOperations:
     @distributed_trace_async
     async def acknowledge(
         self, resource_group_name: str, resource_type: str, resource_name: str, scheduled_event_id: str, **kwargs: Any
-    ) -> _models.ScheduledEventApproveResponse:
-        """Post Scheduled Event Acknowledgement.
+    ) -> _models.ScheduledEventsApproveResponse:
+        """Post ScheduledEvents Acknowledgement.
 
-        Post Scheduled Event Acknowledgement.
+        Post ScheduledEvents Acknowledgement.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3982,12 +3984,12 @@ class ScheduledEventOperations:
         :type resource_type: str
         :param resource_name: Resource Name. Required.
         :type resource_name: str
-        :param scheduled_event_id: Scheduled Event Id. This is a GUID-formatted string (e.g.
+        :param scheduled_event_id: ScheduledEvents Id. This is a GUID-formatted string (e.g.
          00000000-0000-0000-0000-000000000000). Required.
         :type scheduled_event_id: str
-        :return: ScheduledEventApproveResponse. The ScheduledEventApproveResponse is compatible with
+        :return: ScheduledEventsApproveResponse. The ScheduledEventsApproveResponse is compatible with
          MutableMapping
-        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventApproveResponse
+        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventsApproveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4001,9 +4003,9 @@ class ScheduledEventOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ScheduledEventApproveResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ScheduledEventsApproveResponse] = kwargs.pop("cls", None)
 
-        _request = build_scheduled_event_acknowledge_request(
+        _request = build_scheduled_events_acknowledge_request(
             resource_group_name=resource_group_name,
             resource_type=resource_type,
             resource_name=resource_name,
@@ -4042,7 +4044,218 @@ class ScheduledEventOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ScheduledEventApproveResponse, response.json())
+            deserialized = _deserialize(_models.ScheduledEventsApproveResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def acknowledge_list(
+        self,
+        resource_group_name: str,
+        resource_type: str,
+        resource_name: str,
+        scheduled_events_id_list: _models.ScheduledEventsIdList,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledEventsApproveResponse:
+        """Post ScheduledEvents List Acknowledgement.
+
+        Post List of ScheduledEvents Acknowledgement.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_type: Resource type. Required.
+        :type resource_type: str
+        :param resource_name: Resource name. Required.
+        :type resource_name: str
+        :param scheduled_events_id_list: List of ScheduledEvents Id. Required.
+        :type scheduled_events_id_list: ~azure.mgmt.maintenance.models.ScheduledEventsIdList
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledEventsApproveResponse. The ScheduledEventsApproveResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventsApproveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acknowledge_list(
+        self,
+        resource_group_name: str,
+        resource_type: str,
+        resource_name: str,
+        scheduled_events_id_list: _types.ScheduledEventsIdList,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledEventsApproveResponse:
+        """Post ScheduledEvents List Acknowledgement.
+
+        Post List of ScheduledEvents Acknowledgement.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_type: Resource type. Required.
+        :type resource_type: str
+        :param resource_name: Resource name. Required.
+        :type resource_name: str
+        :param scheduled_events_id_list: List of ScheduledEvents Id. Required.
+        :type scheduled_events_id_list: ~azure.mgmt.maintenance.types.ScheduledEventsIdList
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledEventsApproveResponse. The ScheduledEventsApproveResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventsApproveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acknowledge_list(
+        self,
+        resource_group_name: str,
+        resource_type: str,
+        resource_name: str,
+        scheduled_events_id_list: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledEventsApproveResponse:
+        """Post ScheduledEvents List Acknowledgement.
+
+        Post List of ScheduledEvents Acknowledgement.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_type: Resource type. Required.
+        :type resource_type: str
+        :param resource_name: Resource name. Required.
+        :type resource_name: str
+        :param scheduled_events_id_list: List of ScheduledEvents Id. Required.
+        :type scheduled_events_id_list: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledEventsApproveResponse. The ScheduledEventsApproveResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventsApproveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_type",
+                "resource_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
+    async def acknowledge_list(
+        self,
+        resource_group_name: str,
+        resource_type: str,
+        resource_name: str,
+        scheduled_events_id_list: Union[_models.ScheduledEventsIdList, _types.ScheduledEventsIdList, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ScheduledEventsApproveResponse:
+        """Post ScheduledEvents List Acknowledgement.
+
+        Post List of ScheduledEvents Acknowledgement.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_type: Resource type. Required.
+        :type resource_type: str
+        :param resource_name: Resource name. Required.
+        :type resource_name: str
+        :param scheduled_events_id_list: List of ScheduledEvents Id. Is either a ScheduledEventsIdList
+         type or a IO[bytes] type. Required.
+        :type scheduled_events_id_list: ~azure.mgmt.maintenance.models.ScheduledEventsIdList or
+         ~azure.mgmt.maintenance.types.ScheduledEventsIdList or IO[bytes]
+        :return: ScheduledEventsApproveResponse. The ScheduledEventsApproveResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.maintenance.models.ScheduledEventsApproveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ScheduledEventsApproveResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(scheduled_events_id_list, (IOBase, bytes)):
+            _content = scheduled_events_id_list
+        else:
+            _content = json.dumps(scheduled_events_id_list, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_events_acknowledge_list_request(
+            resource_group_name=resource_group_name,
+            resource_type=resource_type,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ScheduledEventsListAcknowledgeError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ScheduledEventsApproveResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4050,7 +4263,7 @@ class ScheduledEventOperations:
         return deserialized  # type: ignore
 
 
-class ApplyUpdateForResourceGroupOperations:
+class ApplyUpdateForResourceGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4169,7 +4382,7 @@ class ApplyUpdateForResourceGroupOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UpdatesOperations:
+class UpdatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
