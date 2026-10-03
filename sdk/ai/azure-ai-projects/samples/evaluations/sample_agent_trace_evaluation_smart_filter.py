@@ -22,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
@@ -140,7 +140,7 @@ with (
         print(f"Using agent filter: {agent_name} v{agent_version or '(latest)'}")
 
     data_source = {
-        "type": "azure_ai_trace_data_source_preview",
+        "type": "azure_ai_trace_data_source",
         "trace_source": trace_source,
     }
 
