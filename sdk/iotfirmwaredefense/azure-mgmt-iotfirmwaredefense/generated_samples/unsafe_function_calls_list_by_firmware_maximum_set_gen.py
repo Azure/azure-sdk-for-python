@@ -15,7 +15,7 @@ from azure.mgmt.iotfirmwaredefense import IoTFirmwareDefenseMgmtClient
     pip install azure-identity
     pip install azure-mgmt-iotfirmwaredefense
 # USAGE
-    python summaries_get_minimum_set_gen.py
+    python unsafe_function_calls_list_by_firmware_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.summaries.get(
-        resource_group_name="FirmwareAnalysisRG",
-        workspace_name="default",
+    response = client.unsafe_function_calls.list_by_firmware(
+        resource_group_name="rgiotfirmwaredefense",
+        workspace_name="exampleWorkspaceName",
         firmware_id="00000000-0000-0000-0000-000000000000",
-        summary_type="Firmware",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-06-01-preview/Summaries_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2026-06-01-preview/UnsafeFunctionCalls_ListByFirmware_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
