@@ -1,5 +1,14 @@
 # Release History
 
+## Unreleased
+
+### Bugs Fixed
+
+- Preserved a complete resolved `agent_reference` when persisting resilient
+  background checkpoints whose snapshots omit or partially specify the agent
+  identity, without mutating handler snapshots or replacing complete explicit
+  references.
+
 ## 2.3.0b2 (2026-09-30)
 
 ### Bugs Fixed
