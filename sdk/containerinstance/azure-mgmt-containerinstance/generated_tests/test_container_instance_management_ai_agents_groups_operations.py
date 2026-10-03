@@ -14,22 +14,22 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementAiAgentsGroupsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ContainerInstanceManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_list_by_subscription(self, resource_group):
-        response = self.client.sandbox_groups.list_by_subscription()
+    def test_ai_agents_groups_list_by_subscription(self, resource_group):
+        response = self.client.ai_agents_groups.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_list_by_resource_group(self, resource_group):
-        response = self.client.sandbox_groups.list_by_resource_group(
+    def test_ai_agents_groups_list_by_resource_group(self, resource_group):
+        response = self.client.ai_agents_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -38,10 +38,10 @@ class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_get(self, resource_group):
-        response = self.client.sandbox_groups.get(
+    def test_ai_agents_groups_get(self, resource_group):
+        response = self.client.ai_agents_groups.get(
             resource_group_name=resource_group.name,
-            sandbox_group_name="str",
+            ai_agents_group_name="str",
         )
 
         # please add some check logic here by yourself
@@ -49,10 +49,10 @@ class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_begin_create_or_update(self, resource_group):
-        response = self.client.sandbox_groups.begin_create_or_update(
+    def test_ai_agents_groups_begin_create_or_update(self, resource_group):
+        response = self.client.ai_agents_groups.begin_create_or_update(
             resource_group_name=resource_group.name,
-            sandbox_group_name="str",
+            ai_agents_group_name="str",
             resource={
                 "location": "str",
                 "id": "str",
@@ -86,10 +86,10 @@ class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_begin_update(self, resource_group):
-        response = self.client.sandbox_groups.begin_update(
+    def test_ai_agents_groups_begin_update(self, resource_group):
+        response = self.client.ai_agents_groups.begin_update(
             resource_group_name=resource_group.name,
-            sandbox_group_name="str",
+            ai_agents_group_name="str",
             properties={
                 "identity": {
                     "type": "str",
@@ -106,10 +106,10 @@ class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_begin_delete(self, resource_group):
-        response = self.client.sandbox_groups.begin_delete(
+    def test_ai_agents_groups_begin_delete(self, resource_group):
+        response = self.client.ai_agents_groups.begin_delete(
             resource_group_name=resource_group.name,
-            sandbox_group_name="str",
+            ai_agents_group_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -117,10 +117,10 @@ class TestContainerInstanceManagementSandboxGroupsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sandbox_groups_connect(self, resource_group):
-        response = self.client.sandbox_groups.connect(
+    def test_ai_agents_groups_connect(self, resource_group):
+        response = self.client.ai_agents_groups.connect(
             resource_group_name=resource_group.name,
-            sandbox_group_name="str",
+            ai_agents_group_name="str",
         )
 
         # please add some check logic here by yourself
