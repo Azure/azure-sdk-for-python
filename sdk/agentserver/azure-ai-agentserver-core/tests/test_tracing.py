@@ -4,6 +4,7 @@
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 
 import asyncio
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
@@ -13,6 +14,9 @@ from unittest import mock
 
 import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry._logs import LogRecord
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter, SimpleLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
@@ -622,6 +626,23 @@ class TestFoundryEnrichmentSpanProcessor:
         assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
         assert attrs["microsoft.foundry.project.id"] == "proj-123"
 
+    def test_provider_on_parent_and_child_spans(self) -> None:
+        provider, collector = self._create_provider(_FoundryEnrichmentSpanProcessor())
+        tracer = provider.get_tracer("framework")
+        try:
+            with tracer.start_as_current_span("parent", attributes={"gen_ai.provider.name": "other-provider"}) as parent:
+                assert parent.attributes["gen_ai.provider.name"] == "microsoft.foundry"
+                with tracer.start_as_current_span("child") as child:
+                    assert child.attributes["gen_ai.provider.name"] == "microsoft.foundry"
+                    child.set_attribute("gen_ai.provider.name", "framework-provider")
+                parent.set_attribute("gen_ai.provider.name", "framework-provider")
+
+            assert len(collector.spans) == 2
+            for span in collector.spans:
+                assert span.attributes["gen_ai.provider.name"] == "microsoft.foundry"
+        finally:
+            provider.shutdown()
+
     def test_agent_attrs_survive_framework_overwrite(self) -> None:
         """A framework setting agent attrs mid-span must not win."""
         proc = _FoundryEnrichmentSpanProcessor(
@@ -888,6 +909,47 @@ class _FakeLogData:
 
 
 class TestBaggageLogRecordProcessor:
+    @pytest.mark.parametrize("attributes", [None, {}, {"gen_ai.provider.name": "other-provider"}])
+    @pytest.mark.parametrize("baggage_provider", [None, "baggage-provider"])
+    def test_provider_on_all_logs(self, attributes, baggage_provider) -> None:
+        proc = _BaggageLogRecordProcessor()
+        log_data = _FakeLogData(None if attributes is None else attributes.copy())
+        ctx = _otel_context.Context()
+        if baggage_provider:
+            ctx = _otel_baggage.set_baggage("gen_ai.provider.name", baggage_provider, context=ctx)
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        assert log_data.log_record.attributes["gen_ai.provider.name"] == "microsoft.foundry"
+
+    @pytest.mark.parametrize("attributes", [None, {}, {"gen_ai.provider.name": "other-provider"}])
+    def test_provider_on_exported_otel_and_python_logs(self, attributes) -> None:
+        collector = InMemoryLogRecordExporter()
+        provider = LoggerProvider()
+        provider.add_log_record_processor(_BaggageLogRecordProcessor())
+        provider.add_log_record_processor(SimpleLogRecordProcessor(collector))
+        handler = LoggingHandler(logger_provider=provider)
+        python_logger = logging.Logger("agentserver.test")
+        python_logger.addHandler(handler)
+        ctx = _otel_baggage.set_baggage("gen_ai.provider.name", "baggage-provider")
+        token = _otel_context.attach(ctx)
+        try:
+            provider.get_logger("agentserver.test").emit(LogRecord(body="otel log", attributes=attributes))
+            python_logger.warning("python log", extra=attributes)
+
+            records = collector.get_finished_logs()
+            assert {record.log_record.body for record in records} == {"otel log", "python log"}
+            for record in records:
+                assert record.log_record.attributes["gen_ai.provider.name"] == "microsoft.foundry"
+        finally:
+            _otel_context.detach(token)
+            python_logger.removeHandler(handler)
+            handler.close()
+            provider.shutdown()
+
     def test_adds_agent_and_fallback_session_attributes(self) -> None:
         proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",

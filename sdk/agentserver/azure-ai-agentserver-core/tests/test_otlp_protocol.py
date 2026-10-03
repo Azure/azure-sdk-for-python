@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 from threading import Lock, Thread
+from typing import Any
 
 import grpc
 import pytest
@@ -29,14 +30,16 @@ from opentelemetry.proto.collector.trace.v1 import (
 _SIGNALS = {"traces", "metrics", "logs"}
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _EMIT_ALL_SIGNALS = """
+import logging
 from azure.ai.agentserver.core import configure_observability
 from opentelemetry import metrics, trace
 from opentelemetry._logs import LogRecord, SeverityNumber, get_logger_provider
 
 configure_observability()
 
-with trace.get_tracer("agentserver.otlp.test").start_as_current_span("otlp-test-span"):
-    pass
+with trace.get_tracer("agentserver.otlp.test").start_as_current_span("otlp-test-span") as span:
+    span.set_attribute("gen_ai.provider.name", "framework-provider")
+    logging.getLogger("agentserver.otlp.test").warning("otlp-python-log")
 
 metrics.get_meter("agentserver.otlp.test").create_counter("otlp.test").add(1)
 
@@ -45,6 +48,14 @@ get_logger_provider().get_logger("agentserver.otlp.test").emit(
         severity_text="INFO",
         severity_number=SeverityNumber.INFO,
         body="otlp-test-log",
+    )
+)
+get_logger_provider().get_logger("agentserver.otlp.test").emit(
+    LogRecord(
+        severity_text="INFO",
+        severity_number=SeverityNumber.INFO,
+        body="otlp-conflicting-provider-log",
+        attributes={"gen_ai.provider.name": "other-provider"},
     )
 )
 
@@ -57,6 +68,7 @@ get_logger_provider().force_flush()
 class _SignalReceiver:
     def __init__(self) -> None:
         self._signals: set[str] = set()
+        self.records: dict[str, list[Any]] = {"traces": [], "logs": []}
         self._lock = Lock()
 
     @property
@@ -68,9 +80,23 @@ class _SignalReceiver:
     def endpoint(self) -> str:
         raise NotImplementedError
 
-    def record(self, signal: str) -> None:
+    def record(self, signal: str, request: Any) -> None:
         with self._lock:
             self._signals.add(signal)
+            if signal == "traces":
+                self.records[signal].extend(
+                    span
+                    for resource in request.resource_spans
+                    for scope in resource.scope_spans
+                    for span in scope.spans
+                )
+            elif signal == "logs":
+                self.records[signal].extend(
+                    record
+                    for resource in request.resource_logs
+                    for scope in resource.scope_logs
+                    for record in scope.log_records
+                )
 
     def __enter__(self) -> "_SignalReceiver":
         raise NotImplementedError
@@ -112,8 +138,8 @@ class _HttpOtlpReceiver(_SignalReceiver):
 
                 signal, request_type, response_type = service
                 body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
-                request_type.FromString(body)
-                receiver.record(signal)
+                request = request_type.FromString(body)
+                receiver.record(signal, request)
 
                 response = response_type().SerializeToString()
                 self.send_response(200)
@@ -153,21 +179,21 @@ class _GrpcOtlpReceiver(_SignalReceiver):
             def Export(
                 self, request, context
             ):  # pylint: disable=invalid-name,unused-argument
-                receiver.record("traces")
+                receiver.record("traces", request)
                 return trace_service_pb2.ExportTraceServiceResponse()
 
         class MetricsService(metrics_service_pb2_grpc.MetricsServiceServicer):
             def Export(
                 self, request, context
             ):  # pylint: disable=invalid-name,unused-argument
-                receiver.record("metrics")
+                receiver.record("metrics", request)
                 return metrics_service_pb2.ExportMetricsServiceResponse()
 
         class LogsService(logs_service_pb2_grpc.LogsServiceServicer):
             def Export(
                 self, request, context
             ):  # pylint: disable=invalid-name,unused-argument
-                receiver.record("logs")
+                receiver.record("logs", request)
                 return logs_service_pb2.ExportLogsServiceResponse()
 
         self._server = grpc.server(ThreadPoolExecutor(max_workers=3))
@@ -236,6 +262,13 @@ def test_otlp_protocol_exports_all_signals(
         f"{protocol} receiver got {sorted(receiver.signals)} instead of "
         f"{sorted(_SIGNALS)}.\nsubprocess stderr:\n{result.stderr}"
     )
+    assert any(span.name == "otlp-test-span" for span in receiver.records["traces"])
+    log_bodies = {record.body.string_value for record in receiver.records["logs"]}
+    assert {"otlp-test-log", "otlp-python-log", "otlp-conflicting-provider-log"} <= log_bodies
+    for records in receiver.records.values():
+        for record in records:
+            attributes = {attr.key: attr.value.string_value for attr in record.attributes}
+            assert attributes.get("gen_ai.provider.name") == "microsoft.foundry"
     if protocol == "grpc":
         assert "otlp-test-span" not in result.stdout
         assert "otlp-test-log" not in result.stdout
