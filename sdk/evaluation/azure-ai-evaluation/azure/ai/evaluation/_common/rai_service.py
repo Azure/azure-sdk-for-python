@@ -740,7 +740,7 @@ def _parse_content_harm_response(
             metric_value = math.nan
         reason = harm_response
     elif harm_response != "" and isinstance(harm_response, (int, float)):
-        if 0 < harm_response <= 7:
+        if 0 <= harm_response <= 7:
             metric_value = harm_response
         else:
             metric_value = math.nan
