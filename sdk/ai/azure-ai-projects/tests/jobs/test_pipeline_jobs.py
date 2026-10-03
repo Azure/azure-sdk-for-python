@@ -20,7 +20,7 @@ from azure.core.pipeline.transport import (
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects.models import CommandJob, JobType, PipelineJob
+from azure.ai.projects.models import AssetTypes, CommandJob, Input, JobResourceConfiguration, JobType, PipelineJob
 
 _ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
 _COMPUTE = "/subscriptions/test/resourceGroups/test/providers/Microsoft.CognitiveServices/accounts/test/computes/cpu"
@@ -45,6 +45,35 @@ _COMMAND_PROPERTIES = {
     "command": "echo hello",
     "environmentImageReference": "example.azurecr.io/train:latest",
     "computeId": _COMPUTE,
+}
+_INLINE_PIPELINE_PROPERTIES = {
+    "jobType": "Pipeline",
+    "computeId": _COMPUTE,
+    "settings": {"default_compute": _COMPUTE, "force_rerun": True},
+    "inputs": {"name": {"jobInputType": "literal", "value": "world"}},
+    "outputs": {},
+    "jobs": {
+        "hello": {
+            "type": "command",
+            "identity": {"type": "managed", "msi_resource_id": "/subscriptions/test/identities/hello"},
+            "component": {
+                "name": "hello",
+                "version": "1",
+                "type": "command",
+                "command": "echo hello ${{inputs.name}}",
+                "environment": {"image": "example.azurecr.io/train:latest"},
+                "inputs": {"name": {"type": "string"}},
+                "outputs": {},
+            },
+            "resources": {
+                "instance_count": 1,
+                "instance_type": "Standard_D4_v3",
+                "properties": {"AISuperComputer": {"SLATier": "Premium"}},
+            },
+            "inputs": {"name": {"job_input_type": "literal", "value": "${{parent.inputs.name}}"}},
+            "outputs": {},
+        }
+    },
 }
 
 
@@ -181,6 +210,106 @@ def _assert_requests(requests: list[HttpRequest], kind: str, expected: dict[str,
     assert urlparse(requests[0].url).path.endswith(f"/jobs/{kind.lower()}")
     assert json.loads(requests[0].body) == {"properties": expected}
     assert JobType.PIPELINE == "Pipeline"
+
+
+def _inline_pipeline() -> tuple[PipelineJob, CommandJob]:
+    command = CommandJob(
+        command="echo hello ${{inputs.name}}",
+        environment_image_reference="example.azurecr.io/train:latest",
+        compute=_COMPUTE,
+        inputs={"name": Input(type=AssetTypes.LITERAL, value="${{parent.inputs.name}}")},
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        resources=JobResourceConfiguration(
+            {
+                "instanceCount": 1,
+                "instanceType": "Standard_D4_v3",
+                "properties": {"AISuperComputer": {"SLATier": "Premium"}},
+            }
+        ),
+    )
+    pipeline = PipelineJob(
+        compute_id=_COMPUTE,
+        settings={"default_compute": _COMPUTE, "force_rerun": True},
+        inputs={"name": Input(type=AssetTypes.LITERAL, value="world")},
+        outputs={},
+        jobs={"hello": command},
+    )
+    return pipeline, command
+
+
+def _assert_inline_request(request: HttpRequest) -> None:
+    assert request.method == "PUT"
+    assert request.headers["Foundry-Features"] == "Jobs=V1Preview"
+    assert json.loads(request.body) == {"properties": _INLINE_PIPELINE_PROPERTIES}
+
+
+def test_jobs_sync_create_from_command_node() -> None:
+    pipeline, command = _inline_pipeline()
+    transport = _Transport([_response("Pipeline")])
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        _assert_job(client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
+
+    assert len(transport.requests) == 1
+    _assert_inline_request(transport.requests[0])
+    assert command.inputs["name"].value == "${{parent.inputs.name}}"
+    assert command.resources.instance_type == "Standard_D4_v3"
+
+
+@pytest.mark.asyncio
+async def test_jobs_async_create_from_command_node() -> None:
+    pipeline, _ = _inline_pipeline()
+    transport = _AsyncTransport([_response("Pipeline")])
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        _assert_job(await client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
+
+    assert len(transport.requests) == 1
+    _assert_inline_request(transport.requests[0])
+
+
+def test_pipeline_composes_commands_and_preserves_raw_graph_nodes() -> None:
+    first, _ = _inline_pipeline()
+    raw_node = {"type": "command", "component": {"name": "raw", "version": "1"}}
+    pipeline = PipelineJob(
+        compute_id=_COMPUTE,
+        jobs={
+            "hello": CommandJob(
+                command="echo hello", environment_image_reference="example.azurecr.io/train:latest", compute=_COMPUTE
+            ),
+            "second": CommandJob(
+                command="echo again", environment_image_reference="example.azurecr.io/train:latest", compute=_COMPUTE
+            ),
+            "raw": raw_node,
+        },
+    )
+
+    assert pipeline.jobs["hello"]["component"]["command"] == "echo hello"
+    assert pipeline.jobs["second"]["component"]["command"] == "echo again"
+    assert pipeline.jobs["raw"] == raw_node
+    assert first.jobs["hello"] == _INLINE_PIPELINE_PROPERTIES["jobs"]["hello"]
+
+
+@pytest.mark.parametrize(
+    ("extra", "message"),
+    [
+        ({"code": "azureai:code:1"}, "codeId"),
+        ({"inputs": {"data": Input(type=AssetTypes.URI_FILE, path="azureai:data:1")}}, "input 'data'"),
+        ({"compute": "/subscriptions/test/computes/other"}, "default compute"),
+        ({"resources": JobResourceConfiguration({"shmSize": "1g"})}, "shmSize"),
+    ],
+)
+def test_pipeline_rejects_unmapped_command_fields(extra: dict[str, Any], message: str) -> None:
+    fields: dict[str, Any] = {
+        "command": "echo hello",
+        "environment_image_reference": "example.azurecr.io/train:latest",
+        "compute": _COMPUTE,
+    }
+    fields.update(extra)
+    with pytest.raises(ValueError, match=message):
+        PipelineJob(compute_id=_COMPUTE, jobs={"hello": CommandJob(**fields)})
 
 
 @pytest.mark.parametrize("kind", ["Command", "Pipeline"])

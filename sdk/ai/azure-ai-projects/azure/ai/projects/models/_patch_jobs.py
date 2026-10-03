@@ -107,6 +107,10 @@ class CommandJob(_RestCommandJob):
 class PipelineJob(_RestPipelineJob):
     """A pipeline job with graph nodes, inputs, and outputs.
 
+    ``jobs`` accepts raw graph node dictionaries or :class:`CommandJob` instances
+    with literal inputs. Command jobs are converted to inline command nodes;
+    use raw graph dictionaries for other node features.
+
     :ivar name: The name of the job. Read-only; populated after the job is created.
     :vartype name: str or None
     :ivar id: The resource ID of the job. Read-only; populated after the job is created.
@@ -116,10 +120,91 @@ class PipelineJob(_RestPipelineJob):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        jobs = kwargs.get("jobs")
+        if isinstance(jobs, dict) and any(isinstance(node, CommandJob) for node in jobs.values()):
+            settings = kwargs.get("settings")
+            default_compute = settings.get("default_compute") if isinstance(settings, dict) else None
+            default_compute = default_compute or kwargs.get("compute_id")
+            kwargs["jobs"] = {
+                name: self._command_node(name, node, default_compute) if isinstance(node, CommandJob) else node
+                for name, node in jobs.items()
+            }
         super().__init__(*args, **kwargs)
         self._name: Optional[str] = None
         self._id: Optional[str] = None
         self._system_data: Optional[SystemData] = None
+
+    @staticmethod
+    def _command_node(name: str, job: CommandJob, default_compute: Optional[str]) -> Dict[str, Any]:
+        unsupported = set(job.as_dict(exclude_readonly=True)) - {
+            "jobType",
+            "command",
+            "environmentImageReference",
+            "computeId",
+            "inputs",
+            "resources",
+            "userAssignedIdentityId",
+        }
+        if unsupported:
+            raise ValueError(
+                f"Pipeline node '{name}' cannot convert CommandJob fields {sorted(unsupported)}; "
+                "use a raw graph node for these fields."
+            )
+        if not job.command or not job.environment_image_reference:
+            raise ValueError(f"Pipeline node '{name}' requires a command and environment image.")
+        if not default_compute or job.compute != default_compute:
+            raise ValueError(
+                f"Pipeline node '{name}' must use the pipeline's default compute; "
+                "use a raw graph node for another compute."
+            )
+
+        inputs: Dict[str, Any] = {}
+        for input_name, job_input in (job.inputs or {}).items():
+            if (
+                not isinstance(job_input, Input)
+                or job_input.type != "literal"
+                or job_input.value is None
+                or set(job_input.as_dict()) - {"jobInputType", "value"}
+            ):
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert input '{input_name}'; "
+                    "only literal CommandJob inputs are supported. Use a raw graph node for other inputs."
+                )
+            inputs[input_name] = {"job_input_type": "literal", "value": job_input.value}
+
+        node: Dict[str, Any] = {
+            "type": "command",
+            "component": {
+                "name": name,
+                "version": "1",
+                "type": "command",
+                "command": job.command,
+                "environment": {"image": job.environment_image_reference},
+                "inputs": {input_name: {"type": "string"} for input_name in inputs},
+                "outputs": {},
+            },
+            "inputs": inputs,
+            "outputs": {},
+        }
+        if job.user_assigned_identity_id is not None:
+            node["identity"] = {"type": "managed", "msi_resource_id": job.user_assigned_identity_id}
+
+        if job.resources is not None:
+            unsupported_resources = set(job.resources.as_dict()) - {"instanceCount", "instanceType", "properties"}
+            if unsupported_resources:
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert resource fields {sorted(unsupported_resources)}; "
+                    "use a raw graph node for these fields."
+                )
+            resources = {}
+            if job.resources.instance_count is not None:
+                resources["instance_count"] = job.resources.instance_count
+            if job.resources.instance_type is not None:
+                resources["instance_type"] = job.resources.instance_type
+            if job.resources.properties is not None:
+                resources["properties"] = job.resources.properties
+            node["resources"] = resources
+        return node
 
     @property
     def name(self) -> Optional[str]:
