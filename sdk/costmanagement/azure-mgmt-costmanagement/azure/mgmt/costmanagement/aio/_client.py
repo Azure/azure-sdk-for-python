@@ -34,6 +34,7 @@ from .operations import (
     GenerateDetailedCostReportOperationStatusOperations,
     GenerateDetailedCostReportOperations,
     GenerateReservationDetailsReportOperations,
+    MarkupRulesOperations,
     Operations,
     PriceSheetOperations,
     QueryOperations,
@@ -52,7 +53,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CostManagementClient:  # pylint: disable=too-many-instance-attributes
+class CostManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """CostManagement management client provides access to CostManagement resources for Azure
     Enterprise Subscriptions.
 
@@ -78,6 +79,8 @@ class CostManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype scheduled_actions: azure.mgmt.costmanagement.aio.operations.ScheduledActionsOperations
     :ivar settings: SettingsOperations operations
     :vartype settings: azure.mgmt.costmanagement.aio.operations.SettingsOperations
+    :ivar markup_rules: MarkupRulesOperations operations
+    :vartype markup_rules: azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations
     :ivar generate_cost_details_report: GenerateCostDetailsReportOperations operations
     :vartype generate_cost_details_report:
      azure.mgmt.costmanagement.aio.operations.GenerateCostDetailsReportOperations
@@ -116,7 +119,7 @@ class CostManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Known values are "2025-03-01" and None. Default value is None. If not
+    :keyword api_version: Known values are "2026-06-01" and None. Default value is None. If not
      set, the operation's default API version will be used. Note that overriding this default value
      may result in unsupported behavior.
     :paramtype api_version: str
@@ -186,6 +189,7 @@ class CostManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.settings = SettingsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.markup_rules = MarkupRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.generate_cost_details_report = GenerateCostDetailsReportOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
