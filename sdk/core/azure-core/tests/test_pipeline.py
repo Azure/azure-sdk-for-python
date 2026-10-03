@@ -68,15 +68,25 @@ def test_default_http_logging_policy(http_request):
     pipeline_client = PipelineClient(base_url="test")
     pipeline = pipeline_client._build_pipeline(config)
     http_logging_policy = pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
+    assert (
+        http_logging_policy.allowed_header_names
+        == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+    )
+    assert (
+        http_logging_policy.allowed_header_names
+        == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
+    )
     assert "WWW-Authenticate" in http_logging_policy.allowed_header_names
     assert "x-vss-e2eid" in http_logging_policy.allowed_header_names
     assert "x-msedge-ref" in http_logging_policy.allowed_header_names
     assert "azure-deprecating" in http_logging_policy.allowed_header_names
     # Testing I can replace the set entirely
-    HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
-    HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
+    HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST = set(
+        HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
+    )
+    HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST = set(
+        HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
+    )
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -89,11 +99,13 @@ def test_pass_in_http_logging_policy(http_request):
     pipeline_client = PipelineClient(base_url="test")
     pipeline = pipeline_client._build_pipeline(config)
     http_logging_policy = pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union(
-        {"x-ms-added-header"}
+    assert (
+        http_logging_policy.allowed_header_names
+        == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
     )
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union(
-        {"x-ms-added-header"}
+    assert (
+        http_logging_policy.allowed_header_names
+        == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union({"x-ms-added-header"})
     )
 
 
@@ -139,7 +151,9 @@ def test_requests_socket_timeout(http_request):
     # by the retry policy.
     with pytest.raises(AzureError):
         with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-            response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
+            response = pipeline.run(
+                request, connection_timeout=0.000001, read_timeout=0.000001
+            )
 
 
 def test_format_url_basic():
@@ -205,7 +219,9 @@ def test_format_url_no_base_url():
 def test_format_url_double_query():
     client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
     formatted = client.format_url("/subpath?a=X&c=Y")
-    assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+    assert (
+        formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+    )
 
 
 def test_format_url_query_strings():
@@ -230,8 +246,14 @@ def test_format_url_trailing_slash_preserved_with_query_only():
     # Test that trailing slash in base URL is preserved when url_template is query-string only
     # https://github.com/Azure/azure-sdk-for-python/issues/45365
     client = PipelineClientBase("{url}")
-    formatted = client.format_url("?versionid=2026-02-25", url="https://storage.blob.core.windows.net/sample//a/a/")
-    assert formatted == "https://storage.blob.core.windows.net/sample//a/a/?versionid=2026-02-25"
+    formatted = client.format_url(
+        "?versionid=2026-02-25",
+        url="https://storage.blob.core.windows.net/sample//a/a/",
+    )
+    assert (
+        formatted
+        == "https://storage.blob.core.windows.net/sample//a/a/?versionid=2026-02-25"
+    )
 
 
 def test_format_url_from_http_request():
@@ -267,7 +289,8 @@ def test_format_incorrect_endpoint():
     with pytest.raises(ValueError) as exp:
         client.format_url("foo/bar")
     assert (
-        str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
+        str(exp.value)
+        == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
     )
 
 
@@ -381,35 +404,48 @@ def test_add_custom_policy():
     config.retry_policy = retry_policy
     boo_policy = BooPolicy()
     foo_policy = FooPolicy()
-    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy)
+    client = PipelineClient(
+        base_url="test", config=config, per_call_policies=boo_policy
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     pos_boo = policies.index(boo_policy)
     pos_retry = policies.index(retry_policy)
     assert pos_boo < pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_call_policies=[boo_policy])
+    client = PipelineClient(
+        base_url="test", config=config, per_call_policies=[boo_policy]
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     pos_boo = policies.index(boo_policy)
     pos_retry = policies.index(retry_policy)
     assert pos_boo < pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_retry_policies=boo_policy)
+    client = PipelineClient(
+        base_url="test", config=config, per_retry_policies=boo_policy
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     pos_boo = policies.index(boo_policy)
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_retry_policies=[boo_policy])
+    client = PipelineClient(
+        base_url="test", config=config, per_retry_policies=[boo_policy]
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     pos_boo = policies.index(boo_policy)
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
+    client = PipelineClient(
+        base_url="test",
+        config=config,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -420,7 +456,10 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        config=config,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -432,28 +471,42 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     policies = [UserAgentPolicy(), RetryPolicy(), DistributedTracingPolicy()]
-    client = PipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy)
+    client = PipelineClient(
+        base_url="test", policies=policies, per_call_policies=boo_policy
+    )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
-    client = PipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy])
+    client = PipelineClient(
+        base_url="test", policies=policies, per_call_policies=[boo_policy]
+    )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
 
-    client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
+    client = PipelineClient(
+        base_url="test", policies=policies, per_retry_policies=foo_policy
+    )
     actual_policies = client._pipeline._impl_policies
     assert foo_policy == actual_policies[2]
-    client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+    client = PipelineClient(
+        base_url="test", policies=policies, per_retry_policies=[foo_policy]
+    )
     actual_policies = client._pipeline._impl_policies
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        base_url="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
@@ -461,9 +514,13 @@ def test_add_custom_policy():
 
     policies = [UserAgentPolicy(), DistributedTracingPolicy()]
     with pytest.raises(ValueError):
-        client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
+        client = PipelineClient(
+            base_url="test", policies=policies, per_retry_policies=foo_policy
+        )
     with pytest.raises(ValueError):
-        client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+        client = PipelineClient(
+            base_url="test", policies=policies, per_retry_policies=[foo_policy]
+        )
 
 
 def test_no_cleanup_policy_when_redirect_policy_is_empty():
@@ -535,9 +592,13 @@ def test_request_text(port, http_request):
     assert request.data == json.dumps("foo")
 
     if is_rest(http_request):
-        request = http_request("POST", "/", headers={"content-type": "text/whatever"}, content="foo")
+        request = http_request(
+            "POST", "/", headers={"content-type": "text/whatever"}, content="foo"
+        )
     else:
-        request = client.post("/", headers={"content-type": "text/whatever"}, content="foo")
+        request = client.post(
+            "/", headers={"content-type": "text/whatever"}, content="foo"
+        )
 
     # We want a direct string
     assert request.data == "foo"
@@ -548,3 +609,68 @@ def test_cleanup_kwargs():
     cleanup_kwargs_for_transport(kwargs)
     assert "insecure_domain_change" not in kwargs
     assert "enable_cae" not in kwargs
+
+
+def test_sensitive_headers_stripped_on_cross_domain_redirect():
+    """Test that api-key and Ocp-Apim-Subscription-Key are stripped on cross-origin redirect."""
+    import http.server
+    import socketserver
+    import threading
+
+    from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.policies import (
+        RedirectPolicy,
+        SensitiveHeaderCleanupPolicy,
+    )
+    from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+
+    captured = {}
+
+    class OriginA(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def do_GET(self):
+            self.send_response(302)
+            self.send_header(
+                "Location", f"http://127.0.0.1:{server_b.server_address[1]}/land"
+            )
+            self.end_headers()
+
+    class OriginB(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def do_GET(self):
+            captured["headers"] = {k.lower(): v for k, v in self.headers.items()}
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"{}")
+
+    server_a = socketserver.TCPServer(("127.0.0.1", 0), OriginA)
+    server_b = socketserver.TCPServer(("127.0.0.1", 0), OriginB)
+
+    t_a = threading.Thread(target=server_a.serve_forever, daemon=True)
+    t_b = threading.Thread(target=server_b.serve_forever, daemon=True)
+    t_a.start()
+    t_b.start()
+
+    try:
+        req = HttpRequest("GET", f"http://127.0.0.1:{server_a.server_address[1]}/start")
+        req.headers["api-key"] = "fake-api-key"
+        req.headers["Ocp-Apim-Subscription-Key"] = "fake-sub-key"
+        req.headers["Authorization"] = "Bearer fake-token"
+        with Pipeline(
+            transport=RequestsTransport(connection_verify=False),
+            policies=[RedirectPolicy(), SensitiveHeaderCleanupPolicy()],
+        ) as pipeline:
+            pipeline.run(req)
+
+        assert "api-key" not in captured.get("headers", {})
+        assert "ocp-apim-subscription-key" not in captured.get("headers", {})
+        assert "authorization" not in captured.get("headers", {})
+    finally:
+        server_a.shutdown()
+        server_a.server_close()
+        server_b.shutdown()
+        server_b.server_close()
