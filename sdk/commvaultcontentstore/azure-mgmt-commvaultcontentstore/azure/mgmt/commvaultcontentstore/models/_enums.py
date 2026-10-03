@@ -66,6 +66,18 @@ class BackUpType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Both incremental and full backups."""
 
 
+class ComplianceLockStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compliance lock status of a Commvault Storage."""
+
+    ENABLED = "Enabled"
+    """Compliance lock is enabled — storage is protected."""
+    DISABLEMENT_PENDING = "DisablementPending"
+    """Disablement is pending multi-person authorization (MPA) approval. Status transitions to
+    'Disabled' once approved."""
+    DISABLED = "Disabled"
+    """Compliance lock is disabled."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 

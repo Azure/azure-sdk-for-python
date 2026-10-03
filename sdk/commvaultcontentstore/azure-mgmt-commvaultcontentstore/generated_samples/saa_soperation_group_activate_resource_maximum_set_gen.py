@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,11 +32,34 @@ def main():
     )
 
     response = client.saa_soperation_group.begin_activate_resource(
-        body={"saaSGuid": "55555555-6666-7777-8888-999999999999"},
+        body={
+            "activateSaaSRequestParam": {
+                "company": {
+                    "city": "Redmond",
+                    "companyName": "Contoso",
+                    "country": "USA",
+                    "jobTitle": "Security Administrator",
+                    "postalCode": "98052",
+                    "state": "WA",
+                    "street": "1 Microsoft Way",
+                    "website": "https://www.contoso.com",
+                },
+                "saasResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-commvault/providers/Microsoft.SaaS/resources/commvault-saas",
+                "user": {
+                    "emailAddress": "john.smith@contoso.com",
+                    "firstName": "John",
+                    "lastName": "Smith",
+                    "phoneNumber": "+1-555-0101",
+                    "upn": "john.smith@contoso.com",
+                },
+            },
+            "publisherId": "contoso-publisher",
+            "saasGuid": "55555555-6666-7777-8888-999999999999",
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/SaaSOperationGroup_ActivateResource_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-01-preview/SaaSOperationGroup_ActivateResource_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
