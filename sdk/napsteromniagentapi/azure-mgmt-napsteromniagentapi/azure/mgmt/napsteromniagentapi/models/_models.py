@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActivateSaaSParameterRequest(_Model):
+class ActivateSaaSParameterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS guid & PublishedId for Activate and Validate SaaS Resource.
 
     :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
@@ -96,7 +96,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -124,7 +124,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LatestLinkedSaaSResponse(_Model):
+class LatestLinkedSaaSResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get latest linked SaaS resource operation.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -161,7 +161,7 @@ class LatestLinkedSaaSResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -213,7 +213,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_Model):
+class MarketplaceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace details for an organization.
 
     :ivar subscription_id: Azure subscription id for the the marketplace offer is purchased from.
@@ -266,7 +266,7 @@ class MarketplaceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_Model):
+class OfferDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
@@ -319,7 +319,7 @@ class OfferDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -407,7 +407,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OrganizationProperties(_Model):
+class OrganizationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to Organization.
 
     :ivar marketplace: Marketplace details of the resource. Required.
@@ -492,7 +492,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -536,7 +536,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class OrganizationResource(TrackedResource):
+class OrganizationResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -591,7 +591,7 @@ class OrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class OrganizationResourceUpdate(_Model):
+class OrganizationResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Organization Resource.
 
     :ivar tags: Resource tags.
@@ -626,7 +626,7 @@ class OrganizationResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerProperties(_Model):
+class PartnerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner's specific Properties.
 
     :ivar application: Application name. Required.
@@ -671,7 +671,7 @@ class ProxyResource(Resource):
     """
 
 
-class SaaSData(_Model):
+class SaaSData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS-related data properties.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -701,7 +701,7 @@ class SaaSData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSResourceDetailsResponse(ProxyResource):
+class SaaSResourceDetailsResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SaaS resource details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -740,7 +740,7 @@ class SaaSResourceDetailsResponse(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SingleSignOnPropertiesV2(_Model):
+class SingleSignOnPropertiesV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to Single Sign On Resource.
 
     :ivar type: Type of Single Sign-On mechanism being used. Required. Known values are: "Saml" and
@@ -800,7 +800,7 @@ class SingleSignOnPropertiesV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -882,7 +882,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserDetails(_Model):
+class UserDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User details for an organization.
 
     :ivar first_name: First name of the user.
