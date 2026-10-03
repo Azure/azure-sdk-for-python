@@ -27,8 +27,11 @@ class EnforcementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enforcement status."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
     NOT_AVAILABLE = "NotAvailable"
+    """NOT_AVAILABLE."""
 
 
 class GroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -37,30 +40,38 @@ class GroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOCATION_GROUP = "AllocationGroup"
     """The group is used for subscription group quota allocations."""
     ENFORCED_GROUP = "EnforcedGroup"
-    """The group is used for the enforced shared limit scenario"""
+    """The group is used for the enforced shared limit scenario."""
 
 
 class LimitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The limit object type."""
 
     LIMIT_VALUE = "LimitValue"
+    """LIMIT_VALUE."""
 
 
 class QuotaLimitTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The quota or usages limit types."""
 
     INDEPENDENT = "Independent"
+    """INDEPENDENT."""
     SHARED = "Shared"
+    """SHARED."""
 
 
 class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Quota request status."""
 
     ACCEPTED = "Accepted"
+    """ACCEPTED."""
     INVALID = "Invalid"
+    """INVALID."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     FAILED = "Failed"
+    """FAILED."""
     IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
 
 
 class RequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -85,8 +96,46 @@ class RequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The quota request has been canceled."""
 
 
+class TransferProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the ARM long-running operation that last wrote to a quota transfer
+    resource (the donor PUT, or the recipient approve / reject actions). Reflects the
+    infrastructure outcome of that call only; the business outcome of the transfer itself is
+    reported separately on ``transferStatus``.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """The LRO completed successfully."""
+    FAILED = "Failed"
+    """The LRO terminated with a failure."""
+    CANCELED = "Canceled"
+    """The LRO was canceled before it reached a terminal state."""
+
+
+class TransferStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Business status of a quota transfer. Distinct from ``provisioningState``, which only reports
+    the ARM LRO outcome of the most recent call.
+    """
+
+    PENDING = "Pending"
+    """The transfer has been created on the donor side and is awaiting recipient action."""
+    ACCEPTED = "Accepted"
+    """The recipient has approved the transfer; quota commit is in progress."""
+    COMPLETED = "Completed"
+    """The transfer has been applied and quota is committed at the recipient."""
+    CANCELLED = "Cancelled"
+    """The donor cancelled the transfer before it was approved."""
+    REJECTED = "Rejected"
+    """The recipient rejected the transfer."""
+    EXPIRED = "Expired"
+    """The transfer aged out before the recipient approved or rejected it."""
+    FAILED = "Failed"
+    """The transfer terminated with a failure."""
+
+
 class UsagesTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The quota or usages limit types."""
 
     INDIVIDUAL = "Individual"
+    """INDIVIDUAL."""
     COMBINED = "Combined"
+    """COMBINED."""
