@@ -1042,10 +1042,16 @@ chain record itself does not carry the per-turn diagnostic.
 | Sub-key | Type | Meaning |
 |---|---|---|
 | `pending_inputs` | array of input values OR refs (§23) | FIFO of queued steering inputs. |
+| `pending_ack_ids` | array of opaque strings or nulls | Internal acknowledgment IDs aligned with `pending_inputs`. Each new append adds a unique ID in the same PATCH; drain and queued cancel remove the corresponding ID. Null marks an untagged slot from a pre-upgrade task record. These are independent of the caller's `input_id`. |
 | `next_input_seq` | integer | Monotonic counter for promoted-attachment key allocation (NEVER reused). |
 | `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
 | `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
+
+Older task records may omit `pending_ack_ids`; those queued slots are treated
+as untagged. Workers handling the same chain concurrently must all understand
+this field, since older workers do not keep it aligned when draining or
+cancelling inputs.
 
 Implementers in other languages MUST use these exact key names. A
 process built in language X must be able to recover a task created
@@ -2996,6 +3002,8 @@ executes this PATCH as a single round-trip:
      pending.append(input)         # raw inline
      attachments_patch = None
 7. steering['pending_inputs']   = pending
+   steering['pending_ack_ids']  = existing IDs (null-padded for untagged
+                                  legacy slots) + [new unique ack ID]
    steering['cancel_requested'] = True
 8. payload_patch = {'steering': steering}
    if input_id provided: payload_patch['last_input_id'] = input_id
@@ -3027,6 +3035,8 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
   4. If pending is empty: return None (no drain happens; caller
      proceeds to suspend/complete normally).
   5. next_entry  = pending.pop(0)
+     next_ack_id = steering['pending_ack_ids'].pop(0) if present,
+                   or null for an untagged legacy entry
   6. attachments_patch = {}
   7. If next_entry is a ref (§23.3):
         attachments_patch[ref_key(next_entry)] = None    # delete attachment
@@ -3035,6 +3045,7 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
         active_input_value = next_entry
   8. steering['active_input']      = active_input_value
   9. steering['pending_inputs']    = pending
+     steering['pending_ack_ids']   = remaining IDs
  10. steering['drain_in_progress'] = True
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
  12. payload['steering']          = steering
