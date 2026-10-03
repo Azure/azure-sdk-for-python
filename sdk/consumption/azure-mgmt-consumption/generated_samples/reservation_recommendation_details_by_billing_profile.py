@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-08-01/ReservationRecommendationDetailsByBillingProfile.json
+# x-ms-original-file: 2026-06-01/ReservationRecommendationDetailsByBillingProfile.json
 if __name__ == "__main__":
     main()
