@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AzureMonitorConfiguration(_Model):
+class AzureMonitorConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for the Azure Monitor Insights service.
 
     :ivar azure_monitor_workspace_id: Azure monitor workspace resource ID used by the service.
@@ -48,7 +48,7 @@ class AzureMonitorConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorInformation(_Model):
+class AzureMonitorInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Monitor Insights service information.
 
     :ivar dcr_id: ID of Data Collection Rule (DCR) associated with this service. Required.
@@ -56,6 +56,8 @@ class AzureMonitorInformation(_Model):
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     dcr_id: str = rest_field(name="dcrId", visibility=["read", "create", "update", "delete", "query"])
@@ -65,6 +67,10 @@ class AzureMonitorInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
@@ -72,6 +78,7 @@ class AzureMonitorInformation(_Model):
         *,
         dcr_id: str,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -85,7 +92,7 @@ class AzureMonitorInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChangeTrackingConfiguration(_Model):
+class ChangeTrackingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for the Change Tracking and Inventory service.
 
     :ivar log_analytics_workspace_id: Log analytics workspace resource ID used by the service.
@@ -116,7 +123,7 @@ class ChangeTrackingConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChangeTrackingInformation(_Model):
+class ChangeTrackingInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Change Tracking and Inventory service information.
 
     :ivar dcr_id: ID of Data Collection Rule (DCR) associated with this service. Required.
@@ -124,6 +131,8 @@ class ChangeTrackingInformation(_Model):
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     dcr_id: str = rest_field(name="dcrId", visibility=["read", "create", "update", "delete", "query"])
@@ -133,6 +142,10 @@ class ChangeTrackingInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
@@ -140,6 +153,7 @@ class ChangeTrackingInformation(_Model):
         *,
         dcr_id: str,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -153,12 +167,14 @@ class ChangeTrackingInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmInformation(_Model):
+class DefenderCspmInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defender Cloud Security Posture Management (CSPM) service information.
 
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     enablement_status: Union[str, "_models.EnablementState"] = rest_field(
@@ -166,12 +182,17 @@ class DefenderCspmInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
         self,
         *,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -185,12 +206,14 @@ class DefenderCspmInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersInformation(_Model):
+class DefenderForServersInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defender for Servers service information.
 
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     enablement_status: Union[str, "_models.EnablementState"] = rest_field(
@@ -198,12 +221,17 @@ class DefenderForServersInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
         self,
         *,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -217,7 +245,7 @@ class DefenderForServersInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DesiredConfiguration(_Model):
+class DesiredConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Desired configuration input by the user.
 
     :ivar change_tracking_and_inventory: Configuration for the Change Tracking and Inventory
@@ -283,7 +311,7 @@ class DesiredConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DesiredConfigurationUpdate(_Model):
+class DesiredConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Updatable parameters in the Desired configuration input.
 
     :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Known
@@ -368,7 +396,40 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details of an error encountered during enabling a service.
+
+    :ivar code: Error code. Required.
+    :vartype code: str
+    :ivar message: Detailed error message. Required.
+    :vartype message: str
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error code. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Detailed error message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -396,12 +457,14 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GuestConfigurationInformation(_Model):
+class GuestConfigurationInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Policy and Machine Configuration service information.
 
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     enablement_status: Union[str, "_models.EnablementState"] = rest_field(
@@ -409,12 +472,17 @@ class GuestConfigurationInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
         self,
         *,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -473,7 +541,7 @@ class ProxyResource(Resource):
     """
 
 
-class ManagedOp(ProxyResource):
+class ManagedOp(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Managed Operations resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -514,13 +582,13 @@ class ManagedOp(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedOpsProperties(_Model):
+class ManagedOpsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the ManagedOps resource.
 
     :ivar sku: Product plan details of this resource.
     :vartype sku: ~azure.mgmt.managedops.models.Sku
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", and "Deleting".
+     "Failed", "Canceled", "Provisioning", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.managedops.models.ProvisioningState
     :ivar desired_configuration: Desired configuration input by the user. Required.
     :vartype desired_configuration: ~azure.mgmt.managedops.models.DesiredConfiguration
@@ -530,13 +598,13 @@ class ManagedOpsProperties(_Model):
     :vartype policy_assignment_properties: ~azure.mgmt.managedops.models.PolicyAssignmentProperties
     """
 
-    sku: Optional["_models.Sku"] = rest_field(visibility=["read"])
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create"])
     """Product plan details of this resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", and \"Deleting\"."""
+     \"Provisioning\", \"Deleting\", and \"Accepted\"."""
     desired_configuration: "_models.DesiredConfiguration" = rest_field(
         name="desiredConfiguration", visibility=["read", "create", "update"]
     )
@@ -553,6 +621,7 @@ class ManagedOpsProperties(_Model):
         self,
         *,
         desired_configuration: "_models.DesiredConfiguration",
+        sku: Optional["_models.Sku"] = None,
     ) -> None: ...
 
     @overload
@@ -566,7 +635,7 @@ class ManagedOpsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedOpUpdate(_Model):
+class ManagedOpUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedOps model for update operations.
 
     :ivar properties: Updatable properties in the ManagedOps resource.
@@ -596,7 +665,7 @@ class ManagedOpUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedOpUpdateProperties(_Model):
+class ManagedOpUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Updatable properties in the ManagedOps resource.
 
     :ivar desired_configuration: Desired configuration input by the user.
@@ -626,7 +695,7 @@ class ManagedOpUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -714,7 +783,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PolicyAssignmentProperties(_Model):
+class PolicyAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy assignments created for managing services.
 
     :ivar policy_initiative_assignment_id: Policy initiative assignment ID. Required.
@@ -788,26 +857,26 @@ class ServiceInformation(_Model):
     """Defender for Cloud's Cloud security posture management (CSPM) service information."""
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the service plan for this resource.
 
-    :ivar name: Name of the SKU. Required.
-    :vartype name: str
-    :ivar tier: Pricing tier of the SKU. Required.
-    :vartype tier: str
+    :ivar name: Name of the SKU. Required. "ManagedOps"
+    :vartype name: str or ~azure.mgmt.managedops.models.SkuName
+    :ivar tier: Pricing tier of the SKU. Required. "Essential"
+    :vartype tier: str or ~azure.mgmt.managedops.models.SkuTier
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the SKU. Required."""
-    tier: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Pricing tier of the SKU. Required."""
+    name: Union[str, "_models.SkuName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the SKU. Required. \"ManagedOps\""""
+    tier: Union[str, "_models.SkuTier"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Pricing tier of the SKU. Required. \"Essential\""""
 
     @overload
     def __init__(
         self,
         *,
-        name: str,
-        tier: str,
+        name: Union[str, "_models.SkuName"],
+        tier: Union[str, "_models.SkuTier"],
     ) -> None: ...
 
     @overload
@@ -821,7 +890,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -888,12 +957,14 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateManagerInformation(_Model):
+class UpdateManagerInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Update Manager service information.
 
     :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
      "Enabled", "InProgress", "Failed", and "Disabled".
     :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
+    :ivar error_details: Optional error message if the service is in Failed state.
+    :vartype error_details: ~azure.mgmt.managedops.models.ErrorDetails
     """
 
     enablement_status: Union[str, "_models.EnablementState"] = rest_field(
@@ -901,12 +972,17 @@ class UpdateManagerInformation(_Model):
     )
     """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
      \"InProgress\", \"Failed\", and \"Disabled\"."""
+    error_details: Optional["_models.ErrorDetails"] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional error message if the service is in Failed state."""
 
     @overload
     def __init__(
         self,
         *,
         enablement_status: Union[str, "_models.EnablementState"],
+        error_details: Optional["_models.ErrorDetails"] = None,
     ) -> None: ...
 
     @overload
