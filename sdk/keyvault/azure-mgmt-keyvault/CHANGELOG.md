@@ -1,5 +1,16 @@
 # Release History
 
+## 15.0.0 (2026-10-01)
+
+### Features Added
+
+  - Enum `JsonWebKeyType` added member `OCT_HSM`
+  - Added enum `ManagedHsmSkuNameV2`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagedHsmSkuName`
+
 ## 14.0.1 (2026-03-27)
 
 ### Bugs Fixed

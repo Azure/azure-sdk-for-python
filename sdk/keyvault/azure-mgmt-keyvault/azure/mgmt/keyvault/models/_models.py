@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessPolicyEntry(_Model):
+class AccessPolicyEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An identity that have access to the key vault. All identities in the array must use the same
     tenant ID as the key vault's tenant ID.
 
@@ -68,7 +68,7 @@ class AccessPolicyEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Action(_Model):
+class Action(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action.
 
     :ivar type: The type of action. Known values are: "rotate" and "notify".
@@ -98,7 +98,7 @@ class Action(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Attributes(_Model):
+class Attributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object attributes managed by the KeyVault service.
 
     :ivar enabled: Determines whether the object is enabled.
@@ -148,7 +148,7 @@ class Attributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckMhsmNameAvailabilityParameters(_Model):
+class CheckMhsmNameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to check the availability of the managed hsm name.
 
     :ivar name: The managed hsm name. Required.
@@ -224,7 +224,7 @@ class CheckNameAvailabilityResult(_Model):
     """An error message explaining the Reason value in more detail."""
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from Key Vault resource provider.
 
     :ivar error: An error response from Key Vault resource provider.
@@ -252,7 +252,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from Key Vault resource provider.
 
     :ivar code: Error code. This is a mnemonic that can be consumed programmatically.
@@ -332,7 +332,7 @@ class ProxyResource(Resource):
     """
 
 
-class DeletedManagedHsm(ProxyResource):
+class DeletedManagedHsm(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -407,7 +407,7 @@ class DeletedManagedHsmProperties(_Model):
     """Tags of the original managed HSM."""
 
 
-class DeletedVault(ProxyResource):
+class DeletedVault(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deleted vault information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -481,7 +481,7 @@ class DeletedVaultProperties(_Model):
     """Purge protection status of the original vault."""
 
 
-class DimensionProperties(_Model):
+class DimensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Type of operation: get, read, delete, etc.
 
     :ivar name: Name of dimension.
@@ -543,7 +543,7 @@ class Error(_Model):
     """The inner error, contains a more specific error code."""
 
 
-class IPRule(_Model):
+class IPRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility of a vault from a specific ip address or ip range.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
@@ -573,7 +573,7 @@ class IPRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Key(ProxyResource):
+class Key(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -650,7 +650,7 @@ class Key(ProxyResource):
             super().__setattr__(key, value)
 
 
-class KeyAttributes(_Model):
+class KeyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object attributes managed by the Azure Key Vault service.
 
     :ivar enabled: Determines whether or not the object is enabled.
@@ -714,7 +714,7 @@ class KeyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyCreateParameters(_Model):
+class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to create a key.
 
     :ivar tags: The tags that will be assigned to the key.
@@ -747,13 +747,13 @@ class KeyCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyProperties(_Model):
+class KeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the key.
 
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.models.KeyAttributes
     :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
-     "EC-HSM", "RSA", and "RSA-HSM".
+     "EC-HSM", "RSA", "RSA-HSM", and "oct-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.models.JsonWebKeyOperation]
@@ -784,7 +784,7 @@ class KeyProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the key. For valid values, see JsonWebKeyType. Known values are: \"EC\",
-     \"EC-HSM\", \"RSA\", and \"RSA-HSM\"."""
+     \"EC-HSM\", \"RSA\", \"RSA-HSM\", and \"oct-HSM\"."""
     key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         name="keyOps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -833,7 +833,7 @@ class KeyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyReleasePolicy(_Model):
+class KeyReleasePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyReleasePolicy.
 
     :ivar content_type: Content type and version of key release policy.
@@ -868,7 +868,7 @@ class KeyReleasePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyRotationPolicyAttributes(_Model):
+class KeyRotationPolicyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyRotationPolicyAttributes.
 
     :ivar created: Creation time in seconds since 1970-01-01T00:00:00Z.
@@ -907,7 +907,7 @@ class KeyRotationPolicyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LifetimeAction(_Model):
+class LifetimeAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LifetimeAction.
 
     :ivar trigger: The trigger of key rotation policy lifetimeAction.
@@ -940,7 +940,7 @@ class LifetimeAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log specification of operation.
 
     :ivar name: Name of log specification.
@@ -982,7 +982,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsm(ProxyResource):
+class ManagedHsm(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1045,7 +1045,7 @@ class ManagedHsm(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmAction(_Model):
+class ManagedHsmAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmAction.
 
     :ivar type: The type of action. Known values are: "rotate" and "notify".
@@ -1086,7 +1086,7 @@ class ManagedHsmError(_Model):
     """The server error."""
 
 
-class ManagedHsmKey(ProxyResource):
+class ManagedHsmKey(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1162,7 +1162,7 @@ class ManagedHsmKey(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedHsmKeyAttributes(_Model):
+class ManagedHsmKeyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object attributes managed by the Azure Key Vault service.
 
     :ivar enabled: Determines whether or not the object is enabled.
@@ -1226,7 +1226,7 @@ class ManagedHsmKeyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmKeyCreateParameters(_Model):
+class ManagedHsmKeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to create a key.
 
     :ivar tags: The tags that will be assigned to the key.
@@ -1261,13 +1261,13 @@ class ManagedHsmKeyCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmKeyProperties(_Model):
+class ManagedHsmKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the key.
 
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.models.ManagedHsmKeyAttributes
     :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
-     "EC-HSM", "RSA", and "RSA-HSM".
+     "EC-HSM", "RSA", "RSA-HSM", and "oct-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.models.JsonWebKeyOperation]
@@ -1298,7 +1298,7 @@ class ManagedHsmKeyProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the key. For valid values, see JsonWebKeyType. Known values are: \"EC\",
-     \"EC-HSM\", \"RSA\", and \"RSA-HSM\"."""
+     \"EC-HSM\", \"RSA\", \"RSA-HSM\", and \"oct-HSM\"."""
     key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         name="keyOps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1347,7 +1347,7 @@ class ManagedHsmKeyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmKeyReleasePolicy(_Model):
+class ManagedHsmKeyReleasePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmKeyReleasePolicy.
 
     :ivar content_type: Content type and version of key release policy.
@@ -1382,7 +1382,7 @@ class ManagedHsmKeyReleasePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmKeyRotationPolicyAttributes(_Model):
+class ManagedHsmKeyRotationPolicyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmKeyRotationPolicyAttributes.
 
     :ivar created: Creation time in seconds since 1970-01-01T00:00:00Z.
@@ -1421,7 +1421,7 @@ class ManagedHsmKeyRotationPolicyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmLifetimeAction(_Model):
+class ManagedHsmLifetimeAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmLifetimeAction.
 
     :ivar trigger: The trigger of key rotation policy lifetimeAction.
@@ -1458,7 +1458,7 @@ class ManagedHsmLifetimeAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmProperties(_Model):
+class ManagedHsmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the managed HSM Pool.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
@@ -1600,7 +1600,7 @@ class ManagedHsmProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmRotationPolicy(_Model):
+class ManagedHsmRotationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmRotationPolicy.
 
     :ivar attributes: The attributes of key rotation policy.
@@ -1655,32 +1655,34 @@ class ManagedHSMSecurityDomainProperties(_Model):
     """Activation Status Message."""
 
 
-class ManagedHsmSku(_Model):
+class ManagedHsmSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU details.
 
     :ivar family: SKU Family of the managed HSM Pool. Required. Known values are: "B" and "C".
     :vartype family: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuFamily
     :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
-     "Custom_B32", "Custom_B6", "Custom_C42", and "Custom_C10".
-    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuName
+     "Custom_B32", "Custom_B6", "Custom_C42", "Custom_C10", "Standard_B1v2", "Standard_B5v2",
+     "Standard_B10v2", "Standard_B15v2", and "Standard_B20v2".
+    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuNameV2
     """
 
     family: Union[str, "_models.ManagedHsmSkuFamily"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU Family of the managed HSM Pool. Required. Known values are: \"B\" and \"C\"."""
-    name: Union[str, "_models.ManagedHsmSkuName"] = rest_field(
+    name: Union[str, "_models.ManagedHsmSkuNameV2"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU of the managed HSM Pool. Required. Known values are: \"Standard_B1\", \"Custom_B32\",
-     \"Custom_B6\", \"Custom_C42\", and \"Custom_C10\"."""
+     \"Custom_B6\", \"Custom_C42\", \"Custom_C10\", \"Standard_B1v2\", \"Standard_B5v2\",
+     \"Standard_B10v2\", \"Standard_B15v2\", and \"Standard_B20v2\"."""
 
     @overload
     def __init__(
         self,
         *,
         family: Union[str, "_models.ManagedHsmSkuFamily"],
-        name: Union[str, "_models.ManagedHsmSkuName"],
+        name: Union[str, "_models.ManagedHsmSkuNameV2"],
     ) -> None: ...
 
     @overload
@@ -1694,7 +1696,7 @@ class ManagedHsmSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsmTrigger(_Model):
+class ManagedHsmTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedHsmTrigger.
 
     :ivar time_after_create: The time duration after key creation to rotate the key. It only
@@ -1735,7 +1737,7 @@ class ManagedHsmTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1786,7 +1788,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -1883,7 +1885,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMGeoReplicatedRegion(_Model):
+class MHSMGeoReplicatedRegion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A region that this managed HSM Pool has been extended to.
 
     :ivar name: Name of the geo replicated region.
@@ -1928,7 +1930,7 @@ class MHSMGeoReplicatedRegion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMIPRule(_Model):
+class MHSMIPRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility of a managed HSM pool from a specific IP address or IP
     range.
 
@@ -1959,7 +1961,7 @@ class MHSMIPRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMNetworkRuleSet(_Model):
+class MHSMNetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of rules governing the network accessibility of a managed hsm pool.
 
     :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
@@ -2034,7 +2036,7 @@ class MHSMPrivateEndpoint(_Model):
     """Full identifier of the private endpoint resource."""
 
 
-class MHSMPrivateEndpointConnection(ProxyResource):
+class MHSMPrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2122,7 +2124,7 @@ class MHSMPrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MHSMPrivateEndpointConnectionItem(_Model):
+class MHSMPrivateEndpointConnectionItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection item.
 
     :ivar id: Id of private endpoint connection.
@@ -2182,7 +2184,7 @@ class MHSMPrivateEndpointConnectionItem(_Model):
             super().__setattr__(key, value)
 
 
-class MHSMPrivateEndpointConnectionProperties(_Model):
+class MHSMPrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: Properties of the private endpoint object.
@@ -2229,7 +2231,7 @@ class MHSMPrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2273,7 +2275,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class MHSMPrivateLinkResource(TrackedResource):
+class MHSMPrivateLinkResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2352,7 +2354,7 @@ class MHSMPrivateLinkResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class MHSMPrivateLinkResourceListResult(_Model):
+class MHSMPrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -2382,7 +2384,7 @@ class MHSMPrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMPrivateLinkResourceProperties(_Model):
+class MHSMPrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: Group identifier of private link resource.
@@ -2420,7 +2422,7 @@ class MHSMPrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMPrivateLinkServiceConnectionState(_Model):
+class MHSMPrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents the approval state of the private link connection.
 
     :ivar status: Indicates whether the connection has been approved, rejected or removed by the
@@ -2466,7 +2468,7 @@ class MHSMPrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMServiceTagRule(_Model):
+class MHSMServiceTagRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility of a managed hsm pool from a specific service tags.
 
     :ivar tag: Name of the service tag. Required.
@@ -2494,7 +2496,7 @@ class MHSMServiceTagRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MHSMVirtualNetworkRule(_Model):
+class MHSMVirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility of a managed hsm pool from a specific virtual network.
 
     :ivar id: Full resource id of a vnet subnet, such as
@@ -2526,7 +2528,7 @@ class MHSMVirtualNetworkRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(_Model):
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of rules governing the network accessibility of a vault.
 
     :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
@@ -2583,7 +2585,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault REST API operation definition.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -2657,7 +2659,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display metadata associated with the operation.
 
     :ivar provider: Service provider: Microsoft Key Vault.
@@ -2700,7 +2702,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProperties(_Model):
+class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of operation, include metric specifications.
 
     :ivar service_specification: One property of operation, include metric specifications.
@@ -2730,7 +2732,7 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Permissions(_Model):
+class Permissions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Permissions the identity has for keys, secrets, certificates and storage.
 
     :ivar keys_property: Permissions to keys.
@@ -2792,7 +2794,7 @@ class PrivateEndpoint(_Model):
     """Full identifier of the private endpoint resource."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2866,7 +2868,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionItem(_Model):
+class PrivateEndpointConnectionItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection item.
 
     :ivar id: Id of private endpoint connection.
@@ -2926,7 +2928,7 @@ class PrivateEndpointConnectionItem(_Model):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: Properties of the private endpoint object.
@@ -2973,7 +2975,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3042,7 +3044,7 @@ class PrivateLinkResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -3072,7 +3074,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: Group identifier of private link resource.
@@ -3110,7 +3112,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents the approval state of the private link connection.
 
     :ivar status: Indicates whether the connection has been approved, rejected or removed by the
@@ -3156,7 +3158,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RotationPolicy(_Model):
+class RotationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RotationPolicy.
 
     :ivar attributes: The attributes of key rotation policy.
@@ -3193,7 +3195,7 @@ class RotationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Secret(ProxyResource):
+class Secret(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3240,7 +3242,7 @@ class Secret(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SecretAttributes(Attributes):
+class SecretAttributes(Attributes):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret management attributes.
 
     :ivar enabled: Determines whether the object is enabled.
@@ -3275,7 +3277,7 @@ class SecretAttributes(Attributes):
         super().__init__(*args, **kwargs)
 
 
-class SecretCreateOrUpdateParameters(_Model):
+class SecretCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating or updating a secret.
 
     :ivar tags: The tags that will be assigned to the secret.
@@ -3308,7 +3310,7 @@ class SecretCreateOrUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretPatchParameters(_Model):
+class SecretPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for patching a secret.
 
     :ivar tags: The tags that will be assigned to the secret.
@@ -3343,7 +3345,7 @@ class SecretPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretPatchProperties(_Model):
+class SecretPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the secret.
 
     :ivar value: The value of the secret.
@@ -3385,7 +3387,7 @@ class SecretPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretProperties(_Model):
+class SecretProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the secret.
 
     :ivar value: The value of the secret. NOTE: 'value' will never be returned from the service, as
@@ -3439,7 +3441,7 @@ class SecretProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceSpecification(_Model):
+class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One property of operation, include log specifications.
 
     :ivar log_specifications: Log specifications of operation.
@@ -3476,7 +3478,7 @@ class ServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU details.
 
     :ivar family: SKU family name. Required. "A"
@@ -3511,7 +3513,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3578,7 +3580,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Trigger(_Model):
+class Trigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger.
 
     :ivar time_after_create: The time duration after key creation to rotate the key. It only
@@ -3634,7 +3636,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class Vault(ProxyResource):
+class Vault(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3683,7 +3685,7 @@ class Vault(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VaultAccessPolicyParameters(_Model):
+class VaultAccessPolicyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating the access policy in a vault.
 
     :ivar id: The resource id of the access policy.
@@ -3729,7 +3731,7 @@ class VaultAccessPolicyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultAccessPolicyProperties(_Model):
+class VaultAccessPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the vault access policy.
 
     :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
@@ -3761,7 +3763,7 @@ class VaultAccessPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultCheckNameAvailabilityParameters(_Model):
+class VaultCheckNameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to check the availability of the vault name.
 
     :ivar name: The vault name. Required.
@@ -3796,7 +3798,7 @@ class VaultCheckNameAvailabilityParameters(_Model):
         self.type: Literal["Microsoft.KeyVault/vaults"] = "Microsoft.KeyVault/vaults"
 
 
-class VaultCreateOrUpdateParameters(_Model):
+class VaultCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating or updating a vault.
 
     :ivar location: The supported Azure location where the key vault should be created. Required.
@@ -3834,7 +3836,7 @@ class VaultCreateOrUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultPatchParameters(_Model):
+class VaultPatchParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating or updating a vault.
 
     :ivar tags: The tags that will be assigned to the key vault.
@@ -3869,7 +3871,7 @@ class VaultPatchParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultPatchProperties(_Model):
+class VaultPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the vault.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
@@ -4017,7 +4019,7 @@ class VaultPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultProperties(_Model):
+class VaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the vault.
 
     :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
@@ -4196,7 +4198,7 @@ class VaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkRule(_Model):
+class VirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule governing the accessibility of a vault from a specific virtual network.
 
     :ivar id: Full resource id of a vnet subnet, such as
