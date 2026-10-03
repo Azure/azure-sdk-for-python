@@ -59,20 +59,27 @@ class TestLatestSessionToken(unittest.TestCase):
 
     @pytest.mark.timeout(1500)
     def test_change_feed_session_token_and_read_items_after_split(self):
-        container_ref = self.key_database.create_container(
+        # This test holds a container open for a long time (split + convergence can take
+        # most of the 1500s timeout). Using a dedicated, disposable database rather than
+        # the shared TEST_DATABASE_ID avoids pushing that database over the emulator's
+        # 25-collection-per-database quota while the rest of the suite is also creating
+        # and tearing down containers there (mirrors test_pk_range_child_update_live_async.py).
+        split_database_id = test_config.unique_database_id("SplitSessionToken")
+        split_key_database = test_config.retry_control_plane(self.key_client.create_database, split_database_id)
+        self.addCleanup(test_config.retry_control_plane, self.key_client.delete_database, split_database_id)
+        container_ref = split_key_database.create_container(
             "test_grouped_partition_split_" + str(uuid.uuid4()), PartitionKey(path="/pk"), offer_throughput=400)
-        self.addCleanup(self.key_database.delete_container, container_ref.id)
-        container = self.database.get_container_client(container_ref.id)
-        key_container_for_split = self.key_database.get_container_client(container.id)
+        container = self.client.get_database_client(split_database_id).get_container_client(container_ref.id)
+        key_container_for_split = split_key_database.get_container_client(container.id)
 
         # Keep continuation and session state separate; routing maps are endpoint-shared.
         change_feed_client = test_config.TestConfig.create_data_client()
         self.addCleanup(change_feed_client.close)
-        created_collection = change_feed_client.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+        created_collection = change_feed_client.get_database_client(split_database_id).get_container_client(
             container_ref.id)
         read_items_client = test_config.TestConfig.create_data_client()
         self.addCleanup(read_items_client.close)
-        read_items_container = read_items_client.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+        read_items_container = read_items_client.get_database_client(split_database_id).get_container_client(
             container_ref.id)
 
         with split_stage("change_feed_before"):
