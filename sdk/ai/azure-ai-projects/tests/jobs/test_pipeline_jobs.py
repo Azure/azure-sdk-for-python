@@ -272,47 +272,21 @@ async def test_jobs_async_create_from_command_node() -> None:
     _assert_inline_request(transport.requests[0])
 
 
-@pytest.mark.parametrize("form", ["mapping", "assignment", "mutation"])
-def test_jobs_sync_create_from_updated_command_node(form: str) -> None:
+def test_jobs_sync_create_from_mapping_with_command_node() -> None:
     _, command = _inline_pipeline()
-    if form == "mapping":
-        pipeline = PipelineJob(
-            {
-                "computeId": _COMPUTE,
-                "settings": {"default_compute": _COMPUTE, "force_rerun": True},
-                "inputs": {"name": Input(type=AssetTypes.LITERAL, value="world")},
-                "outputs": {},
-                "jobs": {"hello": command},
-            }
-        )
-        pipeline.display_name = "Pipeline hello world"
-    else:
-        pipeline, _ = _inline_pipeline()
-        if form == "assignment":
-            pipeline.jobs = {"hello": command}
-        else:
-            assert pipeline.jobs is not None
-            pipeline.jobs["hello"] = command
+    pipeline = PipelineJob(
+        {
+            "computeId": _COMPUTE,
+            "settings": {"default_compute": _COMPUTE, "force_rerun": True},
+            "inputs": {"name": Input(type=AssetTypes.LITERAL, value="world")},
+            "outputs": {},
+            "jobs": {"hello": command},
+        }
+    )
 
     transport = _Transport([_response("Pipeline")])
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
         _assert_job(client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
-
-    assert len(transport.requests) == 1
-    _assert_inline_request(transport.requests[0])
-
-
-@pytest.mark.asyncio
-async def test_jobs_async_create_from_mutated_command_node() -> None:
-    pipeline, command = _inline_pipeline()
-    assert pipeline.jobs is not None
-    pipeline.jobs["hello"] = command
-    transport = _AsyncTransport([_response("Pipeline")])
-
-    async with AsyncAIProjectClient(
-        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
-    ) as client:
-        _assert_job(await client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
 
     assert len(transport.requests) == 1
     _assert_inline_request(transport.requests[0])

@@ -362,8 +362,6 @@ class JobsOperations(_GeneratedJobsOps):
             self._resolve_local_paths(name, job)
         elif not isinstance(job, PipelineJob):
             raise TypeError("job must be a CommandJob or PipelineJob")
-        else:
-            job._convert_pending_jobs()
         self._inject_preview_header(kwargs)
         # Wrap the flat job inside the Job envelope required by the wire format.
         rest_body = _RestJob(properties=job)

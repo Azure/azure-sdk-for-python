@@ -108,9 +108,9 @@ class CommandJob(_RestCommandJob):
 class PipelineJob(_RestPipelineJob):
     """A pipeline job with graph nodes, inputs, and outputs.
 
-    ``jobs`` accepts raw graph node dictionaries or :class:`CommandJob` instances
-    with literal inputs. Command jobs are converted to inline command nodes;
-    use raw graph dictionaries for other node features.
+    When constructing a pipeline, ``jobs`` accepts raw graph node dictionaries
+    or :class:`CommandJob` instances with literal inputs. Command jobs are
+    converted to inline command nodes; use raw dictionaries for other features.
 
     :ivar name: The name of the job. Read-only; populated after the job is created.
     :vartype name: str or None
@@ -144,18 +144,6 @@ class PipelineJob(_RestPipelineJob):
             name: cls._command_node(name, node, default_compute) if isinstance(node, CommandJob) else node
             for name, node in jobs.items()
         }
-
-    def __setattr__(self, name: str, value: Any) -> None:
-        if name == "jobs" and isinstance(value, dict) and any(isinstance(node, CommandJob) for node in value.values()):
-            settings = self.settings
-            default_compute = settings.get("default_compute") if isinstance(settings, dict) else None
-            value = self._convert_jobs(value, default_compute or self.compute_id)
-        super().__setattr__(name, value)
-
-    def _convert_pending_jobs(self) -> None:
-        jobs = self._data.get("jobs")
-        if isinstance(jobs, dict) and any(isinstance(node, CommandJob) for node in jobs.values()):
-            self.jobs = jobs
 
     @staticmethod
     def _command_node(name: str, job: CommandJob, default_compute: Optional[str]) -> Dict[str, Any]:
