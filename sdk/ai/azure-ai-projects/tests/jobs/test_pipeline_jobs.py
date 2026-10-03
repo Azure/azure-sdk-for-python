@@ -252,7 +252,9 @@ def test_jobs_sync_create_from_command_node() -> None:
 
     assert len(transport.requests) == 1
     _assert_inline_request(transport.requests[0])
+    assert command.inputs is not None
     assert command.inputs["name"].value == "${{parent.inputs.name}}"
+    assert command.resources is not None
     assert command.resources.instance_type == "Standard_D4_v3"
 
 
@@ -286,9 +288,11 @@ def test_pipeline_composes_commands_and_preserves_raw_graph_nodes() -> None:
         },
     )
 
+    assert pipeline.jobs is not None
     assert pipeline.jobs["hello"]["component"]["command"] == "echo hello"
     assert pipeline.jobs["second"]["component"]["command"] == "echo again"
     assert pipeline.jobs["raw"] == raw_node
+    assert first.jobs is not None
     assert first.jobs["hello"] == _INLINE_PIPELINE_PROPERTIES["jobs"]["hello"]
 
 
