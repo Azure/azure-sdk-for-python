@@ -264,7 +264,7 @@ def _records_with_ws_extras(records):
     """Filter log records that carry the close-event ``ws.*`` extras."""
     return [
         r for r in records
-        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
+        if hasattr(r, "azure.ai.agentserver.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
     ]
 
 
