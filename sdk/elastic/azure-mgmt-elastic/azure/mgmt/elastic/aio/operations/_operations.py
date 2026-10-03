@@ -36,6 +36,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_all_traffic_filters_list_request,
     build_associate_traffic_filter_associate_request,
@@ -88,7 +89,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -198,7 +199,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MonitoredSubscriptionsOperations:
+class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1056,7 +1057,7 @@ class MonitoredSubscriptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TagRulesOperations:
+class TagRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1569,7 +1570,7 @@ class TagRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MonitorsOperations:
+class MonitorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2154,7 +2155,13 @@ class MonitorsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(self, resource_group_name: str, monitor_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    @api_version_validation(
+        params_added_on={"2026-03-15-preview": ["soft_delete"]},
+        api_versions_list=["2025-06-01", "2026-03-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, monitor_name: str, *, soft_delete: Optional[bool] = None, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2172,6 +2179,7 @@ class MonitorsOperations:
             resource_group_name=resource_group_name,
             monitor_name=monitor_name,
             subscription_id=self._config.subscription_id,
+            soft_delete=soft_delete,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2214,7 +2222,13 @@ class MonitorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete(self, resource_group_name: str, monitor_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    @api_version_validation(
+        params_added_on={"2026-03-15-preview": ["soft_delete"]},
+        api_versions_list=["2025-06-01", "2026-03-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, monitor_name: str, *, soft_delete: Optional[bool] = None, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
         """Delete an existing Elastic monitor resource from your Azure subscription, removing its
         observability and monitoring capabilities.
 
@@ -2223,6 +2237,11 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
+        :keyword soft_delete: Indicates whether to perform a soft delete. When set to true, the Azure
+         resource (Liftr integration) only is deleted and not the Partner Cloud resource. When set to
+         false (default), the resource is permanently deleted from both Azure and the Partner Cloud.
+         Default value is None.
+        :paramtype soft_delete: bool
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2238,6 +2257,7 @@ class MonitorsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 monitor_name=monitor_name,
+                soft_delete=soft_delete,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2468,7 +2488,7 @@ class MonitorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MonitoredResourcesOperations:
+class MonitoredResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2589,7 +2609,7 @@ class MonitoredResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DeploymentInfoOperations:
+class DeploymentInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2678,7 +2698,7 @@ class DeploymentInfoOperations:
         return deserialized  # type: ignore
 
 
-class ExternalUserOperations:
+class ExternalUserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2879,7 +2899,7 @@ class ExternalUserOperations:
         return deserialized  # type: ignore
 
 
-class BillingInfoOperations:
+class BillingInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2968,7 +2988,7 @@ class BillingInfoOperations:
         return deserialized  # type: ignore
 
 
-class ConnectedPartnerResourcesOperations:
+class ConnectedPartnerResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3090,7 +3110,7 @@ class ConnectedPartnerResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VMHostOperations:
+class VMHostOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3209,7 +3229,7 @@ class VMHostOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VMIngestionOperations:
+class VMIngestionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3301,7 +3321,7 @@ class VMIngestionOperations:
         return deserialized  # type: ignore
 
 
-class VMCollectionOperations:
+class VMCollectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3485,7 +3505,7 @@ class VMCollectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UpgradableVersionsOperations:
+class UpgradableVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3576,7 +3596,7 @@ class UpgradableVersionsOperations:
         return deserialized  # type: ignore
 
 
-class MonitorOperations:
+class MonitorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3828,7 +3848,7 @@ class MonitorOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AllTrafficFiltersOperations:
+class AllTrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3920,7 +3940,7 @@ class AllTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class ListAssociatedTrafficFiltersOperations:
+class ListAssociatedTrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4012,7 +4032,7 @@ class ListAssociatedTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class CreateAndAssociateIPFilterOperations:
+class CreateAndAssociateIPFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4171,7 +4191,7 @@ class CreateAndAssociateIPFilterOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CreateAndAssociatePLFilterOperations:
+class CreateAndAssociatePLFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4336,7 +4356,7 @@ class CreateAndAssociatePLFilterOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AssociateTrafficFilterOperations:
+class AssociateTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4478,7 +4498,7 @@ class AssociateTrafficFilterOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DetachAndDeleteTrafficFilterOperations:
+class DetachAndDeleteTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4559,7 +4579,7 @@ class DetachAndDeleteTrafficFilterOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DetachTrafficFilterOperations:
+class DetachTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4701,7 +4721,7 @@ class DetachTrafficFilterOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class TrafficFiltersOperations:
+class TrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4782,7 +4802,7 @@ class TrafficFiltersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class OrganizationsOperations:
+class OrganizationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5261,7 +5281,7 @@ class OrganizationsOperations:
         return deserialized  # type: ignore
 
 
-class OpenAIOperations:
+class OpenAIOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5793,7 +5813,7 @@ class OpenAIOperations:
         return deserialized  # type: ignore
 
 
-class ElasticVersionsOperations:
+class ElasticVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -34,8 +34,8 @@ class CompanyInfo(TypedDict, total=False):
     :vartype domain: str
     :ivar business: Business of the company.
     :vartype business: str
-    :ivar employees_number: Number of employees in the company.
-    :vartype employees_number: str
+    :ivar employeesNumber: Number of employees in the company.
+    :vartype employeesNumber: str
     :ivar state: State of the company location.
     :vartype state: str
     :ivar country: Country of the company location.
@@ -59,18 +59,18 @@ class ElasticCloudDeployment(TypedDict, total=False):
 
     :ivar name: Elastic deployment name.
     :vartype name: str
-    :ivar deployment_id: Elastic deployment Id.
-    :vartype deployment_id: str
-    :ivar azure_subscription_id: Associated Azure subscription Id for the elastic deployment.
-    :vartype azure_subscription_id: str
-    :ivar elasticsearch_region: Region where Deployment at Elastic side took place.
-    :vartype elasticsearch_region: str
-    :ivar elasticsearch_service_url: Elasticsearch ingestion endpoint of the Elastic deployment.
-    :vartype elasticsearch_service_url: str
-    :ivar kibana_service_url: Kibana endpoint of the Elastic deployment.
-    :vartype kibana_service_url: str
-    :ivar kibana_sso_url: Kibana dashboard sso URL of the Elastic deployment.
-    :vartype kibana_sso_url: str
+    :ivar deploymentId: Elastic deployment Id.
+    :vartype deploymentId: str
+    :ivar azureSubscriptionId: Associated Azure subscription Id for the elastic deployment.
+    :vartype azureSubscriptionId: str
+    :ivar elasticsearchRegion: Region where Deployment at Elastic side took place.
+    :vartype elasticsearchRegion: str
+    :ivar elasticsearchServiceUrl: Elasticsearch ingestion endpoint of the Elastic deployment.
+    :vartype elasticsearchServiceUrl: str
+    :ivar kibanaServiceUrl: Kibana endpoint of the Elastic deployment.
+    :vartype kibanaServiceUrl: str
+    :ivar kibanaSsoUrl: Kibana dashboard sso URL of the Elastic deployment.
+    :vartype kibanaSsoUrl: str
     """
 
     name: str
@@ -92,13 +92,13 @@ class ElasticCloudDeployment(TypedDict, total=False):
 class ElasticCloudUser(TypedDict, total=False):
     """Details of the user's elastic account.
 
-    :ivar email_address: Email of the Elastic User Account.
-    :vartype email_address: str
+    :ivar emailAddress: Email of the Elastic User Account.
+    :vartype emailAddress: str
     :ivar id: User Id of the elastic account of the User.
     :vartype id: str
-    :ivar elastic_cloud_sso_default_url: Elastic cloud default dashboard sso URL of the Elastic
-     user account.
-    :vartype elastic_cloud_sso_default_url: str
+    :ivar elasticCloudSsoDefaultUrl: Elastic cloud default dashboard sso URL of the Elastic user
+     account.
+    :vartype elasticCloudSsoDefaultUrl: str
     """
 
     emailAddress: str
@@ -120,9 +120,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -148,9 +148,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -174,9 +174,9 @@ class ElasticMonitorResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -226,10 +226,10 @@ class ElasticMonitorUpgrade(TypedDict, total=False):
 class ElasticProperties(TypedDict, total=False):
     """Elastic Resource Properties.
 
-    :ivar elastic_cloud_user: Details of the user's elastic account.
-    :vartype elastic_cloud_user: "ElasticCloudUser"
-    :ivar elastic_cloud_deployment: Details of the elastic cloud deployment.
-    :vartype elastic_cloud_deployment: "ElasticCloudDeployment"
+    :ivar elasticCloudUser: Details of the user's elastic account.
+    :vartype elasticCloudUser: "ElasticCloudUser"
+    :ivar elasticCloudDeployment: Details of the elastic cloud deployment.
+    :vartype elasticCloudDeployment: "ElasticCloudDeployment"
     """
 
     elasticCloudUser: "ElasticCloudUser"
@@ -241,14 +241,14 @@ class ElasticProperties(TypedDict, total=False):
 class ExternalUserInfo(TypedDict, total=False):
     """The properties of the request required for creating user on elastic side.
 
-    :ivar user_name: Username of the user to be created or updated.
-    :vartype user_name: str
-    :ivar full_name: Full name of the user to be created or updated.
-    :vartype full_name: str
+    :ivar userName: Username of the user to be created or updated.
+    :vartype userName: str
+    :ivar fullName: Full name of the user to be created or updated.
+    :vartype fullName: str
     :ivar password: Password of the user to be created or updated.
     :vartype password: str
-    :ivar email_id: Email id of the user to be created or updated.
-    :vartype email_id: str
+    :ivar emailId: Email id of the user to be created or updated.
+    :vartype emailId: str
     :ivar roles: Roles to be assigned for  created or updated user.
     :vartype roles: list[str]
     """
@@ -288,10 +288,10 @@ class FilteringTag(TypedDict, total=False):
 class IdentityProperties(TypedDict, total=False):
     """Identity properties.
 
-    :ivar principal_id: The identity ID.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
+    :ivar principalId: The identity ID.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of resource.
+    :vartype tenantId: str
     :ivar type: Managed identity type. "SystemAssigned"
     :vartype type: Union[str, "ManagedIdentityTypes"]
     """
@@ -307,19 +307,19 @@ class IdentityProperties(TypedDict, total=False):
 class LogRules(TypedDict, total=False):
     """Set of rules for sending logs for the Monitor resource.
 
-    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
-    :vartype send_aad_logs: bool
-    :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
-     Monitor resource.
-    :vartype send_subscription_logs: bool
-    :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
+    :ivar sendAadLogs: Flag specifying if AAD logs should be sent for the Monitor resource.
+    :vartype sendAadLogs: bool
+    :ivar sendSubscriptionLogs: Flag specifying if subscription logs should be sent for the Monitor
+     resource.
+    :vartype sendSubscriptionLogs: bool
+    :ivar sendActivityLogs: Flag specifying if activity logs from Azure resources should be sent
      for the Monitor resource.
-    :vartype send_activity_logs: bool
-    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+    :vartype sendActivityLogs: bool
+    :ivar filteringTags: List of filtering tags to be used for capturing logs. This only takes
      effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
      Exclude action is specified, the rules will apply to the list of all available resources. If
      Include actions are specified, the rules will only include resources with the associated tags.
-    :vartype filtering_tags: list["FilteringTag"]
+    :vartype filteringTags: list["FilteringTag"]
     """
 
     sendAadLogs: bool
@@ -338,15 +338,15 @@ class LogRules(TypedDict, total=False):
 class MonitoredSubscription(TypedDict, total=False):
     """The list of subscriptions and it's monitoring status by current Elastic monitor.
 
-    :ivar subscription_id: The subscriptionId to be monitored. Required.
-    :vartype subscription_id: str
+    :ivar subscriptionId: The subscriptionId to be monitored. Required.
+    :vartype subscriptionId: str
     :ivar status: The state of monitoring. Known values are: "InProgress", "Active", "Failed", and
      "Deleting".
     :vartype status: Union[str, "Status"]
     :ivar error: The reason of not monitoring the subscription.
     :vartype error: str
-    :ivar tag_rules: Definition of the properties for a TagRules resource.
-    :vartype tag_rules: "MonitoringTagRulesProperties"
+    :ivar tagRules: Definition of the properties for a TagRules resource.
+    :vartype tagRules: "MonitoringTagRulesProperties"
     """
 
     subscriptionId: Required[str]
@@ -371,9 +371,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -388,9 +388,9 @@ class MonitoredSubscriptionProperties(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The request to update subscriptions needed to be monitored by the Elastic
      monitor resource.
     :vartype properties: "SubscriptionList"
@@ -411,9 +411,9 @@ class MonitoringTagRules(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the monitoring tag rules.
     :vartype properties: "MonitoringTagRulesProperties"
     """
@@ -425,12 +425,12 @@ class MonitoringTagRules(ProxyResource):
 class MonitoringTagRulesProperties(TypedDict, total=False):
     """Definition of the properties for a TagRules resource.
 
-    :ivar provisioning_state: Provisioning state of the monitoring tag rules. Known values are:
+    :ivar provisioningState: Provisioning state of the monitoring tag rules. Known values are:
      "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
      and "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar log_rules: Rules for sending logs.
-    :vartype log_rules: "LogRules"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar logRules: Rules for sending logs.
+    :vartype logRules: "LogRules"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -444,42 +444,42 @@ class MonitoringTagRulesProperties(TypedDict, total=False):
 class MonitorProperties(TypedDict, total=False):
     """Properties specific to the monitor resource.
 
-    :ivar provisioning_state: Provisioning state of the monitor resource. Known values are:
+    :ivar provisioningState: Provisioning state of the monitor resource. Known values are:
      "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
      and "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar monitoringStatus: Flag specifying if the resource monitoring is enabled or disabled.
      Known values are: "Enabled" and "Disabled".
-    :vartype monitoring_status: Union[str, "MonitoringStatus"]
-    :ivar elastic_properties: Elastic cloud properties.
-    :vartype elastic_properties: "ElasticProperties"
-    :ivar user_info: User information.
-    :vartype user_info: "UserInfo"
-    :ivar plan_details: Plan details of the monitor resource.
-    :vartype plan_details: "PlanDetails"
+    :vartype monitoringStatus: Union[str, "MonitoringStatus"]
+    :ivar elasticProperties: Elastic cloud properties.
+    :vartype elasticProperties: "ElasticProperties"
+    :ivar userInfo: User information.
+    :vartype userInfo: "UserInfo"
+    :ivar planDetails: Plan details of the monitor resource.
+    :vartype planDetails: "PlanDetails"
     :ivar version: Version of elastic of the monitor resource.
     :vartype version: str
-    :ivar subscription_state: State of the Azure Subscription containing the monitor resource.
-    :vartype subscription_state: str
-    :ivar saa_s_azure_subscription_status: Status of Azure Subscription where Marketplace SaaS is
+    :ivar subscriptionState: State of the Azure Subscription containing the monitor resource.
+    :vartype subscriptionState: str
+    :ivar saaSAzureSubscriptionStatus: Status of Azure Subscription where Marketplace SaaS is
      located.
-    :vartype saa_s_azure_subscription_status: str
-    :ivar source_campaign_name: Name of the marketing campaign.
-    :vartype source_campaign_name: str
-    :ivar source_campaign_id: A unique identifier associated with the campaign.
-    :vartype source_campaign_id: str
-    :ivar liftr_resource_category: Known values are: "Unknown" and "MonitorLogs".
-    :vartype liftr_resource_category: Union[str, "LiftrResourceCategories"]
-    :ivar liftr_resource_preference: The priority of the resource.
-    :vartype liftr_resource_preference: int
-    :ivar generate_api_key: Flag to determine if User API Key has to be generated and shared.
-    :vartype generate_api_key: bool
-    :ivar hosting_type: Hosting type of the monitor resource - either Hosted deployments OR
+    :vartype saaSAzureSubscriptionStatus: str
+    :ivar sourceCampaignName: Name of the marketing campaign.
+    :vartype sourceCampaignName: str
+    :ivar sourceCampaignId: A unique identifier associated with the campaign.
+    :vartype sourceCampaignId: str
+    :ivar liftrResourceCategory: Known values are: "Unknown" and "MonitorLogs".
+    :vartype liftrResourceCategory: Union[str, "LiftrResourceCategories"]
+    :ivar liftrResourcePreference: The priority of the resource.
+    :vartype liftrResourcePreference: int
+    :ivar generateApiKey: Flag to determine if User API Key has to be generated and shared.
+    :vartype generateApiKey: bool
+    :ivar hostingType: Hosting type of the monitor resource - either Hosted deployments OR
      Serverless Projects. Known values are: "Hosted" and "Serverless".
-    :vartype hosting_type: Union[str, "HostingType"]
-    :ivar project_details: Project details of the monitor resource IF it belongs to Serverless
-     offer kind.
-    :vartype project_details: "ProjectDetails"
+    :vartype hostingType: Union[str, "HostingType"]
+    :ivar projectDetails: Project details of the monitor resource IF it belongs to Serverless offer
+     kind.
+    :vartype projectDetails: "ProjectDetails"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -521,16 +521,16 @@ class MonitorProperties(TypedDict, total=False):
 class OpenAIIntegrationProperties(TypedDict, total=False):
     """Open AI Integration details.
 
-    :ivar open_ai_resource_id: The resource name of Open AI resource.
-    :vartype open_ai_resource_id: str
-    :ivar open_ai_resource_endpoint: The API endpoint for Open AI resource.
-    :vartype open_ai_resource_endpoint: str
-    :ivar open_ai_connector_id: The connector id of Open AI resource.
-    :vartype open_ai_connector_id: str
+    :ivar openAIResourceId: The resource name of Open AI resource.
+    :vartype openAIResourceId: str
+    :ivar openAIResourceEndpoint: The API endpoint for Open AI resource.
+    :vartype openAIResourceEndpoint: str
+    :ivar openAIConnectorId: The connector id of Open AI resource.
+    :vartype openAIConnectorId: str
     :ivar key: Value of API key for Open AI resource.
     :vartype key: str
-    :ivar last_refresh_at: Last Update Timestamp for key updation.
-    :vartype last_refresh_at: str
+    :ivar lastRefreshAt: Last Update Timestamp for key updation.
+    :vartype lastRefreshAt: str
     """
 
     openAIResourceId: str
@@ -556,9 +556,9 @@ class OpenAIIntegrationRPModel(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Open AI Integration details.
     :vartype properties: "OpenAIIntegrationProperties"
     """
@@ -570,16 +570,16 @@ class OpenAIIntegrationRPModel(ProxyResource):
 class PlanDetails(TypedDict, total=False):
     """Plan details of the monitor resource.
 
-    :ivar offer_id: Offer ID of the plan.
-    :vartype offer_id: str
-    :ivar publisher_id: Publisher ID of the plan.
-    :vartype publisher_id: str
-    :ivar term_id: Term ID of the plan.
-    :vartype term_id: str
-    :ivar plan_id: Plan ID.
-    :vartype plan_id: str
-    :ivar plan_name: Plan Name.
-    :vartype plan_name: str
+    :ivar offerID: Offer ID of the plan.
+    :vartype offerID: str
+    :ivar publisherID: Publisher ID of the plan.
+    :vartype publisherID: str
+    :ivar termID: Term ID of the plan.
+    :vartype termID: str
+    :ivar planID: Plan ID.
+    :vartype planID: str
+    :ivar planName: Plan Name.
+    :vartype planName: str
     """
 
     offerID: str
@@ -597,12 +597,12 @@ class PlanDetails(TypedDict, total=False):
 class ProjectDetails(TypedDict, total=False):
     """Project details of the monitor resource IF it belongs to Serverless offer kind.
 
-    :ivar project_type: Project type; ex: Elasticsearch / Observability / Security. Known values
+    :ivar projectType: Project type; ex: Elasticsearch / Observability / Security. Known values
      are: "Elasticsearch", "Observability", "Security", and "NotApplicable".
-    :vartype project_type: Union[str, "ProjectType"]
-    :ivar configuration_type: Configuration type of the Elasticsearch project. Known values are:
+    :vartype projectType: Union[str, "ProjectType"]
+    :ivar configurationType: Configuration type of the Elasticsearch project. Known values are:
      "GeneralPurpose", "Vector", "TimeSeries", and "NotApplicable".
-    :vartype configuration_type: Union[str, "ConfigurationType"]
+    :vartype configurationType: Union[str, "ConfigurationType"]
     """
 
     projectType: Union[str, "ProjectType"]
@@ -627,20 +627,20 @@ class ResourceSku(TypedDict, total=False):
 class ResubscribeProperties(TypedDict, total=False):
     """Resubscribe Properties.
 
-    :ivar plan_id: Newly selected plan Id to create the new Marketplace subscription for
+    :ivar planId: Newly selected plan Id to create the new Marketplace subscription for
      Resubscribe.
-    :vartype plan_id: str
+    :vartype planId: str
     :ivar term: Newly selected term to create the new Marketplace subscription for Resubscribe.
     :vartype term: str
-    :ivar subscription_id: Newly selected Azure Subscription Id in which the new Marketplace
+    :ivar subscriptionId: Newly selected Azure Subscription Id in which the new Marketplace
      subscription will be created for Resubscribe.
-    :vartype subscription_id: str
-    :ivar resource_group: Newly selected Azure resource group in which the new Marketplace
+    :vartype subscriptionId: str
+    :ivar resourceGroup: Newly selected Azure resource group in which the new Marketplace
      subscription will be created for Resubscribe.
-    :vartype resource_group: str
-    :ivar organization_id: Organization Id of the Elastic Organization that needs to be
+    :vartype resourceGroup: str
+    :ivar organizationId: Organization Id of the Elastic Organization that needs to be
      resubscribed.
-    :vartype organization_id: str
+    :vartype organizationId: str
     """
 
     planId: str
@@ -663,12 +663,12 @@ class SubscriptionList(TypedDict, total=False):
     :ivar operation: The operation for the patch on the resource. Known values are: "AddBegin",
      "AddComplete", "DeleteBegin", "DeleteComplete", and "Active".
     :vartype operation: Union[str, "Operation"]
-    :ivar monitored_subscription_list: List of subscriptions and the state of the monitoring.
-    :vartype monitored_subscription_list: list["MonitoredSubscription"]
-    :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
+    :ivar monitoredSubscriptionList: List of subscriptions and the state of the monitoring.
+    :vartype monitoredSubscriptionList: list["MonitoredSubscription"]
+    :ivar provisioningState: Provisioning State of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     operation: Union[str, "Operation"]
@@ -684,20 +684,20 @@ class SubscriptionList(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -719,8 +719,8 @@ class SystemData(TypedDict, total=False):
 class UserEmailId(TypedDict, total=False):
     """Email Id of the User Organization, of which the API Key must be returned.
 
-    :ivar email_id: The User email Id.
-    :vartype email_id: str
+    :ivar emailId: The User email Id.
+    :vartype emailId: str
     """
 
     emailId: str
@@ -730,16 +730,16 @@ class UserEmailId(TypedDict, total=False):
 class UserInfo(TypedDict, total=False):
     """User Information to be passed to partners.
 
-    :ivar first_name: First name of the user.
-    :vartype first_name: str
-    :ivar last_name: Last name of the user.
-    :vartype last_name: str
-    :ivar company_name: Company name of the user.
-    :vartype company_name: str
-    :ivar email_address: Email of the user used by Elastic for contacting them if needed.
-    :vartype email_address: str
-    :ivar company_info: Company information of the user to be passed to partners.
-    :vartype company_info: "CompanyInfo"
+    :ivar firstName: First name of the user.
+    :vartype firstName: str
+    :ivar lastName: Last name of the user.
+    :vartype lastName: str
+    :ivar companyName: Company name of the user.
+    :vartype companyName: str
+    :ivar emailAddress: Email of the user used by Elastic for contacting them if needed.
+    :vartype emailAddress: str
+    :ivar companyInfo: Company information of the user to be passed to partners.
+    :vartype companyInfo: "CompanyInfo"
     """
 
     firstName: str
@@ -757,11 +757,11 @@ class UserInfo(TypedDict, total=False):
 class VMCollectionUpdate(TypedDict, total=False):
     """Update VM resource collection.
 
-    :ivar vm_resource_id: ARM id of the VM resource.
-    :vartype vm_resource_id: str
-    :ivar operation_name: Operation to be performed for given VM. Known values are: "Add" and
+    :ivar vmResourceId: ARM id of the VM resource.
+    :vartype vmResourceId: str
+    :ivar operationName: Operation to be performed for given VM. Known values are: "Add" and
      "Delete".
-    :vartype operation_name: Union[str, "OperationName"]
+    :vartype operationName: Union[str, "OperationName"]
     """
 
     vmResourceId: str

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BillingInfoResponse(_Model):
+class BillingInfoResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace Subscription and Organization details to which resource gets billed into.
 
     :ivar marketplace_saas_info: Marketplace Subscription details.
@@ -54,7 +54,7 @@ class BillingInfoResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CompanyInfo(_Model):
+class CompanyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Company information of the user to be passed to partners.
 
     :ivar domain: Domain of the company.
@@ -104,7 +104,7 @@ class CompanyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedPartnerResourceProperties(_Model):
+class ConnectedPartnerResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Partner Resource Properties.
 
     :ivar partner_deployment_name: Elastic resource name.
@@ -158,7 +158,7 @@ class ConnectedPartnerResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedPartnerResourcesListFormat(_Model):
+class ConnectedPartnerResourcesListFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Partner Resources List Format.
 
     :ivar properties: Connected Partner Resource Properties.
@@ -318,7 +318,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -362,7 +362,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ElasticMonitorResource(TrackedResource):
+class ElasticMonitorResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitor resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -426,7 +426,7 @@ class ElasticMonitorResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ElasticMonitorResourceUpdateParameters(_Model):
+class ElasticMonitorResourceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitor resource update parameters.
 
     :ivar tags: elastic monitor resource tags.
@@ -454,7 +454,7 @@ class ElasticMonitorResourceUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticMonitorUpgrade(_Model):
+class ElasticMonitorUpgrade(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upgrade elastic monitor version.
 
     :ivar version: Version to which the elastic monitor should be upgraded to.
@@ -482,7 +482,9 @@ class ElasticMonitorUpgrade(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticOrganizationToAzureSubscriptionMappingResponse(_Model):  # pylint: disable=name-too-long
+class ElasticOrganizationToAzureSubscriptionMappingResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Azure Subscription ID to which the Organization of the logged in user belongs and gets
     billed into.
 
@@ -516,7 +518,9 @@ class ElasticOrganizationToAzureSubscriptionMappingResponse(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class ElasticOrganizationToAzureSubscriptionMappingResponseProperties(_Model):  # pylint: disable=name-too-long
+class ElasticOrganizationToAzureSubscriptionMappingResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of Azure Subscription ID to which the Organization of the logged in user belongs
     and gets billed into.
 
@@ -569,7 +573,7 @@ class ElasticOrganizationToAzureSubscriptionMappingResponseProperties(_Model):  
         super().__init__(*args, **kwargs)
 
 
-class ElasticProperties(_Model):
+class ElasticProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic Resource Properties.
 
     :ivar elastic_cloud_user: Details of the user's elastic account.
@@ -606,7 +610,7 @@ class ElasticProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticTrafficFilter(_Model):
+class ElasticTrafficFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic traffic filter object.
 
     :ivar id: Id of the elastic filter.
@@ -668,7 +672,7 @@ class ElasticTrafficFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticTrafficFilterResponse(_Model):
+class ElasticTrafficFilterResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of elastic traffic filters in the account.
 
     :ivar rulesets: List of elastic traffic filters in the account.
@@ -698,7 +702,7 @@ class ElasticTrafficFilterResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticTrafficFilterRule(_Model):
+class ElasticTrafficFilterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic traffic filter rule object.
 
     :ivar source: IP of the elastic filter rule.
@@ -750,7 +754,7 @@ class ElasticTrafficFilterRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticVersionListFormat(_Model):
+class ElasticVersionListFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic Version List Format.
 
     :ivar properties: Elastic Version Properties.
@@ -780,7 +784,7 @@ class ElasticVersionListFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticVersionListProperties(_Model):
+class ElasticVersionListProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic Version Properties.
 
     :ivar version: Available elastic version of the given region.
@@ -852,7 +856,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -880,7 +884,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseBody(_Model):
+class ErrorResponseBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response body.
 
     :ivar code: Error code.
@@ -936,7 +940,7 @@ class ExternalUserCreationResponse(_Model):
     """Shows if user is created or updated."""
 
 
-class ExternalUserInfo(_Model):
+class ExternalUserInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the request required for creating user on elastic side.
 
     :ivar user_name: Username of the user to be created or updated.
@@ -984,7 +988,7 @@ class ExternalUserInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilteringTag(_Model):
+class FilteringTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a filtering tag. Filtering tags are used for capturing resources and
     include/exclude them from being monitored.
 
@@ -1025,7 +1029,7 @@ class FilteringTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProperties(_Model):
+class IdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity properties.
 
     :ivar principal_id: The identity ID.
@@ -1063,7 +1067,7 @@ class IdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogRules(_Model):
+class LogRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of rules for sending logs for the Monitor resource.
 
     :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
@@ -1122,7 +1126,7 @@ class LogRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceSaaSInfo(_Model):
+class MarketplaceSaaSInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SAAS Info of the resource.
 
     :ivar marketplace_subscription: Marketplace Subscription.
@@ -1187,7 +1191,9 @@ class MarketplaceSaaSInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceSaaSInfoMarketplaceSubscription(_Model):  # pylint: disable=name-too-long
+class MarketplaceSaaSInfoMarketplaceSubscription(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Marketplace Subscription.
 
     :ivar id: Marketplace Subscription Id. This is a GUID-formatted string.
@@ -1227,7 +1233,7 @@ class MarketplaceSaaSInfoMarketplaceSubscription(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class MonitoredResource(_Model):
+class MonitoredResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a resource currently being monitored by the Elastic monitor resource.
 
     :ivar id: The ARM id of the resource.
@@ -1272,7 +1278,7 @@ class MonitoredResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoredSubscription(_Model):
+class MonitoredSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of subscriptions and it's monitoring status by current Elastic monitor.
 
     :ivar subscription_id: The subscriptionId to be monitored. Required.
@@ -1338,7 +1344,7 @@ class ProxyResource(Resource):
     """
 
 
-class MonitoredSubscriptionProperties(ProxyResource):
+class MonitoredSubscriptionProperties(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to update subscriptions needed to be monitored by the Elastic monitor resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1380,7 +1386,7 @@ class MonitoredSubscriptionProperties(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringTagRules(ProxyResource):
+class MonitoringTagRules(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capture logs and metrics of Azure resources based on ARM tags.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1421,7 +1427,7 @@ class MonitoringTagRules(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringTagRulesProperties(_Model):
+class MonitoringTagRulesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the properties for a TagRules resource.
 
     :ivar provisioning_state: Provisioning state of the monitoring tag rules. Known values are:
@@ -1461,7 +1467,7 @@ class MonitoringTagRulesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorProperties(_Model):
+class MonitorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the monitor resource.
 
     :ivar provisioning_state: Provisioning state of the monitor resource. Known values are:
@@ -1590,7 +1596,7 @@ class MonitorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAIIntegrationProperties(_Model):
+class OpenAIIntegrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Open AI Integration details.
 
     :ivar open_ai_resource_id: The resource name of Open AI resource.
@@ -1645,7 +1651,7 @@ class OpenAIIntegrationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAIIntegrationRPModel(ProxyResource):
+class OpenAIIntegrationRPModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capture properties of Open AI resource Integration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1686,7 +1692,7 @@ class OpenAIIntegrationRPModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OpenAIIntegrationStatusResponse(_Model):
+class OpenAIIntegrationStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of the OpenAI Integration.
 
     :ivar properties: Status of the OpenAI Integration.
@@ -1716,7 +1722,9 @@ class OpenAIIntegrationStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenAIIntegrationStatusResponseProperties(_Model):  # pylint: disable=name-too-long
+class OpenAIIntegrationStatusResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Status of the OpenAI Integration.
 
     :ivar status: Status of the OpenAI Integration.
@@ -1744,7 +1752,7 @@ class OpenAIIntegrationStatusResponseProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the display information for an operation.
 
     :ivar provider: The service provider of the operation.
@@ -1787,7 +1795,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(_Model):
+class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Microsoft.Elastic REST API operation.
 
     :ivar name: Operation name, i.e., {provider}/{resource}/{operation}.
@@ -1834,7 +1842,7 @@ class OperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerBillingEntity(_Model):
+class PartnerBillingEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner Billing details associated with the resource.
 
     :ivar id: The Elastic Organization Id.
@@ -1874,7 +1882,7 @@ class PartnerBillingEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlanDetails(_Model):
+class PlanDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan details of the monitor resource.
 
     :ivar offer_id: Offer ID of the plan.
@@ -1924,7 +1932,7 @@ class PlanDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProjectDetails(_Model):
+class ProjectDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Project details of the monitor resource IF it belongs to Serverless offer kind.
 
     :ivar project_type: Project type; ex: Elasticsearch / Observability / Security. Known values
@@ -1976,7 +1984,7 @@ class ResourceProviderDefaultErrorResponse(_Model):
     """Response body of Error."""
 
 
-class ResourceSku(_Model):
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the SKU of a resource.
 
     :ivar name: The name of the SKU. Required.
@@ -2004,7 +2012,7 @@ class ResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResubscribeProperties(_Model):
+class ResubscribeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resubscribe Properties.
 
     :ivar plan_id: Newly selected plan Id to create the new Marketplace subscription for
@@ -2064,7 +2072,7 @@ class ResubscribeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionList(_Model):
+class SubscriptionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to update subscriptions needed to be monitored by the Elastic monitor resource.
 
     :ivar operation: The operation for the patch on the resource. Known values are: "AddBegin",
@@ -2110,7 +2118,7 @@ class SubscriptionList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2177,7 +2185,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradableVersionsList(_Model):
+class UpgradableVersionsList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stack Versions that this version can upgrade to.
 
     :ivar current_version: Current version of the elastic monitor.
@@ -2214,7 +2222,7 @@ class UpgradableVersionsList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserApiKeyResponse(_Model):
+class UserApiKeyResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The User Api Key created for the Organization associated with the User Email Id that was passed
     in the request.
 
@@ -2244,7 +2252,7 @@ class UserApiKeyResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserApiKeyResponseProperties(_Model):
+class UserApiKeyResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserApiKeyResponseProperties.
 
     :ivar api_key: The User Api Key Generated based on GenerateApiKey flag. This is applicable for
@@ -2274,7 +2282,7 @@ class UserApiKeyResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserEmailId(_Model):
+class UserEmailId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email Id of the User Organization, of which the API Key must be returned.
 
     :ivar email_id: The User email Id.
@@ -2302,7 +2310,7 @@ class UserEmailId(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserInfo(_Model):
+class UserInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User Information to be passed to partners.
 
     :ivar first_name: First name of the user.
@@ -2356,7 +2364,7 @@ class UserInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMCollectionUpdate(_Model):
+class VMCollectionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update VM resource collection.
 
     :ivar vm_resource_id: ARM id of the VM resource.
@@ -2394,7 +2402,7 @@ class VMCollectionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMIngestionDetailsResponse(_Model):
+class VMIngestionDetailsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vm ingestion details to install an agent.
 
     :ivar cloud_id: The cloudId of given Elastic monitor resource.
@@ -2429,7 +2437,7 @@ class VMIngestionDetailsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMResources(_Model):
+class VMResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vm resource properties that is currently being monitored by the Elastic monitor resource.
 
     :ivar vm_resource_id: The ARM id of the VM resource.

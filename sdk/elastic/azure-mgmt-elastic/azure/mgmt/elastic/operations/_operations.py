@@ -36,6 +36,7 @@ from .. import models as _models, types as _types
 from .._configuration import ElasticMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -49,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +71,7 @@ def build_monitored_subscriptions_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +101,7 @@ def build_monitored_subscriptions_createor_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +133,7 @@ def build_monitored_subscriptions_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +163,7 @@ def build_monitored_subscriptions_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/monitoredSubscriptions/{configurationName}"
     path_format_arguments = {
@@ -186,7 +187,7 @@ def build_monitored_subscriptions_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -214,7 +215,7 @@ def build_tag_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -244,7 +245,7 @@ def build_tag_rules_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -274,7 +275,7 @@ def build_tag_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/tagRules/{ruleSetName}"
     path_format_arguments = {
@@ -298,7 +299,7 @@ def build_tag_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -326,7 +327,7 @@ def build_monitors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +356,7 @@ def build_monitors_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +387,7 @@ def build_monitors_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -411,11 +412,16 @@ def build_monitors_update_request(
 
 
 def build_monitors_delete_request(
-    resource_group_name: str, monitor_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    monitor_name: str,
+    subscription_id: str,
+    *,
+    soft_delete: Optional[bool] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}"
     path_format_arguments = {
@@ -428,6 +434,8 @@ def build_monitors_delete_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if soft_delete is not None:
+        _params["softDelete"] = _SERIALIZER.query("soft_delete", soft_delete, "bool")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
@@ -438,7 +446,7 @@ def build_monitors_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -463,7 +471,7 @@ def build_monitors_list_request(subscription_id: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -489,7 +497,7 @@ def build_monitored_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -517,7 +525,7 @@ def build_deployment_info_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -546,7 +554,7 @@ def build_external_user_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -576,7 +584,7 @@ def build_billing_info_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -604,7 +612,7 @@ def build_connected_partner_resources_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -632,7 +640,7 @@ def build_vm_host_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,7 +668,7 @@ def build_vm_ingestion_details_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -689,7 +697,7 @@ def build_vm_collection_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/vmCollectionUpdate"
     path_format_arguments = {
@@ -716,7 +724,7 @@ def build_upgradable_versions_details_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -745,7 +753,7 @@ def build_monitor_upgrade_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/upgrade"
     path_format_arguments = {
@@ -772,7 +780,7 @@ def build_all_traffic_filters_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -800,7 +808,7 @@ def build_list_associated_traffic_filters_list_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -833,7 +841,7 @@ def build_create_and_associate_ip_filter_create_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/createAndAssociateIPFilter"
     path_format_arguments = {
@@ -866,7 +874,7 @@ def build_create_and_associate_pl_filter_create_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/createAndAssociatePLFilter"
     path_format_arguments = {
@@ -899,7 +907,7 @@ def build_associate_traffic_filter_associate_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/associateTrafficFilter"
     path_format_arguments = {
@@ -928,7 +936,7 @@ def build_detach_and_delete_traffic_filter_delete_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/detachAndDeleteTrafficFilter"
     path_format_arguments = {
@@ -957,7 +965,7 @@ def build_detach_traffic_filter_update_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/detachTrafficFilter"
     path_format_arguments = {
@@ -986,7 +994,7 @@ def build_traffic_filters_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/deleteTrafficFilter"
     path_format_arguments = {
@@ -1012,7 +1020,7 @@ def build_organizations_resubscribe_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1041,7 +1049,7 @@ def build_organizations_get_api_key_request(subscription_id: str, **kwargs: Any)
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1069,7 +1077,7 @@ def build_organizations_get_elastic_to_azure_subscription_mapping_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1097,7 +1105,7 @@ def build_open_ai_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1127,7 +1135,7 @@ def build_open_ai_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1157,7 +1165,7 @@ def build_open_ai_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/openAIIntegrations/{integrationName}"
     path_format_arguments = {
@@ -1181,7 +1189,7 @@ def build_open_ai_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1209,7 +1217,7 @@ def build_open_ai_get_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1236,7 +1244,7 @@ def build_elastic_versions_list_request(subscription_id: str, *, region: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1257,7 +1265,7 @@ def build_elastic_versions_list_request(subscription_id: str, *, region: str, **
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1367,7 +1375,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class MonitoredSubscriptionsOperations:
+class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2225,7 +2233,7 @@ class MonitoredSubscriptionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TagRulesOperations:
+class TagRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2738,7 +2746,7 @@ class TagRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MonitorsOperations:
+class MonitorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3323,7 +3331,13 @@ class MonitorsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(self, resource_group_name: str, monitor_name: str, **kwargs: Any) -> Iterator[bytes]:
+    @api_version_validation(
+        params_added_on={"2026-03-15-preview": ["soft_delete"]},
+        api_versions_list=["2025-06-01", "2026-03-15-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, monitor_name: str, *, soft_delete: Optional[bool] = None, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3341,6 +3355,7 @@ class MonitorsOperations:
             resource_group_name=resource_group_name,
             monitor_name=monitor_name,
             subscription_id=self._config.subscription_id,
+            soft_delete=soft_delete,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3383,7 +3398,13 @@ class MonitorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(self, resource_group_name: str, monitor_name: str, **kwargs: Any) -> LROPoller[None]:
+    @api_version_validation(
+        params_added_on={"2026-03-15-preview": ["soft_delete"]},
+        api_versions_list=["2025-06-01", "2026-03-15-preview"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, monitor_name: str, *, soft_delete: Optional[bool] = None, **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete an existing Elastic monitor resource from your Azure subscription, removing its
         observability and monitoring capabilities.
 
@@ -3392,6 +3413,11 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
+        :keyword soft_delete: Indicates whether to perform a soft delete. When set to true, the Azure
+         resource (Liftr integration) only is deleted and not the Partner Cloud resource. When set to
+         false (default), the resource is permanently deleted from both Azure and the Partner Cloud.
+         Default value is None.
+        :paramtype soft_delete: bool
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3407,6 +3433,7 @@ class MonitorsOperations:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 monitor_name=monitor_name,
+                soft_delete=soft_delete,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -3635,7 +3662,7 @@ class MonitorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MonitoredResourcesOperations:
+class MonitoredResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3756,7 +3783,7 @@ class MonitoredResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeploymentInfoOperations:
+class DeploymentInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3845,7 +3872,7 @@ class DeploymentInfoOperations:
         return deserialized  # type: ignore
 
 
-class ExternalUserOperations:
+class ExternalUserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4046,7 +4073,7 @@ class ExternalUserOperations:
         return deserialized  # type: ignore
 
 
-class BillingInfoOperations:
+class BillingInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4135,7 +4162,7 @@ class BillingInfoOperations:
         return deserialized  # type: ignore
 
 
-class ConnectedPartnerResourcesOperations:
+class ConnectedPartnerResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4257,7 +4284,7 @@ class ConnectedPartnerResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VMHostOperations:
+class VMHostOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4376,7 +4403,7 @@ class VMHostOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VMIngestionOperations:
+class VMIngestionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4466,7 +4493,7 @@ class VMIngestionOperations:
         return deserialized  # type: ignore
 
 
-class VMCollectionOperations:
+class VMCollectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4650,7 +4677,7 @@ class VMCollectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UpgradableVersionsOperations:
+class UpgradableVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4739,7 +4766,7 @@ class UpgradableVersionsOperations:
         return deserialized  # type: ignore
 
 
-class MonitorOperations:
+class MonitorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4991,7 +5018,7 @@ class MonitorOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AllTrafficFiltersOperations:
+class AllTrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5081,7 +5108,7 @@ class AllTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class ListAssociatedTrafficFiltersOperations:
+class ListAssociatedTrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5171,7 +5198,7 @@ class ListAssociatedTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class CreateAndAssociateIPFilterOperations:
+class CreateAndAssociateIPFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5330,7 +5357,7 @@ class CreateAndAssociateIPFilterOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CreateAndAssociatePLFilterOperations:
+class CreateAndAssociatePLFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5495,7 +5522,7 @@ class CreateAndAssociatePLFilterOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AssociateTrafficFilterOperations:
+class AssociateTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5637,7 +5664,7 @@ class AssociateTrafficFilterOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DetachAndDeleteTrafficFilterOperations:
+class DetachAndDeleteTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5718,7 +5745,7 @@ class DetachAndDeleteTrafficFilterOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DetachTrafficFilterOperations:
+class DetachTrafficFilterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5860,7 +5887,7 @@ class DetachTrafficFilterOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class TrafficFiltersOperations:
+class TrafficFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5941,7 +5968,7 @@ class TrafficFiltersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class OrganizationsOperations:
+class OrganizationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6420,7 +6447,7 @@ class OrganizationsOperations:
         return deserialized  # type: ignore
 
 
-class OpenAIOperations:
+class OpenAIOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6953,7 +6980,7 @@ class OpenAIOperations:
         return deserialized  # type: ignore
 
 
-class ElasticVersionsOperations:
+class ElasticVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
