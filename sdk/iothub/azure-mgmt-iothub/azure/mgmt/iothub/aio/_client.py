@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class IotHubClient:  # pylint: disable=too-many-instance-attributes
+class IotHubClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Use this API to manage the IoT hubs in your Azure subscription.
 
     :ivar operations: Operations operations
@@ -69,7 +69,7 @@ class IotHubClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
