@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. [#45113](https://github.com/Azure/azure-sdk-for-python/pull/45113)
+- `BearerTokenCredentialPolicy` now rejects request URLs containing backslashes in the authority before attaching a bearer token.
 
 ### Other Changes
 
