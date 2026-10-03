@@ -159,15 +159,17 @@ def _response(kind: str) -> dict[str, Any]:
 
 
 def _assert_job(result: Union[CommandJob, PipelineJob], kind: str) -> None:
-    assert isinstance(result, PipelineJob if kind == "Pipeline" else CommandJob)
-    assert result.job_type == kind
-    assert result.name == kind.lower()
-    assert result.id == f"/jobs/{kind.lower()}"
     if kind == "Pipeline":
+        assert isinstance(result, PipelineJob)
         assert result.jobs == _PIPELINE_PROPERTIES["jobs"]
         assert result.inputs == _PIPELINE_PROPERTIES["inputs"]
         assert result.outputs == _PIPELINE_PROPERTIES["outputs"]
         assert result.settings == _PIPELINE_PROPERTIES["settings"]
+    else:
+        assert isinstance(result, CommandJob)
+    assert result.job_type == kind
+    assert result.name == kind.lower()
+    assert result.id == f"/jobs/{kind.lower()}"
 
 
 def _assert_requests(requests: list[HttpRequest], kind: str, expected: dict[str, Any]) -> None:
