@@ -87,6 +87,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     },
                     "customDomain": {"name": "str", "useSubDomainName": bool},
                     "dataCollaborationPolicyProperties": {
+                        "allowBlobAccessPoints": bool,
                         "allowCrossTenantDataSharing": bool,
                         "allowStorageConnectors": bool,
                         "allowStorageDataShares": bool,
@@ -151,6 +152,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                         "requireUserBoundUserDelegationSasAction": "str",
                     },
                     "supportsHttpsTrafficOnly": bool,
+                    "turboTier": {"status": "str", "targetPercent": 0},
                 },
                 "tags": {"str": "str"},
                 "zones": ["str"],
@@ -205,6 +207,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     },
                     "customDomain": {"name": "str", "useSubDomainName": bool},
                     "dataCollaborationPolicyProperties": {
+                        "allowBlobAccessPoints": bool,
                         "allowCrossTenantDataSharing": bool,
                         "allowStorageConnectors": bool,
                         "allowStorageDataShares": bool,
@@ -267,6 +270,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                         "requireUserBoundUserDelegationSasAction": "str",
                     },
                     "supportsHttpsTrafficOnly": bool,
+                    "turboTier": {"status": "str", "targetPercent": 0},
                 },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},

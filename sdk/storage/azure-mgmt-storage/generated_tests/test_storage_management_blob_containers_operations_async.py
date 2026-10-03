@@ -43,6 +43,10 @@ class TestStorageManagementBlobContainersOperationsAsync(AzureMgmtRecordedTestCa
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "blobAccessPointConfiguration": {
+                        "blobAccessPointConfigurationName": "str",
+                        "blobAccessPointConfigurationUniqueId": "str",
+                    },
                     "defaultEncryptionScope": "str",
                     "deleted": bool,
                     "deletedTime": "2020-02-20 00:00:00",
@@ -129,6 +133,10 @@ class TestStorageManagementBlobContainersOperationsAsync(AzureMgmtRecordedTestCa
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "blobAccessPointConfiguration": {
+                        "blobAccessPointConfigurationName": "str",
+                        "blobAccessPointConfigurationUniqueId": "str",
+                    },
                     "defaultEncryptionScope": "str",
                     "deleted": bool,
                     "deletedTime": "2020-02-20 00:00:00",
