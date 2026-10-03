@@ -161,6 +161,12 @@ for a runnable end-to-end example.
 
 ### Configuring tracing
 
+The default observability setup stamps every OpenTelemetry span and log record
+with `gen_ai.provider.name = "microsoft.foundry"`, including telemetry from
+protocol packages and underlying frameworks. Conflicting provider values are
+overridden. Custom observability callbacks that replace the default setup are
+responsible for configuring their own enrichment.
+
 Tracing is enabled automatically when an Application Insights connection string is available:
 
 ```python

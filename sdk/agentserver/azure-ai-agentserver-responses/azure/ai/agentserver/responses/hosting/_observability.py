@@ -180,7 +180,7 @@ def build_create_span_tags(
 
 
 _SERVICE_NAME = "azure.ai.agentserver"
-_PROVIDER_NAME = "AzureAI Hosted Agents"
+_PROVIDER_NAME = "microsoft.foundry"
 _MAX_REQUEST_ID_LEN = 256
 
 
