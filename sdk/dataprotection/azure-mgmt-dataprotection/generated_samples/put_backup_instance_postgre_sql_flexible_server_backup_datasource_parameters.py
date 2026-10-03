@@ -16,7 +16,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python put_backup_instance_with_generic_parameters.py
+    python put_backup_instance_postgre_sql_flexible_server_backup_datasource_parameters.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,54 +32,48 @@ def main():
     )
 
     response = client.backup_instances.begin_create_or_update(
-        resource_group_name="ESAN-ECYBVTRG",
-        vault_name="ESANVault",
-        backup_instance_name="esan-volgroup-bi",
+        resource_group_name="pgflexrg",
+        vault_name="pgflexvault",
+        backup_instance_name="pgflexbi",
         parameters={
             "properties": {
                 "dataSourceInfo": {
-                    "datasourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
+                    "datasourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
                     "objectType": "Datasource",
-                    "resourceID": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG/providers/Microsoft.ElasticSan/elasticSans/ecy-bvt-adhoc/volumeGroups/esan-volgroup",
+                    "resourceID": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/pgflexrg/providers/Microsoft.DBforPostgreSQL/flexibleServers/pgflexserver",
                     "resourceLocation": "eastus2euap",
-                    "resourceName": "esan-volgroup-bi",
-                    "resourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
-                    "resourceUri": "SampleresourceUri123",
+                    "resourceName": "pgflexserver",
+                    "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+                    "resourceUri": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/pgflexrg/providers/Microsoft.DBforPostgreSQL/flexibleServers/pgflexserver",
                 },
                 "dataSourceSetInfo": {
-                    "datasourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
+                    "datasourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
                     "objectType": "DatasourceSet",
-                    "resourceID": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG/providers/Microsoft.ElasticSan/elasticSans/ecy-bvt-adhoc",
+                    "resourceID": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/pgflexrg/providers/Microsoft.DBforPostgreSQL/flexibleServers/pgflexserver",
                     "resourceLocation": "eastus2euap",
-                    "resourceType": "Microsoft.ElasticSan/elasticSans",
+                    "resourceName": "pgflexserver",
+                    "resourceType": "Microsoft.DBforPostgreSQL/flexibleServers",
+                    "resourceUri": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/pgflexrg/providers/Microsoft.DBforPostgreSQL/flexibleServers/pgflexserver",
                 },
-                "friendlyName": "esan-volgroup-bi",
+                "friendlyName": "pgflexbi",
                 "objectType": "BackupInstance",
                 "policyInfo": {
-                    "policyId": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG/providers/Microsoft.DataProtection/backupVaults/ESANVault/backupPolicies/BVTPolicy",
+                    "policyId": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/pgflexrg/providers/Microsoft.DataProtection/BackupVaults/pgflexvault/backupPolicies/pgflexpolicy",
                     "policyParameters": {
                         "backupDatasourceParametersList": [
                             {
-                                "objectType": "GenericBackupDatasourceParameters",
-                                "resourceSelectors": ["vol1", "vol2", "vol3"],
+                                "backupSolutionType": "PhysicalBackup",
+                                "objectType": "PostgreSqlFlexibleServerBackupDatasourceParameters",
                             }
-                        ],
-                        "dataStoreParametersList": [
-                            {
-                                "dataStoreType": "OperationalStore",
-                                "objectType": "AzureOperationalStoreParameters",
-                                "resourceGroupId": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG",
-                            }
-                        ],
+                        ]
                     },
                 },
-            },
-            "tags": {"key1": "val1"},
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/BackupInstanceOperations/PutBackupInstanceWithGenericParameters.json
+# x-ms-original-file: 2026-07-01/BackupInstanceOperations/PutBackupInstance_PostgreSqlFlexibleServerBackupDatasourceParameters.json
 if __name__ == "__main__":
     main()
