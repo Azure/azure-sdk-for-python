@@ -88,7 +88,9 @@ class ServiceBusClient(
      rather than the whole operation. Applies to sending, management operations, and AMQP link
      acquisition, including the link acquisition performed by `receive_messages`. The value must
      be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
-     bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
+     bound the `receive_messages` long poll, the receiver iterator's own wait, or receiver-link
+     settlement. Management-link settlement uses this value when configured and an internal
+     60-second default otherwise.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -259,7 +261,9 @@ class ServiceBusClient(
          rather than the whole operation. Applies to sending, management operations, and AMQP link
          acquisition, including the link acquisition performed by `receive_messages`. The value must
          be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
-         bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
+         bound the `receive_messages` long poll, the receiver iterator's own wait, or receiver-link
+         settlement. Management-link settlement uses this value when configured and an internal
+         60-second default otherwise.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.

@@ -77,27 +77,31 @@ class ManagementOperation(object):
         self._responses[operation_id] = None
         self._mgmt_error = None
 
-        self._mgmt_link.execute_operation(
-            message,
-            partial(self._on_execute_operation_complete, operation_id),
-            timeout=timeout,
-            operation=operation,
-            type=operation_type,
-        )
+        pending_operation = None
+        try:
+            pending_operation = self._mgmt_link.execute_operation(
+                message,
+                partial(self._on_execute_operation_complete, operation_id),
+                timeout=timeout,
+                operation=operation,
+                type=operation_type,
+            )
 
-        while not self._responses[operation_id] and not self._mgmt_error:
-            if timeout and timeout > 0:
-                now = time.time()
-                if (now - start_time) >= timeout:
-                    raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
-            self._connection.listen()
+            while not self._responses[operation_id] and not self._mgmt_error:
+                if timeout and timeout > 0:
+                    now = time.time()
+                    if (now - start_time) >= timeout:
+                        raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
+                self._connection.listen()
 
-        if self._mgmt_error:
-            self._responses.pop(operation_id)
-            raise self._mgmt_error
+            if self._mgmt_error:
+                raise self._mgmt_error
 
-        response = self._responses.pop(operation_id)
-        return response
+            return self._responses[operation_id]
+        finally:
+            self._responses.pop(operation_id, None)
+            if pending_operation:
+                self._mgmt_link.cancel_operation(pending_operation)
 
     def open(self):
         self._mgmt_link_open_status = ManagementOpenResult.OPENING

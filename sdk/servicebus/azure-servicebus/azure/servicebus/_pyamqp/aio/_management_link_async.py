@@ -165,6 +165,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
                 if message_delivery.message == operation.message:
                     to_remove_operation = operation
                     break
+            if not to_remove_operation:
+                return
             self._pending_operations.remove(to_remove_operation)
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
@@ -220,7 +222,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
          informational text in response messages.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
-        :rtype: None
+        :return: The operation registered while its response is pending.
+        :rtype: PendingManagementOperation
         """
         message.application_properties["operation"] = operation
         message.application_properties["type"] = type
@@ -238,7 +241,15 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
         await self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
+        self._pending_operations.append(pending_operation)
+        return pending_operation
+
+    def cancel_operation(self, pending_operation):
+        try:
+            self._pending_operations.remove(pending_operation)
+        except ValueError:
+            pass
 
     async def close(self):
         if self.state != ManagementLinkState.IDLE:

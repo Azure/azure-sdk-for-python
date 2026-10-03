@@ -159,8 +159,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
-        with self.lock:
-            self._pending_operations.remove(to_remove_operation)
+            self.cancel_operation(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
@@ -170,7 +169,9 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
                 if message_delivery.message == operation.message:
                     to_remove_operation = operation
                     break
-            self._pending_operations.remove(to_remove_operation)
+            if not to_remove_operation:
+                return
+            self.cancel_operation(to_remove_operation)
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
             #  or should there an error mapping which maps the condition to the error type
@@ -223,7 +224,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
          informational text in response messages.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
-        :rtype: None
+        :return: The operation registered while its response is pending.
+        :rtype: PendingManagementOperation
         """
         message.application_properties["operation"] = operation
         message.application_properties["type"] = type
@@ -241,7 +243,16 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
         self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
+        self._pending_operations.append(pending_operation)
+        return pending_operation
+
+    def cancel_operation(self, pending_operation):
+        with self.lock:
+            try:
+                self._pending_operations.remove(pending_operation)
+            except ValueError:
+                pass
 
     def close(self):
         if self.state != ManagementLinkState.IDLE:
