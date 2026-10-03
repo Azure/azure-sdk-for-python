@@ -125,6 +125,38 @@ class AfdQueryStringCachingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """INCLUDE_SPECIFIED_QUERY_STRINGS."""
 
 
+class AfdServerTlsGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported key-exchange groups and curves. The ML-KEM groups are hybrid post-quantum groups."""
+
+    SEC_P256_R1_MLKEM768 = "SecP256r1MLKEM768"
+    """Hybrid post-quantum group combining secp256r1 with ML-KEM-768."""
+    SEC_P384_R1_MLKEM1024 = "SecP384r1MLKEM1024"
+    """Hybrid post-quantum group combining secp384r1 with ML-KEM-1024."""
+    X25519_MLKEM768 = "X25519MLKEM768"
+    """Hybrid post-quantum group combining X25519 with ML-KEM-768."""
+    PRIME256_V1 = "prime256v1"
+    """The prime256v1 elliptic curve group."""
+    X25519 = "X25519"
+    """The X25519 elliptic curve group."""
+    SECP384_R1 = "secp384r1"
+    """The secp384r1 elliptic curve group."""
+    SECP521_R1 = "secp521r1"
+    """The secp521r1 elliptic curve group."""
+
+
+class AfdServerTlsGroupPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Server TLS group policy that will be used for Https. Standard and Enhanced are service-managed
+    sets; Custom allows specifying serverTlsGroups explicitly.
+    """
+
+    STANDARD = "Standard"
+    """Uses the standard service-managed set of server TLS groups."""
+    ENHANCED = "Enhanced"
+    """Uses the enhanced service-managed set of server TLS groups."""
+    CUSTOM = "Custom"
+    """Uses the server TLS groups specified by serverTlsGroups."""
+
+
 class Algorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Algorithm to use for URL signing."""
 
@@ -170,6 +202,30 @@ class CanMigrateDefaultSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """STANDARD_AZURE_FRONT_DOOR."""
     PREMIUM_AZURE_FRONT_DOOR = "Premium_AzureFrontDoor"
     """PREMIUM_AZURE_FRONT_DOOR."""
+
+
+class CertificateNameCheckValidationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The validation mode for certificate name check at origin level. Only applicable when
+    enforceCertificateNameCheck is true.
+    """
+
+    ORIGIN_HOSTNAME = "OriginHostname"
+    """Validate the certificate against the origin hostname."""
+    CUSTOM_CERTIFICATE_SUBJECT = "CustomCertificateSubject"
+    """Validate the certificate against custom certificate subjects."""
+    INCOMING_HOST_HEADER = "IncomingHostHeader"
+    """Validate the certificate against the incoming host header."""
+
+
+class CertificateRevocationCheckEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set to Enabled by default. If set to Disabled, revocation status of client certificate chain
+    will be checked before establishing mutual TLS connection.
+    """
+
+    ENABLED = "Enabled"
+    """ENABLED."""
+    DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class CertificateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -354,6 +410,10 @@ class DeliveryRuleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ORIGIN_GROUP_OVERRIDE."""
     ROUTE_CONFIGURATION_OVERRIDE = "RouteConfigurationOverride"
     """ROUTE_CONFIGURATION_OVERRIDE."""
+    EDGE_ACTION = "EdgeAction"
+    """EDGE_ACTION."""
+    AFD_URL_SIGNING = "AfdUrlSigning"
+    """AFD_URL_SIGNING."""
 
 
 class DeliveryRuleActionParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -379,6 +439,8 @@ class DeliveryRuleActionParametersType(str, Enum, metaclass=CaseInsensitiveEnumM
         "DeliveryRuleRouteConfigurationOverrideActionParameters"
     )
     """DELIVERY_RULE_ROUTE_CONFIGURATION_OVERRIDE_ACTION_PARAMETERS."""
+    DELIVERY_RULE_EDGE_ACTION_PARAMETERS = "DeliveryRuleEdgeActionParameters"
+    """DELIVERY_RULE_EDGE_ACTION_PARAMETERS."""
 
 
 class DeliveryRuleConditionParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -514,6 +576,17 @@ class EndpointResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """STOPPING."""
 
 
+class EnforceMtlsEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set to Disabled by default. If set to Enabled, only custom domains with mTLS enabled can be
+    added to child Route resources.
+    """
+
+    ENABLED = "Enabled"
+    """ENABLED."""
+    DISABLED = "Disabled"
+    """DISABLED."""
+
+
 class ForwardingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protocol this rule will use when forwarding traffic to backends."""
 
@@ -597,6 +670,15 @@ class HttpVersionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EQUAL = "Equal"
     """EQUAL."""
+
+
+class InvocationPoint(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines at which point in the request processing pipeline the edge action will be invoked."""
+
+    CLIENT_REQUEST = "ClientRequest"
+    """CLIENT_REQUEST."""
+    ORIGIN_REQUEST = "OriginRequest"
+    """ORIGIN_REQUEST."""
 
 
 class IsDeviceMatchConditionParametersMatchValuesItem(  # pylint: disable=name-too-long
@@ -821,6 +903,19 @@ class MinimumTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TLS12."""
 
 
+class MtlsScenarioType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported scenarios for establishing mTLS connection."""
+
+    CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED = "ClientCertificateRequiredAndValidated"
+    """CLIENT_CERTIFICATE_REQUIRED_AND_VALIDATED."""
+    CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES = "ClientCertificateRequiredAndOriginValidates"
+    """CLIENT_CERTIFICATE_REQUIRED_AND_ORIGIN_VALIDATES."""
+    CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED = "ClientCertificateValidatedIfPresented"
+    """CLIENT_CERTIFICATE_VALIDATED_IF_PRESENTED."""
+    COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN = "CompleteMtlsPassthroughToOrigin"
+    """COMPLETE_MTLS_PASSTHROUGH_TO_ORIGIN."""
+
+
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -865,6 +960,20 @@ class OptimizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LARGE_FILE_DOWNLOAD."""
     DYNAMIC_SITE_ACCELERATION = "DynamicSiteAcceleration"
     """DYNAMIC_SITE_ACCELERATION."""
+
+
+class OriginAuthenticationTokenDestinationHeader(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The HTTP request header where the origin authentication token is placed when forwarding the
+    request to the origin.
+    """
+
+    AUTHORIZATION = "Authorization"
+    """Place the token in the standard ``Authorization`` request header (default behavior)."""
+    X_AZURE_AUTHORIZATION = "X-Azure-Authorization"
+    """Place the token in the ``X-Azure-Authorization`` request header to avoid conflicts with an
+    existing ``Authorization`` header set by the client."""
 
 
 class OriginAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1418,6 +1527,8 @@ class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MANAGED_CERTIFICATE."""
     AZURE_FIRST_PARTY_MANAGED_CERTIFICATE = "AzureFirstPartyManagedCertificate"
     """AZURE_FIRST_PARTY_MANAGED_CERTIFICATE."""
+    MTLS_CERTIFICATE_CHAIN = "MtlsCertificateChain"
+    """MTLS_CERTIFICATE_CHAIN."""
 
 
 class SecurityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1572,6 +1683,13 @@ class TransformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """URL_ENCODE."""
     REMOVE_NULLS = "RemoveNulls"
     """REMOVE_NULLS."""
+
+
+class TypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TypeName."""
+
+    DELIVERY_RULE_AFD_URL_SIGNING_ACTION_PARAMETERS = "DeliveryRuleAfdUrlSigningActionParameters"
+    """DELIVERY_RULE_AFD_URL_SIGNING_ACTION_PARAMETERS."""
 
 
 class UpdateRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):

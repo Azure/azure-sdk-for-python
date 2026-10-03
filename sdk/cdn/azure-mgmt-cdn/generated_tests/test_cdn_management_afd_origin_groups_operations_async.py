@@ -43,7 +43,12 @@ class TestCdnManagementAFDOriginGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "authentication": {"scope": "str", "type": "str", "userAssignedIdentity": {"id": "str"}},
+                        "authentication": {
+                            "scope": "str",
+                            "tokenDestinationHeader": "str",
+                            "type": "str",
+                            "userAssignedIdentity": {"id": "str"},
+                        },
                         "deploymentStatus": "str",
                         "healthProbeSettings": {
                             "probeIntervalInSeconds": 0,
@@ -87,7 +92,12 @@ class TestCdnManagementAFDOriginGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                 origin_group_name="str",
                 origin_group_update_properties={
                     "properties": {
-                        "authentication": {"scope": "str", "type": "str", "userAssignedIdentity": {"id": "str"}},
+                        "authentication": {
+                            "scope": "str",
+                            "tokenDestinationHeader": "str",
+                            "type": "str",
+                            "userAssignedIdentity": {"id": "str"},
+                        },
                         "healthProbeSettings": {
                             "probeIntervalInSeconds": 0,
                             "probePath": "str",
