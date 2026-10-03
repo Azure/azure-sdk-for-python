@@ -34,7 +34,7 @@ def main():
         resource_group_name="rgconfigurationmanager",
         config_template_name="testname",
         body={
-            "configTemplateVersion": {"properties": {"configurations": "rgricnhvcbqykc"}},
+            "configTemplateVersion": {"properties": {"configurations": "zsapegdehodzmwjmwl"}},
             "updateType": "Major",
             "version": "1.0.0",
         },
@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/ConfigTemplates_CreateVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ConfigTemplates_CreateVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

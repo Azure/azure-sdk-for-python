@@ -34,19 +34,17 @@ def main():
         resource_group_name="rgconfigurationmanager",
         context_name="testname",
         resource={
-            "location": "pkquwbplcp",
+            "location": "ctfi",
             "properties": {
-                "capabilities": [
-                    {"description": "banbenutsngwytoqh", "name": "tpylinjcmlnycfpofpxjtqmt", "state": "active"}
-                ],
-                "hierarchies": [{"description": "vg", "name": "upqe"}],
+                "capabilities": [{"description": "sin", "name": "alufbbxccup", "state": "active"}],
+                "hierarchies": [{"description": "eg", "name": "fz"}],
             },
-            "tags": {"key3046": "clcnhzwypk"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Contexts_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Contexts_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -38,16 +38,16 @@ def main():
         properties={
             "properties": {
                 "activeState": "active",
-                "reconciliationPolicy": {"interval": "cmzlrjwnlshnkgv", "state": "inactive"},
+                "reconciliationPolicy": {"interval": "otpsmjex", "state": "inactive"},
                 "solutionScope": "testname",
-                "solutionVersionId": "vrpzlamkvanqibtjarpxit",
-                "targetId": "tqkdvc",
+                "solutionVersionId": "ttjgk",
+                "targetId": "bebahvhrwsnxkxlignvhxivicdyzvc",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Instances_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Instances_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

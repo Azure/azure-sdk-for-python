@@ -32,15 +32,15 @@ def main():
 
     response = client.executions.begin_update(
         resource_group_name="rgconfigurationmanager",
-        context_name="abcde",
-        workflow_name="abcde",
+        context_name="testname",
+        workflow_name="testname",
         version_name="abcde",
         execution_name="abcde",
-        properties={"properties": {"specification": {}, "workflowVersionId": "xjsxzbfltzvbuvn"}},
+        properties={"properties": {"specification": {}, "workflowVersionId": "ihhcmejnkuto"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Executions_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Executions_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

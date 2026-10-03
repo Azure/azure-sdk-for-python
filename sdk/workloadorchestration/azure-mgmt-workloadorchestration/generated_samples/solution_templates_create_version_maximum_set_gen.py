@@ -36,7 +36,8 @@ def main():
         body={
             "solutionTemplateVersion": {
                 "properties": {
-                    "configurations": "ofqcsavwmeuwmvtjnqpoybtjvkmrlh",
+                    "configurations": "zprhmcyzk",
+                    "internalState": "PendingValidation",
                     "orchestratorType": "TO",
                     "specification": {},
                 }
@@ -48,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/SolutionTemplates_CreateVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionTemplates_CreateVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
