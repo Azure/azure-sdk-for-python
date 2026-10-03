@@ -9312,7 +9312,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
-            if body is _Unset:  # pyright: ignore[reportUnboundVariable]
+            if body is _Unset:
                 if scope is _Unset:
                     raise TypeError("missing required argument: scope")
                 body = {"scope": scope}
@@ -14236,7 +14236,8 @@ class BetaJobsOperations:
     ) -> AsyncItemPaged["_models.Job"]:
         """List Jobs.
 
-        :keyword job_type: Filter by job type (e.g. 'Command'). "Command" Default value is None.
+        :keyword job_type: Filter by job type (e.g. 'Command' or 'Pipeline'). Known values are:
+         "Command" and "Pipeline". Default value is None.
         :paramtype job_type: str or ~azure.ai.projects.models.JobType
         :keyword tag: Filter jobs by tag in the format 'key=value' (e.g., 'framework=pytorch'). Default
          value is None.
@@ -14292,7 +14293,7 @@ class BetaJobsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = "2026-01-15-preview"
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
