@@ -11,6 +11,9 @@
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`
   ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
+- Fix HTTP dependency target being rendered as `host:None` when the span has
+  `server.address` but no `server.port` (e.g. default-port requests traced by azure-core)
+  ([#49344](https://github.com/Azure/azure-sdk-for-python/pull/49344))
 
 ## 1.0.0b57 (2026-09-02)
 
