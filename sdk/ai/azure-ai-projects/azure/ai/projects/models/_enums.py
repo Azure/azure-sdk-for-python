@@ -750,6 +750,8 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COMMAND = "Command"
     """Command job."""
+    PIPELINE = "Pipeline"
+    """Pipeline job."""
 
 
 class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
