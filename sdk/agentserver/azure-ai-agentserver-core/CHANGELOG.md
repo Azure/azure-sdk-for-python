@@ -20,6 +20,8 @@
   before propagating request cancellation. Both helpers are marked
   `@experimental`.
 
+- Fixed Windows file-backed replay streams remaining locked after abrupt process termination by using an OS-managed lock.
+
 ### Other Changes
 
 - `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
