@@ -32,3 +32,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-migrationassessment
       safeName: azuremgmtmigrationassessment
+    - name: azure-mgmt-migrate
+      safeName: azuremgmtmigrate
