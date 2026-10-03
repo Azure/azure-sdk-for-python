@@ -1,0 +1,92 @@
+{
+  "base_commit": "5d29c5f16f1e546dcbdfb113d28d2526c9b691da",
+  "safe_outputs_source_hash": "fb290abfce3e10e8d622f2d42ce29d99d3c7e88d4d54d0dac0fc32005fba344f",
+  "handler_config": {
+    "add_comment": {
+      "max": 2,
+      "target": "*"
+    },
+    "add_labels": {
+      "max": 7,
+      "target": "*"
+    },
+    "assign_to_user": {
+      "max": 1,
+      "target": "*"
+    },
+    "create_report_incomplete_issue": {},
+    "missing_data": {},
+    "missing_tool": {},
+    "noop": {
+      "max": 1,
+      "report-as-issue": "false"
+    },
+    "remove_labels": {
+      "max": 7,
+      "target": "*"
+    },
+    "report_incomplete": {}
+  },
+  "jobs": {
+    "agent": {
+      "needs": [
+        "activation"
+      ],
+      "condition": "needs.activation.outputs.daily_ai_credits_exceeded != 'true'",
+      "permissions": {
+        "contents": "read",
+        "copilot-requests": "write",
+        "issues": "read"
+      }
+    },
+    "detection": {
+      "needs": [
+        "activation",
+        "agent"
+      ],
+      "condition": "always() && needs.agent.result != 'skipped'",
+      "permissions": {
+        "contents": "read",
+        "copilot-requests": "write"
+      }
+    },
+    "safe_outputs": {
+      "needs": [
+        "activation",
+        "agent",
+        "detection"
+      ],
+      "condition": "(!cancelled()) && needs.agent.result != 'skipped' && needs.detection.result == 'success'",
+      "permissions": {
+        "issues": "write",
+        "pull-requests": "write"
+      }
+    },
+    "mention_owners": {
+      "needs": [
+        "agent",
+        "detection"
+      ],
+      "condition": "(!cancelled()) && needs.agent.result != 'skipped' && contains(needs.agent.outputs.output_types, 'mention_owners')",
+      "permissions": {
+        "issues": "write"
+      }
+    },
+    "conclusion": {
+      "needs": [
+        "activation",
+        "agent",
+        "detection",
+        "mention_owners",
+        "safe_outputs"
+      ],
+      "condition": "always() && (needs.agent.result != 'skipped' || needs.activation.outputs.lockdown_check_failed == 'true' || needs.activation.outputs.oauth_token_check_failed == 'true' || needs.activation.outputs.stale_lock_file_failed == 'true' || needs.activation.outputs.daily_ai_credits_exceeded == 'true')",
+      "permissions": {
+        "actions": "read",
+        "issues": "write",
+        "pull-requests": "write"
+      }
+    }
+  },
+  "actionlint_source_hash": "56cac3ca7b2b4eaea261ca41ed1035d51b4a78cea1ea07c86813bbcd57f10837"
+}
