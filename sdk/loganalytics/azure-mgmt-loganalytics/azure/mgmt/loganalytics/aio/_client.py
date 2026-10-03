@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogAnalyticsManagementClient:  # pylint: disable=too-many-instance-attributes
+class LogAnalyticsManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """LogAnalyticsManagementClient.
 
     :ivar operations: Operations operations
@@ -116,7 +117,7 @@ class LogAnalyticsManagementClient:  # pylint: disable=too-many-instance-attribu
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-07-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
