@@ -354,6 +354,8 @@ class JobsOperations(_GeneratedJobsOps):
             await self._resolve_local_paths(name, job)
         elif not isinstance(job, PipelineJob):
             raise TypeError("job must be a CommandJob or PipelineJob")
+        else:
+            job._convert_pending_jobs()
         self._inject_preview_header(kwargs)
         rest_body = _RestJob(properties=job)
         rest_result = await super().create_or_update(name=name, job=rest_body, **kwargs)

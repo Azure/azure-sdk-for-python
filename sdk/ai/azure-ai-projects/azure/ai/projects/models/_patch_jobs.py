@@ -7,6 +7,7 @@
 
 import datetime
 import json
+from collections.abc import Mapping
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
@@ -120,19 +121,41 @@ class PipelineJob(_RestPipelineJob):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        jobs = kwargs.get("jobs")
+        fields = args[0] if args and isinstance(args[0], Mapping) else kwargs
+        jobs = fields.get("jobs")
         if isinstance(jobs, dict) and any(isinstance(node, CommandJob) for node in jobs.values()):
-            settings = kwargs.get("settings")
+            settings = fields.get("settings")
             default_compute = settings.get("default_compute") if isinstance(settings, dict) else None
-            default_compute = default_compute or kwargs.get("compute_id")
-            kwargs["jobs"] = {
-                name: self._command_node(name, node, default_compute) if isinstance(node, CommandJob) else node
-                for name, node in jobs.items()
-            }
+            default_compute = default_compute or fields.get("computeId" if args else "compute_id")
+            converted = dict(fields)
+            converted["jobs"] = self._convert_jobs(jobs, default_compute)
+            if args:
+                args = (converted,) + args[1:]
+            else:
+                kwargs = converted
         super().__init__(*args, **kwargs)
         self._name: Optional[str] = None
         self._id: Optional[str] = None
         self._system_data: Optional[SystemData] = None
+
+    @classmethod
+    def _convert_jobs(cls, jobs: Dict[str, Any], default_compute: Optional[str]) -> Dict[str, Any]:
+        return {
+            name: cls._command_node(name, node, default_compute) if isinstance(node, CommandJob) else node
+            for name, node in jobs.items()
+        }
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name == "jobs" and isinstance(value, dict) and any(isinstance(node, CommandJob) for node in value.values()):
+            settings = self.settings
+            default_compute = settings.get("default_compute") if isinstance(settings, dict) else None
+            value = self._convert_jobs(value, default_compute or self.compute_id)
+        super().__setattr__(name, value)
+
+    def _convert_pending_jobs(self) -> None:
+        jobs = self._data.get("jobs")
+        if isinstance(jobs, dict) and any(isinstance(node, CommandJob) for node in jobs.values()):
+            self.jobs = jobs
 
     @staticmethod
     def _command_node(name: str, job: CommandJob, default_compute: Optional[str]) -> Dict[str, Any]:
