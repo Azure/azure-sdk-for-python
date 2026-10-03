@@ -49,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_disaster_recovery_configs_get_authorization_rule_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -105,7 +105,7 @@ def build_disaster_recovery_configs_list_authorization_rules_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,7 +139,7 @@ def build_disaster_recovery_configs_list_keys_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -170,7 +170,7 @@ def build_disaster_recovery_configs_check_name_availability_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -200,7 +200,7 @@ def build_disaster_recovery_configs_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,7 +230,7 @@ def build_disaster_recovery_configs_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -260,7 +260,7 @@ def build_disaster_recovery_configs_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}"
     path_format_arguments = {
@@ -284,7 +284,7 @@ def build_disaster_recovery_configs_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -311,7 +311,7 @@ def build_disaster_recovery_configs_break_pairing_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing"
     path_format_arguments = {
@@ -336,7 +336,7 @@ def build_disaster_recovery_configs_fail_over_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover"
     path_format_arguments = {
@@ -369,7 +369,7 @@ def build_queues_get_authorization_rule_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -405,7 +405,7 @@ def build_queues_create_or_update_authorization_rule_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -441,7 +441,7 @@ def build_queues_delete_authorization_rule_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}"
     path_format_arguments = {
@@ -466,7 +466,7 @@ def build_queues_list_authorization_rules_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -500,7 +500,7 @@ def build_queues_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -536,7 +536,7 @@ def build_queues_regenerate_keys_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -568,7 +568,7 @@ def build_queues_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -598,7 +598,7 @@ def build_queues_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -628,7 +628,7 @@ def build_queues_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}"
     path_format_arguments = {
@@ -658,7 +658,7 @@ def build_queues_list_by_namespace_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -695,7 +695,7 @@ def build_topics_get_authorization_rule_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -731,7 +731,7 @@ def build_topics_create_or_update_authorization_rule_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -767,7 +767,7 @@ def build_topics_delete_authorization_rule_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}"
     path_format_arguments = {
@@ -792,7 +792,7 @@ def build_topics_list_authorization_rules_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -826,7 +826,7 @@ def build_topics_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -862,7 +862,7 @@ def build_topics_regenerate_keys_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -894,7 +894,7 @@ def build_topics_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -924,7 +924,7 @@ def build_topics_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -954,7 +954,7 @@ def build_topics_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}"
     path_format_arguments = {
@@ -984,7 +984,7 @@ def build_topics_list_by_namespace_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1020,7 +1020,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1056,7 +1056,7 @@ def build_private_endpoint_connections_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1092,7 +1092,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -1118,7 +1118,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1146,7 +1146,7 @@ def build_network_security_perimeter_configurations_get_resource_association_nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1174,7 +1174,7 @@ def build_network_security_perimeter_configurations_reconcile_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkSecurityPerimeterConfigurations/{resourceAssociationName}/reconcile"
     path_format_arguments = {
@@ -1202,7 +1202,7 @@ def build_migration_configs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1236,7 +1236,7 @@ def build_migration_configs_create_and_start_migration_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1270,7 +1270,7 @@ def build_migration_configs_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}"
     path_format_arguments = {
@@ -1294,7 +1294,7 @@ def build_migration_configs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1325,7 +1325,7 @@ def build_migration_configs_complete_migration_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/upgrade"
     path_format_arguments = {
@@ -1352,7 +1352,7 @@ def build_migration_configs_revert_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/revert"
     path_format_arguments = {
@@ -1382,7 +1382,7 @@ def build_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1420,7 +1420,7 @@ def build_rules_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1458,7 +1458,7 @@ def build_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}"
     path_format_arguments = {
@@ -1492,7 +1492,7 @@ def build_rules_list_by_subscriptions_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1526,7 +1526,7 @@ def build_namespaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1555,7 +1555,7 @@ def build_namespaces_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1586,7 +1586,7 @@ def build_namespaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1615,7 +1615,7 @@ def build_namespaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}"
     path_format_arguments = {
@@ -1638,7 +1638,7 @@ def build_namespaces_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1665,7 +1665,7 @@ def build_namespaces_list_request(subscription_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1692,7 +1692,7 @@ def build_namespaces_failover_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/failover"
     path_format_arguments = {
@@ -1719,7 +1719,7 @@ def build_namespaces_get_network_rule_set_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1748,7 +1748,7 @@ def build_namespaces_create_or_update_network_rule_set_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1778,7 +1778,7 @@ def build_namespaces_list_network_rule_sets_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1806,7 +1806,7 @@ def build_namespaces_get_authorization_rule_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1836,7 +1836,7 @@ def build_namespaces_create_or_update_authorization_rule_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1866,7 +1866,7 @@ def build_namespaces_delete_authorization_rule_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}"
     path_format_arguments = {
@@ -1890,7 +1890,7 @@ def build_namespaces_list_authorization_rules_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1918,7 +1918,7 @@ def build_namespaces_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1948,7 +1948,7 @@ def build_namespaces_regenerate_keys_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1980,7 +1980,7 @@ def build_namespaces_check_name_availability_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2008,7 +2008,7 @@ def build_private_link_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2036,7 +2036,7 @@ def build_network_security_perimeter_configuration_list_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2069,7 +2069,7 @@ def build_subscriptions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2105,7 +2105,7 @@ def build_subscriptions_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2141,7 +2141,7 @@ def build_subscriptions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}"
     path_format_arguments = {
@@ -2173,7 +2173,7 @@ def build_subscriptions_list_by_topic_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

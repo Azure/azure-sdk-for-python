@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-01-01/NameSpaces/SBNameSpaceList.json
+# x-ms-original-file: 2026-07-01-preview/NameSpaces/SBNameSpaceList.json
 if __name__ == "__main__":
     main()

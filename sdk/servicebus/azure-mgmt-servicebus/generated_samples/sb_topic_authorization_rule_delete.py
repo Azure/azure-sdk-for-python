@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-01-01/Topics/SBTopicAuthorizationRuleDelete.json
+# x-ms-original-file: 2026-07-01-preview/Topics/SBTopicAuthorizationRuleDelete.json
 if __name__ == "__main__":
     main()
