@@ -158,6 +158,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
+        # Serializes _open() so concurrent callers cannot race on creating
+        # and closing self._handler (see issue #35618). Initialized lazily
+        # because the constructor may execute outside a running event loop.
+        self._open_lock: Optional[asyncio.Lock] = None
 
     async def __aenter__(self) -> "ServiceBusSender":
         if self._shutdown.is_set():
@@ -215,50 +219,55 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
-        deadline = get_link_ready_deadline(timeout)
-        if self._handler:
-            await close_handler_with_deadline(self._handler, deadline)
+        if self._open_lock is None:
+            self._open_lock = asyncio.Lock()
+        async with self._open_lock:
+            if self._running:
+                return
+            deadline = get_link_ready_deadline(timeout)
+            if self._handler:
+                await close_handler_with_deadline(self._handler, deadline)
 
-        check_link_ready_deadline(deadline)
-        auth = (
-            None
-            if self._connection
-            else await await_with_deadline(
-                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
-            )
-        )
-        self._create_handler(auth)
-        try:
-            # The token fetch can use the budget, so re-check before opening; the open itself
-            # is bounded by open_handler_with_deadline.
             check_link_ready_deadline(deadline)
-            await open_handler_with_deadline(self._handler, self._connection, deadline)
-            while True:
+            auth = (
+                None
+                if self._connection
+                else await await_with_deadline(
+                    create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+                )
+            )
+            self._create_handler(auth)
+            try:
+                # The token fetch can use the budget, so re-check before opening; the open itself
+                # is bounded by open_handler_with_deadline.
                 check_link_ready_deadline(deadline)
-                if await await_with_deadline(
-                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
-                ):
-                    break
-                await asyncio.sleep(0.05)
-            check_link_ready_deadline(deadline)
-            self._running = True
-            self._max_message_size_on_link = (
-                self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
-            )
-            # Prefer the vendor property 'com.microsoft:max-message-batch-size'
-            # which correctly reports the batch size limit independent of the
-            # per-entity max-message-size (which can be up to 100 MB on Premium
-            # large-message entities).
-            vendor_batch_size = self._amqp_transport.get_remote_max_message_batch_size(self._handler)
-            if vendor_batch_size is not None:
-                self._max_batch_size_on_link = vendor_batch_size
-            elif self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
-                self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
-            else:
-                self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
-        except:
-            await close_handler_for_cleanup(self._close_handler(), deadline)
-            raise
+                await open_handler_with_deadline(self._handler, self._connection, deadline)
+                while True:
+                    check_link_ready_deadline(deadline)
+                    if await await_with_deadline(
+                        self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                    ):
+                        break
+                    await asyncio.sleep(0.05)
+                check_link_ready_deadline(deadline)
+                self._running = True
+                self._max_message_size_on_link = (
+                    self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
+                )
+                # Prefer the vendor property 'com.microsoft:max-message-batch-size'
+                # which correctly reports the batch size limit independent of the
+                # per-entity max-message-size (which can be up to 100 MB on Premium
+                # large-message entities).
+                vendor_batch_size = self._amqp_transport.get_remote_max_message_batch_size(self._handler)
+                if vendor_batch_size is not None:
+                    self._max_batch_size_on_link = vendor_batch_size
+                elif self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+                    self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+                else:
+                    self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
+            except:
+                await close_handler_for_cleanup(self._close_handler(), deadline)
+                raise
 
     async def _send(
         self,
