@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed quadratic-time parsing of the `WWW-Authenticate` challenge header in `_parse_challenge`, which let a registry send an oversized header that consumed excessive CPU during authentication.
 
 ### Other Changes
 - Added support for Python 3.12.
