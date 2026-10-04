@@ -182,15 +182,13 @@ def pluralize(data: Sized, singular: str, plural: str) -> str:
 def analyze_dependencies() -> None:
     base_dir = discover_repo_root()
 
-    parser = argparse.ArgumentParser(
-        description="""\
+    parser = argparse.ArgumentParser(description="""\
     Analyze dependencies in Python packages. First, all declared dependencies
     and the libraries that declare them will be discovered (visible with
     --verbose). Next, all declared dependency version specs will be analyzed to
     ensure that none of requirements conflict with any other package in the repo. Finally, all declared dependency
     version specs will be frozen to shared_requirements.txt.
-    """
-    )
+    """)
     parser.add_argument(
         "glob_string",
         nargs="?",

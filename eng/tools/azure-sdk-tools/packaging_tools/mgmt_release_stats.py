@@ -10,7 +10,6 @@ from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.utils import get_column_letter
 from openpyxl.chart import LineChart, Reference
 
-
 _LOGGER = logging.getLogger(__name__)
 
 FOLDER_SDK = os.path.join(pathlib.Path(__file__).parent.absolute(), "..", "..", "..", "sdk")
