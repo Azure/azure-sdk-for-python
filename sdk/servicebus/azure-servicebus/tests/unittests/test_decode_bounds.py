@@ -7,6 +7,8 @@ from azure.servicebus._pyamqp._decode import (
     _decode_map_small,
     decode_frame,
     _MAX_COMPOUND_COUNT,
+    _MAX_NESTING_DEPTH,
+    _DECODE_BY_CONSTRUCTOR,
 )
 
 
@@ -98,3 +100,173 @@ def test_decode_map_small_rejects_odd_count():
     buffer = memoryview(b"\x00\x03")
     with pytest.raises(ValueError, match="must be even"):
         _decode_map_small(buffer)
+
+
+def _nested_list(levels: int) -> bytes:
+    # list32 with correct size/count so the payload is valid even if size is ever enforced.
+    payload = b"\x40"
+    for _ in range(levels):
+        body = b"\x00\x00\x00\x01" + payload
+        payload = b"\xd0" + len(body).to_bytes(4, "big") + body
+    return payload
+
+
+def _nested_map(levels: int) -> bytes:
+    payload = b"\x40"
+    for _ in range(levels):
+        body = b"\x00\x00\x00\x02" + b"\x40" + payload
+        payload = b"\xd1" + len(body).to_bytes(4, "big") + body
+    return payload
+
+
+def _nested_array(levels: int) -> bytes:
+    payload = b"\xf0" + (5).to_bytes(4, "big") + b"\x00\x00\x00\x01\x40"
+    for _ in range(levels - 1):
+        body = b"\x00\x00\x00\x01" + b"\xf0" + payload[1:]
+        payload = b"\xf0" + len(body).to_bytes(4, "big") + body
+    return payload
+
+
+def _nested_described(levels: int) -> bytes:
+    return b"\x00\x53\x00" * levels + b"\x40"
+
+
+def _nested_mixed(levels: int) -> bytes:
+    # alternate list/map/described so one chain exercises multiple decoders.
+    payload = b"\x40"
+    wrappers = (
+        lambda p: b"\xd0" + len(b"\x00\x00\x00\x01" + p).to_bytes(4, "big") + b"\x00\x00\x00\x01" + p,
+        lambda p: b"\xd1" + len(b"\x00\x00\x00\x02\x40" + p).to_bytes(4, "big") + b"\x00\x00\x00\x02\x40" + p,
+        lambda p: b"\x00\x53\x00" + p,
+    )
+    for i in range(levels):
+        payload = wrappers[i % 3](payload)
+    return payload
+
+
+def _decode(payload: bytes):
+    return _DECODE_BY_CONSTRUCTOR[payload[0]](memoryview(payload)[1:])
+
+
+def _nested_list8(levels: int) -> bytes:
+    # list8 (compact) wrappers; the size byte is ignored by the decoder so 0x00 is fine.
+    payload = b"\x40"
+    for _ in range(levels):
+        payload = b"\xc0\x00\x01" + payload
+    return payload
+
+
+def _nested_map8(levels: int) -> bytes:
+    payload = b"\x40"
+    for _ in range(levels):
+        payload = b"\xc1\x00\x02\x40" + payload
+    return payload
+
+
+def _nested_array8(levels: int) -> bytes:
+    body = b"\x00\x01\x40"
+    for _ in range(levels - 1):
+        body = b"\x00\x01\xe0" + body
+    return b"\xe0" + body
+
+
+_BOMBS = [
+    _nested_list,
+    _nested_map,
+    _nested_array,
+    _nested_described,
+    _nested_mixed,
+    _nested_list8,
+    _nested_map8,
+    _nested_array8,
+]
+
+
+@pytest.mark.parametrize("bomb", _BOMBS)
+def test_decode_rejects_excessive_nesting(bomb):
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(bomb(_MAX_NESTING_DEPTH + 1))
+
+
+@pytest.mark.parametrize("bomb", _BOMBS)
+def test_decode_accepts_nesting_at_limit(bomb):
+    _decode(bomb(_MAX_NESTING_DEPTH))
+
+
+@pytest.mark.parametrize("bomb", _BOMBS)
+def test_decode_resets_depth_after_rejection(bomb):
+    # after a rejected bomb the depth counter must reset so a later decode still works.
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(bomb(_MAX_NESTING_DEPTH + 1))
+    remaining, value = _decode(b"\xc0\x05\x02\x50\x01\x50\x02")
+    assert value == [1, 2]
+    assert bytes(remaining) == b""
+
+
+def test_decode_frame_rejects_deeply_nested_field():
+    field = _nested_list(_MAX_NESTING_DEPTH + 1)
+    data = b"\x00\x53\x00\xd0" + (len(field) + 4).to_bytes(4, "big") + b"\x00\x00\x00\x01" + field
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        decode_frame(memoryview(data))
+
+
+def test_decode_shallow_value_unchanged():
+    remaining, value = _decode(_nested_list(2))
+    assert value == [[None]]
+    assert bytes(remaining) == b""
+
+
+def _described_array_of(inner: bytes) -> bytes:
+    body = (1).to_bytes(4, "big") + b"\x00" + b"\x53\x00" + inner[0:1] + inner[1:]
+    return b"\xf0" + len(body).to_bytes(4, "big") + body
+
+
+def _nested_described_array(levels: int) -> bytes:
+    payload = b"\x40"
+    for _ in range(levels):
+        payload = _described_array_of(payload)
+    return payload
+
+
+def test_decode_rejects_described_array_depth_bypass():
+    # each described-array level is an array plus a described layer, so 33 levels = 66 layers.
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(_nested_described_array(_MAX_NESTING_DEPTH // 2 + 1))
+
+
+def test_decode_accepts_described_array_at_limit():
+    _decode(_nested_described_array(_MAX_NESTING_DEPTH // 2))
+
+
+def test_decode_list_large_threads_explicit_depth():
+    # depth is now a parameter rather than thread-local state: a decode already at the limit rejects.
+    empty = b"\x00\x00\x00\x04\x00\x00\x00\x00"
+    _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH - 1)
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode_list_large(memoryview(empty), depth=_MAX_NESTING_DEPTH)
+
+
+def _nested_list_to_empty(levels: int) -> bytes:
+    # `levels` list32 wrappers around an empty list0 (0x45); total compound layers = levels + 1.
+    payload = b"\x45"
+    for _ in range(levels):
+        body = b"\x00\x00\x00\x01" + payload
+        payload = b"\xd0" + len(body).to_bytes(4, "big") + body
+    return payload
+
+
+def test_decode_rejects_empty_list_past_depth_limit():
+    # the empty-list (list0) leaf is itself a compound layer and must count toward the limit.
+    with pytest.raises(ValueError, match="exceeds maximum depth"):
+        _decode(_nested_list_to_empty(_MAX_NESTING_DEPTH))
+
+
+def test_decode_accepts_empty_list_at_depth_limit():
+    _decode(_nested_list_to_empty(_MAX_NESTING_DEPTH - 1))
+
+
+def test_decode_decimal128_rejects_out_of_range():
+    # An out-of-range decimal128 exponent must surface as a decode ValueError, not a bare
+    # decimal.DecimalException, so the receive loop can reject rather than tear down.
+    with pytest.raises(ValueError):
+        _decode(b"\x94" + b"\x5f" + b"\xff" * 15)

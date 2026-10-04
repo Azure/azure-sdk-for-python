@@ -6,6 +6,7 @@
 
 import uuid
 import logging
+import struct
 from typing import Optional, Union
 
 from .._decode import decode_payload
@@ -16,8 +17,7 @@ from ..performatives import (
     DispositionFrame,
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
-from ..error import AMQPException, ErrorCondition
-
+from ..error import AMQPException, ErrorCondition, AMQPError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,6 +32,7 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self._received_settled = False
         self._received_delivery_tags = set()
 
     @classmethod
@@ -60,25 +61,51 @@ class ReceiverLink(Link):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.received_delivery_id = frame[1]  # delivery_id
-        # If more is false --> this is the last frame of the message
-        if not frame[5]:
+        # The last frame (more is false) or an aborted frame completes the delivery
+        if not frame[5] or frame[9]:
             self.delivery_count += 1
             self.current_link_credit -= 1
         if self.received_delivery_id is not None:
             self._first_frame = frame
+            self._received_settled = frame[4] is True
+        else:
+            self._received_settled = self._received_settled or (frame[4] is True)
+        if frame[9]:  # aborted takes precedence over `more`: discard payload, implicitly settled, no decode/disposition
+            self._received_payload = bytearray()
+            return
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
-            self._received_delivery_tags.add(self._first_frame[2])
-            if self._received_payload:
-                message = decode_payload(memoryview(self._received_payload))
+            if not self._received_settled:
+                self._received_delivery_tags.add(self._first_frame[2])
+            try:
+                if self._received_payload:
+                    message = decode_payload(memoryview(self._received_payload))
+                    self._received_payload = bytearray()
+                else:
+                    message = decode_payload(frame[11])
+            except (ValueError, KeyError, IndexError, TypeError, EOFError, struct.error) as e:
+                # A malformed payload must not tear down the receive loop; reject the delivery.
                 self._received_payload = bytearray()
-            else:
-                message = decode_payload(frame[11])
+                _LOGGER.error(
+                    "Failed to decode message payload; rejecting delivery. %r", e, extra=self.network_trace_params
+                )
+                if not self._received_settled:
+                    await self._outgoing_disposition(
+                        first=self._first_frame[1],
+                        last=self._first_frame[1],
+                        delivery_tag=self._first_frame[2],
+                        settled=True,
+                        state=Rejected(
+                            error=AMQPError(condition=ErrorCondition.DecodeError, description=str(e), info=None)
+                        ),
+                        batchable=None,
+                    )
+                return
             delivery_state = await self._process_incoming_message(self._first_frame, message)
-            if not frame[4] and delivery_state:  # settled
+            if not self._received_settled and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
