@@ -720,6 +720,9 @@ def upload_directory(
                     future.result()  # access result to propagate any exceptions
                     file_path_name = futures_dict[future][0]
                     pbar.update(size_dict.get(file_path_name) or 0)
+        else:
+            for future in as_completed(futures_dict):
+                future.result()
 
 
 @retry(
