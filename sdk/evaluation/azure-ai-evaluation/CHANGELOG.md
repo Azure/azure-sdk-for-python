@@ -4,6 +4,7 @@
 
 ### Bugs Fixed
 
+- Fixed nested `NodeLogManager` contexts attributing the outer run's output to the inner run: a nested manager reuses the outer `NodeLogWriter`, and its node context is now restored when the nested manager exits ([#49274](https://github.com/Azure/azure-sdk-for-python/issues/49274)).
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
 
 ## 1.18.7 (2026-09-25)
