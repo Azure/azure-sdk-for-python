@@ -189,13 +189,11 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 reason = parsed_output.get("reason", "")
                 llm_properties = parsed_output.get("properties", {}) or {}
             else:
-                # Fallback: try to parse legacy XML format or extract digit
+                # Fallback: try to parse legacy XML format or extract a numeric score
                 if isinstance(llm_output, str) and self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                     score, reason = parse_quality_evaluator_reason_score(llm_output)
                 elif isinstance(llm_output, str):
-                    match = re.search(r"\d", llm_output)
-                    if match:
-                        score = float(match.group())
+                    score = self._extract_score_from_text(llm_output)
 
             score = float(score) if score is not None else math.nan
             score_result = self._get_binary_result(score)
@@ -219,6 +217,30 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
         )
+
+    @staticmethod
+    def _extract_score_from_text(llm_output: str) -> float:
+        """Extract a numeric score from free-text LLM output that is not parseable JSON.
+
+        Preference order: the whole output is a bare number, an explicitly labelled score
+        (e.g. "Score: 4"), then the last number in the output. Taking the first digit risks
+        scoring the judge's reasoning rather than its verdict.
+
+        :param llm_output: The raw text output from the LLM.
+        :type llm_output: str
+        :return: The extracted score, or NaN if the output contains no number.
+        :rtype: float
+        """
+        match = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*", llm_output)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"[Ss]core\s*[:=]?\s*(\d+(?:\.\d+)?)", llm_output)
+        if match:
+            return float(match.group(1))
+        matches = re.findall(r"\d+(?:\.\d+)?", llm_output)
+        if matches:
+            return float(matches[-1])
+        return math.nan
 
     @staticmethod
     def _get_token_metadata(prompty_output: Dict) -> Dict:
