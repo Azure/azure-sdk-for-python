@@ -1,11 +1,17 @@
-from deid_base_test_case import *
+import pytest
+from deid_base_test_case import DeidBaseTestCase, BatchEnv
 from devtools_testutils.aio import (
     recorded_by_proxy_async,
 )
 
-from azure.health.deidentification.models import *
 from azure.core.polling import AsyncLROPoller
-import pytest
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationOperationType,
+    OperationStatus,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
 
 
 class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
