@@ -52,13 +52,44 @@ async def test_basic_aiohttp(port, http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_aiohttp_auto_headers(port, http_request):
+async def test_aiohttp_auto_headers(port, http_request, monkeypatch):
 
+    monkeypatch.setitem(aiohttp.ClientRequest.DEFAULT_HEADERS, "Accept-Encoding", "gzip, deflate, br")
     request = http_request("POST", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
         assert "Content-Type" not in auto_headers
+        assert auto_headers["Accept-Encoding"] == "gzip, deflate"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_aiohttp_preserves_accept_encoding_header(port, http_request):
+
+    request = http_request(
+        "GET",
+        "http://localhost:{}/basic/string".format(port),
+        headers={"Accept-Encoding": "identity"},
+    )
+    async with AioHttpTransport() as sender:
+        response = await sender.send(request)
+        assert response.internal_response.request_info.headers["Accept-Encoding"] == "identity"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_aiohttp_preserves_injected_session_accept_encoding(port, http_request):
+    # A user-provided session may configure its own default Accept-Encoding (for example
+    # "identity", or an encoding handled by a custom decompressor). The transport must not
+    # override that default with its own supported-encodings value.
+    session = aiohttp.ClientSession(headers={"Accept-Encoding": "identity"}, auto_decompress=False)
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+    transport = AioHttpTransport(session=session, session_owner=False)
+    async with transport:
+        response = await transport.send(request)
+        assert response.internal_response.request_info.headers["Accept-Encoding"] == "identity"
+    await session.close()
 
 
 @pytest.mark.asyncio
