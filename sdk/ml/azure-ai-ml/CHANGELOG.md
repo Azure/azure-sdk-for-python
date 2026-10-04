@@ -17,6 +17,7 @@
 ## 1.35.0 (2026-09-08)
 
 ### Features Added
+- Added support for asset-backed default values on non-primitive component inputs of type `uri_file`, `uri_folder` and `mltable`. A default such as `default: azureml:my_data_asset:1` is now accepted by `load_component()` instead of failing with `Non-primitive type Input has no default value`, and is preserved through YAML, SDK and REST serialization. Defaults for these types must be a string asset or path reference.
 
 ### Bugs Fixed
 - Fixed slow iteration over `MLClient.jobs.list()` (issue [#48415](https://github.com/Azure/azure-sdk-for-python/issues/48415)) caused by `_append_tid_to_studio_url` calling `credential.get_token()` on every job to extract the tenant id from a JWT. The tenant id is now decoded once per `JobOperations` instance and reused for subsequent jobs.
