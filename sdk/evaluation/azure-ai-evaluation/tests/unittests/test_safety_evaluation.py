@@ -395,3 +395,40 @@ class TestSafetyEvaluation:
         # Global state should be unchanged
         after_value = random.random()
         assert initial_value == after_value, "Local Random usage should not affect global state"
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__init__", return_value=None)
+    @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__call__", new_callable=AsyncMock)
+    async def test_direct_attack_same_seed_behavior(self, mock_direct_call, mock_direct_init, safety_eval, mock_target):
+        """Test that DirectAttackSimulator uses the same randomization_seed for both regular and jailbreak simulations."""
+        
+        # Mock the DirectAttackSimulator to return consistent results
+        mock_regular_results = [
+            {"messages": [{"content": "regular_query_1", "role": "user"}]},
+            {"messages": [{"content": "regular_query_2", "role": "user"}]},
+        ]
+        mock_jailbreak_results = [
+            {"messages": [{"content": "jailbreak_query_1", "role": "user"}]},
+            {"messages": [{"content": "jailbreak_query_2", "role": "user"}]},
+        ]
+        
+        mock_direct_call.return_value = {
+            "regular": JsonLineList(mock_regular_results),
+            "jailbreak": JsonLineList(mock_jailbreak_results)
+        }
+        
+        # Call safety evaluation with DIRECT_ATTACK
+        await safety_eval._simulate(
+            target=mock_target,
+            direct_attack=True,
+            adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA,
+            max_simulation_results=2,
+            randomization_seed=42
+        )
+        
+        # Verify DirectAttackSimulator was called with the correct seed
+        mock_direct_call.assert_called_once()
+        call_kwargs = mock_direct_call.call_args[1]
+        
+        # Both regular and jailbreak should use the same randomization_seed
+        assert call_kwargs.get("randomization_seed") == 42
