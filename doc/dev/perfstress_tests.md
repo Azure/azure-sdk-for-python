@@ -486,7 +486,7 @@ If your tests are not being discovered, run the `perfstressdebug` command instea
 The system tests are used to test the performance of the Python HTTP layers exclusive of the Azure SDK in order to set a performance benchmark.
 In order to run these, you will need a Python environment with `systemperf` flavour of `devtools_testutils` installed. Installing to a fresh Python environment is recommended.
 ```cmd
-(env) ~/> pip install -e azure-sdk-for-python/tools/devtools_testutils[systemperf]
+(env) ~/> pip install -e azure-sdk-for-python/eng/tools/azure-sdk-tools[systemperf]
 ```
 Once these dependencies are installed, the `systemperf` command can be run directly to list the available tests:
 ```cmd
