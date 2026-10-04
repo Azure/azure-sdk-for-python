@@ -118,9 +118,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._higher_is_better = True
 
         # Initialize input validator. ``GroundednessConversationValidator``
-        # carries a wider ``UNSUPPORTED_TOOLS`` list than the shared base:
-        # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding``
-        # are still rejected here pending a context-extractor helper.
+        # keeps stricter guardrails than the shared base for the remaining
+        # unsupported tool families, while allowing grounding/search/openapi
+        # tool calls supported by this evaluator.
         self._validator = GroundednessConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
