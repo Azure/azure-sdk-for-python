@@ -14,8 +14,9 @@ from azure.ai.evaluation._exceptions import (
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool_result
+from azure.ai.evaluation._common.utils import _log_safe_summary
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import _get_tool_calls_results, _reformat_tool_calls_results
 
 logger = logging.getLogger(__name__)
 
@@ -270,75 +271,6 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
         if logger:
             logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
         return tool_definitions
-
-
-def _get_tool_calls_results(agent_response_msgs):
-    """Extract formatted agent tool calls and results from response."""
-    agent_response_text = []
-    tool_results = {}
-
-    # First pass: collect tool results
-
-    for msg in agent_response_msgs:
-        if msg.get("role") == "tool" and "tool_call_id" in msg:
-            for content in msg.get("content", []):
-                if content.get("type") == "tool_result":
-                    result = content.get("tool_result")
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
-
-    # Second pass: parse assistant messages and tool calls
-    for msg in agent_response_msgs:
-        if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
-
-            for content in msg.get("content", []):
-
-                if content.get("type") == "tool_call":
-                    if "tool_call" in content and "function" in content.get("tool_call", {}):
-                        tc = content.get("tool_call", {})
-                        func_name = tc.get("function", {}).get("name", "")
-                        args = tc.get("function", {}).get("arguments", {})
-                        tool_call_id = tc.get("id")
-                    else:
-                        tool_call_id = content.get("tool_call_id")
-                        func_name = content.get("name", "")
-                        args = content.get("arguments", {})
-                    args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
-                    agent_response_text.append(call_line)
-                    if tool_call_id in tool_results:
-                        agent_response_text.append(tool_results[tool_call_id])
-
-    return agent_response_text
-
-
-def _reformat_tool_calls_results(response, logger=None):
-    try:
-        if response is None or response == []:
-            return ""
-        agent_response = _get_tool_calls_results(response)
-        if agent_response == []:
-            # If no message could be extracted, likely the format changed,
-            # fallback to the original response in that case
-            if logger:
-                logger.warning(
-                    "Empty agent response extracted, likely due to input schema change. "
-                    "Falling back to using the original response. %s",
-                    _log_safe_summary(response),
-                )
-            return response
-        return "\n".join(agent_response)
-    except Exception as e:  # pylint: disable=broad-except
-        # If the agent response cannot be parsed for whatever
-        # reason (e.g. the converter format changed), the original response is returned
-        # This is a fallback to ensure that the evaluation can still proceed.
-        # See comments on reformat_conversation_history for more details.
-        if logger:
-            logger.warning(
-                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
-                e,
-                _log_safe_summary(response),
-            )
-        return response
 
 
 def _reformat_tool_definitions(tool_definitions, logger=None):
