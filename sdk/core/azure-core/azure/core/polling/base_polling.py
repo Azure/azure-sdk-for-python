@@ -26,6 +26,7 @@
 import abc
 import base64
 import json
+import logging
 from enum import Enum
 from typing import (
     Optional,
@@ -43,7 +44,7 @@ from typing import (
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
-from ..pipeline.policies._utils import get_retry_after
+from ..pipeline.policies._utils import get_retry_after, get_domain
 from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
 from .. import PipelineClient
@@ -62,6 +63,8 @@ from ._utils import (
     _decode_continuation_token,
     _filter_sensitive_headers,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
@@ -223,6 +226,36 @@ def _is_empty(response: AllHttpResponseType) -> bool:
     :rtype: bool
     """
     return not bool(_get_content(response))
+
+
+def _warn_on_cross_host_poll_target(initial_request_url: str, status_link: str) -> None:
+    """Warn when the LRO poll target host differs from the client's configured endpoint.
+
+    The poll target is taken verbatim from a service response header
+    (``Operation-Location`` / ``Azure-AsyncOperation`` / ``Location``) and is then sent
+    through the client's credentialed pipeline. If the response names a host the client
+    was not configured for, that request carries the client's credentials (API key or
+    bearer token) to that host. :class:`~azure.core.pipeline.policies.SensitiveHeaderCleanupPolicy`
+    strips sensitive headers on cross-domain 3xx redirects, but the LRO poll target
+    reaches a new host without a 3xx redirect, so that policy does not cover it.
+
+    This logs a warning (it does not block the request) so it is safe for services that
+    legitimately poll a different host, while surfacing the credential-to-new-host case
+    to operators. A relative poll target (no host) resolves to the same host and is quiet.
+
+    :param str initial_request_url: URL of the client's initial (trusted) request.
+    :param str status_link: The poll URL taken from the service response.
+    """
+    initial_domain = get_domain(initial_request_url)
+    poll_domain = get_domain(status_link)
+    if initial_domain and poll_domain and poll_domain != initial_domain:
+        _LOGGER.warning(
+            "Long-running-operation poll target host '%s' differs from the client's configured "
+            "endpoint host '%s'. The poll request carries the client's credentials to that host. "
+            "Ensure the polled host is trusted.",
+            poll_domain,
+            initial_domain,
+        )
 
 
 class LongRunningOperation(ABC, Generic[HTTPRequestType_co, HTTPResponseType_co]):
@@ -1013,6 +1046,7 @@ class LROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
+        _warn_on_cross_host_poll_target(self._initial_response.http_response.request.url, status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
