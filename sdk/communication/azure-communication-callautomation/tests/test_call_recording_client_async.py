@@ -6,13 +6,14 @@
 import json
 import pytest
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, MagicMock
 from unittest_helpers import mock_response
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.communication.callautomation.aio import CallAutomationClient
+from azure.communication.callautomation.aio._content_downloader_async import ContentDownloader as AsyncContentDownloader
 from azure.communication.callautomation import (
     ServerCallLocator,
     GroupCallLocator,
@@ -110,3 +111,29 @@ class TestCallRecordingClientAsync(IsolatedAsyncioTestCase):
             transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
         await callautomation_client.get_recording_properties(recording_id=self.recording_id)
+
+
+def _make_async_downloader() -> AsyncContentDownloader:
+    mock_config = MagicMock()
+    mock_config.endpoint = "https://endpoint"
+    mock_recording_client = MagicMock()
+    mock_recording_client._config = mock_config  # pylint: disable=protected-access
+    return AsyncContentDownloader(mock_recording_client)
+
+
+class TestAsyncContentDownloaderValidation(IsolatedAsyncioTestCase):
+    async def test_download_streaming_rejects_invalid_recording_url(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            await _make_async_downloader().download_streaming("http://storage.asm.skype.com/rec", None, None)
+
+    async def test_delete_recording_rejects_invalid_recording_url(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            await _make_async_downloader().delete_recording("http://storage.asm.skype.com/rec")
+
+    async def test_download_streaming_accepts_valid_recording_url(self):
+        downloader = _make_async_downloader()
+        mock_pr = MagicMock()
+        mock_pr.http_response.status_code = 200
+        downloader._call_recording_client._client._pipeline.run = AsyncMock(return_value=mock_pr)  # pylint: disable=protected-access
+        response = await downloader.download_streaming("https://storage.asm.skype.com/rec", None, None)
+        assert response.status_code == 200
