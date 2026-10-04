@@ -11,7 +11,6 @@ import re
 import tempfile
 import json
 import time
-from threading import Lock
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -41,6 +40,7 @@ from .._constants import (
 
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, AppInsightsConfig
 from .._user_agent import UserAgentSingleton
+from ._app_insights_export import _AppInsightsExportDiagnostics, _ExportResultTrackingLogExporter
 from ._batch_run import (
     EvalRunContext,
     CodeClient,
@@ -1183,6 +1183,7 @@ def _log_events_to_app_insights(
     app_insights_config: AppInsightsConfig,
     data_source_item: Optional[Dict[str, Any]] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+    diagnostics: Optional[_AppInsightsExportDiagnostics] = None,
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry event logging.
@@ -1239,7 +1240,7 @@ def _log_events_to_app_insights(
                     agent_name = value
 
         # Log each event as a separate log record
-        for i, event_data in enumerate(events):
+        for event_data in events:
             try:
                 # Prepare log record attributes with specific mappings
                 # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
@@ -1300,11 +1301,8 @@ def _log_events_to_app_insights(
                     if extra_properties:
                         try:
                             properties_json = json.dumps(extra_properties, default=str)
-                        except (TypeError, ValueError) as ex:
-                            LOGGER.warning(
-                                "Failed to serialize evaluator properties for App Insights: %s",
-                                ex,
-                            )
+                        except (TypeError, ValueError):
+                            LOGGER.warning("Failed to serialize evaluator properties for App Insights.")
                         else:
                             if len(properties_json) > _MAX_EVALUATION_PROPERTIES_JSON_LEN:
                                 # Slicing the JSON string would produce an unterminated, invalid
@@ -1365,12 +1363,20 @@ def _log_events_to_app_insights(
                         span_id=span_id if span_id is not None else None,
                     )
                 )
+                if diagnostics is not None:
+                    diagnostics.record_events(emitted=1)
 
-            except Exception as e:
-                LOGGER.warning(f"Failed to log event {i}: {e}")
+            except Exception:
+                if diagnostics is not None:
+                    diagnostics.record_events(failed=1)
+                else:
+                    LOGGER.warning("Failed to construct or emit an App Insights evaluation event.")
 
-    except Exception as e:
-        LOGGER.error(f"Failed to log events to App Insights: {e}")
+    except Exception:
+        if diagnostics is not None:
+            diagnostics.record_events(failed=len(events))
+        else:
+            LOGGER.error("Failed to prepare App Insights evaluation events.")
 
 
 def emit_eval_result_events_to_app_insights(
@@ -1393,9 +1399,9 @@ def emit_eval_result_events_to_app_insights(
         return
 
     exporter_options = _get_app_insights_exporter_options(app_insights_config)
-    use_entra_authentication = app_insights_config.get("credential_type") == "ProjectManagedIdentity"
+    diagnostics = _AppInsightsExportDiagnostics(app_insights_config, len(results))
+    diagnostics.attach_response_hook(exporter_options)
 
-    from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExportResult
     from opentelemetry.sdk.resources import Resource
@@ -1405,6 +1411,9 @@ def emit_eval_result_events_to_app_insights(
     from opentelemetry.sdk._events import EventLoggerProvider
 
     logger_provider = None
+    flush_status = "not_attempted"
+    emit_failed = False
+    shutdown_status = "not_attempted"
     try:
         # Configure OpenTelemetry logging with anonymized Resource attributes
 
@@ -1419,15 +1428,12 @@ def emit_eval_result_events_to_app_insights(
         )
 
         logger_provider = LoggerProvider(resource=anonymized_resource)
-        _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
         azure_log_exporter = AzureMonitorLogExporter(**exporter_options)
-        export_result_tracker: Optional["_ExportResultTrackingLogExporter"] = None
-        log_exporter: Any = azure_log_exporter
-        if use_entra_authentication:
-            export_result_tracker = _ExportResultTrackingLogExporter(azure_log_exporter, LogExportResult.FAILURE)
-            log_exporter = export_result_tracker
+        log_exporter = _ExportResultTrackingLogExporter(
+            azure_log_exporter, diagnostics, LogExportResult.SUCCESS, LogExportResult.FAILURE
+        )
 
         # Add the Azure Monitor exporter to the logger provider
         # Set export_timeout_millis to prevent individual batch exports from hanging
@@ -1438,7 +1444,7 @@ def emit_eval_result_events_to_app_insights(
         event_logger = get_event_logger(__name__, event_logger_provider=event_provider)
 
         # Initialize base log attributes with extra_attributes if present, otherwise empty dict
-        base_log_attributes = app_insights_config.get("extra_attributes", {})
+        base_log_attributes = app_insights_config.get("extra_attributes", {}).copy()
 
         # Add AppInsights config attributes with proper semantic convention mappings
         if "run_type" in app_insights_config:
@@ -1461,32 +1467,28 @@ def emit_eval_result_events_to_app_insights(
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
                 evaluator_config=evaluator_config,
                 app_insights_config=app_insights_config,
+                diagnostics=diagnostics,
             )
         # Force flush to ensure events are sent, with a timeout to prevent hanging
         flush_timeout_millis = 60000  # 60 seconds
+        flush_status = "exception"
         flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
-        export_failed = export_result_tracker is not None and export_result_tracker.export_failed
-        if export_failed:
-            LOGGER.error("Failed to export evaluation results to App Insights.")
-        if not flush_success:
-            timeout_message = (
-                f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
-                "Some evaluation events may not have been sent."
-            )
-            LOGGER.warning(timeout_message)
-        elif not export_failed:
-            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        flush_status = "completed" if flush_success else "timeout"
 
-    except Exception as ex:
-        LOGGER.error("Failed to emit evaluation results to App Insights: %s", ex)
+    except Exception:
+        emit_failed = True
     finally:
+        if flush_status in ("timeout", "exception"):
+            diagnostics.log_flush_failure(LOGGER, flush_status)
         # Shut down the logger provider to stop background threads (e.g. OneSettings
         # configuration poller) that would otherwise keep the process alive indefinitely.
         if logger_provider is not None:
             try:
                 logger_provider.shutdown()
+                shutdown_status = "completed"
             except Exception:
-                pass
+                shutdown_status = "failure"
+        diagnostics.log_summary(LOGGER, flush_status, emit_failed, shutdown_status)
 
 
 class _AzureMonitorScopedCredential:  # pylint: disable=too-few-public-methods
@@ -1498,40 +1500,6 @@ class _AzureMonitorScopedCredential:  # pylint: disable=too-few-public-methods
     def get_token(self, *_scopes: str, **kwargs: Any) -> AccessToken:
         """Request a fresh Azure Monitor token from the configured credential."""
         return self._credential.get_token(AZURE_MONITOR_SCOPE, **kwargs)
-
-
-class _ExportResultTrackingLogExporter:  # pylint: disable=too-few-public-methods
-    """Track failures returned by a log exporter running on a worker thread."""
-
-    def __init__(self, exporter: Any, failure_result: Any) -> None:
-        self._exporter = exporter
-        self._failure_result = failure_result
-        self._export_failed = False
-        self._lock = Lock()
-
-    @property
-    def export_failed(self) -> bool:
-        """Return whether any batch export failed."""
-        with self._lock:
-            return self._export_failed
-
-    def export(self, batch: Any) -> Any:
-        """Delegate a batch export and retain its failure status."""
-        try:
-            result = self._exporter.export(batch)
-        except Exception:
-            with self._lock:
-                self._export_failed = True
-            raise
-
-        if result == self._failure_result:
-            with self._lock:
-                self._export_failed = True
-        return result
-
-    def shutdown(self) -> None:
-        """Shut down the wrapped exporter."""
-        self._exporter.shutdown()
 
 
 def _get_app_insights_exporter_options(

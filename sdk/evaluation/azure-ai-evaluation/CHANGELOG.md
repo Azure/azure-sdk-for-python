@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Added correlated, content-free Application Insights evaluation export summaries for all authentication modes. Flush completion no longer implies ingestion success; ingestion counts are reported only from observed acknowledgements, with retries and offline-storage replay explicitly included in their scope.
+
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
 
 ## 1.18.7 (2026-09-25)
