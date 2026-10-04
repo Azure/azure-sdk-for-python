@@ -1,5 +1,15 @@
 # Release History
 
+## Unreleased
+
+### Bugs Fixed
+
+- File-backed replay streams now await ordered writes and disk flushes on a worker
+  thread instead of blocking the event loop. Events remain unpublished until
+  persistence completes, and cancellation drains the write and its in-memory
+  update before allowing another mutation or deletion. Lazy compaction runs with
+  the next persisted write rather than during synchronous subscription.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes
