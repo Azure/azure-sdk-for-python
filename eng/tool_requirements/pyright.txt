@@ -1,0 +1,2 @@
+# Pins for the azpysdk `pyright` and `verifytypes` checks. Single source of truth (see README.md).
+pyright==1.1.407

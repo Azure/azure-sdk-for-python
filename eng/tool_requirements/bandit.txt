@@ -1,0 +1,3 @@
+# Pins for the azpysdk `bandit` check. Single source of truth (see README.md).
+bandit==1.6.2
+pbr
