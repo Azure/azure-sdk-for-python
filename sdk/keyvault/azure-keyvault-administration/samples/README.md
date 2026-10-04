@@ -37,6 +37,10 @@ pip install azure-keyvault-administration azure-identity
 | [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
 | [settings_operations.py][settings_operations_sample] | list and update Key Vault settings |
 | [settings_operations_async.py][settings_operations_async_sample] | list and update Key Vault settings with an async client |
+| [ekm_operations.py][ekm_operations_sample] | create/update/delete EKM connections |
+| [ekm_operations_async.py][ekm_operations_async_sample] | create/update/delete EKM connections with an async client |
+| [ekm_private_endpoint_operations.py][ekm_private_endpoint_operations_sample] | create/get/list/delete EKM proxy private endpoints |
+| [ekm_private_endpoint_operations_async.py][ekm_private_endpoint_operations_async_sample] | create/get/list/delete EKM proxy private endpoints with an async client |
 
 [access_control_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations.py
 [access_control_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations_async.py
@@ -44,3 +48,7 @@ pip install azure-keyvault-administration azure-identity
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations_async.py
 [settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
 [settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
+[ekm_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations.py
+[ekm_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations_async.py
+[ekm_private_endpoint_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_private_endpoint_operations.py
+[ekm_private_endpoint_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_private_endpoint_operations_async.py
