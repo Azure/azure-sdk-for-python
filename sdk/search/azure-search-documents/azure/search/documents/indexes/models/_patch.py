@@ -9,6 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
+from ..._utils.model_base import rest_field
+from ._models import ContentUnderstandingSkill as _ContentUnderstandingSkill
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
@@ -23,13 +25,16 @@ if TYPE_CHECKING:
 
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
+        ContentUnderstandingSkillChunkingProperties,
         DataChangeDetectionPolicy,
         DataDeletionDetectionPolicy,
         DataSourceCredentials,
+        InputFieldMappingEntry,
+        OutputFieldMappingEntry,
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
     )
-    from ._enums import SearchIndexerDataSourceType
+    from ._enums import ContentUnderstandingSkillExtractionOptions, SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -151,6 +156,61 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
 
 class KnowledgeBase(_KnowledgeBase):
     """Represents a knowledge base definition."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContentUnderstandingSkill(
+    _ContentUnderstandingSkill, discriminator="#Microsoft.Skills.Util.ContentUnderstandingSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A skill that leverages Azure AI Content Understanding to process and extract structured
+    insights from documents, enabling enriched, searchable content for enhanced document indexing
+    and retrieval.
+
+    This subclass adds the ``model_name`` and ``model_deployment`` properties, which the generated
+    model does not expose yet. They map to the REST ``modelName`` and ``modelDeployment``
+    properties and enable AI-generated descriptions for document-embedded images, charts, and
+    diagrams. The service requires both properties to be supplied together.
+
+    :ivar model_name: The name of the chat-completion model used for image description. Must be
+     provided together with model_deployment.
+    :vartype model_name: str
+    :ivar model_deployment: The deployment name of the chat-completion model used for image
+     description. Must be provided together with model_name.
+    :vartype model_deployment: str
+    """
+
+    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the chat-completion model used for image description. Must be provided together
+     with model_deployment."""
+    model_deployment: Optional[str] = rest_field(
+        name="modelDeployment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deployment name of the chat-completion model used for image description. Must be provided
+     together with model_name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        extraction_options: Optional[List[Union[str, "ContentUnderstandingSkillExtractionOptions"]]] = None,
+        chunking_properties: Optional["ContentUnderstandingSkillChunkingProperties"] = None,
+        model_name: Optional[str] = None,
+        model_deployment: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -485,6 +545,7 @@ def ComplexField(
 
 
 __all__: list[str] = [
+    "ContentUnderstandingSkill",
     "KnowledgeBase",
     "SearchField",
     "SearchFieldDataType",

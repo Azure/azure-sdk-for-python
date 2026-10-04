@@ -177,6 +177,8 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         (f"{_IM}.WebKnowledgeSourceParameters", "freshness"),
         (f"{_IM}.ContentUnderstandingSkillChunkingProperties", "method"),
         (f"{_IM}.ContentUnderstandingSkillChunkingProperties", "unit"),
+        (f"{_IM}.ContentUnderstandingSkill", "model_name"),
+        (f"{_IM}.ContentUnderstandingSkill", "model_deployment"),
         (f"{_IM}.SearchServiceCounters", "knowledge_base_counter"),
         (f"{_IM}.SearchServiceCounters", "knowledge_source_counter"),
         (f"{_IM}.SearchServiceStatistics", "indexers_runtime"),

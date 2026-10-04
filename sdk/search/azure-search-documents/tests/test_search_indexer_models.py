@@ -21,9 +21,11 @@ silent regression before it reaches customers.
 from __future__ import annotations
 
 from azure.search.documents.indexes.models import (
+    ContentUnderstandingSkill,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
     SearchIndexerDataSourceType,
+    SearchIndexerSkillset,
     SearchResourceEncryptionKey,
 )
 
@@ -68,3 +70,78 @@ class TestSearchResourceEncryptionKeyOverloads:
         encryption_key.is_service_level_key = True
 
         assert encryption_key.as_dict() == {"isServiceLevelKey": True}
+
+
+CONTENT_UNDERSTANDING_SKILL_JSON = {
+    "@odata.type": "#Microsoft.Skills.Util.ContentUnderstandingSkill",
+    "name": "content-understanding",
+    "description": "Extract content and describe figures",
+    "context": "/document",
+    "inputs": [],
+    "outputs": [],
+    "modelName": "gpt-5.4",
+    "modelDeployment": "gpt-5.4",
+}
+
+
+class TestContentUnderstandingSkillModelProperties:
+    """The hand-written `ContentUnderstandingSkill` subclass in `_patch` exposes the
+    `model_name`/`model_deployment` properties that the generated model lacks."""
+
+    def test_model_name_and_model_deployment_serialize_to_rest_names(self):
+        require_capability(
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name",
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment",
+        )
+
+        skill = ContentUnderstandingSkill(
+            name="content-understanding",
+            description="Extract content and describe figures",
+            context="/document",
+            inputs=[],
+            outputs=[],
+            model_name="gpt-5.4",
+            model_deployment="gpt-5.4",
+        )
+
+        assert skill.model_name == "gpt-5.4"
+        assert skill.model_deployment == "gpt-5.4"
+        assert skill.as_dict() == CONTENT_UNDERSTANDING_SKILL_JSON
+
+    def test_model_name_and_model_deployment_deserialize_from_rest_payload(self):
+        require_capability(
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name",
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment",
+        )
+
+        skill = ContentUnderstandingSkill(CONTENT_UNDERSTANDING_SKILL_JSON)
+
+        assert skill.model_name == "gpt-5.4"
+        assert skill.model_deployment == "gpt-5.4"
+
+    def test_skillset_deserialization_routes_to_patched_model(self):
+        require_capability(
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name",
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment",
+        )
+
+        skillset = SearchIndexerSkillset(name="skillset", skills=[CONTENT_UNDERSTANDING_SKILL_JSON])
+        skill = skillset.skills[0]
+
+        assert isinstance(skill, ContentUnderstandingSkill)
+        assert skill.model_name == "gpt-5.4"
+        assert skill.model_deployment == "gpt-5.4"
+        assert skillset.as_dict()["skills"][0] == CONTENT_UNDERSTANDING_SKILL_JSON
+
+    def test_unset_model_properties_are_omitted_from_payload(self):
+        require_capability(
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name",
+            "azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment",
+        )
+
+        skill = ContentUnderstandingSkill(inputs=[], outputs=[])
+
+        assert skill.model_name is None
+        assert skill.model_deployment is None
+        assert "modelName" not in skill.as_dict()
+        assert "modelDeployment" not in skill.as_dict()
