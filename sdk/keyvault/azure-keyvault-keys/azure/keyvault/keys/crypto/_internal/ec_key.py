@@ -10,11 +10,13 @@ from cryptography.hazmat.primitives.asymmetric.ec import (
     EllipticCurvePrivateKey,
     EllipticCurvePrivateNumbers,
     EllipticCurvePublicNumbers,
+    EllipticCurve,
     SECP256R1,
     SECP384R1,
     SECP521R1,
     SECP256K1,
 )
+from typing import Type, Dict, Any
 
 from ._internal import _bytes_to_int, asn1_der_to_ecdsa, ecdsa_to_asn1_der
 from .key import Key
@@ -27,7 +29,7 @@ _crypto_crv_to_kv_crv = {
     "secp521r1": KeyCurveName.p_521,
     "secp256k1": KeyCurveName.p_256_k,
 }
-_kv_crv_to_crypto_cls = {
+_kv_crv_to_crypto_cls: Dict[Any, Type[EllipticCurve]] = {
     KeyCurveName.p_256: SECP256R1,
     KeyCurveName.p_256_k: SECP256K1,
     KeyCurveName.p_384: SECP384R1,
