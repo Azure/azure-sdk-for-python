@@ -61,7 +61,12 @@ from ..streaming._helpers import (
     _coerce_handler_event,
     _extract_response_snapshot_from_events,
 )
-from ..streaming._internals import construct_event_model
+from ..streaming._internals import (
+    construct_event_model,
+    is_complete_agent_reference,
+    response_agent_reference,
+    should_replace_agent_reference,
+)
 from ..streaming._sse import (
     encode_keep_alive_comment,
     encode_sse_any_event,
@@ -320,6 +325,7 @@ async def _do_checkpoint_persist(
     response_id: str,
     last_snapshot: "bytes | None",
     terminal_seen: bool,
+    agent_reference: generated_models.AgentReference | dict[str, Any] | None = None,
 ) -> "bytes | None":
     """Persist a developer checkpoint snapshot (spec 025 §A.3).
 
@@ -345,6 +351,8 @@ async def _do_checkpoint_persist(
     :paramtype last_snapshot: bytes | None
     :keyword terminal_seen: Whether a terminal event has already been processed.
     :paramtype terminal_seen: bool
+    :keyword agent_reference: Resolved execution identity to supply when the snapshot identity is incomplete.
+    :paramtype agent_reference: AgentReference | dict[str, Any] | None
     :returns: The new ``last_snapshot`` bytes (unchanged when nothing persisted).
     :rtype: bytes | None
     """
@@ -357,6 +365,13 @@ async def _do_checkpoint_persist(
     response = event.response
     if response is None or provider is None:
         return last_snapshot
+    if is_complete_agent_reference(agent_reference) and should_replace_agent_reference(
+        response.get("agent_reference"), agent_reference
+    ):
+        response = cast(
+            generated_models.ResponseObject,
+            {**response, "agent_reference": response_agent_reference(agent_reference)},
+        )
     try:
         snapshot_bytes = json.dumps(dict(response), sort_keys=True, default=str).encode("utf-8")
     except Exception:  # pylint: disable=broad-exception-caught
@@ -1029,6 +1044,7 @@ async def _bg_drain_handler_events(
                     response_id=response_id,
                     last_snapshot=st.checkpoint_snapshot,
                     terminal_seen=st.terminal_seen,
+                    agent_reference=agent_reference,
                 )
                 continue
             # Client-initiated cancel → discard and force cancelled.
@@ -2324,6 +2340,7 @@ class _ResponseOrchestrator:
             response_id=ctx.response_id,
             last_snapshot=state.last_persisted_snapshot,
             terminal_seen=state.pending_terminal is not None,
+            agent_reference=ctx.agent_reference,
         )
 
     async def _emit_standalone_error(

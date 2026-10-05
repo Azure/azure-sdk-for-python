@@ -13,6 +13,9 @@ from __future__ import annotations
 import asyncio
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
+from threading import Event
 from typing import Any
 
 import pytest
@@ -25,7 +28,11 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.responses.hosting._orchestrator import _do_checkpoint_persist
 from azure.ai.agentserver.responses.models._generated import ResponseObject
+from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.streaming._checkpoint import ResponseCheckpointEvent
+
+
+_AGENT_REFERENCE = {"type": "agent_reference", "name": "checkpoint-agent", "version": "7"}
 
 
 class _RecordingProvider:
@@ -34,10 +41,11 @@ class _RecordingProvider:
     def __init__(self, *, fail: bool = False) -> None:
         self.updates: list[dict[str, Any]] = []
         self.fail = fail
+        self.error = RuntimeError("boom")
 
     async def update_response(self, response, *, context=None):  # noqa: ANN001
         if self.fail:
-            raise RuntimeError("boom")
+            raise self.error
         self.updates.append(dict(response))
 
 
@@ -170,7 +178,7 @@ async def test_t21_status_as_is_in_snapshot():
 
 
 @pytest.mark.asyncio
-async def test_t22_failure_swallowed_and_tagged():
+async def test_t22_failure_swallowed_and_tagged(caplog):
     from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # noqa: E501
 
     p = _RecordingProvider(fail=True)
@@ -185,9 +193,114 @@ async def test_t22_failure_swallowed_and_tagged():
         response_id="r1",
         last_snapshot=b"prev",
         terminal_seen=False,
+        agent_reference=_AGENT_REFERENCE,
     )
     assert snap == b"prev"
-    del PLATFORM_ERROR_TAG  # symbol exists
+    assert p.updates == []
+    assert getattr(p.error, PLATFORM_ERROR_TAG) is True
+    assert "checkpoint persist failed (response_id=r1)" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "identity_fields",
+    [
+        {},
+        {"agent_reference": None},
+        {"agent_reference": {}},
+        {"agent_reference": {"type": "agent_reference", "name": "checkpoint-agent"}},
+        {"agent_reference": {"type": "agent_reference", "version": "7"}},
+        {"agent_reference": {"type": "agent_reference", "name": "", "version": "7"}},
+        {"agent_reference": {"type": "agent_reference", "name": "checkpoint-agent", "version": " "}},
+        {"agent_reference": {"type": "agent_reference", "name": "server-default-agent"}},
+    ],
+)
+@pytest.mark.asyncio
+async def test_checkpoint_normalizes_identity_without_mutation_or_duplicate_writes(identity_fields):
+    provider = _RecordingProvider()
+    event = _event(progress="saved")
+    event.response.update(identity_fields)
+    original_response = deepcopy(event.response)
+
+    snapshot = await _do_checkpoint_persist(
+        event,
+        provider=provider,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        context=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
+        agent_reference=_AGENT_REFERENCE,
+    )
+    repeated_snapshot = await _do_checkpoint_persist(
+        event,
+        provider=provider,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        context=None,
+        response_id="r1",
+        last_snapshot=snapshot,
+        terminal_seen=False,
+        agent_reference=_AGENT_REFERENCE,
+    )
+
+    assert provider.updates == [{**original_response, "agent_reference": _AGENT_REFERENCE}]
+    assert event.response == original_response
+    assert snapshot is not None
+    assert repeated_snapshot == snapshot
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_preserves_complete_handler_identity():
+    provider = _RecordingProvider()
+    event = _event(progress="saved")
+    event.response["agent_reference"] = {"type": "agent_reference", "name": "explicit-agent", "version": "2"}
+    original_response = deepcopy(event.response)
+
+    await _do_checkpoint_persist(
+        event,
+        provider=provider,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        context=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
+        agent_reference=_AGENT_REFERENCE,
+    )
+
+    assert provider.updates == [original_response]
+    assert event.response == original_response
+
+
+@pytest.mark.parametrize(
+    "agent_reference",
+    [None, {}, {"type": "agent_reference", "name": "checkpoint-agent"}, {"type": "agent_reference", "version": "7"}],
+)
+@pytest.mark.asyncio
+async def test_checkpoint_does_not_fabricate_unresolved_identity(agent_reference):
+    provider = _RecordingProvider()
+    event = _event(progress="saved")
+    original_response = deepcopy(event.response)
+
+    await _do_checkpoint_persist(
+        event,
+        provider=provider,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        context=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
+        agent_reference=agent_reference,
+    )
+
+    assert provider.updates == [original_response]
+    assert "agent_reference" not in provider.updates[0]
 
 
 @pytest.mark.asyncio
@@ -323,3 +436,76 @@ def test_t22d_no_implicit_checkpoints_zero_checkpoint_handler():
     _poll_terminal(client, rid)
     # Only the terminal update (no in-flight checkpoint write).
     assert update_count["n"] <= 1, f"unexpected extra update_response calls: {update_count['n']}"
+
+
+@pytest.mark.parametrize("streaming", [False, True])
+def test_checkpoint_persists_resolved_agent_reference_before_completion(monkeypatch, streaming):
+    agent_reference = _AGENT_REFERENCE
+    provider = FileResponseStore()
+    checkpoint_processed = Event()
+    finish_handler = Event()
+    updates = []
+    original_update = provider.update_response
+
+    async def record_update(response, *, context=None):
+        updates.append(dict(response))
+        await original_update(response, context=context)
+
+    monkeypatch.setattr(provider, "update_response", record_update)
+
+    async def handler(request, context, cancellation_signal):
+        async def events():
+            stream = ResponseEventStream(response_id=context.response_id)
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            for event in stream.output_item_message("saved progress"):
+                yield event
+            yield stream.checkpoint()
+            checkpoint_processed.set()
+            await asyncio.to_thread(finish_handler.wait, 10)
+            yield stream.emit_completed()
+
+        return events()
+
+    app = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(resilient_background=True),
+        store=provider,
+    )
+    app.response_handler(handler)
+
+    with TestClient(app) as client, ThreadPoolExecutor(max_workers=1) as executor:
+        response_future = executor.submit(
+            client.post,
+            "/responses",
+            json={
+                "agent_reference": agent_reference,
+                "model": "m",
+                "input": "hi",
+                "stream": streaming,
+                "store": True,
+                "background": True,
+            },
+        )
+        try:
+            assert checkpoint_processed.wait(5)
+            assert len(updates) == 1
+            response_id = updates[0]["id"]
+            assert updates[0]["agent_reference"] == agent_reference
+            assert updates[0]["status"] == "in_progress"
+            persisted = client.portal.call(FileResponseStore().get_response, response_id)
+            assert persisted["agent_reference"] == agent_reference
+            assert persisted["status"] == "in_progress"
+            assert persisted["output"][0]["content"][0]["text"] == "saved progress"
+            stored = client.get(f"/responses/{response_id}")
+            assert stored.status_code == 200
+            assert stored.json()["agent_reference"] == agent_reference
+        finally:
+            finish_handler.set()
+
+        response = response_future.result(timeout=5)
+        assert response.status_code == 200
+        assert "response.checkpoint" not in response.text
+        completed = _poll_terminal(client, response_id)
+        assert completed["status"] == "completed"
+        assert completed["agent_reference"] == agent_reference
+        assert completed["output"][0]["content"][0]["text"] == "saved progress"
