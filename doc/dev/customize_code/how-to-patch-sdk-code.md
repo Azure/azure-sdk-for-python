@@ -6,9 +6,9 @@ Handwritten patches (including `_patch.py`) extend generated SDK code without ed
 
 ## Before You Customize
 
-Before customizing generated code, consider whether your change should be made in TypeSpec (`client.tsp`) instead. TypeSpec customizations are cleaner and survive regeneration. See the [TypeSpec Client Customizations Reference](https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/knowledge/customizing-client-tsp.md) for available decorators like `@@clientName`, `@@access`, etc.
+Before customizing generated code, check whether your change belongs in TypeSpec (`client.tsp`). Prefer TypeSpec customizations when they can express the intended behavior; they survive regeneration. See the [TypeSpec Client Customizations Reference](https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/knowledge/customizing-client-tsp.md) for available decorators like `@@clientName`, `@@access`, etc.
 
-Use code customizations (`_patch.py`) when TypeSpec cannot express the behavior you need.
+Before choosing a handwritten patch (`_patch.py`), check whether it is necessary: can the behavior be corrected in the service spec/configuration or emitter/generator, and is it caused by an emitter bug? Prefer fixing the source and regenerating instead of patching the output. Use a patch only for justified SDK-specific behavior or compatibility requirements that cannot be expressed in the spec/configuration, or as a documented temporary workaround for a confirmed generator bug.
 
 Before adding or changing handwritten patches or customizations of generated Python SDK code, follow this checklist, whether working manually or through customization tools:
 
