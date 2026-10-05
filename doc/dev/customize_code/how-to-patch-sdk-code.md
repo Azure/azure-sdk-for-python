@@ -10,9 +10,7 @@ Before customizing generated code, consider whether your change should be made i
 
 Use code customizations (`_patch.py`) when TypeSpec cannot express the behavior you need.
 
-## Before Adding or Changing a Patch
-
-Apply this checklist to handwritten patches and customizations of generated Python SDK code, whether made manually or through customization tools:
+Before adding or changing handwritten patches or customizations of generated Python SDK code, follow this checklist, whether working manually or through customization tools:
 
 1. **Identify generation inputs.** Record the generating tool and resolved version, service spec path and revision, configuration/options, and generation command. For TypeSpec, inspect `tsp-location.yaml`, `tspconfig.yaml`, and applicable emitter dependency/version records; for legacy AutoRest, inspect its generation configuration and generator version. Do not assume the current repository dependency version produced the affected code.
 2. **Investigate the source of the behavior.** Distinguish an incorrect service spec/configuration from an emitter/generator defect or intentional SDK customization. When practical, use a minimal spec reproduction or regenerate with the identified inputs and inspect the unpatched output to establish evidence. Prefer correcting spec/configuration and regenerating, or fixing/reporting generator-wide defects in the responsible tool's upstream repository, instead of masking them in one SDK.
