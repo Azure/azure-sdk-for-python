@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +29,6 @@ from .operations import (
     CapturedLogsOperations,
     ConfigurationsOperations,
     DatabasesOperations,
-    DbAgentsOperations,
     FirewallRulesOperations,
     MaintenanceEventsOperations,
     MajorVersionUpgradePrecheckOperations,
@@ -59,7 +57,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure Database for PostgreSQL management API provides create, read, update, and delete
     functionality for Azure PostgreSQL resources including servers, databases, firewall rules,
     network configuration, security alert policies, log files and configurations with new business
@@ -94,8 +92,6 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
     :ivar major_version_upgrade_precheck: MajorVersionUpgradePrecheckOperations operations
     :vartype major_version_upgrade_precheck:
      azure.mgmt.postgresqlflexibleservers.operations.MajorVersionUpgradePrecheckOperations
-    :ivar db_agents: DbAgentsOperations operations
-    :vartype db_agents: azure.mgmt.postgresqlflexibleservers.operations.DbAgentsOperations
     :ivar administrators_microsoft_entra: AdministratorsMicrosoftEntraOperations operations
     :vartype administrators_microsoft_entra:
      azure.mgmt.postgresqlflexibleservers.operations.AdministratorsMicrosoftEntraOperations
@@ -146,7 +142,7 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -222,7 +218,6 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
         self.major_version_upgrade_precheck = MajorVersionUpgradePrecheckOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.db_agents = DbAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.administrators_microsoft_entra = AdministratorsMicrosoftEntraOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

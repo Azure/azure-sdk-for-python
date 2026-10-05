@@ -480,11 +480,7 @@ def _decode_attribute_map_key(key):
 
 
 class Serializer:  # pylint: disable=too-many-public-methods
-    """Request object model serializer.
-
-    :param classes: Mapping of model names to model types, used to resolve models during serialization.
-    :type classes: typing.Optional[typing.Mapping[str, type]]
-    """
+    """Request object model serializer."""
 
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
 

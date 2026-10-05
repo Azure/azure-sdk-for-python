@@ -103,15 +103,15 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .connections.list
 
 .datasets.begin_create_generation_job*
-.datasets.cancel_generation_job*
+.datasets.cancel_generation_job
 .datasets.create_or_update
 .datasets.delete
-.datasets.delete_generation_job*
+.datasets.delete_generation_job
 .datasets.get
 .datasets.get_credentials
-.datasets.get_generation_job*
+.datasets.get_generation_job
 .datasets.list
-.datasets.list_generation_jobs*
+.datasets.list_generation_jobs
 .datasets.list_versions
 .datasets.pending_upload
 .datasets.upload_file*

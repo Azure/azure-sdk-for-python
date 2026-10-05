@@ -1,16 +1,20 @@
 # Release History
 
-## 1.0.0b58 (2026-10-07)
+## 1.0.0b58 (Unreleased)
 
 ### Features Added
 - Map the `session.id` attribute on spans and logs to the Azure Monitor session context
   ([#49179](https://github.com/Azure/azure-sdk-for-python/pull/49179))
+
+### Breaking Changes
 
 ### Bugs Fixed
 - Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`
   ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
+
+### Other Changes
 
 ## 1.0.0b57 (2026-09-02)
 

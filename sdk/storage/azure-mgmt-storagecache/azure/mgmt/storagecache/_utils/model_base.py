@@ -158,15 +158,7 @@ def _is_readonly(p):
 
 
 class SdkJSONEncoder(JSONEncoder):
-    """A JSON encoder that's capable of serializing datetime objects and bytes.
-
-    :param args: Additional positional arguments passed to the base ``JSONEncoder``.
-    :type args: typing.Any
-    :keyword exclude_readonly: Whether to exclude readonly properties. Defaults to False.
-    :paramtype exclude_readonly: bool
-    :keyword format: The format to use for serialization. Defaults to None.
-    :paramtype format: typing.Optional[str]
-    """
+    """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def __init__(self, *args, exclude_readonly: bool = False, format: typing.Optional[str] = None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -350,12 +342,6 @@ def _deserialize_int_as_str(attr):
     return int(attr)
 
 
-def _deserialize_bool_as_str(attr):
-    if isinstance(attr, bool):
-        return attr
-    return attr.lower() == "true"
-
-
 _DESERIALIZE_MAPPING = {
     datetime: _deserialize_datetime,
     date: _deserialize_date,
@@ -383,8 +369,6 @@ _DESERIALIZE_MAPPING_WITHFORMAT = {
 def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] = None):
     if annotation is int and rf and rf._format == "str":
         return _deserialize_int_as_str
-    if annotation is bool and rf and rf._format == "str":
-        return _deserialize_bool_as_str
     if annotation is str and rf and rf._format in _ARRAY_ENCODE_MAPPING:
         return functools.partial(_deserialize_array_encoded, _ARRAY_ENCODE_MAPPING[rf._format])
     if rf and rf._format:
@@ -474,21 +458,21 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def keys(self) -> typing.KeysView[str]:
         """
-        :returns: a set-like object providing a view on the mapping's keys
+        :returns: a set-like object providing a view on D's keys
         :rtype: ~typing.KeysView
         """
         return self._data.keys()
 
     def values(self) -> typing.ValuesView[typing.Any]:
         """
-        :returns: an object providing a view on the mapping's values
+        :returns: an object providing a view on D's values
         :rtype: ~typing.ValuesView
         """
         return self._data.values()
 
     def items(self) -> typing.ItemsView[str, typing.Any]:
         """
-        :returns: a set-like object providing a view on the mapping's items
+        :returns: set-like object providing a view on D's items
         :rtype: ~typing.ItemsView
         """
         return self._data.items()
@@ -498,7 +482,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Get the value for key if key is in the dictionary, else default.
         :param str key: The key to look up.
         :param any default: The value to return if key is not in the dictionary. Defaults to None
-        :returns: The value for key if key is in the dictionary, else default.
+        :returns: D[k] if k in D, else d.
         :rtype: any
         """
         try:
@@ -533,19 +517,19 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Removes and returns some (key, value) pair
         :returns: The (key, value) pair.
         :rtype: tuple
-        :raises KeyError: if the dictionary is empty.
+        :raises KeyError: if D is empty.
         """
         return self._data.popitem()
 
     def clear(self) -> None:
         """
-        Remove all items from the dictionary.
+        Remove all items from D.
         """
         self._data.clear()
 
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=arguments-differ
         """
-        Update the dictionary from a mapping or an iterable of key-value pairs.
+        Updates D from mapping/iterable E and F.
         :param any args: Either a mapping object or an iterable of key-value pairs.
         """
         self._data.update(*args, **kwargs)
@@ -558,11 +542,10 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         """
-        Return the value for key if key is in the dictionary; otherwise set the key to
-        default and return default.
+        Same as calling D.get(k, d), and setting D[k]=d if k not found
         :param str key: The key to look up.
         :param any default: The value to set if key is not in the dictionary
-        :returns: The value for key if key is in the dictionary, else default.
+        :returns: D[k] if k in D, else d.
         :rtype: any
         """
         if default is _UNSET:

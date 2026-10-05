@@ -563,6 +563,10 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                             "vmCategories": ["str"],
                         },
                         "vmNamePrefix": "str",
+                        "zoneAllocationPolicy": {
+                            "distributionStrategy": "str",
+                            "zonePreferences": [{"zone": "str", "rank": 0}],
+                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -1109,6 +1113,10 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                             "vmCategories": ["str"],
                         },
                         "vmNamePrefix": "str",
+                        "zoneAllocationPolicy": {
+                            "distributionStrategy": "str",
+                            "zonePreferences": [{"zone": "str", "rank": 0}],
+                        },
                     },
                     "tags": {"str": "str"},
                 },

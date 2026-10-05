@@ -69,9 +69,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputConfiguration,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
-    SimpleQnADataGenerationJobConfiguration,
+    SimpleQnADataGenerationJobOptions,
 )
 
 load_dotenv()
@@ -150,13 +150,13 @@ with (
                     agent_version=agent.version,
                 ),
             ],
-            generation_configuration=SimpleQnADataGenerationJobConfiguration(
+            generation_configuration=SimpleQnADataGenerationJobOptions(
                 # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                 max_samples=15,
                 # `simple_qna` REQUIRES model_options.
                 model_options=DataGenerationModelOptions(model=model_name),
             ),
-            output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
+            output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
         )
         print("Begin creating a dataset generation job.")
         poller = project_client.datasets.begin_create_generation_job(

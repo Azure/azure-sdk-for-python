@@ -65,9 +65,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputConfiguration,
+    EvaluationDataGenerationJobOutputTarget,
     PromptDataGenerationJobSource,
-    SimpleQnADataGenerationJobConfiguration,
+    SimpleQnADataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
 )
 
@@ -113,12 +113,12 @@ def main() -> None:
                         ),
                     ),
                 ],
-                generation_configuration=SimpleQnADataGenerationJobConfiguration(
+                generation_configuration=SimpleQnADataGenerationJobOptions(
                     # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                     max_samples=15,
                     model_options=DataGenerationModelOptions(model=model_name),
                 ),
-                output_configuration=EvaluationDataGenerationJobOutputConfiguration(
+                output_configuration=EvaluationDataGenerationJobOutputTarget(
                     name=dataset_name,
                     description="QnA pairs generated from the Contoso refund policy prompt.",
                     tags={"sample": "dataset-generation-with-evaluation"},
@@ -183,10 +183,7 @@ def main() -> None:
                     name="coherence",
                     evaluator_name="builtin.coherence",
                     initialization_parameters={"deployment_name": model_name},
-                    data_mapping={
-                        "query": "{{item.query}}",
-                        "response": "{{sample.output_text}}",
-                    },
+                    data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
                 ),
                 TestingCriterionAzureAIEvaluator(
                     type="azure_ai_evaluator",

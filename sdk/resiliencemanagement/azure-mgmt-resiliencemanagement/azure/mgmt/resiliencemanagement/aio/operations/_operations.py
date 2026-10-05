@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models, types as _types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -44,9 +44,7 @@ from ...operations._operations import (
     build_drill_run_resources_list_request,
     build_drill_runs_add_notes_request,
     build_drill_runs_fail_over_request,
-    build_drill_runs_generate_report_request,
     build_drill_runs_get_request,
-    build_drill_runs_list_report_download_url_request,
     build_drill_runs_list_request,
     build_drill_runs_mark_as_complete_request,
     build_drill_runs_reprotect_request,
@@ -123,10 +121,11 @@ from .._configuration import ResilienceManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:  # pylint: disable=docstring-missing-param
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -239,7 +238,7 @@ class Operations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OperationStatusOperations:  # pylint: disable=docstring-missing-param
+class OperationStatusOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -327,7 +326,7 @@ class OperationStatusOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
+class GoalAssignmentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -418,7 +417,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        resource: Union[_models.GoalAssignment, _types.GoalAssignment, IO[bytes]],
+        resource: Union[_models.GoalAssignment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -522,7 +521,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        resource: _types.GoalAssignment,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -534,7 +533,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.GoalAssignment
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -574,7 +573,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        resource: Union[_models.GoalAssignment, _types.GoalAssignment, IO[bytes]],
+        resource: Union[_models.GoalAssignment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Create a GoalAssignment.
@@ -583,10 +582,9 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
-        :param resource: Resource create parameters. Is either a GoalAssignment type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalAssignment or
-         ~azure.mgmt.resiliencemanagement.types.GoalAssignment or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: GoalAssignment,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalAssignment or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -642,7 +640,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        properties: Union[_models.GoalAssignment, _types.GoalAssignment, IO[bytes]],
+        properties: Union[_models.GoalAssignment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -746,7 +744,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        properties: _types.GoalAssignment,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -758,7 +756,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.GoalAssignment
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -798,7 +796,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        properties: Union[_models.GoalAssignment, _types.GoalAssignment, IO[bytes]],
+        properties: Union[_models.GoalAssignment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Update a GoalAssignment.
@@ -807,10 +805,9 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
-        :param properties: The resource properties to be updated. Is either a GoalAssignment type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalAssignment or
-         ~azure.mgmt.resiliencemanagement.types.GoalAssignment or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         GoalAssignment, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalAssignment or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -866,7 +863,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: Union[_models.UpdateGoalResourceRequest, _types.UpdateGoalResourceRequest, IO[bytes]],
+        body: Union[_models.UpdateGoalResourceRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -970,7 +967,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: _types.UpdateGoalResourceRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -982,7 +979,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.UpdateGoalResourceRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1022,7 +1019,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: Union[_models.UpdateGoalResourceRequest, _types.UpdateGoalResourceRequest, IO[bytes]],
+        body: Union[_models.UpdateGoalResourceRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Action to exclude a resource from goal assignment.
@@ -1031,10 +1028,10 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
-        :param body: The content of the action request. Is either a UpdateGoalResourceRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.UpdateGoalResourceRequest or
-         ~azure.mgmt.resiliencemanagement.types.UpdateGoalResourceRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         UpdateGoalResourceRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.UpdateGoalResourceRequest or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1340,13 +1337,13 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _recommend_capacity_initial(
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: Union[_models.RecommendCapacityRequest, _types.RecommendCapacityRequest, IO[bytes]],
+        body: Union[_models.RecommendCapacityRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1451,7 +1448,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: _types.RecommendCapacityRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1464,7 +1461,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.RecommendCapacityRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1512,13 +1509,13 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_recommend_capacity(
         self,
         service_group_name: str,
         goal_assignment_name: str,
-        body: Union[_models.RecommendCapacityRequest, _types.RecommendCapacityRequest, IO[bytes]],
+        body: Union[_models.RecommendCapacityRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Recommends capacity improvements for resources under the goal assignments scope. Returns
@@ -1528,10 +1525,10 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param goal_assignment_name: The name of the GoalAssignment. Required.
         :type goal_assignment_name: str
-        :param body: The content of the action request. Is either a RecommendCapacityRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.RecommendCapacityRequest or
-         ~azure.mgmt.resiliencemanagement.types.RecommendCapacityRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         RecommendCapacityRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.RecommendCapacityRequest or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1688,7 +1685,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
+class GoalTemplatesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1709,10 +1706,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def get(self, service_group_name: str, goal_template_name: str, **kwargs: Any) -> _models.GoalTemplate:
-        """Gets a goal template. Deprecated: the GoalTemplate resource type is deprecated and is removed
-        in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Get a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -1782,7 +1776,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        resource: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
+        resource: Union[_models.GoalTemplate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1864,10 +1858,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GoalTemplate]:
-        """Creates or updates a goal template. Deprecated: the GoalTemplate resource type is deprecated
-        and is removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Create a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -1890,22 +1881,19 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        resource: _types.GoalTemplate,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GoalTemplate]:
-        """Creates or updates a goal template. Deprecated: the GoalTemplate resource type is deprecated
-        and is removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Create a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
         :param goal_template_name: The name of the goalTemplate. Required.
         :type goal_template_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.GoalTemplate
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1926,10 +1914,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GoalTemplate]:
-        """Creates or updates a goal template. Deprecated: the GoalTemplate resource type is deprecated
-        and is removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Create a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -1952,22 +1937,18 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        resource: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
+        resource: Union[_models.GoalTemplate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GoalTemplate]:
-        """Creates or updates a goal template. Deprecated: the GoalTemplate resource type is deprecated
-        and is removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Create a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
         :param goal_template_name: The name of the goalTemplate. Required.
         :type goal_template_name: str
-        :param resource: Resource create parameters. Is either a GoalTemplate type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or
-         ~azure.mgmt.resiliencemanagement.types.GoalTemplate or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: GoalTemplate, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GoalTemplate. The GoalTemplate is
          compatible with MutableMapping
         :rtype:
@@ -2030,7 +2011,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        properties: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
+        properties: Union[_models.GoalTemplate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2113,10 +2094,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates a goal template. Deprecated: the GoalTemplate resource type is deprecated and is
-        removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Update a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -2137,22 +2115,19 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        properties: _types.GoalTemplate,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates a goal template. Deprecated: the GoalTemplate resource type is deprecated and is
-        removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Update a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
         :param goal_template_name: The name of the goalTemplate. Required.
         :type goal_template_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.GoalTemplate
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2171,10 +2146,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates a goal template. Deprecated: the GoalTemplate resource type is deprecated and is
-        removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Update a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -2195,22 +2167,18 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         goal_template_name: str,
-        properties: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
+        properties: Union[_models.GoalTemplate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates a goal template. Deprecated: the GoalTemplate resource type is deprecated and is
-        removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Update a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
         :param goal_template_name: The name of the goalTemplate. Required.
         :type goal_template_name: str
-        :param properties: The resource properties to be updated. Is either a GoalTemplate type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or
-         ~azure.mgmt.resiliencemanagement.types.GoalTemplate or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         GoalTemplate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2326,10 +2294,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
     async def begin_delete(
         self, service_group_name: str, goal_template_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a goal template. Deprecated: the GoalTemplate resource type is deprecated and is
-        removed in 2026-09-30-preview. Set resiliency intent directly on the GoalAssignment
-        (requireZonalResiliency, requireRegionalResiliency) and read resource posture from GoalResource
-        (zonalResiliency, regionalResiliency) instead.
+        """Delete a GoalTemplate.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -2387,10 +2352,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
     def list(
         self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.GoalTemplate"]:
-        """Lists the goal templates of a service group. Deprecated: the GoalTemplate resource type is
-        deprecated and is removed in 2026-09-30-preview. Set resiliency intent directly on the
-        GoalAssignment (requireZonalResiliency, requireRegionalResiliency) and read resource posture
-        from GoalResource (zonalResiliency, regionalResiliency) instead.
+        """List GoalTemplate resources by tenant.
 
         :param service_group_name: The name of the service group. Required.
         :type service_group_name: str
@@ -2491,7 +2453,7 @@ class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GoalResourcesOperations:  # pylint: disable=docstring-missing-param
+class GoalResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2697,7 +2659,7 @@ class GoalResourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
+class RecoveryPlansOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2788,7 +2750,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        resource: Union[_models.RecoveryPlan, _types.RecoveryPlan, IO[bytes]],
+        resource: Union[_models.RecoveryPlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2893,7 +2855,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        resource: _types.RecoveryPlan,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2905,7 +2867,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.RecoveryPlan
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2949,7 +2911,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        resource: Union[_models.RecoveryPlan, _types.RecoveryPlan, IO[bytes]],
+        resource: Union[_models.RecoveryPlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecoveryPlan]:
         """Create a RecoveryPlan.
@@ -2958,10 +2920,9 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param resource: Resource create parameters. Is either a RecoveryPlan type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.RecoveryPlan or
-         ~azure.mgmt.resiliencemanagement.types.RecoveryPlan or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: RecoveryPlan, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.RecoveryPlan or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RecoveryPlan. The RecoveryPlan is
          compatible with MutableMapping
         :rtype:
@@ -3024,7 +2985,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        properties: Union[_models.RecoveryPlan, _types.RecoveryPlan, IO[bytes]],
+        properties: Union[_models.RecoveryPlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3127,7 +3088,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        properties: _types.RecoveryPlan,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3139,7 +3100,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.RecoveryPlan
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3183,7 +3144,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        properties: Union[_models.RecoveryPlan, _types.RecoveryPlan, IO[bytes]],
+        properties: Union[_models.RecoveryPlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecoveryPlan]:
         """Update a RecoveryPlan.
@@ -3192,10 +3153,9 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param properties: The resource properties to be updated. Is either a RecoveryPlan type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.RecoveryPlan or
-         ~azure.mgmt.resiliencemanagement.types.RecoveryPlan or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         RecoveryPlan, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.RecoveryPlan or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RecoveryPlan. The RecoveryPlan is
          compatible with MutableMapping
         :rtype:
@@ -3477,7 +3437,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
+class RecoveryPlanActionsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3637,7 +3597,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.UpdateRecoveryResourcesRequest, _types.UpdateRecoveryResourcesRequest, IO[bytes]],
+        body: Union[_models.UpdateRecoveryResourcesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -3746,7 +3706,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.UpdateRecoveryResourcesRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -3759,7 +3719,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.UpdateRecoveryResourcesRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3808,7 +3768,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.UpdateRecoveryResourcesRequest, _types.UpdateRecoveryResourcesRequest, IO[bytes]],
+        body: Union[_models.UpdateRecoveryResourcesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -3819,10 +3779,10 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a UpdateRecoveryResourcesRequest type
-         or a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.UpdateRecoveryResourcesRequest or
-         ~azure.mgmt.resiliencemanagement.types.UpdateRecoveryResourcesRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         UpdateRecoveryResourcesRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.UpdateRecoveryResourcesRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns UpdateRecoveryResourcesResponse. The
@@ -3888,7 +3848,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.ValidateForOperationRequest, _types.ValidateForOperationRequest, IO[bytes]],
+        body: Union[_models.ValidateForOperationRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4001,7 +3961,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.ValidateForOperationRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -4015,7 +3975,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ValidateForOperationRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4065,7 +4025,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.ValidateForOperationRequest, _types.ValidateForOperationRequest, IO[bytes]],
+        body: Union[_models.ValidateForOperationRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4077,10 +4037,10 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a ValidateForOperationRequest type or
-         a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ValidateForOperationRequest or
-         ~azure.mgmt.resiliencemanagement.types.ValidateForOperationRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         ValidateForOperationRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ValidateForOperationRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ArmResponseErrorResponse. The
@@ -4150,7 +4110,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4261,7 +4221,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.FailoverRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -4276,7 +4236,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.FailoverRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4327,7 +4287,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4340,10 +4300,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a FailoverRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or
-         ~azure.mgmt.resiliencemanagement.types.FailoverRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: FailoverRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ValidateForRecoveryOperationBaseResponse.
@@ -4540,7 +4499,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4651,7 +4610,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.FailoverRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -4666,7 +4625,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.FailoverRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4717,7 +4676,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -4730,10 +4689,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a FailoverRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or
-         ~azure.mgmt.resiliencemanagement.types.FailoverRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: FailoverRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ValidateForRecoveryOperationBaseResponse.
@@ -4938,13 +4896,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _validate_for_reprotect_initial(
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[Union[_models.ReprotectRequest, _types.ReprotectRequest, IO[bytes]]] = None,
+        body: Optional[Union[_models.ReprotectRequest, JSON, IO[bytes]]] = None,
         *,
         operation_id: str,
         **kwargs: Any
@@ -5059,7 +5017,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[_types.ReprotectRequest] = None,
+        body: Optional[JSON] = None,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -5074,7 +5032,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ReprotectRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5133,13 +5091,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_validate_for_reprotect(
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[Union[_models.ReprotectRequest, _types.ReprotectRequest, IO[bytes]]] = None,
+        body: Optional[Union[_models.ReprotectRequest, JSON, IO[bytes]]] = None,
         *,
         operation_id: str,
         **kwargs: Any
@@ -5152,10 +5110,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a ReprotectRequest type or a
-         IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ReprotectRequest or
-         ~azure.mgmt.resiliencemanagement.types.ReprotectRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         ReprotectRequest, JSON, IO[bytes] Default value is None.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ReprotectRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ValidateForRecoveryOperationBaseResponse.
@@ -5349,7 +5306,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -5459,7 +5416,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.FailoverRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -5473,7 +5430,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.FailoverRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5523,7 +5480,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -5535,10 +5492,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a FailoverRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or
-         ~azure.mgmt.resiliencemanagement.types.FailoverRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: FailoverRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns RecoveryPlanActionBaseResponse. The
@@ -5742,13 +5698,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _reprotect_initial(
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[Union[_models.ReprotectRequest, _types.ReprotectRequest, IO[bytes]]] = None,
+        body: Optional[Union[_models.ReprotectRequest, JSON, IO[bytes]]] = None,
         *,
         operation_id: str,
         **kwargs: Any
@@ -5862,7 +5818,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[_types.ReprotectRequest] = None,
+        body: Optional[JSON] = None,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -5876,7 +5832,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ReprotectRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5934,13 +5890,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_reprotect(
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Optional[Union[_models.ReprotectRequest, _types.ReprotectRequest, IO[bytes]]] = None,
+        body: Optional[Union[_models.ReprotectRequest, JSON, IO[bytes]]] = None,
         *,
         operation_id: str,
         **kwargs: Any
@@ -5952,10 +5908,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a ReprotectRequest type or a
-         IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ReprotectRequest or
-         ~azure.mgmt.resiliencemanagement.types.ReprotectRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         ReprotectRequest, JSON, IO[bytes] Default value is None.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ReprotectRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns RecoveryPlanActionBaseResponse. The
@@ -6022,7 +5977,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -6132,7 +6087,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.FailoverRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -6146,7 +6101,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.FailoverRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6196,7 +6151,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.FailoverRequest, _types.FailoverRequest, IO[bytes]],
+        body: Union[_models.FailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -6208,10 +6163,9 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a FailoverRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or
-         ~azure.mgmt.resiliencemanagement.types.FailoverRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: FailoverRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.FailoverRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns RecoveryPlanActionBaseResponse. The
@@ -6277,7 +6231,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.TestFailoverCleanupRequest, _types.TestFailoverCleanupRequest, IO[bytes]],
+        body: Union[_models.TestFailoverCleanupRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -6387,7 +6341,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: _types.TestFailoverCleanupRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -6401,7 +6355,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.TestFailoverCleanupRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6451,7 +6405,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         self,
         service_group_name: str,
         recovery_plan_name: str,
-        body: Union[_models.TestFailoverCleanupRequest, _types.TestFailoverCleanupRequest, IO[bytes]],
+        body: Union[_models.TestFailoverCleanupRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -6463,10 +6417,10 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         :type service_group_name: str
         :param recovery_plan_name: The name of the recovery orchestration plan. Required.
         :type recovery_plan_name: str
-        :param body: The content of the action request. Is either a TestFailoverCleanupRequest type or
-         a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.TestFailoverCleanupRequest or
-         ~azure.mgmt.resiliencemanagement.types.TestFailoverCleanupRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         TestFailoverCleanupRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.TestFailoverCleanupRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns RecoveryPlanActionBaseResponse. The
@@ -6529,7 +6483,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         )
 
 
-class RecoveryResourcesOperations:  # pylint: disable=docstring-missing-param
+class RecoveryResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6723,7 +6677,7 @@ class RecoveryResourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
+class RecoveryJobsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6928,14 +6882,14 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _cancel_initial(
         self,
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: Union[_models.RecoveryActionRequest, _types.RecoveryActionRequest, IO[bytes]],
+        body: Union[_models.RecoveryActionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -7052,7 +7006,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: _types.RecoveryActionRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -7067,7 +7021,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         :param recovery_job_name: The unique name (GUID) of the recovery job. Required.
         :type recovery_job_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.RecoveryActionRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7127,14 +7081,14 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_cancel(
         self,
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: Union[_models.RecoveryActionRequest, _types.RecoveryActionRequest, IO[bytes]],
+        body: Union[_models.RecoveryActionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -7147,10 +7101,9 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         :type recovery_plan_name: str
         :param recovery_job_name: The unique name (GUID) of the recovery job. Required.
         :type recovery_job_name: str
-        :param body: The content of the action request. Is either a RecoveryActionRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.RecoveryActionRequest or
-         ~azure.mgmt.resiliencemanagement.types.RecoveryActionRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         RecoveryActionRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.RecoveryActionRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ArmResponseErrorResponse. The
@@ -7229,14 +7182,14 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _resume_initial(
         self,
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: Union[_models.RecoveryActionRequest, _types.RecoveryActionRequest, IO[bytes]],
+        body: Union[_models.RecoveryActionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -7354,7 +7307,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: _types.RecoveryActionRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -7370,7 +7323,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         :param recovery_job_name: The unique name (GUID) of the recovery job. Required.
         :type recovery_job_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.RecoveryActionRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7431,14 +7384,14 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_resume(
         self,
         service_group_name: str,
         recovery_plan_name: str,
         recovery_job_name: str,
-        body: Union[_models.RecoveryActionRequest, _types.RecoveryActionRequest, IO[bytes]],
+        body: Union[_models.RecoveryActionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -7452,10 +7405,9 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         :type recovery_plan_name: str
         :param recovery_job_name: The unique name (GUID) of the recovery job. Required.
         :type recovery_job_name: str
-        :param body: The content of the action request. Is either a RecoveryActionRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.RecoveryActionRequest or
-         ~azure.mgmt.resiliencemanagement.types.RecoveryActionRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         RecoveryActionRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.RecoveryActionRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns ArmResponseErrorResponse. The
@@ -7676,7 +7628,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
         )
 
 
-class RecoveryJobResourcesOperations:  # pylint: disable=docstring-missing-param
+class RecoveryJobResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7882,7 +7834,7 @@ class RecoveryJobResourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DrillsOperations:  # pylint: disable=docstring-missing-param
+class DrillsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7970,11 +7922,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     async def _create_initial(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        resource: Union[_models.Drill, _types.Drill, IO[bytes]],
-        **kwargs: Any
+        self, service_group_name: str, drill_name: str, resource: Union[_models.Drill, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8077,7 +8025,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        resource: _types.Drill,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8089,7 +8037,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.Drill
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8128,11 +8076,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     async def begin_create(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        resource: Union[_models.Drill, _types.Drill, IO[bytes]],
-        **kwargs: Any
+        self, service_group_name: str, drill_name: str, resource: Union[_models.Drill, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Drill]:
         """Create a Drill.
 
@@ -8140,10 +8084,9 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param resource: Resource create parameters. Is either a Drill type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.Drill or
-         ~azure.mgmt.resiliencemanagement.types.Drill or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: Drill, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.Drill or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Drill. The Drill is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.Drill]
@@ -8205,7 +8148,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        properties: Union[_models.DrillUpdate, _types.DrillUpdate, IO[bytes]],
+        properties: Union[_models.DrillUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8309,7 +8252,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        properties: _types.DrillUpdate,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8321,7 +8264,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.DrillUpdate
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8361,7 +8304,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        properties: Union[_models.DrillUpdate, _types.DrillUpdate, IO[bytes]],
+        properties: Union[_models.DrillUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Update a Drill.
@@ -8370,10 +8313,9 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param properties: The resource properties to be updated. Is either a DrillUpdate type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.DrillUpdate or
-         ~azure.mgmt.resiliencemanagement.types.DrillUpdate or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         DrillUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.DrillUpdate or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8654,13 +8596,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _validate_for_execution_initial(
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.ValidateForExecutionRequest, _types.ValidateForExecutionRequest, IO[bytes]],
+        body: Union[_models.ValidateForExecutionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -8770,7 +8712,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: _types.ValidateForExecutionRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -8783,7 +8725,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ValidateForExecutionRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8836,13 +8778,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_validate_for_execution(
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.ValidateForExecutionRequest, _types.ValidateForExecutionRequest, IO[bytes]],
+        body: Union[_models.ValidateForExecutionRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -8853,10 +8795,10 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param body: The content of the action request. Is either a ValidateForExecutionRequest type or
-         a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ValidateForExecutionRequest or
-         ~azure.mgmt.resiliencemanagement.types.ValidateForExecutionRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         ValidateForExecutionRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ValidateForExecutionRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -8915,7 +8857,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.DrillStartRequest, _types.DrillStartRequest, IO[bytes]],
+        body: Union[_models.DrillStartRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9025,7 +8967,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: _types.DrillStartRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -9038,7 +8980,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.DrillStartRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9083,7 +9025,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.DrillStartRequest, _types.DrillStartRequest, IO[bytes]],
+        body: Union[_models.DrillStartRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9094,10 +9036,9 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param body: The content of the action request. Is either a DrillStartRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillStartRequest or
-         ~azure.mgmt.resiliencemanagement.types.DrillStartRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         DrillStartRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.DrillStartRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -9156,7 +9097,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.DrillEndRequest, _types.DrillEndRequest, IO[bytes]],
+        body: Union[_models.DrillEndRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9266,7 +9207,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: _types.DrillEndRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -9279,7 +9220,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.DrillEndRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9324,7 +9265,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.DrillEndRequest, _types.DrillEndRequest, IO[bytes]],
+        body: Union[_models.DrillEndRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9335,10 +9276,9 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param body: The content of the action request. Is either a DrillEndRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillEndRequest or
-         ~azure.mgmt.resiliencemanagement.types.DrillEndRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: DrillEndRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.DrillEndRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -9398,13 +9338,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     async def _add_or_update_resources_initial(
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.AddOrUpdateResourcesRequest, _types.AddOrUpdateResourcesRequest, IO[bytes]],
+        body: Union[_models.AddOrUpdateResourcesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9514,7 +9454,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         self,
         service_group_name: str,
         drill_name: str,
-        body: _types.AddOrUpdateResourcesRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -9527,7 +9467,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.AddOrUpdateResourcesRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9573,13 +9513,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     async def begin_add_or_update_resources(
         self,
         service_group_name: str,
         drill_name: str,
-        body: Union[_models.AddOrUpdateResourcesRequest, _types.AddOrUpdateResourcesRequest, IO[bytes]],
+        body: Union[_models.AddOrUpdateResourcesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -9590,10 +9530,10 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         :type service_group_name: str
         :param drill_name: The name of the Drill. Required.
         :type drill_name: str
-        :param body: The content of the action request. Is either a AddOrUpdateResourcesRequest type or
-         a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.AddOrUpdateResourcesRequest or
-         ~azure.mgmt.resiliencemanagement.types.AddOrUpdateResourcesRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         AddOrUpdateResourcesRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.AddOrUpdateResourcesRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -9651,7 +9591,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _resync_readiness_check_initial(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -9721,7 +9661,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_resync_readiness_check(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -9784,7 +9724,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DrillResourcesOperations:  # pylint: disable=docstring-missing-param
+class DrillResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9990,7 +9930,7 @@ class DrillResourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DrillRunsOperations:  # pylint: disable=docstring-missing-param
+class DrillRunsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10181,27 +10121,12 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={
-            "2026-06-01-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
-    )
     async def _fail_over_initial(
         self,
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[Union[_models.DrillRunFailoverRequest, _types.DrillRunFailoverRequest, IO[bytes]]] = None,
+        body: Union[_models.DrillRunFailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -10218,18 +10143,14 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json" if body else None
+        content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_drill_runs_fail_over_request(
             service_group_name=service_group_name,
@@ -10288,7 +10209,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[_models.DrillRunFailoverRequest] = None,
+        body: _models.DrillRunFailoverRequest,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -10302,7 +10223,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
+        :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunFailoverRequest
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
@@ -10320,7 +10241,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[_types.DrillRunFailoverRequest] = None,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -10334,8 +10255,8 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.types.DrillRunFailoverRequest
+        :param body: The content of the action request. Required.
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -10352,7 +10273,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -10366,7 +10287,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
+        :param body: The content of the action request. Required.
         :type body: IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
@@ -10379,27 +10300,12 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={
-            "2026-06-01-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
-    )
     async def begin_fail_over(
         self,
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[Union[_models.DrillRunFailoverRequest, _types.DrillRunFailoverRequest, IO[bytes]]] = None,
+        body: Union[_models.DrillRunFailoverRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -10412,10 +10318,10 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Is either a DrillRunFailoverRequest type or a
-         IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunFailoverRequest or
-         ~azure.mgmt.resiliencemanagement.types.DrillRunFailoverRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         DrillRunFailoverRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunFailoverRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -10426,7 +10332,6 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10472,30 +10377,8 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={
-            "2026-06-01-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
-    )
     async def _reprotect_initial(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[Union[_models.DrillRunReprotectRequest, _types.DrillRunReprotectRequest, IO[bytes]]] = None,
-        *,
-        operation_id: str,
-        **kwargs: Any
+        self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10505,31 +10388,17 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if body else None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
 
         _request = build_drill_runs_reprotect_request(
             service_group_name=service_group_name,
             drill_name=drill_name,
             drill_run_name=drill_run_name,
             operation_id=operation_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -10573,127 +10442,9 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
-    @overload
-    async def begin_reprotect(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[_models.DrillRunReprotectRequest] = None,
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """This initiates a new Reprotect operation on this Drill Run.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunReprotectRequest
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_reprotect(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[_types.DrillRunReprotectRequest] = None,
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """This initiates a new Reprotect operation on this Drill Run.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.types.DrillRunReprotectRequest
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_reprotect(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """This initiates a new Reprotect operation on this Drill Run.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: IO[bytes]
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={
-            "2026-06-01-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
-    )
     async def begin_reprotect(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[Union[_models.DrillRunReprotectRequest, _types.DrillRunReprotectRequest, IO[bytes]]] = None,
-        *,
-        operation_id: str,
-        **kwargs: Any
+        self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """This initiates a new Reprotect operation on this Drill Run.
 
@@ -10703,21 +10454,15 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Is either a DrillRunReprotectRequest type or a
-         IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunReprotectRequest or
-         ~azure.mgmt.resiliencemanagement.types.DrillRunReprotectRequest or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10727,9 +10472,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 service_group_name=service_group_name,
                 drill_name=drill_name,
                 drill_run_name=drill_run_name,
-                body=body,
                 operation_id=operation_id,
-                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -10768,7 +10511,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Union[_models.DrillRunAddNotesRequest, _types.DrillRunAddNotesRequest, IO[bytes]],
+        body: Union[_models.DrillRunAddNotesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -10883,7 +10626,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: _types.DrillRunAddNotesRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -10898,7 +10641,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.DrillRunAddNotesRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -10947,7 +10690,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Union[_models.DrillRunAddNotesRequest, _types.DrillRunAddNotesRequest, IO[bytes]],
+        body: Union[_models.DrillRunAddNotesRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -10960,10 +10703,10 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Is either a DrillRunAddNotesRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunAddNotesRequest or
-         ~azure.mgmt.resiliencemanagement.types.DrillRunAddNotesRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         DrillRunAddNotesRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.DrillRunAddNotesRequest or JSON or
+         IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -11154,7 +10897,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Union[_models.MarkAsCompleteRequest, _types.MarkAsCompleteRequest, IO[bytes]],
+        body: Union[_models.MarkAsCompleteRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -11269,7 +11012,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: _types.MarkAsCompleteRequest,
+        body: JSON,
         *,
         operation_id: str,
         content_type: str = "application/json",
@@ -11284,7 +11027,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.MarkAsCompleteRequest
+        :type body: JSON
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -11333,7 +11076,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Union[_models.MarkAsCompleteRequest, _types.MarkAsCompleteRequest, IO[bytes]],
+        body: Union[_models.MarkAsCompleteRequest, JSON, IO[bytes]],
         *,
         operation_id: str,
         **kwargs: Any
@@ -11346,10 +11089,9 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_name: str
         :param drill_run_name: The name of the DrillRun (GUID). Required.
         :type drill_run_name: str
-        :param body: The content of the action request. Is either a MarkAsCompleteRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.MarkAsCompleteRequest or
-         ~azure.mgmt.resiliencemanagement.types.MarkAsCompleteRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         MarkAsCompleteRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.MarkAsCompleteRequest or JSON or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
         :return: An instance of AsyncLROPoller that returns None
@@ -11405,478 +11147,8 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2026-08-31-preview",
-        params_added_on={
-            "2026-08-31-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-31-preview"],
-    )
-    async def _generate_report_initial(
-        self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_drill_runs_generate_report_request(
-            service_group_name=service_group_name,
-            drill_name=drill_name,
-            drill_run_name=drill_run_name,
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-08-31-preview",
-        params_added_on={
-            "2026-08-31-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-31-preview"],
-    )
-    async def begin_generate_report(
-        self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.DrillReportSummary]:
-        """This generates, or regenerates, the report for this Drill Run. The action is idempotent and is
-        safe to call at any time: a call that arrives while a generation is already running joins it,
-        and a call made after a failed attempt retries it. A report that has been finalized is never
-        regenerated.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :return: An instance of AsyncLROPoller that returns DrillReportSummary. The DrillReportSummary
-         is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.DrillReportSummary]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DrillReportSummary] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._generate_report_initial(
-                service_group_name=service_group_name,
-                drill_name=drill_name,
-                drill_run_name=drill_run_name,
-                operation_id=operation_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.DrillReportSummary, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.DrillReportSummary].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.DrillReportSummary](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-08-31-preview",
-        params_added_on={
-            "2026-08-31-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-31-preview"],
-    )
-    async def _list_report_download_url_initial(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Union[_models.ListReportDownloadUrlRequest, _types.ListReportDownloadUrlRequest, IO[bytes]],
-        *,
-        operation_id: str,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_drill_runs_list_report_download_url_request(
-            service_group_name=service_group_name,
-            drill_name=drill_name,
-            drill_run_name=drill_run_name,
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: _models.ListReportDownloadUrlRequest,
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.ListReportDownloadUrlResponse]:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ListReportDownloadUrlResponse. The
-         ListReportDownloadUrlResponse is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: _types.ListReportDownloadUrlRequest,
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.ListReportDownloadUrlResponse]:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ListReportDownloadUrlResponse. The
-         ListReportDownloadUrlResponse is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: IO[bytes],
-        *,
-        operation_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.ListReportDownloadUrlResponse]:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Required.
-        :type body: IO[bytes]
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ListReportDownloadUrlResponse. The
-         ListReportDownloadUrlResponse is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-08-31-preview",
-        params_added_on={
-            "2026-08-31-preview": [
-                "service_group_name",
-                "api_version",
-                "operation_id",
-                "drill_name",
-                "drill_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-31-preview"],
-    )
-    async def begin_list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Union[_models.ListReportDownloadUrlRequest, _types.ListReportDownloadUrlRequest, IO[bytes]],
-        *,
-        operation_id: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.ListReportDownloadUrlResponse]:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Is either a ListReportDownloadUrlRequest type
-         or a IO[bytes] type. Required.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest or
-         ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest or IO[bytes]
-        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
-        :paramtype operation_id: str
-        :return: An instance of AsyncLROPoller that returns ListReportDownloadUrlResponse. The
-         ListReportDownloadUrlResponse is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ListReportDownloadUrlResponse] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._list_report_download_url_initial(
-                service_group_name=service_group_name,
-                drill_name=drill_name,
-                drill_run_name=drill_run_name,
-                body=body,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ListReportDownloadUrlResponse, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.ListReportDownloadUrlResponse].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.ListReportDownloadUrlResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
-class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param
+class DrillRunResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12076,7 +11348,7 @@ class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UnifiedResilienceItemsOperations:  # pylint: disable=docstring-missing-param
+class UnifiedResilienceItemsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12270,7 +11542,7 @@ class UnifiedResilienceItemsOperations:  # pylint: disable=docstring-missing-par
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UsagePlansOperations:  # pylint: disable=docstring-missing-param
+class UsagePlansOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12295,7 +11567,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def get(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> _models.UsagePlan:
         """Get a UsagePlan.
@@ -12378,13 +11650,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        resource: Union[_models.UsagePlan, _types.UsagePlan, IO[bytes]],
+        resource: Union[_models.UsagePlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12490,7 +11762,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        resource: _types.UsagePlan,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12503,7 +11775,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         :param usage_plan_name: The name of the usage plan. Required.
         :type usage_plan_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.UsagePlan
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12554,13 +11826,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        resource: Union[_models.UsagePlan, _types.UsagePlan, IO[bytes]],
+        resource: Union[_models.UsagePlan, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UsagePlan]:
         """Create a UsagePlan.
@@ -12570,10 +11842,9 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param usage_plan_name: The name of the usage plan. Required.
         :type usage_plan_name: str
-        :param resource: Resource create parameters. Is either a UsagePlan type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.UsagePlan or
-         ~azure.mgmt.resiliencemanagement.types.UsagePlan or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: UsagePlan, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.UsagePlan or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UsagePlan. The UsagePlan is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.UsagePlan]
@@ -12643,13 +11914,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        properties: Union[_models.UsagePlanTagsUpdate, _types.UsagePlanTagsUpdate, IO[bytes]],
+        properties: Union[_models.UsagePlanTagsUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12753,7 +12024,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        properties: _types.UsagePlanTagsUpdate,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12766,7 +12037,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         :param usage_plan_name: The name of the usage plan. Required.
         :type usage_plan_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.UsagePlanTagsUpdate
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12817,13 +12088,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         usage_plan_name: str,
-        properties: Union[_models.UsagePlanTagsUpdate, _types.UsagePlanTagsUpdate, IO[bytes]],
+        properties: Union[_models.UsagePlanTagsUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UsagePlan]:
         """Update a UsagePlan.
@@ -12833,10 +12104,10 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param usage_plan_name: The name of the usage plan. Required.
         :type usage_plan_name: str
-        :param properties: The resource properties to be updated. Is either a UsagePlanTagsUpdate type
-         or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.UsagePlanTagsUpdate or
-         ~azure.mgmt.resiliencemanagement.types.UsagePlanTagsUpdate or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         UsagePlanTagsUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.UsagePlanTagsUpdate or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns UsagePlan. The UsagePlan is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.UsagePlan]
@@ -12899,7 +12170,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, usage_plan_name: str, **kwargs: Any
@@ -12968,7 +12239,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_delete(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a UsagePlan.
@@ -13030,7 +12301,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by resource group.
@@ -13133,7 +12404,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by subscription ID.
@@ -13229,7 +12500,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
+class EnrollmentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13261,7 +12532,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def get(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13350,14 +12621,14 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         usage_plan_name: str,
         enrollment_name: str,
-        resource: Union[_models.Enrollment, _types.Enrollment, IO[bytes]],
+        resource: Union[_models.Enrollment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13468,7 +12739,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         usage_plan_name: str,
         enrollment_name: str,
-        resource: _types.Enrollment,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13483,7 +12754,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         :param enrollment_name: The name of the enrollment. Required.
         :type enrollment_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.Enrollment
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13538,14 +12809,14 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         usage_plan_name: str,
         enrollment_name: str,
-        resource: Union[_models.Enrollment, _types.Enrollment, IO[bytes]],
+        resource: Union[_models.Enrollment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Enrollment]:
         """Create or update an Enrollment.
@@ -13557,10 +12828,9 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         :type usage_plan_name: str
         :param enrollment_name: The name of the enrollment. Required.
         :type enrollment_name: str
-        :param resource: Resource create parameters. Is either a Enrollment type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.Enrollment or
-         ~azure.mgmt.resiliencemanagement.types.Enrollment or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: Enrollment, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.Enrollment or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Enrollment. The Enrollment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.Enrollment]
@@ -13630,7 +12900,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13706,7 +12976,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13775,7 +13045,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview"],
     )
     def list(
         self, resource_group_name: str, usage_plan_name: str, **kwargs: Any

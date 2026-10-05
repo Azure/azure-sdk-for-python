@@ -102,6 +102,8 @@ from ._models import (  # type: ignore
     WinRMListener,
     WindowsConfiguration,
     WindowsVMGuestPatchAutomaticByPlatformSettings,
+    ZoneAllocationPolicy,
+    ZonePreference,
 )
 
 from ._enums import (  # type: ignore
@@ -150,6 +152,7 @@ from ._enums import (  # type: ignore
     WindowsPatchAssessmentMode,
     WindowsVMGuestPatchAutomaticByPlatformRebootSetting,
     WindowsVMGuestPatchMode,
+    ZoneDistributionStrategy,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -244,6 +247,8 @@ __all__ = [
     "WinRMListener",
     "WindowsConfiguration",
     "WindowsVMGuestPatchAutomaticByPlatformSettings",
+    "ZoneAllocationPolicy",
+    "ZonePreference",
     "AcceleratorManufacturer",
     "AcceleratorType",
     "ActionType",
@@ -289,6 +294,7 @@ __all__ = [
     "WindowsPatchAssessmentMode",
     "WindowsVMGuestPatchAutomaticByPlatformRebootSetting",
     "WindowsVMGuestPatchMode",
+    "ZoneDistributionStrategy",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

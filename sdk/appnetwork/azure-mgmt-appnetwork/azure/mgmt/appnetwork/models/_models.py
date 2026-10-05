@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TrackedResource(Resource):
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,8 +89,8 @@ class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class AppLink(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Kubernetes Application Network resource.
+class AppLink(TrackedResource):
+    """AppLink resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -143,8 +143,8 @@ class AppLink(TrackedResource):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class AppLinkMember(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A member of an Azure Kubernetes Application Network resource.
+class AppLinkMember(TrackedResource):
+    """AppLink Member resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -190,7 +190,7 @@ class AppLinkMember(TrackedResource):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class AppLinkMemberProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AppLinkMemberProperties(_Model):
     """AppLink Member properties.
 
     :ivar cluster_type: Cluster type. "AKS"
@@ -254,7 +254,7 @@ class AppLinkMemberProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class AppLinkMemberUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AppLinkMemberUpdate(_Model):
     """The type used for update operations of the AppLinkMember.
 
     :ivar tags: Resource tags.
@@ -289,20 +289,26 @@ class AppLinkMemberUpdate(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class AppLinkMemberUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AppLinkMemberUpdateProperties(_Model):
     """The updatable properties of the AppLinkMember.
 
     :ivar upgrade_profile: Upgrade profile.
-    :vartype upgrade_profile: ~azure.mgmt.appnetwork.models.UpgradeProfileUpdate
+    :vartype upgrade_profile: ~azure.mgmt.appnetwork.models.UpgradeProfile
+    :ivar observability_profile: Observability profile.
+    :vartype observability_profile: ~azure.mgmt.appnetwork.models.ObservabilityProfile
     :ivar connectivity_profile: Connectivity profile.
-    :vartype connectivity_profile: ~azure.mgmt.appnetwork.models.ConnectivityProfileUpdate
+    :vartype connectivity_profile: ~azure.mgmt.appnetwork.models.ConnectivityProfile
     """
 
-    upgrade_profile: Optional["_models.UpgradeProfileUpdate"] = rest_field(
+    upgrade_profile: Optional["_models.UpgradeProfile"] = rest_field(
         name="upgradeProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Upgrade profile."""
-    connectivity_profile: Optional["_models.ConnectivityProfileUpdate"] = rest_field(
+    observability_profile: Optional["_models.ObservabilityProfile"] = rest_field(
+        name="observabilityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Observability profile."""
+    connectivity_profile: Optional["_models.ConnectivityProfile"] = rest_field(
         name="connectivityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Connectivity profile."""
@@ -311,8 +317,9 @@ class AppLinkMemberUpdateProperties(_Model):  # pylint: disable=docstring-keywor
     def __init__(
         self,
         *,
-        upgrade_profile: Optional["_models.UpgradeProfileUpdate"] = None,
-        connectivity_profile: Optional["_models.ConnectivityProfileUpdate"] = None,
+        upgrade_profile: Optional["_models.UpgradeProfile"] = None,
+        observability_profile: Optional["_models.ObservabilityProfile"] = None,
+        connectivity_profile: Optional["_models.ConnectivityProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -341,28 +348,21 @@ class AppLinkProperties(_Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
 
 
-class AppLinkUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AppLinkUpdate(_Model):
     """The type used for update operations of the AppLink.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.appnetwork.models.ManagedServiceIdentityUpdate
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentityUpdate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
         self,
         *,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
     ) -> None: ...
 
     @overload
@@ -393,7 +393,7 @@ class ProxyResource(Resource):
     """
 
 
-class AvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AvailableVersion(ProxyResource):
     """AppLink available version resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -434,7 +434,7 @@ class AvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class AvailableVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AvailableVersionProperties(_Model):
     """AppLink available version properties.
 
     :ivar kubernetes_version: Kubernetes version. Required.
@@ -486,15 +486,13 @@ class AvailableVersionProperties(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ConnectivityProfile(_Model):
     """AppLinkMember connectivity profile.
 
     :ivar east_west_gateway: East-West gateway profile.
     :vartype east_west_gateway: ~azure.mgmt.appnetwork.models.EastWestGatewayProfile
     :ivar private_connect: Private connect profile.
     :vartype private_connect: ~azure.mgmt.appnetwork.models.PrivateConnectProfile
-    :ivar network: The network name for an Azure Kubernetes Application Network member.
-    :vartype network: str
     """
 
     east_west_gateway: Optional["_models.EastWestGatewayProfile"] = rest_field(
@@ -505,8 +503,6 @@ class ConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-m
         name="privateConnect", visibility=["read", "create", "update", "delete", "query"]
     )
     """Private connect profile."""
-    network: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The network name for an Azure Kubernetes Application Network member."""
 
     @overload
     def __init__(
@@ -514,7 +510,6 @@ class ConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-m
         *,
         east_west_gateway: Optional["_models.EastWestGatewayProfile"] = None,
         private_connect: Optional["_models.PrivateConnectProfile"] = None,
-        network: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -528,42 +523,7 @@ class ConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable AppLinkMember connectivity profile.
-
-    :ivar east_west_gateway: East-West gateway profile.
-    :vartype east_west_gateway: ~azure.mgmt.appnetwork.models.EastWestGatewayProfileUpdate
-    :ivar network: The network name for an Azure Kubernetes Application Network member.
-    :vartype network: str
-    """
-
-    east_west_gateway: Optional["_models.EastWestGatewayProfileUpdate"] = rest_field(
-        name="eastWestGateway", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """East-West gateway profile."""
-    network: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The network name for an Azure Kubernetes Application Network member."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        east_west_gateway: Optional["_models.EastWestGatewayProfileUpdate"] = None,
-        network: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EastWestGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class EastWestGatewayProfile(_Model):
     """AppLinkMember east-west gateway profile.
 
     :ivar visibility: East-West gateway visibility. Required. Known values are: "Internal" and
@@ -581,36 +541,6 @@ class EastWestGatewayProfile(_Model):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         visibility: Union[str, "_models.EastWestGatewayVisibility"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EastWestGatewayProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable AppLinkMember east-west gateway profile.
-
-    :ivar visibility: East-West gateway visibility. Known values are: "Internal" and "External".
-    :vartype visibility: str or ~azure.mgmt.appnetwork.models.EastWestGatewayVisibility
-    """
-
-    visibility: Optional[Union[str, "_models.EastWestGatewayVisibility"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """East-West gateway visibility. Known values are: \"Internal\" and \"External\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        visibility: Optional[Union[str, "_models.EastWestGatewayVisibility"]] = None,
     ) -> None: ...
 
     @overload
@@ -668,7 +598,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object.
@@ -696,7 +626,7 @@ class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class FullyManagedUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FullyManagedUpgradeProfile(_Model):
     """AppLinkMember fully managed upgrade profile.
 
     :ivar release_channel: Release channel. Required. Known values are: "Rapid" and "Stable".
@@ -726,37 +656,7 @@ class FullyManagedUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class FullyManagedUpgradeProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable AppLinkMember fully managed upgrade profile.
-
-    :ivar release_channel: Release channel. Known values are: "Rapid" and "Stable".
-    :vartype release_channel: str or ~azure.mgmt.appnetwork.models.UpgradeReleaseChannel
-    """
-
-    release_channel: Optional[Union[str, "_models.UpgradeReleaseChannel"]] = rest_field(
-        name="releaseChannel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Release channel. Known values are: \"Rapid\" and \"Stable\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        release_channel: Optional[Union[str, "_models.UpgradeReleaseChannel"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FullyManagedVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FullyManagedVersions(_Model):
     """Fully managed versions.
 
     :ivar release_channels: Release channels. Required.
@@ -786,7 +686,7 @@ class FullyManagedVersions(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -838,47 +738,7 @@ class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentityUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The update-specific managed service identity (all fields optional for PATCH).
-
-    :ivar type: The type of managed identity assigned to this resource. Known values are: "None",
-     "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: str or ~azure.mgmt.appnetwork.models.ManagedServiceIdentityType
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.appnetwork.models.UserAssignedIdentity]
-    """
-
-    type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of managed identity assigned to this resource. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identities assigned to this resource by the user."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Metadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Metadata(_Model):
     """AppLinkMember metadata.
 
     :ivar resource_id: Resource ID. Required.
@@ -917,7 +777,7 @@ class MetricsProfile(_Model):
     """Metrics endpoint URL."""
 
 
-class ObservabilityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ObservabilityProfile(_Model):
     """AppLinkMember observability profile.
 
     :ivar metrics: Metrics configuration.
@@ -945,7 +805,7 @@ class ObservabilityProfile(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Operation(_Model):
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1033,7 +893,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrivateConnectProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateConnectProfile(_Model):
     """AppLinkMember private connect profile.
 
     :ivar subnet_resource_id: Delegated Subnet to AppLink. Required.
@@ -1061,7 +921,7 @@ class PrivateConnectProfile(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class ReleaseChannelInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ReleaseChannelInfo(_Model):
     """Release channel information.
 
     :ivar release_channel: Release channel. Required.
@@ -1094,7 +954,7 @@ class ReleaseChannelInfo(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class SelfManagedUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SelfManagedUpgradeProfile(_Model):
     """AppLinkMember self managed upgrade profile.
 
     :ivar version: Istio version. Required.
@@ -1122,35 +982,7 @@ class SelfManagedUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class SelfManagedUpgradeProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable AppLinkMember self managed upgrade profile.
-
-    :ivar version: Istio version.
-    :vartype version: str
-    """
-
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Istio version."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SelfManagedVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SelfManagedVersions(_Model):
     """Self managed versions.
 
     :ivar versions: Istio versions. Required.
@@ -1178,7 +1010,7 @@ class SelfManagedVersions(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1245,7 +1077,7 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class UpgradeHistory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UpgradeHistory(ProxyResource):
     """AppLinkMember upgrade history.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1286,7 +1118,7 @@ class UpgradeHistory(ProxyResource):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class UpgradeHistoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UpgradeHistoryProperties(_Model):
     """AppLinkMember upgrade history properties.
 
     :ivar start_timestamp: Start timestamp. Required.
@@ -1346,7 +1178,7 @@ class UpgradeHistoryProperties(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class UpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UpgradeProfile(_Model):
     """AppLinkMember upgrade profile.
 
     :ivar mode: Upgrade mode. Required. Known values are: "FullyManaged" and "SelfManaged".
@@ -1389,52 +1221,6 @@ class UpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class UpgradeProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable AppLinkMember upgrade profile.
-
-    :ivar mode: Upgrade mode. Known values are: "FullyManaged" and "SelfManaged".
-    :vartype mode: str or ~azure.mgmt.appnetwork.models.UpgradeMode
-    :ivar fully_managed_upgrade_profile: Fully managed upgrade profile.
-    :vartype fully_managed_upgrade_profile:
-     ~azure.mgmt.appnetwork.models.FullyManagedUpgradeProfileUpdate
-    :ivar self_managed_upgrade_profile: Self managed upgrade profile.
-    :vartype self_managed_upgrade_profile:
-     ~azure.mgmt.appnetwork.models.SelfManagedUpgradeProfileUpdate
-    """
-
-    mode: Optional[Union[str, "_models.UpgradeMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Upgrade mode. Known values are: \"FullyManaged\" and \"SelfManaged\"."""
-    fully_managed_upgrade_profile: Optional["_models.FullyManagedUpgradeProfileUpdate"] = rest_field(
-        name="fullyManagedUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fully managed upgrade profile."""
-    self_managed_upgrade_profile: Optional["_models.SelfManagedUpgradeProfileUpdate"] = rest_field(
-        name="selfManagedUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Self managed upgrade profile."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Optional[Union[str, "_models.UpgradeMode"]] = None,
-        fully_managed_upgrade_profile: Optional["_models.FullyManagedUpgradeProfileUpdate"] = None,
-        self_managed_upgrade_profile: Optional["_models.SelfManagedUpgradeProfileUpdate"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
@@ -1450,7 +1236,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VersionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VersionInfo(_Model):
     """Version information.
 
     :ivar version: Istio version. Required.

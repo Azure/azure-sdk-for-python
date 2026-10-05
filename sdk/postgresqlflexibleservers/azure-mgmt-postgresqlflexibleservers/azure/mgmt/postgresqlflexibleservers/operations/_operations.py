@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._configuration import PostgreSQLManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,6 +40,7 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +72,7 @@ def build_migrations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +102,7 @@ def build_migrations_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +134,7 @@ def build_migrations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +165,7 @@ def build_migrations_cancel_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,7 +199,7 @@ def build_migrations_list_by_target_server_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +230,7 @@ def build_migrations_check_name_availability_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +260,7 @@ def build_servers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,7 +289,7 @@ def build_servers_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}"
     path_format_arguments = {
@@ -316,7 +317,7 @@ def build_servers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}"
     path_format_arguments = {
@@ -342,7 +343,7 @@ def build_servers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}"
     path_format_arguments = {
@@ -365,7 +366,7 @@ def build_servers_list_by_resource_group_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -392,7 +393,7 @@ def build_servers_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -419,7 +420,7 @@ def build_servers_restart_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/restart"
     path_format_arguments = {
@@ -445,7 +446,7 @@ def build_servers_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/start"
     path_format_arguments = {
@@ -467,7 +468,7 @@ def build_servers_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/stop"
     path_format_arguments = {
@@ -490,7 +491,7 @@ def build_servers_migrate_network_mode_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -519,7 +520,7 @@ def build_servers_start_major_version_upgrade_precheck_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -549,7 +550,7 @@ def build_configurations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -579,7 +580,7 @@ def build_configurations_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/configurations/{configurationName}"
     path_format_arguments = {
@@ -608,7 +609,7 @@ def build_configurations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/configurations/{configurationName}"
     path_format_arguments = {
@@ -636,7 +637,7 @@ def build_configurations_list_by_server_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -664,7 +665,7 @@ def build_databases_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +695,7 @@ def build_databases_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/databases/{databaseName}"
     path_format_arguments = {
@@ -721,7 +722,7 @@ def build_databases_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/databases/{databaseName}"
     path_format_arguments = {
@@ -745,7 +746,7 @@ def build_databases_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -773,7 +774,7 @@ def build_firewall_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -803,7 +804,7 @@ def build_firewall_rules_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}"
     path_format_arguments = {
@@ -830,7 +831,7 @@ def build_firewall_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/firewallRules/{firewallRuleName}"
     path_format_arguments = {
@@ -854,7 +855,7 @@ def build_firewall_rules_list_by_server_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -886,7 +887,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -922,7 +923,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -955,7 +956,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -981,7 +982,7 @@ def build_private_endpoint_connections_list_by_server_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1009,7 +1010,7 @@ def build_private_link_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1038,7 +1039,7 @@ def build_private_link_resources_list_by_server_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1066,7 +1067,7 @@ def build_virtual_endpoints_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1096,7 +1097,7 @@ def build_virtual_endpoints_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/virtualendpoints/{virtualEndpointName}"
     path_format_arguments = {
@@ -1125,7 +1126,7 @@ def build_virtual_endpoints_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/virtualendpoints/{virtualEndpointName}"
     path_format_arguments = {
@@ -1152,7 +1153,7 @@ def build_virtual_endpoints_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/virtualendpoints/{virtualEndpointName}"
     path_format_arguments = {
@@ -1176,7 +1177,7 @@ def build_virtual_endpoints_list_by_server_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1204,7 +1205,7 @@ def build_maintenance_events_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1238,7 +1239,7 @@ def build_maintenance_events_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1269,7 +1270,7 @@ def build_maintenance_events_reschedule_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1300,7 +1301,7 @@ def build_maintenance_events_apply_now_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1329,7 +1330,7 @@ def build_major_version_upgrade_precheck_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1358,7 +1359,7 @@ def build_major_version_upgrade_precheck_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1380,100 +1381,13 @@ def build_major_version_upgrade_precheck_list_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_db_agents_list_request(
-    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/dbAgents"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_db_agents_get_request(
-    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/dbAgents/Default"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_db_agents_create_or_update_request(
-    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/dbAgents/Default"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_administrators_microsoft_entra_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, server_name: str, object_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1503,7 +1417,7 @@ def build_administrators_microsoft_entra_create_or_update_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/administrators/{objectId}"
     path_format_arguments = {
@@ -1530,7 +1444,7 @@ def build_administrators_microsoft_entra_delete_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/administrators/{objectId}"
     path_format_arguments = {
@@ -1554,7 +1468,7 @@ def build_administrators_microsoft_entra_list_by_server_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1582,7 +1496,7 @@ def build_capabilities_by_server_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1610,7 +1524,7 @@ def build_captured_logs_list_by_server_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1639,7 +1553,7 @@ def build_backups_long_term_retention_check_prerequisites_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1670,7 +1584,7 @@ def build_backups_long_term_retention_start_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1700,7 +1614,7 @@ def build_backups_long_term_retention_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1729,7 +1643,7 @@ def build_backups_long_term_retention_list_by_server_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1757,7 +1671,7 @@ def build_replicas_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1789,7 +1703,7 @@ def build_advanced_threat_protection_settings_get_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1818,7 +1732,7 @@ def build_advanced_threat_protection_settings_list_by_server_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1851,7 +1765,7 @@ def build_server_threat_protection_settings_create_or_update_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/advancedThreatProtectionSettings/{threatProtectionName}"
     path_format_arguments = {
@@ -1879,7 +1793,7 @@ def build_backups_automatic_and_on_demand_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1907,7 +1821,7 @@ def build_backups_automatic_and_on_demand_create_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/backups/{backupName}"
     path_format_arguments = {
@@ -1930,7 +1844,7 @@ def build_backups_automatic_and_on_demand_delete_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/backups/{backupName}"
     path_format_arguments = {
@@ -1954,7 +1868,7 @@ def build_backups_automatic_and_on_demand_list_by_server_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1986,7 +1900,7 @@ def build_tuning_options_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2015,7 +1929,7 @@ def build_tuning_options_list_by_server_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2049,7 +1963,7 @@ def build_tuning_options_list_recommendations_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2080,7 +1994,7 @@ def build_capabilities_by_location_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2108,7 +2022,7 @@ def build_name_availability_check_globally_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2137,7 +2051,7 @@ def build_name_availability_check_with_location_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2164,7 +2078,7 @@ def build_private_dns_zone_suffix_get_request(**kwargs: Any) -> HttpRequest:  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2183,7 +2097,7 @@ def build_quota_usages_list_request(location_name: str, subscription_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2211,7 +2125,7 @@ def build_virtual_network_subnet_usage_list_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2234,7 +2148,7 @@ def build_virtual_network_subnet_usage_list_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:  # pylint: disable=docstring-missing-param
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2346,7 +2260,7 @@ class Operations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class MigrationsOperations:  # pylint: disable=docstring-missing-param
+class MigrationsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2474,7 +2388,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: _types.Migration,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2489,7 +2403,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :param migration_name: Name of migration. Required.
         :type migration_name: str
         :param parameters: Parameters required for creating a migration. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Migration
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2534,7 +2448,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: Union[_models.Migration, _types.Migration, IO[bytes]],
+        parameters: Union[_models.Migration, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Migration:
         """Creates a new migration.
@@ -2546,10 +2460,9 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: Parameters required for creating a migration. Is either a Migration type or
-         a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration or
-         ~azure.mgmt.postgresqlflexibleservers.types.Migration or IO[bytes]
+        :param parameters: Parameters required for creating a migration. Is one of the following types:
+         Migration, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration or JSON or IO[bytes]
         :return: Migration. The Migration is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2660,7 +2573,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: _types.MigrationResourceForPatch,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2677,7 +2590,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :param migration_name: Name of migration. Required.
         :type migration_name: str
         :param parameters: Parameters required to update an existing migration. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.MigrationResourceForPatch
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2724,7 +2637,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: Union[_models.MigrationResourceForPatch, _types.MigrationResourceForPatch, IO[bytes]],
+        parameters: Union[_models.MigrationResourceForPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Migration:
         """Updates an existing migration. The request body can contain one to many of the mutable
@@ -2738,10 +2651,10 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: Parameters required to update an existing migration. Is either a
-         MigrationResourceForPatch type or a IO[bytes] type. Required.
+        :param parameters: Parameters required to update an existing migration. Is one of the following
+         types: MigrationResourceForPatch, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResourceForPatch or
-         ~azure.mgmt.postgresqlflexibleservers.types.MigrationResourceForPatch or IO[bytes]
+         JSON or IO[bytes]
         :return: Migration. The Migration is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3040,7 +2953,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _types.MigrationNameAvailability,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3056,7 +2969,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param parameters: Parameters required to check if a migration name is valid and available.
          Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.MigrationNameAvailability
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3102,7 +3015,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.MigrationNameAvailability, _types.MigrationNameAvailability, IO[bytes]],
+        parameters: Union[_models.MigrationNameAvailability, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationNameAvailability:
         """Check the validity and availability of the given name, to assign it to a new migration.
@@ -3115,9 +3028,9 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to check if a migration name is valid and available. Is
-         either a MigrationNameAvailability type or a IO[bytes] type. Required.
+         one of the following types: MigrationNameAvailability, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability or
-         ~azure.mgmt.postgresqlflexibleservers.types.MigrationNameAvailability or IO[bytes]
+         JSON or IO[bytes]
         :return: MigrationNameAvailability. The MigrationNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
@@ -3191,7 +3104,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class ServersOperations:  # pylint: disable=docstring-missing-param
+class ServersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3284,7 +3197,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, _types.Server, IO[bytes]],
+        parameters: Union[_models.Server, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3391,7 +3304,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _types.Server,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3405,7 +3318,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param parameters: Parameters required to create a new server or to update an existing server.
          Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Server
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3449,7 +3362,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, _types.Server, IO[bytes]],
+        parameters: Union[_models.Server, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Server]:
         """Creates a new server.
@@ -3460,9 +3373,8 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to create a new server or to update an existing server.
-         Is either a Server type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server or
-         ~azure.mgmt.postgresqlflexibleservers.types.Server or IO[bytes]
+         Is one of the following types: Server, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server or JSON or IO[bytes]
         :return: An instance of LROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -3531,7 +3443,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForPatch, _types.ServerForPatch, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3638,7 +3550,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _types.ServerForPatch,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3652,7 +3564,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to update a server. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ServerForPatch
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3696,7 +3608,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForPatch, _types.ServerForPatch, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Server]:
         """Updates an existing server. The request body can contain one or multiple of the properties
@@ -3707,10 +3619,10 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Parameters required to update a server. Is either a ServerForPatch type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch or
-         ~azure.mgmt.postgresqlflexibleservers.types.ServerForPatch or IO[bytes]
+        :param parameters: Parameters required to update a server. Is one of the following types:
+         ServerForPatch, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -4088,7 +4000,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[Union[_models.RestartParameter, _types.RestartParameter, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.RestartParameter, JSON, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4197,7 +4109,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[_types.RestartParameter] = None,
+        parameters: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4210,7 +4122,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters to restart a server. Default value is None.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.RestartParameter
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4251,7 +4163,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[Union[_models.RestartParameter, _types.RestartParameter, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.RestartParameter, JSON, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restarts PostgreSQL database engine in a server.
@@ -4261,10 +4173,10 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Parameters to restart a server. Is either a RestartParameter type or a
-         IO[bytes] type. Default value is None.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter or
-         ~azure.mgmt.postgresqlflexibleservers.types.RestartParameter or IO[bytes]
+        :param parameters: Parameters to restart a server. Is one of the following types:
+         RestartParameter, JSON, IO[bytes] Default value is None.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4558,7 +4470,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-01-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-01-01-preview", "2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-04-01-preview"],
     )
     def _migrate_network_mode_initial(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -4634,7 +4546,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-01-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-01-01-preview", "2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-04-01-preview"],
     )
     def begin_migrate_network_mode(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -4717,15 +4629,13 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def _start_major_version_upgrade_precheck_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         server_name: str,
-        body: Union[
-            _models.StartMajorVersionUpgradePrecheckRequest, _types.StartMajorVersionUpgradePrecheckRequest, IO[bytes]
-        ],
+        body: Union[_models.StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4837,7 +4747,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         server_name: str,
-        body: _types.StartMajorVersionUpgradePrecheckRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4850,7 +4760,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.postgresqlflexibleservers.types.StartMajorVersionUpgradePrecheckRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4903,15 +4813,13 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def begin_start_major_version_upgrade_precheck(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         server_name: str,
-        body: Union[
-            _models.StartMajorVersionUpgradePrecheckRequest, _types.StartMajorVersionUpgradePrecheckRequest, IO[bytes]
-        ],
+        body: Union[_models.StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StartMajorVersionUpgradePrecheckResponse]:
         """Start Major Version Upgrade Prechecks.
@@ -4921,11 +4829,10 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param body: The content of the action request. Is either a
-         StartMajorVersionUpgradePrecheckRequest type or a IO[bytes] type. Required.
+        :param body: The content of the action request. Is one of the following types:
+         StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes] Required.
         :type body:
-         ~azure.mgmt.postgresqlflexibleservers.models.StartMajorVersionUpgradePrecheckRequest or
-         ~azure.mgmt.postgresqlflexibleservers.types.StartMajorVersionUpgradePrecheckRequest or
+         ~azure.mgmt.postgresqlflexibleservers.models.StartMajorVersionUpgradePrecheckRequest or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns StartMajorVersionUpgradePrecheckResponse. The
          StartMajorVersionUpgradePrecheckResponse is compatible with MutableMapping
@@ -4989,7 +4896,7 @@ class ServersOperations:  # pylint: disable=docstring-missing-param
         )
 
 
-class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
+class ConfigurationsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5089,7 +4996,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5204,7 +5111,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: _types.ConfigurationForUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5222,7 +5129,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
          configuration (also known as server parameter). Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5274,7 +5181,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Configuration]:
         """Updates, using Put verb, the value assigned to a specific modifiable configuration (also known
@@ -5289,10 +5196,10 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
-         configuration (also known as server parameter). Is either a ConfigurationForUpdate type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or
-         ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate or IO[bytes]
+         configuration (also known as server parameter). Is one of the following types:
+         ConfigurationForUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns Configuration. The Configuration is compatible
          with MutableMapping
         :rtype:
@@ -5364,7 +5271,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5479,7 +5386,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: _types.ConfigurationForUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5497,7 +5404,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
          configuration (also known as server parameter). Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5549,7 +5456,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Configuration]:
         """Updates the value assigned to a specific modifiable configuration (also known as server
@@ -5564,10 +5471,10 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
-         configuration (also known as server parameter). Is either a ConfigurationForUpdate type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or
-         ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate or IO[bytes]
+         configuration (also known as server parameter). Is one of the following types:
+         ConfigurationForUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns Configuration. The Configuration is compatible
          with MutableMapping
         :rtype:
@@ -5738,7 +5645,7 @@ class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class DatabasesOperations:  # pylint: disable=docstring-missing-param
+class DatabasesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5836,7 +5743,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, _types.Database, IO[bytes]],
+        parameters: Union[_models.Database, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5948,7 +5855,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: _types.Database,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5964,7 +5871,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
          retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
         :param parameters: Parameters required to create a new database. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Database
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6012,7 +5919,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, _types.Database, IO[bytes]],
+        parameters: Union[_models.Database, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Database]:
         """Creates a new database.
@@ -6025,10 +5932,9 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
         :param database_name: Name of the database (case-sensitive). Exact database names can be
          retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
-        :param parameters: Parameters required to create a new database. Is either a Database type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database or
-         ~azure.mgmt.postgresqlflexibleservers.types.Database or IO[bytes]
+        :param parameters: Parameters required to create a new database. Is one of the following types:
+         Database, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database or JSON or IO[bytes]
         :return: An instance of LROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.Database]
@@ -6325,7 +6231,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
+class FirewallRulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6424,7 +6330,7 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
+        parameters: Union[_models.FirewallRule, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6536,7 +6442,7 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: _types.FirewallRule,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6551,7 +6457,7 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :param firewall_rule_name: Name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: Parameters required for creating or updating a firewall rule. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.FirewallRule
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6600,7 +6506,7 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
+        parameters: Union[_models.FirewallRule, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FirewallRule]:
         """Creates a new firewall rule or updates an existing firewall rule.
@@ -6612,10 +6518,10 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param firewall_rule_name: Name of the firewall rule. Required.
         :type firewall_rule_name: str
-        :param parameters: Parameters required for creating or updating a firewall rule. Is either a
-         FirewallRule type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.FirewallRule or
-         ~azure.mgmt.postgresqlflexibleservers.types.FirewallRule or IO[bytes]
+        :param parameters: Parameters required for creating or updating a firewall rule. Is one of the
+         following types: FirewallRule, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.FirewallRule or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns FirewallRule. The FirewallRule is compatible
          with MutableMapping
         :rtype:
@@ -6912,7 +6818,7 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
+class PrivateEndpointConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7013,7 +6919,7 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7126,7 +7032,7 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: _types.PrivateEndpointConnection,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7142,7 +7048,7 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Parameters required to update a private endpoint connection. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.PrivateEndpointConnection
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7192,7 +7098,7 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Approves or rejects a private endpoint connection.
@@ -7205,10 +7111,10 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Parameters required to update a private endpoint connection. Is either a
-         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :param parameters: Parameters required to update a private endpoint connection. Is one of the
+         following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnection or
-         ~azure.mgmt.postgresqlflexibleservers.types.PrivateEndpointConnection or IO[bytes]
+         JSON or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -7507,7 +7413,7 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
+class PrivateLinkResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7705,7 +7611,7 @@ class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
+class VirtualEndpointsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7804,7 +7710,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpoint, _types.VirtualEndpoint, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7917,7 +7823,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: _types.VirtualEndpoint,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7933,7 +7839,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         :type virtual_endpoint_name: str
         :param parameters: Parameters required to create or update a pair of virtual endpoints.
          Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpoint
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7983,7 +7889,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpoint, _types.VirtualEndpoint, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualEndpoint]:
         """Creates a pair of virtual endpoints for a server.
@@ -7995,10 +7901,10 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: Parameters required to create or update a pair of virtual endpoints. Is
-         either a VirtualEndpoint type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint or
-         ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpoint or IO[bytes]
+        :param parameters: Parameters required to create or update a pair of virtual endpoints. Is one
+         of the following types: VirtualEndpoint, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns VirtualEndpoint. The VirtualEndpoint is
          compatible with MutableMapping
         :rtype:
@@ -8070,7 +7976,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResourceForPatch, _types.VirtualEndpointResourceForPatch, IO[bytes]],
+        parameters: Union[_models.VirtualEndpointResourceForPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8182,7 +8088,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: _types.VirtualEndpointResourceForPatch,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8197,7 +8103,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
         :param parameters: Parameters required to update a pair of virtual endpoints. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpointResourceForPatch
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8246,7 +8152,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResourceForPatch, _types.VirtualEndpointResourceForPatch, IO[bytes]],
+        parameters: Union[_models.VirtualEndpointResourceForPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualEndpoint]:
         """Updates a pair of virtual endpoints for a server.
@@ -8258,10 +8164,10 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: Parameters required to update a pair of virtual endpoints. Is either a
-         VirtualEndpointResourceForPatch type or a IO[bytes] type. Required.
+        :param parameters: Parameters required to update a pair of virtual endpoints. Is one of the
+         following types: VirtualEndpointResourceForPatch, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResourceForPatch
-         or ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpointResourceForPatch or IO[bytes]
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns VirtualEndpoint. The VirtualEndpoint is
          compatible with MutableMapping
         :rtype:
@@ -8559,7 +8465,7 @@ class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
+class MaintenanceEventsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8591,7 +8497,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def get(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -8681,7 +8587,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def list(
         self,
@@ -8808,14 +8714,14 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def _reschedule_initial(
         self,
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: Union[_models.MaintenanceEventRescheduleRequest, _types.MaintenanceEventRescheduleRequest, IO[bytes]],
+        body: Union[_models.MaintenanceEventRescheduleRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8928,7 +8834,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: _types.MaintenanceEventRescheduleRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8943,7 +8849,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
         :param maintenance_event_id: The name of the MaintenanceEventResource. Required.
         :type maintenance_event_id: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.postgresqlflexibleservers.types.MaintenanceEventRescheduleRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9000,14 +8906,14 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def begin_reschedule(
         self,
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: Union[_models.MaintenanceEventRescheduleRequest, _types.MaintenanceEventRescheduleRequest, IO[bytes]],
+        body: Union[_models.MaintenanceEventRescheduleRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MaintenanceEventActionResponse]:
         """Reschedules a maintenance event to a new date and time.
@@ -9019,10 +8925,10 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
         :type server_name: str
         :param maintenance_event_id: The name of the MaintenanceEventResource. Required.
         :type maintenance_event_id: str
-        :param body: The content of the action request. Is either a MaintenanceEventRescheduleRequest
-         type or a IO[bytes] type. Required.
+        :param body: The content of the action request. Is one of the following types:
+         MaintenanceEventRescheduleRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventRescheduleRequest or
-         ~azure.mgmt.postgresqlflexibleservers.types.MaintenanceEventRescheduleRequest or IO[bytes]
+         JSON or IO[bytes]
         :return: An instance of LROPoller that returns MaintenanceEventActionResponse. The
          MaintenanceEventActionResponse is compatible with MutableMapping
         :rtype:
@@ -9094,7 +9000,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def _apply_now_initial(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -9174,7 +9080,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def begin_apply_now(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -9245,7 +9151,7 @@ class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
         )
 
 
-class MajorVersionUpgradePrecheckOperations:  # pylint: disable=docstring-missing-param
+class MajorVersionUpgradePrecheckOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9277,7 +9183,7 @@ class MajorVersionUpgradePrecheckOperations:  # pylint: disable=docstring-missin
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def get(
         self, resource_group_name: str, server_name: str, precheck_validation_id: str, **kwargs: Any
@@ -9360,7 +9266,7 @@ class MajorVersionUpgradePrecheckOperations:  # pylint: disable=docstring-missin
         params_added_on={
             "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-04-01-preview", "2026-07-01-preview"],
+        api_versions_list=["2026-04-01-preview"],
     )
     def list(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -9465,483 +9371,7 @@ class MajorVersionUpgradePrecheckOperations:  # pylint: disable=docstring-missin
         return ItemPaged(get_next, extract_data)
 
 
-class DbAgentsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.postgresqlflexibleservers.PostgreSQLManagementClient`'s
-        :attr:`db_agents` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PostgreSQLManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={
-            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
-        },
-        api_versions_list=["2026-07-01-preview"],
-    )
-    def list(self, resource_group_name: str, server_name: str, **kwargs: Any) -> ItemPaged["_models.DbAgent"]:
-        """Lists the database agent configuration for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :return: An iterator like instance of DbAgent
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.postgresqlflexibleservers.models.DbAgent]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DbAgent]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_db_agents_list_request(
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.DbAgent],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={
-            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
-        },
-        api_versions_list=["2026-07-01-preview"],
-    )
-    def get(self, resource_group_name: str, server_name: str, **kwargs: Any) -> _models.DbAgent:
-        """Gets the database agent configuration for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :return: DbAgent. The DbAgent is compatible with MutableMapping
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.DbAgent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DbAgent] = kwargs.pop("cls", None)
-
-        _request = build_db_agents_get_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DbAgent, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={
-            "2026-07-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "server_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-07-01-preview"],
-    )
-    def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        resource: Union[_models.DbAgentForUpdate, _types.DbAgentForUpdate, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_db_agents_create_or_update_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Azure-AsyncOperation"] = self._deserialize(
-            "str", response.headers.get("Azure-AsyncOperation")
-        )
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        resource: _models.DbAgentForUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DbAgent]:
-        """Enables or disables the database agent for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DbAgent. The DbAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.DbAgent]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        resource: _types.DbAgentForUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DbAgent]:
-        """Enables or disables the database agent for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.postgresqlflexibleservers.types.DbAgentForUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DbAgent. The DbAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.DbAgent]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DbAgent]:
-        """Enables or disables the database agent for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DbAgent. The DbAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.DbAgent]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={
-            "2026-07-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "server_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-07-01-preview"],
-    )
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        resource: Union[_models.DbAgentForUpdate, _types.DbAgentForUpdate, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.DbAgent]:
-        """Enables or disables the database agent for a flexible server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param resource: Resource create parameters. Is either a DbAgentForUpdate type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdate or
-         ~azure.mgmt.postgresqlflexibleservers.types.DbAgentForUpdate or IO[bytes]
-        :return: An instance of LROPoller that returns DbAgent. The DbAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.DbAgent]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DbAgent] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                server_name=server_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.DbAgent, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DbAgent].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DbAgent](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
-class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missing-param
+class AdministratorsMicrosoftEntraOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10041,7 +9471,7 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: Union[_models.AdministratorMicrosoftEntraAdd, _types.AdministratorMicrosoftEntraAdd, IO[bytes]],
+        parameters: Union[_models.AdministratorMicrosoftEntraAdd, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10154,7 +9584,7 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: _types.AdministratorMicrosoftEntraAdd,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10170,7 +9600,7 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         :type object_id: str
         :param parameters: Required parameters for adding a server administrator associated to a
          Microsoft Entra principal. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.AdministratorMicrosoftEntraAdd
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10220,7 +9650,7 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: Union[_models.AdministratorMicrosoftEntraAdd, _types.AdministratorMicrosoftEntraAdd, IO[bytes]],
+        parameters: Union[_models.AdministratorMicrosoftEntraAdd, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AdministratorMicrosoftEntra]:
         """Creates a new server administrator associated to a Microsoft Entra principal.
@@ -10233,10 +9663,10 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         :param object_id: Object identifier of the Microsoft Entra principal. Required.
         :type object_id: str
         :param parameters: Required parameters for adding a server administrator associated to a
-         Microsoft Entra principal. Is either a AdministratorMicrosoftEntraAdd type or a IO[bytes] type.
-         Required.
+         Microsoft Entra principal. Is one of the following types: AdministratorMicrosoftEntraAdd, JSON,
+         IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.AdministratorMicrosoftEntraAdd
-         or ~azure.mgmt.postgresqlflexibleservers.types.AdministratorMicrosoftEntraAdd or IO[bytes]
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AdministratorMicrosoftEntra. The
          AdministratorMicrosoftEntra is compatible with MutableMapping
         :rtype:
@@ -10534,7 +9964,7 @@ class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missi
         return ItemPaged(get_next, extract_data)
 
 
-class CapabilitiesByServerOperations:  # pylint: disable=docstring-missing-param
+class CapabilitiesByServerOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10654,7 +10084,7 @@ class CapabilitiesByServerOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class CapturedLogsOperations:  # pylint: disable=docstring-missing-param
+class CapturedLogsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10776,7 +10206,7 @@ class CapturedLogsOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-param
+class BackupsLongTermRetentionOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10827,7 +10257,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _types.LtrPreBackupRequest,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10840,7 +10270,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.LtrPreBackupRequest
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10881,7 +10311,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.LtrPreBackupRequest, _types.LtrPreBackupRequest, IO[bytes]],
+        parameters: Union[_models.LtrPreBackupRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.LtrPreBackupResponse:
         """Performs all checks required for a long term retention backup operation to succeed.
@@ -10891,10 +10321,10 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is either a LtrPreBackupRequest type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupRequest or
-         ~azure.mgmt.postgresqlflexibleservers.types.LtrPreBackupRequest or IO[bytes]
+        :param parameters: Request body for operation. Is one of the following types:
+         LtrPreBackupRequest, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupRequest or JSON or
+         IO[bytes]
         :return: LtrPreBackupResponse. The LtrPreBackupResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10973,7 +10403,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupsLongTermRetentionRequest, _types.BackupsLongTermRetentionRequest, IO[bytes]],
+        parameters: Union[_models.BackupsLongTermRetentionRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11085,7 +10515,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _types.BackupsLongTermRetentionRequest,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11098,7 +10528,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.BackupsLongTermRetentionRequest
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11143,7 +10573,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupsLongTermRetentionRequest, _types.BackupsLongTermRetentionRequest, IO[bytes]],
+        parameters: Union[_models.BackupsLongTermRetentionRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupsLongTermRetentionResponse]:
         """Initiates a long term retention backup.
@@ -11153,10 +10583,10 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is either a BackupsLongTermRetentionRequest type
-         or a IO[bytes] type. Required.
+        :param parameters: Request body for operation. Is one of the following types:
+         BackupsLongTermRetentionRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.BackupsLongTermRetentionRequest
-         or ~azure.mgmt.postgresqlflexibleservers.types.BackupsLongTermRetentionRequest or IO[bytes]
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns BackupsLongTermRetentionResponse. The
          BackupsLongTermRetentionResponse is compatible with MutableMapping
         :rtype:
@@ -11398,7 +10828,7 @@ class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-p
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicasOperations:  # pylint: disable=docstring-missing-param
+class ReplicasOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11518,7 +10948,7 @@ class ReplicasOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11723,7 +11153,7 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-m
         return ItemPaged(get_next, extract_data)
 
 
-class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param
+class ServerThreatProtectionSettingsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11747,9 +11177,7 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[
-            _models.AdvancedThreatProtectionSettingsModel, _types.AdvancedThreatProtectionSettingsModel, IO[bytes]
-        ],
+        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11864,7 +11292,7 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: _types.AdvancedThreatProtectionSettingsModel,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11881,8 +11309,7 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
         :param parameters: The Advanced Threat Protection state for the server. Required.
-        :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.types.AdvancedThreatProtectionSettingsModel
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11933,9 +11360,7 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[
-            _models.AdvancedThreatProtectionSettingsModel, _types.AdvancedThreatProtectionSettingsModel, IO[bytes]
-        ],
+        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AdvancedThreatProtectionSettingsModel]:
         """Creates or updates a server's Advanced Threat Protection settings.
@@ -11949,11 +11374,11 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
          Required.
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :param parameters: The Advanced Threat Protection state for the server. Is either a
-         AdvancedThreatProtectionSettingsModel type or a IO[bytes] type. Required.
+        :param parameters: The Advanced Threat Protection state for the server. Is one of the following
+         types: AdvancedThreatProtectionSettingsModel, JSON, IO[bytes] Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel or
-         ~azure.mgmt.postgresqlflexibleservers.types.AdvancedThreatProtectionSettingsModel or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns AdvancedThreatProtectionSettingsModel. The
          AdvancedThreatProtectionSettingsModel is compatible with MutableMapping
         :rtype:
@@ -12021,7 +11446,7 @@ class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-mis
         )
 
 
-class BackupsAutomaticAndOnDemandOperations:  # pylint: disable=docstring-missing-param
+class BackupsAutomaticAndOnDemandOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12487,7 +11912,7 @@ class BackupsAutomaticAndOnDemandOperations:  # pylint: disable=docstring-missin
         return ItemPaged(get_next, extract_data)
 
 
-class TuningOptionsOperations:  # pylint: disable=docstring-missing-param
+class TuningOptionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12811,7 +12236,7 @@ class TuningOptionsOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class CapabilitiesByLocationOperations:  # pylint: disable=docstring-missing-param
+class CapabilitiesByLocationOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12927,7 +12352,7 @@ class CapabilitiesByLocationOperations:  # pylint: disable=docstring-missing-par
         return ItemPaged(get_next, extract_data)
 
 
-class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
+class NameAvailabilityOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12965,13 +12390,13 @@ class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     def check_globally(
-        self, parameters: _types.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Checks the validity and availability of the given name, to assign it to a new server or to use
         it as the base name of a new pair of virtual endpoints.
 
         :param parameters: The request body. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12999,17 +12424,15 @@ class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     def check_globally(
-        self,
-        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
-        **kwargs: Any
+        self, parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Checks the validity and availability of the given name, to assign it to a new server or to use
         it as the base name of a new pair of virtual endpoints.
 
-        :param parameters: The request body. Is either a CheckNameAvailabilityRequest type or a
-         IO[bytes] type. Required.
+        :param parameters: The request body. Is one of the following types:
+         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityRequest or
-         ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest or IO[bytes]
+         JSON or IO[bytes]
         :return: NameAvailabilityModel. The NameAvailabilityModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.NameAvailabilityModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13104,19 +12527,14 @@ class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     def check_with_location(
-        self,
-        location_name: str,
-        parameters: _types.CheckNameAvailabilityRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, location_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Check the availability of name for resource.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The request body. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13147,17 +12565,17 @@ class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     def check_with_location(
         self,
         location_name: str,
-        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Check the availability of name for resource.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
-        :param parameters: The request body. Is either a CheckNameAvailabilityRequest type or a
-         IO[bytes] type. Required.
+        :param parameters: The request body. Is one of the following types:
+         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityRequest or
-         ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest or IO[bytes]
+         JSON or IO[bytes]
         :return: NameAvailabilityModel. The NameAvailabilityModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.NameAvailabilityModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13229,7 +12647,7 @@ class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class PrivateDnsZoneSuffixOperations:  # pylint: disable=docstring-missing-param
+class PrivateDnsZoneSuffixOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13311,7 +12729,7 @@ class PrivateDnsZoneSuffixOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class QuotaUsagesOperations:  # pylint: disable=docstring-missing-param
+class QuotaUsagesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13427,7 +12845,7 @@ class QuotaUsagesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class VirtualNetworkSubnetUsageOperations:  # pylint: disable=docstring-missing-param
+class VirtualNetworkSubnetUsageOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13473,20 +12891,14 @@ class VirtualNetworkSubnetUsageOperations:  # pylint: disable=docstring-missing-
 
     @overload
     def list(
-        self,
-        location_name: str,
-        parameters: _types.VirtualNetworkSubnetUsageParameter,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, location_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageModel:
         """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The request body. Required.
-        :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.types.VirtualNetworkSubnetUsageParameter
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13519,20 +12931,18 @@ class VirtualNetworkSubnetUsageOperations:  # pylint: disable=docstring-missing-
     def list(
         self,
         location_name: str,
-        parameters: Union[
-            _models.VirtualNetworkSubnetUsageParameter, _types.VirtualNetworkSubnetUsageParameter, IO[bytes]
-        ],
+        parameters: Union[_models.VirtualNetworkSubnetUsageParameter, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageModel:
         """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
-        :param parameters: The request body. Is either a VirtualNetworkSubnetUsageParameter type or a
-         IO[bytes] type. Required.
+        :param parameters: The request body. Is one of the following types:
+         VirtualNetworkSubnetUsageParameter, JSON, IO[bytes] Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageParameter or
-         ~azure.mgmt.postgresqlflexibleservers.types.VirtualNetworkSubnetUsageParameter or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageParameter or JSON or
+         IO[bytes]
         :return: VirtualNetworkSubnetUsageModel. The VirtualNetworkSubnetUsageModel is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageModel

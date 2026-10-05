@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._configuration import AppNetworkMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_app_links_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_app_links_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_app_links_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_app_links_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppLink/appLinks/{appLinkName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_app_links_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +210,7 @@ def build_app_links_list_by_subscription_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_app_link_members_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -266,7 +266,7 @@ def build_app_link_members_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +298,7 @@ def build_app_link_members_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -328,7 +328,7 @@ def build_app_link_members_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppLink/appLinks/{appLinkName}/appLinkMembers/{appLinkMemberName}"
     path_format_arguments = {
@@ -352,7 +352,7 @@ def build_app_link_members_list_by_app_link_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -380,7 +380,7 @@ def build_upgrade_histories_list_by_app_link_member_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -409,7 +409,7 @@ def build_available_versions_list_by_location_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -432,7 +432,7 @@ def build_available_versions_list_by_location_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:  # pylint: disable=docstring-missing-param
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -496,10 +496,7 @@ class Operations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -542,7 +539,7 @@ class Operations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class AppLinksOperations:  # pylint: disable=docstring-missing-param
+class AppLinksOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -561,7 +558,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     def get(self, resource_group_name: str, app_link_name: str, **kwargs: Any) -> _models.AppLink:
-        """Get the details of an Azure Kubernetes Application Network.
+        """Get an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -633,7 +630,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         app_link_name: str,
-        resource: Union[_models.AppLink, _types.AppLink, IO[bytes]],
+        resource: Union[_models.AppLink, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -716,7 +713,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Create an Azure Kubernetes Application Network resource.
+        """Create an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -739,12 +736,12 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         app_link_name: str,
-        resource: _types.AppLink,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Create an Azure Kubernetes Application Network resource.
+        """Create an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -752,7 +749,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         :param app_link_name: The name of the AppLink. Required.
         :type app_link_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.appnetwork.types.AppLink
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -772,7 +769,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Create an Azure Kubernetes Application Network resource.
+        """Create an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -795,20 +792,19 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         app_link_name: str,
-        resource: Union[_models.AppLink, _types.AppLink, IO[bytes]],
+        resource: Union[_models.AppLink, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Create an Azure Kubernetes Application Network resource.
+        """Create an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param app_link_name: The name of the AppLink. Required.
         :type app_link_name: str
-        :param resource: Resource create parameters. Is either a AppLink type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.appnetwork.models.AppLink or ~azure.mgmt.appnetwork.types.AppLink
-         or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: AppLink, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.appnetwork.models.AppLink or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AppLink. The AppLink is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.appnetwork.models.AppLink]
@@ -866,25 +862,11 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-08-01-preview",
-        params_added_on={
-            "2026-08-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "app_link_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-01-preview"],
-    )
     def _update_initial(
         self,
         resource_group_name: str,
         app_link_name: str,
-        properties: Union[_models.AppLinkUpdate, _types.AppLinkUpdate, IO[bytes]],
+        properties: Union[_models.AppLinkUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -968,7 +950,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Update an Azure Kubernetes Application Network resource.
+        """Update an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -991,12 +973,12 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         app_link_name: str,
-        properties: _types.AppLinkUpdate,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Update an Azure Kubernetes Application Network resource.
+        """Update an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1004,7 +986,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         :param app_link_name: The name of the AppLink. Required.
         :type app_link_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.appnetwork.types.AppLinkUpdate
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1024,7 +1006,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Update an Azure Kubernetes Application Network resource.
+        """Update an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1043,38 +1025,23 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-08-01-preview",
-        params_added_on={
-            "2026-08-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "app_link_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-01-preview"],
-    )
     def begin_update(
         self,
         resource_group_name: str,
         app_link_name: str,
-        properties: Union[_models.AppLinkUpdate, _types.AppLinkUpdate, IO[bytes]],
+        properties: Union[_models.AppLinkUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AppLink]:
-        """Update an Azure Kubernetes Application Network resource.
+        """Update an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param app_link_name: The name of the AppLink. Required.
         :type app_link_name: str
-        :param properties: The resource properties to be updated. Is either a AppLinkUpdate type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.appnetwork.models.AppLinkUpdate or
-         ~azure.mgmt.appnetwork.types.AppLinkUpdate or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         AppLinkUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.appnetwork.models.AppLinkUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AppLink. The AppLink is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.appnetwork.models.AppLink]
@@ -1193,7 +1160,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, app_link_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Delete an Azure Kubernetes Application Network resource.
+        """Delete an AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1250,7 +1217,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.AppLink"]:
-        """List Azure Kubernetes Application Network resources by resource group.
+        """List AppLink resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1300,10 +1267,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1347,7 +1311,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.AppLink"]:
-        """List Azure Kubernetes Application Network resources by subscription.
+        """List AppLink resources by subscription.
 
         :return: An iterator like instance of AppLink
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appnetwork.models.AppLink]
@@ -1393,10 +1357,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1439,7 +1400,7 @@ class AppLinksOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
+class AppLinkMembersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1460,7 +1421,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
     def get(
         self, resource_group_name: str, app_link_name: str, app_link_member_name: str, **kwargs: Any
     ) -> _models.AppLinkMember:
-        """Get a member of an Azure Kubernetes Application Network resource.
+        """Get an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1536,7 +1497,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        resource: Union[_models.AppLinkMember, _types.AppLinkMember, IO[bytes]],
+        resource: Union[_models.AppLinkMember, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1621,7 +1582,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Create a member of an Azure Kubernetes Application Network resource.
+        """Create an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1647,12 +1608,12 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        resource: _types.AppLinkMember,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Create a member of an Azure Kubernetes Application Network resource.
+        """Create an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1662,7 +1623,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         :param app_link_member_name: The name of the AppLinkMember. Required.
         :type app_link_member_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.appnetwork.types.AppLinkMember
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1683,7 +1644,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Create a member of an Azure Kubernetes Application Network resource.
+        """Create an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1709,10 +1670,10 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        resource: Union[_models.AppLinkMember, _types.AppLinkMember, IO[bytes]],
+        resource: Union[_models.AppLinkMember, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Create a member of an Azure Kubernetes Application Network resource.
+        """Create an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1721,10 +1682,9 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         :type app_link_name: str
         :param app_link_member_name: The name of the AppLinkMember. Required.
         :type app_link_member_name: str
-        :param resource: Resource create parameters. Is either a AppLinkMember type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.mgmt.appnetwork.models.AppLinkMember or
-         ~azure.mgmt.appnetwork.types.AppLinkMember or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: AppLinkMember,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.appnetwork.models.AppLinkMember or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AppLinkMember. The AppLinkMember is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.appnetwork.models.AppLinkMember]
@@ -1783,27 +1743,12 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-08-01-preview",
-        params_added_on={
-            "2026-08-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "app_link_name",
-                "app_link_member_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-01-preview"],
-    )
     def _update_initial(
         self,
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        properties: Union[_models.AppLinkMemberUpdate, _types.AppLinkMemberUpdate, IO[bytes]],
+        properties: Union[_models.AppLinkMemberUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1889,7 +1834,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Update a member of an Azure Kubernetes Application Network resource.
+        """Update an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1915,12 +1860,12 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        properties: _types.AppLinkMemberUpdate,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Update a member of an Azure Kubernetes Application Network resource.
+        """Update an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1930,7 +1875,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         :param app_link_member_name: The name of the AppLinkMember. Required.
         :type app_link_member_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.appnetwork.types.AppLinkMemberUpdate
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1951,7 +1896,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Update a member of an Azure Kubernetes Application Network resource.
+        """Update an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1972,30 +1917,15 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-08-01-preview",
-        params_added_on={
-            "2026-08-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "app_link_name",
-                "app_link_member_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-08-01-preview"],
-    )
     def begin_update(
         self,
         resource_group_name: str,
         app_link_name: str,
         app_link_member_name: str,
-        properties: Union[_models.AppLinkMemberUpdate, _types.AppLinkMemberUpdate, IO[bytes]],
+        properties: Union[_models.AppLinkMemberUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AppLinkMember]:
-        """Update a member of an Azure Kubernetes Application Network resource.
+        """Update an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2004,10 +1934,9 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         :type app_link_name: str
         :param app_link_member_name: The name of the AppLinkMember. Required.
         :type app_link_member_name: str
-        :param properties: The resource properties to be updated. Is either a AppLinkMemberUpdate type
-         or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.appnetwork.models.AppLinkMemberUpdate or
-         ~azure.mgmt.appnetwork.types.AppLinkMemberUpdate or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         AppLinkMemberUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.appnetwork.models.AppLinkMemberUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AppLinkMember. The AppLinkMember is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.appnetwork.models.AppLinkMember]
@@ -2132,7 +2061,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
     def begin_delete(
         self, resource_group_name: str, app_link_name: str, app_link_member_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Remove a member from an Azure Kubernetes Application Network resource.
+        """Delete an AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2194,7 +2123,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
     def list_by_app_link(
         self, resource_group_name: str, app_link_name: str, **kwargs: Any
     ) -> ItemPaged["_models.AppLinkMember"]:
-        """List the members of an Azure Kubernetes Application Network resource.
+        """List AppLinkMember resources by AppLink.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2247,10 +2176,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2293,7 +2219,7 @@ class AppLinkMembersOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class UpgradeHistoriesOperations:  # pylint: disable=docstring-missing-param
+class UpgradeHistoriesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2314,7 +2240,7 @@ class UpgradeHistoriesOperations:  # pylint: disable=docstring-missing-param
     def list_by_app_link_member(
         self, resource_group_name: str, app_link_name: str, app_link_member_name: str, **kwargs: Any
     ) -> ItemPaged["_models.UpgradeHistory"]:
-        """List the upgrade history of an Azure Kubernetes Application Network member.
+        """List UpgradeHistory resources by AppLinkMember.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2370,10 +2296,7 @@ class UpgradeHistoriesOperations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2416,7 +2339,7 @@ class UpgradeHistoriesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class AvailableVersionsOperations:  # pylint: disable=docstring-missing-param
+class AvailableVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2437,7 +2360,7 @@ class AvailableVersionsOperations:  # pylint: disable=docstring-missing-param
     def list_by_location(
         self, location: str, *, kubernetes_version: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.AvailableVersion"]:
-        """List the Azure Kubernetes Application Network versions available in a location.
+        """List AvailableVersion resources by location.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -2489,10 +2412,7 @@ class AvailableVersionsOperations:  # pylint: disable=docstring-missing-param
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

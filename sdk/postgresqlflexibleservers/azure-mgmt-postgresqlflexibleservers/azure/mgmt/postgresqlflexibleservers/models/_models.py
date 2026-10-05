@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdminCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdminCredentials(_Model):
     """Credentials of administrator users for source and target servers.
 
     :ivar source_server_password: Password for the user of the source server. Required.
@@ -50,7 +50,7 @@ class AdminCredentials(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class AdminCredentialsForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdminCredentialsForPatch(_Model):
     """Credentials of administrator users for source and target servers.
 
     :ivar source_server_password: Password for the user of the source server.
@@ -128,7 +128,7 @@ class ProxyResource(Resource):
     """
 
 
-class AdministratorMicrosoftEntra(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdministratorMicrosoftEntra(ProxyResource):
     """Server administrator associated to a Microsoft Entra principal.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -191,7 +191,7 @@ class AdministratorMicrosoftEntra(ProxyResource):  # pylint: disable=docstring-k
             super().__setattr__(key, value)
 
 
-class AdministratorMicrosoftEntraAdd(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdministratorMicrosoftEntraAdd(_Model):
     """Server administrator associated to a Microsoft Entra principal.
 
     :ivar properties: Properties of the server administrator associated to a Microsoft Entra
@@ -243,7 +243,7 @@ class AdministratorMicrosoftEntraAdd(_Model):  # pylint: disable=docstring-keywo
             super().__setattr__(key, value)
 
 
-class AdministratorMicrosoftEntraProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdministratorMicrosoftEntraProperties(_Model):
     """Properties of a server administrator associated to a Microsoft Entra principal.
 
     :ivar principal_type: Type of Microsoft Entra principal to which the server administrator is
@@ -290,9 +290,7 @@ class AdministratorMicrosoftEntraProperties(_Model):  # pylint: disable=docstrin
         super().__init__(*args, **kwargs)
 
 
-class AdministratorMicrosoftEntraPropertiesForAdd(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class AdministratorMicrosoftEntraPropertiesForAdd(_Model):  # pylint: disable=name-too-long
     """Properties of a server administrator associated to a Microsoft Entra principal.
 
     :ivar principal_type: Type of Microsoft Entra principal to which the server administrator is
@@ -334,9 +332,7 @@ class AdministratorMicrosoftEntraPropertiesForAdd(
         super().__init__(*args, **kwargs)
 
 
-class AdvancedThreatProtectionSettingsModel(
-    ProxyResource
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdvancedThreatProtectionSettingsModel(ProxyResource):
     """Advanced threat protection settings of the server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -398,9 +394,7 @@ class AdvancedThreatProtectionSettingsModel(
             super().__setattr__(key, value)
 
 
-class AdvancedThreatProtectionSettingsProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class AdvancedThreatProtectionSettingsProperties(_Model):  # pylint: disable=name-too-long
     """Properties of advanced threat protection state for a server.
 
     :ivar state: Specifies the state of the advanced threat protection, whether it is enabled,
@@ -438,7 +432,7 @@ class AdvancedThreatProtectionSettingsProperties(
         super().__init__(*args, **kwargs)
 
 
-class AuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AuthConfig(_Model):
     """Authentication configuration properties of a server.
 
     :ivar active_directory_auth: Indicates if the server supports Microsoft Entra authentication.
@@ -485,7 +479,7 @@ class AuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class AuthConfigForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AuthConfigForPatch(_Model):
     """Authentication configuration properties of a server.
 
     :ivar active_directory_auth: Indicates if the server supports Microsoft Entra authentication.
@@ -532,7 +526,7 @@ class AuthConfigForPatch(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Backup(_Model):
     """Backup properties of a server.
 
     :ivar backup_retention_days: Backup retention days for the server.
@@ -541,9 +535,6 @@ class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
      redundant backups. Known values are: "Enabled" and "Disabled".
     :vartype geo_redundant_backup: str or
      ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
-    :ivar immutable_backup: Indicates if the server is configured to create immutable backups.
-     Known values are: "Enabled" and "Disabled".
-    :vartype immutable_backup: str or ~azure.mgmt.postgresqlflexibleservers.models.ImmutableBackup
     :ivar earliest_restore_date: Earliest restore point time (ISO8601 format) for a server.
     :vartype earliest_restore_date: ~datetime.datetime
     """
@@ -557,11 +548,6 @@ class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
     )
     """Indicates if the server is configured to create geographically redundant backups. Known values
      are: \"Enabled\" and \"Disabled\"."""
-    immutable_backup: Optional[Union[str, "_models.ImmutableBackup"]] = rest_field(
-        name="immutableBackup", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates if the server is configured to create immutable backups. Known values are:
-     \"Enabled\" and \"Disabled\"."""
     earliest_restore_date: Optional[datetime.datetime] = rest_field(
         name="earliestRestoreDate", visibility=["read"], format="rfc3339"
     )
@@ -573,7 +559,6 @@ class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
         *,
         backup_retention_days: Optional[int] = None,
         geo_redundant_backup: Optional[Union[str, "_models.GeographicallyRedundantBackup"]] = None,
-        immutable_backup: Optional[Union[str, "_models.ImmutableBackup"]] = None,
     ) -> None: ...
 
     @overload
@@ -587,7 +572,7 @@ class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
         super().__init__(*args, **kwargs)
 
 
-class BackupAutomaticAndOnDemand(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupAutomaticAndOnDemand(ProxyResource):
     """Properties of a backup.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -649,7 +634,7 @@ class BackupAutomaticAndOnDemand(ProxyResource):  # pylint: disable=docstring-ke
             super().__setattr__(key, value)
 
 
-class BackupAutomaticAndOnDemandProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupAutomaticAndOnDemandProperties(_Model):
     """Properties of a backup.
 
     :ivar backup_type: Type of backup. Known values are: "Full" and "Customer On-Demand".
@@ -691,7 +676,7 @@ class BackupAutomaticAndOnDemandProperties(_Model):  # pylint: disable=docstring
         super().__init__(*args, **kwargs)
 
 
-class BackupForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupForPatch(_Model):
     """Backup properties of a server.
 
     :ivar backup_retention_days: Backup retention days for the server.
@@ -700,9 +685,6 @@ class BackupForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
      redundant backups. Known values are: "Enabled" and "Disabled".
     :vartype geo_redundant_backup: str or
      ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
-    :ivar immutable_backup: Indicates if the server is configured to create immutable backups.
-     Known values are: "Enabled" and "Disabled".
-    :vartype immutable_backup: str or ~azure.mgmt.postgresqlflexibleservers.models.ImmutableBackup
     :ivar earliest_restore_date: Earliest restore point time (ISO8601 format) for a server.
     :vartype earliest_restore_date: ~datetime.datetime
     """
@@ -716,11 +698,6 @@ class BackupForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
     )
     """Indicates if the server is configured to create geographically redundant backups. Known values
      are: \"Enabled\" and \"Disabled\"."""
-    immutable_backup: Optional[Union[str, "_models.ImmutableBackup"]] = rest_field(
-        name="immutableBackup", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates if the server is configured to create immutable backups. Known values are:
-     \"Enabled\" and \"Disabled\"."""
     earliest_restore_date: Optional[datetime.datetime] = rest_field(
         name="earliestRestoreDate", visibility=["read"], format="rfc3339"
     )
@@ -731,7 +708,6 @@ class BackupForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
         self,
         *,
         backup_retention_days: Optional[int] = None,
-        immutable_backup: Optional[Union[str, "_models.ImmutableBackup"]] = None,
     ) -> None: ...
 
     @overload
@@ -745,7 +721,7 @@ class BackupForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class BackupRequestBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupRequestBase(_Model):
     """BackupRequestBase is the base for all backup request.
 
     :ivar backup_settings: Backup Settings. Required.
@@ -775,7 +751,7 @@ class BackupRequestBase(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class BackupSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupSettings(_Model):
     """Settings for the long term backup.
 
     :ivar backup_name: Backup Name for the current backup. Required.
@@ -803,7 +779,7 @@ class BackupSettings(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class BackupsLongTermRetentionOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupsLongTermRetentionOperation(ProxyResource):
     """Response for the LTR backup Operation API call.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -876,7 +852,7 @@ class BackupsLongTermRetentionOperation(ProxyResource):  # pylint: disable=docst
             super().__setattr__(key, value)
 
 
-class BackupsLongTermRetentionRequest(BackupRequestBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupsLongTermRetentionRequest(BackupRequestBase):
     """Request made for a long term retention backup.
 
     :ivar backup_settings: Backup Settings. Required.
@@ -909,7 +885,7 @@ class BackupsLongTermRetentionRequest(BackupRequestBase):  # pylint: disable=doc
         super().__init__(*args, **kwargs)
 
 
-class BackupsLongTermRetentionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupsLongTermRetentionResponse(_Model):
     """Response for the LTR backup API call.
 
     :ivar properties: Long Term Retention Backup Operation Resource Properties.
@@ -971,9 +947,7 @@ class BackupsLongTermRetentionResponse(_Model):  # pylint: disable=docstring-key
             super().__setattr__(key, value)
 
 
-class BackupsLongTermRetentionResponseProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class BackupsLongTermRetentionResponseProperties(_Model):  # pylint: disable=name-too-long
     """Response for the pre-backup request.
 
     :ivar number_of_containers: Number of storage containers the plugin will use during backup.
@@ -1006,7 +980,7 @@ class BackupsLongTermRetentionResponseProperties(
         super().__init__(*args, **kwargs)
 
 
-class BackupStoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BackupStoreDetails(_Model):
     """Details about the target where the backup content will be stored.
 
     :ivar sas_uri_list: List of SAS uri of storage containers where backup data is to be
@@ -1052,7 +1026,7 @@ class CapabilityBase(_Model):
     """Reason for the capability not being available."""
 
 
-class Capability(CapabilityBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Capability(CapabilityBase):
     """Capability for the Azure Database for PostgreSQL flexible server.
 
     :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
@@ -1211,7 +1185,7 @@ class Capability(CapabilityBase):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class CapturedLog(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CapturedLog(ProxyResource):
     """Log file.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1272,7 +1246,7 @@ class CapturedLog(ProxyResource):  # pylint: disable=docstring-keyword-should-ma
             super().__setattr__(key, value)
 
 
-class CapturedLogProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CapturedLogProperties(_Model):
     """Properties of a log file.
 
     :ivar created_time: Creation timestamp of the log file.
@@ -1324,7 +1298,7 @@ class CapturedLogProperties(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CheckNameAvailabilityRequest(_Model):
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -1357,7 +1331,7 @@ class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CheckNameAvailabilityResponse(_Model):
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -1402,7 +1376,7 @@ class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class Cluster(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Cluster(_Model):
     """Cluster properties of a server.
 
     :ivar cluster_size: Number of nodes assigned to the elastic cluster.
@@ -1439,7 +1413,7 @@ class Cluster(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
-class Configuration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Configuration(ProxyResource):
     """Configuration (also known as server parameter).
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1512,7 +1486,7 @@ class Configuration(ProxyResource):  # pylint: disable=docstring-keyword-should-
             super().__setattr__(key, value)
 
 
-class ConfigurationForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ConfigurationForUpdate(_Model):
     """Configuration (also known as server parameter).
 
     :ivar properties: Properties of a configuration (also known as server parameter).
@@ -1574,7 +1548,7 @@ class ConfigurationForUpdate(_Model):  # pylint: disable=docstring-keyword-shoul
             super().__setattr__(key, value)
 
 
-class ConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ConfigurationProperties(_Model):
     """Properties of a configuration (also known as server parameter).
 
     :ivar value: Value of the configuration (also known as server parameter). Required to update
@@ -1663,7 +1637,7 @@ class ConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class Database(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Database(ProxyResource):
     """Represents a database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1724,7 +1698,7 @@ class Database(ProxyResource):  # pylint: disable=docstring-keyword-should-match
             super().__setattr__(key, value)
 
 
-class DatabaseMigrationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DatabaseMigrationState(_Model):
     """Migration state of a database.
 
     :ivar database_name: Name of database.
@@ -1859,7 +1833,7 @@ class DatabaseMigrationState(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class DatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DatabaseProperties(_Model):
     """Properties of a database.
 
     :ivar charset: Character set of the database.
@@ -1892,7 +1866,7 @@ class DatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class DataEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DataEncryption(_Model):
     """Data encryption properties of a server.
 
     :ivar primary_key_uri: URI of the key in Azure Key Vault used for data encryption of the
@@ -2005,138 +1979,7 @@ class DataEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class DbAgent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The database agent configuration for a PostgreSQL flexible server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentProperties
-    """
-
-    properties: Optional["_models.DbAgentProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.DbAgentProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request to enable or disable the database agent.
-
-    :ivar properties: The requested database agent properties. Required.
-    :vartype properties: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateProperties
-    """
-
-    properties: "_models.DbAgentForUpdateProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The requested database agent properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.DbAgentForUpdateProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentForUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Writable properties of the database agent configuration.
-
-    :ivar state: The requested state of the database agent. Required. Known values are: "Enabled"
-     and "Disabled".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateState
-    """
-
-    state: Union[str, "_models.DbAgentForUpdateState"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The requested state of the database agent. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        state: Union[str, "_models.DbAgentForUpdateState"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentProperties(_Model):
-    """Properties of the database agent configuration.
-
-    :ivar state: The state of the database agent. Required. Known values are: "Enabling",
-     "Enabled", "Disabling", "Disabled", and "Failed".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.DbAgentState
-    :ivar provisioning_state: The provisioning state of the database agent resource. Known values
-     are: "Succeeded", "Failed", "Canceled", and "InProgress".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.DbAgentProvisioningState
-    :ivar last_modified_time: The time when the database agent configuration was last modified.
-    :vartype last_modified_time: ~datetime.datetime
-    """
-
-    state: Union[str, "_models.DbAgentState"] = rest_field(visibility=["read"])
-    """The state of the database agent. Required. Known values are: \"Enabling\", \"Enabled\",
-     \"Disabling\", \"Disabled\", and \"Failed\"."""
-    provisioning_state: Optional[Union[str, "_models.DbAgentProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the database agent resource. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", and \"InProgress\"."""
-    last_modified_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedTime", visibility=["read"], format="rfc3339"
-    )
-    """The time when the database agent configuration was last modified."""
-
-
-class DbLevelValidationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DbLevelValidationStatus(_Model):
     """Validation status summary for a database.
 
     :ivar database_name: Name of database.
@@ -2187,7 +2030,7 @@ class DbLevelValidationStatus(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class DbServerMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DbServerMetadata(_Model):
     """Database server metadata.
 
     :ivar location: Location of database server.
@@ -2291,7 +2134,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object.
@@ -2352,7 +2195,7 @@ class FastProvisioningEditionCapability(CapabilityBase):
     """Count of servers in cache matching this specification."""
 
 
-class FirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FirewallRule(ProxyResource):
     """Firewall rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2413,7 +2256,7 @@ class FirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-m
             super().__setattr__(key, value)
 
 
-class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FirewallRuleProperties(_Model):
     """Properties of a firewall rule.
 
     :ivar start_ip_address: IP address defining the start of the range of addresses of a firewall
@@ -2452,7 +2295,7 @@ class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class HighAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class HighAvailability(_Model):
     """High availability properties of a server.
 
     :ivar mode: High availability mode for a server. Known values are: "Disabled", "ZoneRedundant",
@@ -2504,7 +2347,7 @@ class HighAvailability(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class HighAvailabilityForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class HighAvailabilityForPatch(_Model):
     """High availability properties of a server.
 
     :ivar mode: High availability mode for a server. Known values are: "Disabled", "ZoneRedundant",
@@ -2556,7 +2399,7 @@ class HighAvailabilityForPatch(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class ImpactRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ImpactRecord(_Model):
     """Impact on some metric if this recommended action is applied.
 
     :ivar dimension_name: Dimension name.
@@ -2605,7 +2448,7 @@ class ImpactRecord(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LogSpecification(_Model):
     """Log specification for an operation.
 
     :ivar name: Name of the log.
@@ -2647,7 +2490,7 @@ class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class LtrBackupOperationResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LtrBackupOperationResponseProperties(_Model):
     """Response for the backup request.
 
     :ivar datasource_size_in_bytes: Size of datasource in bytes.
@@ -2738,7 +2581,7 @@ class LtrBackupOperationResponseProperties(_Model):  # pylint: disable=docstring
         super().__init__(*args, **kwargs)
 
 
-class LtrPreBackupRequest(BackupRequestBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LtrPreBackupRequest(BackupRequestBase):
     """A request that is made for pre-backup.
 
     :ivar backup_settings: Backup Settings. Required.
@@ -2763,7 +2606,7 @@ class LtrPreBackupRequest(BackupRequestBase):  # pylint: disable=docstring-keywo
         super().__init__(*args, **kwargs)
 
 
-class LtrPreBackupResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LtrPreBackupResponse(_Model):
     """Response for the LTR pre-backup API call.
 
     :ivar properties: Additional Properties for the pre backup response. Required.
@@ -2814,7 +2657,7 @@ class LtrPreBackupResponse(_Model):  # pylint: disable=docstring-keyword-should-
             super().__setattr__(key, value)
 
 
-class MaintenanceEventActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MaintenanceEventActionResponse(_Model):
     """Response model for maintenance event reschedule and apply-now actions.
 
     :ivar maintenance_event_id: The maintenance event name (maintenance ID).
@@ -2888,7 +2731,7 @@ class MaintenanceEventActionResponse(_Model):  # pylint: disable=docstring-keywo
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceEventRescheduleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MaintenanceEventRescheduleRequest(_Model):
     """Parameters to reschedule a maintenance event.
 
     :ivar postpone_to_date_time: New start time in RFC3339 format. Required.
@@ -2918,7 +2761,7 @@ class MaintenanceEventRescheduleRequest(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceEventResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MaintenanceEventResource(ProxyResource):
     """Maintenance event resource for a PostgreSQL flexible server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3036,7 +2879,7 @@ class MaintenanceEventResourceProperties(_Model):
      has never been rescheduled. Required."""
 
 
-class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MaintenanceWindow(_Model):
     """Maintenance window properties of a server.
 
     :ivar custom_window: Indicates whether custom window is enabled or disabled.
@@ -3085,7 +2928,7 @@ class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MaintenanceWindowForPatch(_Model):
     """Maintenance window properties of a server.
 
     :ivar custom_window: Indicates whether custom window is enabled or disabled.
@@ -3134,7 +2977,7 @@ class MaintenanceWindowForPatch(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class MajorVersionUpgradePrecheckResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MajorVersionUpgradePrecheckResource(ProxyResource):
     """Major version upgrade precheck resource for a PostgreSQL flexible server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3176,9 +3019,7 @@ class MajorVersionUpgradePrecheckResource(ProxyResource):  # pylint: disable=doc
         super().__init__(*args, **kwargs)
 
 
-class MajorVersionUpgradePrecheckResourceProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class MajorVersionUpgradePrecheckResourceProperties(_Model):  # pylint: disable=name-too-long
     """Major version upgrade precheck resource with validation results.
 
     :ivar create_time: The time when the precheck was created.
@@ -3190,7 +3031,7 @@ class MajorVersionUpgradePrecheckResourceProperties(
     :ivar precheck_result: The detailed result of the precheck operation.
     :vartype precheck_result: ~azure.mgmt.postgresqlflexibleservers.models.PrecheckResult
     :ivar target_version: The target PostgreSQL major version for the upgrade. Known values are:
-     "19", "18", "17", "16", "15", "14", "13", "12", and "11".
+     "18", "17", "16", "15", "14", "13", "12", and "11".
     :vartype target_version: str or
      ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     :ivar policy_details: Array of policy validation details.
@@ -3213,8 +3054,8 @@ class MajorVersionUpgradePrecheckResourceProperties(
     target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
         name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The target PostgreSQL major version for the upgrade. Known values are: \"19\", \"18\", \"17\",
-     \"16\", \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    """The target PostgreSQL major version for the upgrade. Known values are: \"18\", \"17\", \"16\",
+     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
     policy_details: Optional[list["_models.PolicyDetail"]] = rest_field(
         name="policyDetails", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3242,7 +3083,7 @@ class MajorVersionUpgradePrecheckResourceProperties(
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MetricSpecification(_Model):
     """Metric specification for an operation.
 
     :ivar name: Name of the metric.
@@ -3315,7 +3156,7 @@ class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class MigrateNetworkStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrateNetworkStatus(_Model):
     """Status of a network migration operation.
 
     :ivar subscription_id: Identifier of the subscription.
@@ -3365,7 +3206,7 @@ class MigrateNetworkStatus(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TrackedResource(Resource):
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3409,7 +3250,7 @@ class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class Migration(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Migration(TrackedResource):
     """Properties of a migration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3502,7 +3343,7 @@ class Migration(TrackedResource):  # pylint: disable=docstring-keyword-should-ma
             super().__setattr__(key, value)
 
 
-class MigrationNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationNameAvailability(_Model):
     """Availability of a migration name.
 
     :ivar name: Name of the migration to check for validity and availability. Required.
@@ -3549,7 +3390,7 @@ class MigrationNameAvailability(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class MigrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationProperties(_Model):
     """Migration.
 
     :ivar migration_id: Identifier of a migration.
@@ -3805,7 +3646,7 @@ class MigrationProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class MigrationPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationPropertiesForPatch(_Model):
     """Migration properties.
 
     :ivar source_db_server_resource_id: Identifier of the source database server resource, when
@@ -3975,7 +3816,7 @@ class MigrationPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class MigrationResourceForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationResourceForPatch(_Model):
     """Migration.
 
     :ivar properties: Migration properties.
@@ -4046,7 +3887,7 @@ class MigrationResourceForPatch(_Model):  # pylint: disable=docstring-keyword-sh
             super().__setattr__(key, value)
 
 
-class MigrationSecretParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationSecretParameters(_Model):
     """Migration secret parameters.
 
     :ivar admin_credentials: Credentials of administrator users for source and target servers.
@@ -4091,7 +3932,7 @@ class MigrationSecretParameters(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class MigrationSecretParametersForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationSecretParametersForPatch(_Model):
     """Migration secret parameters.
 
     :ivar admin_credentials: Credentials of administrator users for source and target servers.
@@ -4160,7 +4001,7 @@ class MigrationStatus(_Model):
     """Current migration sub state details."""
 
 
-class MigrationSubstateDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MigrationSubstateDetails(_Model):
     """Details of migration substate.
 
     :ivar current_sub_state: Substate of migration. Known values are:
@@ -4213,9 +4054,7 @@ class MigrationSubstateDetails(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class NameAvailabilityModel(
-    CheckNameAvailabilityResponse
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NameAvailabilityModel(CheckNameAvailabilityResponse):
     """Availability of a name.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -4259,7 +4098,7 @@ class NameAvailabilityModel(
         super().__init__(*args, **kwargs)
 
 
-class NameProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NameProperty(_Model):
     """Name property for quota usage.
 
     :ivar value: Name value.
@@ -4294,7 +4133,7 @@ class NameProperty(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class Network(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Network(_Model):
     """Network properties of a server.
 
     :ivar public_network_access: Indicates if public network access is enabled or not. This is only
@@ -4355,7 +4194,7 @@ class Network(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
-class ObjectRecommendation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ObjectRecommendation(ProxyResource):
     """Object recommendation properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4431,7 +4270,7 @@ class ObjectRecommendation(ProxyResource):  # pylint: disable=docstring-keyword-
             super().__setattr__(key, value)
 
 
-class ObjectRecommendationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ObjectRecommendationDetails(_Model):
     """Recommendation details for the recommended action.
 
     :ivar database_name: Database name.
@@ -4495,7 +4334,7 @@ class ObjectRecommendationDetails(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class ObjectRecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ObjectRecommendationProperties(_Model):
     """Object recommendation properties.
 
     :ivar initial_recommended_time: Creation time (UTC) of this recommendation.
@@ -4597,9 +4436,7 @@ class ObjectRecommendationProperties(_Model):  # pylint: disable=docstring-keywo
         super().__init__(*args, **kwargs)
 
 
-class ObjectRecommendationPropertiesAnalyzedWorkload(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class ObjectRecommendationPropertiesAnalyzedWorkload(_Model):  # pylint: disable=name-too-long
     """Workload information for the recommended action.
 
     :ivar start_time: Start time (UTC) of the workload analyzed.
@@ -4645,9 +4482,7 @@ class ObjectRecommendationPropertiesAnalyzedWorkload(
         super().__init__(*args, **kwargs)
 
 
-class ObjectRecommendationPropertiesImplementationDetails(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class ObjectRecommendationPropertiesImplementationDetails(_Model):  # pylint: disable=name-too-long
     """Implementation details for the recommended action.
 
     :ivar method: Method of implementation for recommended action.
@@ -4680,7 +4515,7 @@ class ObjectRecommendationPropertiesImplementationDetails(
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Operation(_Model):
     """REST API operation definition.
 
     :ivar name: Name of the operation being performed on this particular object.
@@ -4751,7 +4586,7 @@ class OperationDisplay(_Model):
     """Description of the operation."""
 
 
-class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class OperationProperties(_Model):
     """Additional properties for operation metadata.
 
     :ivar service_specification: Service specification for the operation.
@@ -4782,7 +4617,7 @@ class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class PolicyDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PolicyDetail(_Model):
     """Policy validation details.
 
     :ivar policy_name: The name of the policy.
@@ -4836,7 +4671,7 @@ class PolicyDetail(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class PrecheckErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrecheckErrorInfo(_Model):
     """Error information from precheck validation.
 
     :ivar error_code: The error code.
@@ -4871,7 +4706,7 @@ class PrecheckErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class PrecheckResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrecheckResult(_Model):
     """Precheck result details.
 
     :ivar action: The action performed.
@@ -4924,7 +4759,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateEndpointConnection(Resource):
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4986,7 +4821,7 @@ class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateEndpointConnectionProperties(_Model):
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -5039,7 +4874,7 @@ class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateLinkResource(ProxyResource):
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5100,7 +4935,7 @@ class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-s
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateLinkResourceProperties(_Model):
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -5138,7 +4973,7 @@ class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrivateLinkServiceConnectionState(_Model):
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -5185,7 +5020,7 @@ class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
-class QuotaUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class QuotaUsage(_Model):
     """Quota usage for servers.
 
     :ivar name: Name of quota usage for servers.
@@ -5235,7 +5070,7 @@ class QuotaUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class Replica(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Replica(_Model):
     """Replica properties of a server.
 
     :ivar role: Role of the server in a replication set. Known values are: "None", "Primary",
@@ -5309,7 +5144,7 @@ class Replica(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
-class RestartParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class RestartParameter(_Model):
     """PostgreSQL database engine restart parameters.
 
     :ivar restart_with_failover: Indicates if restart the PostgreSQL database engine should
@@ -5351,7 +5186,7 @@ class RestartParameter(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class Server(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Server(TrackedResource):
     """Properties of a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5411,7 +5246,6 @@ class Server(TrackedResource):  # pylint: disable=docstring-keyword-should-match
         "create_mode",
         "private_endpoint_connections",
         "cluster",
-        "fips_mode",
     ]
 
     @overload
@@ -5489,7 +5323,7 @@ class ServerEditionCapability(CapabilityBase):
     """List of supported compute names (SKUs)."""
 
 
-class ServerForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ServerForPatch(_Model):
     """Represents a server to be updated.
 
     :ivar sku: Compute tier and size of a server.
@@ -5527,12 +5361,10 @@ class ServerForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
         "data_encryption",
         "availability_zone",
         "create_mode",
-        "source_server_resource_id",
         "replication_role",
         "replica",
         "network",
         "cluster",
-        "fips_mode",
     ]
 
     @overload
@@ -5574,7 +5406,7 @@ class ServerForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-
             super().__setattr__(key, value)
 
 
-class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ServerProperties(_Model):
     """Properties of a server.
 
     :ivar administrator_login: Name of the login designated as the first password based
@@ -5586,8 +5418,8 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar administrator_login_password: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
+    :ivar version: Major version of PostgreSQL database engine. Known values are: "18", "17", "16",
+     "15", "14", "13", "12", and "11".
     :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     :ivar minor_version: Minor version of PostgreSQL database engine.
     :vartype minor_version: str
@@ -5639,10 +5471,6 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
      list[~azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnection]
     :ivar cluster: Cluster properties of a server.
     :vartype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
-    :ivar fips_mode: Indicates if FIPS (Federal Information Processing Standards) mode is enabled
-     on the server. If not specified on create, it defaults to Disabled. Known values are: "Enabled"
-     and "Disabled".
-    :vartype fips_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.FipsMode
     """
 
     administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read", "create"])
@@ -5659,8 +5487,8 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    """Major version of PostgreSQL database engine. Known values are: \"18\", \"17\", \"16\", \"15\",
+     \"14\", \"13\", \"12\", and \"11\"."""
     minor_version: Optional[str] = rest_field(name="minorVersion", visibility=["read"])
     """Minor version of PostgreSQL database engine."""
     state: Optional[Union[str, "_models.ServerState"]] = rest_field(visibility=["read"])
@@ -5723,12 +5551,6 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     """List of private endpoint connections associated with the specified server."""
     cluster: Optional["_models.Cluster"] = rest_field(visibility=["read", "create", "update"])
     """Cluster properties of a server."""
-    fips_mode: Optional[Union[str, "_models.FipsMode"]] = rest_field(
-        name="fipsMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates if FIPS (Federal Information Processing Standards) mode is enabled on the server. If
-     not specified on create, it defaults to Disabled. Known values are: \"Enabled\" and
-     \"Disabled\"."""
 
     @overload
     def __init__(
@@ -5751,7 +5573,6 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         replica: Optional["_models.Replica"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         cluster: Optional["_models.Cluster"] = None,
-        fips_mode: Optional[Union[str, "_models.FipsMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -5765,7 +5586,7 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ServerPropertiesForPatch(_Model):
     """Properties of a server.
 
     :ivar administrator_login: Name of the login designated as the first password based
@@ -5777,8 +5598,8 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar administrator_login_password: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
+    :ivar version: Major version of PostgreSQL database engine. Known values are: "18", "17", "16",
+     "15", "14", "13", "12", and "11".
     :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     :ivar storage: Storage properties of a server.
     :vartype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
@@ -5798,9 +5619,6 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype availability_zone: str
     :ivar create_mode: Update mode of an existing server. Known values are: "Default" and "Update".
     :vartype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateModeForPatch
-    :ivar source_server_resource_id: Identifier of the server to be used as the source of the new
-     server.
-    :vartype source_server_resource_id: str
     :ivar replication_role: Role of the server in a replication set. Known values are: "None",
      "Primary", "AsyncReplica", and "GeoAsyncReplica".
     :vartype replication_role: str or ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
@@ -5812,10 +5630,6 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
     :ivar cluster: Cluster properties of a server.
     :vartype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
-    :ivar fips_mode: Indicates if FIPS (Federal Information Processing Standards) mode is enabled
-     on the server. If not specified, the current value is preserved. Known values are: "Enabled"
-     and "Disabled".
-    :vartype fips_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.FipsMode
     """
 
     administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read"])
@@ -5830,8 +5644,8 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    """Major version of PostgreSQL database engine. Known values are: \"18\", \"17\", \"16\", \"15\",
+     \"14\", \"13\", \"12\", and \"11\"."""
     storage: Optional["_models.Storage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Storage properties of a server."""
     backup: Optional["_models.BackupForPatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5860,8 +5674,6 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
         name="createMode", visibility=["update"]
     )
     """Update mode of an existing server. Known values are: \"Default\" and \"Update\"."""
-    source_server_resource_id: Optional[str] = rest_field(name="sourceServerResourceId", visibility=["update"])
-    """Identifier of the server to be used as the source of the new server."""
     replication_role: Optional[Union[str, "_models.ReplicationRole"]] = rest_field(
         name="replicationRole", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5874,11 +5686,6 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
      virtual network provided by customer."""
     cluster: Optional["_models.Cluster"] = rest_field(visibility=["read", "update"])
     """Cluster properties of a server."""
-    fips_mode: Optional[Union[str, "_models.FipsMode"]] = rest_field(
-        name="fipsMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates if FIPS (Federal Information Processing Standards) mode is enabled on the server. If
-     not specified, the current value is preserved. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -5894,12 +5701,10 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
         data_encryption: Optional["_models.DataEncryption"] = None,
         availability_zone: Optional[str] = None,
         create_mode: Optional[Union[str, "_models.CreateModeForPatch"]] = None,
-        source_server_resource_id: Optional[str] = None,
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         replica: Optional["_models.Replica"] = None,
         network: Optional["_models.Network"] = None,
         cluster: Optional["_models.Cluster"] = None,
-        fips_mode: Optional[Union[str, "_models.FipsMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -5913,7 +5718,7 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class ServerSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ServerSku(_Model):
     """Compute information of a server.
 
     :ivar name: Compute tier and size of the database server. This object is empty for an Azure
@@ -6056,7 +5861,7 @@ class ServiceSpecification(_Model):
     """Log specifications for the operation."""
 
 
-class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Sku(_Model):
     """Compute information of a server.
 
     :ivar name: Name by which is known a given compute size assigned to a server. Required.
@@ -6091,7 +5896,7 @@ class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-onl
         super().__init__(*args, **kwargs)
 
 
-class SkuForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SkuForPatch(_Model):
     """Compute information of a server.
 
     :ivar name: Name by which is known a given compute size assigned to a server.
@@ -6128,11 +5933,11 @@ class SkuForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class StartMajorVersionUpgradePrecheckRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StartMajorVersionUpgradePrecheckRequest(_Model):
     """Request model for starting a major version upgrade precheck.
 
-    :ivar target_version: The target major version to upgrade to. Required. Known values are: "19",
-     "18", "17", "16", "15", "14", "13", "12", and "11".
+    :ivar target_version: The target major version to upgrade to. Required. Known values are: "18",
+     "17", "16", "15", "14", "13", "12", and "11".
     :vartype target_version: str or
      ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     """
@@ -6140,8 +5945,8 @@ class StartMajorVersionUpgradePrecheckRequest(_Model):  # pylint: disable=docstr
     target_version: Union[str, "_models.PostgresMajorVersion"] = rest_field(
         name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The target major version to upgrade to. Required. Known values are: \"19\", \"18\", \"17\",
-     \"16\", \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    """The target major version to upgrade to. Required. Known values are: \"18\", \"17\", \"16\",
+     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
 
     @overload
     def __init__(
@@ -6161,7 +5966,7 @@ class StartMajorVersionUpgradePrecheckRequest(_Model):  # pylint: disable=docstr
         super().__init__(*args, **kwargs)
 
 
-class StartMajorVersionUpgradePrecheckResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StartMajorVersionUpgradePrecheckResponse(_Model):
     """Response model for starting a major version upgrade precheck.
 
     :ivar name: The precheck validation ID.
@@ -6206,7 +6011,7 @@ class StartMajorVersionUpgradePrecheckResponse(_Model):  # pylint: disable=docst
         super().__init__(*args, **kwargs)
 
 
-class Storage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Storage(_Model):
     """Storage properties of a server.
 
     :ivar storage_size_gb: Size of storage assigned to a server.
@@ -6215,14 +6020,6 @@ class Storage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
      when available space is nearing zero and conditions allow for automatically growing storage
      size. Known values are: "Enabled" and "Disabled".
     :vartype auto_grow: str or ~azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrow
-    :ivar auto_grow_max_threshold_mb: Maximum allocated storage size to which storage autogrow may
-     grow, in MB. This value is not a disk-utilization trigger threshold and must be at least the
-     effective current or requested storage size. Storage conversion uses 1 GB = 1,024 MB.
-    :vartype auto_grow_max_threshold_mb: int
-    :ivar auto_grow_increment_percent: Storage autogrow increment as a percentage of the current
-     allocated storage size. This value is not an absolute size increment or a utilization
-     threshold.
-    :vartype auto_grow_increment_percent: int
     :ivar tier: Storage tier of a server. Known values are: "P1", "P2", "P3", "P4", "P6", "P10",
      "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
     :vartype tier: str or
@@ -6249,17 +6046,6 @@ class Storage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
     """Flag to enable or disable the automatic growth of storage size of a server when available space
      is nearing zero and conditions allow for automatically growing storage size. Known values are:
      \"Enabled\" and \"Disabled\"."""
-    auto_grow_max_threshold_mb: Optional[int] = rest_field(
-        name="autoGrowMaxThresholdMb", visibility=["read", "create", "update"]
-    )
-    """Maximum allocated storage size to which storage autogrow may grow, in MB. This value is not a
-     disk-utilization trigger threshold and must be at least the effective current or requested
-     storage size. Storage conversion uses 1 GB = 1,024 MB."""
-    auto_grow_increment_percent: Optional[int] = rest_field(
-        name="autoGrowIncrementPercent", visibility=["read", "create", "update"]
-    )
-    """Storage autogrow increment as a percentage of the current allocated storage size. This value is
-     not an absolute size increment or a utilization threshold."""
     tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6284,8 +6070,6 @@ class Storage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         *,
         storage_size_gb: Optional[int] = None,
         auto_grow: Optional[Union[str, "_models.StorageAutoGrow"]] = None,
-        auto_grow_max_threshold_mb: Optional[int] = None,
-        auto_grow_increment_percent: Optional[int] = None,
         tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTier"]] = None,
         iops: Optional[int] = None,
         throughput: Optional[int] = None,
@@ -6414,7 +6198,7 @@ class SupportedFeature(_Model):
      \"Enabled\" and \"Disabled\"."""
 
 
-class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -6482,7 +6266,7 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class TuningOptions(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TuningOptions(ProxyResource):
     """Impact on some metric if this recommended action is applied.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6534,15 +6318,15 @@ class TuningOptionsProperties(_Model):
     """State of the tuning option."""
 
 
-class UpgradeSequence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UpgradeSequence(_Model):
     """Upgrade sequence information.
 
-    :ivar source_version: The source PostgreSQL version. Known values are: "19", "18", "17", "16",
-     "15", "14", "13", "12", and "11".
+    :ivar source_version: The source PostgreSQL version. Known values are: "18", "17", "16", "15",
+     "14", "13", "12", and "11".
     :vartype source_version: str or
      ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
-    :ivar target_version: The target PostgreSQL version. Known values are: "19", "18", "17", "16",
-     "15", "14", "13", "12", and "11".
+    :ivar target_version: The target PostgreSQL version. Known values are: "18", "17", "16", "15",
+     "14", "13", "12", and "11".
     :vartype target_version: str or
      ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     """
@@ -6550,13 +6334,13 @@ class UpgradeSequence(_Model):  # pylint: disable=docstring-keyword-should-match
     source_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
         name="sourceVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The source PostgreSQL version. Known values are: \"19\", \"18\", \"17\", \"16\", \"15\",
-     \"14\", \"13\", \"12\", and \"11\"."""
+    """The source PostgreSQL version. Known values are: \"18\", \"17\", \"16\", \"15\", \"14\",
+     \"13\", \"12\", and \"11\"."""
     target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
         name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The target PostgreSQL version. Known values are: \"19\", \"18\", \"17\", \"16\", \"15\",
-     \"14\", \"13\", \"12\", and \"11\"."""
+    """The target PostgreSQL version. Known values are: \"18\", \"17\", \"16\", \"15\", \"14\",
+     \"13\", \"12\", and \"11\"."""
 
     @overload
     def __init__(
@@ -6577,7 +6361,7 @@ class UpgradeSequence(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UserAssignedIdentity(_Model):
     """Identities associated with a server.
 
     :ivar user_assigned_identities: Map of user assigned managed identities.
@@ -6628,7 +6412,7 @@ class UserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class UserIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UserIdentity(_Model):
     """User assigned managed identity associated with a server.
 
     :ivar principal_id: Identifier of the object of the service principal associated to the user
@@ -6667,7 +6451,7 @@ class UserIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class ValidationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationDetails(_Model):
     """Details for the validation for migration.
 
     :ivar status: Validation status for migration. Known values are: "Failed", "Succeeded", and
@@ -6728,7 +6512,7 @@ class ValidationDetails(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ValidationMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationMessage(_Model):
     """Validation message object.
 
     :ivar state: Severity of validation message. Known values are: "Failed", "Succeeded", and
@@ -6764,7 +6548,7 @@ class ValidationMessage(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ValidationSummaryItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationSummaryItem(_Model):
     """Validation summary object.
 
     :ivar type: Validation type.
@@ -6807,7 +6591,7 @@ class ValidationSummaryItem(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class VirtualEndpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VirtualEndpoint(ProxyResource):
     """Pair of virtual endpoints for a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6869,7 +6653,7 @@ class VirtualEndpoint(ProxyResource):  # pylint: disable=docstring-keyword-shoul
             super().__setattr__(key, value)
 
 
-class VirtualEndpointResourceForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VirtualEndpointResourceForPatch(_Model):
     """Pair of virtual endpoints for a server.
 
     :ivar properties: Properties of the pair of virtual endpoints.
@@ -6920,7 +6704,7 @@ class VirtualEndpointResourceForPatch(_Model):  # pylint: disable=docstring-keyw
             super().__setattr__(key, value)
 
 
-class VirtualEndpointResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VirtualEndpointResourceProperties(_Model):
     """Properties of a pair of virtual endpoints.
 
     :ivar endpoint_type: Type of endpoint for the virtual endpoints. "ReadWrite"
@@ -6980,7 +6764,7 @@ class VirtualNetworkSubnetUsageModel(_Model):
     """subscriptionId of the delegated subnet usage."""
 
 
-class VirtualNetworkSubnetUsageParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VirtualNetworkSubnetUsageParameter(_Model):
     """Virtual network subnet usage parameter.
 
     :ivar virtual_network_arm_resource_id: Virtual network resource id.

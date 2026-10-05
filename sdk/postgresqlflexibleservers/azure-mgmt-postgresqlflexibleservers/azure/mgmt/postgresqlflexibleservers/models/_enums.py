@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -165,43 +164,6 @@ class DataEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     security."""
 
 
-class DbAgentForUpdateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The database agent states accepted in a write request."""
-
-    ENABLED = "Enabled"
-    """Enable the database agent."""
-    DISABLED = "Disabled"
-    """Disable the database agent."""
-
-
-class DbAgentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the database agent resource."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    IN_PROGRESS = "InProgress"
-    """The database agent lifecycle operation is in progress."""
-
-
-class DbAgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the database agent."""
-
-    ENABLING = "Enabling"
-    """The database agent is being enabled."""
-    ENABLED = "Enabled"
-    """The database agent is enabled."""
-    DISABLING = "Disabling"
-    """The database agent is being disabled."""
-    DISABLED = "Disabled"
-    """The database agent is disabled."""
-    FAILED = "Failed"
-    """The database agent lifecycle operation failed."""
-
-
 class EncryptionKeyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of key used by a server configured with data encryption based on customer managed key,
     to encrypt the primary storage associated to the server.
@@ -264,15 +226,6 @@ class FeatureStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature is enabled."""
     DISABLED = "Disabled"
     """Feature is disabled."""
-
-
-class FipsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if FIPS (Federal Information Processing Standards) mode is enabled on the server."""
-
-    ENABLED = "Enabled"
-    """FIPS mode is enabled on the server."""
-    DISABLED = "Disabled"
-    """FIPS mode is disabled on the server."""
 
 
 class GeographicallyRedundantBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -340,15 +293,6 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure automatically creates and manages the identity associated to the lifecycle of the server."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """Both system-assigned and user-assigned identities are assigned to the server."""
-
-
-class ImmutableBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if the server is configured to create immutable backups."""
-
-    ENABLED = "Enabled"
-    """Server is configured to create immutable backups."""
-    DISABLED = "Disabled"
-    """Server is not configured to create immutable backups."""
 
 
 class LocationRestricted(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -600,8 +544,6 @@ class PasswordBasedAuth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class PostgresMajorVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Major version of PostgreSQL database engine."""
 
-    ENUM_19 = "19"
-    """PostgreSQL 19."""
     EIGHTEEN = "18"
     """PostgreSQL 18."""
     SEVENTEEN = "17"

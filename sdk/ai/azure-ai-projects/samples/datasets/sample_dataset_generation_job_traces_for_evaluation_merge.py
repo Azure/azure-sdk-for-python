@@ -24,7 +24,7 @@ DESCRIPTION:
          the seeded conversations, and the agent.
 
     Private content in the traces is redacted by default
-    (`TracesDataGenerationJobConfiguration.redact_private_content=True`).
+    (`TracesDataGenerationJobOptions.redact_private_content=True`).
 
     Prerequisite: the project must have an Application Insights resource
     connected so the agent emits server-side traces. The Foundry project's
@@ -64,9 +64,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputConfiguration,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
-    TracesDataGenerationJobConfiguration,
+    TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
 )
 
@@ -147,8 +147,8 @@ def run_traces_job(
                         ),
                     ],
                     # max_samples is omitted, so sampling is turned off and every matching trace is used.
-                    generation_configuration=TracesDataGenerationJobConfiguration(redact_private_content=True),
-                    output_configuration=EvaluationDataGenerationJobOutputConfiguration(
+                    generation_configuration=TracesDataGenerationJobOptions(redact_private_content=True),
+                    output_configuration=EvaluationDataGenerationJobOutputTarget(
                         name=output_dataset_name,
                         write_mode=write_mode,
                     ),
@@ -205,10 +205,7 @@ def main() -> None:
             start_time = datetime.now(tz=timezone.utc) - timedelta(minutes=5)
             print(f"Seed the first batch of {len(FIRST_BATCH_PROMPTS)} conversation(s).")
             seed_conversations(openai_client, FIRST_BATCH_PROMPTS, created_conversation_ids)
-            print(
-                f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
-                flush=True,
-            )
+            print(f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
             time.sleep(INGEST_WAIT_SECONDS)
 
             # 2. Create the first dataset version (overwrite is the default write mode).
@@ -224,10 +221,7 @@ def main() -> None:
             # 3. Seed more traces, then merge them into the next dataset version.
             print(f"Seed the second batch of {len(SECOND_BATCH_PROMPTS)} conversation(s).")
             seed_conversations(openai_client, SECOND_BATCH_PROMPTS, created_conversation_ids)
-            print(
-                f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
-                flush=True,
-            )
+            print(f"Wait {INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
             time.sleep(INGEST_WAIT_SECONDS)
 
             # The window still starts before the first batch: trace rows already present in
