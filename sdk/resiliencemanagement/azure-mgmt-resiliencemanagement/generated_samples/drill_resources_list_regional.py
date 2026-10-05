@@ -15,7 +15,7 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
     pip install azure-identity
     pip install azure-mgmt-resiliencemanagement
 # USAGE
-    python goal_templates_delete_minimum_set_gen.py
+    python drill_resources_list_regional.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.goal_templates.begin_delete(
-        service_group_name="sg1",
-        goal_template_name="gt1",
-    ).result()
+    response = client.drill_resources.list(
+        service_group_name="sampleServiceGroupName",
+        drill_name="regionalDrill",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-10-31-preview/DrillResources_List_Regional.json
 if __name__ == "__main__":
     main()
