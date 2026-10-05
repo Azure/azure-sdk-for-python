@@ -146,10 +146,12 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         status_description = response_detail.get(self._status_description_field)
 
         to_remove_operation = None
-        for operation in self._pending_operations:
-            if operation.message.properties.message_id == correlation_id:
-                to_remove_operation = operation
-                break
+        with self.lock:
+            for operation in self._pending_operations:
+                if operation.message.properties.message_id == correlation_id:
+                    to_remove_operation = operation
+                    self._pending_operations.remove(operation)
+                    break
         if to_remove_operation:
             mgmt_result = (
                 ManagementExecuteOperationResult.OK
@@ -159,19 +161,19 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
-            self.cancel_operation(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
-            for operation in self._pending_operations:
-                if message_delivery.message == operation.message:
-                    to_remove_operation = operation
-                    break
+            with self.lock:
+                for operation in self._pending_operations:
+                    if message_delivery.message == operation.message:
+                        to_remove_operation = operation
+                        self._pending_operations.remove(operation)
+                        break
             if not to_remove_operation:
                 return
-            self.cancel_operation(to_remove_operation)
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
             #  or should there an error mapping which maps the condition to the error type
@@ -244,7 +246,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
 
         self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
         pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
-        self._pending_operations.append(pending_operation)
+        with self.lock:
+            self._pending_operations.append(pending_operation)
         return pending_operation
 
     def cancel_operation(self, pending_operation):
@@ -259,7 +262,10 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             self.state = ManagementLinkState.CLOSING
             self._response_link.detach(close=True)
             self._request_link.detach(close=True)
-            for pending_operation in self._pending_operations:
+            with self.lock:
+                pending_operations = self._pending_operations
+                self._pending_operations = []
+            for pending_operation in pending_operations:
                 pending_operation.on_execute_operation_complete(
                     ManagementExecuteOperationResult.LINK_CLOSED,
                     None,
@@ -267,5 +273,4 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
                     pending_operation.message,
                     AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed."),
                 )
-            self._pending_operations = []
         self.state = ManagementLinkState.IDLE

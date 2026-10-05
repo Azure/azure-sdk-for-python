@@ -869,6 +869,69 @@ class TestManagementLinkSettlementIsBounded:
 class TestPyamqpManagementRequestReadiness:
     """Management links must not depend on the associated receiver link remaining attached."""
 
+    @pytest.mark.parametrize("response_path", ["message", "rejection"])
+    def test_sync_management_selection_cannot_skip_response_during_cancellation(self, response_path):
+        from azure.servicebus._pyamqp.constants import LinkDeliverySettleReason, SEND_DISPOSITION_REJECT
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+
+        iterating, cancelling, continue_iteration = Event(), Event(), Event()
+        link = ManagementLink.__new__(ManagementLink)
+        link.lock = Lock()
+        link._status_code_field = b"status-code"
+        link._status_description_field = b"status-description"
+        link._network_trace_params = {}
+        callback = MagicMock()
+        first = PendingManagementOperation(MagicMock(), MagicMock())
+        second = PendingManagementOperation(MagicMock(), callback)
+
+        class PausingOperations(list):
+            def __iter__(self):
+                iterator = super().__iter__()
+                yield next(iterator)
+                iterating.set()
+                assert continue_iteration.wait(5)
+                yield from iterator
+
+        link._pending_operations = PausingOperations([first, second])
+
+        def respond():
+            if response_path == "message":
+                message = MagicMock()
+                message.properties = [None] * 5 + [second.message.properties.message_id]
+                message.application_properties = {b"status-code": 200, b"status-description": "OK"}
+                link._on_message_received(None, message)
+            else:
+                delivery = MagicMock(message=second.message)
+                link._on_send_complete(
+                    delivery,
+                    LinkDeliverySettleReason.DISPOSITION_RECEIVED,
+                    {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]},
+                )
+
+        def cancel():
+            cancelling.set()
+            link.cancel_operation(first)
+
+        def on_complete(*args, **kwargs):
+            assert link.lock.acquire(timeout=1), "Callback invoked under the pending-operation lock"
+            link.lock.release()
+
+        callback.side_effect = on_complete
+        with ThreadPoolExecutor(max_workers=2) as threads:
+            response = threads.submit(respond)
+            try:
+                assert iterating.wait(5)
+                cancellation = threads.submit(cancel)
+                assert cancelling.wait(5)
+                assert link.lock.locked(), "Selection must hold the cancellation lock"
+            finally:
+                continue_iteration.set()
+            response.result(timeout=5)
+            cancellation.result(timeout=5)
+
+        callback.assert_called_once()
+        assert link._pending_operations == []
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("asynchronous", [False, True])
     @pytest.mark.parametrize("wall_clock_jump", [-3600, 3600])
