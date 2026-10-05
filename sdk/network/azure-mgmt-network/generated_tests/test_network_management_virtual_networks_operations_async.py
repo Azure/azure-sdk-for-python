@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -176,7 +176,13 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -208,6 +214,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -508,7 +515,11 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -549,6 +560,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -573,6 +585,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -634,6 +647,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -699,6 +713,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -789,6 +804,9 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -809,6 +827,9 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -866,6 +887,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -917,6 +939,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -964,6 +987,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1036,6 +1060,9 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1056,6 +1083,9 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1117,6 +1147,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1172,6 +1203,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1223,6 +1255,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1427,6 +1460,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1478,6 +1512,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1616,6 +1651,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -1819,7 +1855,11 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1862,6 +1902,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1886,6 +1927,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1947,6 +1989,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -2014,6 +2057,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -2262,6 +2306,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2313,6 +2358,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2362,6 +2408,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2429,6 +2476,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2490,6 +2538,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2555,6 +2604,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2759,6 +2809,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2824,6 +2875,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2866,6 +2918,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -3077,7 +3130,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3091,7 +3144,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -3104,7 +3157,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_networks.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3116,7 +3169,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
     async def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3126,7 +3179,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3139,7 +3192,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -3151,7 +3204,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3164,9 +3217,28 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_networks.begin_list_ddos_protection_status(
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_networks_begin_move_ip_configurations(self, resource_group):
+        response = await (
+            await self.client.virtual_networks.begin_move_ip_configurations(
+                resource_group_name=resource_group.name,
+                virtual_network_name="str",
+                body={
+                    "moveIpConfigurationItems": [
+                        {"sourceIpConfiguration": {"id": "str"}, "targetIpConfiguration": {"id": "str"}}
+                    ]
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

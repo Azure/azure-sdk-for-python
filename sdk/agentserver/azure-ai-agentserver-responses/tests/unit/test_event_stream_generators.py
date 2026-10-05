@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from azure.ai.agentserver.responses.models._generated import ResponseStreamEvent
+from azure.ai.agentserver.responses.aio.streaming import ResponseEventStream as AsyncResponseEventStream
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 RESPONSE_ID = "resp_gen_test_12345"
@@ -24,6 +24,14 @@ def _started_stream(**kwargs) -> ResponseEventStream:
     return stream
 
 
+def _started_async_stream(**kwargs) -> AsyncResponseEventStream:
+    """Return an async stream that has already emitted created + in_progress events."""
+    stream = AsyncResponseEventStream(response_id=RESPONSE_ID, **kwargs)
+    stream.emit_created()
+    stream.emit_in_progress()
+    return stream
+
+
 # ---- output_item_message() ----
 
 
@@ -32,9 +40,9 @@ def test_output_item_message_yields_full_lifecycle() -> None:
     events = list(stream.output_item_message("Hello world"))
 
     assert len(events) == 6
-    # Every yielded event must be a ResponseStreamEvent model, not a plain dict
+    # Every yielded event must be a ResponseStreamEvent wire dict.
     for event in events:
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -63,7 +71,7 @@ def test_output_item_function_call_yields_full_lifecycle() -> None:
 
     assert len(events) == 4
     for event in events:
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -93,7 +101,7 @@ def test_output_item_function_call_output_yields_added_and_done() -> None:
 
     assert len(events) == 2
     for event in events:
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -115,7 +123,7 @@ def test_output_item_reasoning_item_yields_full_lifecycle() -> None:
 
     assert len(events) == 6
     for event in events:
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -165,8 +173,8 @@ async def test_async_output_item_message_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_message("hello async"))
 
-    stream2 = _started_stream()
-    async_events = await _collect(stream2.aoutput_item_message("hello async"))
+    stream2 = _started_async_stream()
+    async_events = await _collect(stream2.output_item_message("hello async"))
 
     assert len(async_events) == len(sync_events)
     for s, a in zip(sync_events, async_events):
@@ -182,8 +190,8 @@ async def test_async_output_item_message_streams_deltas() -> None:
         yield " world"
         yield "!"
 
-    stream = _started_stream()
-    events = await _collect(stream.aoutput_item_message(chunks()))
+    stream = _started_async_stream()
+    events = await _collect(stream.output_item_message(chunks()))
 
     # added, content_added, delta("Hello"), delta(" world"), delta("!"),
     # text_done("Hello world!"), content_done, item_done
@@ -214,8 +222,8 @@ async def test_async_output_item_function_call_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_function_call("fn", "call_1", '{"x":1}'))
 
-    stream2 = _started_stream()
-    async_events = await _collect(stream2.aoutput_item_function_call("fn", "call_1", '{"x":1}'))
+    stream2 = _started_async_stream()
+    async_events = await _collect(stream2.output_item_function_call("fn", "call_1", '{"x":1}'))
 
     assert len(async_events) == len(sync_events)
     for s, a in zip(sync_events, async_events):
@@ -230,8 +238,8 @@ async def test_async_output_item_function_call_streams_arguments() -> None:
         yield '{"city":'
         yield '"Seattle"}'
 
-    stream = _started_stream()
-    events = await _collect(stream.aoutput_item_function_call("get_weather", "call_1", arg_chunks()))
+    stream = _started_async_stream()
+    events = await _collect(stream.output_item_function_call("get_weather", "call_1", arg_chunks()))
 
     # added, delta, delta, args_done, item_done
     assert len(events) == 5
@@ -245,8 +253,8 @@ async def test_async_output_item_function_call_output_yields_same_as_sync() -> N
     stream = _started_stream()
     sync_events = list(stream.output_item_function_call_output("call_1", "result"))
 
-    stream2 = _started_stream()
-    async_events = await _collect(stream2.aoutput_item_function_call_output("call_1", "result"))
+    stream2 = _started_async_stream()
+    async_events = await _collect(stream2.output_item_function_call_output("call_1", "result"))
 
     assert len(async_events) == len(sync_events)
     for s, a in zip(sync_events, async_events):
@@ -258,8 +266,8 @@ async def test_async_output_item_reasoning_item_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_reasoning_item("thinking..."))
 
-    stream2 = _started_stream()
-    async_events = await _collect(stream2.aoutput_item_reasoning_item("thinking..."))
+    stream2 = _started_async_stream()
+    async_events = await _collect(stream2.output_item_reasoning_item("thinking..."))
 
     assert len(async_events) == len(sync_events)
     for s, a in zip(sync_events, async_events):
@@ -274,8 +282,8 @@ async def test_async_output_item_reasoning_item_streams_deltas() -> None:
         yield "Let me "
         yield "think..."
 
-    stream = _started_stream()
-    events = await _collect(stream.aoutput_item_reasoning_item(summary_chunks()))
+    stream = _started_async_stream()
+    events = await _collect(stream.output_item_reasoning_item(summary_chunks()))
 
     # added, part_added, delta, delta, text_done, part_done, item_done
     assert len(events) == 7

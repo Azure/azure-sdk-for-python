@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
+from azure.ai.ml._restclient.arm_ml_service.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.arm_ml_service.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import (
@@ -33,24 +33,24 @@ from ._constants import HTTPS
 class AzureFileDatastore(Datastore):
     """Azure file share that is linked to an Azure ML workspace.
 
-    :param name: Name of the datastore.
-    :type name: str
-    :param account_name: Name of the Azure storage account.
-    :type account_name: str
-    :param file_share_name: Name of the file share.
-    :type file_share_name: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param endpoint: Endpoint to use to connect with the Azure storage account
-    :type endpoint: str
-    :param protocol: Protocol to use to connect with the Azure storage account
-    :type protocol: str
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param credentials: Credentials to use for Azure ML workspace to connect to the storage. Defaults to None.
-    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+    :keyword name: Name of the datastore.
+    :paramtype name: str
+    :keyword account_name: Name of the Azure storage account.
+    :paramtype account_name: str
+    :keyword file_share_name: Name of the file share.
+    :paramtype file_share_name: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword endpoint: Endpoint to use to connect with the Azure storage account
+    :paramtype endpoint: str
+    :keyword protocol: Protocol to use to connect with the Azure storage account
+    :paramtype protocol: str
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword credentials: Credentials to use for Azure ML workspace to connect to the storage. Defaults to None.
+    :paramtype credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
@@ -133,24 +133,24 @@ class AzureFileDatastore(Datastore):
 class AzureBlobDatastore(Datastore):
     """Azure blob storage that is linked to an Azure ML workspace.
 
-    :param name: Name of the datastore.
-    :type name: str
-    :param account_name: Name of the Azure storage account.
-    :type account_name: str
-    :param container_name: Name of the container.
-    :type container_name: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param endpoint: Endpoint to use to connect with the Azure storage account.
-    :type endpoint: str
-    :param protocol: Protocol to use to connect with the Azure storage account.
-    :type protocol: str
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+    :keyword name: Name of the datastore.
+    :paramtype name: str
+    :keyword account_name: Name of the Azure storage account.
+    :paramtype account_name: str
+    :keyword container_name: Name of the container.
+    :paramtype container_name: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword endpoint: Endpoint to use to connect with the Azure storage account.
+    :paramtype endpoint: str
+    :keyword protocol: Protocol to use to connect with the Azure storage account.
+    :paramtype protocol: str
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword credentials: Credentials to use for Azure ML workspace to connect to the storage.
+    :paramtype credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
@@ -234,28 +234,28 @@ class AzureBlobDatastore(Datastore):
 class AzureDataLakeGen2Datastore(Datastore):
     """Azure data lake gen 2 that is linked to an Azure ML workspace.
 
-    :param name: Name of the datastore.
-    :type name: str
-    :param account_name: Name of the Azure storage account.
-    :type account_name: str
-    :param filesystem: The name of the Data Lake Gen2 filesystem.
-    :type filesystem: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param endpoint: Endpoint to use to connect with the Azure storage account
-    :type endpoint: str
-    :param protocol: Protocol to use to connect with the Azure storage account
-    :type protocol: str
-    :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[
+    :keyword name: Name of the datastore.
+    :paramtype name: str
+    :keyword account_name: Name of the Azure storage account.
+    :paramtype account_name: str
+    :keyword filesystem: The name of the Data Lake Gen2 filesystem.
+    :paramtype filesystem: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword endpoint: Endpoint to use to connect with the Azure storage account
+    :paramtype endpoint: str
+    :keyword protocol: Protocol to use to connect with the Azure storage account
+    :paramtype protocol: str
+    :keyword credentials: Credentials to use for Azure ML workspace to connect to the storage.
+    :paramtype credentials: Union[
         ~azure.ai.ml.entities.ServicePrincipalConfiguration,
         ~azure.ai.ml.entities.CertificateConfiguration
 
         ]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

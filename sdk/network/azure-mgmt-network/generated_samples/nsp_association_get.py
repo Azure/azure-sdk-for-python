@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/NspAssociationGet.json
+# x-ms-original-file: 2026-01-01/NspAssociationGet.json
 if __name__ == "__main__":
     main()

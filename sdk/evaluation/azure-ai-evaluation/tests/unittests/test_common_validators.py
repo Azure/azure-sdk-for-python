@@ -513,6 +513,29 @@ class TestTaskNavigationEfficiencyValidator:
         with pytest.raises(EvaluationException):
             validator.validate_eval_input(eval_input)
 
+    @pytest.mark.parametrize(
+        "eval_input, canonical_name, alias_name",
+        [
+            # 'response'/'actions' missing (None).
+            ({"response": None, "ground_truth": ["search"]}, "response", "actions"),
+            # 'response'/'actions' wrong type.
+            ({"response": "not a list", "ground_truth": ["search"]}, "response", "actions"),
+            # 'ground_truth'/'expected_actions' empty -- the reported UX case.
+            ({"response": [{"role": "user", "content": "x"}], "ground_truth": []}, "ground_truth", "expected_actions"),
+            # 'ground_truth'/'expected_actions' wrong type.
+            ({"response": [{"role": "user", "content": "x"}], "ground_truth": 123}, "ground_truth", "expected_actions"),
+        ],
+    )
+    def test_error_messages_name_both_canonical_and_alias(self, eval_input, canonical_name, alias_name):
+        # Regression guard: user-facing validation errors must cite both the SDK input name and
+        # its azureml-assets alias, so a caller never sees a parameter name they did not supply.
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input(eval_input)
+        message = str(exc_info.value)
+        assert f"'{canonical_name}'" in message
+        assert f"'{alias_name}'" in message
+
 
 @pytest.mark.unittest
 class TestMessagesOrQueryResponseInputValidator:

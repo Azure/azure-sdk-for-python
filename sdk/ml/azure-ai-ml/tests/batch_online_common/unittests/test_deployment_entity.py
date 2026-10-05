@@ -10,12 +10,12 @@ from azure.ai.ml import load_batch_deployment, load_online_deployment
 from azure.ai.ml._restclient.arm_ml_service.models import BatchDeployment as BatchDeploymentData
 from azure.ai.ml._restclient.arm_ml_service.models import BatchOutputAction, EndpointComputeType
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import BatchPipelineComponentDeploymentConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineDeployment as RestOnlineDeploymentData
 from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
@@ -770,7 +770,7 @@ class TestOnlineDeploymentSDK:
 
     def test_managed_online_deployment_from_rest_object(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_managed_rest.json", "r") as f:
-            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object = RestOnlineDeploymentData._deserialize(json.load(f), [])
             blue_deployment = OnlineDeployment._from_rest_object(rest_object)
             assert isinstance(blue_deployment, ManagedOnlineDeployment)
             assert blue_deployment.name == "blue"
@@ -806,7 +806,7 @@ class TestOnlineDeploymentSDK:
 
     def test_kubenets_online_deployment_from_rest_object_(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
-            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object = RestOnlineDeploymentData._deserialize(json.load(f), [])
             blue_deployment = OnlineDeployment._from_rest_object(rest_object)
             assert isinstance(blue_deployment, KubernetesOnlineDeployment)
             assert blue_deployment.name == "blue"
@@ -873,7 +873,7 @@ class TestOnlineDeploymentSDK:
 
     def test_online_deployment_from_rest_object_unsupported_type(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
-            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object = RestOnlineDeploymentData._deserialize(json.load(f), [])
             rest_object.properties.endpoint_compute_type = "Other"
             with pytest.raises(DeploymentException) as exc:
                 OnlineDeployment._from_rest_object(rest_object)
@@ -881,14 +881,17 @@ class TestOnlineDeploymentSDK:
 
     def test__deployment_from_rest_object_unsupported_type(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
-            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object = RestOnlineDeploymentData._deserialize(json.load(f), [])
+            # The base ``Deployment`` dispatcher only accepts the Online/Batch tracked-resource
+            # envelopes; a raw properties object (KubernetesOnlineDeployment) is unsupported.
+            properties_object = rest_object.properties
             with pytest.raises(DeploymentException) as exc:
-                Deployment._from_rest_object(rest_object)
-            assert str(exc.value) == f"Unsupported deployment type {type(rest_object)}"
+                Deployment._from_rest_object(properties_object)
+            assert str(exc.value) == f"Unsupported deployment type {type(properties_object)}"
 
     def test_online_deployment_from_rest_object_unsupported_scale_settings_type(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
-            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object = RestOnlineDeploymentData._deserialize(json.load(f), [])
             rest_object.properties.scale_settings.scale_type = "Other"
             with pytest.raises(DeploymentException) as exc:
                 OnlineDeployment._from_rest_object(rest_object)

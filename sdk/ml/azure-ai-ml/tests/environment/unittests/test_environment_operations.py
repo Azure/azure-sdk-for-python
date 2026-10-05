@@ -274,7 +274,7 @@ class TestEnvironmentOperations:
     def side_effect(self, args):
         print(args)
 
-    # #Mock(azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._environment_versions_operations, "get")
+    # #Mock(azure.ai.ml._restclient.arm_ml_service.operations._operations, "get")
     # def test_promote_environment_from_workspace(
     #     self,
     #     mock_environment_operation_reg: EnvironmentOperations,

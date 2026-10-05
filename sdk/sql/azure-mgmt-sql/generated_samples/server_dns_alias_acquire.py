@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/ServerDnsAliasAcquire.json
+# x-ms-original-file: 2025-08-01-preview/ServerDnsAliasAcquire.json
 if __name__ == "__main__":
     main()

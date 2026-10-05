@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccountInfo(_Model):
+class AccountInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Account Info of the NewRelic account.
 
     :ivar account_id: Account id.
@@ -57,7 +57,7 @@ class AccountInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccountProperties(_Model):
+class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of all the New relic accounts for the given user.
 
     :ivar organization_id: organization id.
@@ -149,7 +149,7 @@ class ProxyResource(Resource):
     """
 
 
-class AccountResource(ProxyResource):
+class AccountResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of a account resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -208,7 +208,7 @@ class AccountResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ActivateSaaSParameterRequest(_Model):
+class ActivateSaaSParameterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS guid & PublishedId for Activate and Validate SaaS Resource.
 
     :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
@@ -241,7 +241,7 @@ class ActivateSaaSParameterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppServiceInfo(_Model):
+class AppServiceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of VM Resource having NewRelic OneAgent installed.
 
     :ivar azure_resource_id: Azure App service resource ID.
@@ -285,7 +285,7 @@ class AppServiceInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppServicesGetRequest(_Model):
+class AppServicesGetRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request of a app services get Operation.
 
     :ivar azure_resource_ids: Azure resource IDs.
@@ -320,7 +320,7 @@ class AppServicesGetRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingInfoResponse(_Model):
+class BillingInfoResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace Subscription and Organization details to which resource gets billed into.
 
     :ivar marketplace_saas_info: Marketplace Subscription details.
@@ -357,7 +357,7 @@ class BillingInfoResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedPartnerResourceProperties(_Model):
+class ConnectedPartnerResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Partner Resource Properties.
 
     :ivar account_name: NewRelic account name.
@@ -404,7 +404,7 @@ class ConnectedPartnerResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedPartnerResourcesListFormat(_Model):
+class ConnectedPartnerResourcesListFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Partner Resources List Format.
 
     :ivar properties: Connected Partner Resource Properties.
@@ -479,7 +479,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -507,7 +507,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilteringTag(_Model):
+class FilteringTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a filtering tag. Filtering tags are used for capturing resources and
     include/exclude them from being monitored.
 
@@ -550,7 +550,7 @@ class FilteringTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostsGetRequest(_Model):
+class HostsGetRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request of a Hosts get Operation.
 
     :ivar vm_ids: VM resource IDs.
@@ -583,7 +583,7 @@ class HostsGetRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LatestLinkedSaaSResponse(_Model):
+class LatestLinkedSaaSResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get latest linked SaaS resource operation.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -620,7 +620,7 @@ class LatestLinkedSaaSResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedResource(_Model):
+class LinkedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a linked resource.
 
     :ivar id: The ARM id of the linked resource.
@@ -648,7 +648,7 @@ class LinkedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogRules(_Model):
+class LogRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of rules for sending logs for the Monitor resource.
 
     :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource. Known
@@ -713,7 +713,7 @@ class LogRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -765,7 +765,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceSaaSInfo(_Model):
+class MarketplaceSaaSInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SAAS Info of the resource.
 
     :ivar marketplace_subscription_id: Marketplace Subscription Id. This is a GUID-formatted
@@ -837,7 +837,7 @@ class MarketplaceSaaSInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricRules(_Model):
+class MetricRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of rules for sending metrics for the Monitor resource.
 
     :ivar send_metrics: Flag specifying if metrics should be sent for the Monitor resource. Known
@@ -881,7 +881,7 @@ class MetricRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsRequest(_Model):
+class MetricsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request of get metrics Operation.
 
     :ivar user_email: Reusable representation of an email address. Required.
@@ -909,7 +909,7 @@ class MetricsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsStatusRequest(_Model):
+class MetricsStatusRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request of get metrics status Operation.
 
     :ivar azure_resource_ids: Azure resource IDs.
@@ -944,7 +944,7 @@ class MetricsStatusRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsStatusResponse(_Model):
+class MetricsStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get metrics status Operation.
 
     :ivar azure_resource_ids: Azure resource IDs.
@@ -974,7 +974,7 @@ class MetricsStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoredResource(_Model):
+class MonitoredResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of resource being monitored by NewRelic monitor resource.
 
     :ivar id: The ARM id of the resource.
@@ -1036,7 +1036,7 @@ class MonitoredResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoredSubscription(_Model):
+class MonitoredSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of subscriptions and it's monitoring status by current NewRelic monitor.
 
     :ivar subscription_id: The subscriptionId to be monitored.
@@ -1087,7 +1087,7 @@ class MonitoredSubscription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoredSubscriptionProperties(ProxyResource):
+class MonitoredSubscriptionProperties(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to update subscriptions needed to be monitored by the NewRelic monitor resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1129,7 +1129,7 @@ class MonitoredSubscriptionProperties(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringTagRulesProperties(_Model):
+class MonitoringTagRulesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource-specific properties for this resource.
 
     :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
@@ -1175,7 +1175,7 @@ class MonitoringTagRulesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorProperties(_Model):
+class MonitorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the NewRelic Monitor resource.
 
     :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
@@ -1299,7 +1299,7 @@ class MonitorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NewRelicAccountProperties(_Model):
+class NewRelicAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the NewRelic account.
 
     :ivar user_id: User id.
@@ -1349,7 +1349,7 @@ class NewRelicAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1393,7 +1393,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class NewRelicMonitorResource(TrackedResource):
+class NewRelicMonitorResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Monitor Resource by NewRelic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1480,7 +1480,7 @@ class NewRelicMonitorResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NewRelicMonitorResourceUpdate(_Model):
+class NewRelicMonitorResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the NewRelicMonitorResource.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -1550,7 +1550,7 @@ class NewRelicMonitorResourceUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class NewRelicMonitorResourceUpdateProperties(_Model):
+class NewRelicMonitorResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the NewRelicMonitorResource.
 
     :ivar new_relic_account_properties: MarketplaceSubscriptionStatus of the resource.
@@ -1618,7 +1618,7 @@ class NewRelicMonitorResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NewRelicSingleSignOnProperties(_Model):
+class NewRelicSingleSignOnProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single sign on Info of the NewRelic account.
 
     :ivar single_sign_on_state: Single sign-on state. Known values are: "Initial", "Enable",
@@ -1673,7 +1673,7 @@ class NewRelicSingleSignOnProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1761,7 +1761,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OrganizationInfo(_Model):
+class OrganizationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Organization Info of the NewRelic account.
 
     :ivar organization_id: Organization id.
@@ -1791,7 +1791,7 @@ class OrganizationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrganizationProperties(_Model):
+class OrganizationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of Organizations.
 
     :ivar organization_id: organization id.
@@ -1835,7 +1835,7 @@ class OrganizationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrganizationResource(ProxyResource):
+class OrganizationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of a Organization resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1894,7 +1894,7 @@ class OrganizationResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PartnerBillingEntity(_Model):
+class PartnerBillingEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner Billing details associated with the resource.
 
     :ivar organization_id: The New Relic Organization Id.
@@ -1931,7 +1931,7 @@ class PartnerBillingEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlanData(_Model):
+class PlanData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan data of NewRelic Monitor resource.
 
     :ivar usage_type: Different usage type like PAYG/COMMITTED. this could be enum. Known values
@@ -1984,7 +1984,7 @@ class PlanData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlanDataProperties(_Model):
+class PlanDataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan details.
 
     :ivar plan_data: Plan details.
@@ -2030,7 +2030,7 @@ class PlanDataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlanDataResource(ProxyResource):
+class PlanDataResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of a PlanData resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2089,7 +2089,7 @@ class PlanDataResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ResubscribeProperties(_Model):
+class ResubscribeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resubscribe Properties.
 
     :ivar plan_id: Newly selected plan Id to create the new Marketplace subscription for
@@ -2162,7 +2162,7 @@ class ResubscribeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSData(_Model):
+class SaaSData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS details.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -2192,7 +2192,7 @@ class SaaSData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSResourceDetailsResponse(ProxyResource):
+class SaaSResourceDetailsResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SaaS resource details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2231,7 +2231,7 @@ class SaaSResourceDetailsResponse(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionList(_Model):
+class SubscriptionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to update subscriptions needed to be monitored by the NewRelic monitor resource.
 
     :ivar patch_operation: The operation for the patch on the resource. Known values are:
@@ -2280,7 +2280,7 @@ class SubscriptionList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchBillingRequest(_Model):
+class SwitchBillingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request of a switch billing Operation.
 
     :ivar azure_resource_id: Azure resource Id.
@@ -2329,7 +2329,7 @@ class SwitchBillingRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2396,7 +2396,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagRule(ProxyResource):
+class TagRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tag rule belonging to NewRelic account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2455,7 +2455,7 @@ class TagRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagRuleUpdate(_Model):
+class TagRuleUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the TagRule.
 
     :ivar properties: The updatable properties of the TagRule.
@@ -2505,7 +2505,7 @@ class TagRuleUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class TagRuleUpdateProperties(_Model):
+class TagRuleUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the TagRule.
 
     :ivar log_rules: Set of rules for sending logs for the Monitor resource.
@@ -2557,7 +2557,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserInfo(_Model):
+class UserInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User Info of NewRelic Monitor resource.
 
     :ivar first_name: First name.
@@ -2609,7 +2609,7 @@ class UserInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtensionPayload(_Model):
+class VMExtensionPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of payload to be passed while installing VM agent.
 
     :ivar ingestion_key: Ingestion key of the account.
@@ -2639,7 +2639,7 @@ class VMExtensionPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMInfo(_Model):
+class VMInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of VM Resource having NewRelic OneAgent installed.
 
     :ivar vm_id: Azure VM resource ID.

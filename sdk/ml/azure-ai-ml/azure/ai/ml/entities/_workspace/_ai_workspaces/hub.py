@@ -22,49 +22,49 @@ class Hub(Workspace):
 
     As a type of workspace, hub management is controlled by an MLClient's workspace operations.
 
-    :param name: Name of the hub.
-    :type name: str
-    :param description: Description of the hub.
-    :type description: str
-    :param tags: Tags of the hub.
-    :type tags: dict
-    :param display_name: Display name for the hub. This is non-unique within the resource group.
-    :type display_name: str
-    :param location: The location to create the hub in.
+    :keyword name: Name of the hub.
+    :paramtype name: str
+    :keyword description: Description of the hub.
+    :paramtype description: str
+    :keyword tags: Tags of the hub.
+    :paramtype tags: dict
+    :keyword display_name: Display name for the hub. This is non-unique within the resource group.
+    :paramtype display_name: str
+    :keyword location: The location to create the hub in.
         If not specified, the same location as the resource group will be used.
-    :type location: str
-    :param resource_group: Name of resource group to create the hub in.
-    :type resource_group: str
-    :param managed_network: Hub's Managed Network configuration
-    :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
-    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
-    :type storage_account: str
-    :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
-    :type key_vault: str
-    :param container_registry: The resource ID of an existing container registry
+    :paramtype location: str
+    :keyword resource_group: Name of resource group to create the hub in.
+    :paramtype resource_group: str
+    :keyword managed_network: Hub's Managed Network configuration
+    :paramtype managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :keyword storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+    :paramtype storage_account: str
+    :keyword key_vault: The resource ID of an existing key vault to use instead of creating a new one.
+    :paramtype key_vault: str
+    :keyword container_registry: The resource ID of an existing container registry
         to use instead of creating a new one.
-    :type container_registry: str
-    :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
+    :paramtype container_registry: str
+    :keyword customer_managed_key: Key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default.
-    :type customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
+    :paramtype customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
     :param image_build_compute: The name of the compute target to use for building environment.
         Docker images with the container registry is behind a VNet.
     :type image_build_compute: str
-    :param public_network_access: Whether to allow public endpoint connectivity.
+    :keyword public_network_access: Whether to allow public endpoint connectivity.
         when a workspace is private link enabled.
-    :type public_network_access: str
-    :param network_acls: The network access control list (ACL) settings of the workspace.
-    :type network_acls: ~azure.ai.ml.entities.NetworkAcls
-    :param identity: The hub's Managed Identity (user assigned, or system assigned).
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param primary_user_assigned_identity: The hub's primary user assigned identity.
-    :type primary_user_assigned_identity: str
-    :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+    :paramtype public_network_access: str
+    :keyword network_acls: The network access control list (ACL) settings of the workspace.
+    :paramtype network_acls: ~azure.ai.ml.entities.NetworkAcls
+    :keyword identity: The hub's Managed Identity (user assigned, or system assigned).
+    :paramtype identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :keyword primary_user_assigned_identity: The hub's primary user assigned identity.
+    :paramtype primary_user_assigned_identity: str
+    :keyword enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
-    :type enable_data_isolation: bool
-    :param default_resource_group: The resource group that will be used by projects
+    :paramtype enable_data_isolation: bool
+    :keyword default_resource_group: The resource group that will be used by projects
         created under this hub if no resource group is specified.
-    :type default_resource_group: str
+    :paramtype default_resource_group: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

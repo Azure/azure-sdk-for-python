@@ -32,10 +32,11 @@ def main():
 
     client.horizon_db_private_endpoint_connections.begin_delete(
         resource_group_name="exampleresourcegroup",
+        cluster_name="examplecluster",
         private_endpoint_connection_name="exampleprivateendpointconnection.1fa229cd-bf3f-47f0-8c49-afb36723997e",
     ).result()
 
 
-# x-ms-original-file: 2026-01-20-preview/PrivateEndpointConnections_Delete.json
+# x-ms-original-file: 2026-05-01-preview/PrivateEndpointConnections_Delete.json
 if __name__ == "__main__":
     main()

@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.DataBoxEdge": "2023-12-01"
   },
-  "commit": "3d9e7b114735f19e20b6db530db8c6bf4b3b0736",
+  "commit": "c35249d1029d9e572cccf12d7eebea0d463193e1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/DataBoxEdge",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

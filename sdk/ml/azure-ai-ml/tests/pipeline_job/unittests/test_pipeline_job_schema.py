@@ -12,19 +12,35 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    JobOutput as RestJobOutput,
+)
+from azure.core.serialization import as_attribute_dict
+from azure.ai.ml._restclient.arm_ml_service.models import MLTableJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    PipelineJob as RestPipelineJob,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import UriFolderJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    dump_yaml_to_file,
+    is_data_binding_expression,
+    load_yaml,
+)
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
+from azure.ai.ml.entities import (
+    CommandComponent,
+    Component,
+    Job,
+    PipelineJob,
+    SparkComponent,
+)
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -34,7 +50,9 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_characters,
 )
-from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
+from azure.ai.ml.entities._job.automl.search_space_utils import (
+    _convert_sweep_dist_dict_to_str_dict,
+)
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -119,7 +137,7 @@ class TestPipelineJobSchema:
             }
         }
         assert expected_rest_settings_overrides["expected_rest_overrides"]["distribution"] == (
-            hello_world_component_2.distribution._to_rest_object().as_dict()
+            as_attribute_dict(hello_world_component_2.distribution._to_rest_object())
         )
         assert {"FOO": "bar"} == hello_world_component_2.environment_variables
         assert {"nested_override": 5} == hello_world_component_2.additional_override
@@ -141,7 +159,10 @@ class TestPipelineJobSchema:
             assert input_name in rest_pipeline_properties.inputs
             if isinstance(input_value, dict):
                 input_value = input_value.get("value", None)
-            if not isinstance(rest_pipeline_properties.inputs[input_name], (MLTableJobInput, UriFolderJobInput)):
+            if not isinstance(
+                rest_pipeline_properties.inputs[input_name],
+                (MLTableJobInput, UriFolderJobInput),
+            ):
                 assert str(input_value) == rest_pipeline_properties.inputs[input_name].value
 
         # Check settings
@@ -594,7 +615,13 @@ class TestPipelineJobSchema:
 
     def assert_inline_component(self, component_job, component_dict):
         assert isinstance(
-            component_job.component, (CommandComponent, ParallelComponent, SparkComponent, DataTransferComponent)
+            component_job.component,
+            (
+                CommandComponent,
+                ParallelComponent,
+                SparkComponent,
+                DataTransferComponent,
+            ),
         )
         component = component_job.component or component_job.trial
         assert component._is_anonymous
@@ -653,7 +680,10 @@ class TestPipelineJobSchema:
     def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
         job = load_job(test_path)
-        assert isinstance(job.jobs["hello_world_inline_paralleljob"].identity, UserIdentityConfiguration)
+        assert isinstance(
+            job.jobs["hello_world_inline_paralleljob"].identity,
+            UserIdentityConfiguration,
+        )
 
     @classmethod
     def assert_settings_field(
@@ -796,7 +826,10 @@ class TestPipelineJobSchema:
                             "job_input_type": "literal",
                             "value": "${{parent.jobs.hello_world.outputs.job_output}}",
                         },
-                        "test2": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"},
+                        "test2": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.job_data_path}}",
+                        },
                     },
                 },
                 id="pipeline_job_with_sweep_job_with_input_bindings",
@@ -1149,7 +1182,10 @@ class TestPipelineJobSchema:
     def test_dump_distribution(self):
         # pipeline level test is in test_pipeline_job_create_with_distribution_component
         from azure.ai.ml import TensorFlowDistribution
-        from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema
+        from azure.ai.ml._schema.job.distribution import (
+            PyTorchDistributionSchema,
+            TensorFlowDistributionSchema,
+        )
 
         distribution_dict = {
             "type": "tensorflow",
@@ -1161,11 +1197,13 @@ class TestPipelineJobSchema:
         distribution_obj = TensorFlowDistribution(**distribution_dict)
 
         with pytest.raises(
-            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+            ValidationError,
+            match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema",
         ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
         with pytest.raises(
-            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+            ValidationError,
+            match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema",
         ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
@@ -1286,7 +1324,7 @@ class TestPipelineJobSchema:
         pipeline_entity = load_job(source=test_path)
         # check component of pipeline job is expected
         for name, expected_dict in expected_components.items():
-            actual_dict = pipeline_entity.jobs[name].component._to_rest_object().as_dict()
+            actual_dict = as_attribute_dict(pipeline_entity.jobs[name].component._to_rest_object())
             omit_fields = [
                 "name",
                 # dumped code will be an absolute path, tested in other tests
@@ -1345,7 +1383,7 @@ class TestPipelineJobSchema:
             },
         }
         for name, expected_dict in expected_components.items():
-            actual_dict = pipeline_entity.jobs[name].component._to_rest_object().as_dict()
+            actual_dict = as_attribute_dict(pipeline_entity.jobs[name].component._to_rest_object())
             omit_fields = [
                 "name",
             ]
@@ -1417,7 +1455,11 @@ class TestPipelineJobSchema:
         ],
     )
     def test_automl_node_in_pipeline_load_dump(
-        self, test_path, job_key, mock_machinelearning_client: MLClient, mocker: MockFixture
+        self,
+        test_path,
+        job_key,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
     ):
         pipeline: PipelineJob = load_job(source=test_path)
 
@@ -1425,9 +1467,13 @@ class TestPipelineJobSchema:
             original_dict = yaml.safe_load(f)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         # Prevent token refresh check which fails on Windows with Mock credentials
         mocker.patch(
             "azure.mgmt.core.policies._authentication.ARMChallengeAuthenticationPolicy._need_new_token",
@@ -1439,7 +1485,15 @@ class TestPipelineJobSchema:
         automl_job_dict = automl_job._to_dict(inside_pipeline=True)
         pipeline_job_dict = json.loads(json.dumps(automl_job_dict))
         original_job_dict = json.loads(json.dumps(original_dict["jobs"][job_key]))
-        omit_fields = ["display_name", "experiment_name", "log_verbosity", "name", "outputs", "properties", "tags"]
+        omit_fields = [
+            "display_name",
+            "experiment_name",
+            "log_verbosity",
+            "name",
+            "outputs",
+            "properties",
+            "tags",
+        ]
         pipeline_job_dict = pydash.omit(pipeline_job_dict, omit_fields)
         original_job_dict = pydash.omit(original_job_dict, omit_fields)
         if job_key == "automl_text_ner":
@@ -1482,7 +1536,12 @@ class TestPipelineJobSchema:
         ],
     )
     def test_automl_image_node_in_pipeline_load_dump(
-        self, test_path, job_key, mock_machinelearning_client: MLClient, mocker: MockFixture, tmp_path: Path
+        self,
+        test_path,
+        job_key,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        tmp_path: Path,
     ):
         with open(test_path) as f:
             original_dict = yaml.safe_load(f)
@@ -1496,7 +1555,11 @@ class TestPipelineJobSchema:
         }
 
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         # # Test AMS Gradient
@@ -1506,7 +1569,11 @@ class TestPipelineJobSchema:
             "values": [1.2, 2.5],
         }
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["ams_gradient"] = True
@@ -1520,7 +1587,11 @@ class TestPipelineJobSchema:
             "values": ["random_lr_scheduler1", "random_lr_scheduler2"],
         }
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = camel_to_snake(
@@ -1531,7 +1602,10 @@ class TestPipelineJobSchema:
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = {
             "type": "choice",
-            "values": [camel_to_snake(LearningRateScheduler.WARMUP_COSINE), camel_to_snake(LearningRateScheduler.STEP)],
+            "values": [
+                camel_to_snake(LearningRateScheduler.WARMUP_COSINE),
+                camel_to_snake(LearningRateScheduler.STEP),
+            ],
         }
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
         self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
@@ -1543,7 +1617,11 @@ class TestPipelineJobSchema:
             "values": ["random1", "random2"],
         }
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = camel_to_snake(StochasticOptimizer.ADAM)
@@ -1552,7 +1630,10 @@ class TestPipelineJobSchema:
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = {
             "type": "choice",
-            "values": [camel_to_snake(StochasticOptimizer.SGD), camel_to_snake(StochasticOptimizer.ADAM)],
+            "values": [
+                camel_to_snake(StochasticOptimizer.SGD),
+                camel_to_snake(StochasticOptimizer.ADAM),
+            ],
         }
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
         self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
@@ -1561,17 +1642,29 @@ class TestPipelineJobSchema:
         original_dict_copy = deepcopy(original_dict)
         original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = 1
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = 100.5
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = True
         self._raise_error_on_wrong_schema(
-            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            test_yaml_path,
+            original_dict_copy,
+            job_key,
+            mock_machinelearning_client,
+            mocker,
         )
 
         if "image_" in job_key and "classification" in job_key:
@@ -1640,7 +1733,10 @@ class TestPipelineJobSchema:
         ],
     )
     def test_parallel_pipeline_not_private_preview_features(self, test_path, mocker: MockFixture):
-        mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=False)
+        mocker.patch(
+            "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled",
+            return_value=False,
+        )
         job: PipelineJob = load_job(source=test_path)
         try:
             job._to_rest_object()
@@ -1751,7 +1847,9 @@ class TestPipelineJobSchema:
             },
         }
 
-    def test_command_job_node_services_in_pipeline_with_no_component_with_properties(self):
+    def test_command_job_node_services_in_pipeline_with_no_component_with_properties(
+        self,
+    ):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job_with_properties.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
@@ -1851,8 +1949,14 @@ class TestPipelineJobSchema:
         assert job._validate().passed
         job_dict = job._to_dict()
         assert job_dict["outputs"] == {
-            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
-            "output_path": {"path": "azureml://datastores/mock/paths/my_output_file.txt", "type": "uri_file"},
+            "not_exists": {
+                "path": "azureml://datastores/mock/paths/not_exists.txt",
+                "type": "uri_file",
+            },
+            "output_path": {
+                "path": "azureml://datastores/mock/paths/my_output_file.txt",
+                "type": "uri_file",
+            },
         }
 
         # Assert the output_path:None not override original component output value
@@ -1861,7 +1965,10 @@ class TestPipelineJobSchema:
         assert job._validate().passed
         job_dict = job._to_dict()
         assert job_dict["outputs"] == {
-            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "not_exists": {
+                "path": "azureml://datastores/mock/paths/not_exists.txt",
+                "type": "uri_file",
+            },
             "output_path": {"type": "uri_folder"},  # uri_folder from component output
         }
 
@@ -1876,7 +1983,10 @@ class TestPipelineJobSchema:
         DATABINDING_EXPRESSION_TEST_CASES,
     )
     def test_pipeline_job_with_data_binding_expression(
-        self, client: MLClient, pipeline_job_path: str, expected_error: Optional[Exception]
+        self,
+        client: MLClient,
+        pipeline_job_path: str,
+        expected_error: Optional[Exception],
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path)
         pipeline._to_rest_object()

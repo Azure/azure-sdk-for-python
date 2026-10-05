@@ -1,15 +1,28 @@
 from pathlib import Path
 
+import json
+
 import pytest
 from test_utilities.utils import omit_with_wildcard
 
+from azure.core.serialization import as_attribute_dict
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
+from azure.ai.ml.entities._job.pipeline._io.base import (
+    _resolve_builders_2_data_bindings,
+)
 from azure.ai.ml.exceptions import UserErrorException
 
 from .._util import _DSL_TIMEOUT_SECOND, expand_pipeline_nodes
+
+
+def _rest_props_snake(rest_props):
+    # ``as_attribute_dict`` yields the snake_case attribute view of the arm_ml_service hybrid model; the
+    # ``json`` round-trip with ``default=str`` stringifies any residual data-binding objects left in
+    # free-form nested dicts (as the legacy msrest ``as_dict`` did) so downstream deepcopy/compare work.
+    return json.loads(json.dumps(as_attribute_dict(rest_props), default=str))
+
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -54,7 +67,11 @@ class TestInputOutputBuilder:
             "data1": "${{parent.inputs.input1}}",
             "data2": {"1": "${{parent.inputs.input2}}"},
             "data3": ["${{parent.inputs.input3}}"],
-            "data4": [{"1": "${{parent.inputs.input1}}"}, "${{parent.inputs.input2}}", ["${{parent.inputs.input3}}"]],
+            "data4": [
+                {"1": "${{parent.inputs.input1}}"},
+                "${{parent.inputs.input2}}",
+                ["${{parent.inputs.input3}}"],
+            ],
             "data5": {
                 "1": ["${{parent.inputs.input1}}"],
                 "2": {"1": "${{parent.inputs.input2}}"},
@@ -74,31 +91,56 @@ class TestInputOutputBuilder:
             assert isinstance(job_in_path.result(), Input)
             node1 = component_func(component_in_number=job_in_number, component_in_path=job_in_path)
             # calling result() will convert pipeline input to actual value
-            node2 = component_func(component_in_number=job_in_number.result(), component_in_path=job_in_path.result())
-            return {"output1": node1.outputs.component_out_path, "output2": node2.outputs.component_out_path}
+            node2 = component_func(
+                component_in_number=job_in_number.result(),
+                component_in_path=job_in_path.result(),
+            )
+            return {
+                "output1": node1.outputs.component_out_path,
+                "output2": node2.outputs.component_out_path,
+            }
 
         pipeline_job1 = my_pipeline(job_in_number=1, job_in_path=Input(path="fake_path1"))
 
         rest_pipeline_job = omit_with_wildcard(
-            pipeline_job1._to_rest_object().properties.as_dict(), *common_omit_fields
+            _rest_props_snake(pipeline_job1._to_rest_object().properties), *common_omit_fields
         )
         expected_pipeline_job1 = {
             "node1": {
                 "inputs": {
-                    "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_number}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "node1",
-                "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
+                "outputs": {
+                    "component_out_path": {
+                        "type": "literal",
+                        "value": "${{parent.outputs.output1}}",
+                    }
+                },
                 "type": "command",
             },
             "node2": {
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
-                    "component_in_path": {"job_input_type": "uri_folder", "uri": "fake_path1"},
+                    "component_in_path": {
+                        "job_input_type": "uri_folder",
+                        "uri": "fake_path1",
+                    },
                 },
                 "name": "node2",
-                "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.output2}}"}},
+                "outputs": {
+                    "component_out_path": {
+                        "type": "literal",
+                        "value": "${{parent.outputs.output2}}",
+                    }
+                },
                 "type": "command",
             },
         }
@@ -107,26 +149,45 @@ class TestInputOutputBuilder:
         pipeline_job2 = my_pipeline(job_in_number=2, job_in_path=Input(path="fake_path2"))
 
         rest_pipeline_job = omit_with_wildcard(
-            pipeline_job2._to_rest_object().properties.as_dict(), *common_omit_fields
+            _rest_props_snake(pipeline_job2._to_rest_object().properties), *common_omit_fields
         )
 
         expected_pipeline_job2 = {
             "node1": {
                 "inputs": {
-                    "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_number}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "node1",
-                "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
+                "outputs": {
+                    "component_out_path": {
+                        "type": "literal",
+                        "value": "${{parent.outputs.output1}}",
+                    }
+                },
                 "type": "command",
             },
             "node2": {
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "2"},
-                    "component_in_path": {"job_input_type": "uri_folder", "uri": "fake_path2"},
+                    "component_in_path": {
+                        "job_input_type": "uri_folder",
+                        "uri": "fake_path2",
+                    },
                 },
                 "name": "node2",
-                "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.output2}}"}},
+                "outputs": {
+                    "component_out_path": {
+                        "type": "literal",
+                        "value": "${{parent.outputs.output2}}",
+                    }
+                },
                 "type": "command",
             },
         }
@@ -137,7 +198,7 @@ class TestInputOutputBuilder:
         pipeline_job1.jobs["node2"].inputs["component_in_path"].path == "fake_path1"
 
         rest_pipeline_job = omit_with_wildcard(
-            pipeline_job1._to_rest_object().properties.as_dict(), *common_omit_fields
+            _rest_props_snake(pipeline_job1._to_rest_object().properties), *common_omit_fields
         )
         assert rest_pipeline_job["jobs"] == expected_pipeline_job1
 
@@ -166,22 +227,34 @@ class TestInputOutputBuilder:
         pipeline_job2 = my_pipeline_level_2(job_in_number=2, job_in_path=Input(path="fake_path2"))
 
         rest_pipeline_job = omit_with_wildcard(
-            pipeline_job2._to_rest_object().properties.as_dict(), *common_omit_fields
+            _rest_props_snake(pipeline_job2._to_rest_object().properties), *common_omit_fields
         )
 
         expected_pipeline_job = {
             "microsoftsamples_command_component_basic": {
                 "inputs": {
-                    "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_number}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "microsoftsamples_command_component_basic",
                 "type": "command",
             },
             "my_pipeline_level_1": {
                 "inputs": {
-                    "job_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
-                    "job_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "job_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_number}}",
+                    },
+                    "job_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "my_pipeline_level_1",
                 "type": "pipeline",
@@ -219,7 +292,10 @@ class TestInputOutputBuilder:
         def another_nodes_output():
             node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
             node1.name = "node1"
-            node2 = component_func1(component_in_number=2, component_in_path=node1.outputs.component_out_path)
+            node2 = component_func1(
+                component_in_number=2,
+                component_in_path=node1.outputs.component_out_path,
+            )
             node2.name = "node2"
             assert node2.inputs.component_in_path._get_data_owner().name == "node1"
 
@@ -293,7 +369,10 @@ class TestInputOutputBuilder:
         @pipeline
         def parent_pipeline():
             node1 = sub_pipeline(component_in_path=Input(path="test_path"))
-            node3 = component_func1(component_in_number=3, component_in_path=node1.outputs.component_out_path)
+            node3 = component_func1(
+                component_in_number=3,
+                component_in_path=node1.outputs.component_out_path,
+            )
             assert node3.inputs.component_in_path._get_data_owner().name == "sub_node"
             return node3
 
@@ -317,7 +396,10 @@ class TestInputOutputBuilder:
         @pipeline
         def parent_pipeline():
             node1 = sub_pipeline_2(component_in_path=Input(path="test_path"))
-            node3 = component_func1(component_in_number=3, component_in_path=node1.outputs.component_out_path)
+            node3 = component_func1(
+                component_in_number=3,
+                component_in_path=node1.outputs.component_out_path,
+            )
             assert node3.inputs.component_in_path._get_data_owner().name == "sub_node_1"
             return node3
 
@@ -451,6 +533,10 @@ class TestInputOutputBuilder:
 
         assert_node_owners_expected(
             pipeline_job=my_pipeline,
-            expected_owners={"node1": None, "inner_node": "node1", "node3": "inner_node"},
+            expected_owners={
+                "node1": None,
+                "inner_node": "node1",
+                "node3": "inner_node",
+            },
             input_name="component_in_path",
         )

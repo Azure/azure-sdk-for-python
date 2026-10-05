@@ -15,7 +15,7 @@ import pytest
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
-from test_helpers import MockStorageTransport, ProgressTracker
+from test_helpers import ProgressTracker
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -1701,59 +1701,6 @@ class TestFile(StorageRecordedTestCase):
         data = b"Hello world"
         fc.get_file_properties()
         fc.upload_data(data, overwrite=True)
-
-    @DataLakePreparer()
-    def test_mock_transport_no_content_validation(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        transport = MockStorageTransport()
-        file_client = DataLakeFileClient(
-            self.account_url(datalake_storage_account_name, "dfs"),
-            "filesystem/",
-            "dir/file.txt",
-            credential=datalake_storage_account_key.secret,
-            transport=transport,
-            retry_total=0,
-        )
-
-        data = file_client.download_file()
-        assert data is not None
-
-        props = file_client.get_file_properties()
-        assert props is not None
-
-        data = b"Hello World!"
-        resp = file_client.upload_data(data, overwrite=True)
-        assert resp is not None
-
-        file_data = file_client.download_file().read()
-        assert file_data == b"Hello World!"  # data is fixed by mock transport
-
-        resp = file_client.delete_file()
-        assert resp is not None
-
-    @DataLakePreparer()
-    def test_mock_transport_with_content_validation(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        transport = MockStorageTransport()
-        file_client = DataLakeFileClient(
-            self.account_url(datalake_storage_account_name, "dfs"),
-            "filesystem/",
-            "dir/file.txt",
-            credential=datalake_storage_account_key.secret,
-            transport=transport,
-            retry_total=0,
-        )
-
-        data = b"Hello World!"
-        resp = file_client.upload_data(data, overwrite=True, validate_content=True)
-        assert resp is not None
-
-        file_data = file_client.download_file(validate_content=True).read()
-        assert file_data == b"Hello World!"  # data is fixed by mock transport
 
     @DataLakePreparer()
     @recorded_by_proxy

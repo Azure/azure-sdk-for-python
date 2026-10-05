@@ -15,16 +15,17 @@ Pass any text source to ``text=``:
 
 from __future__ import annotations
 
+
 import inspect
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union
+from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union, cast
 
-from ..models import _generated as generated_models
+from .. import models as response_models
 from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse, ResponseObject
+
 
 #: Union of all accepted text sources.
 TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
@@ -76,27 +77,27 @@ class TextResponse:
     def __init__(
         self,
         context: "ResponseContext",
-        request: "CreateResponse",
+        request: "response_models.CreateResponse",
         *,
         text: TextSource,
-        configure: Callable[["ResponseObject"], None] | None = None,
+        configure: Callable[["response_models.ResponseObject"], None] | None = None,
     ) -> None:
         self._context = context
         self._request = request
         self._text = text
         self._configure = configure
 
-    def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    def __aiter__(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         return self._generate()
 
-    async def _generate(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def _generate(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         stream = ResponseEventStream(
             response_id=self._context.response_id,
             request=self._request,
         )
 
         if self._configure is not None:
-            self._configure(stream.response)
+            self._configure(cast("response_models.ResponseObject", stream.response))
 
         yield stream.emit_created()
         yield stream.emit_in_progress()

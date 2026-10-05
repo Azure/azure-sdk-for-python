@@ -9,11 +9,16 @@ from typing import Any, Dict, Optional, cast
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AllNodes
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.arm_ml_service.models import AllNodes
+from azure.ai.ml._restclient.arm_ml_service.models import JobService as RestJobService
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -84,11 +89,14 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
             )
 
     def _to_rest_job_service(self, updated_properties: Optional[Dict[str, str]] = None) -> RestJobService:
+        # ``status`` is intentionally NOT set on the wire object. On the v2023_04 msrest model it was a
+        # readonly attribute that ``serialize()`` silently dropped, so the submitted body never carried it.
+        # The shared arm_ml_service model exposes ``status`` as a writable field, so omitting it here keeps
+        # the wire payload byte-identical to the previous behavior.
         return RestJobService(
             endpoint=self.endpoint,
-            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None,
+            job_service_type=(JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None),
             nodes=AllNodes() if self.nodes else None,
-            status=self.status,
             port=self.port,
             properties=updated_properties if updated_properties else self.properties,
         )

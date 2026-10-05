@@ -63,6 +63,14 @@ def main():
                     "managedConfigurationSettings": {
                         "imageConfigurationSettings": {
                             "imageName": "akri-connectors/rest",
+                            "readinessProbe": {
+                                "exec": {"command": ["cat", "/tmp/ready"]},
+                                "failureThreshold": 3,
+                                "initialDelaySeconds": 5,
+                                "periodSeconds": 10,
+                                "successThreshold": 1,
+                                "timeoutSeconds": 2,
+                            },
                             "registrySettings": {
                                 "containerRegistrySettings": {"registry": "akribuilds.azurecr.io"},
                                 "registrySettingsType": "ContainerRegistry",
@@ -79,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/AkriConnectorTemplate_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-07-01/AkriConnectorTemplate_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

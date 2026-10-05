@@ -414,7 +414,7 @@ class MaintenanceDayOfWeekType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of MetricAggregationType."""
+    """Metric aggregation type."""
 
     NOT_SPECIFIED = "NotSpecified"
     """NotSpecified."""
@@ -511,6 +511,59 @@ class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """QuotaId."""
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
     """NotAvailableForSubscription."""
+
+
+class RebalanceJobAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The administrative status of the rebalance job. Active means the job is running normally.
+    Cancel requests the job to stop.
+    """
+
+    ACTIVE = "Active"
+    """The rebalance job is running normally."""
+    CANCEL = "Cancel"
+    """Request the rebalance job to stop."""
+
+
+class RebalanceJobPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state for the rebalance job."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """Resource is being created."""
+    UPDATING = "Updating"
+    """Resource is being updated."""
+    DELETING = "Deleting"
+    """Resource is being deleted."""
+
+
+class RebalanceJobStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of the rebalance job. InProgress indicates the rebalance is running on
+    the cluster. Cancelling indicates a cancel has been requested. Canceled indicates the rebalance
+    was cancelled. Completed indicates the rebalance finished successfully (imbalance below low
+    watermark). Failed indicates the rebalance was unable to complete due to a fatal error.
+    Deleting indicates the job is being cleaned up during deletion. RollingBack indicates the
+    orchestrator is rolling back provisioned resources after a failure.
+    """
+
+    IN_PROGRESS = "InProgress"
+    """The rebalance job is currently running on the cluster."""
+    CANCELLING = "Cancelling"
+    """A cancel has been requested and the job is stopping."""
+    CANCELED = "Canceled"
+    """The rebalance job was canceled before completion."""
+    COMPLETED = "Completed"
+    """The rebalance job finished successfully."""
+    FAILED = "Failed"
+    """The rebalance job failed due to a fatal error."""
+    DELETING = "Deleting"
+    """The job is being cleaned up during deletion."""
+    ROLLING_BACK = "RollingBack"
+    """The orchestrator is rolling back provisioned resources after a failure."""
 
 
 class StorageTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

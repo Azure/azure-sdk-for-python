@@ -122,5 +122,5 @@
         "azure.mgmt.sqlvirtualmachine.operations.SqlVirtualMachineTroubleshootOperations.begin_troubleshoot": "Microsoft.SqlVirtualMachine.SqlVirtualMachines.troubleshoot",
         "azure.mgmt.sqlvirtualmachine.aio.operations.SqlVirtualMachineTroubleshootOperations.begin_troubleshoot": "Microsoft.SqlVirtualMachine.SqlVirtualMachines.troubleshoot"
     },
-    "CrossLanguageVersion": "1b8fa6253c13"
+    "CrossLanguageVersion": "eeff62122fe4"
 }

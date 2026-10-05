@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,20 +24,27 @@ from .operations import (
     CassandraClustersOperations,
     CassandraDataCentersOperations,
     CassandraResourcesOperations,
+    ChaosFaultOperations,
     CollectionOperations,
     CollectionPartitionOperations,
     CollectionPartitionRegionOperations,
     CollectionRegionOperations,
+    CopyJobsOperations,
+    DataTransferJobsOperations,
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
+    FleetAnalyticsOperations,
     FleetOperations,
     FleetspaceAccountOperations,
     FleetspaceOperations,
+    GarnetClustersOperations,
+    GraphResourcesOperations,
     GremlinResourcesOperations,
     LocationsOperations,
     MongoDBResourcesOperations,
     MongoMIResourcesOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     NotebookWorkspacesOperations,
     Operations,
     PartitionKeyRangeIdOperations,
@@ -59,8 +67,15 @@ from .operations import (
     RestorableTableResourcesOperations,
     RestorableTablesOperations,
     ServiceOperations,
+    SoftDeletedDatabaseAccountsOperations,
+    SoftDeletedSqlContainersOperations,
+    SoftDeletedSqlDatabasesOperations,
     SqlResourcesOperations,
     TableResourcesOperations,
+    ThroughputPoolAccountOperations,
+    ThroughputPoolAccountsOperations,
+    ThroughputPoolOperations,
+    ThroughputPoolsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -73,13 +88,17 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
+class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Throughput Pool REST API.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cosmosdb.aio.operations.Operations
     :ivar database_accounts: DatabaseAccountsOperations operations
     :vartype database_accounts: azure.mgmt.cosmosdb.aio.operations.DatabaseAccountsOperations
+    :ivar copy_jobs: CopyJobsOperations operations
+    :vartype copy_jobs: azure.mgmt.cosmosdb.aio.operations.CopyJobsOperations
+    :ivar graph_resources: GraphResourcesOperations operations
+    :vartype graph_resources: azure.mgmt.cosmosdb.aio.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -90,6 +109,14 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype cassandra_resources: azure.mgmt.cosmosdb.aio.operations.CassandraResourcesOperations
     :ivar gremlin_resources: GremlinResourcesOperations operations
     :vartype gremlin_resources: azure.mgmt.cosmosdb.aio.operations.GremlinResourcesOperations
+    :ivar data_transfer_jobs: DataTransferJobsOperations operations
+    :vartype data_transfer_jobs: azure.mgmt.cosmosdb.aio.operations.DataTransferJobsOperations
+    :ivar garnet_clusters: GarnetClustersOperations operations
+    :vartype garnet_clusters: azure.mgmt.cosmosdb.aio.operations.GarnetClustersOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.cosmosdb.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
     :vartype notebook_workspaces: azure.mgmt.cosmosdb.aio.operations.NotebookWorkspacesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -98,6 +125,17 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cosmosdb.aio.operations.PrivateLinkResourcesOperations
+    :ivar soft_deleted_database_accounts: SoftDeletedDatabaseAccountsOperations operations
+    :vartype soft_deleted_database_accounts:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedDatabaseAccountsOperations
+    :ivar soft_deleted_sql_databases: SoftDeletedSqlDatabasesOperations operations
+    :vartype soft_deleted_sql_databases:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlDatabasesOperations
+    :ivar soft_deleted_sql_containers: SoftDeletedSqlContainersOperations operations
+    :vartype soft_deleted_sql_containers:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlContainersOperations
+    :ivar chaos_fault: ChaosFaultOperations operations
+    :vartype chaos_fault: azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations
     :ivar database: DatabaseOperations operations
     :vartype database: azure.mgmt.cosmosdb.aio.operations.DatabaseOperations
     :ivar collection: CollectionOperations operations
@@ -169,10 +207,22 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.cosmosdb.aio.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.aio.operations.ServiceOperations
+    :ivar throughput_pool: ThroughputPoolOperations operations
+    :vartype throughput_pool: azure.mgmt.cosmosdb.aio.operations.ThroughputPoolOperations
+    :ivar throughput_pools: ThroughputPoolsOperations operations
+    :vartype throughput_pools: azure.mgmt.cosmosdb.aio.operations.ThroughputPoolsOperations
+    :ivar throughput_pool_account: ThroughputPoolAccountOperations operations
+    :vartype throughput_pool_account:
+     azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountOperations
+    :ivar throughput_pool_accounts: ThroughputPoolAccountsOperations operations
+    :vartype throughput_pool_accounts:
+     azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountsOperations
     :ivar mongo_mi_resources: MongoMIResourcesOperations operations
     :vartype mongo_mi_resources: azure.mgmt.cosmosdb.aio.operations.MongoMIResourcesOperations
     :ivar fleet: FleetOperations operations
     :vartype fleet: azure.mgmt.cosmosdb.aio.operations.FleetOperations
+    :ivar fleet_analytics: FleetAnalyticsOperations operations
+    :vartype fleet_analytics: azure.mgmt.cosmosdb.aio.operations.FleetAnalyticsOperations
     :ivar fleetspace: FleetspaceOperations operations
     :vartype fleetspace: azure.mgmt.cosmosdb.aio.operations.FleetspaceOperations
     :ivar fleetspace_account: FleetspaceAccountOperations operations
@@ -186,9 +236,10 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-03-15"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -247,6 +298,8 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.copy_jobs = CopyJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -258,6 +311,13 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
         self.gremlin_resources = GremlinResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.data_transfer_jobs = DataTransferJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.garnet_clusters = GarnetClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -267,6 +327,16 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.soft_deleted_database_accounts = SoftDeletedDatabaseAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_sql_databases = SoftDeletedSqlDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_sql_containers = SoftDeletedSqlContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.chaos_fault = ChaosFaultOperations(self._client, self._config, self._serialize, self._deserialize)
         self.database = DatabaseOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collection_region = CollectionRegionOperations(
@@ -338,10 +408,21 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.throughput_pool = ThroughputPoolOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.throughput_pools = ThroughputPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.throughput_pool_account = ThroughputPoolAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.throughput_pool_accounts = ThroughputPoolAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.mongo_mi_resources = MongoMIResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.fleet = FleetOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet_analytics = FleetAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleetspace = FleetspaceOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleetspace_account = FleetspaceAccountOperations(
             self._client, self._config, self._serialize, self._deserialize

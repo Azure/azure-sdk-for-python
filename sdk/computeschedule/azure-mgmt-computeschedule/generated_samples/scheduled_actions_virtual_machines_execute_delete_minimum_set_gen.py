@@ -32,13 +32,12 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_execute_delete(
-        locationparameter="east",
+        locationparameter="eastus2",
         request_body={
             "executionParameters": {},
             "resources": {
                 "ids": [
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource3",
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource4",
+                    "/subscriptions/732116BD-AF31-4E74-9283-B387C44B4A44/resourceGroups/rgcomputeschedule/providers/Microsoft.Compute/virtualMachines/vm1"
                 ]
             },
         },
@@ -46,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesExecuteDelete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_VirtualMachinesExecuteDelete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

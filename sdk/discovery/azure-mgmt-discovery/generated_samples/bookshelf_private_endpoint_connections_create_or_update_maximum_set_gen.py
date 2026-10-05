@@ -32,14 +32,14 @@ def main():
 
     response = client.bookshelf_private_endpoint_connections.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        bookshelf_name="a65f3c23bf2baa5bd4",
+        bookshelf_name="10ae70fbcf775d1e88",
         private_endpoint_connection_name="connection",
         resource={
             "properties": {
                 "privateEndpoint": {},
                 "privateLinkServiceConnectionState": {
-                    "actionsRequired": "vgqhrxvmviabfgmafqtbej",
-                    "description": "lknyprq",
+                    "actionsRequired": "xbshniighjomlygqk",
+                    "description": "km",
                     "status": "Pending",
                 },
             }
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/BookshelfPrivateEndpointConnections_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/BookshelfPrivateEndpointConnections_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ variables:
   - name: WINDOWSVMIMAGE
     value: windows-2022
   - name: MACVMIMAGE
-    value: macos-latest
+    value: macos-15-arm64
 
   # Values required for pool.os field in 1es pipeline templates
   - name: LINUXOS
@@ -24,5 +24,4 @@ variables:
     value: windows
   - name: MACOS
     value: macOS
-
 

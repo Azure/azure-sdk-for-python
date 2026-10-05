@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -51,6 +51,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                             "name": "str",
                             "properties": {
                                 "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                "enableConnectionTracking": bool,
                                 "gatewayLoadBalancer": {"id": "str"},
                                 "inboundNatPools": [{"id": "str"}],
                                 "inboundNatRules": [{"id": "str"}],
@@ -485,6 +486,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -505,6 +509,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -624,6 +631,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -648,6 +658,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -818,6 +831,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1308,6 +1324,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1437,7 +1456,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 },
                                             },
                                         },
-                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                        "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                         "linkedPublicIPAddress": ...,
                                         "migrationPhase": "str",
                                         "natGateway": {
@@ -1469,6 +1488,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         "publicIPPrefix": {"id": "str"},
                                         "resourceGuid": "str",
                                         "servicePublicIPAddress": ...,
+                                        "upgradedToV2": bool,
                                     },
                                     "sku": {"name": "str", "tier": "str"},
                                     "tags": {"str": "str"},
@@ -1547,7 +1567,13 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "idleTimeoutInMinutes": 0,
                                                             "ipAddress": "str",
                                                             "ipConfiguration": ...,
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -1579,6 +1605,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -1884,7 +1911,11 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1927,6 +1958,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1989,6 +2021,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -2009,6 +2044,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -2117,6 +2155,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -2137,6 +2178,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -2299,6 +2343,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -2519,6 +2564,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2566,6 +2612,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2837,6 +2884,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -3345,6 +3393,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -3365,6 +3416,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -3429,6 +3483,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                         "id": "str"
                                                                                                     }
                                                                                                 },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3521,6 +3576,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3545,6 +3603,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3715,6 +3776,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -3995,6 +4059,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4080,6 +4145,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -4209,7 +4277,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 },
                                             },
                                         },
-                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                        "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                         "linkedPublicIPAddress": ...,
                                         "migrationPhase": "str",
                                         "natGateway": {
@@ -4241,6 +4309,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         "publicIPPrefix": {"id": "str"},
                                         "resourceGuid": "str",
                                         "servicePublicIPAddress": ...,
+                                        "upgradedToV2": bool,
                                     },
                                     "sku": {"name": "str", "tier": "str"},
                                     "tags": {"str": "str"},
@@ -4318,7 +4387,13 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "idleTimeoutInMinutes": 0,
                                                             "ipAddress": "str",
                                                             "ipConfiguration": ...,
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -4350,6 +4425,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -4539,6 +4615,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -4559,6 +4638,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -4616,6 +4698,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -4667,6 +4750,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -4716,6 +4800,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -4791,6 +4876,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4811,6 +4899,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4973,6 +5064,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -5225,6 +5317,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -5280,6 +5373,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -5331,6 +5425,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -5401,6 +5496,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -5548,7 +5644,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5562,7 +5658,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -5575,7 +5671,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
             await self.client.virtual_network_taps.begin_delete(
                 resource_group_name=resource_group.name,
                 tap_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5587,7 +5683,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
     async def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -5597,7 +5693,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_virtual_network_taps_list_all(self, resource_group):
         response = self.client.virtual_network_taps.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

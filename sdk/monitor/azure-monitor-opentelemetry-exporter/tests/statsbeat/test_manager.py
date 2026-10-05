@@ -96,6 +96,8 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
             self.assertEqual(config.region, "westus")
             self.assertEqual(config.instrumentation_key, "test-key")
+            # config.disable_offline_storage mirrors the user's setting (used only for DISK_RETRY
+            # reporting); statsbeat's own exporter never persists to disk regardless (see _do_initialize).
             self.assertTrue(config.disable_offline_storage)
             self.assertIsNotNone(config.credential)
             self.assertEqual(config.distro_version, "1.0.0")
@@ -140,11 +142,13 @@ class TestStatsbeatConfig(unittest.TestCase):
             region="westus",
             instrumentation_key="test-key",
             credential="test_credential",
-            disable_offline_storage=False,
+            disable_offline_storage=True,
             distro_version="1.0.0",
         )
 
-        config_dict = {"disable_offline_storage": "true"}
+        # A conflicting value in the dict must be ignored: the customer's setting is preserved from
+        # base_config, and statsbeat's own storage is never controlled by OneSettings.
+        config_dict = {"disable_offline_storage": "false"}
 
         new_config = StatsbeatConfig.from_config(base_config, config_dict)
 

@@ -4274,23 +4274,6 @@ namespace azure.mgmt.servicebus.operations
 
 namespace azure.mgmt.servicebus.types
 
-    class azure.mgmt.servicebus.types.AccessKeys(TypedDict, total=False):
-        key "aliasPrimaryConnectionString": str
-        key "aliasSecondaryConnectionString": str
-        key "keyName": str
-        key "primaryConnectionString": str
-        key "primaryKey": str
-        key "secondaryConnectionString": str
-        key "secondaryKey": str
-        alias_primary_connection_string: str
-        alias_secondary_connection_string: str
-        key_name: str
-        primary_connection_string: str
-        primary_key: str
-        secondary_connection_string: str
-        secondary_key: str
-
-
     class azure.mgmt.servicebus.types.Action(TypedDict, total=False):
         key "compatibilityLevel": int
         key "requiresPreprocessing": bool
@@ -4331,15 +4314,6 @@ namespace azure.mgmt.servicebus.types
     class azure.mgmt.servicebus.types.CheckNameAvailability(TypedDict, total=False):
         key "name": Required[str]
         name: str
-
-
-    class azure.mgmt.servicebus.types.CheckNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": Union[str, UnavailableReason]
-        message: str
-        name_available: bool
-        reason: Union[str, UnavailableReason]
 
 
     class azure.mgmt.servicebus.types.ConfidentialCompute(TypedDict, total=False):
@@ -4383,30 +4357,6 @@ namespace azure.mgmt.servicebus.types
         key_source: Literal[KeyVault]
         key_vault_properties: list[KeyVaultProperties]
         require_infrastructure_encryption: bool
-
-
-    class azure.mgmt.servicebus.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.servicebus.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorResponseError', module='types')
-        error: ErrorResponseError
-
-
-    class azure.mgmt.servicebus.types.ErrorResponseError(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorResponse]
-        message: str
-        target: str
 
 
     class azure.mgmt.servicebus.types.FailOver(TypedDict, total=False):
@@ -4549,119 +4499,6 @@ namespace azure.mgmt.servicebus.types
         virtual_network_rules: list[NWRuleSetVirtualNetworkRules]
 
 
-    class azure.mgmt.servicebus.types.NetworkSecurityPerimeter(TypedDict, total=False):
-        key "id": str
-        key "location": str
-        key "perimeterGuid": str
-        id: str
-        location: str
-        perimeter_guid: str
-
-
-    class azure.mgmt.servicebus.types.NetworkSecurityPerimeterConfiguration(ProxyResource):
-        key "id": str
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('NetworkSecurityPerimeterConfigurationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: NetworkSecurityPerimeterConfigurationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.servicebus.types.NetworkSecurityPerimeterConfigurationProperties(TypedDict, total=False):
-        key "isBackingResource": bool
-        key "networkSecurityPerimeter": ForwardRef('NetworkSecurityPerimeter', module='types')
-        key "parentAssociationName": str
-        key "profile": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesProfile', module='types')
-        key "provisioningState": Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        key "resourceAssociation": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation', module='types')
-        key "sourceResourceId": str
-        applicableFeatures: list[str]
-        applicable_features: list[str]
-        is_backing_resource: bool
-        network_security_perimeter: NetworkSecurityPerimeter
-        parent_association_name: str
-        profile: NetworkSecurityPerimeterConfigurationPropertiesProfile
-        provisioningIssues: list[ProvisioningIssue]
-        provisioning_issues: list[ProvisioningIssue]
-        provisioning_state: Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        resource_association: NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation
-        source_resource_id: str
-
-
-    class azure.mgmt.servicebus.types.NetworkSecurityPerimeterConfigurationPropertiesProfile(TypedDict, total=False):
-        key "accessRulesVersion": str
-        key "name": str
-        accessRules: list[NspAccessRule]
-        access_rules: list[NspAccessRule]
-        access_rules_version: str
-        name: str
-
-
-    class azure.mgmt.servicebus.types.NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(TypedDict, total=False):
-        key "accessMode": Union[str, ResourceAssociationAccessMode]
-        key "name": str
-        access_mode: Union[str, ResourceAssociationAccessMode]
-        name: str
-
-
-    class azure.mgmt.servicebus.types.NspAccessRule(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('NspAccessRuleProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: NspAccessRuleProperties
-        type: str
-
-
-    class azure.mgmt.servicebus.types.NspAccessRuleProperties(TypedDict, total=False):
-        key "direction": Union[str, NspAccessRuleDirection]
-        addressPrefixes: list[str]
-        address_prefixes: list[str]
-        direction: Union[str, NspAccessRuleDirection]
-        fullyQualifiedDomainNames: list[str]
-        fully_qualified_domain_names: list[str]
-        networkSecurityPerimeters: list[NetworkSecurityPerimeter]
-        network_security_perimeters: list[NetworkSecurityPerimeter]
-        subscriptions: list[NspAccessRulePropertiesSubscriptionsItem]
-
-
-    class azure.mgmt.servicebus.types.NspAccessRulePropertiesSubscriptionsItem(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.servicebus.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": Any
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: Any
-
-
-    class azure.mgmt.servicebus.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
     class azure.mgmt.servicebus.types.PlatformCapabilities(TypedDict, total=False):
         key "confidentialCompute": ForwardRef('ConfidentialCompute', module='types')
         confidential_compute: ConfidentialCompute
@@ -4694,47 +4531,6 @@ namespace azure.mgmt.servicebus.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: ConnectionState
         provisioning_state: Union[str, EndPointProvisioningState]
-
-
-    class azure.mgmt.servicebus.types.PrivateLinkResource(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        type: str
-
-
-    class azure.mgmt.servicebus.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
-    class azure.mgmt.servicebus.types.PrivateLinkResourcesListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PrivateLinkResource]]
-        next_link: str
-        value: list[PrivateLinkResource]
-
-
-    class azure.mgmt.servicebus.types.ProvisioningIssue(TypedDict, total=False):
-        key "name": str
-        key "properties": ForwardRef('ProvisioningIssueProperties', module='types')
-        name: str
-        properties: ProvisioningIssueProperties
-
-
-    class azure.mgmt.servicebus.types.ProvisioningIssueProperties(TypedDict, total=False):
-        key "description": str
-        key "issueType": str
-        description: str
-        issue_type: str
 
 
     class azure.mgmt.servicebus.types.ProxyResource(Resource):

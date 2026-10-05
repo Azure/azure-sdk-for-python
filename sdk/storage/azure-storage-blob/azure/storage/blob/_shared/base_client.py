@@ -48,6 +48,7 @@ from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
@@ -168,6 +169,8 @@ class StorageAccountHostsMixin(object):
         if not self._hosts:
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
+            if not primary_hostname:
+                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
@@ -318,6 +321,7 @@ class StorageAccountHostsMixin(object):
             transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),

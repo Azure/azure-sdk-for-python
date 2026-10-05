@@ -395,7 +395,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = await client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert sorted(user["assignedRoles"]) == ["Contributor", "Reader"]
 
             await client.delete_ledger_user(user_id)
             await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.

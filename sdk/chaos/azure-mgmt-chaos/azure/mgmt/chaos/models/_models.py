@@ -965,34 +965,36 @@ class ChaosTargetSimpleFilterParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationExclusions(_Model):
-    """Model that represents exclusion criteria for protecting resources from fault injection. Uses
-    union (OR) logic - a resource is excluded if it matches ANY criteria.
+class Connection(ProxyResource):
+    """Model that represents a connection between a workspace and a target resource. A connection
+    provisions and tracks the trust relationship that authorizes the actor to reach the Chaos
+    Studio data plane for the workspace and target during fault injection.
 
-    :ivar resources: Array of specific resource IDs to exclude from fault injection.
-    :vartype resources: list[str]
-    :ivar tags: Array of tag key-value pairs. Resources with matching tags are excluded.
-    :vartype tags: list[~azure.mgmt.chaos.models.KeyValuePair]
-    :ivar types: Array of resource types. All resources of these types are excluded.
-    :vartype types: list[str]
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar properties: The properties of the connection.
+    :vartype properties: ~azure.mgmt.chaos.models.ConnectionProperties
     """
 
-    resources: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of specific resource IDs to exclude from fault injection."""
-    tags: Optional[list["_models.KeyValuePair"]] = rest_field(
+    properties: Optional["_models.ConnectionProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Array of tag key-value pairs. Resources with matching tags are excluded."""
-    types: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of resource types. All resources of these types are excluded."""
+    """The properties of the connection."""
 
     @overload
     def __init__(
         self,
         *,
-        resources: Optional[list[str]] = None,
-        tags: Optional[list["_models.KeyValuePair"]] = None,
-        types: Optional[list[str]] = None,
+        properties: Optional["_models.ConnectionProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1006,74 +1008,96 @@ class ConfigurationExclusions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationFilters(_Model):
-    """Model that represents filter criteria for constraining which discovered
-    resources participate in fault injection.
+class ConnectionProperties(_Model):
+    """Model that represents the properties of a connection.
 
-    Uses intersection (AND) logic — a resource is included only if it matches all criteria.
+    The schema is flat and discriminated by ``kind``. Optional fields form the
+    superset across all connection kinds; which fields are required is
+    validated by the service per kind.
 
-    :ivar locations: Array of Azure location strings. Only resources in these locations are
-     included.
-
-     Null or omitted means all locations (no filter). Empty array means include nothing.
-    :vartype locations: list[str]
-    :ivar zones: Array of availability zone identifiers ("1", "2", "3", "zone-redundant").
-     Only resources whose zones intersect this list are included.
-
-     Null or omitted means all zones (including non-zonal). Empty array means include nothing.
-
-     Mutually exclusive with ``physicalZones`` — set one or the other, not both.
-    :vartype zones: list[str]
-    :ivar physical_zones: Array of physical availability zone identifiers in ``{region}-az{N}``
-     format
-     (e.g., ``"westus2-az1"``). Only resources in the corresponding logical zone
-     for each subscription are included.
-
-     At execution time, each physical zone is resolved to per-subscription
-     logical zones via the Azure locations API. The resolved mapping is surfaced
-     on the scenario run response (``zoneResolution``).
-
-     Null or omitted means physical zone targeting is not used.
-     Only one physical zone is supported in preview.
-
-     Mutually exclusive with ``zones`` — set one or the other, not both.
-    :vartype physical_zones: list[str]
+    :ivar kind: The kind of connection, indicating the actor type authorized to reach the Chaos
+     Studio data plane for the workspace and target. Required. Known values are: "AksExtension",
+     "ChaosAgent", and "Csfi".
+    :vartype kind: str or ~azure.mgmt.chaos.models.ConnectionKind
+    :ivar target_resource_id: The fully qualified Azure resource ID of the target resource this
+     connection is established with. Required.
+    :vartype target_resource_id: str
+    :ivar principal_id: The Microsoft Entra principal (object) ID of the identity used by the
+     connection.
+    :vartype principal_id: str
+    :ivar tenant_id: The Microsoft Entra tenant ID that the connection identity belongs to.
+    :vartype tenant_id: str
+    :ivar certificate_subject_name: The subject name of the certificate used to authenticate the
+     connection.
+    :vartype certificate_subject_name: str
+    :ivar certificate_issuer: The issuer of the certificate used to authenticate the connection.
+    :vartype certificate_issuer: str
+    :ivar dsts_principal: The dSTS principal name used to authenticate the connection.
+    :vartype dsts_principal: str
+    :ivar data_plane_endpoint: The regional Chaos Studio data-plane endpoint assigned to this
+     connection. Clients and agents use this endpoint to reach the Chaos Studio data plane for the
+     connection.
+    :vartype data_plane_endpoint: str
+    :ivar status: The current status of the connection. Known values are: "Pending", "Connected",
+     "Disconnected", and "Revoked".
+    :vartype status: str or ~azure.mgmt.chaos.models.ConnectionStatus
+    :ivar provisioning_state: The most recent provisioning state for the connection resource. Known
+     values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
+     "Running".
+    :vartype provisioning_state: str or ~azure.mgmt.chaos.models.ProvisioningState
     """
 
-    locations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of Azure location strings. Only resources in these locations are included.
-     
-     Null or omitted means all locations (no filter). Empty array means include nothing."""
-    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of availability zone identifiers (\"1\", \"2\", \"3\", \"zone-redundant\").
-     Only resources whose zones intersect this list are included.
-     
-     Null or omitted means all zones (including non-zonal). Empty array means include nothing.
-     
-     Mutually exclusive with ``physicalZones`` — set one or the other, not both."""
-    physical_zones: Optional[list[str]] = rest_field(
-        name="physicalZones", visibility=["read", "create", "update", "delete", "query"]
+    kind: Union[str, "_models.ConnectionKind"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The kind of connection, indicating the actor type authorized to reach the Chaos Studio data
+     plane for the workspace and target. Required. Known values are: \"AksExtension\",
+     \"ChaosAgent\", and \"Csfi\"."""
+    target_resource_id: str = rest_field(
+        name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Array of physical availability zone identifiers in ``{region}-az{N}`` format
-     (e.g., ``\"westus2-az1\"``). Only resources in the corresponding logical zone
-     for each subscription are included.
-     
-     At execution time, each physical zone is resolved to per-subscription
-     logical zones via the Azure locations API. The resolved mapping is surfaced
-     on the scenario run response (``zoneResolution``).
-     
-     Null or omitted means physical zone targeting is not used.
-     Only one physical zone is supported in preview.
-     
-     Mutually exclusive with ``zones`` — set one or the other, not both."""
+    """The fully qualified Azure resource ID of the target resource this connection is established
+     with. Required."""
+    principal_id: Optional[str] = rest_field(
+        name="principalId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Entra principal (object) ID of the identity used by the connection."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Entra tenant ID that the connection identity belongs to."""
+    certificate_subject_name: Optional[str] = rest_field(
+        name="certificateSubjectName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subject name of the certificate used to authenticate the connection."""
+    certificate_issuer: Optional[str] = rest_field(
+        name="certificateIssuer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The issuer of the certificate used to authenticate the connection."""
+    dsts_principal: Optional[str] = rest_field(
+        name="dstsPrincipal", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The dSTS principal name used to authenticate the connection."""
+    data_plane_endpoint: Optional[str] = rest_field(name="dataPlaneEndpoint", visibility=["read"])
+    """The regional Chaos Studio data-plane endpoint assigned to this connection. Clients and agents
+     use this endpoint to reach the Chaos Studio data plane for the connection."""
+    status: Optional[Union[str, "_models.ConnectionStatus"]] = rest_field(visibility=["read"])
+    """The current status of the connection. Known values are: \"Pending\", \"Connected\",
+     \"Disconnected\", and \"Revoked\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The most recent provisioning state for the connection resource. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Creating\", \"Updating\", \"Deleting\", and
+     \"Running\"."""
 
     @overload
     def __init__(
         self,
         *,
-        locations: Optional[list[str]] = None,
-        zones: Optional[list[str]] = None,
-        physical_zones: Optional[list[str]] = None,
+        kind: Union[str, "_models.ConnectionKind"],
+        target_resource_id: str,
+        principal_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        certificate_subject_name: Optional[str] = None,
+        certificate_issuer: Optional[str] = None,
+        dsts_principal: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1896,7 +1920,7 @@ class FixResourcePermissionsRequest(_Model):
 
 
 class KeyValuePair(_Model):
-    """A map used to describe parameters for actions or configurations.
+    """A key-value pair used to describe parameters for actions or configurations.
 
     :ivar key: The name of the setting for the action. Required.
     :vartype key: str
@@ -2189,6 +2213,10 @@ class PermissionError(_Model):
     :vartype recommended_roles: list[str]
     :ivar identity: The identity.
     :vartype identity: ~azure.mgmt.chaos.models.EntraIdentity
+    :ivar error_message: The error message describing the permission validation failure, when the
+     failure carries a distinct message (for example, when the target could not be read to evaluate
+     access).
+    :vartype error_message: str
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read"])
@@ -2201,6 +2229,9 @@ class PermissionError(_Model):
     """The recommended roles. Required."""
     identity: Optional["_models.EntraIdentity"] = rest_field(visibility=["read"])
     """The identity."""
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    """The error message describing the permission validation failure, when the failure carries a
+     distinct message (for example, when the target could not be read to evaluate access)."""
 
 
 class PermissionsFix(ProxyResource):
@@ -2765,6 +2796,134 @@ class ResourceStateError(_Model):
     """The remediation uri. Required."""
 
 
+class ResourceTargeting(_Model):
+    """Model that represents unified resource targeting with symmetric include/exclude criteria. Both
+    sides support the same set of dimensions.
+
+    :ivar include: Inclusion criteria. Resources must match ALL active dimensions to be candidates.
+     Null or omitted means no inclusion filtering (all resources are candidates).
+    :vartype include: ~azure.mgmt.chaos.models.ResourceTargetingCriteria
+    :ivar exclude: Exclusion criteria. Resources matching ANY active dimension are removed. Null or
+     omitted means no exclusions applied.
+    :vartype exclude: ~azure.mgmt.chaos.models.ResourceTargetingCriteria
+    """
+
+    include: Optional["_models.ResourceTargetingCriteria"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inclusion criteria. Resources must match ALL active dimensions to be candidates. Null or
+     omitted means no inclusion filtering (all resources are candidates)."""
+    exclude: Optional["_models.ResourceTargetingCriteria"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclusion criteria. Resources matching ANY active dimension are removed. Null or omitted means
+     no exclusions applied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        include: Optional["_models.ResourceTargetingCriteria"] = None,
+        exclude: Optional["_models.ResourceTargetingCriteria"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceTargetingCriteria(_Model):
+    """Model that represents a set of targeting criteria for resource selection.
+    Used on both the include and exclude sides of ResourceTargeting.
+
+    All dimensions use unified null/empty semantics:
+
+    * Null or omitted means "no constraint" (this dimension is inactive).
+    * Empty array is treated the same as null (no constraint).
+    * Non-empty array means the dimension is active.
+
+    :ivar locations: Array of Azure location strings (e.g., "eastus", "westeurope", "global").
+     Case-insensitive, normalized form only (e.g., "eastus" not "East US").
+    :vartype locations: list[str]
+    :ivar zones: Array of logical availability zone identifiers (e.g., "1", "2", "3",
+     "zone-redundant").
+
+     Mutually exclusive with ``physicalZones`` — set one or the other, not both.
+     When set, ``locations`` must also be set on the same side (zone IDs are only meaningful within
+     a region).
+    :vartype zones: list[str]
+    :ivar physical_zones: Array of physical datacenter zone identifiers in ``{region}-az{N}``
+     format
+     (e.g., "westus2-az1"). Resolved to logical zones per-subscription at execution time.
+
+     Mutually exclusive with ``zones`` — set one or the other, not both.
+    :vartype physical_zones: list[str]
+    :ivar types: Array of Azure resource type strings (e.g., "Microsoft.Compute/virtualMachines").
+     Case-insensitive equality. Supports trailing wildcard (e.g., "Microsoft.Compute/*").
+    :vartype types: list[str]
+    :ivar tags: Array of tag key-value pairs for filtering by Azure resource tags. Key and value
+     are matched case-insensitively. Use "*" as value to match any value for a key.
+    :vartype tags: list[~azure.mgmt.chaos.models.KeyValuePair]
+    :ivar resources: Array of fully qualified Azure resource IDs. Case-insensitive equality.
+    :vartype resources: list[str]
+    """
+
+    locations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of Azure location strings (e.g., \"eastus\", \"westeurope\", \"global\").
+     Case-insensitive, normalized form only (e.g., \"eastus\" not \"East US\")."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of logical availability zone identifiers (e.g., \"1\", \"2\", \"3\", \"zone-redundant\").
+     
+     Mutually exclusive with ``physicalZones`` — set one or the other, not both.
+     When set, ``locations`` must also be set on the same side (zone IDs are only meaningful within
+     a region)."""
+    physical_zones: Optional[list[str]] = rest_field(
+        name="physicalZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of physical datacenter zone identifiers in ``{region}-az{N}`` format
+     (e.g., \"westus2-az1\"). Resolved to logical zones per-subscription at execution time.
+     
+     Mutually exclusive with ``zones`` — set one or the other, not both."""
+    types: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of Azure resource type strings (e.g., \"Microsoft.Compute/virtualMachines\").
+     Case-insensitive equality. Supports trailing wildcard (e.g., \"Microsoft.Compute/*\")."""
+    tags: Optional[list["_models.KeyValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of tag key-value pairs for filtering by Azure resource tags. Key and value are matched
+     case-insensitively. Use \"*\" as value to match any value for a key."""
+    resources: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of fully qualified Azure resource IDs. Case-insensitive equality."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        locations: Optional[list[str]] = None,
+        zones: Optional[list[str]] = None,
+        physical_zones: Optional[list[str]] = None,
+        types: Optional[list[str]] = None,
+        tags: Optional[list["_models.KeyValuePair"]] = None,
+        resources: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RoleAssignmentError(_Model):
     """Error details for a failed role assignment.
 
@@ -2937,7 +3096,7 @@ class ScenarioAction(_Model):
     """Human-readable description of what this action does."""
     duration: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """ISO 8601 duration for how long the action runs (e.g., PT30M for 30 minutes). Supports template
-     macro syntax (%%\{parameters.\<name\>\}%%). Required."""
+     macro syntax (%%\\{parameters.\\<name\\>\\}%%). Required."""
     parameters: Optional[list["_models.KeyValuePair"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3033,15 +3192,21 @@ class ScenarioConfigurationProperties(_Model):
     :ivar parameters: Runtime parameter values for the scenario. Keys must match parameter names
      defined in the scenario.
     :vartype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
-    :ivar exclusions: Exclusion criteria for protecting resources from fault injection.
-    :vartype exclusions: ~azure.mgmt.chaos.models.ConfigurationExclusions
     :ivar provisioning_state: Most recent provisioning state for the given scenario resource. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
     :vartype provisioning_state: str or ~azure.mgmt.chaos.models.ProvisioningState
-    :ivar filters: Filter criteria used to constrain which discovered resources participate in
-     fault injection.
-    :vartype filters: ~azure.mgmt.chaos.models.ConfigurationFilters
+    :ivar resource_targeting: Unified resource targeting policy that controls which discovered
+     resources participate
+     in fault injection. Replaces the separate ``exclusions`` and ``filters`` properties with
+     symmetric include/exclude criteria.
+
+     Include uses AND logic — a resource must match ALL active include dimensions.
+     Exclude uses OR logic — a resource is removed if it matches ANY exclude dimension.
+     When include and exclude conflict on the same resource, exclude wins.
+
+     Null or omitted means all discovered resources participate (no targeting constraints).
+    :vartype resource_targeting: ~azure.mgmt.chaos.models.ResourceTargeting
     """
 
     scenario_id: str = rest_field(name="scenarioId", visibility=["read", "create", "update", "delete", "query"])
@@ -3051,20 +3216,24 @@ class ScenarioConfigurationProperties(_Model):
     )
     """Runtime parameter values for the scenario. Keys must match parameter names defined in the
      scenario."""
-    exclusions: Optional["_models.ConfigurationExclusions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Exclusion criteria for protecting resources from fault injection."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Most recent provisioning state for the given scenario resource. Known values are:
      \"Succeeded\", \"Failed\", \"Canceled\", \"Creating\", \"Updating\", \"Deleting\", and
      \"Running\"."""
-    filters: Optional["_models.ConfigurationFilters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    resource_targeting: Optional["_models.ResourceTargeting"] = rest_field(
+        name="resourceTargeting", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Filter criteria used to constrain which discovered resources participate in fault injection."""
+    """Unified resource targeting policy that controls which discovered resources participate
+     in fault injection. Replaces the separate ``exclusions`` and ``filters`` properties with
+     symmetric include/exclude criteria.
+     
+     Include uses AND logic — a resource must match ALL active include dimensions.
+     Exclude uses OR logic — a resource is removed if it matches ANY exclude dimension.
+     When include and exclude conflict on the same resource, exclude wins.
+     
+     Null or omitted means all discovered resources participate (no targeting constraints)."""
 
     @overload
     def __init__(
@@ -3072,8 +3241,7 @@ class ScenarioConfigurationProperties(_Model):
         *,
         scenario_id: str,
         parameters: Optional[list["_models.KeyValuePair"]] = None,
-        exclusions: Optional["_models.ConfigurationExclusions"] = None,
-        filters: Optional["_models.ConfigurationFilters"] = None,
+        resource_targeting: Optional["_models.ResourceTargeting"] = None,
     ) -> None: ...
 
     @overload
@@ -3117,45 +3285,6 @@ class ScenarioErrors(_Model):
         *,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScenarioEvaluationResultItem(_Model):
-    """Model that represents a single scenario evaluation result.
-
-    :ivar scenario_name: The name of the scenario that was evaluated. Required.
-    :vartype scenario_name: str
-    :ivar evaluation_result: The evaluation result for this scenario. Required. Known values are:
-     "NotEvaluated", "Recommended", "NotApplicable", "Evaluating", "EvaluationFailed", and
-     "EvaluationCancelled".
-    :vartype evaluation_result: str or ~azure.mgmt.chaos.models.RecommendationStatus
-    """
-
-    scenario_name: str = rest_field(name="scenarioName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the scenario that was evaluated. Required."""
-    evaluation_result: Union[str, "_models.RecommendationStatus"] = rest_field(
-        name="evaluationResult", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The evaluation result for this scenario. Required. Known values are: \"NotEvaluated\",
-     \"Recommended\", \"NotApplicable\", \"Evaluating\", \"EvaluationFailed\", and
-     \"EvaluationCancelled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scenario_name: str,
-        evaluation_result: Union[str, "_models.RecommendationStatus"],
     ) -> None: ...
 
     @overload
@@ -3335,12 +3464,21 @@ class ScenarioRunProperties(_Model):
     :ivar managed_identity_principal_id: The principal id for the managed identity used for the
      run. Required.
     :vartype managed_identity_principal_id: str
+    :ivar resource_snapshot_id: The resource snapshot ID this run is pinned to. Resolved from the
+     scenario's pinned evaluation snapshot (template scenarios) or the latest discovery snapshot
+     (custom scenarios) at run creation, ensuring the run executes against the same set of
+     discovered resources that produced the recommendation.
+    :vartype resource_snapshot_id: str
     :ivar status: The scenario run status. Required. Known values are: "Queued", "Resolving",
      "Generating", "Validating", "ValidationSucceeded", "Starting", "Preparing", "Running",
      "CleaningUp", "Canceling", "Canceled", "Succeeded", and "Failed".
     :vartype status: str or ~azure.mgmt.chaos.models.ScenarioRunState
     :ivar resources: All resources discovered for the scenario run. Required.
     :vartype resources: list[~azure.mgmt.chaos.models.ScenarioRunResource]
+    :ivar excluded_resources: Resources that matched the scenario's target resource types but were
+     excluded from fault injection by the configuration's resource-targeting filters (for example
+     zone, location, or explicit exclusions). These resources will not be impacted by the run.
+    :vartype excluded_resources: list[~azure.mgmt.chaos.models.ScenarioRunResource]
     :ivar errors: System or infrastructure errors encountered during the scenario run.
     :vartype errors: list[~azure.mgmt.chaos.models.OperationError]
     :ivar execution_errors: Business errors from fault injection — permission and resource state
@@ -3368,12 +3506,23 @@ class ScenarioRunProperties(_Model):
     """The scenario configuration name. Required."""
     managed_identity_principal_id: str = rest_field(name="managedIdentityPrincipalId", visibility=["read"])
     """The principal id for the managed identity used for the run. Required."""
+    resource_snapshot_id: Optional[str] = rest_field(name="resourceSnapshotId", visibility=["read"])
+    """The resource snapshot ID this run is pinned to. Resolved from the scenario's pinned evaluation
+     snapshot (template scenarios) or the latest discovery snapshot (custom scenarios) at run
+     creation, ensuring the run executes against the same set of discovered resources that produced
+     the recommendation."""
     status: Union[str, "_models.ScenarioRunState"] = rest_field(visibility=["read"])
     """The scenario run status. Required. Known values are: \"Queued\", \"Resolving\", \"Generating\",
      \"Validating\", \"ValidationSucceeded\", \"Starting\", \"Preparing\", \"Running\",
      \"CleaningUp\", \"Canceling\", \"Canceled\", \"Succeeded\", and \"Failed\"."""
     resources: list["_models.ScenarioRunResource"] = rest_field(visibility=["read"])
     """All resources discovered for the scenario run. Required."""
+    excluded_resources: Optional[list["_models.ScenarioRunResource"]] = rest_field(
+        name="excludedResources", visibility=["read"]
+    )
+    """Resources that matched the scenario's target resource types but were excluded from fault
+     injection by the configuration's resource-targeting filters (for example zone, location, or
+     explicit exclusions). These resources will not be impacted by the run."""
     errors: Optional[list["_models.OperationError"]] = rest_field(visibility=["read"])
     """System or infrastructure errors encountered during the scenario run."""
     execution_errors: Optional["_models.ScenarioErrors"] = rest_field(name="executionErrors", visibility=["read"])
@@ -3687,6 +3836,61 @@ class TargetTypeProperties(_Model):
     """List of resource types this Target Type can extend."""
 
 
+class TemplateEvaluationResultItem(_Model):
+    """Model that represents a single template evaluation result.
+
+    :ivar template_id: The template ID that was evaluated. Optional because the underlying BE field
+     may be null for legacy evaluations created before template-centric persistence landed; the GW
+     falls back to ``scenarioName`` in that case (``scenario.Id == templateId`` by BE convention),
+     so ARM responses are typically populated in practice.
+    :vartype template_id: str
+    :ivar template_name: The template name that was evaluated. Optional for the same reason as
+     ``templateId``.
+    :vartype template_name: str
+    :ivar evaluation_result: The evaluation result for this template. Required. Known values are:
+     "NotEvaluated", "Recommended", "NotApplicable", "Evaluating", "EvaluationFailed", and
+     "EvaluationCancelled".
+    :vartype evaluation_result: str or ~azure.mgmt.chaos.models.RecommendationStatus
+    """
+
+    template_id: Optional[str] = rest_field(
+        name="templateId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The template ID that was evaluated. Optional because the underlying BE field may be null for
+     legacy evaluations created before template-centric persistence landed; the GW falls back to
+     ``scenarioName`` in that case (``scenario.Id == templateId`` by BE convention), so ARM
+     responses are typically populated in practice."""
+    template_name: Optional[str] = rest_field(
+        name="templateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The template name that was evaluated. Optional for the same reason as ``templateId``."""
+    evaluation_result: Union[str, "_models.RecommendationStatus"] = rest_field(
+        name="evaluationResult", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The evaluation result for this template. Required. Known values are: \"NotEvaluated\",
+     \"Recommended\", \"NotApplicable\", \"Evaluating\", \"EvaluationFailed\", and
+     \"EvaluationCancelled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        evaluation_result: Union[str, "_models.RecommendationStatus"],
+        template_id: Optional[str] = None,
+        template_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
@@ -3758,6 +3962,13 @@ class ValidationProperties(_Model):
     :vartype execution_plan_json: str
     :ivar end_time: The scenario validation UTC end time.
     :vartype end_time: ~datetime.datetime
+    :ivar resources: Resources that matched the scenario's target resource types and will be
+     impacted by the run, resolved after applying the configuration's resource-targeting filters.
+    :vartype resources: list[~azure.mgmt.chaos.models.ScenarioRunResource]
+    :ivar excluded_resources: Resources that matched the scenario's target resource types but were
+     excluded from fault injection by the configuration's resource-targeting filters (for example
+     zone, location, or explicit exclusions). These resources will not be impacted.
+    :vartype excluded_resources: list[~azure.mgmt.chaos.models.ScenarioRunResource]
     :ivar errors: System or infrastructure errors encountered during validation.
     :vartype errors: list[~azure.mgmt.chaos.models.OperationError]
     :ivar validation_errors: Business errors from validation — permission and resource state
@@ -3778,6 +3989,15 @@ class ValidationProperties(_Model):
      execution."""
     end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
     """The scenario validation UTC end time."""
+    resources: Optional[list["_models.ScenarioRunResource"]] = rest_field(visibility=["read"])
+    """Resources that matched the scenario's target resource types and will be impacted by the run,
+     resolved after applying the configuration's resource-targeting filters."""
+    excluded_resources: Optional[list["_models.ScenarioRunResource"]] = rest_field(
+        name="excludedResources", visibility=["read"]
+    )
+    """Resources that matched the scenario's target resource types but were excluded from fault
+     injection by the configuration's resource-targeting filters (for example zone, location, or
+     explicit exclusions). These resources will not be impacted."""
     errors: Optional[list["_models.OperationError"]] = rest_field(visibility=["read"])
     """System or infrastructure errors encountered during validation."""
     validation_errors: Optional["_models.ScenarioErrors"] = rest_field(
@@ -3856,6 +4076,80 @@ class Workspace(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
+class WorkspaceDiscovery(ProxyResource):
+    """Model that represents the latest workspace discovery result.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.chaos.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.chaos.models.WorkspaceDiscoveryProperties
+    """
+
+    properties: Optional["_models.WorkspaceDiscoveryProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.WorkspaceDiscoveryProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WorkspaceDiscoveryProperties(_Model):
+    """Model that represents the properties of the workspace discovery.
+
+    :ivar status: The discovery status. Required. Known values are: "Pending", "Queued",
+     "InProgress", "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.mgmt.chaos.models.WorkspaceDiscoveryStatus
+    :ivar start_time: The discovery UTC start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The discovery UTC end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar errors: System or infrastructure errors encountered during discovery.
+    :vartype errors: list[~azure.mgmt.chaos.models.OperationError]
+    :ivar workspace_id: The workspace ID this discovery belongs to. Required.
+    :vartype workspace_id: str
+    :ivar resource_snapshot_id: The resource snapshot ID produced by this discovery.
+    :vartype resource_snapshot_id: str
+    """
+
+    status: Union[str, "_models.WorkspaceDiscoveryStatus"] = rest_field(visibility=["read"])
+    """The discovery status. Required. Known values are: \"Pending\", \"Queued\", \"InProgress\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """The discovery UTC start time."""
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    """The discovery UTC end time."""
+    errors: Optional[list["_models.OperationError"]] = rest_field(visibility=["read"])
+    """System or infrastructure errors encountered during discovery."""
+    workspace_id: str = rest_field(name="workspaceId", visibility=["read"])
+    """The workspace ID this discovery belongs to. Required."""
+    resource_snapshot_id: Optional[str] = rest_field(name="resourceSnapshotId", visibility=["read"])
+    """The resource snapshot ID produced by this discovery."""
+
+
 class WorkspaceEvaluation(ProxyResource):
     """Model that represents the latest workspace evaluation result.
 
@@ -3911,20 +4205,22 @@ class WorkspaceEvaluationProperties(_Model):
     :vartype errors: list[~azure.mgmt.chaos.models.OperationError]
     :ivar workspace_id: The workspace ID this evaluation belongs to. Required.
     :vartype workspace_id: str
-    :ivar num_scenarios_to_evaluate: The number of scenarios to evaluate.
-    :vartype num_scenarios_to_evaluate: int
-    :ivar num_scenarios_evaluated_succeeded: The number of scenarios that evaluated successfully.
-    :vartype num_scenarios_evaluated_succeeded: int
-    :ivar num_scenarios_evaluated_failed: The number of scenarios that failed evaluation.
-    :vartype num_scenarios_evaluated_failed: int
-    :ivar num_scenarios_evaluated_cancelled: The number of scenarios that were cancelled during
+    :ivar resource_snapshot_id: The resource snapshot ID used for this evaluation.
+    :vartype resource_snapshot_id: str
+    :ivar num_templates_to_evaluate: The number of templates to evaluate.
+    :vartype num_templates_to_evaluate: int
+    :ivar num_templates_evaluated_succeeded: The number of templates that evaluated successfully.
+    :vartype num_templates_evaluated_succeeded: int
+    :ivar num_templates_evaluated_failed: The number of templates that failed evaluation.
+    :vartype num_templates_evaluated_failed: int
+    :ivar num_templates_evaluated_cancelled: The number of templates that were cancelled during
      evaluation.
-    :vartype num_scenarios_evaluated_cancelled: int
+    :vartype num_templates_evaluated_cancelled: int
     :ivar evaluation_result: The overall evaluation result. Known values are: "NotEvaluated",
      "Recommended", "NotApplicable", "Evaluating", "EvaluationFailed", and "EvaluationCancelled".
     :vartype evaluation_result: str or ~azure.mgmt.chaos.models.RecommendationStatus
-    :ivar results: Per-scenario evaluation results.
-    :vartype results: list[~azure.mgmt.chaos.models.ScenarioEvaluationResultItem]
+    :ivar results: Per-template evaluation results.
+    :vartype results: list[~azure.mgmt.chaos.models.TemplateEvaluationResultItem]
     """
 
     status: Union[str, "_models.WorkspaceEvaluationStatus"] = rest_field(visibility=["read"])
@@ -3938,25 +4234,27 @@ class WorkspaceEvaluationProperties(_Model):
     """System or infrastructure errors encountered during evaluation."""
     workspace_id: str = rest_field(name="workspaceId", visibility=["read"])
     """The workspace ID this evaluation belongs to. Required."""
-    num_scenarios_to_evaluate: Optional[int] = rest_field(name="numScenariosToEvaluate", visibility=["read"])
-    """The number of scenarios to evaluate."""
-    num_scenarios_evaluated_succeeded: Optional[int] = rest_field(
-        name="numScenariosEvaluatedSucceeded", visibility=["read"]
+    resource_snapshot_id: Optional[str] = rest_field(name="resourceSnapshotId", visibility=["read"])
+    """The resource snapshot ID used for this evaluation."""
+    num_templates_to_evaluate: Optional[int] = rest_field(name="numTemplatesToEvaluate", visibility=["read"])
+    """The number of templates to evaluate."""
+    num_templates_evaluated_succeeded: Optional[int] = rest_field(
+        name="numTemplatesEvaluatedSucceeded", visibility=["read"]
     )
-    """The number of scenarios that evaluated successfully."""
-    num_scenarios_evaluated_failed: Optional[int] = rest_field(name="numScenariosEvaluatedFailed", visibility=["read"])
-    """The number of scenarios that failed evaluation."""
-    num_scenarios_evaluated_cancelled: Optional[int] = rest_field(
-        name="numScenariosEvaluatedCancelled", visibility=["read"]
+    """The number of templates that evaluated successfully."""
+    num_templates_evaluated_failed: Optional[int] = rest_field(name="numTemplatesEvaluatedFailed", visibility=["read"])
+    """The number of templates that failed evaluation."""
+    num_templates_evaluated_cancelled: Optional[int] = rest_field(
+        name="numTemplatesEvaluatedCancelled", visibility=["read"]
     )
-    """The number of scenarios that were cancelled during evaluation."""
+    """The number of templates that were cancelled during evaluation."""
     evaluation_result: Optional[Union[str, "_models.RecommendationStatus"]] = rest_field(
         name="evaluationResult", visibility=["read"]
     )
     """The overall evaluation result. Known values are: \"NotEvaluated\", \"Recommended\",
      \"NotApplicable\", \"Evaluating\", \"EvaluationFailed\", and \"EvaluationCancelled\"."""
-    results: Optional[list["_models.ScenarioEvaluationResultItem"]] = rest_field(visibility=["read"])
-    """Per-scenario evaluation results."""
+    results: Optional[list["_models.TemplateEvaluationResultItem"]] = rest_field(visibility=["read"])
+    """Per-template evaluation results."""
 
 
 class WorkspaceProperties(_Model):

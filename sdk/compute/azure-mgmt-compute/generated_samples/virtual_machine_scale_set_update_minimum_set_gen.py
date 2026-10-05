@@ -128,7 +128,10 @@ def main():
                         ],
                         "extensionsTimeBudget": "str",
                     },
-                    "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "hardwareProfile": {
+                        "processorMode": "str",
+                        "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
+                    },
                     "interconnectBlockProfile": {"interconnectBlock": {"id": "str"}},
                     "licenseType": "str",
                     "networkProfile": {
@@ -234,10 +237,18 @@ def main():
                         "proxyAgentSettings": {
                             "addProxyAgentExtension": bool,
                             "enabled": bool,
-                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            "imds": {
+                                "inVMAccessControlProfileReferenceId": "str",
+                                "mode": "str",
+                                "useLocalFileRules": bool,
+                            },
                             "keyIncarnationId": 0,
                             "mode": "str",
-                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            "wireServer": {
+                                "inVMAccessControlProfileReferenceId": "str",
+                                "mode": "str",
+                                "useLocalFileRules": bool,
+                            },
                         },
                         "securityType": "str",
                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
@@ -253,6 +264,21 @@ def main():
                                 "diskMBpsReadWrite": 0,
                                 "diskSizeGB": 0,
                                 "managedDisk": {
+                                    "additionalDiskProperties": {
+                                        "managedDiskProperties": {
+                                            "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                            "burstingEnabled": bool,
+                                            "diskAccessId": "str",
+                                            "diskIOPSReadOnly": 0,
+                                            "diskMBpsReadOnly": 0,
+                                            "logicalSectorSize": 0,
+                                            "maxShares": 0,
+                                            "networkAccessPolicy": "str",
+                                            "optimizedForFrequentAttach": bool,
+                                            "performancePlus": bool,
+                                            "tier": "str",
+                                        }
+                                    },
                                     "diskEncryptionSet": {"id": "str"},
                                     "securityProfile": {
                                         "diskEncryptionSet": {"id": "str"},
@@ -265,6 +291,7 @@ def main():
                                 "writeAcceleratorEnabled": bool,
                             }
                         ],
+                        "diskApiVersion": "str",
                         "diskControllerType": "str",
                         "imageReference": {
                             "communityGalleryImageId": "str",
@@ -283,6 +310,21 @@ def main():
                             "diskSizeGB": 0,
                             "image": {"uri": "str"},
                             "managedDisk": {
+                                "additionalDiskProperties": {
+                                    "managedDiskProperties": {
+                                        "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                        "burstingEnabled": bool,
+                                        "diskAccessId": "str",
+                                        "diskIOPSReadOnly": 0,
+                                        "diskMBpsReadOnly": 0,
+                                        "logicalSectorSize": 0,
+                                        "maxShares": 0,
+                                        "networkAccessPolicy": "str",
+                                        "optimizedForFrequentAttach": bool,
+                                        "performancePlus": bool,
+                                        "tier": "str",
+                                    }
+                                },
                                 "diskEncryptionSet": {"id": "str"},
                                 "securityProfile": {
                                     "diskEncryptionSet": {"id": "str"},
@@ -307,6 +349,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -19,12 +19,17 @@ def add_sanitizers(test_proxy):
     # Ensure all search service endpoint names are mocked to "test-service"
     add_general_regex_sanitizer(
         value="://fakesearchendpoint.search.windows.net",
-        regex=r"://(.+).search.windows.net",
+        regex=r"://([^/\"]+)\.search\.windows\.net",
     )
     # Remove storage connection strings from recordings
     add_general_regex_sanitizer(value="AccountKey=FAKE;", regex=r"AccountKey=([^;]+);")
     # Remove storage account names from recordings
     add_general_regex_sanitizer(value="AccountName=fakestoragecs;", regex=r"AccountName=([^;]+);")
+    # Remove Azure OpenAI resource names from File knowledge source recordings
+    add_general_regex_sanitizer(
+        value="https://fake-openai.openai.azure.com",
+        regex=r"https://[^\"/]+\.openai\.azure\.com",
+    )
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3493"])

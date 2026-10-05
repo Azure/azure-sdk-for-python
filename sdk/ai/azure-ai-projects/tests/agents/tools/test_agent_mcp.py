@@ -18,7 +18,7 @@ class TestAgentMCP(TestBase):
     # To run only this test:
     # pytest tests/agents/tools/test_agent_mcp.py::TestAgentMCP::test_agent_mcp_basic -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_mcp_basic(self, **kwargs):
         """
         Test agent with MCP (Model Context Protocol) tool for external API access.

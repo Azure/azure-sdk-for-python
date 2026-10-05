@@ -32,6 +32,7 @@ from ._lease import ShareLeaseClient
 from ._models import (
     ContentSettings,
     FileProperties,
+    FileRange,
     Handle,
     NTFSAttributes,
 )
@@ -307,6 +308,17 @@ class ShareFileClient(StorageAccountHostsMixin):
         **kwargs: Any
     ) -> List[Dict[str, int]]: ...
     @distributed_trace
+    def list_ranges(
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
+    @distributed_trace
     def get_ranges_diff(
         self,
         previous_sharesnapshot: Union[str, Dict[str, Any]],
@@ -318,6 +330,19 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
     @distributed_trace
     def clear_range(
         self,

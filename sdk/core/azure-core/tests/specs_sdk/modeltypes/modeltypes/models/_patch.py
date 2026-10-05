@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, BinaryIO, Dict, Any, Optional
-from datetime import date, datetime, time, timedelta, tzinfo
+from datetime import date, datetime, time, timedelta
 from .._utils.model_base import Model as HybridModel, rest_field
 from .._utils.serialization import Model as MsrestModel
 

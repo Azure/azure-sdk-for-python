@@ -2408,68 +2408,9 @@ namespace azure.mgmt.edgeorder.types
         shipping_address: ShippingAddress
 
 
-    class azure.mgmt.edgeorder.types.AvailabilityInformation(TypedDict, total=False):
-        key "availabilityStage": Union[str, AvailabilityStage]
-        key "disabledReason": Union[str, DisabledReason]
-        key "disabledReasonMessage": str
-        availability_stage: Union[str, AvailabilityStage]
-        disabled_reason: Union[str, DisabledReason]
-        disabled_reason_message: str
-
-
-    class azure.mgmt.edgeorder.types.BasicInformation(TypedDict, total=False):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        availability_information: AvailabilityInformation
-        cost_information: CostInformation
-        description: Description
-        display_name: str
-        fulfilled_by: Union[str, FulfillmentType]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-
-
-    class azure.mgmt.edgeorder.types.BillingMeterDetails(TypedDict, total=False):
-        key "frequency": str
-        key "meterDetails": ForwardRef('MeterDetails', module='types')
-        key "meteringType": Union[str, MeteringType]
-        key "name": str
-        key "termTypeDetails": ForwardRef('TermTypeDetails', module='types')
-        frequency: str
-        meter_details: MeterDetails
-        metering_type: Union[str, MeteringType]
-        name: str
-        term_type_details: TermTypeDetails
-
-
-    class azure.mgmt.edgeorder.types.BillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PAV2 = "Pav2"
-        PURCHASE = "Purchase"
-
-
     class azure.mgmt.edgeorder.types.CancellationReason(TypedDict, total=False):
         key "reason": Required[str]
         reason: str
-
-
-    class azure.mgmt.edgeorder.types.CategoryInformation(TypedDict, total=False):
-        key "categoryDisplayName": str
-        key "categoryName": str
-        key "description": str
-        category_display_name: str
-        category_name: str
-        description: str
-        links: list[Link]
-
-
-    class azure.mgmt.edgeorder.types.ChildConfiguration(TypedDict, total=False):
-        key "properties": ForwardRef('ChildConfigurationProperties', module='types')
-        properties: ChildConfigurationProperties
 
 
     class azure.mgmt.edgeorder.types.ChildConfigurationFilter(TypedDict, total=False):
@@ -2477,68 +2418,6 @@ namespace azure.mgmt.edgeorder.types
         child_configuration_types: list[Union[str, ChildConfigurationType]]
         hierarchyInformations: list[HierarchyInformation]
         hierarchy_informations: list[HierarchyInformation]
-
-
-    class azure.mgmt.edgeorder.types.ChildConfigurationProperties(TypedDict, total=False):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "childConfigurationType": Union[str, ChildConfigurationType]
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "dimensions": ForwardRef('Dimensions', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        key "isPartOfBaseConfiguration": bool
-        key "maximumQuantity": int
-        key "minimumQuantity": int
-        key "provisioningSupport": Union[str, ProvisioningSupport]
-        availability_information: AvailabilityInformation
-        childConfigurationTypes: list[Union[str, ChildConfigurationType]]
-        child_configuration_type: Union[str, ChildConfigurationType]
-        child_configuration_types: list[Union[str, ChildConfigurationType]]
-        cost_information: CostInformation
-        description: Description
-        dimensions: Dimensions
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        groupedChildConfigurations: list[GroupedChildConfigurations]
-        grouped_child_configurations: list[GroupedChildConfigurations]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-        is_part_of_base_configuration: bool
-        maximum_quantity: int
-        minimum_quantity: int
-        provisioning_support: Union[str, ProvisioningSupport]
-        specifications: list[Specification]
-        supportedTermCommitmentDurations: list[str]
-        supported_term_commitment_durations: list[str]
-
-
-    class azure.mgmt.edgeorder.types.CommonProperties(BasicInformation):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        availability_information: AvailabilityInformation
-        cost_information: CostInformation
-        description: Description
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-
-
-    class azure.mgmt.edgeorder.types.Configuration(TypedDict, total=False):
-        key "properties": ForwardRef('ConfigurationProperties', module='types')
-        properties: ConfigurationProperties
 
 
     class azure.mgmt.edgeorder.types.ConfigurationDeviceDetails(TypedDict, total=False):
@@ -2565,36 +2444,6 @@ namespace azure.mgmt.edgeorder.types
         hierarchy_information: HierarchyInformation
 
 
-    class azure.mgmt.edgeorder.types.ConfigurationProperties(CommonProperties):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "dimensions": ForwardRef('Dimensions', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        key "provisioningSupport": Union[str, ProvisioningSupport]
-        availability_information: AvailabilityInformation
-        childConfigurationTypes: list[Union[str, ChildConfigurationType]]
-        child_configuration_types: list[Union[str, ChildConfigurationType]]
-        cost_information: CostInformation
-        description: Description
-        dimensions: Dimensions
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        groupedChildConfigurations: list[GroupedChildConfigurations]
-        grouped_child_configurations: list[GroupedChildConfigurations]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-        provisioning_support: Union[str, ProvisioningSupport]
-        specifications: list[Specification]
-        supportedTermCommitmentDurations: list[str]
-        supported_term_commitment_durations: list[str]
-
-
     class azure.mgmt.edgeorder.types.ConfigurationsRequest(TypedDict, total=False):
         key "configurationFilter": ForwardRef('ConfigurationFilter', module='types')
         key "customerSubscriptionDetails": ForwardRef('CustomerSubscriptionDetails', module='types')
@@ -2615,13 +2464,6 @@ namespace azure.mgmt.edgeorder.types
         phone_extension: str
 
 
-    class azure.mgmt.edgeorder.types.CostInformation(TypedDict, total=False):
-        key "billingInfoUrl": str
-        billingMeterDetails: list[BillingMeterDetails]
-        billing_info_url: str
-        billing_meter_details: list[BillingMeterDetails]
-
-
     class azure.mgmt.edgeorder.types.CustomerSubscriptionDetails(TypedDict, total=False):
         key "locationPlacementId": str
         key "quotaId": Required[str]
@@ -2636,18 +2478,6 @@ namespace azure.mgmt.edgeorder.types
         key "state": str
         name: str
         state: str
-
-
-    class azure.mgmt.edgeorder.types.Description(TypedDict, total=False):
-        key "descriptionType": Union[str, DescriptionType]
-        key "longDescription": str
-        key "shortDescription": str
-        attributes: list[str]
-        description_type: Union[str, DescriptionType]
-        keywords: list[str]
-        links: list[Link]
-        long_description: str
-        short_description: str
 
 
     class azure.mgmt.edgeorder.types.DeviceDetails(TypedDict, total=False):
@@ -2670,23 +2500,6 @@ namespace azure.mgmt.edgeorder.types
         key "status": Union[str, DevicePresenceVerificationStatus]
         message: str
         status: Union[str, DevicePresenceVerificationStatus]
-
-
-    class azure.mgmt.edgeorder.types.Dimensions(TypedDict, total=False):
-        key "depth": float
-        key "height": float
-        key "length": float
-        key "lengthHeightUnit": Union[str, LengthHeightUnit]
-        key "weight": float
-        key "weightUnit": Union[str, WeightMeasurementUnit]
-        key "width": float
-        depth: float
-        height: float
-        length: float
-        length_height_unit: Union[str, LengthHeightUnit]
-        weight: float
-        weight_unit: Union[str, WeightMeasurementUnit]
-        width: float
 
 
     class azure.mgmt.edgeorder.types.DisplayInfo(TypedDict, total=False):
@@ -2720,11 +2533,6 @@ namespace azure.mgmt.edgeorder.types
         target: str
 
 
-    class azure.mgmt.edgeorder.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.edgeorder.types.FilterableProperty(TypedDict, total=False):
         key "supportedValues": Required[list[str]]
         key "type": Required[Union[str, SupportedFilterTypes]]
@@ -2743,13 +2551,6 @@ namespace azure.mgmt.edgeorder.types
         tracking_url: str
 
 
-    class azure.mgmt.edgeorder.types.GroupedChildConfigurations(TypedDict, total=False):
-        key "categoryInformation": ForwardRef('CategoryInformation', module='types')
-        category_information: CategoryInformation
-        childConfigurations: list[ChildConfiguration]
-        child_configurations: list[ChildConfiguration]
-
-
     class azure.mgmt.edgeorder.types.HierarchyInformation(TypedDict, total=False):
         key "configurationIdDisplayName": str
         key "configurationName": str
@@ -2763,20 +2564,6 @@ namespace azure.mgmt.edgeorder.types
         product_name: str
 
 
-    class azure.mgmt.edgeorder.types.ImageInformation(TypedDict, total=False):
-        key "imageType": Union[str, ImageType]
-        key "imageUrl": str
-        image_type: Union[str, ImageType]
-        image_url: str
-
-
-    class azure.mgmt.edgeorder.types.Link(TypedDict, total=False):
-        key "linkType": Union[str, LinkType]
-        key "linkUrl": str
-        link_type: Union[str, LinkType]
-        link_url: str
-
-
     class azure.mgmt.edgeorder.types.ManagementResourcePreferences(TypedDict, total=False):
         key "preferredManagementResourceId": str
         preferred_management_resource_id: str
@@ -2787,30 +2574,6 @@ namespace azure.mgmt.edgeorder.types
         key "stageName": Required[Union[str, NotificationStageName]]
         send_notification: bool
         stage_name: Union[str, NotificationStageName]
-
-
-    class azure.mgmt.edgeorder.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.edgeorder.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
 
 
     class azure.mgmt.edgeorder.types.OrderItemDetails(TypedDict, total=False):
@@ -2907,41 +2670,6 @@ namespace azure.mgmt.edgeorder.types
         preferences: Preferences
 
 
-    class azure.mgmt.edgeorder.types.OrderProperties(TypedDict, total=False):
-        key "currentStage": ForwardRef('StageDetails', module='types')
-        key "orderMode": Union[str, OrderMode]
-        current_stage: StageDetails
-        orderItemIds: list[str]
-        orderStageHistory: list[StageDetails]
-        order_item_ids: list[str]
-        order_mode: Union[str, OrderMode]
-        order_stage_history: list[StageDetails]
-
-
-    class azure.mgmt.edgeorder.types.OrderResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": Required[OrderProperties]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: OrderProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.edgeorder.types.Pav2MeterDetails(TypedDict, total=False):
-        key "billingType": Required[Literal[BillingType.PAV2]]
-        key "chargingType": Union[str, ChargingType]
-        key "meterGuid": str
-        key "multiplier": float
-        billing_type: Literal[BillingType.PAV2]
-        charging_type: Union[str, ChargingType]
-        meter_guid: str
-        multiplier: float
-
-
     class azure.mgmt.edgeorder.types.Preferences(TypedDict, total=False):
         key "encryptionPreferences": ForwardRef('EncryptionPreferences', module='types')
         key "managementResourcePreferences": ForwardRef('ManagementResourcePreferences', module='types')
@@ -2953,11 +2681,6 @@ namespace azure.mgmt.edgeorder.types
         notification_preferences: list[NotificationPreference]
         term_commitment_preferences: TermCommitmentPreferences
         transport_preferences: TransportPreferences
-
-
-    class azure.mgmt.edgeorder.types.Product(TypedDict, total=False):
-        key "properties": ForwardRef('ProductProperties', module='types')
-        properties: ProductProperties
 
 
     class azure.mgmt.edgeorder.types.ProductDetails(TypedDict, total=False):
@@ -2986,89 +2709,11 @@ namespace azure.mgmt.edgeorder.types
         parent_provisioning_details: ProvisioningDetails
 
 
-    class azure.mgmt.edgeorder.types.ProductFamiliesMetadataDetails(TypedDict, total=False):
-        key "properties": ForwardRef('ProductFamilyProperties', module='types')
-        properties: ProductFamilyProperties
-
-
     class azure.mgmt.edgeorder.types.ProductFamiliesRequest(TypedDict, total=False):
         key "customerSubscriptionDetails": ForwardRef('CustomerSubscriptionDetails', module='types')
         key "filterableProperties": Required[dict[str, list[FilterableProperty]]]
         customer_subscription_details: CustomerSubscriptionDetails
         filterable_properties: dict[str, list[FilterableProperty]]
-
-
-    class azure.mgmt.edgeorder.types.ProductFamily(TypedDict, total=False):
-        key "properties": ForwardRef('ProductFamilyProperties', module='types')
-        properties: ProductFamilyProperties
-
-
-    class azure.mgmt.edgeorder.types.ProductFamilyProperties(CommonProperties):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        availability_information: AvailabilityInformation
-        cost_information: CostInformation
-        description: Description
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-        productLines: list[ProductLine]
-        product_lines: list[ProductLine]
-        resourceProviderDetails: list[ResourceProviderDetails]
-        resource_provider_details: list[ResourceProviderDetails]
-
-
-    class azure.mgmt.edgeorder.types.ProductLine(TypedDict, total=False):
-        key "properties": ForwardRef('ProductLineProperties', module='types')
-        properties: ProductLineProperties
-
-
-    class azure.mgmt.edgeorder.types.ProductLineProperties(CommonProperties):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        availability_information: AvailabilityInformation
-        cost_information: CostInformation
-        description: Description
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
-        products: list[Product]
-
-
-    class azure.mgmt.edgeorder.types.ProductProperties(CommonProperties):
-        key "availabilityInformation": ForwardRef('AvailabilityInformation', module='types')
-        key "costInformation": ForwardRef('CostInformation', module='types')
-        key "description": ForwardRef('Description', module='types')
-        key "displayName": str
-        key "fulfilledBy": Union[str, FulfillmentType]
-        key "hierarchyInformation": ForwardRef('HierarchyInformation', module='types')
-        availability_information: AvailabilityInformation
-        configurations: list[Configuration]
-        cost_information: CostInformation
-        description: Description
-        display_name: str
-        filterableProperties: list[FilterableProperty]
-        filterable_properties: list[FilterableProperty]
-        fulfilled_by: Union[str, FulfillmentType]
-        hierarchy_information: HierarchyInformation
-        imageInformation: list[ImageInformation]
-        image_information: list[ImageInformation]
 
 
     class azure.mgmt.edgeorder.types.ProvisioningDetails(TypedDict, total=False):
@@ -3092,32 +2737,6 @@ namespace azure.mgmt.edgeorder.types
         serial_number: str
         unique_device_identifier: str
         vendor_name: str
-
-
-    class azure.mgmt.edgeorder.types.ProxyResource(Resource):
-        key "id": str
-        key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.edgeorder.types.PurchaseMeterDetails(TypedDict, total=False):
-        key "billingType": Required[Literal[BillingType.PURCHASE]]
-        key "chargingType": Union[str, ChargingType]
-        key "multiplier": float
-        key "productId": str
-        key "skuId": str
-        key "termId": str
-        billing_type: Literal[BillingType.PURCHASE]
-        charging_type: Union[str, ChargingType]
-        multiplier: float
-        product_id: str
-        sku_id: str
-        term_id: str
 
 
     class azure.mgmt.edgeorder.types.Resource(TypedDict, total=False):
@@ -3199,13 +2818,6 @@ namespace azure.mgmt.edgeorder.types
         site_id: str
 
 
-    class azure.mgmt.edgeorder.types.Specification(TypedDict, total=False):
-        key "name": str
-        key "value": str
-        name: str
-        value: str
-
-
     class azure.mgmt.edgeorder.types.StageDetails(TypedDict, total=False):
         key "displayName": str
         key "stageName": Union[str, StageName]
@@ -3246,13 +2858,6 @@ namespace azure.mgmt.edgeorder.types
         key "preferredTermCommitmentType": Required[Union[str, TermCommitmentType]]
         preferred_term_commitment_duration: str
         preferred_term_commitment_type: Union[str, TermCommitmentType]
-
-
-    class azure.mgmt.edgeorder.types.TermTypeDetails(TypedDict, total=False):
-        key "termType": Required[Union[str, TermCommitmentType]]
-        key "termTypeDuration": Required[str]
-        term_type: Union[str, TermCommitmentType]
-        term_type_duration: str
 
 
     class azure.mgmt.edgeorder.types.TrackedResource(Resource):

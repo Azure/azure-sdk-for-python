@@ -50,6 +50,7 @@
         "azure.mgmt.recoveryservices.models.PrivateLinkResourceProperties": "Microsoft.RecoveryServices.PrivateLinkResourceProperties",
         "azure.mgmt.recoveryservices.models.PrivateLinkServiceConnectionState": "Microsoft.RecoveryServices.PrivateLinkServiceConnectionState",
         "azure.mgmt.recoveryservices.models.RawCertificateData": "Microsoft.RecoveryServices.RawCertificateData",
+        "azure.mgmt.recoveryservices.models.RegionOfChoiceSettings": "Microsoft.RecoveryServices.RegionOfChoiceSettings",
         "azure.mgmt.recoveryservices.models.ReplicationUsage": "Microsoft.RecoveryServices.ReplicationUsage",
         "azure.mgmt.recoveryservices.models.ResourceCapabilities": "Microsoft.RecoveryServices.ResourceCapabilities",
         "azure.mgmt.recoveryservices.models.ResourceCertificateDetails": "Microsoft.RecoveryServices.ResourceCertificateDetails",
@@ -151,5 +152,5 @@
         "azure.mgmt.recoveryservices.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult",
         "azure.mgmt.recoveryservices.aio.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult"
     },
-    "CrossLanguageVersion": "45e8bbe08725"
+    "CrossLanguageVersion": "4cffd300683a"
 }
