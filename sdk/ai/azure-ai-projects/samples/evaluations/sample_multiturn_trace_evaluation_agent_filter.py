@@ -27,6 +27,8 @@ USAGE:
     2) FOUNDRY_MODEL_NAME - Required. The model deployment name for AI-assisted evaluators.
     3) FOUNDRY_AGENT_NAME - Required. The name of the agent whose traces to evaluate.
     4) FOUNDRY_AGENT_VERSION - Optional. The agent version. If not set, latest is used.
+    5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back for agent traces.
+       Defaults to 168 (7 days).
 """
 
 import os
@@ -43,6 +45,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 agent_version = os.environ.get("FOUNDRY_AGENT_VERSION", "")
+lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "168"))
 
 
 def main() -> None:
@@ -100,7 +103,7 @@ def main() -> None:
         # Pad end_time by +600s (10 min) to avoid ingestion-delay edge exclusion
         now_unix = int(time.time())
         end_time = now_unix + 600
-        start_time = now_unix - (24 * 3600)
+        start_time = now_unix - (lookback_hours * 3600)
 
         trace_source: dict = {
             "type": "agent_filter",
