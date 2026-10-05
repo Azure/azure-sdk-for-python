@@ -36,8 +36,8 @@ def create_item(hpk):
 
 @pytest.mark.cosmosSplit
 @pytest.mark.cosmosAADSplit
-class TestLatestSessionToken(unittest.TestCase):
-    """Test for session token helpers"""
+class TestPartitionSplitScenarios(unittest.TestCase):
+    """Test shared partition-split scenarios and HPK session tokens."""
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
