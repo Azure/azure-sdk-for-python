@@ -285,7 +285,8 @@ def test_replenished_window_stays_positive_across_reported_boundary():
 @pytest.mark.parametrize("value", [-1, -255, -256])
 def test_unsigned_encoders_reject_negative_values(encoder, value):
     output = bytearray()
-    with pytest.raises(ValueError):
+    match = "Unsigned short value must be 0-65535" if encoder == encode_ushort else None
+    with pytest.raises(ValueError, match=match):
         encoder(output, value)
     assert not output
 
@@ -304,5 +305,6 @@ def test_unsigned_encoders_preserve_valid_boundaries(encoder, maximum):
         output = bytearray()
         encoder(output, value)
         assert output
-    with pytest.raises(ValueError):
+    match = "Unsigned short value must be 0-65535" if encoder == encode_ushort else None
+    with pytest.raises(ValueError, match=match):
         encoder(bytearray(), maximum + 1)

@@ -144,12 +144,12 @@ def encode_ushort(output: bytearray, value: int, with_constructor: bool = True, 
     """
     value = int(value)
     if value < 0:
-        raise ValueError("Unsigned byte value must be 0-65535")
+        raise ValueError("Unsigned short value must be 0-65535")
     try:
         output.extend(_construct(ConstructorBytes.ushort, with_constructor))
         output.extend(struct.pack(">H", value))
     except struct.error as exc:
-        raise ValueError("Unsigned byte value must be 0-65535") from exc
+        raise ValueError("Unsigned short value must be 0-65535") from exc
 
 
 def encode_uint(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True) -> None:
