@@ -22,6 +22,7 @@ class PendingDelivery(object):
         self.message = kwargs.get("message")
         self.sent = False
         self.frame = None
+        self.abort_pending = False
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
         self.transfer_state = None
@@ -149,19 +150,25 @@ class SenderLink(Link):
                 self._outgoing_flow()
             now = time.time()
             pending = []
+            blocked = False
 
-            for index, delivery in enumerate(self._pending_deliveries):
-                if delivery.timeout and (now - delivery.start) >= delivery.timeout:
+            for delivery in self._pending_deliveries:
+                if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
                     delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                    continue
-                if not delivery.sent:
+                    if not delivery.frame or not delivery.frame["more"]:
+                        continue
+                    delivery.abort_pending = True
+                    delivery.frame["aborted"] = True
+                    delivery.frame["payload"] = b""
+                if not delivery.sent and not blocked:
                     sent_and_settled = self._outgoing_transfer(delivery)
-                    if sent_and_settled:
+                    if sent_and_settled or (
+                        delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
+                    ):
                         continue
                 pending.append(delivery)
-                if delivery.transfer_state == SessionTransferState.BUSY:
-                    pending.extend(self._pending_deliveries[index + 1 :])
-                    break
+                if delivery.transfer_state == SessionTransferState.BUSY or delivery.abort_pending:
+                    blocked = True
             self._pending_deliveries = pending
 
     def send_transfer(self, message, *, send_async=False, **kwargs):
@@ -201,5 +208,12 @@ class SenderLink(Link):
                 ErrorCondition.ClientError,
                 message="Transfer cannot be cancelled. Message has already been sent and awaiting disposition.",
             )
+        if delivery.abort_pending:
+            raise MessageException(ErrorCondition.ClientError, message="Transfer cancellation is already pending.")
         delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
-        self._pending_deliveries.pop(index)
+        if delivery.frame and delivery.frame["more"]:
+            delivery.abort_pending = True
+            delivery.frame["aborted"] = True
+            delivery.frame["payload"] = b""
+        else:
+            self._pending_deliveries.pop(index)

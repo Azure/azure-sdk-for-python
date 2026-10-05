@@ -12,6 +12,7 @@ from azure.servicebus._pyamqp._encode import (
     encode_ushort,
 )
 from azure.servicebus._pyamqp.constants import (
+    LinkDeliverySettleReason,
     LinkState,
     SenderSettleMode,
     SessionState,
@@ -195,11 +196,7 @@ async def test_fragmented_transfer_replenishes_per_frame_and_waits_for_remote_cr
     assert [frame.next_outgoing_id for frame in flows] == [1, 2, 3]
 
 
-@pytest.mark.parametrize("async_session", [False, True])
-@pytest.mark.asyncio
-async def test_sender_resumes_partial_delivery_before_sending_next(
-    monkeypatch, async_session
-):
+def _sender(monkeypatch, async_session):
     from azure.servicebus._pyamqp import sender as sender_module
     from azure.servicebus._pyamqp.aio import _sender_async as async_sender_module
 
@@ -229,6 +226,15 @@ async def test_sender_resumes_partial_delivery_before_sending_next(
     sender.send_settle_mode = SenderSettleMode.Mixed
     if not async_session:
         sender.lock = Lock()
+    return sender, session, connection
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.asyncio
+async def test_sender_resumes_partial_delivery_before_sending_next(
+    monkeypatch, async_session
+):
+    sender, session, connection = _sender(monkeypatch, async_session)
 
     message = MagicMock(_code=0, payload=b"a" * 120)
     if async_session:
@@ -262,6 +268,124 @@ async def test_sender_resumes_partial_delivery_before_sending_next(
     assert [frame.delivery_tag for frame in transfers[:-1]] == [
         transfers[0].delivery_tag
     ] * (len(transfers) - 1)
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("termination", ["timeout", "cancel"])
+@pytest.mark.asyncio
+async def test_partial_delivery_aborts_before_next_and_checks_later_timeouts(
+    monkeypatch, async_session, termination
+):
+    sender, session, connection = _sender(monkeypatch, async_session)
+    reasons = []
+
+    def completed(reason, _state):
+        reasons.append(reason)
+
+    async def completed_async(reason, state):
+        completed(reason, state)
+
+    callback = completed_async if async_session else completed
+    send = sender.send_transfer
+    if async_session:
+        first = await send(MagicMock(_code=0, payload=b"a" * 120), settled=False, on_send_complete=callback)
+        expired = await send(
+            MagicMock(_code=0, payload=b"expired"), send_async=True, timeout=1,
+            settled=False, on_send_complete=callback,
+        )
+        next_delivery = await send(MagicMock(_code=0, payload=b"next"), send_async=True)
+    else:
+        first = send(MagicMock(_code=0, payload=b"a" * 120), settled=False, on_send_complete=callback)
+        expired = send(
+            MagicMock(_code=0, payload=b"expired"), send_async=True, timeout=1,
+            settled=False, on_send_complete=callback,
+        )
+        next_delivery = send(MagicMock(_code=0, payload=b"next"), send_async=True)
+
+    assert first.frame["more"] and not first.sent
+    if termination == "timeout":
+        first.timeout = 1
+        first.start -= 10
+    else:
+        if async_session:
+            await sender.cancel_transfer(first)
+        else:
+            sender.cancel_transfer(first)
+    expired.start -= 10
+
+    if async_session:
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+    assert reasons == [
+        LinkDeliverySettleReason.TIMEOUT if termination == "timeout" else LinkDeliverySettleReason.CANCELLED,
+        LinkDeliverySettleReason.TIMEOUT,
+    ]
+    assert first.abort_pending
+    assert first in sender._pending_deliveries
+    assert expired not in sender._pending_deliveries
+    assert next_delivery.frame is None
+
+    for _ in range(20):
+        session.remote_incoming_window = 1
+        if async_session:
+            await sender.update_pending_deliveries()
+        else:
+            sender.update_pending_deliveries()
+        if next_delivery.sent:
+            break
+    assert next_delivery.sent
+    assert first not in sender._pending_deliveries
+    assert len(reasons) == 2
+    transfers = [
+        call.args[1]
+        for call in connection._process_outgoing_frame.call_args_list
+        if isinstance(call.args[1], TransferFrame)
+    ]
+    aborted = [frame for frame in transfers if frame.aborted]
+    assert len(aborted) == 1
+    assert aborted[0].delivery_id == transfers[0].delivery_id
+    assert aborted[0].payload == b""
+    assert not aborted[0].more
+    assert transfers[-1].payload == b"next"
+    assert transfers[-1].delivery_id == len(transfers) - 1
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.asyncio
+async def test_later_delivery_times_out_while_first_waits_for_credit(
+    monkeypatch, async_session
+):
+    sender, _session, _connection = _sender(monkeypatch, async_session)
+    reasons = []
+
+    async def completed_async(reason, _state):
+        reasons.append(reason)
+
+    def completed(reason, _state):
+        reasons.append(reason)
+
+    callback = completed_async if async_session else completed
+    if async_session:
+        first = await sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120), settled=False)
+        later = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"later"), send_async=True, settled=False,
+            timeout=1, on_send_complete=callback,
+        )
+    else:
+        first = sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120), settled=False)
+        later = sender.send_transfer(
+            MagicMock(_code=0, payload=b"later"), send_async=True, settled=False,
+            timeout=1, on_send_complete=callback,
+        )
+    later.start -= 10
+    if async_session:
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+    assert reasons == [LinkDeliverySettleReason.TIMEOUT]
+    assert sender._pending_deliveries == [first]
+    assert first.frame["more"] and not first.abort_pending
 
 
 def test_replenished_window_stays_positive_across_reported_boundary():
