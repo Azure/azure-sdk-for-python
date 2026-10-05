@@ -2,10 +2,13 @@
     "CrossLanguagePackageId": "Storage.File",
     "CrossLanguageDefinitionId": {
         "azure.storage.fileshare.models.AccessPolicy": "Storage.File.AccessPolicy",
+        "azure.storage.fileshare.models.BlockDeviceItem": "Storage.File.BlockDeviceItem",
+        "azure.storage.fileshare.models.CharDeviceItem": "Storage.File.CharDeviceItem",
         "azure.storage.fileshare.models.ClearRange": "Storage.File.ClearRange",
         "azure.storage.fileshare.models.CorsRule": "Storage.File.CorsRule",
         "azure.storage.fileshare.models.DirectoryItem": "Storage.File.DirectoryItem",
         "azure.storage.fileshare.models.Error": "Storage.File.Error",
+        "azure.storage.fileshare.models.FifoItem": "Storage.File.FifoItem",
         "azure.storage.fileshare.models.FileItem": "Storage.File.FileItem",
         "azure.storage.fileshare.models.FileProperty": "Storage.File.FileProperty",
         "azure.storage.fileshare.models.FileRange": "Storage.File.FileRange",
@@ -31,8 +34,10 @@
         "azure.storage.fileshare.models.SignedIdentifier": "Storage.File.SignedIdentifier",
         "azure.storage.fileshare.models.SignedIdentifiers": "Storage.File.SignedIdentifiers",
         "azure.storage.fileshare.models.SmbMultichannel": "Storage.File.SmbMultichannel",
+        "azure.storage.fileshare.models.SocketItem": "Storage.File.SocketItem",
         "azure.storage.fileshare.models.StorageServiceProperties": "Storage.File.StorageServiceProperties",
         "azure.storage.fileshare.models.StringEncoded": "Storage.File.StringEncoded",
+        "azure.storage.fileshare.models.SymLinkItem": "Storage.File.SymLinkItem",
         "azure.storage.fileshare.models.UserDelegationKey": "Storage.File.UserDelegationKey",
         "azure.storage.fileshare.models.NfsFileType": "Storage.File.NfsFileType",
         "azure.storage.fileshare.models.StorageErrorCode": "Storage.File.StorageErrorCode",
@@ -160,5 +165,5 @@
         "azure.storage.fileshare.operations.ShareOperations.restore": "Storage.File.Share.restore",
         "azure.storage.fileshare.aio.operations.ShareOperations.restore": "Storage.File.Share.restore"
     },
-    "CrossLanguageVersion": "86e7a7e7bb09"
+    "CrossLanguageVersion": "1b20e62c0911"
 }

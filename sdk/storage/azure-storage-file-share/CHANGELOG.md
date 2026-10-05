@@ -3,6 +3,9 @@
 ## 12.28.0b1 (Unreleased)
 
 ### Features Added
+- Added support for listing NFS files, directories, and special file types (symbolic links, block devices,
+character devices, FIFOs, and sockets) via `list_directories_and_files`. The `include` keyword now accepts
+the values `"Permissions"`, `"LinkCount"`, `"NfsAttributes"`, and `"All"`.
 
 ### Bugs Fixed
 - Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
