@@ -82,6 +82,12 @@ Always:
 - If an Azure SDK MCP workflow cannot start because PowerShell is unavailable,
   provide the [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell)
   and recommend restarting the IDE after installation so the MCP server starts.
+- Before adding or changing handwritten patches or customizations of generated
+  Python SDK code, including `_patch.py`, investigate whether the behavior comes
+  from the service spec/configuration or the emitter/generator. Follow the
+  [patch diagnosis checklist](doc/dev/customize_code/how-to-patch-sdk-code.md#before-you-customize)
+  and document the evidence, rationale, and any investigation blockers before
+  adopting a package-local workaround.
 - Make focused, minimal changes: only touch files relevant to the task, and do
   not fix unrelated pre-existing issues.
 - Write Python 3.10-compatible code unless the affected package declares a newer

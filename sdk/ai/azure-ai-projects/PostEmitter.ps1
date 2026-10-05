@@ -143,23 +143,6 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# Wrap forward-reference-only aliases in Union so they are valid runtime type aliases.
-$f = 'azure\ai\projects\_unions.py'
-$c = Get-Content $f -Raw
-$c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
-# Remove the duplicate VoiceAgentToolChoice alias emitted by some TypeSpec versions.
-$duplicateVoiceAgentToolChoice = '(?ms)\r?\nVoiceAgentToolChoice = Union\[\r?\n    Literal\["none"\], Literal\["auto"\], Literal\["required"\], "_models\.ToolChoiceFunction", "_models\.ToolChoiceMCP"\r?\n\]'
-$firstVoiceAgentToolChoice = [regex]::Match($c, $duplicateVoiceAgentToolChoice)
-if ($firstVoiceAgentToolChoice.Success) {
-    $secondStart = $firstVoiceAgentToolChoice.Index + $firstVoiceAgentToolChoice.Length
-    $second = [regex]::Match($c.Substring($secondStart), $duplicateVoiceAgentToolChoice)
-    if ($second.Success) {
-        $removeStart = $secondStart + $second.Index
-        $c = $c.Remove($removeStart, $second.Length)
-    }
-}
-Set-Content $f $c -NoNewline
-
 # Remove invalid single overload stubs for BetaAgentsOperations.generate/create_from_prompt.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
@@ -169,13 +152,91 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# Complete generated MatchConditions support for TypeSpec Azure.Core.eTag parameters.
-# The emitter generates prep_if_match(etag, match_condition), but omits the helper,
-# imports, match_condition parameters, and arguments that the generated call path needs.
-& (Join-Path $PSScriptRoot 'scripts\FixMatchConditions.ps1') -PackageRoot $PSScriptRoot
+# Remove malformed overloads where the emitter assigns a body List type to the ETag parameter.
+# If only one overload remains for that method, remove that stub too because @overload requires
+# at least two declarations. The concrete implementation remains available.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    for ($i = 0; $i -lt $lines.Length;) {
+        if ($lines[$i] -notmatch '^(\s*)@overload\s*$') {
+            $out += $lines[$i]
+            $i++
+            continue
+        }
 
-# Finishing by running 'black' tool to format code.
-black --config ../../../eng/black-pyproject.toml .
+        $indent = $Matches[1]
+        $overloads = @()
+        while ($i -lt $lines.Length -and $lines[$i] -match ('^' + [regex]::Escape($indent) + '@overload\s*$')) {
+            $end = $i + 1
+            while ($end -lt $lines.Length -and $lines[$end] -notmatch ('^' + [regex]::Escape($indent) + '@')) {
+                $end++
+            }
+            $overload = $lines[$i..($end - 1)]
+            $overloads += ,@{
+                Lines = $overload
+                MalformedEtag = [bool]($overload -match '^\s*etag:\s*List\[[^\]]+\]')
+            }
+            $i = $end
+        }
+
+        $validOverloads = @($overloads | Where-Object { -not $_.MalformedEtag })
+        $removedMalformedEtag = $validOverloads.Count -ne $overloads.Count
+        if (-not $removedMalformedEtag -or $validOverloads.Count -gt 1) {
+            foreach ($overload in $validOverloads) {
+                $out += $overload.Lines
+            }
+        }
+    }
+    Set-Content $f $out
+}
+
+# Remove duplicate top-level variable declarations from generated _unions.py.
+# Keep the first declaration for each name and remove any later declarations, including multiline aliases.
+$unionsFile = Resolve-Path 'azure\ai\projects\_unions.py'
+$deduplicateUnionsScript = @'
+import ast
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+source = path.read_text(encoding="utf-8-sig")
+tree = ast.parse(source, filename=str(path))
+seen = set()
+duplicate_ranges = []
+
+for statement in tree.body:
+    names = []
+    if isinstance(statement, ast.Assign) and len(statement.targets) == 1 and isinstance(statement.targets[0], ast.Name):
+        names = [statement.targets[0].id]
+    elif isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name):
+        names = [statement.target.id]
+
+    duplicate_names = [name for name in names if name in seen]
+    if duplicate_names:
+        duplicate_ranges.append((statement.lineno, statement.end_lineno))
+    else:
+        seen.update(names)
+
+if duplicate_ranges:
+    lines = source.splitlines(keepends=True)
+    for start, end in reversed(duplicate_ranges):
+        del lines[start - 1 : end]
+    path.write_text("".join(lines), encoding="utf-8")
+'@
+
+$deduplicateUnionsScriptFile = Join-Path ([System.IO.Path]::GetTempPath()) ("azure-ai-projects-deduplicate-unions-{0}.py" -f [guid]::NewGuid().ToString('N'))
+Set-Content $deduplicateUnionsScriptFile $deduplicateUnionsScript -Encoding utf8
+try {
+    & (Get-Command python -ErrorAction Stop).Source $deduplicateUnionsScriptFile $unionsFile
+    if ($LASTEXITCODE -ne 0) {
+        throw "Duplicate union cleanup failed with exit code $LASTEXITCODE."
+    }
+}
+finally {
+    Remove-Item $deduplicateUnionsScriptFile -ErrorAction SilentlyContinue
+}
 
 # Regenerate API review artifacts and the public method inventory.
 $pythonExecutable = (Get-Command python -ErrorAction Stop).Source
