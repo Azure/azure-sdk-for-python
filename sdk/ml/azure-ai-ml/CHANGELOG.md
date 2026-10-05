@@ -6,6 +6,7 @@
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
+- Fixed directory uploads not propagating errors when progress reporting is disabled.
 - Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
 - Fixed artifact cache reads failing on transient Windows checksum-sharing errors during initial validation.
 - Improved the missing Azure CLI error reported when initializing the artifact cache.
