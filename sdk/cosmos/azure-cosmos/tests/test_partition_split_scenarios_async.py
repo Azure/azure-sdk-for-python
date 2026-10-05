@@ -1,13 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import random
 import time
 import unittest
 import uuid
 
 import pytest
 
-from _split_test_utils import assert_no_stage_failures, snapshot_split_routing_map, split_stage, wait_for_split_ranges_async
+from _split_test_utils import (
+    assert_no_stage_failures,
+    create_item,
+    snapshot_split_routing_map,
+    split_stage,
+    wait_for_split_ranges_async,
+)
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -15,24 +20,6 @@ from azure.cosmos._session_token_helpers import is_compound_session_token, parse
 from azure.cosmos.aio import DatabaseProxy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import HttpHeaders
-
-
-def create_item(hpk):
-    if hpk:
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'state': 'CA',
-            'city': 'LA' + str(random.randint(1, 10)),
-            'zipcode': '90001'
-        }
-    else:
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'pk': 'A' + str(random.randint(1, 10))
-        }
-    return item
 
 
 @pytest.mark.cosmosSplit

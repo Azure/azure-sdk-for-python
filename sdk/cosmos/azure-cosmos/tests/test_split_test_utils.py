@@ -7,6 +7,7 @@ import time
 import unittest
 from contextlib import redirect_stdout
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import pytest
 
@@ -14,6 +15,7 @@ from azure.cosmos.http_constants import HttpHeaders
 
 from _split_test_utils import (
     assert_no_stage_failures,
+    create_item,
     snapshot_split_routing_map,
     split_stage,
     wait_for_split_ranges,
@@ -34,6 +36,22 @@ def _container(read_ranges):
 
 @pytest.mark.cosmosEmulator
 class TestSplitTestUtils(unittest.TestCase):
+    def test_creates_regular_and_hpk_items(self):
+        for hpk, fields in (
+            (False, {"pk": "A7"}),
+            (True, {"state": "CA", "city": "LA7", "zipcode": "90001"}),
+        ):
+            with self.subTest(hpk=hpk), patch(
+                "_split_test_utils.uuid.uuid4", return_value="fixed-id"
+            ) as generate_id, patch(
+                "_split_test_utils.random.randint", return_value=7
+            ) as random_number:
+                self.assertEqual(
+                    create_item(hpk), {"id": "itemfixed-id", "name": "sample", **fields}
+                )
+                generate_id.assert_called_once_with()
+                random_number.assert_called_once_with(1, 10)
+
     def test_restores_only_this_containers_name_and_rid_entries(self):
         link = "dbs/test/colls/split"
         parent_map = object()

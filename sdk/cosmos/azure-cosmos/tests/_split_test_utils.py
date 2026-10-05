@@ -1,16 +1,36 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Diagnostics and physical-range confirmation for grouped live split tests."""
+"""Shared data and diagnostics for grouped live split tests."""
 
 import asyncio
 import json
+import random
 import time
 import unittest
+import uuid
 from contextlib import contextmanager
 
 from azure.cosmos import _base
 from azure.cosmos.http_constants import HttpHeaders
+
+
+def create_item(hpk):
+    if hpk:
+        item = {
+            'id': 'item' + str(uuid.uuid4()),
+            'name': 'sample',
+            'state': 'CA',
+            'city': 'LA' + str(random.randint(1, 10)),
+            'zipcode': '90001'
+        }
+    else:
+        item = {
+            'id': 'item' + str(uuid.uuid4()),
+            'name': 'sample',
+            'pk': 'A' + str(random.randint(1, 10))
+        }
+    return item
 
 
 def _record(stage, outcome, **details):
