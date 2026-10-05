@@ -55,7 +55,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -165,7 +165,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetsOperations:
+class FleetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1144,7 +1144,7 @@ class FleetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview", "2026-06-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-01"],
     )
     def list_virtual_machines(
         self,

@@ -133,6 +133,27 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 - **Background** — Return immediately, handler runs in the background
 - **Streaming + Background** — SSE while connected, handler continues after disconnect
 
+### Telemetry flushing
+
+`AGENTSERVER_FLUSH_MODE` controls per-request telemetry flushing independently
+of the response's `background` flag:
+
+| Value | Behavior |
+|---|---|
+| `background` (default) | Schedule a background flush without awaiting export. |
+| `async` | Await export off the event loop before completing the request. |
+| `sync` | Flush synchronously, blocking the event loop. |
+
+Values are case-insensitive and whitespace is ignored. Unset, empty, or invalid
+values use `background`; each distinct invalid value logs a warning once.
+Streaming requests dispatch one flush after stream cleanup and before HTTP
+completion.
+
+Background flushing requires the platform to allow the process to keep running
+long enough to drain telemetry before suspension or shutdown. If that window
+is unavailable, set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited
+flushing. Response completion alone does not guarantee telemetry delivery.
+
 ### Response lifecycle
 
 The library orchestrates the complete response lifecycle: `created` → `in_progress` → `completed` (or `failed` / `cancelled`). Cancellation, error handling, and terminal event guarantees are all managed automatically.

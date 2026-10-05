@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-01-01",
+  "apiVersion": "2026-08-01",
   "apiVersions": {
-    "Microsoft.StorageCache": "2026-01-01"
+    "Microsoft.StorageCache": "2026-08-01"
   },
-  "commit": "c4186f9c6595ff594789322daa64f9c1cb58ef65",
+  "commit": "e16457ec7e3a852b849042ac03d802c3d9e777f7",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/storagecache/resource-manager/Microsoft.StorageCache/StorageCache",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.1"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }
