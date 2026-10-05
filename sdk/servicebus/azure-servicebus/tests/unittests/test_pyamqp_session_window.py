@@ -1,5 +1,7 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
+from threading import Event
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -19,6 +21,7 @@ from azure.servicebus._pyamqp.constants import (
     SessionTransferState,
 )
 from azure.servicebus._pyamqp.performatives import FlowFrame, TransferFrame
+from azure.servicebus._pyamqp.error import MessageException
 from azure.servicebus._pyamqp.session import Session
 from azure.servicebus._pyamqp.sender import SenderLink
 from azure.servicebus._pyamqp.aio._session_async import Session as AsyncSession
@@ -27,6 +30,7 @@ from azure.servicebus._pyamqp.aio._sender_async import SenderLink as AsyncSender
 
 def _delivery():
     return MagicMock(
+        abort_requested=False,
         frame={
             "handle": 1,
             "delivery_tag": b"tag",
@@ -131,6 +135,60 @@ async def test_concurrent_async_transfers_do_not_reuse_delivery_ids():
     assert session.next_outgoing_id == 2
 
 
+@pytest.mark.asyncio
+async def test_async_flow_waits_for_transfer_accounting():
+    session, connection = _session(AsyncSession, async_connection=True)
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    transfer = asyncio.create_task(session._outgoing_transfer(_delivery(), None))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        flow = asyncio.create_task(session._outgoing_flow({"handle": 2}))
+        await asyncio.sleep(0)
+        assert not flow.done()
+    finally:
+        release.set()
+    await asyncio.gather(transfer, flow)
+    frames = [call.args[1] for call in send.call_args_list]
+    assert [type(frame) for frame in frames] == [TransferFrame, FlowFrame]
+    assert frames[1].next_outgoing_id == 1
+
+
+def test_sync_flow_waits_for_transfer_accounting():
+    session, connection = _session(Session)
+    started, release = Event(), Event()
+    send = connection._process_outgoing_frame
+
+    def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            started.set()
+            assert release.wait(5)
+        send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        transfer = pool.submit(session._outgoing_transfer, _delivery(), None)
+        try:
+            assert started.wait(5)
+            flow = pool.submit(session._outgoing_flow, {"handle": 2})
+            assert not flow.done()
+        finally:
+            release.set()
+        transfer.result(timeout=5)
+        flow.result(timeout=5)
+    frames = [call.args[1] for call in send.call_args_list]
+    assert [type(frame) for frame in frames] == [TransferFrame, FlowFrame]
+    assert frames[1].next_outgoing_id == 1
+
+
 @pytest.mark.parametrize("async_session", [False, True])
 @pytest.mark.asyncio
 async def test_zero_outgoing_window_blocks_transfer(async_session):
@@ -226,6 +284,9 @@ def _sender(monkeypatch, async_session):
     sender.network_trace = False
     sender.network_trace_params = {}
     sender._pending_deliveries = []
+    if async_session:
+        sender._updating_deliveries = False
+        sender._update_requested = False
     sender._is_closed = False
     sender.state = LinkState.ATTACHED
     sender.send_settle_mode = SenderSettleMode.Mixed
@@ -273,6 +334,92 @@ async def test_sender_resumes_partial_delivery_before_sending_next(
     assert [frame.delivery_tag for frame in transfers[:-1]] == [
         transfers[0].delivery_tag
     ] * (len(transfers) - 1)
+
+
+@pytest.mark.asyncio
+async def test_concurrent_async_sends_preserve_partial_delivery_order(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame) and not started.is_set():
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    first_task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120)))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        second = await sender.send_transfer(MagicMock(_code=0, payload=b"next"))
+        assert second.frame is None
+        assert len(sender._pending_deliveries) == 2
+    finally:
+        release.set()
+    first = await first_task
+    for _ in range(20):
+        session.remote_incoming_window = 1
+        await sender.update_pending_deliveries()
+        if second.sent:
+            break
+    assert first.sent and second.sent
+    transfers = [call.args[1] for call in send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    assert {frame.delivery_id for frame in transfers[:-1]} == {0}
+    assert transfers[-1].delivery_id == len(transfers) - 1
+    assert transfers[-1].payload == b"next"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("final_frame", [False, True])
+async def test_cancellation_during_async_transfer_write(monkeypatch, final_frame):
+    sender, session, connection = _sender(monkeypatch, True)
+    if final_frame:
+        connection._remote_max_frame_size = 1024
+    else:
+        session.remote_incoming_window = 10
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+    transfer_count = 0
+    reasons = []
+
+    async def send_frame(channel, frame):
+        nonlocal transfer_count
+        if isinstance(frame, TransferFrame):
+            transfer_count += 1
+            if transfer_count == (1 if final_frame else 2):
+                assert frame.more is not final_frame
+                started.set()
+                await release.wait()
+        await send(channel, frame)
+
+    async def completed(reason, _state):
+        reasons.append(reason)
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(
+        sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120), settled=False, on_send_complete=completed)
+    )
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        if final_frame:
+            with pytest.raises(MessageException, match="already in flight"):
+                await sender.cancel_transfer(delivery)
+        else:
+            await sender.cancel_transfer(delivery)
+            assert reasons == [LinkDeliverySettleReason.CANCELLED]
+    finally:
+        release.set()
+    await task
+    transfers = [call.args[1] for call in send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    if final_frame:
+        assert delivery.sent and not any(frame.aborted for frame in transfers)
+    else:
+        assert len([frame for frame in transfers if frame.aborted]) == 1
+        assert transfers[-1].aborted and transfers[-1].delivery_id == transfers[0].delivery_id
+        assert not delivery.frame["payload"]
+        assert reasons == [LinkDeliverySettleReason.CANCELLED]
 
 
 @pytest.mark.parametrize("async_session", [False, True])

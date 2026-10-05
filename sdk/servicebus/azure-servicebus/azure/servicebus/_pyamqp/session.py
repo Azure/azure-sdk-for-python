@@ -208,6 +208,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]].detach()
 
     def _outgoing_flow(self, frame=None):
+        with self._outgoing_transfer_lock:
+            self._outgoing_flow_locked(frame)
+
+    def _outgoing_flow_locked(self, frame=None):
         link_flow = frame or {}
         link_flow.update(
             {
@@ -225,10 +229,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     def _incoming_flow(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
-        self.next_incoming_id = frame[2]  # next_outgoing_id
-        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
-        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
-        self.remote_outgoing_window = frame[3]  # outgoing_window
+        with self._outgoing_transfer_lock:
+            self.next_incoming_id = frame[2]  # next_outgoing_id
+            remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+            self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
+            self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
             self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
         else:
@@ -278,7 +283,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 self.outgoing_window -= 1
                 if self.outgoing_window == 0:
                     self.outgoing_window = self.target_outgoing_window
-                    self._outgoing_flow()
+                    self._outgoing_flow_locked()
                 if not more:
                     delivery.transfer_state = SessionTransferState.OKAY
                     return

@@ -208,6 +208,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
+        async with self._outgoing_transfer_lock:
+            await self._outgoing_flow_locked(frame)
+
+    async def _outgoing_flow_locked(self, frame=None):
         link_flow = frame or {}
         link_flow.update(
             {
@@ -225,10 +229,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     async def _incoming_flow(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
-        self.next_incoming_id = frame[2]  # next_outgoing_id
-        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
-        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
-        self.remote_outgoing_window = frame[3]  # outgoing_window
+        async with self._outgoing_transfer_lock:
+            self.next_incoming_id = frame[2]  # next_outgoing_id
+            remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+            self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
+            self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
             await self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
         else:
@@ -268,9 +273,13 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                         TransferFrame(payload=b"***", **frame),
                         extra=network_trace_params,
                     )
-                await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                    self.channel, TransferFrame(payload=fragment, **frame)
-                )
+                delivery._inflight_more = more  # pylint: disable=protected-access
+                try:
+                    await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
+                        self.channel, TransferFrame(payload=fragment, **frame)
+                    )
+                finally:
+                    delivery._inflight_more = None  # pylint: disable=protected-access
                 delivery.frame["payload"] = payload[len(fragment) :] if more else b""
                 delivery.frame["more"] = more
                 self.next_outgoing_id += 1
@@ -278,7 +287,13 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 self.outgoing_window -= 1
                 if self.outgoing_window == 0:
                     self.outgoing_window = self.target_outgoing_window
-                    await self._outgoing_flow()
+                    await self._outgoing_flow_locked()
+                if delivery.abort_requested and more:
+                    delivery.abort_pending = True
+                    delivery.frame["aborted"] = True
+                    delivery.frame["payload"] = b""
+                    delivery.transfer_state = SessionTransferState.BUSY
+                    return
                 if not more:
                     delivery.transfer_state = SessionTransferState.OKAY
                     return

@@ -23,6 +23,8 @@ class PendingDelivery(object):
         self.sent = False
         self.frame = None
         self.abort_pending = False
+        self.abort_requested = False
+        self._inflight_more = None
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
         self.transfer_state = None
@@ -47,6 +49,8 @@ class SenderLink(Link):
             kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
+        self._updating_deliveries = False
+        self._update_requested = False
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -144,30 +148,49 @@ class SenderLink(Link):
         await super()._on_session_state_change()
 
     async def update_pending_deliveries(self):
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            await self._outgoing_flow()
-        now = time.time()
-        pending = []
-        blocked = False
-        for delivery in self._pending_deliveries:
-            if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                if not delivery.frame or not delivery.frame["more"]:
-                    continue
-                delivery.abort_pending = True
-                delivery.frame["aborted"] = True
-                delivery.frame["payload"] = b""
-            if not delivery.sent and not blocked:
-                sent_and_settled = await self._outgoing_transfer(delivery)
-                if sent_and_settled or (
-                    delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
-                ):
-                    continue
-            pending.append(delivery)
-            if delivery.transfer_state == SessionTransferState.BUSY or delivery.abort_pending:
-                blocked = True
-        self._pending_deliveries = pending
+        if self._updating_deliveries:
+            self._update_requested = True
+            return
+        self._updating_deliveries = True
+        try:
+            if self.current_link_credit <= 0:
+                self.current_link_credit = self.link_credit
+                await self._outgoing_flow()
+            now = time.time()
+            blocked = False
+            index = 0
+            while index < len(self._pending_deliveries):
+                delivery = self._pending_deliveries[index]
+                if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                    if not delivery.frame or not delivery.frame["more"]:
+                        self._pending_deliveries.pop(index)
+                        continue
+                    delivery.abort_pending = True
+                    delivery.frame["aborted"] = True
+                    delivery.frame["payload"] = b""
+                if not delivery.sent and not blocked:
+                    sent_and_settled = await self._outgoing_transfer(delivery)
+                    if sent_and_settled or (
+                        delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
+                    ):
+                        self._pending_deliveries.pop(index)
+                        continue
+                if delivery.transfer_state == SessionTransferState.BUSY or delivery.abort_pending:
+                    blocked = True
+                    if (
+                        delivery.abort_pending
+                        and delivery.transfer_state == SessionTransferState.BUSY
+                        and self._session.remote_incoming_window > 0
+                        and self._session.outgoing_window > 0
+                    ):
+                        self._update_requested = True
+                index += 1
+        finally:
+            self._updating_deliveries = False
+        if self._update_requested:
+            self._update_requested = False
+            await self.update_pending_deliveries()
 
     async def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
@@ -183,16 +206,9 @@ class SenderLink(Link):
             settled=settled,
             network_trace_params=self.network_trace_params,
         )
-        if (
-            self.current_link_credit == 0
-            or send_async
-            or any(pending.frame and pending.frame["more"] for pending in self._pending_deliveries)
-        ):
-            self._pending_deliveries.append(delivery)
-        else:
-            sent_and_settled = await self._outgoing_transfer(delivery)
-            if not sent_and_settled:
-                self._pending_deliveries.append(delivery)
+        self._pending_deliveries.append(delivery)
+        if not send_async and self.current_link_credit != 0:
+            await self.update_pending_deliveries()
         return delivery
 
     async def cancel_transfer(self, delivery):
@@ -208,6 +224,12 @@ class SenderLink(Link):
             )
         if delivery.abort_pending:
             raise MessageException(ErrorCondition.ClientError, message="Transfer cancellation is already pending.")
+        if delivery._inflight_more is not None:  # pylint: disable=protected-access
+            if not delivery._inflight_more:  # pylint: disable=protected-access
+                raise MessageException(ErrorCondition.ClientError, message="Final Transfer frame is already in flight.")
+            delivery.abort_requested = True
+            await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
+            return
         await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
         if delivery.frame and delivery.frame["more"]:
             delivery.abort_pending = True
