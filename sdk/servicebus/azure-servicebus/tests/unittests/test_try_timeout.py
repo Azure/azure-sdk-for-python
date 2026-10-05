@@ -1133,6 +1133,48 @@ class TestPyamqpManagementRequestReadiness:
         assert operation._responses == {}
         assert mgmt_link._pending_operations == []
 
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    def test_sync_management_cleanup_invalidates_callback_before_cancelling_registration(self, late_result):
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        link = ManagementLink.__new__(ManagementLink)
+        link.lock = Lock()
+        link._pending_operations = []
+        operation = ManagementOperation(MagicMock())
+        operation._mgmt_link = link
+
+        def execute_operation(message, callback, **kwargs):
+            pending = PendingManagementOperation(message, callback)
+            link._pending_operations.append(pending)
+            return pending
+
+        link.execute_operation = execute_operation
+        operation._responses["concurrent-request"] = None
+        operation._connection.listen.side_effect = TimeoutError("transport timed out")
+        with ThreadPoolExecutor(max_workers=1) as listener:
+
+            def cancel_operation(pending):
+                listener.submit(
+                    pending.on_execute_operation_complete,
+                    getattr(ManagementExecuteOperationResult, late_result),
+                    200,
+                    "OK",
+                    "late response",
+                    error=RuntimeError("late error"),
+                ).result(timeout=5)
+                assert operation._responses == {"concurrent-request": None}
+                assert operation._mgmt_error is None
+                ManagementLink.cancel_operation(link, pending)
+
+            link.cancel_operation = cancel_operation
+            with pytest.raises(TimeoutError, match="transport timed out"):
+                operation.execute(MagicMock(), timeout=5)
+
+        assert link._pending_operations == []
+        assert operation._responses == {"concurrent-request": None}
+
     @pytest.mark.asyncio
     async def test_cancelled_async_management_request_cleans_operation_state(self):
         from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink

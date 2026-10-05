@@ -105,10 +105,10 @@ class ManagementOperation(object):
 
             return self._responses[operation_id]
         finally:
-            if pending_operation:
-                self._mgmt_link.cancel_operation(pending_operation)
             with self._mgmt_link.lock:
                 self._responses.pop(operation_id, None)
+            if pending_operation:
+                self._mgmt_link.cancel_operation(pending_operation)
 
     def open(self):
         self._mgmt_link_open_status = ManagementOpenResult.OPENING

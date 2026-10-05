@@ -15,7 +15,6 @@ from unittest.mock import MagicMock, patch
 
 import asyncio  # pylint:disable=do-not-import-asyncio
 import struct
-import time
 
 import pytest
 
