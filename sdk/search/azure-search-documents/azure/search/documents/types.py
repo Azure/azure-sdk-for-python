@@ -9,54 +9,21 @@
 from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import VectorQueryKind, VectorThresholdKind
+from .models._enums import VectorQueryKind
 
 if TYPE_CHECKING:
     from .models import (
         AutocompleteMode,
-        HybridCountAndFacetMode,
         IndexActionType,
         QueryAnswerType,
         QueryCaptionType,
         QueryDebugMode,
-        QueryLanguage,
-        QueryRewritesType,
-        QuerySpellerType,
         QueryType,
         ScoringStatistics,
         SearchMode,
         SemanticErrorMode,
         VectorFilterMode,
     )
-
-
-class HybridSearch(TypedDict, total=False):
-    """The query parameters to configure hybrid search behaviors.
-
-    :ivar maxTextRecallSize: Determines the maximum number of documents to be retrieved by the text
-     query portion of a hybrid search request. Those documents will be combined with the documents
-     matching the vector queries to produce a single final list of results. Choosing a larger
-     maxTextRecallSize value will allow retrieving and paging through more documents (using the top
-     and skip parameters), at the cost of higher resource utilization and higher latency. The value
-     needs to be between 1 and 10,000. Default is 1000.
-    :vartype maxTextRecallSize: int
-    :ivar countAndFacetMode: Determines whether the count and facets should includes all documents
-     that matched the search query, or only the documents that are retrieved within the
-     'maxTextRecallSize' window. Known values are: "countRetrievableResults" and "countAllResults".
-    :vartype countAndFacetMode: Union[str, "HybridCountAndFacetMode"]
-    """
-
-    maxTextRecallSize: int
-    """Determines the maximum number of documents to be retrieved by the text query portion of a
-     hybrid search request. Those documents will be combined with the documents matching the vector
-     queries to produce a single final list of results. Choosing a larger maxTextRecallSize value
-     will allow retrieving and paging through more documents (using the top and skip parameters), at
-     the cost of higher resource utilization and higher latency. The value needs to be between 1 and
-     10,000. Default is 1000."""
-    countAndFacetMode: Union[str, "HybridCountAndFacetMode"]
-    """Determines whether the count and facets should includes all documents that matched the search
-     query, or only the documents that are retrieved within the 'maxTextRecallSize' window. Known
-     values are: \"countRetrievableResults\" and \"countAllResults\"."""
 
 
 IndexAction = TypedDict(
@@ -85,26 +52,6 @@ class IndexDocumentsBatch(TypedDict, total=False):
     """The actions in the batch. Required."""
 
 
-class SearchScoreThreshold(TypedDict, total=False):
-    """The results of the vector query will filter based on the '.
-
-    :ivar value: The threshold will filter based on the '. Required.
-    :vartype value: float
-    :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
-     vector query will filter based on the '@search.score' value. Note this is the @search.score
-     returned as part of the search response. The threshold direction will be chosen for higher
-     @search.score.
-    :vartype kind: Literal[VectorThresholdKind.SEARCH_SCORE]
-    """
-
-    value: Required[float]
-    """The threshold will filter based on the '. Required."""
-    kind: Required[Literal[VectorThresholdKind.SEARCH_SCORE]]
-    """The kind of threshold used to filter vector queries. Required. The results of the vector query
-     will filter based on the '@search.score' value. Note this is the @search.score returned as part
-     of the search response. The threshold direction will be chosen for higher @search.score."""
-
-
 class VectorizableImageBinaryQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a base 64 encoded binary of an image that
     needs to be vectorized is provided.
@@ -130,18 +77,6 @@ class VectorizableImageBinaryQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
-    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
-     'fields' use the same similarity metric.
-    :vartype threshold: "VectorThreshold"
-    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
-     filter expression is defined at the vector level, the expression defined in the top level
-     filter parameter is used instead.
-    :vartype filterOverride: str
-    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
-     vector search query. Setting it to 1 ensures at most one vector per document is matched,
-     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
-     relevant vectors from the same document to be matched. Default is 0.
-    :vartype perDocumentVectorLimit: int
     :ivar base64Image: The base 64 encoded binary of an image to be vectorized to perform a vector
      search query.
     :vartype base64Image: str
@@ -169,18 +104,6 @@ class VectorizableImageBinaryQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    threshold: "VectorThreshold"
-    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
-     similarity metric."""
-    filterOverride: str
-    """The OData filter expression to apply to this specific vector query. If no filter expression is
-     defined at the vector level, the expression defined in the top level filter parameter is used
-     instead."""
-    perDocumentVectorLimit: int
-    """Controls how many vectors can be matched from each document in a vector search query. Setting
-     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
-     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
-     document to be matched. Default is 0."""
     base64Image: str
     """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
     kind: Required[Literal[VectorQueryKind.IMAGE_BINARY]]
@@ -213,18 +136,6 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
-    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
-     'fields' use the same similarity metric.
-    :vartype threshold: "VectorThreshold"
-    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
-     filter expression is defined at the vector level, the expression defined in the top level
-     filter parameter is used instead.
-    :vartype filterOverride: str
-    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
-     vector search query. Setting it to 1 ensures at most one vector per document is matched,
-     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
-     relevant vectors from the same document to be matched. Default is 0.
-    :vartype perDocumentVectorLimit: int
     :ivar url: The URL of an image to be vectorized to perform a vector search query.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
@@ -251,18 +162,6 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    threshold: "VectorThreshold"
-    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
-     similarity metric."""
-    filterOverride: str
-    """The OData filter expression to apply to this specific vector query. If no filter expression is
-     defined at the vector level, the expression defined in the top level filter parameter is used
-     instead."""
-    perDocumentVectorLimit: int
-    """Controls how many vectors can be matched from each document in a vector search query. Setting
-     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
-     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
-     document to be matched. Default is 0."""
     url: str
     """The URL of an image to be vectorized to perform a vector search query."""
     kind: Required[Literal[VectorQueryKind.IMAGE_URL]]
@@ -295,23 +194,8 @@ class VectorizableTextQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
-    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
-     'fields' use the same similarity metric.
-    :vartype threshold: "VectorThreshold"
-    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
-     filter expression is defined at the vector level, the expression defined in the top level
-     filter parameter is used instead.
-    :vartype filterOverride: str
-    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
-     vector search query. Setting it to 1 ensures at most one vector per document is matched,
-     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
-     relevant vectors from the same document to be matched. Default is 0.
-    :vartype perDocumentVectorLimit: int
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
-    :ivar queryRewrites: Can be configured to let a generative model rewrite the query before
-     sending it to be vectorized. Known values are: "none" and "generative".
-    :vartype queryRewrites: Union[str, "QueryRewritesType"]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a text value
      that needs to be vectorized is provided.
     :vartype kind: Literal[VectorQueryKind.TEXT]
@@ -336,23 +220,8 @@ class VectorizableTextQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    threshold: "VectorThreshold"
-    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
-     similarity metric."""
-    filterOverride: str
-    """The OData filter expression to apply to this specific vector query. If no filter expression is
-     defined at the vector level, the expression defined in the top level filter parameter is used
-     instead."""
-    perDocumentVectorLimit: int
-    """Controls how many vectors can be matched from each document in a vector search query. Setting
-     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
-     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
-     document to be matched. Default is 0."""
     text: Required[str]
     """The text to be vectorized to perform a vector search query. Required."""
-    queryRewrites: Union[str, "QueryRewritesType"]
-    """Can be configured to let a generative model rewrite the query before sending it to be
-     vectorized. Known values are: \"none\" and \"generative\"."""
     kind: Required[Literal[VectorQueryKind.TEXT]]
     """The kind of vector query being performed. Required. Vector query where a text value that needs
      to be vectorized is provided."""
@@ -382,18 +251,6 @@ class VectorizedQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
-    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
-     'fields' use the same similarity metric.
-    :vartype threshold: "VectorThreshold"
-    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
-     filter expression is defined at the vector level, the expression defined in the top level
-     filter parameter is used instead.
-    :vartype filterOverride: str
-    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
-     vector search query. Setting it to 1 ensures at most one vector per document is matched,
-     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
-     relevant vectors from the same document to be matched. Default is 0.
-    :vartype perDocumentVectorLimit: int
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
@@ -420,52 +277,11 @@ class VectorizedQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    threshold: "VectorThreshold"
-    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
-     similarity metric."""
-    filterOverride: str
-    """The OData filter expression to apply to this specific vector query. If no filter expression is
-     defined at the vector level, the expression defined in the top level filter parameter is used
-     instead."""
-    perDocumentVectorLimit: int
-    """Controls how many vectors can be matched from each document in a vector search query. Setting
-     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
-     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
-     document to be matched. Default is 0."""
     vector: Required[list[float]]
     """The vector representation of a search query. Required."""
     kind: Required[Literal[VectorQueryKind.VECTOR]]
     """The kind of vector query being performed. Required. Vector query where a raw vector value is
      provided."""
-
-
-class VectorSimilarityThreshold(TypedDict, total=False):
-    """The results of the vector query will be filtered based on the vector similarity metric. Note
-    this is the canonical definition of similarity metric, not the 'distance' version. The
-    threshold direction (larger or smaller) will be chosen automatically according to the metric
-    used by the field.
-
-    :ivar value: The threshold will filter based on the similarity metric value. Note this is the
-     canonical definition of similarity metric, not the 'distance' version. The threshold direction
-     (larger or smaller) will be chosen automatically according to the metric used by the field.
-     Required.
-    :vartype value: float
-    :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
-     vector query will be filtered based on the vector similarity metric. Note this is the canonical
-     definition of similarity metric, not the 'distance' version. The threshold direction (larger or
-     smaller) will be chosen automatically according to the metric used by the field.
-    :vartype kind: Literal[VectorThresholdKind.VECTOR_SIMILARITY]
-    """
-
-    value: Required[float]
-    """The threshold will filter based on the similarity metric value. Note this is the canonical
-     definition of similarity metric, not the 'distance' version. The threshold direction (larger or
-     smaller) will be chosen automatically according to the metric used by the field. Required."""
-    kind: Required[Literal[VectorThresholdKind.VECTOR_SIMILARITY]]
-    """The kind of threshold used to filter vector queries. Required. The results of the vector query
-     will be filtered based on the vector similarity metric. Note this is the canonical definition
-     of similarity metric, not the 'distance' version. The threshold direction (larger or smaller)
-     will be chosen automatically according to the metric used by the field."""
 
 
 class SearchPostRequest(TypedDict, total=False):
@@ -494,6 +310,9 @@ class SearchPostRequest(TypedDict, total=False):
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
     :vartype minimumCoverage: float
+    :ivar moreLikeThis: The key of the document to use as the basis for finding similar documents.
+     This parameter cannot be used together with search text.
+    :vartype moreLikeThis: str
     :ivar orderby: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
@@ -541,19 +360,6 @@ class SearchPostRequest(TypedDict, total=False):
     :ivar searchMode: A value that specifies whether any or all of the search terms must be matched
      in order to count the document as a match. Known values are: "any" and "all".
     :vartype searchMode: Union[str, "SearchMode"]
-    :ivar queryLanguage: A value that specifies the language of the search query. Known values are:
-     "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-     "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-     "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-     "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-     "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-     "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-     "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-     "te-in", and "ur-pk".
-    :vartype queryLanguage: Union[str, "QueryLanguage"]
-    :ivar speller: A value that specifies the type of the speller to use to spell-correct
-     individual search query terms. Known values are: "none" and "lexicon".
-    :vartype speller: Union[str, "QuerySpellerType"]
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: list[str]
@@ -587,19 +393,12 @@ class SearchPostRequest(TypedDict, total=False):
     :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Known values are: "none" and "extractive".
     :vartype captions: Union[str, "QueryCaptionType"]
-    :ivar queryRewrites: A value that specifies whether query rewrites should be generated to
-     augment the search query. Known values are: "none" and "generative".
-    :vartype queryRewrites: Union[str, "QueryRewritesType"]
-    :ivar semanticFields: The comma-separated list of field names used for semantic ranking.
-    :vartype semanticFields: list[str]
     :ivar vectorQueries: The query parameters for vector and hybrid search queries.
     :vartype vectorQueries: list["VectorQuery"]
     :ivar vectorFilterMode: Determines whether or not filters are applied before or after the
      vector search is performed. Default is 'preFilter' for new indexes. Known values are:
      "postFilter", "preFilter", and "strictPostFilter".
     :vartype vectorFilterMode: Union[str, "VectorFilterMode"]
-    :ivar hybridSearch: The query parameters to configure hybrid search behaviors.
-    :vartype hybridSearch: "HybridSearch"
     """
 
     count: bool
@@ -624,6 +423,9 @@ class SearchPostRequest(TypedDict, total=False):
     """A number between 0 and 100 indicating the percentage of the index that must be covered by a
      search query in order for the query to be reported as a success. This parameter can be useful
      for ensuring search availability even for services with only one replica. The default is 100."""
+    moreLikeThis: str
+    """The key of the document to use as the basis for finding similar documents. This parameter
+     cannot be used together with search text."""
     orderby: list[str]
     """The comma-separated list of OData $orderby expressions by which to sort the results. Each
      expression can be either a field name or a call to either the geo.distance() or the
@@ -668,20 +470,6 @@ class SearchPostRequest(TypedDict, total=False):
     searchMode: Union[str, "SearchMode"]
     """A value that specifies whether any or all of the search terms must be matched in order to count
      the document as a match. Known values are: \"any\" and \"all\"."""
-    queryLanguage: Union[str, "QueryLanguage"]
-    """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
-     \"en-gb\", \"en-in\", \"en-ca\", \"en-au\", \"fr-fr\", \"fr-ca\", \"de-de\", \"es-es\",
-     \"es-mx\", \"zh-cn\", \"zh-tw\", \"pt-br\", \"pt-pt\", \"it-it\", \"ja-jp\", \"ko-kr\",
-     \"ru-ru\", \"cs-cz\", \"nl-be\", \"nl-nl\", \"hu-hu\", \"pl-pl\", \"sv-se\", \"tr-tr\",
-     \"hi-in\", \"ar-sa\", \"ar-eg\", \"ar-ma\", \"ar-kw\", \"ar-jo\", \"da-dk\", \"no-no\",
-     \"bg-bg\", \"hr-hr\", \"hr-ba\", \"ms-my\", \"ms-bn\", \"sl-sl\", \"ta-in\", \"vi-vn\",
-     \"el-gr\", \"ro-ro\", \"is-is\", \"id-id\", \"th-th\", \"lt-lt\", \"uk-ua\", \"lv-lv\",
-     \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
-     \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
-     \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    speller: Union[str, "QuerySpellerType"]
-    """A value that specifies the type of the speller to use to spell-correct individual search query
-     terms. Known values are: \"none\" and \"lexicon\"."""
     select: list[str]
     """The comma-separated list of fields to retrieve. If unspecified, all fields marked as
      retrievable in the schema are included."""
@@ -713,19 +501,12 @@ class SearchPostRequest(TypedDict, total=False):
     captions: Union[str, "QueryCaptionType"]
     """A value that specifies whether captions should be returned as part of the search response.
      Known values are: \"none\" and \"extractive\"."""
-    queryRewrites: Union[str, "QueryRewritesType"]
-    """A value that specifies whether query rewrites should be generated to augment the search query.
-     Known values are: \"none\" and \"generative\"."""
-    semanticFields: list[str]
-    """The comma-separated list of field names used for semantic ranking."""
     vectorQueries: list["VectorQuery"]
     """The query parameters for vector and hybrid search queries."""
     vectorFilterMode: Union[str, "VectorFilterMode"]
     """Determines whether or not filters are applied before or after the vector search is performed.
      Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
      \"strictPostFilter\"."""
-    hybridSearch: "HybridSearch"
-    """The query parameters to configure hybrid search behaviors."""
 
 
 class SuggestPostRequest(TypedDict, total=False):
@@ -893,5 +674,4 @@ class AutocompletePostRequest(TypedDict, total=False):
      default is 5."""
 
 
-VectorThreshold = Union[SearchScoreThreshold, VectorSimilarityThreshold]
 VectorQuery = Union[VectorizableImageBinaryQuery, VectorizableImageUrlQuery, VectorizableTextQuery, VectorizedQuery]

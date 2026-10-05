@@ -16,9 +16,6 @@ from ..._utils.utils import FileType
 from ._enums import (
     KnowledgeBaseModelKind,
     KnowledgeSourceKind,
-    McpServerAuthenticationKind,
-    McpServerOutputParsingKind,
-    SearchIndexKnowledgeSourceBoostKind,
     VectorSearchAlgorithmKind,
     VectorSearchCompressionKind,
     VectorSearchVectorizerKind,
@@ -167,147 +164,6 @@ class AIServicesAccountKey(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Azure.Search.AIServicesByKey"  # type: ignore
-
-
-class AIServicesVisionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies the AI Services Vision parameters for vectorizing a query image or text.
-
-    :ivar model_version: The version of the model to use when calling the AI Services Vision
-     service. It will default to the latest available when not specified. Required.
-    :vartype model_version: str
-    :ivar resource_uri: The resource URI of the AI Services resource. Required.
-    :vartype resource_uri: str
-    :ivar api_key: API key of the designated AI Services resource.
-    :vartype api_key: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
-     authResourceId is provided and it's not specified, the system-assigned managed identity is
-     used. On updates to the index, if the identity is unspecified, the value remains unchanged. If
-     set to "none", the value of this property is cleared.
-    :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    """
-
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The version of the model to use when calling the AI Services Vision service. It will default to
-     the latest available when not specified. Required."""
-    resource_uri: str = rest_field(name="resourceUri", visibility=["read", "create", "update", "delete", "query"])
-    """The resource URI of the AI Services resource. Required."""
-    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
-    """API key of the designated AI Services resource."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
-        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-assigned managed identity used for outbound connections. If an authResourceId is
-     provided and it's not specified, the system-assigned managed identity is used. On updates to
-     the index, if the identity is unspecified, the value remains unchanged. If set to \"none\", the
-     value of this property is cleared."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_version: str,
-        resource_uri: str,
-        api_key: Optional[str] = None,
-        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VectorSearchVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies the vectorization method to be used during query time.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AIServicesVisionVectorizer, AzureMachineLearningVectorizer, AzureOpenAIVectorizer,
-    WebApiVectorizer
-
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar kind: Type of VectorSearchVectorizer. Required. Known values are: "azureOpenAI",
-     "customWebApi", "aiServicesVision", and "aml".
-    :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchVectorizerKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    vectorizer_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
-    """The name to associate with this particular vectorization method. Required."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\", \"customWebApi\",
-     \"aiServicesVision\", and \"aml\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vectorizer_name: str,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AIServicesVisionVectorizer(
-    VectorSearchVectorizer, discriminator="aiServicesVision"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Clears the identity property of a datasource.
-
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar ai_services_vision_parameters: Contains the parameters specific to AI Services Vision
-     embedding vectorization.
-    :vartype ai_services_vision_parameters:
-     ~azure.search.documents.indexes.models.AIServicesVisionParameters
-    :ivar kind: The name of the kind of vectorization method being configured for use with vector
-     search. Required. Generate embeddings for an image or text input at query time using the Azure
-     AI Services Vision Vectorize API.
-    :vartype kind: str or ~azure.search.documents.indexes.models.AI_SERVICES_VISION
-    """
-
-    ai_services_vision_parameters: Optional["_models.AIServicesVisionParameters"] = rest_field(
-        name="aiServicesVisionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the parameters specific to AI Services Vision embedding vectorization."""
-    kind: Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The name of the kind of vectorization method being configured for use with vector search.
-     Required. Generate embeddings for an image or text input at query time using the Azure AI
-     Services Vision Vectorize API."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vectorizer_name: str,
-        ai_services_vision_parameters: Optional["_models.AIServicesVisionParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = VectorSearchVectorizerKind.AI_SERVICES_VISION  # type: ignore
 
 
 class AnalyzedTokenInfo(_Model):
@@ -624,24 +480,17 @@ class KnowledgeSource(_Model):  # pylint: disable=docstring-keyword-should-match
     """Represents a knowledge source definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureBlobKnowledgeSource, FabricDataAgentKnowledgeSource, FabricOntologyKnowledgeSource,
-    FileKnowledgeSource, IndexedOneLakeKnowledgeSource, IndexedSharePointKnowledgeSource,
-    IndexedSqlKnowledgeSource, McpServerKnowledgeSource, RemoteSharePointKnowledgeSource,
-    SearchIndexKnowledgeSource, WebKnowledgeSource, WorkIQKnowledgeSource
+    AzureBlobKnowledgeSource, FileKnowledgeSource, IndexedOneLakeKnowledgeSource,
+    IndexedSharePointKnowledgeSource, IndexedSqlKnowledgeSource, SearchIndexKnowledgeSource,
+    WebKnowledgeSource
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
     :ivar kind: The type of the knowledge source. Required. Known values are: "searchIndex",
-     "azureBlob", "indexedSharePoint", "indexedOneLake", "indexedSql", "web", "remoteSharePoint",
-     "workIQ", "file", "mcpServer", "fabricDataAgent", and "fabricOntology".
+     "azureBlob", "indexedSharePoint", "indexedOneLake", "indexedSql", "web", and "file".
     :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeSourceKind
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -662,14 +511,7 @@ class KnowledgeSource(_Model):  # pylint: disable=docstring-keyword-should-match
     """Optional user-defined description."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """The type of the knowledge source. Required. Known values are: \"searchIndex\", \"azureBlob\",
-     \"indexedSharePoint\", \"indexedOneLake\", \"indexedSql\", \"web\", \"remoteSharePoint\",
-     \"workIQ\", \"file\", \"mcpServer\", \"fabricDataAgent\", and \"fabricOntology\"."""
-    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
-        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls whether results from this knowledge source are reranked before they are included in
-     the final result set. Defaults to 'rerank' when not specified. Known values are: \"rerank\" and
-     \"none\"."""
+     \"indexedSharePoint\", \"indexedOneLake\", \"indexedSql\", \"web\", and \"file\"."""
     e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the knowledge source."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
@@ -691,7 +533,6 @@ class KnowledgeSource(_Model):  # pylint: disable=docstring-keyword-should-match
         name: str,
         kind: str,
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -716,11 +557,6 @@ class AzureBlobKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -755,7 +591,6 @@ class AzureBlobKnowledgeSource(
         name: str,
         azure_blob_parameters: "_models.AzureBlobKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -788,11 +623,6 @@ class AzureBlobKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-k
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -815,11 +645,6 @@ class AzureBlobKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-k
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -832,7 +657,6 @@ class AzureBlobKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-k
         folder_path: Optional[str] = None,
         is_adls_gen2: Optional[bool] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -922,16 +746,101 @@ class AzureMachineLearningParameters(_Model):  # pylint: disable=docstring-keywo
         super().__init__(*args, **kwargs)
 
 
+class VectorSearchVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the vectorization method to be used during query time.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer
+
+    :ivar vectorizer_name: The name to associate with this particular vectorization method.
+     Required.
+    :vartype vectorizer_name: str
+    :ivar kind: Type of VectorSearchVectorizer. Required. Known values are: "azureOpenAI",
+     "customWebApi", "aiServicesVision", and "aml".
+    :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchVectorizerKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    vectorizer_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The name to associate with this particular vectorization method. Required."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\", \"customWebApi\",
+     \"aiServicesVision\", and \"aml\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vectorizer_name: str,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureMachineLearningVectorizer(
+    VectorSearchVectorizer, discriminator="aml"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
+    for generating the vector embedding of a query string.
+
+    :ivar vectorizer_name: The name to associate with this particular vectorization method.
+     Required.
+    :vartype vectorizer_name: str
+    :ivar aml_parameters: Specifies the properties of the AML vectorizer.
+    :vartype aml_parameters: ~azure.search.documents.indexes.models.AzureMachineLearningParameters
+    :ivar kind: The name of the kind of vectorization method being configured for use with vector
+     search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the
+     Azure AI Foundry Model Catalog at query time.
+    :vartype kind: str or ~azure.search.documents.indexes.models.AML
+    """
+
+    aml_parameters: Optional["_models.AzureMachineLearningParameters"] = rest_field(
+        name="amlParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the properties of the AML vectorizer."""
+    kind: Literal[VectorSearchVectorizerKind.AML] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The name of the kind of vectorization method being configured for use with vector search.
+     Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the Azure
+     AI Foundry Model Catalog at query time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vectorizer_name: str,
+        aml_parameters: Optional["_models.AzureMachineLearningParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VectorSearchVectorizerKind.AML  # type: ignore
+
+
 class SearchIndexerSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureMachineLearningSkill, ChatCompletionSkill, WebApiSkill, AzureOpenAIEmbeddingSkill,
-    CustomEntityLookupSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill,
-    PIIDetectionSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill,
-    EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, ContentUnderstandingSkill,
-    DocumentExtractionSkill, DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill,
-    OcrSkill, VisionVectorizeSkill
+    ChatCompletionSkill, WebApiSkill, AzureOpenAIEmbeddingSkill, CustomEntityLookupSkill,
+    KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SplitSkill,
+    TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
+    ConditionalSkill, ContentUnderstandingSkill, DocumentExtractionSkill,
+    DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -999,159 +908,6 @@ class SearchIndexerSkill(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class AzureMachineLearningSkill(
-    SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.AmlSkill"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The AML skill allows you to extend AI enrichment with a custom Azure Machine Learning (AML)
-    model. Once an AML model is trained and deployed, an AML skill integrates it into AI
-    enrichment.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
-     the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
-    :vartype scoring_uri: str
-    :ivar authentication_key: (Required for key authentication) The key for the AML service.
-    :vartype authentication_key: str
-    :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
-     of the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-    :vartype resource_id: str
-    :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
-     API call.
-    :vartype timeout: ~datetime.timedelta
-    :ivar region: (Optional for token authentication). The region the AML service is deployed in.
-    :vartype region: str
-    :ivar degree_of_parallelism: (Optional) When specified, indicates the number of calls the
-     indexer will make in parallel to the endpoint you have provided. You can decrease this value if
-     your endpoint is failing under too high of a request load, or raise it if your endpoint is able
-     to accept more requests and you would like an increase in the performance of the indexer. If
-     not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
-     and a minimum of 1.
-    :vartype degree_of_parallelism: int
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Custom.AmlSkill".
-    :vartype odata_type: str
-    """
-
-    scoring_uri: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
-    """(Required for no authentication or key authentication) The scoring URI of the AML service to
-     which the JSON payload will be sent. Only the https URI scheme is allowed."""
-    authentication_key: Optional[str] = rest_field(
-        name="key", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Required for key authentication) The key for the AML service."""
-    resource_id: Optional[str] = rest_field(
-        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Required for token authentication). The Azure Resource Manager resource ID of the AML service.
-     It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}."""
-    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional) When specified, indicates the timeout for the http client making the API call."""
-    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional for token authentication). The region the AML service is deployed in."""
-    degree_of_parallelism: Optional[int] = rest_field(
-        name="degreeOfParallelism", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Optional) When specified, indicates the number of calls the indexer will make in parallel to
-     the endpoint you have provided. You can decrease this value if your endpoint is failing under
-     too high of a request load, or raise it if your endpoint is able to accept more requests and
-     you would like an increase in the performance of the indexer. If not set, a default value of 5
-     is used. The degreeOfParallelism can be set to a maximum of 10 and a minimum of 1."""
-    odata_type: Literal["#Microsoft.Skills.Custom.AmlSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Custom.AmlSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        scoring_uri: Optional[str] = None,
-        authentication_key: Optional[str] = None,
-        resource_id: Optional[str] = None,
-        timeout: Optional[datetime.timedelta] = None,
-        region: Optional[str] = None,
-        degree_of_parallelism: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Custom.AmlSkill"  # type: ignore
-
-
-class AzureMachineLearningVectorizer(
-    VectorSearchVectorizer, discriminator="aml"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
-    for generating the vector embedding of a query string.
-
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar aml_parameters: Specifies the properties of the AML vectorizer.
-    :vartype aml_parameters: ~azure.search.documents.indexes.models.AzureMachineLearningParameters
-    :ivar kind: The name of the kind of vectorization method being configured for use with vector
-     search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the
-     Azure AI Foundry Model Catalog at query time.
-    :vartype kind: str or ~azure.search.documents.indexes.models.AML
-    """
-
-    aml_parameters: Optional["_models.AzureMachineLearningParameters"] = rest_field(
-        name="amlParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the properties of the AML vectorizer."""
-    kind: Literal[VectorSearchVectorizerKind.AML] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The name of the kind of vectorization method being configured for use with vector search.
-     Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the Azure
-     AI Foundry Model Catalog at query time."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vectorizer_name: str,
-        aml_parameters: Optional["_models.AzureMachineLearningParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = VectorSearchVectorizerKind.AML  # type: ignore
-
-
 class AzureOpenAIEmbeddingSkill(
     SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1184,9 +940,7 @@ class AzureOpenAIEmbeddingSkill(
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
-     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
@@ -1215,9 +969,7 @@ class AzureOpenAIEmbeddingSkill(
     )
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
-     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
     dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only supported in
      text-embedding-3 and later models."""
@@ -1252,51 +1004,6 @@ class AzureOpenAIEmbeddingSkill(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"  # type: ignore
-
-
-class AzureOpenAITokenizerParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Azure OpenAI Tokenizer parameters.
-
-    :ivar encoder_model_name: Only applies if the unit is set to azureOpenAITokens. Options include
-     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'.
-     Known values are: "r50k_base", "p50k_base", "p50k_edit", and "cl100k_base".
-    :vartype encoder_model_name: str or
-     ~azure.search.documents.indexes.models.SplitSkillEncoderModelName
-    :ivar allowed_special_tokens: (Optional) Only applies if the unit is set to azureOpenAITokens.
-     This parameter defines a collection of special tokens that are permitted within the
-     tokenization process.
-    :vartype allowed_special_tokens: list[str]
-    """
-
-    encoder_model_name: Optional[Union[str, "_models.SplitSkillEncoderModelName"]] = rest_field(
-        name="encoderModelName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Only applies if the unit is set to azureOpenAITokens. Options include 'R50k_base', 'P50k_base',
-     'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'. Known values are:
-     \"r50k_base\", \"p50k_base\", \"p50k_edit\", and \"cl100k_base\"."""
-    allowed_special_tokens: Optional[list[str]] = rest_field(
-        name="allowedSpecialTokens", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Optional) Only applies if the unit is set to azureOpenAITokens. This parameter defines a
-     collection of special tokens that are permitted within the tokenization process."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        encoder_model_name: Optional[Union[str, "_models.SplitSkillEncoderModelName"]] = None,
-        allowed_special_tokens: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AzureOpenAIVectorizer(
@@ -1355,9 +1062,7 @@ class AzureOpenAIVectorizerParameters(_Model):  # pylint: disable=docstring-keyw
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
-     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
@@ -1380,9 +1085,7 @@ class AzureOpenAIVectorizerParameters(_Model):  # pylint: disable=docstring-keyw
     )
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
-     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
 
     @overload
     def __init__(
@@ -2374,6 +2077,12 @@ class ContentUnderstandingSkill(
     :ivar chunking_properties: Controls the cardinality for chunking the content.
     :vartype chunking_properties:
      ~azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingProperties
+    :ivar model_name: The name of the chat-completion model used for image description. Must be
+     provided together with modelDeployment.
+    :vartype model_name: str
+    :ivar model_deployment: The deployment name of the chat-completion model used for image
+     description. Must be provided together with modelName.
+    :vartype model_deployment: str
     :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Util.ContentUnderstandingSkill".
     :vartype odata_type: str
@@ -2387,6 +2096,14 @@ class ContentUnderstandingSkill(
         name="chunkingProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls the cardinality for chunking the content."""
+    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the chat-completion model used for image description. Must be provided together
+     with modelDeployment."""
+    model_deployment: Optional[str] = rest_field(
+        name="modelDeployment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deployment name of the chat-completion model used for image description. Must be provided
+     together with modelName."""
     odata_type: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.ContentUnderstandingSkill\"."""
@@ -2402,6 +2119,8 @@ class ContentUnderstandingSkill(
         context: Optional[str] = None,
         extraction_options: Optional[list[Union[str, "_models.ContentUnderstandingSkillExtractionOptions"]]] = None,
         chunking_properties: Optional["_models.ContentUnderstandingSkillChunkingProperties"] = None,
+        model_name: Optional[str] = None,
+        model_deployment: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4082,53 +3801,6 @@ class EntityRecognitionSkillV3(
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"  # type: ignore
 
 
-class EntraAppAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for a customer-owned Microsoft Entra app registration used for federated
-    credential-based on-behalf-of authentication.
-
-    :ivar application_id: The application (client) ID of the customer-owned Entra app registration.
-     Required.
-    :vartype application_id: str
-    :ivar federated_credential_id: The federated credential ID configured on the app registration,
-     enabling the search service to authenticate as the app without a stored client secret.
-     Required.
-    :vartype federated_credential_id: str
-    :ivar tenant_id: The tenant ID of the app registration. Required when the app registration is
-     in a different tenant than the search service. If omitted, the search service's tenant is used.
-    :vartype tenant_id: str
-    """
-
-    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
-    """The application (client) ID of the customer-owned Entra app registration. Required."""
-    federated_credential_id: str = rest_field(
-        name="federatedCredentialId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The federated credential ID configured on the app registration, enabling the search service to
-     authenticate as the app without a stored client secret. Required."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
-    """The tenant ID of the app registration. Required when the app registration is in a different
-     tenant than the search service. If omitted, the search service's tenant is used."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        application_id: str,
-        federated_credential_id: str,
-        tenant_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class VectorSearchAlgorithmConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the algorithm used during indexing or querying.
 
@@ -4243,204 +3915,6 @@ class ExhaustiveKnnParameters(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class FabricDataAgentKnowledgeSource(
-    KnowledgeSource, discriminator="fabricDataAgent"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for Fabric Data Agent knowledge source.
-
-    :ivar name: The name of the knowledge source. Required.
-    :vartype name: str
-    :ivar description: Optional user-defined description.
-    :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar e_tag: The ETag of the knowledge source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your knowledge source
-     definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
-     you have encrypted your knowledge source definition, it will always remain encrypted. The
-     search service will ignore attempts to set this property to null. You can change this property
-     as needed if you want to rotate your encryption key; Your knowledge source definition will be
-     unaffected. Encryption with customer-managed keys is not available for free search services,
-     and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from a
-     Fabric Data Agent.
-    :vartype kind: str or ~azure.search.documents.indexes.models.FABRIC_DATA_AGENT
-    :ivar fabric_data_agent_parameters: The parameters for the Fabric Data Agent knowledge source.
-     Required.
-    :vartype fabric_data_agent_parameters:
-     ~azure.search.documents.indexes.models.FabricDataAgentKnowledgeSourceParameters
-    """
-
-    kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. A knowledge source that retrieves data from a Fabric Data
-     Agent."""
-    fabric_data_agent_parameters: "_models.FabricDataAgentKnowledgeSourceParameters" = rest_field(
-        name="fabricDataAgentParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The parameters for the Fabric Data Agent knowledge source. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        fabric_data_agent_parameters: "_models.FabricDataAgentKnowledgeSourceParameters",
-        description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.FABRIC_DATA_AGENT  # type: ignore
-
-
-class FabricDataAgentKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for Fabric Data Agent knowledge source.
-
-    :ivar workspace_id: Fabric workspace ID. Required.
-    :vartype workspace_id: str
-    :ivar data_agent_id: Specifies which Fabric Data Agent to access. Required.
-    :vartype data_agent_id: str
-    """
-
-    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create", "update", "delete", "query"])
-    """Fabric workspace ID. Required."""
-    data_agent_id: str = rest_field(name="dataAgentId", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies which Fabric Data Agent to access. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        workspace_id: str,
-        data_agent_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FabricOntologyKnowledgeSource(
-    KnowledgeSource, discriminator="fabricOntology"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for Fabric Ontology knowledge source.
-
-    :ivar name: The name of the knowledge source. Required.
-    :vartype name: str
-    :ivar description: Optional user-defined description.
-    :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar e_tag: The ETag of the knowledge source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your knowledge source
-     definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
-     you have encrypted your knowledge source definition, it will always remain encrypted. The
-     search service will ignore attempts to set this property to null. You can change this property
-     as needed if you want to rotate your encryption key; Your knowledge source definition will be
-     unaffected. Encryption with customer-managed keys is not available for free search services,
-     and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: The discriminator value. Required. A knowledge source that retrieves data from
-     Microsoft Fabric Ontology ontologies.
-    :vartype kind: str or ~azure.search.documents.indexes.models.FABRIC_ONTOLOGY
-    :ivar fabric_ontology_parameters: The parameters for the Fabric Ontology knowledge source.
-     Required.
-    :vartype fabric_ontology_parameters:
-     ~azure.search.documents.indexes.models.FabricOntologyKnowledgeSourceParameters
-    """
-
-    kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. A knowledge source that retrieves data from Microsoft Fabric
-     Ontology ontologies."""
-    fabric_ontology_parameters: "_models.FabricOntologyKnowledgeSourceParameters" = rest_field(
-        name="fabricOntologyParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The parameters for the Fabric Ontology knowledge source. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        fabric_ontology_parameters: "_models.FabricOntologyKnowledgeSourceParameters",
-        description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.FABRIC_ONTOLOGY  # type: ignore
-
-
-class FabricOntologyKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for Fabric Ontology knowledge source.
-
-    :ivar workspace_id: The Fabric workspace ID containing the ontology. Required.
-    :vartype workspace_id: str
-    :ivar ontology_id: The ID of the ontology to use from the Fabric workspace. Required.
-    :vartype ontology_id: str
-    """
-
-    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Fabric workspace ID containing the ontology. Required."""
-    ontology_id: str = rest_field(name="ontologyId", visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the ontology to use from the Fabric workspace. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        workspace_id: str,
-        ontology_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class FieldMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a mapping between a field in a data source and a target field in an index.
 
@@ -4530,11 +4004,6 @@ class FileKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4576,7 +4045,6 @@ class FileKnowledgeSource(
         name: str,
         file_parameters: "_models.FileKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         cors_options: Optional["_models.CorsOptions"] = None,
@@ -4601,11 +4069,6 @@ class FileKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keywor
      source, including the content extraction mode and an optional embeddingModel.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the file knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4615,11 +4078,6 @@ class FileKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keywor
     )
     """Consolidates all general ingestion settings for the File knowledge source, including the
      content extraction mode and an optional embeddingModel."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the file knowledge source."""
 
@@ -4628,7 +4086,6 @@ class FileKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keywor
         self,
         *,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5026,11 +4483,6 @@ class IndexedOneLakeKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5063,7 +4515,6 @@ class IndexedOneLakeKnowledgeSource(
         name: str,
         indexed_one_lake_parameters: "_models.IndexedOneLakeKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -5092,11 +4543,6 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):  # pylint: disable=docstr
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -5115,11 +4561,6 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):  # pylint: disable=docstr
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5131,7 +4572,6 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):  # pylint: disable=docstr
         lakehouse_id: str,
         target_path: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5154,11 +4594,6 @@ class IndexedSharePointKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5191,7 +4626,6 @@ class IndexedSharePointKnowledgeSource(
         name: str,
         indexed_share_point_parameters: "_models.IndexedSharePointKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -5219,7 +4653,8 @@ class IndexedSharePointKnowledgeSourceParameters(
      Required.
     :vartype connection_string: str
     :ivar container_name: Specifies which SharePoint libraries to access. Required. Known values
-     are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
+     are: "defaultSiteLibrary", "allSiteLibraries", "useQuery", "allSiteLists", "allSitePages", and
+     "allSiteContent".
     :vartype container_name: str or
      ~azure.search.documents.indexes.models.IndexedSharePointContainerName
     :ivar query: Optional query to filter SharePoint content.
@@ -5227,11 +4662,6 @@ class IndexedSharePointKnowledgeSourceParameters(
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -5246,18 +4676,14 @@ class IndexedSharePointKnowledgeSourceParameters(
         name="containerName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies which SharePoint libraries to access. Required. Known values are:
-     \"defaultSiteLibrary\", \"allSiteLibraries\", and \"useQuery\"."""
+     \"defaultSiteLibrary\", \"allSiteLibraries\", \"useQuery\", \"allSiteLists\", \"allSitePages\",
+     and \"allSiteContent\"."""
     query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional query to filter SharePoint content."""
     ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5269,7 +4695,6 @@ class IndexedSharePointKnowledgeSourceParameters(
         container_name: Union[str, "_models.IndexedSharePointContainerName"],
         query: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5292,11 +4717,6 @@ class IndexedSqlKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5331,7 +4751,6 @@ class IndexedSqlKnowledgeSource(
         name: str,
         indexed_sql_parameters: "_models.IndexedSqlKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -5370,11 +4789,6 @@ class IndexedSqlKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-
      model, schedule, and identity.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -5403,11 +4817,6 @@ class IndexedSqlKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings including embedding model, schedule, and identity."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5421,7 +4830,6 @@ class IndexedSqlKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-
         content_columns: Optional[list["_models.ContentColumnMapping"]] = None,
         embedding_columns: Optional[list["_models.EmbeddingColumnMapping"]] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5435,83 +4843,12 @@ class IndexedSqlKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
-class IndexerCurrentState(_Model):
-    """Represents all of the state that defines and dictates the indexer's current execution.
-
-    :ivar mode: The mode the indexer is running in. Known values are: "indexingAllDocs",
-     "indexingResetDocs", and "indexingResync".
-    :vartype mode: str or ~azure.search.documents.indexes.models.IndexingMode
-    :ivar all_docs_initial_tracking_state: Change tracking state used when indexing starts on all
-     documents in the datasource.
-    :vartype all_docs_initial_tracking_state: str
-    :ivar all_docs_final_tracking_state: Change tracking state value when indexing finishes on all
-     documents in the datasource.
-    :vartype all_docs_final_tracking_state: str
-    :ivar reset_docs_initial_tracking_state: Change tracking state used when indexing starts on
-     select, reset documents in the datasource.
-    :vartype reset_docs_initial_tracking_state: str
-    :ivar reset_docs_final_tracking_state: Change tracking state value when indexing finishes on
-     select, reset documents in the datasource.
-    :vartype reset_docs_final_tracking_state: str
-    :ivar resync_initial_tracking_state: Change tracking state used when indexing starts on
-     selective options from the datasource.
-    :vartype resync_initial_tracking_state: str
-    :ivar resync_final_tracking_state: Change tracking state value when indexing finishes on
-     selective options from the datasource.
-    :vartype resync_final_tracking_state: str
-    :ivar reset_document_keys: The list of document keys that have been reset. The document key is
-     the document's unique identifier for the data in the search index. The indexer will prioritize
-     selectively re-ingesting these keys.
-    :vartype reset_document_keys: list[str]
-    :ivar reset_datasource_document_ids: The list of datasource document ids that have been reset.
-     The datasource document id is the unique identifier for the data in the datasource. The indexer
-     will prioritize selectively re-ingesting these ids.
-    :vartype reset_datasource_document_ids: list[str]
-    """
-
-    mode: Optional[Union[str, "_models.IndexingMode"]] = rest_field(visibility=["read"])
-    """The mode the indexer is running in. Known values are: \"indexingAllDocs\",
-     \"indexingResetDocs\", and \"indexingResync\"."""
-    all_docs_initial_tracking_state: Optional[str] = rest_field(name="allDocsInitialTrackingState", visibility=["read"])
-    """Change tracking state used when indexing starts on all documents in the datasource."""
-    all_docs_final_tracking_state: Optional[str] = rest_field(name="allDocsFinalTrackingState", visibility=["read"])
-    """Change tracking state value when indexing finishes on all documents in the datasource."""
-    reset_docs_initial_tracking_state: Optional[str] = rest_field(
-        name="resetDocsInitialTrackingState", visibility=["read"]
-    )
-    """Change tracking state used when indexing starts on select, reset documents in the datasource."""
-    reset_docs_final_tracking_state: Optional[str] = rest_field(name="resetDocsFinalTrackingState", visibility=["read"])
-    """Change tracking state value when indexing finishes on select, reset documents in the
-     datasource."""
-    resync_initial_tracking_state: Optional[str] = rest_field(name="resyncInitialTrackingState", visibility=["read"])
-    """Change tracking state used when indexing starts on selective options from the datasource."""
-    resync_final_tracking_state: Optional[str] = rest_field(name="resyncFinalTrackingState", visibility=["read"])
-    """Change tracking state value when indexing finishes on selective options from the datasource."""
-    reset_document_keys: Optional[list[str]] = rest_field(name="resetDocumentKeys", visibility=["read"])
-    """The list of document keys that have been reset. The document key is the document's unique
-     identifier for the data in the search index. The indexer will prioritize selectively
-     re-ingesting these keys."""
-    reset_datasource_document_ids: Optional[list[str]] = rest_field(
-        name="resetDatasourceDocumentIds", visibility=["read"]
-    )
-    """The list of datasource document ids that have been reset. The datasource document id is the
-     unique identifier for the data in the datasource. The indexer will prioritize selectively
-     re-ingesting these ids."""
-
-
 class IndexerExecutionResult(_Model):
     """Represents the result of an individual indexer execution.
 
     :ivar status: The outcome of this indexer execution. Required. Known values are:
      "transientFailure", "success", "inProgress", and "reset".
     :vartype status: str or ~azure.search.documents.indexes.models.IndexerExecutionStatus
-    :ivar status_detail: The outcome of this indexer execution. Known values are: "resetDocs" and
-     "resync".
-    :vartype status_detail: str or
-     ~azure.search.documents.indexes.models.IndexerExecutionStatusDetail
-    :ivar mode: The mode the indexer is running in. Known values are: "indexingAllDocs",
-     "indexingResetDocs", and "indexingResync".
-    :vartype mode: str or ~azure.search.documents.indexes.models.IndexingMode
     :ivar error_message: The error message indicating the top-level error, if any.
     :vartype error_message: str
     :ivar start_time: The start time of this indexer execution.
@@ -5538,13 +4875,6 @@ class IndexerExecutionResult(_Model):
     status: Union[str, "_models.IndexerExecutionStatus"] = rest_field(visibility=["read"])
     """The outcome of this indexer execution. Required. Known values are: \"transientFailure\",
      \"success\", \"inProgress\", and \"reset\"."""
-    status_detail: Optional[Union[str, "_models.IndexerExecutionStatusDetail"]] = rest_field(
-        name="statusDetail", visibility=["read"]
-    )
-    """The outcome of this indexer execution. Known values are: \"resetDocs\" and \"resync\"."""
-    mode: Optional[Union[str, "_models.IndexingMode"]] = rest_field(visibility=["read"])
-    """The mode the indexer is running in. Known values are: \"indexingAllDocs\",
-     \"indexingResetDocs\", and \"indexingResync\"."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
     """The error message indicating the top-level error, if any."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
@@ -5787,6 +5117,12 @@ class IndexingParametersConfiguration(_Model):  # pylint: disable=docstring-keyw
     :ivar query_timeout: Increases the timeout beyond the 5-minute default for Azure SQL database
      data sources, specified in the format "hh:mm:ss".
     :vartype query_timeout: str
+    :ivar refresh_all_acls: For ADLS Gen2 data sources that ingest permissions, indicates whether
+     the indexer refreshes the access control lists of documents whose content has not changed.
+     Changing a file's permissions does not change its last-modified time, so without this the index
+     keeps serving stale permissions. The refresh runs at most once every 24 hours, and only updates
+     permission metadata: content and enriched fields are left as they are. Set to false to disable.
+    :vartype refresh_all_acls: bool
     """
 
     parsing_mode: Optional[Union[str, "_models.BlobIndexerParsingMode"]] = rest_field(
@@ -5889,6 +5225,14 @@ class IndexingParametersConfiguration(_Model):  # pylint: disable=docstring-keyw
     )
     """Increases the timeout beyond the 5-minute default for Azure SQL database data sources,
      specified in the format \"hh:mm:ss\"."""
+    refresh_all_acls: Optional[bool] = rest_field(
+        name="refreshAllAcls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For ADLS Gen2 data sources that ingest permissions, indicates whether the indexer refreshes the
+     access control lists of documents whose content has not changed. Changing a file's permissions
+     does not change its last-modified time, so without this the index keeps serving stale
+     permissions. The refresh runs at most once every 24 hours, and only updates permission
+     metadata: content and enriched fields are left as they are. Set to false to disable."""
 
     @overload
     def __init__(
@@ -5912,6 +5256,7 @@ class IndexingParametersConfiguration(_Model):  # pylint: disable=docstring-keyw
         pdf_text_rotation_algorithm: Optional[Union[str, "_models.BlobIndexerPDFTextRotationAlgorithm"]] = None,
         execution_environment: Optional[Union[str, "_models.IndexerExecutionEnvironment"]] = None,
         query_timeout: Optional[str] = None,
+        refresh_all_acls: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6349,9 +5694,6 @@ class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar description: The description of the knowledge base.
     :vartype description: str
-    :ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
-     its usage and costs.
-    :vartype tags: dict[str, str]
     :ivar retrieval_instructions: Instructions considered by the knowledge base when developing
      query plan.
     :vartype retrieval_instructions: str
@@ -6361,11 +5703,6 @@ class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
      base.
     :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
-    :ivar retrieve_defaults: Persisted request-wide retrieve defaults for this knowledge base.
-     These values apply to retrieve requests that omit the corresponding fields; request-time values
-     take precedence when present.
-    :vartype retrieve_defaults:
-     ~azure.search.documents.indexes.models.KnowledgeBaseRetrieveDefaults
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6395,9 +5732,6 @@ class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-k
     """A description of an encryption key that you create in Azure Key Vault."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the knowledge base."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """User-defined key-value pairs for categorizing the knowledge base and attributing its usage and
-     costs."""
     retrieval_instructions: Optional[str] = rest_field(
         name="retrievalInstructions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6410,12 +5744,6 @@ class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-k
         name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Options to control Cross-Origin Resource Sharing (CORS) for the knowledge base."""
-    retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = rest_field(
-        name="retrieveDefaults", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Persisted request-wide retrieve defaults for this knowledge base. These values apply to
-     retrieve requests that omit the corresponding fields; request-time values take precedence when
-     present."""
 
     @overload
     def __init__(
@@ -6429,11 +5757,9 @@ class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-k
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         description: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
         retrieval_instructions: Optional[str] = None,
         answer_instructions: Optional[str] = None,
         cors_options: Optional["_models.CorsOptions"] = None,
-        retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = None,
     ) -> None: ...
 
     @overload
@@ -6517,53 +5843,6 @@ class KnowledgeBaseAzureOpenAIModel(
         self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
 
 
-class KnowledgeBaseRetrieveDefaults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Persisted request-wide defaults for knowledge base retrieve requests. Each value provides the
-    default for the matching retrieve-request field; service defaults apply when unset, and
-    request-time values take precedence when present.
-
-    :ivar max_runtime_in_seconds: The default maximum runtime in seconds for a retrieve request.
-    :vartype max_runtime_in_seconds: int
-    :ivar max_output_documents: The default maximum number of documents in the retrieve output.
-    :vartype max_output_documents: int
-    :ivar max_output_size_in_tokens: The default maximum size, in tokens, of the content in the
-     retrieve output.
-    :vartype max_output_size_in_tokens: int
-    """
-
-    max_runtime_in_seconds: Optional[int] = rest_field(
-        name="maxRuntimeInSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The default maximum runtime in seconds for a retrieve request."""
-    max_output_documents: Optional[int] = rest_field(
-        name="maxOutputDocuments", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The default maximum number of documents in the retrieve output."""
-    max_output_size_in_tokens: Optional[int] = rest_field(
-        name="maxOutputSizeInTokens", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The default maximum size, in tokens, of the content in the retrieve output."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_runtime_in_seconds: Optional[int] = None,
-        max_output_documents: Optional[int] = None,
-        max_output_size_in_tokens: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class KnowledgeSourceFile(_Model):
     """Metadata for a file uploaded to a File knowledge source.
 
@@ -6629,37 +5908,16 @@ class KnowledgeSourceReference(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
-    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
-     knowledge source. When true, images extracted during ingestion are delivered to downstream
-     models at query time.
-    :vartype enable_image_serving: bool
-    :ivar enable_freshness: Indicates whether freshness-aware retrieval should be enabled for this
-     knowledge source. When true, a freshness scoring profile is applied during retrieval to bias
-     results toward newer documents.
-    :vartype enable_freshness: bool
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the knowledge source. Required."""
-    enable_image_serving: Optional[bool] = rest_field(
-        name="enableImageServing", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether image serving should be enabled for this knowledge source. When true, images
-     extracted during ingestion are delivered to downstream models at query time."""
-    enable_freshness: Optional[bool] = rest_field(
-        name="enableFreshness", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether freshness-aware retrieval should be enabled for this knowledge source. When
-     true, a freshness scoring profile is applied during retrieval to bias results toward newer
-     documents."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        enable_image_serving: Optional[bool] = None,
-        enable_freshness: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7140,614 +6398,6 @@ class MappingCharFilter(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Azure.Search.MappingCharFilter"  # type: ignore
-
-
-class McpServerAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Authentication configuration for an MCP server knowledge source.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    McpServerFoundryConnectionAuthentication, McpServerStoredHeadersAuthentication
-
-    :ivar kind: The kind of authentication to use. Required. Known values are: "foundryConnection"
-     and "storedHeaders".
-    :vartype kind: str or ~azure.search.documents.indexes.models.McpServerAuthenticationKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of authentication to use. Required. Known values are: \"foundryConnection\" and
-     \"storedHeaders\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerOutputParsing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Output parsing configuration for an MCP server tool.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    McpServerAutoOutputParsing, McpServerJsonOutputParsing, McpServerNoneOutputParsing,
-    McpServerSplitOutputParsing
-
-    :ivar kind: The kind of output parsing to apply. Required. Known values are: "auto", "json",
-     "split", and "none".
-    :vartype kind: str or ~azure.search.documents.indexes.models.McpServerOutputParsingKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of output parsing to apply. Required. Known values are: \"auto\", \"json\", \"split\",
-     and \"none\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerAutoOutputParsing(McpServerOutputParsing, discriminator="auto"):
-    """Automatically detect the output format and parse accordingly.
-
-    :ivar kind: The discriminator value. Required. Automatically detect the output format and parse
-     accordingly.
-    :vartype kind: str or ~azure.search.documents.indexes.models.AUTO
-    """
-
-    kind: Literal[McpServerOutputParsingKind.AUTO] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Automatically detect the output format and parse
-     accordingly."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerOutputParsingKind.AUTO  # type: ignore
-
-
-class McpServerFoundryConnectionAuthentication(
-    McpServerAuthentication, discriminator="foundryConnection"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Authentication using an Azure AI Foundry connection.
-
-    :ivar kind: The discriminator value. Required. Authenticate using an Azure AI Foundry
-     connection.
-    :vartype kind: str or ~azure.search.documents.indexes.models.FOUNDRY_CONNECTION
-    :ivar foundry_connection_parameters: Parameters for Foundry connection authentication.
-     Required.
-    :vartype foundry_connection_parameters:
-     ~azure.search.documents.indexes.models.McpServerFoundryConnectionParameters
-    """
-
-    kind: Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Authenticate using an Azure AI Foundry connection."""
-    foundry_connection_parameters: "_models.McpServerFoundryConnectionParameters" = rest_field(
-        name="foundryConnectionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for Foundry connection authentication. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        foundry_connection_parameters: "_models.McpServerFoundryConnectionParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerAuthenticationKind.FOUNDRY_CONNECTION  # type: ignore
-
-
-class McpServerFoundryConnectionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for Foundry connection authentication.
-
-    :ivar connection_id: The Azure AI Foundry connection identifier.
-    :vartype connection_id: str
-    """
-
-    connection_id: Optional[str] = rest_field(
-        name="connectionId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Azure AI Foundry connection identifier."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerHeaders(_Model):
-    """A dictionary of HTTP header names and values."""
-
-
-class McpServerJsonOutputParsing(
-    McpServerOutputParsing, discriminator="json"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parse the output as a JSON document using the configured JSON parameters.
-
-    :ivar kind: The discriminator value. Required. Parse the output as a JSON document using the
-     configured JSON parameters.
-    :vartype kind: str or ~azure.search.documents.indexes.models.JSON
-    :ivar json_parameters: Parameters for JSON output parsing. Required when kind is 'json'.
-     Required.
-    :vartype json_parameters:
-     ~azure.search.documents.indexes.models.McpServerOutputParsingJsonParameters
-    """
-
-    kind: Literal[McpServerOutputParsingKind.JSON] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Parse the output as a JSON document using the configured
-     JSON parameters."""
-    json_parameters: "_models.McpServerOutputParsingJsonParameters" = rest_field(
-        name="jsonParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for JSON output parsing. Required when kind is 'json'. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        json_parameters: "_models.McpServerOutputParsingJsonParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerOutputParsingKind.JSON  # type: ignore
-
-
-class McpServerKnowledgeSource(
-    KnowledgeSource, discriminator="mcpServer"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for a knowledge source backed by an MCP (Model Context Protocol) server.
-
-    :ivar name: The name of the knowledge source. Required.
-    :vartype name: str
-    :ivar description: Optional user-defined description.
-    :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar e_tag: The ETag of the knowledge source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your knowledge source
-     definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
-     you have encrypted your knowledge source definition, it will always remain encrypted. The
-     search service will ignore attempts to set this property to null. You can change this property
-     as needed if you want to rotate your encryption key; Your knowledge source definition will be
-     unaffected. Encryption with customer-managed keys is not available for free search services,
-     and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: The discriminator value. Required. A knowledge source backed by an MCP (Model
-     Context Protocol) server.
-    :vartype kind: str or ~azure.search.documents.indexes.models.MCP_SERVER
-    :ivar mcp_server_parameters: The parameters for the MCP server knowledge source. Required.
-    :vartype mcp_server_parameters:
-     ~azure.search.documents.indexes.models.McpServerKnowledgeSourceParameters
-    """
-
-    kind: Literal[KnowledgeSourceKind.MCP_SERVER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. A knowledge source backed by an MCP (Model Context Protocol)
-     server."""
-    mcp_server_parameters: "_models.McpServerKnowledgeSourceParameters" = rest_field(
-        name="mcpServerParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The parameters for the MCP server knowledge source. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        mcp_server_parameters: "_models.McpServerKnowledgeSourceParameters",
-        description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.MCP_SERVER  # type: ignore
-
-
-class McpServerKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for an MCP server knowledge source.
-
-    :ivar server_url: The URL of the MCP server endpoint. Required.
-    :vartype server_url: str
-    :ivar authentication: The authentication configuration for the MCP server.
-    :vartype authentication: ~azure.search.documents.indexes.models.McpServerAuthentication
-    :ivar tools: The list of tools to invoke on the MCP server. Required.
-    :vartype tools: list[~azure.search.documents.indexes.models.McpServerTool]
-    """
-
-    server_url: str = rest_field(name="serverURL", visibility=["read", "create", "update", "delete", "query"])
-    """The URL of the MCP server endpoint. Required."""
-    authentication: Optional["_models.McpServerAuthentication"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication configuration for the MCP server."""
-    tools: list["_models.McpServerTool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of tools to invoke on the MCP server. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        server_url: str,
-        tools: list["_models.McpServerTool"],
-        authentication: Optional["_models.McpServerAuthentication"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerNoneOutputParsing(McpServerOutputParsing, discriminator="none"):
-    """Treat the output as a single block without any parsing.
-
-    :ivar kind: The discriminator value. Required. Treat the output as a single block without any
-     parsing.
-    :vartype kind: str or ~azure.search.documents.indexes.models.NONE
-    """
-
-    kind: Literal[McpServerOutputParsingKind.NONE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Treat the output as a single block without any parsing."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerOutputParsingKind.NONE  # type: ignore
-
-
-class McpServerOutputParsingJsonParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for JSON output parsing.
-
-    :ivar documents_path: The JSON path to the array of documents in the tool output. Required.
-    :vartype documents_path: str
-    :ivar include_context: Whether to include surrounding context from the JSON output alongside
-     extracted documents.
-    :vartype include_context: bool
-    """
-
-    documents_path: str = rest_field(name="documentsPath", visibility=["read", "create", "update", "delete", "query"])
-    """The JSON path to the array of documents in the tool output. Required."""
-    include_context: Optional[bool] = rest_field(
-        name="includeContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to include surrounding context from the JSON output alongside extracted documents."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        documents_path: str,
-        include_context: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerOutputParsingSplitParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for split output parsing.
-
-    :ivar text_split_mode: The text split mode to use. Known values are: "pages" and "sentences".
-    :vartype text_split_mode: str or ~azure.search.documents.indexes.models.TextSplitMode
-    :ivar maximum_page_length: The maximum number of characters per page.
-    :vartype maximum_page_length: int
-    :ivar page_overlap_length: The number of characters to overlap between pages.
-    :vartype page_overlap_length: int
-    :ivar maximum_pages_to_take: The maximum number of pages to take from the output.
-    :vartype maximum_pages_to_take: int
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-     Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hr",
-     "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru", "sk", "sl",
-     "sr", "sv", "tr", "ur", and "zh".
-    :vartype default_language_code: str or
-     ~azure.search.documents.indexes.models.SplitSkillLanguage
-    """
-
-    text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = rest_field(
-        name="textSplitMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The text split mode to use. Known values are: \"pages\" and \"sentences\"."""
-    maximum_page_length: Optional[int] = rest_field(
-        name="maximumPageLength", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum number of characters per page."""
-    page_overlap_length: Optional[int] = rest_field(
-        name="pageOverlapLength", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The number of characters to overlap between pages."""
-    maximum_pages_to_take: Optional[int] = rest_field(
-        name="maximumPagesToTake", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum number of pages to take from the output."""
-    default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"am\",
-     \"bs\", \"cs\", \"da\", \"de\", \"en\", \"es\", \"et\", \"fi\", \"fr\", \"he\", \"hi\", \"hr\",
-     \"hu\", \"id\", \"is\", \"it\", \"ja\", \"ko\", \"lv\", \"nb\", \"nl\", \"pl\", \"pt\",
-     \"pt-br\", \"ru\", \"sk\", \"sl\", \"sr\", \"sv\", \"tr\", \"ur\", and \"zh\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = None,
-        maximum_page_length: Optional[int] = None,
-        page_overlap_length: Optional[int] = None,
-        maximum_pages_to_take: Optional[int] = None,
-        default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerSplitOutputParsing(
-    McpServerOutputParsing, discriminator="split"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Split the output into pages using the configured split parameters.
-
-    :ivar kind: The discriminator value. Required. Split the output into pages using the configured
-     split parameters.
-    :vartype kind: str or ~azure.search.documents.indexes.models.SPLIT
-    :ivar split_parameters: Parameters for split output parsing.
-    :vartype split_parameters:
-     ~azure.search.documents.indexes.models.McpServerOutputParsingSplitParameters
-    """
-
-    kind: Literal[McpServerOutputParsingKind.SPLIT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Split the output into pages using the configured split
-     parameters."""
-    split_parameters: Optional["_models.McpServerOutputParsingSplitParameters"] = rest_field(
-        name="splitParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for split output parsing."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        split_parameters: Optional["_models.McpServerOutputParsingSplitParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerOutputParsingKind.SPLIT  # type: ignore
-
-
-class McpServerStoredHeadersAuthentication(
-    McpServerAuthentication, discriminator="storedHeaders"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Authentication using stored HTTP headers.
-
-    :ivar kind: The discriminator value. Required. Authenticate using stored HTTP headers.
-    :vartype kind: str or ~azure.search.documents.indexes.models.STORED_HEADERS
-    :ivar stored_headers_parameters: Parameters for stored headers authentication. Required.
-    :vartype stored_headers_parameters:
-     ~azure.search.documents.indexes.models.McpServerStoredHeadersParameters
-    """
-
-    kind: Literal[McpServerAuthenticationKind.STORED_HEADERS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Authenticate using stored HTTP headers."""
-    stored_headers_parameters: "_models.McpServerStoredHeadersParameters" = rest_field(
-        name="storedHeadersParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for stored headers authentication. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        stored_headers_parameters: "_models.McpServerStoredHeadersParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = McpServerAuthenticationKind.STORED_HEADERS  # type: ignore
-
-
-class McpServerStoredHeadersParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for stored headers authentication.
-
-    :ivar headers: The stored HTTP headers to include in MCP server requests.
-    :vartype headers: ~azure.search.documents.indexes.models.McpServerHeaders
-    """
-
-    headers: Optional["_models.McpServerHeaders"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The stored HTTP headers to include in MCP server requests."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        headers: Optional["_models.McpServerHeaders"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class McpServerTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents a single tool within an MCP server knowledge source.
-
-    :ivar name: The name of the MCP tool to invoke.
-    :vartype name: str
-    :ivar output_parsing: Optional configuration for parsing the tool's output.
-    :vartype output_parsing: ~azure.search.documents.indexes.models.McpServerOutputParsing
-    :ivar results_processing: Controls whether the parsed results from this tool are reranked.
-     Defaults to 'rerank' when not specified. Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar max_output_tokens: Optional post-parsing token cap for this tool's output. Must be
-     greater than 0 when specified.
-    :vartype max_output_tokens: int
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the MCP tool to invoke."""
-    output_parsing: Optional["_models.McpServerOutputParsing"] = rest_field(
-        name="outputParsing", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional configuration for parsing the tool's output."""
-    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
-        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls whether the parsed results from this tool are reranked. Defaults to 'rerank' when not
-     specified. Known values are: \"rerank\" and \"none\"."""
-    max_output_tokens: Optional[int] = rest_field(
-        name="maxOutputTokens", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional post-parsing token cap for this tool's output. Must be greater than 0 when specified."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        output_parsing: Optional["_models.McpServerOutputParsing"] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        max_output_tokens: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class MergeSkill(
@@ -8834,122 +7484,6 @@ class PIIDetectionSkill(
         self.odata_type = "#Microsoft.Skills.Text.PIIDetectionSkill"  # type: ignore
 
 
-class RemoteSharePointKnowledgeSource(
-    KnowledgeSource, discriminator="remoteSharePoint"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for remote SharePoint knowledge source.
-
-    :ivar name: The name of the knowledge source. Required.
-    :vartype name: str
-    :ivar description: Optional user-defined description.
-    :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar e_tag: The ETag of the knowledge source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your knowledge source
-     definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
-     you have encrypted your knowledge source definition, it will always remain encrypted. The
-     search service will ignore attempts to set this property to null. You can change this property
-     as needed if you want to rotate your encryption key; Your knowledge source definition will be
-     unaffected. Encryption with customer-managed keys is not available for free search services,
-     and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: Required. A knowledge source that reads data from remote SharePoint.
-    :vartype kind: str or ~azure.search.documents.indexes.models.REMOTE_SHARE_POINT
-    :ivar remote_share_point_parameters: The parameters for the remote SharePoint knowledge source.
-    :vartype remote_share_point_parameters:
-     ~azure.search.documents.indexes.models.RemoteSharePointKnowledgeSourceParameters
-    """
-
-    kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A knowledge source that reads data from remote SharePoint."""
-    remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = rest_field(
-        name="remoteSharePointParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The parameters for the remote SharePoint knowledge source."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-        remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.REMOTE_SHARE_POINT  # type: ignore
-
-
-class RemoteSharePointKnowledgeSourceParameters(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Parameters for remote SharePoint knowledge source.
-
-    :ivar filter_expression: Keyword Query Language (KQL) expression with queryable SharePoint
-     properties and attributes to scope the retrieval before the query runs.
-    :vartype filter_expression: str
-    :ivar resource_metadata: A list of metadata fields to be returned for each item in the
-     response. Only retrievable metadata properties can be included in this list. By default, no
-     metadata is returned.
-    :vartype resource_metadata: list[str]
-    :ivar container_type_id: Container ID for SharePoint Embedded connection. When this is null, it
-     will use SharePoint Online.
-    :vartype container_type_id: str
-    """
-
-    filter_expression: Optional[str] = rest_field(
-        name="filterExpression", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Keyword Query Language (KQL) expression with queryable SharePoint properties and attributes to
-     scope the retrieval before the query runs."""
-    resource_metadata: Optional[list[str]] = rest_field(
-        name="resourceMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of metadata fields to be returned for each item in the response. Only retrievable
-     metadata properties can be included in this list. By default, no metadata is returned."""
-    container_type_id: Optional[str] = rest_field(
-        name="containerTypeId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Container ID for SharePoint Embedded connection. When this is null, it will use SharePoint
-     Online."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        filter_expression: Optional[str] = None,
-        resource_metadata: Optional[list[str]] = None,
-        container_type_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RescoringOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the options for rescoring.
 
@@ -9299,16 +7833,16 @@ class SearchField(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar permission_filter: A value indicating whether the field should be used as a permission
      filter. Known values are: "userIds", "groupIds", and "rbacScope".
     :vartype permission_filter: str or ~azure.search.documents.indexes.models.PermissionFilter
-    :ivar sensitivity_label_id: A value indicating whether the field should be used for sensitivity
-     label ID filtering. This enables document-level filtering based on Microsoft Purview
-     sensitivity label IDs.
-    :vartype sensitivity_label_id: bool
-    :ivar sensitivity_label_name: A value indicating whether the field contains the name of a
-     Microsoft Purview sensitivity label applied to the document.
-    :vartype sensitivity_label_name: bool
-    :ivar source_document_id: A value indicating whether the field contains the source document
-     identifier used for Purview audit tracking.
-    :vartype source_document_id: bool
+    :ivar organization_access_expiration: A value indicating whether the field contains the
+     expiration timestamp for organization-scoped SharePoint sharing links. At most one top-level
+     field of type Edm.DateTimeOffset can have this property set to true. On permission-filtered
+     queries, expiration applies only to orgLink:<tenantId> values in a userIds permission-filter
+     field whose tenant ID matches the validated user's tenant ID. The grant is valid only before
+     the timestamp; an absent expiration field or a null timestamp means no time limit. Expiration
+     does not affect orgGroup:<tenantId> values in groupIds permission-filter fields or ordinary
+     user and group grants. If omitted or false, this field is not used for organization-link
+     expiration.
+    :vartype organization_access_expiration: bool
     :ivar sharepoint_site_url: A value indicating whether the field contains a SharePoint site URL
      used for SharePoint group-based filtering.
     :vartype sharepoint_site_url: bool
@@ -9475,21 +8009,17 @@ class SearchField(_Model):  # pylint: disable=docstring-keyword-should-match-key
     )
     """A value indicating whether the field should be used as a permission filter. Known values are:
      \"userIds\", \"groupIds\", and \"rbacScope\"."""
-    sensitivity_label_id: Optional[bool] = rest_field(
-        name="sensitivityLabelId", visibility=["read", "create", "update", "delete", "query"]
+    organization_access_expiration: Optional[bool] = rest_field(
+        name="organizationAccessExpiration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating whether the field should be used for sensitivity label ID filtering. This
-     enables document-level filtering based on Microsoft Purview sensitivity label IDs."""
-    sensitivity_label_name: Optional[bool] = rest_field(
-        name="sensitivityLabelName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating whether the field contains the name of a Microsoft Purview sensitivity label
-     applied to the document."""
-    source_document_id: Optional[bool] = rest_field(
-        name="sourceDocumentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating whether the field contains the source document identifier used for Purview
-     audit tracking."""
+    """A value indicating whether the field contains the expiration timestamp for organization-scoped
+     SharePoint sharing links. At most one top-level field of type Edm.DateTimeOffset can have this
+     property set to true. On permission-filtered queries, expiration applies only to
+     orgLink:<tenantId> values in a userIds permission-filter field whose tenant ID matches the
+     validated user's tenant ID. The grant is valid only before the timestamp; an absent expiration
+     field or a null timestamp means no time limit. Expiration does not affect orgGroup:<tenantId>
+     values in groupIds permission-filter fields or ordinary user and group grants. If omitted or
+     false, this field is not used for organization-link expiration."""
     sharepoint_site_url: Optional[bool] = rest_field(
         name="sharepointSiteUrl", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9622,9 +8152,7 @@ class SearchField(_Model):  # pylint: disable=docstring-keyword-should-match-key
         sortable: Optional[bool] = None,
         facetable: Optional[bool] = None,
         permission_filter: Optional[Union[str, "_models.PermissionFilter"]] = None,
-        sensitivity_label_id: Optional[bool] = None,
-        sensitivity_label_name: Optional[bool] = None,
-        source_document_id: Optional[bool] = None,
+        organization_access_expiration: Optional[bool] = None,
         sharepoint_site_url: Optional[bool] = None,
         analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
         search_analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
@@ -9701,8 +8229,6 @@ class SearchIndex(_Model):  # pylint: disable=docstring-keyword-should-match-key
      the index. Known values are: "enabled" and "disabled".
     :vartype permission_filter_option: str or
      ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
-    :ivar purview_enabled: A value indicating whether Purview is enabled for the index.
-    :vartype purview_enabled: bool
     :ivar share_point_connector_app_registration: Configures a SharePoint connector app
      registration for the index, enabling document-level permissions from SharePoint. If provided,
      the applicationId and federatedCredentialId properties are required.
@@ -9785,10 +8311,6 @@ class SearchIndex(_Model):  # pylint: disable=docstring-keyword-should-match-key
     )
     """A value indicating whether permission filtering is enabled for the index. Known values are:
      \"enabled\" and \"disabled\"."""
-    purview_enabled: Optional[bool] = rest_field(
-        name="purviewEnabled", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating whether Purview is enabled for the index."""
     share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = rest_field(
         name="sharePointConnectorAppRegistration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9819,7 +8341,6 @@ class SearchIndex(_Model):  # pylint: disable=docstring-keyword-should-match-key
         semantic_search: Optional["_models.SemanticSearch"] = None,
         vector_search: Optional["_models.VectorSearch"] = None,
         permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = None,
-        purview_enabled: Optional[bool] = None,
         share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
@@ -9873,9 +8394,6 @@ class SearchIndexer(_Model):  # pylint: disable=docstring-keyword-should-match-k
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
-     without having to rebuild the index every time.
-    :vartype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9929,11 +8447,6 @@ class SearchIndexer(_Model):  # pylint: disable=docstring-keyword-should-match-k
      indexer execution status) will be unaffected. Encryption with customer-managed keys is not
      available for free search services, and is only available for paid services created on or after
      January 1, 2019."""
-    cache: Optional["_models.SearchIndexerCache"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Adds caching to an enrichment pipeline to allow for incremental modification steps without
-     having to rebuild the index every time."""
 
     @overload
     def __init__(
@@ -9951,65 +8464,6 @@ class SearchIndexer(_Model):  # pylint: disable=docstring-keyword-should-match-k
         is_disabled: Optional[bool] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-        cache: Optional["_models.SearchIndexerCache"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchIndexerCache(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The type of the cache.
-
-    :ivar id: A guid for the SearchIndexerCache.
-    :vartype id: str
-    :ivar storage_connection_string: The connection string to the storage account where the cache
-     data will be persisted.
-    :vartype storage_connection_string: str
-    :ivar enable_reprocessing: Specifies whether incremental reprocessing is enabled.
-    :vartype enable_reprocessing: bool
-    :ivar identity: The user-assigned managed identity used for connections to the enrichment
-     cache.  If the connection string indicates an identity (ResourceId) and it's not specified, the
-     system-assigned managed identity is used. On updates to the indexer, if the identity is
-     unspecified, the value remains unchanged. If set to "none", the value of this property is
-     cleared.
-    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A guid for the SearchIndexerCache."""
-    storage_connection_string: Optional[str] = rest_field(
-        name="storageConnectionString", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The connection string to the storage account where the cache data will be persisted."""
-    enable_reprocessing: Optional[bool] = rest_field(
-        name="enableReprocessing", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies whether incremental reprocessing is enabled."""
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-assigned managed identity used for connections to the enrichment cache.  If the
-     connection string indicates an identity (ResourceId) and it's not specified, the
-     system-assigned managed identity is used. On updates to the indexer, if the identity is
-     unspecified, the value remains unchanged. If set to \"none\", the value of this property is
-     cleared."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        storage_connection_string: Optional[str] = None,
-        enable_reprocessing: Optional[bool] = None,
-        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -10135,9 +8589,6 @@ class SearchIndexerDataSourceConnection(_Model):  # pylint: disable=docstring-ke
     :ivar type: The type of the datasource. Required. Known values are: "azuresql", "cosmosdb",
      "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", and "sharepoint".
     :vartype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
-    :ivar sub_type: A specific type of the data source, in case the resource is capable of
-     different modalities. For example, 'MongoDb' for certain 'cosmosDb' accounts.
-    :vartype sub_type: str
     :ivar credentials: Credentials for the datasource. Required.
     :vartype credentials: ~azure.search.documents.indexes.models.DataSourceCredentials
     :ivar container: The data container for the datasource. Required.
@@ -10178,9 +8629,6 @@ class SearchIndexerDataSourceConnection(_Model):  # pylint: disable=docstring-ke
     )
     """The type of the datasource. Required. Known values are: \"azuresql\", \"cosmosdb\",
      \"azureblob\", \"azuretable\", \"mysql\", \"adlsgen2\", \"onelake\", and \"sharepoint\"."""
-    sub_type: Optional[str] = rest_field(name="subType", visibility=["read"])
-    """A specific type of the data source, in case the resource is capable of different modalities.
-     For example, 'MongoDb' for certain 'cosmosDb' accounts."""
     credentials: "_models.DataSourceCredentials" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10512,10 +8960,6 @@ class SearchIndexerKnowledgeStore(_Model):  # pylint: disable=docstring-keyword-
      to the indexer, if the identity is unspecified, the value remains unchanged. If set to "none",
      the value of this property is cleared.
     :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar parameters: A dictionary of knowledge store-specific configuration properties. Each name
-     is the name of a specific property. Each value must be of a primitive type.
-    :vartype parameters:
-     ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreParameters
     """
 
     storage_connection_string: str = rest_field(
@@ -10534,11 +8978,6 @@ class SearchIndexerKnowledgeStore(_Model):  # pylint: disable=docstring-keyword-
      specified, the system-assigned managed identity is used. On updates to the indexer, if the
      identity is unspecified, the value remains unchanged. If set to \"none\", the value of this
      property is cleared."""
-    parameters: Optional["_models.SearchIndexerKnowledgeStoreParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
-     specific property. Each value must be of a primitive type."""
 
     @overload
     def __init__(
@@ -10547,7 +8986,6 @@ class SearchIndexerKnowledgeStore(_Model):  # pylint: disable=docstring-keyword-
         storage_connection_string: str,
         projections: list["_models.SearchIndexerKnowledgeStoreProjection"],
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
-        parameters: Optional["_models.SearchIndexerKnowledgeStoreParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -10737,38 +9175,6 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(
         source: Optional[str] = None,
         source_context: Optional[str] = None,
         inputs: Optional[list["_models.InputFieldMappingEntry"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchIndexerKnowledgeStoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
-    specific property. Each value must be of a primitive type.
-
-    :ivar synthesize_generated_key_name: Whether or not projections should synthesize a generated
-     key name if one isn't already present.
-    :vartype synthesize_generated_key_name: bool
-    """
-
-    synthesize_generated_key_name: Optional[bool] = rest_field(
-        name="synthesizeGeneratedKeyName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether or not projections should synthesize a generated key name if one isn't already present."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        synthesize_generated_key_name: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10999,7 +9405,7 @@ class SearchIndexerStatus(_Model):
      "running".
     :vartype status: str or ~azure.search.documents.indexes.models.IndexerStatus
     :ivar runtime: Snapshot of the indexer's cumulative runtime consumption for the service over
-     the current UTC period. Required.
+     the current UTC period.
     :vartype runtime: ~azure.search.documents.indexes.models.IndexerRuntime
     :ivar last_result: The result of the most recent or an in-progress indexer execution.
     :vartype last_result: ~azure.search.documents.indexes.models.IndexerExecutionResult
@@ -11008,26 +9414,21 @@ class SearchIndexerStatus(_Model):
     :vartype execution_history: list[~azure.search.documents.indexes.models.IndexerExecutionResult]
     :ivar limits: The execution limits for the indexer. Required.
     :vartype limits: ~azure.search.documents.indexes.models.SearchIndexerLimits
-    :ivar current_state: All of the state that defines and dictates the indexer's current
-     execution.
-    :vartype current_state: ~azure.search.documents.indexes.models.IndexerCurrentState
     """
 
     name: str = rest_field(visibility=["read"])
     """The name of the indexer. Required."""
     status: Union[str, "_models.IndexerStatus"] = rest_field(visibility=["read"])
     """Overall indexer status. Required. Known values are: \"unknown\", \"error\", and \"running\"."""
-    runtime: "_models.IndexerRuntime" = rest_field(visibility=["read"])
+    runtime: Optional["_models.IndexerRuntime"] = rest_field(visibility=["read"])
     """Snapshot of the indexer's cumulative runtime consumption for the service over the current UTC
-     period. Required."""
+     period."""
     last_result: Optional["_models.IndexerExecutionResult"] = rest_field(name="lastResult", visibility=["read"])
     """The result of the most recent or an in-progress indexer execution."""
     execution_history: list["_models.IndexerExecutionResult"] = rest_field(name="executionHistory", visibility=["read"])
     """History of the recent indexer executions, sorted in reverse chronological order. Required."""
     limits: "_models.SearchIndexerLimits" = rest_field(visibility=["read"])
     """The execution limits for the indexer. Required."""
-    current_state: Optional["_models.IndexerCurrentState"] = rest_field(name="currentState", visibility=["read"])
-    """All of the state that defines and dictates the indexer's current execution."""
 
 
 class SearchIndexerWarning(_Model):
@@ -11101,11 +9502,6 @@ class SearchIndexKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -11138,7 +9534,6 @@ class SearchIndexKnowledgeSource(
         name: str,
         search_index_parameters: "_models.SearchIndexKnowledgeSourceParameters",
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -11153,190 +9548,6 @@ class SearchIndexKnowledgeSource(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = KnowledgeSourceKind.SEARCH_INDEX  # type: ignore
-
-
-class SearchIndexKnowledgeSourceBoost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A hint that identifies a condition the query planner can use to influence document ranking.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SearchIndexKnowledgeSourceFieldValueBoost, SearchIndexKnowledgeSourceMultiWordExpressionBoost
-
-    :ivar kind: The kind of boost hint. Required. Known values are: "fieldValue" and
-     "multiWordExpression".
-    :vartype kind: str or
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoostKind
-    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
-     boost.
-    :vartype boost_instructions: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of boost hint. Required. Known values are: \"fieldValue\" and \"multiWordExpression\"."""
-    boost_instructions: Optional[str] = rest_field(
-        name="boostInstructions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Natural-language instructions that explain when and how to apply the boost."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        boost_instructions: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchIndexKnowledgeSourceFieldValueBoost(
-    SearchIndexKnowledgeSourceBoost, discriminator="fieldValue"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A hint that boosts documents based on a field value.
-
-    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
-     boost.
-    :vartype boost_instructions: str
-    :ivar kind: The discriminator value. Required. Boost documents based on a field value.
-    :vartype kind: str or ~azure.search.documents.indexes.models.FIELD_VALUE
-    :ivar field: The name of the search index field. Required.
-    :vartype field: str
-    :ivar field_values: Representative values for the field.
-    :vartype field_values: list[str]
-    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
-    """
-
-    kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Boost documents based on a field value."""
-    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the search index field. Required."""
-    field_values: Optional[list[str]] = rest_field(
-        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Representative values for the field."""
-    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        field: str,
-        boost: float,
-        boost_instructions: Optional[str] = None,
-        field_values: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE  # type: ignore
-
-
-class SearchIndexKnowledgeSourceFilterHint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A hint that identifies a field and representative values the query planner can use when
-    constructing a filter.
-
-    :ivar field: The name of the filterable search index field. Required.
-    :vartype field: str
-    :ivar field_values: Representative values for the field. Required.
-    :vartype field_values: list[str]
-    :ivar filter_instructions: Natural-language instructions that explain when and how to filter on
-     the field.
-    :vartype filter_instructions: str
-    """
-
-    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the filterable search index field. Required."""
-    field_values: list[str] = rest_field(name="fieldValues", visibility=["read", "create", "update", "delete", "query"])
-    """Representative values for the field. Required."""
-    filter_instructions: Optional[str] = rest_field(
-        name="filterInstructions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Natural-language instructions that explain when and how to filter on the field."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        field: str,
-        field_values: list[str],
-        filter_instructions: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchIndexKnowledgeSourceMultiWordExpressionBoost(
-    SearchIndexKnowledgeSourceBoost, discriminator="multiWordExpression"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A hint that boosts documents based on a multi-word expression.
-
-    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
-     boost.
-    :vartype boost_instructions: str
-    :ivar kind: The discriminator value. Required. Boost documents based on a multi-word
-     expression.
-    :vartype kind: str or ~azure.search.documents.indexes.models.MULTI_WORD_EXPRESSION
-    :ivar field_values: Representative values for the boost.
-    :vartype field_values: list[str]
-    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
-    """
-
-    kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Boost documents based on a multi-word expression."""
-    field_values: Optional[list[str]] = rest_field(
-        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Representative values for the boost."""
-    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        boost: float,
-        boost_instructions: Optional[str] = None,
-        field_values: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION  # type: ignore
 
 
 class SearchIndexKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -11355,11 +9566,6 @@ class SearchIndexKnowledgeSourceParameters(_Model):  # pylint: disable=docstring
     :ivar base_filter: A default filter condition applied to the index at retrieval time (e.g.,
      'State eq VA'). Can be overridden at query time via knowledge source runtime parameters.
     :vartype base_filter: str
-    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
-     this search index knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype query_hints:
-     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     search_index_name: str = rest_field(
@@ -11384,11 +9590,6 @@ class SearchIndexKnowledgeSourceParameters(_Model):  # pylint: disable=docstring
     )
     """A default filter condition applied to the index at retrieval time (e.g., 'State eq VA'). Can be
      overridden at query time via knowledge source runtime parameters."""
-    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
-        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default hints that guide query planning toward useful filters and boosts for this search index
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
 
     @overload
     def __init__(
@@ -11399,49 +9600,6 @@ class SearchIndexKnowledgeSourceParameters(_Model):  # pylint: disable=docstring
         search_fields: Optional[list["_models.SearchIndexFieldReference"]] = None,
         semantic_configuration_name: Optional[str] = None,
         base_filter: Optional[str] = None,
-        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchIndexKnowledgeSourceQueryHints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Hints that guide query planning toward useful filters and boosts for a search index knowledge
-    source.
-
-    :ivar filters: Filter hints that identify fields and representative values the query planner
-     can use when constructing filters.
-    :vartype filters:
-     list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint]
-    :ivar boosts: Boost hints that identify conditions the query planner can use to influence
-     document ranking.
-    :vartype boosts: list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoost]
-    """
-
-    filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Filter hints that identify fields and representative values the query planner can use when
-     constructing filters."""
-    boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Boost hints that identify conditions the query planner can use to influence document ranking."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = None,
-        boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = None,
     ) -> None: ...
 
     @overload
@@ -11508,8 +9666,11 @@ class SearchIndexResponse(_Model):  # pylint: disable=docstring-keyword-should-m
      the index. Known values are: "enabled" and "disabled".
     :vartype permission_filter_option: str or
      ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
-    :ivar purview_enabled: A value indicating whether Purview is enabled for the index.
-    :vartype purview_enabled: bool
+    :ivar share_point_connector_app_registration: Configures a SharePoint connector app
+     registration for the index, enabling document-level permissions from SharePoint. If provided,
+     the applicationId and federatedCredentialId properties are required.
+    :vartype share_point_connector_app_registration:
+     ~azure.search.documents.indexes.models.SharePointConnectorAppRegistration
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -11589,10 +9750,12 @@ class SearchIndexResponse(_Model):  # pylint: disable=docstring-keyword-should-m
     )
     """A value indicating whether permission filtering is enabled for the index. Known values are:
      \"enabled\" and \"disabled\"."""
-    purview_enabled: Optional[bool] = rest_field(
-        name="purviewEnabled", visibility=["read", "create", "update", "delete", "query"]
+    share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = rest_field(
+        name="sharePointConnectorAppRegistration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating whether Purview is enabled for the index."""
+    """Configures a SharePoint connector app registration for the index, enabling document-level
+     permissions from SharePoint. If provided, the applicationId and federatedCredentialId
+     properties are required."""
     e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the index."""
 
@@ -11617,7 +9780,7 @@ class SearchIndexResponse(_Model):  # pylint: disable=docstring-keyword-should-m
         semantic_search: Optional["_models.SemanticSearch"] = None,
         vector_search: Optional["_models.VectorSearch"] = None,
         permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = None,
-        purview_enabled: Optional[bool] = None,
+        share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
 
@@ -11655,9 +9818,6 @@ class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-
      update to the resource, if the explicit identity is unspecified, it remains unchanged. If
      "none" is specified, the value of this property is cleared.
     :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar is_service_level_key: An optional value indicating whether this key is a service-level
-     key. Default is false.
-    :vartype is_service_level_key: bool
     """
 
     key_name: str = rest_field(name="keyVaultKeyName", visibility=["read", "create", "update", "delete", "query"])
@@ -11682,10 +9842,6 @@ class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-
      credentials property is null, the system-assigned managed identity is used. On update to the
      resource, if the explicit identity is unspecified, it remains unchanged. If \"none\" is
      specified, the value of this property is cleared."""
-    is_service_level_key: Optional[bool] = rest_field(
-        name="isServiceLevelKey", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An optional value indicating whether this key is a service-level key. Default is false."""
 
     __flattened_items = ["application_id", "application_secret"]
 
@@ -11698,7 +9854,6 @@ class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-
         key_version: Optional[str] = None,
         access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
-        is_service_level_key: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -11752,10 +9907,6 @@ class SearchServiceCounters(_Model):  # pylint: disable=docstring-keyword-should
     :ivar vector_index_size_counter: Total memory consumption of all vector indexes within the
      service, in bytes. Required.
     :vartype vector_index_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :ivar knowledge_base_counter: Total number of knowledge bases. Required.
-    :vartype knowledge_base_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :ivar knowledge_source_counter: Total number of knowledge sources. Required.
-    :vartype knowledge_source_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
     alias_counter: "_models.ResourceCounter" = rest_field(
@@ -11794,14 +9945,6 @@ class SearchServiceCounters(_Model):  # pylint: disable=docstring-keyword-should
         name="vectorIndexSize", visibility=["read", "create", "update", "delete", "query"]
     )
     """Total memory consumption of all vector indexes within the service, in bytes. Required."""
-    knowledge_base_counter: "_models.ResourceCounter" = rest_field(
-        name="knowledgeBasesCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Total number of knowledge bases. Required."""
-    knowledge_source_counter: "_models.ResourceCounter" = rest_field(
-        name="knowledgeSourcesCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Total number of knowledge sources. Required."""
 
     @overload
     def __init__(
@@ -11816,8 +9959,6 @@ class SearchServiceCounters(_Model):  # pylint: disable=docstring-keyword-should
         synonym_map_counter: "_models.ResourceCounter",
         skillset_counter: "_models.ResourceCounter",
         vector_index_size_counter: "_models.ResourceCounter",
-        knowledge_base_counter: "_models.ResourceCounter",
-        knowledge_source_counter: "_models.ResourceCounter",
     ) -> None: ...
 
     @overload
@@ -11850,9 +9991,6 @@ class SearchServiceLimits(_Model):  # pylint: disable=docstring-keyword-should-m
     :ivar max_cumulative_indexer_runtime_seconds: The maximum cumulative indexer runtime in seconds
      allowed for the service.
     :vartype max_cumulative_indexer_runtime_seconds: int
-    :ivar max_vector_index_size_per_index_in_bytes: The maximum vector index size (vector memory
-     quota) allowed per index in bytes.
-    :vartype max_vector_index_size_per_index_in_bytes: int
     """
 
     max_fields_per_index: Optional[int] = rest_field(
@@ -11880,10 +10018,6 @@ class SearchServiceLimits(_Model):  # pylint: disable=docstring-keyword-should-m
         name="maxCumulativeIndexerRuntimeSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum cumulative indexer runtime in seconds allowed for the service."""
-    max_vector_index_size_per_index_in_bytes: Optional[int] = rest_field(
-        name="maxVectorIndexSizePerIndexInBytes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum vector index size (vector memory quota) allowed per index in bytes."""
 
     @overload
     def __init__(
@@ -11895,7 +10029,6 @@ class SearchServiceLimits(_Model):  # pylint: disable=docstring-keyword-should-m
         max_complex_objects_in_collections_per_document: Optional[int] = None,
         max_storage_per_index_in_bytes: Optional[int] = None,
         max_cumulative_indexer_runtime_seconds: Optional[int] = None,
-        max_vector_index_size_per_index_in_bytes: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -11917,7 +10050,7 @@ class SearchServiceStatistics(_Model):  # pylint: disable=docstring-keyword-shou
     :vartype counters: ~azure.search.documents.indexes.models.SearchServiceCounters
     :ivar limits: Service level general limits. Required.
     :vartype limits: ~azure.search.documents.indexes.models.SearchServiceLimits
-    :ivar indexers_runtime: Service level indexer runtime consumption. Required.
+    :ivar indexers_runtime: Service level indexer runtime consumption.
     :vartype indexers_runtime: ~azure.search.documents.indexes.models.ServiceIndexersRuntime
     """
 
@@ -11925,10 +10058,10 @@ class SearchServiceStatistics(_Model):  # pylint: disable=docstring-keyword-shou
     """Service level resource counters. Required."""
     limits: "_models.SearchServiceLimits" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Service level general limits. Required."""
-    indexers_runtime: "_models.ServiceIndexersRuntime" = rest_field(
+    indexers_runtime: Optional["_models.ServiceIndexersRuntime"] = rest_field(
         name="indexersRuntime", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Service level indexer runtime consumption. Required."""
+    """Service level indexer runtime consumption."""
 
     @overload
     def __init__(
@@ -11936,7 +10069,7 @@ class SearchServiceStatistics(_Model):  # pylint: disable=docstring-keyword-shou
         *,
         counters: "_models.SearchServiceCounters",
         limits: "_models.SearchServiceLimits",
-        indexers_runtime: "_models.ServiceIndexersRuntime",
+        indexers_runtime: Optional["_models.ServiceIndexersRuntime"] = None,
     ) -> None: ...
 
     @overload
@@ -12008,9 +10141,6 @@ class SemanticConfiguration(_Model):  # pylint: disable=docstring-keyword-should
     :ivar ranking_order: Specifies the score type to be used for the sort order of the search
      results. Known values are: "BoostedRerankerScore" and "RerankerScore".
     :vartype ranking_order: str or ~azure.search.documents.indexes.models.RankingOrder
-    :ivar flighting_opt_in: Determines which semantic or query rewrite models to use during model
-     flighting/upgrades.
-    :vartype flighting_opt_in: bool
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -12026,10 +10156,6 @@ class SemanticConfiguration(_Model):  # pylint: disable=docstring-keyword-should
     )
     """Specifies the score type to be used for the sort order of the search results. Known values are:
      \"BoostedRerankerScore\" and \"RerankerScore\"."""
-    flighting_opt_in: Optional[bool] = rest_field(
-        name="flightingOptIn", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Determines which semantic or query rewrite models to use during model flighting/upgrades."""
 
     @overload
     def __init__(
@@ -12038,7 +10164,6 @@ class SemanticConfiguration(_Model):  # pylint: disable=docstring-keyword-should
         name: str,
         prioritized_fields: "_models.SemanticPrioritizedFields",
         ranking_order: Optional[Union[str, "_models.RankingOrder"]] = None,
-        flighting_opt_in: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -12682,16 +10807,6 @@ class SplitSkill(
      'maximumPagesToTake' pages, in order to improve performance when only a few initial pages are
      needed from each document.
     :vartype maximum_pages_to_take: int
-    :ivar unit: Only applies if textSplitMode is set to pages. There are two possible values. The
-     choice of the values will decide the length (maximumPageLength and pageOverlapLength)
-     measurement. The default is 'characters', which means the length will be measured by character.
-     Known values are: "characters" and "azureOpenAITokens".
-    :vartype unit: str or ~azure.search.documents.indexes.models.SplitSkillUnit
-    :ivar azure_open_ai_tokenizer_parameters: Only applies if the unit is set to azureOpenAITokens.
-     If specified, the splitSkill will use these parameters when performing the tokenization. The
-     parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property.
-    :vartype azure_open_ai_tokenizer_parameters:
-     ~azure.search.documents.indexes.models.AzureOpenAITokenizerParameters
     :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.SplitSkill".
     :vartype odata_type: str
@@ -12723,19 +10838,6 @@ class SplitSkill(
     """Only applicable when textSplitMode is set to 'pages'. If specified, the SplitSkill will
      discontinue splitting after processing the first 'maximumPagesToTake' pages, in order to
      improve performance when only a few initial pages are needed from each document."""
-    unit: Optional[Union[str, "_models.SplitSkillUnit"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Only applies if textSplitMode is set to pages. There are two possible values. The choice of the
-     values will decide the length (maximumPageLength and pageOverlapLength) measurement. The
-     default is 'characters', which means the length will be measured by character. Known values
-     are: \"characters\" and \"azureOpenAITokens\"."""
-    azure_open_ai_tokenizer_parameters: Optional["_models.AzureOpenAITokenizerParameters"] = rest_field(
-        name="azureOpenAITokenizerParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Only applies if the unit is set to azureOpenAITokens. If specified, the splitSkill will use
-     these parameters when performing the tokenization. The parameters are a valid
-     'encoderModelName' and an optional 'allowedSpecialTokens' property."""
     odata_type: Literal["#Microsoft.Skills.Text.SplitSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.SplitSkill\"."""
@@ -12754,8 +10856,6 @@ class SplitSkill(
         maximum_page_length: Optional[int] = None,
         page_overlap_length: Optional[int] = None,
         maximum_pages_to_take: Optional[int] = None,
-        unit: Optional[Union[str, "_models.SplitSkillUnit"]] = None,
-        azure_open_ai_tokenizer_parameters: Optional["_models.AzureOpenAITokenizerParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -13731,67 +11831,6 @@ class VectorSearchProfile(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class VisionVectorizeSkill(
-    SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.VectorizeSkill"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Allows you to generate a vector embedding for a given image or text input using the Azure AI
-    Services Vision Vectorize API.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar model_version: The version of the model to use when calling the AI Services Vision
-     service. It will default to the latest available when not specified. Required.
-    :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Vision.VectorizeSkill".
-    :vartype odata_type: str
-    """
-
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The version of the model to use when calling the AI Services Vision service. It will default to
-     the latest available when not specified. Required."""
-    odata_type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Vision.VectorizeSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        model_version: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Vision.VectorizeSkill"  # type: ignore
-
-
 class WebApiHttpHeaders(_Model):
     """A dictionary of http request headers."""
 
@@ -14048,11 +12087,6 @@ class WebKnowledgeSource(
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -14083,7 +12117,6 @@ class WebKnowledgeSource(
         *,
         name: str,
         description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         web_parameters: Optional["_models.WebKnowledgeSourceParameters"] = None,
@@ -14354,106 +12387,3 @@ class WordDelimiterTokenFilter(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Azure.Search.WordDelimiterTokenFilter"  # type: ignore
-
-
-class WorkIQKnowledgeSource(
-    KnowledgeSource, discriminator="workIQ"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for WorkIQ knowledge source.
-
-    :ivar name: The name of the knowledge source. Required.
-    :vartype name: str
-    :ivar description: Optional user-defined description.
-    :vartype description: str
-    :ivar results_processing: Controls whether results from this knowledge source are reranked
-     before they are included in the final result set. Defaults to 'rerank' when not specified.
-     Known values are: "rerank" and "none".
-    :vartype results_processing: str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
-    :ivar e_tag: The ETag of the knowledge source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your knowledge source
-     definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
-     you have encrypted your knowledge source definition, it will always remain encrypted. The
-     search service will ignore attempts to set this property to null. You can change this property
-     as needed if you want to rotate your encryption key; Your knowledge source definition will be
-     unaffected. Encryption with customer-managed keys is not available for free search services,
-     and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
-    :vartype kind: str or ~azure.search.documents.indexes.models.WORK_IQ
-    :ivar work_iq_parameters: The parameters for the WorkIQ knowledge source, including the
-     customer-owned Entra app configuration used for on-behalf-of authentication. Required.
-    :vartype work_iq_parameters:
-     ~azure.search.documents.indexes.models.WorkIQKnowledgeSourceParameters
-    """
-
-    kind: Literal[KnowledgeSourceKind.WORK_IQ] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. A knowledge source that reads data from work IQ."""
-    work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters" = rest_field(
-        name="workIQParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The parameters for the WorkIQ knowledge source, including the customer-owned Entra app
-     configuration used for on-behalf-of authentication. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters",
-        description: Optional[str] = None,
-        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.WORK_IQ  # type: ignore
-
-
-class WorkIQKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for a WorkIQ knowledge source.
-
-    :ivar entra_app_authentication: The customer-owned Microsoft Entra app registration
-     configuration used for on-behalf-of authentication to the Work IQ API. The customer registers a
-     tenant-owned Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a
-     federated credential so Azure AI Search can authenticate as that app without a stored client
-     secret. Required.
-    :vartype entra_app_authentication:
-     ~azure.search.documents.indexes.models.EntraAppAuthentication
-    """
-
-    entra_app_authentication: "_models.EntraAppAuthentication" = rest_field(
-        name="entraAppAuthentication", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The customer-owned Microsoft Entra app registration configuration used for on-behalf-of
-     authentication to the Work IQ API. The customer registers a tenant-owned Entra app, grants it
-     the WorkIQAgent.Ask delegated permission, and configures a federated credential so Azure AI
-     Search can authenticate as that app without a stored client secret. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        entra_app_authentication: "_models.EntraAppAuthentication",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)

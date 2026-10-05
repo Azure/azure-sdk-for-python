@@ -32,7 +32,7 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
         listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-        ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
+        ``ApiVersion.V2026_10_01``. Note that overriding this default value may
         result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
@@ -54,7 +54,6 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
         retrieval_request: Union[models.KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
-        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncKnowledgeBaseRetrievalStream:
@@ -66,15 +65,17 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
         :keyword query_source_authorization: Token identifying the user for which the query is
          executed. Default value is None.
         :paramtype query_source_authorization: str
-        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
-         app registration configured on a Work IQ knowledge source. Default value is None.
-        :paramtype query_work_iq_source_authorization: str
+
         :keyword content_type: Body parameter content type. Default value is "application/json".
         :paramtype content_type: str
         :return: An asynchronous stream of typed knowledge base retrieval events.
         :rtype: ~azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if "query_work_iq_source_authorization" in kwargs:
+            raise TypeError(
+                "retrieve_stream() got an unsupported GA keyword argument 'query_work_iq_source_authorization'"
+            )
         custom_cls = kwargs.pop("cls", None)
         callback_context: dict[str, Any] = {}
 
@@ -95,7 +96,6 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             await super().retrieve_stream(
                 typed_retrieval_request,
                 query_source_authorization=query_source_authorization,
-                query_work_iq_source_authorization=query_work_iq_source_authorization,
                 content_type=content_type,
                 cls=_wrap_stream,
                 **kwargs,

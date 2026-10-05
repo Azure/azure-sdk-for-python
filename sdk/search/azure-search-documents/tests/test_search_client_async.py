@@ -6,12 +6,15 @@
 
 from __future__ import annotations
 
+import base64
+import json
 from unittest import mock
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
 
-from azure.search.documents import ApiVersion, IndexDocumentsBatch, RequestEntityTooLargeError
+from azure.search.documents import ApiVersion, DEFAULT_VERSION, IndexDocumentsBatch, RequestEntityTooLargeError
+from azure.search.documents._operations._patch import _build_search_request
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.aio._operations._patch import AsyncSearchItemPaged, AsyncSearchPageIterator
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
@@ -93,8 +96,62 @@ class TestSearchClientConstructorAsync:
 
         assert client._config.api_version == ApiVersion.V2020_06_30
 
+    def test_constructor_defaults_to_2026_10_01_ga(self):
+        client = create_search_client()
+
+        assert DEFAULT_VERSION == ApiVersion.V2026_10_01
+        assert client._config.api_version == "2026-10-01"
+
+    def test_constructor_accepts_2026_10_01_api_version_enum(self):
+        client = create_search_client(api_version=ApiVersion.V2026_10_01)
+
+        assert client._config.api_version == "2026-10-01"
+
 
 class TestSearchRequestBuildingAsync:
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_serializes_more_like_this_in_request_body(self, mock_search_post):
+        mock_search_post.return_value = create_search_documents_result()
+        async with create_search_client() as client:
+            result = await client.search(more_like_this=DOCUMENT_KEY)
+            await result.__anext__()
+
+        search_request = get_search_request(mock_search_post)
+        assert search_request.more_like_this == DOCUMENT_KEY
+        assert search_request.as_dict()["moreLikeThis"] == DOCUMENT_KEY
+        assert "more_like_this" not in mock_search_post.call_args.kwargs
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", [ApiVersion.V2026_10_01, ApiVersion.V2025_09_01])
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_continuation_token_uses_configured_api_version(self, mock_search_post, api_version):
+        search_result = create_search_documents_result()
+        search_result.next_page_parameters = _build_search_request(search_text=SEARCH_TEXT, skip=1)
+        search_result.next_link = SEARCH_ENDPOINT
+        mock_search_post.return_value = search_result
+        async with create_search_client(api_version=api_version) as client:
+            result = await client.search(search_text=SEARCH_TEXT)
+            pages = result.by_page()
+            page = await pages.__anext__()
+            _ = [document async for document in page]
+
+        token = json.loads(base64.b64decode(pages.continuation_token))
+        assert token["apiVersion"] == api_version.value
+        assert token["nextPageParameters"]["skip"] == 1
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "keyword", ["query_language", "speller", "query_rewrites", "semantic_fields", "hybrid_search"]
+    )
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_rejects_preview_only_keywords_before_sending(self, mock_search_post, keyword):
+        async with create_search_client() as client:
+            with pytest.raises(TypeError, match=keyword):
+                await client.search(search_text=SEARCH_TEXT, **{keyword: None})
+
+        mock_search_post.assert_not_awaited()
+
     @pytest.mark.asyncio
     @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_search_returns_lazy_pager_and_builds_search_request(self, mock_search_post):

@@ -37,6 +37,10 @@ Make HTTP calls to Azure AI Search. Runs in playback by default; switch to live 
 
 Replays existing recordings. Fast, offline.
 
+Recordings must target the API version used by the generated client. After an API version change,
+preview recordings cannot establish GA compatibility. Re-record the supported scenarios against
+the GA API; do not ignore or rewrite API-version differences just to make playback pass.
+
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "false"
 venv python -m pytest tests/ -k "live"
@@ -77,4 +81,3 @@ This checklist is mandatory for every test change. Do not add or update tests wi
 1. Wrap each test scenario that depends on preview-only surfaces with `require_capability(...)`; pass every preview surface the scenario uses.
 2. Register capabilities in `tests/_capabilities.py` at the narrowest public surface: new class, new method, method kwarg, model field, or enum member. Use dotted names that match the surface under test, for example `SearchClient.search.query_rewrites`; set `owner` to the public object that must exist and `kwargs` only for method kwargs, model fields, or enum members.
 3. Avoid importing preview symbols at module load. Use strings, JSON, local imports, or `hasattr` checks when needed.
-

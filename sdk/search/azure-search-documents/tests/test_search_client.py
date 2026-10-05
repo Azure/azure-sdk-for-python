@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+import base64
+import json
 from unittest import mock
 
 import pytest
@@ -14,11 +16,12 @@ from azure.core.paging import ItemPaged
 
 from azure.search.documents import (
     ApiVersion,
+    DEFAULT_VERSION,
     IndexDocumentsBatch,
     RequestEntityTooLargeError,
     SearchClient,
 )
-from azure.search.documents._operations._patch import SearchPageIterator
+from azure.search.documents._operations._patch import SearchPageIterator, _build_search_request
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
 
 from _capabilities import require_capability
@@ -98,16 +101,59 @@ class TestSearchClientConstructor:
 
         assert client._config.api_version == ApiVersion.V2020_06_30
 
-    def test_api_version_enum_includes_2026_08_01_preview(self):
-        assert ApiVersion.V2026_08_01_PREVIEW == "2026-08-01-preview"
+    def test_constructor_defaults_to_2026_10_01_ga(self):
+        client = create_search_client()
 
-    def test_constructor_accepts_2026_08_01_preview_api_version_enum(self):
-        client = create_search_client(api_version=ApiVersion.V2026_08_01_PREVIEW)
+        assert DEFAULT_VERSION == ApiVersion.V2026_10_01
+        assert client._config.api_version == "2026-10-01"
 
-        assert client._config.api_version == "2026-08-01-preview"
+    def test_constructor_accepts_2026_10_01_api_version_enum(self):
+        client = create_search_client(api_version=ApiVersion.V2026_10_01)
+
+        assert client._config.api_version == "2026-10-01"
 
 
 class TestSearchRequestBuilding:
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_serializes_more_like_this_in_request_body(self, mock_search_post):
+        mock_search_post.return_value = create_search_documents_result()
+        client = create_search_client()
+
+        next(client.search(more_like_this=DOCUMENT_KEY))
+
+        search_request = get_search_request(mock_search_post)
+        assert search_request.more_like_this == DOCUMENT_KEY
+        assert search_request.as_dict()["moreLikeThis"] == DOCUMENT_KEY
+        assert "more_like_this" not in mock_search_post.call_args.kwargs
+
+    @pytest.mark.parametrize("api_version", [ApiVersion.V2026_10_01, ApiVersion.V2025_09_01])
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_continuation_token_uses_configured_api_version(self, mock_search_post, api_version):
+        search_result = create_search_documents_result()
+        search_result.next_page_parameters = _build_search_request(search_text=SEARCH_TEXT, skip=1)
+        search_result.next_link = SEARCH_ENDPOINT
+        mock_search_post.return_value = search_result
+        client = create_search_client(api_version=api_version)
+        pages = client.search(search_text=SEARCH_TEXT).by_page()
+
+        list(next(pages))
+
+        token = json.loads(base64.b64decode(pages.continuation_token))
+        assert token["apiVersion"] == api_version.value
+        assert token["nextPageParameters"]["skip"] == 1
+
+    @pytest.mark.parametrize(
+        "keyword", ["query_language", "speller", "query_rewrites", "semantic_fields", "hybrid_search"]
+    )
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_rejects_preview_only_keywords_before_sending(self, mock_search_post, keyword):
+        client = create_search_client()
+
+        with pytest.raises(TypeError, match=keyword):
+            client.search(search_text=SEARCH_TEXT, **{keyword: None})
+
+        mock_search_post.assert_not_called()
+
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
     def test_search_returns_lazy_pager_and_builds_search_request(self, mock_search_post):
         mock_search_post.return_value = create_search_documents_result()

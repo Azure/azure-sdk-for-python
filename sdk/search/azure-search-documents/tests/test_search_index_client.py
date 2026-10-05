@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Unit tests for ``SearchIndexClient`` preview list-paging kwargs."""
+"""Unit tests for ``SearchIndexClient`` list-paging customizations."""
 
 from __future__ import annotations
 
@@ -52,6 +52,10 @@ def _index_response_stub(name="hotels"):
     response.vector_search = None
     response.permission_filter_option = None
     response.purview_enabled = None
+    response.share_point_connector_app_registration = {
+        "applicationId": "sharepoint-app",
+        "federatedCredentialId": "sharepoint-credential",
+    }
     response.e_tag = '"etag"'
     return response
 
@@ -88,7 +92,7 @@ class TestListIndexes:
             "azure.search.documents.indexes.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
-            "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
+            "azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration",
         )
 
         list(_client().list_indexes(select=["name"], search="hot", page_size=3, search_type="prefix"))
@@ -102,6 +106,10 @@ class TestListIndexes:
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
+        registration = converted[0].share_point_connector_app_registration
+        assert registration.application_id == "sharepoint-app"
+        assert registration.federated_credential_id == "sharepoint-credential"
+        assert converted[0].e_tag == '"etag"'
 
 
 class TestListIndexNames:
@@ -130,7 +138,8 @@ class TestListIndexNames:
 class TestKnowledgeSourceFileOperations:
     @mock.patch(
         "azure.search.documents.indexes._operations._operations."
-        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file"
+        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file",
+        create=True,
     )
     def test_upload_knowledge_source_file_forwards_content(self, mock_upload):
         require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")
@@ -151,7 +160,8 @@ class TestKnowledgeSourceFileOperations:
 
     @mock.patch(
         "azure.search.documents.indexes._operations._operations."
-        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file"
+        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file",
+        create=True,
     )
     def test_upload_knowledge_source_file_builds_content_disposition_from_filename(self, mock_upload):
         require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")

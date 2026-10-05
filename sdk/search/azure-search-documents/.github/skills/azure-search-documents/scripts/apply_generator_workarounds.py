@@ -31,6 +31,7 @@ REPLACEMENTS = (
     SemanticQueryRewritesResultType,
     SemanticSearchResultsType,
 """,
+        applies_when="SemanticFieldState",
     ),
     Replacement(
         "azure/search/documents/models/__init__.py",
@@ -42,6 +43,7 @@ REPLACEMENTS = (
     "SemanticQueryRewritesResultType",
     "SemanticSearchResultsType",
 """,
+        applies_when="SemanticFieldState",
     ),
     Replacement(
         "azure/search/documents/types.py",
@@ -60,7 +62,7 @@ REPLACEMENTS = (
         """        KnowledgeSourceIngestionPermissionOption,
         KnowledgeSourceResultsProcessing,
 """,
-        applies_when="KnowledgeSourceIngestionPermissionOption",
+        applies_when="KnowledgeSourceResultsProcessing",
     ),
     Replacement(
         "azure/search/documents/indexes/types.py",
@@ -149,6 +151,24 @@ REPLACEMENTS = (
         "                list[_models2._models.SearchIndexResponse],  # pylint: disable=protected-access\n"
         '                deserialized.get("value", []),\n'
         "            )",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/_operations/_operations.py",
+        "suppress statement count for the generated retrieval stream",
+        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n' "    )\n" "    def retrieve_stream(\n",
+        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
+        "    )\n"
+        "    def retrieve_stream(  # pylint: disable=too-many-statements\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/aio/_operations/_operations.py",
+        "suppress statement count for the generated async retrieval stream",
+        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
+        "    )\n"
+        "    async def retrieve_stream(\n",
+        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
+        "    )\n"
+        "    async def retrieve_stream(  # pylint: disable=too-many-statements\n",
     ),
 )
 

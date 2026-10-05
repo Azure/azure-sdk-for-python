@@ -354,49 +354,6 @@ class _SearchIndexClientOperationsMixin(
             )
 
     @distributed_trace_async
-    async def upload_knowledge_source_file(
-        self,
-        name: str,
-        file: Union[bytes, IO[bytes]],
-        *,
-        filename: Optional[str] = None,
-        content_disposition: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.KnowledgeSourceFile:
-        """Uploads a file to a File knowledge source for processing and indexing.
-
-        :param name: The name of the File knowledge source. Required.
-        :type name: str
-        :param file: The file content to upload. Required.
-        :type file: bytes or IO[bytes]
-        :keyword filename: The name to associate with the uploaded file. When provided, the
-         ``Content-Disposition`` header is built as ``attachment; filename="<filename>"``. Either
-         ``filename`` or ``content_disposition`` must be provided.
-        :paramtype filename: str
-        :keyword content_disposition: The raw ``Content-Disposition`` header value. Use this to
-         override the default ``attachment; filename="<filename>"`` format produced from
-         ``filename``. Either ``filename`` or ``content_disposition`` must be provided.
-        :paramtype content_disposition: str
-        :return: KnowledgeSourceFile
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
-        :raises ValueError: If neither ``filename`` nor ``content_disposition`` is provided.
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if content_disposition is None:
-            if filename is None:
-                raise ValueError("Either 'filename' or 'content_disposition' must be provided.")
-            content_disposition = f'attachment; filename="{filename}"'
-        return cast(
-            _models.KnowledgeSourceFile,
-            await self._upload_knowledge_source_file(
-                name=name,
-                file=cast(bytes, file),
-                content_disposition=content_disposition,
-                **kwargs,
-            ),
-        )
-
-    @distributed_trace_async
     async def delete_knowledge_source_file(
         self,
         name: str,
@@ -674,7 +631,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         data_source_connection: Union[_models.SearchIndexerDataSourceConnection, JSON],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerDataSourceConnection:
@@ -682,21 +638,24 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
+
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        for name in ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"):
+            if name in kwargs:
+                raise TypeError(
+                    f"create_or_update_data_source_connection() got an unsupported GA keyword argument '{name}'"
+                )
         if not isinstance(data_source_connection, _models.SearchIndexerDataSourceConnection):
             data_source_connection = _models.SearchIndexerDataSourceConnection(data_source_connection)
         return await self._create_or_update_data_source_connection(
             name=data_source_connection.name,
             data_source=data_source_connection,
             prefer="return=representation",
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             match_condition=match_condition,
             etag=data_source_connection.e_tag,
             **kwargs,
@@ -740,8 +699,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         indexer: Union[_models.SearchIndexer, JSON],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexer:
@@ -749,25 +706,22 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param indexer: The SearchIndexer object to create or update. Required.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
+
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        for name in ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"):
+            if name in kwargs:
+                raise TypeError(f"create_or_update_indexer() got an unsupported GA keyword argument '{name}'")
         if not isinstance(indexer, _models.SearchIndexer):
             indexer = _models.SearchIndexer(indexer)
         return await self._create_or_update_indexer(
             name=indexer.name,
             indexer=indexer,
             prefer="return=representation",
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             match_condition=match_condition,
             etag=indexer.e_tag,
             **kwargs,
@@ -794,35 +748,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             Union[_models.IndexerResyncBody, _types.IndexerResyncBody, IO[bytes]], indexer_resync
         )
         return await self._resync(name=name, indexer_resync=typed_indexer_resync, **kwargs)
-
-    @distributed_trace_async
-    async def reset_documents(
-        self,
-        name: str,
-        keys_or_ids: Optional[Union[_models.DocumentKeysOrIds, JSON, IO[bytes]]] = None,
-        *,
-        overwrite: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-            the document key field must be specified in the indexer configuration. If ids are provided,
-            the document key field is ignored. Default value is None.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds or JSON or IO[bytes]
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-            keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        typed_keys_or_ids = cast(
-            Optional[Union[_models.DocumentKeysOrIds, _types.DocumentKeysOrIds, IO[bytes]]], keys_or_ids
-        )
-        return await self._reset_documents(name=name, keys_or_ids=typed_keys_or_ids, overwrite=overwrite, **kwargs)
 
     @distributed_trace_async
     async def delete_skillset(
@@ -862,8 +787,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         skillset: Union[_models.SearchIndexerSkillset, JSON],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerSkillset:
@@ -871,49 +794,26 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param skillset: The SearchIndexerSkillset object to create or update. Required.
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
+
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        for name in ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"):
+            if name in kwargs:
+                raise TypeError(f"create_or_update_skillset() got an unsupported GA keyword argument '{name}'")
         if not isinstance(skillset, _models.SearchIndexerSkillset):
             skillset = _models.SearchIndexerSkillset(skillset)
         return await self._create_or_update_skillset(
             name=skillset.name,
             skillset=skillset,
             prefer="return=representation",
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             match_condition=match_condition,
             etag=skillset.e_tag,
             **kwargs,
         )
-
-    @distributed_trace_async
-    async def reset_skills(
-        self,
-        name: str,
-        skill_names: Union[_models.SkillNames, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames or JSON or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        typed_skill_names = cast(Union[_models.SkillNames, _types.SkillNames, IO[bytes]], skill_names)
-        return await self._reset_skills(name=name, skill_names=typed_skill_names, **kwargs)
 
     @distributed_trace_async
     async def get_skillsets(

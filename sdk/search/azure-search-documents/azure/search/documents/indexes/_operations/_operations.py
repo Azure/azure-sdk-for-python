@@ -54,7 +54,7 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -90,7 +90,7 @@ def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -123,7 +123,7 @@ def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -155,7 +155,7 @@ def build_search_index_get_synonym_maps_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_search_index_create_synonym_map_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -253,7 +253,7 @@ def build_search_index_delete_index_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -284,7 +284,7 @@ def build_search_index_get_index_request(name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -315,7 +315,7 @@ def build_search_index_list_indexes_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -348,7 +348,7 @@ def build_search_index_list_indexes_with_selected_properties_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -377,7 +377,7 @@ def build_search_index_create_index_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -401,7 +401,7 @@ def build_search_index_get_index_statistics_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -427,7 +427,7 @@ def build_search_index_analyze_text_request(name: str, **kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -458,7 +458,7 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_search_index_delete_alias_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -525,7 +525,7 @@ def build_search_index_get_alias_request(name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -556,7 +556,7 @@ def build_search_index_list_aliases_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -583,7 +583,7 @@ def build_search_index_create_alias_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -609,7 +609,7 @@ def build_search_index_create_or_update_knowledge_base_request(  # pylint: disab
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -645,7 +645,7 @@ def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -678,7 +678,7 @@ def build_search_index_get_knowledge_base_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -709,7 +709,7 @@ def build_search_index_list_knowledge_bases_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -736,7 +736,7 @@ def build_search_index_create_knowledge_base_request(**kwargs: Any) -> HttpReque
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -762,7 +762,7 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -798,7 +798,7 @@ def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -831,7 +831,7 @@ def build_search_index_get_knowledge_source_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -862,7 +862,7 @@ def build_search_index_list_knowledge_sources_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -889,7 +889,7 @@ def build_search_index_create_knowledge_source_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -913,7 +913,7 @@ def build_search_index_get_knowledge_source_status_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -934,43 +934,13 @@ def build_search_index_get_knowledge_source_status_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_upload_knowledge_source_file_request(  # pylint: disable=name-too-long
-    name: str, *, content_disposition: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/knowledgesources('{sourceName}')/files"
-    path_format_arguments = {
-        "sourceName": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Content-Disposition"] = _SERIALIZER.header("content_disposition", content_disposition, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_search_index_upload_knowledge_source_file_multipart_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1002,7 +972,7 @@ def build_search_index_list_knowledge_source_files_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1032,19 +1002,19 @@ def build_search_index_list_knowledge_source_files_request(  # pylint: disable=n
 
 
 def build_search_index_delete_knowledge_source_file_request(  # pylint: disable=name-too-long
-    file_id: str, name: str, **kwargs: Any
+    name: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources('{sourceName}')/files('{fileId}')"
     path_format_arguments = {
-        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
         "sourceName": _SERIALIZER.url("name", name, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1060,19 +1030,19 @@ def build_search_index_delete_knowledge_source_file_request(  # pylint: disable=
 
 
 def build_search_index_update_knowledge_source_file_request(  # pylint: disable=name-too-long
-    file_id: str, name: str, **kwargs: Any
+    name: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/knowledgesources('{sourceName}')/files('{fileId}')"
     path_format_arguments = {
-        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
         "sourceName": _SERIALIZER.url("name", name, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1090,7 +1060,7 @@ def build_search_index_get_service_statistics_request(**kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1116,7 +1086,7 @@ def build_search_index_list_index_stats_summary_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1139,19 +1109,14 @@ def build_search_index_list_index_stats_summary_request(  # pylint: disable=name
 
 
 def build_search_indexer_create_or_update_data_source_connection_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1164,10 +1129,6 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip_indexer_reset_requirement_for_cache is not None:
-        _params["ignoreResetRequirements"] = _SERIALIZER.query(
-            "skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, "bool"
-        )
 
     # Construct headers
     if accept is not None:
@@ -1191,7 +1152,7 @@ def build_search_indexer_delete_data_source_connection_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1224,7 +1185,7 @@ def build_search_indexer_get_data_source_connection_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1256,7 +1217,7 @@ def build_search_indexer_get_data_source_connections_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1287,7 +1248,7 @@ def build_search_indexer_create_data_source_connection_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1311,7 +1272,7 @@ def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1337,7 +1298,7 @@ def build_search_indexer_resync_request(name: str, **kwargs: Any) -> HttpRequest
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1360,43 +1321,11 @@ def build_search_indexer_resync_request(name: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-long
-    name: str, *, overwrite: Optional[bool] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
-    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
-
-    # Construct URL
-    _url = "/indexers('{indexerName}')/search.resetdocs"
-    path_format_arguments = {
-        "indexerName": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if overwrite is not None:
-        _params["overwrite"] = _SERIALIZER.query("overwrite", overwrite, "bool")
-
-    # Construct headers
-    if accept is not None:
-        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_search_indexer_run_indexer_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1418,20 +1347,14 @@ def build_search_indexer_run_indexer_request(name: str, **kwargs: Any) -> HttpRe
 
 
 def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-    disable_cache_reprocessing_change_detection: Optional[bool] = None,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1444,14 +1367,6 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip_indexer_reset_requirement_for_cache is not None:
-        _params["ignoreResetRequirements"] = _SERIALIZER.query(
-            "skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, "bool"
-        )
-    if disable_cache_reprocessing_change_detection is not None:
-        _params["disableCacheReprocessingChangeDetection"] = _SERIALIZER.query(
-            "disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, "bool"
-        )
 
     # Construct headers
     if accept is not None:
@@ -1475,7 +1390,7 @@ def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1506,7 +1421,7 @@ def build_search_indexer_get_indexer_request(name: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1538,7 +1453,7 @@ def build_search_indexer_get_indexers_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1567,7 +1482,7 @@ def build_search_indexer_create_indexer_request(**kwargs: Any) -> HttpRequest:  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1591,7 +1506,7 @@ def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1613,20 +1528,14 @@ def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too
 
 
 def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-    disable_cache_reprocessing_change_detection: Optional[bool] = None,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1639,14 +1548,6 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip_indexer_reset_requirement_for_cache is not None:
-        _params["ignoreResetRequirements"] = _SERIALIZER.query(
-            "skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, "bool"
-        )
-    if disable_cache_reprocessing_change_detection is not None:
-        _params["disableCacheReprocessingChangeDetection"] = _SERIALIZER.query(
-            "disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, "bool"
-        )
 
     # Construct headers
     if accept is not None:
@@ -1670,7 +1571,7 @@ def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1701,7 +1602,7 @@ def build_search_indexer_get_skillset_request(name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1733,7 +1634,7 @@ def build_search_indexer_get_skillsets_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -1762,39 +1663,11 @@ def build_search_indexer_create_skillset_request(**kwargs: Any) -> HttpRequest: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/skillsets"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if accept is not None:
-        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_search_indexer_reset_skills_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
-    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
-
-    # Construct URL
-    _url = "/skillsets('{skillsetName}')/search.resetskills"
-    path_format_arguments = {
-        "skillsetName": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2083,7 +1956,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def _get_synonym_maps(
         self,
@@ -2613,9 +2492,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "accept", "search", "page_size", "search_type"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
     def _list_indexes(
         self,
@@ -2734,15 +2613,15 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={
             "2026-08-01-preview": [
                 "api_version",
+                "client_request_id",
                 "accept",
                 "select",
                 "search",
                 "page_size",
                 "search_type",
-                "client_request_id",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
     def _list_indexes_with_selected_properties(
         self,
@@ -3428,7 +3307,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def list_aliases(
         self,
@@ -3938,7 +3823,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def list_knowledge_bases(
         self,
@@ -4448,7 +4339,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def list_knowledge_sources(
         self,
@@ -4755,122 +4652,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    def _upload_knowledge_source_file(
-        self,
-        name: str,
-        file: bytes,
-        *,
-        content_disposition: str,
-        content_type: str = "application/octet-stream",
-        **kwargs: Any,
-    ) -> _models1.KnowledgeSourceFile: ...
-    @overload
-    def _upload_knowledge_source_file(
-        self,
-        name: str,
-        file: IO[bytes],
-        *,
-        content_disposition: str,
-        content_type: str = "application/octet-stream",
-        **kwargs: Any,
-    ) -> _models1.KnowledgeSourceFile: ...
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "content_type",
-                "content_disposition",
-                "client_request_id",
-                "name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
-    )
-    def _upload_knowledge_source_file(
-        self, name: str, file: Union[bytes, IO[bytes]], *, content_disposition: str, **kwargs: Any
-    ) -> _models1.KnowledgeSourceFile:
-        """Uploads a file to a File knowledge source for processing and indexing.
-
-        :param name: The name of the knowledge source. Required.
-        :type name: str
-        :param file: The file content to upload. Is either a bytes type or a IO[bytes] type. Required.
-        :type file: bytes or IO[bytes]
-        :keyword content_disposition: The Content-Disposition header specifying the filename of the
-         uploaded file.
-         Must follow the format: ``attachment; filename="<filename>"``.
-         For example: ``attachment; filename="installation-guide.pdf"``. Required.
-        :paramtype content_disposition: str
-        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models1.KnowledgeSourceFile] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/octet-stream"
-        _content = file
-
-        _request = build_search_index_upload_knowledge_source_file_request(
-            name=name,
-            content_disposition=content_disposition,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models1.KnowledgeSourceFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
     def upload_knowledge_source_file_multipart(
         self, name: str, body: _models1.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
@@ -4906,7 +4687,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
     def upload_knowledge_source_file_multipart(
         self,
@@ -4994,10 +4775,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={
-            "2026-05-01-preview": ["api_version", "accept", "client_request_id", "name"],
+            "2026-05-01-preview": ["api_version", "client_request_id", "name", "accept"],
             "2026-08-01-preview": ["prefix", "search", "page_size", "search_type"],
         },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01"],
     )
     def list_knowledge_source_files(
         self,
@@ -5123,18 +4904,18 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "file_id", "accept", "client_request_id", "name"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        params_added_on={"2026-05-01-preview": ["api_version", "client_request_id", "name", "file_id", "accept"]},
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01"],
     )
     def _delete_knowledge_source_file(  # pylint: disable=inconsistent-return-statements
-        self, file_id: str, name: str, **kwargs: Any
+        self, name: str, file_id: str, **kwargs: Any
     ) -> None:
         """Deletes a file from a File knowledge source and removes all indexed content derived from it.
 
-        :param file_id: The unique identifier of the file to delete. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to delete. Required.
+        :type file_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5153,8 +4934,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_knowledge_source_file_request(
-            file_id=file_id,
             name=name,
+            file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5184,16 +4965,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def update_knowledge_source_file(
-        self, file_id: str, name: str, body: _models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+        self, name: str, file_id: str, body: _models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Required.
         :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest
         :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
@@ -5203,16 +4984,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def update_knowledge_source_file(
-        self, file_id: str, name: str, body: _types_models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+        self, name: str, file_id: str, body: _types_models1.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models1.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Required.
         :type body: ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
         :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
@@ -5224,14 +5005,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "file_id", "client_request_id", "name", "content_type", "accept"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "name", "file_id", "content_type", "accept"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
     def update_knowledge_source_file(
         self,
-        file_id: str,
         name: str,
+        file_id: str,
         body: Union[_models1.UpdateKnowledgeSourceFileRequest, _types_models1.UpdateKnowledgeSourceFileRequest],
         **kwargs: Any,
     ) -> _models1.KnowledgeSourceFile:
@@ -5239,10 +5020,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Is one of
          the following types: UpdateKnowledgeSourceFileRequest Required.
         :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
@@ -5270,8 +5051,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_search_index_update_knowledge_source_file_request(
-            file_id=file_id,
             name=name,
+            file_id=file_id,
             api_version=self._config.api_version,
             files=_files,
             headers=_headers,
@@ -5379,9 +5160,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "accept", "search", "page_size", "search_type"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
     def list_index_stats_summary(
         self,
@@ -5496,7 +5277,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return ItemPaged(get_next, extract_data)
 
 
-class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _SearchIndexerClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], SearchIndexerClientConfiguration]
 ):
 
@@ -5506,7 +5287,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         data_source: _models1.SearchIndexerDataSourceConnection,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5518,7 +5298,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         data_source: _types_models1.SearchIndexerDataSourceConnection,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5530,7 +5309,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         data_source: IO[bytes],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5538,10 +5316,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerDataSourceConnection: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2026-05-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
-    )
     def _create_or_update_data_source_connection(
         self,
         name: str,
@@ -5549,7 +5323,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _models1.SearchIndexerDataSourceConnection, _types_models1.SearchIndexerDataSourceConnection, IO[bytes]
         ],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
@@ -5562,9 +5335,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          SearchIndexerDataSourceConnection type or a IO[bytes] type. Required.
         :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
          ~azure.search.documents.indexes.types.SearchIndexerDataSourceConnection or IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5605,7 +5375,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_create_or_update_data_source_connection_request(
             name=name,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -5787,7 +5556,13 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def _get_data_source_connections(
         self,
@@ -6130,8 +5905,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        params_added_on={"2026-05-01-preview": ["api_version", "client_request_id", "name", "accept", "content_type"]},
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01"],
     )
     def _resync(  # pylint: disable=inconsistent-return-statements
         self,
@@ -6174,127 +5949,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_resync_request(
             name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def _reset_documents(
-        self,
-        name: str,
-        keys_or_ids: Optional[_models1.DocumentKeysOrIds] = None,
-        *,
-        overwrite: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None: ...
-    @overload
-    def _reset_documents(
-        self,
-        name: str,
-        keys_or_ids: Optional[_types_models1.DocumentKeysOrIds] = None,
-        *,
-        overwrite: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None: ...
-    @overload
-    def _reset_documents(
-        self,
-        name: str,
-        keys_or_ids: Optional[IO[bytes]] = None,
-        *,
-        overwrite: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None: ...
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": ["api_version", "accept", "overwrite", "client_request_id", "name", "content_type"]
-        },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
-    )
-    def _reset_documents(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        keys_or_ids: Optional[Union[_models1.DocumentKeysOrIds, _types_models1.DocumentKeysOrIds, IO[bytes]]] = None,
-        *,
-        overwrite: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Is either a DocumentKeysOrIds type or a IO[bytes] type. Default
-         value is None.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds or
-         ~azure.search.documents.indexes.types.DocumentKeysOrIds or IO[bytes]
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if keys_or_ids else None
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if keys_or_ids else None
-        _content = None
-        if isinstance(keys_or_ids, (IOBase, bytes)):
-            _content = keys_or_ids
-        else:
-            if keys_or_ids is not None:
-                _content = json.dumps(keys_or_ids, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_search_indexer_reset_documents_request(
-            name=name,
-            overwrite=overwrite,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6382,8 +6036,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         indexer: _models1.SearchIndexer,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6395,8 +6047,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         indexer: _types_models1.SearchIndexer,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6408,8 +6058,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         indexer: IO[bytes],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6417,22 +6065,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexer: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={
-            "2026-05-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
-    )
     def _create_or_update_indexer(
         self,
         name: str,
         indexer: Union[_models1.SearchIndexer, _types_models1.SearchIndexer, IO[bytes]],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
@@ -6445,12 +6082,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          type or a IO[bytes] type. Required.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or
          ~azure.search.documents.indexes.types.SearchIndexer or IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6490,8 +6121,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_create_or_update_indexer_request(
             name=name,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -6672,7 +6301,13 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def _get_indexers(
         self,
@@ -6988,8 +6623,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         skillset: _models1.SearchIndexerSkillset,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7001,8 +6634,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         skillset: _types_models1.SearchIndexerSkillset,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7014,8 +6645,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         name: str,
         skillset: IO[bytes],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7023,22 +6652,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerSkillset: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={
-            "2026-05-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
-    )
     def _create_or_update_skillset(
         self,
         name: str,
         skillset: Union[_models1.SearchIndexerSkillset, _types_models1.SearchIndexerSkillset, IO[bytes]],
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
@@ -7051,12 +6669,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
          service. Is either a SearchIndexerSkillset type or a IO[bytes] type. Required.
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or
          ~azure.search.documents.indexes.types.SearchIndexerSkillset or IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -7096,8 +6708,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         _request = build_search_indexer_create_or_update_skillset_request(
             name=name,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -7278,7 +6888,13 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     def _get_skillsets(
         self,
@@ -7528,94 +7144,3 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def _reset_skills(
-        self, name: str, skill_names: _models1.SkillNames, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None: ...
-    @overload
-    def _reset_skills(
-        self,
-        name: str,
-        skill_names: _types_models1.SkillNames,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None: ...
-    @overload
-    def _reset_skills(
-        self, name: str, skill_names: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None: ...
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
-    )
-    def _reset_skills(  # pylint: disable=inconsistent-return-statements
-        self, name: str, skill_names: Union[_models1.SkillNames, _types_models1.SkillNames, IO[bytes]], **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Is either a SkillNames type or a IO[bytes] type. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames or
-         ~azure.search.documents.indexes.types.SkillNames or IO[bytes]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(skill_names, (IOBase, bytes)):
-            _content = skill_names
-        else:
-            _content = json.dumps(skill_names, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_search_indexer_reset_skills_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models2.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
