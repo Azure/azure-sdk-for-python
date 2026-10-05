@@ -258,7 +258,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 raise ValueError("Remote max frame size is too small for a Transfer frame.")
 
             while True:
-                payload = delivery.frame["payload"]
+                payload = memoryview(delivery.frame["payload"])
                 more = len(payload) > available_frame_size
                 frame["more"] = more
                 fragment = payload[:available_frame_size]
@@ -271,7 +271,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
                     self.channel, TransferFrame(payload=fragment, **frame)
                 )
-                delivery.frame["payload"] = payload[len(fragment) :]
+                delivery.frame["payload"] = payload[len(fragment) :] if more else b""
                 delivery.frame["more"] = more
                 self.next_outgoing_id += 1
                 self.remote_incoming_window -= 1

@@ -180,10 +180,14 @@ async def test_fragmented_transfer_replenishes_per_frame_and_waits_for_remote_cr
         if remaining:
             assert delivery.transfer_state == SessionTransferState.BUSY
             assert delivery.frame["more"]
+            assert isinstance(delivery.frame["payload"], memoryview)
+            assert delivery.frame["payload"].obj is payload
             session.remote_incoming_window = 1
         else:
             assert delivery.transfer_state == SessionTransferState.OKAY
             assert not delivery.frame["more"]
+            assert delivery.frame["payload"] == b""
+            assert not isinstance(delivery.frame["payload"], memoryview)
 
     frames = [
         call.args[1] for call in connection._process_outgoing_frame.call_args_list
@@ -193,6 +197,7 @@ async def test_fragmented_transfer_replenishes_per_frame_and_waits_for_remote_cr
     assert b"".join(frame.payload for frame in transfers) == payload
     assert [frame.delivery_id for frame in transfers] == [0, 0, 0]
     assert [frame.more for frame in transfers] == [True, True, False]
+    assert all(isinstance(frame.payload, memoryview) and frame.payload.obj is payload for frame in transfers)
     assert [frame.next_outgoing_id for frame in flows] == [1, 2, 3]
 
 
