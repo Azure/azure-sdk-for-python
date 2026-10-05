@@ -125,9 +125,11 @@ def encode_ubyte(output: bytearray, value: Union[int, bytes], with_constructor: 
     except ValueError:
         value = cast(bytes, value)
         value = ord(value)
+    if value < 0:
+        raise ValueError("Unsigned byte value must be 0-255")
     try:
         output.extend(_construct(ConstructorBytes.ubyte, with_constructor))
-        output.extend(struct.pack(">B", abs(value)))
+        output.extend(struct.pack(">B", value))
     except struct.error as exc:
         raise ValueError("Unsigned byte value must be 0-255") from exc
 
@@ -141,9 +143,11 @@ def encode_ushort(output: bytearray, value: int, with_constructor: bool = True, 
     :param bool with_constructor: Whether to include the constructor byte.
     """
     value = int(value)
+    if value < 0:
+        raise ValueError("Unsigned byte value must be 0-65535")
     try:
         output.extend(_construct(ConstructorBytes.ushort, with_constructor))
-        output.extend(struct.pack(">H", abs(value)))
+        output.extend(struct.pack(">H", value))
     except struct.error as exc:
         raise ValueError("Unsigned byte value must be 0-65535") from exc
 
@@ -161,16 +165,18 @@ def encode_uint(output: bytearray, value: int, with_constructor: bool = True, us
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
+    if value < 0:
+        raise ValueError("Value supplied for unsigned int invalid: {}".format(value))
     if value == 0:
         output.extend(ConstructorBytes.uint_0)
         return
     try:
         if use_smallest and value <= 255:
             output.extend(_construct(ConstructorBytes.uint_small, with_constructor))
-            output.extend(struct.pack(">B", abs(value)))
+            output.extend(struct.pack(">B", value))
             return
         output.extend(_construct(ConstructorBytes.uint_large, with_constructor))
-        output.extend(struct.pack(">I", abs(value)))
+        output.extend(struct.pack(">I", value))
     except struct.error as exc:
         raise ValueError("Value supplied for unsigned int invalid: {}".format(value)) from exc
 
@@ -188,16 +194,18 @@ def encode_ulong(output: bytearray, value: int, with_constructor: bool = True, u
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
+    if value < 0:
+        raise ValueError("Value supplied for unsigned long invalid: {}".format(value))
     if value == 0:
         output.extend(ConstructorBytes.ulong_0)
         return
     try:
         if use_smallest and value <= 255:
             output.extend(_construct(ConstructorBytes.ulong_small, with_constructor))
-            output.extend(struct.pack(">B", abs(value)))
+            output.extend(struct.pack(">B", value))
             return
         output.extend(_construct(ConstructorBytes.ulong_large, with_constructor))
-        output.extend(struct.pack(">Q", abs(value)))
+        output.extend(struct.pack(">Q", value))
     except struct.error as exc:
         raise ValueError("Value supplied for unsigned long invalid: {}".format(value)) from exc
 

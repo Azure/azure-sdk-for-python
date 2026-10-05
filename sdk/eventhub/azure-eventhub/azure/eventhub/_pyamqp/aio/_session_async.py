@@ -53,6 +53,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.incoming_window = kwargs.pop("incoming_window", 1)
         self.outgoing_window = kwargs.pop("outgoing_window", 1)
         self.target_incoming_window = self.incoming_window
+        self.target_outgoing_window = self.outgoing_window
         self.remote_incoming_window = 0
         self.remote_outgoing_window = 0
         self.offered_capabilities = None
@@ -68,6 +69,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._connection = connection
         self._output_handles = {}
         self._input_handles = {}
+        self._outgoing_transfer_lock = asyncio.Lock()
 
     async def __aenter__(self):
         await self.begin()
@@ -235,9 +237,14 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     await link._incoming_flow(frame)  # pylint: disable=protected-access
 
     async def _outgoing_transfer(self, delivery, network_trace_params):
+        async with self._outgoing_transfer_lock:
+            await self._outgoing_transfer_locked(delivery, network_trace_params)
+
+    async def _outgoing_transfer_locked(self, delivery, network_trace_params):
         if self.state != SessionState.MAPPED:
             delivery.transfer_state = SessionTransferState.ERROR
-        if self.remote_incoming_window <= 0:
+            return
+        if self.remote_incoming_window <= 0 or self.outgoing_window <= 0:
             delivery.transfer_state = SessionTransferState.BUSY
         else:
             payload = delivery.frame["payload"]
@@ -316,6 +323,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
+            if self.outgoing_window == 0:
+                self.outgoing_window = self.target_outgoing_window
+                await self._outgoing_flow()
             # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 

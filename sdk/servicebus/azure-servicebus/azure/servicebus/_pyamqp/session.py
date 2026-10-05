@@ -8,6 +8,7 @@ from __future__ import annotations
 import uuid
 import logging
 import time
+from threading import Lock
 from typing import Union, Optional
 
 from .constants import ConnectionState, SessionState, SessionTransferState, Role
@@ -52,6 +53,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.incoming_window = kwargs.pop("incoming_window", 1)
         self.outgoing_window = kwargs.pop("outgoing_window", 1)
         self.target_incoming_window = self.incoming_window
+        self.target_outgoing_window = self.outgoing_window
         self.remote_incoming_window = 0
         self.remote_outgoing_window = 0
         self.offered_capabilities = None
@@ -67,6 +69,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._connection = connection
         self._output_handles = {}
         self._input_handles = {}
+        self._outgoing_transfer_lock = Lock()
 
     def __enter__(self):
         self.begin()
@@ -234,9 +237,14 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     link._incoming_flow(frame)  # pylint: disable=protected-access
 
     def _outgoing_transfer(self, delivery, network_trace_params):
+        with self._outgoing_transfer_lock:
+            self._outgoing_transfer_locked(delivery, network_trace_params)
+
+    def _outgoing_transfer_locked(self, delivery, network_trace_params):
         if self.state != SessionState.MAPPED:
             delivery.transfer_state = SessionTransferState.ERROR
-        if self.remote_incoming_window <= 0:
+            return
+        if self.remote_incoming_window <= 0 or self.outgoing_window <= 0:
             delivery.transfer_state = SessionTransferState.BUSY
         else:
             payload = delivery.frame["payload"]
@@ -315,6 +323,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
+            if self.outgoing_window == 0:
+                self.outgoing_window = self.target_outgoing_window
+                self._outgoing_flow()
             # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 
