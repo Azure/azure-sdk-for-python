@@ -29,6 +29,7 @@ USAGE:
     4) FOUNDRY_AGENT_VERSION - Optional. The agent version. If not set, latest is used.
     5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back for agent traces.
        Defaults to 168 (7 days).
+    6) TRACE_MAX_TRACES - Optional. Maximum number of traces to evaluate. Defaults to 5.
 """
 
 import os
@@ -46,6 +47,7 @@ model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 agent_version = os.environ.get("FOUNDRY_AGENT_VERSION", "")
 lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "168"))
+max_traces = int(os.environ.get("TRACE_MAX_TRACES", "5"))
 
 
 def main() -> None:
@@ -110,7 +112,7 @@ def main() -> None:
             "agent_name": agent_name,
             "start_time": start_time,
             "end_time": end_time,
-            "max_traces": 5,
+            "max_traces": max_traces,
         }
 
         if agent_version:
