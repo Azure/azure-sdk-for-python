@@ -30,7 +30,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -62,7 +62,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
@@ -88,31 +87,29 @@ with (
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
-    poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
-            inputs=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=evaluator_name,
-                evaluator_display_name="Reservation Quality (Generated)",
-                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-                sources=[
-                    PromptEvaluatorGenerationJobSource(
-                        description="Application overview - purpose, capabilities, and tools.",
-                        prompt=(
-                            "You are evaluating a restaurant reservation assistant. The assistant helps "
-                            "users create, modify, and cancel reservations at participating restaurants. "
-                            "It can:\n"
-                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                            "  - Check table availability for a requested date, time, and party size.\n"
-                            "  - Create, update, and cancel reservations on behalf of the user.\n"
-                            "  - Send SMS or email confirmations through a notifications tool.\n"
-                            "It must always confirm the user's intent before committing changes, "
-                            "ask follow-up questions when details are missing, and maintain a polite "
-                            "restaurant-host tone."
-                        ),
+    poller = project_client.evaluators.begin_create_generation_job(
+        job=EvaluatorGenerationInputs(
+            model=model_name,
+            evaluator_name=evaluator_name,
+            evaluator_display_name="Reservation Quality (Generated)",
+            evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+            sources=[
+                PromptEvaluatorGenerationJobSource(
+                    description="Application overview - purpose, capabilities, and tools.",
+                    prompt=(
+                        "You are evaluating a restaurant reservation assistant. The assistant helps "
+                        "users create, modify, and cancel reservations at participating restaurants. "
+                        "It can:\n"
+                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                        "  - Check table availability for a requested date, time, and party size.\n"
+                        "  - Create, update, and cancel reservations on behalf of the user.\n"
+                        "  - Send SMS or email confirmations through a notifications tool.\n"
+                        "It must always confirm the user's intent before committing changes, "
+                        "ask follow-up questions when details are missing, and maintain a polite "
+                        "restaurant-host tone."
                     ),
-                ],
-            ),
+                ),
+            ],
         ),
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
@@ -206,4 +203,4 @@ with (
     # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
