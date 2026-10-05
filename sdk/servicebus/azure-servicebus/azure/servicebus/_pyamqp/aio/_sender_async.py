@@ -85,22 +85,23 @@ class SenderLink(Link):
         await self.update_pending_deliveries()
 
     async def _outgoing_transfer(self, delivery):
-        output = bytearray()
-        encode_payload(output, delivery.message)
         delivery_count = self.delivery_count + 1
-        delivery.frame = {
-            "handle": self.handle,
-            "delivery_tag": struct.pack(">I", abs(delivery_count)),
-            "message_format": delivery.message._code,  # pylint:disable=protected-access
-            "settled": delivery.settled,
-            "more": False,
-            "rcv_settle_mode": None,
-            "state": None,
-            "resume": None,
-            "aborted": None,
-            "batchable": None,
-            "payload": output,
-        }
+        if not delivery.frame or not delivery.frame["more"]:
+            output = bytearray()
+            encode_payload(output, delivery.message)
+            delivery.frame = {
+                "handle": self.handle,
+                "delivery_tag": struct.pack(">I", abs(delivery_count)),
+                "message_format": delivery.message._code,  # pylint:disable=protected-access
+                "settled": delivery.settled,
+                "more": False,
+                "rcv_settle_mode": None,
+                "state": None,
+                "resume": None,
+                "aborted": None,
+                "batchable": None,
+                "payload": output,
+            }
         await self._session._outgoing_transfer(  # pylint:disable=protected-access
             delivery, self.network_trace_params if self.network_trace else None
         )
@@ -147,7 +148,7 @@ class SenderLink(Link):
             await self._outgoing_flow()
         now = time.time()
         pending = []
-        for delivery in self._pending_deliveries:
+        for index, delivery in enumerate(self._pending_deliveries):
             if delivery.timeout and (now - delivery.start) >= delivery.timeout:
                 await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                 continue
@@ -156,6 +157,9 @@ class SenderLink(Link):
                 if sent_and_settled:
                     continue
             pending.append(delivery)
+            if delivery.transfer_state == SessionTransferState.BUSY:
+                pending.extend(self._pending_deliveries[index + 1 :])
+                break
         self._pending_deliveries = pending
 
     async def send_transfer(self, message, *, send_async=False, **kwargs):
@@ -172,7 +176,11 @@ class SenderLink(Link):
             settled=settled,
             network_trace_params=self.network_trace_params,
         )
-        if self.current_link_credit == 0 or send_async:
+        if (
+            self.current_link_credit == 0
+            or send_async
+            or any(pending.frame and pending.frame["more"] for pending in self._pending_deliveries)
+        ):
             self._pending_deliveries.append(delivery)
         else:
             sent_and_settled = await self._outgoing_transfer(delivery)
