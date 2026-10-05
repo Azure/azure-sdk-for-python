@@ -464,12 +464,7 @@ fn upload_blob<'py>(
     Ok(dict)
 }
 
-/// Default download window size (256 MiB).
-///
-/// Each iteration of [`NativeDownloadStream`] fills one window via `download_into`, so peak
-/// memory is bounded to a single window while the Rust SDK still performs parallel
-/// partitioned range fetches *within* that window. A large window keeps that intra-window
-/// parallelism high.
+/// Default download window size.
 const DEFAULT_WINDOW_SIZE: u64 = 256 * 1024 * 1024;
 
 /// The `Content-Range` response header (`bytes start-end/total`).
@@ -634,8 +629,24 @@ fn download_blob(
 ) -> PyResult<NativeDownloadStream> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
 
-    // A window size of 0 would make no progress; clamp to at least 1 byte.
-    let window_size = max_chunk_size.unwrap_or(DEFAULT_WINDOW_SIZE).max(1);
+    let window_size = match (max_concurrency, max_chunk_size) {
+        (Some(concurrency), Some(chunk_size)) => {
+            let concurrency = u64::try_from(concurrency).map_err(|e| {
+                PyValueError::new_err(format!("Invalid max_concurrency value: {e}"))
+            })?;
+            concurrency.checked_mul(chunk_size).ok_or_else(|| {
+                PyValueError::new_err(
+                    "max_concurrency multiplied by max_chunk_size exceeds the supported window size.",
+                )
+            })?
+        }
+        _ => DEFAULT_WINDOW_SIZE,
+    };
+    if window_size == 0 {
+        return Err(PyValueError::new_err(
+            "max_concurrency and max_chunk_size must be greater than zero.",
+        ));
+    }
     let start = offset.unwrap_or(0);
     // First window is bounded by the window size and, if the caller requested a range, by the
     // requested length.
@@ -661,6 +672,11 @@ fn download_blob(
     download_options.if_tags = if_tags.map(str::to_string);
     download_options.version_id = version_id.map(str::to_string);
     download_options.timeout = timeout;
+    if let Some(chunk_size) = max_chunk_size {
+        let chunk_size = usize::try_from(chunk_size)
+            .map_err(|e| PyValueError::new_err(format!("Invalid max_chunk_size value: {e}")))?;
+        download_options.partition_size = NonZero::new(chunk_size);
+    }
 
     if let Some(algorithm) = encryption_algorithm {
         download_options.encryption_algorithm = Some(
