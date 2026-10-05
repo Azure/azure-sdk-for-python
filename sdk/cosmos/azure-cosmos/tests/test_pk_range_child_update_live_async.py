@@ -18,9 +18,11 @@ validates the fix.
 """
 
 import asyncio
+import hashlib
 import json
 import time
 import unittest
+from collections import Counter, deque
 from unittest.mock import patch
 
 import pytest
@@ -56,6 +58,47 @@ def _range_state(routing_map):
         {"id": r.id, "parents": r.parents, "status": r.status}
         for r in routing_map.get_ordered_partition_key_ranges()
     ]
+
+
+def _continuation_hash(token):
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()[:12] if token else None
+
+
+def _observe_query_post(original_post, requests):
+    request_count = 0
+
+    async def observe_post(path, request_params, body, req_headers, **kwargs):
+        nonlocal request_count
+        if not path.rstrip("/").endswith("/docs") or req_headers.get(HttpHeaders.IsQuery) != "true":
+            return await original_post(path, request_params, body, req_headers, **kwargs)
+        request_count += 1
+        entry = {
+            "request": request_count,
+            "range_id": req_headers.get(HttpHeaders.PartitionKeyRangeID),
+            "request_continuation_hash": _continuation_hash(req_headers.get(HttpHeaders.Continuation)),
+            "time": time.time(),
+            "outcome": "pending",
+        }
+        requests.append(entry)
+        start = time.monotonic()
+        try:
+            response = await original_post(path, request_params, body, req_headers, **kwargs)
+        except (Exception, asyncio.CancelledError) as error:
+            entry.update(outcome="error", **_error_fields(error))
+            raise
+        else:
+            result, headers = response
+            entry.update(
+                outcome="page",
+                ids=[item["id"] for item in result["Documents"]],
+                response_continuation_hash=_continuation_hash(headers.get(HttpHeaders.Continuation)),
+                activity_id=headers.get(HttpHeaders.ActivityId),
+            )
+            return response
+        finally:
+            entry["elapsed_seconds"] = round(time.monotonic() - start, 3)
+
+    return observe_post
 
 
 @pytest.mark.cosmosSplit
@@ -99,15 +142,23 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
         _record("database_deleted", database=self.database.id)
 
     async def _scan(self):
+        # Retain only this scan's last 50 backend requests; do not log raw tokens or ordinary successful scans.
+        requests = deque(maxlen=50)
+        connection = self.client.client_connection
+        observe_post = _observe_query_post(connection._CosmosClientConnection__Post, requests)
         try:
-            items = self.container.query_items(
-                query="SELECT * FROM c",
-                feed_range={"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}},
-                max_item_count=10,
+            with patch.object(connection, "_CosmosClientConnection__Post", new=observe_post):
+                items = self.container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range={"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}},
+                    max_item_count=10,
+                )
+                ids = [item["id"] async for item in items]
+        except (Exception, asyncio.CancelledError) as error:
+            _record(
+                "scan_failed", scans=self.scans, ranges=_range_state(self.routing_map),
+                requests=list(requests), **_error_fields(error),
             )
-            ids = [item["id"] async for item in items]
-        except Exception as error:
-            _record("scan_failed", scans=self.scans, ranges=_range_state(self.routing_map), **_error_fields(error))
             raise
         if sorted(ids) != self.expected_ids:
             _record(
@@ -116,7 +167,12 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                 missing=sorted(set(self.expected_ids) - set(ids)),
                 unexpected=sorted(set(ids) - set(self.expected_ids)),
                 duplicate_count=len(ids) - len(set(ids)),
+                duplicate_ids={item_id: count for item_id, count in Counter(ids).items() if count > 1},
+                returned_ids=ids,
+                requests=list(requests),
             )
+        elif any(request.get("status_code") == 410 for request in requests):
+            _record("scan_split_recovered", scans=self.scans, requests=list(requests))
         self.assertEqual(sorted(ids), self.expected_ids)
         self.scans += 1
 
