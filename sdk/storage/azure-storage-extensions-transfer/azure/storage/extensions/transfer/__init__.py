@@ -213,8 +213,9 @@ def download_blob(
     :keyword str version_id: Blob version to download.
     :keyword int timeout: Server-side timeout applied to each download request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
-    :keyword int max_chunk_size: Size in bytes of each download window. Defaults to 256 MiB.
-        Larger windows increase intra-window parallelism at the cost of higher peak memory.
+    :keyword int max_chunk_size: Maximum size of each ranged download request. When both
+        ``max_concurrency`` and ``max_chunk_size`` are provided, each download window is their
+        product. Otherwise, the window size defaults to 256 MiB.
     :returns: A lazy iterator yielding the blob content one window at a time. The object also
         exposes ``size`` (total bytes to be delivered).
     :rtype: Iterator[bytes]
