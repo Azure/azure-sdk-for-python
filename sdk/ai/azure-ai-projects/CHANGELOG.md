@@ -1,5 +1,15 @@
 # Release History
 
+## 2.8.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 2.8.0 (2026-10-02)
 
 ### Features Added
