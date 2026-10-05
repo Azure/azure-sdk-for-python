@@ -51,11 +51,11 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     DataGenerationModelOptions,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputTarget,
+    EvaluationDataGenerationJobOutputConfiguration,
     JobStatus,
     PageOrder,
     PromptDataGenerationJobSource,
-    SimpleQnADataGenerationJobOptions,
+    SimpleQnADataGenerationJobConfiguration,
 )
 
 load_dotenv()
@@ -100,13 +100,13 @@ def main() -> None:
                     ),
                 ),
             ],
-            generation_configuration=SimpleQnADataGenerationJobOptions(
+            generation_configuration=SimpleQnADataGenerationJobConfiguration(
                 # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                 max_samples=15,
                 # `simple_qna` REQUIRES model_options.
                 model_options=DataGenerationModelOptions(model=model_name),
             ),
-            output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
+            output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
         )
 
         print("Create a data generation job without SDK polling.")

@@ -66,10 +66,10 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputTarget,
+    EvaluationDataGenerationJobOutputConfiguration,
     FileDataGenerationJobSource,
     PromptDataGenerationJobSource,
-    SimpleQnADataGenerationJobOptions,
+    SimpleQnADataGenerationJobConfiguration,
 )
 
 load_dotenv()
@@ -81,9 +81,7 @@ poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run resource names so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
-run_id = (
-    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-)
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
     raise ValueError(
@@ -93,9 +91,7 @@ if len(output_dataset_name) > 50:
 
 SEED_REFERENCE_PATH = Path(__file__).with_name("simpleqna_seed_reference.txt")
 
-EXPECTED_OUTPUT_DESCRIPTION = (
-    "QnA pairs generated from synthetic primary care conversations."
-)
+EXPECTED_OUTPUT_DESCRIPTION = "QnA pairs generated from synthetic primary care conversations."
 EXPECTED_OUTPUT_TAGS = {
     "sample": "dataset-generation-simpleqna-with-file-source",
     "difficulty": "expert",
@@ -115,9 +111,7 @@ with (
         # 1. Upload the seed reference document as an Azure OpenAI file.
         # ------------------------------------------------------------------
         seed_filename = SEED_REFERENCE_PATH.name
-        print(
-            f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`."
-        )
+        print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
         with SEED_REFERENCE_PATH.open("rb") as seed_stream:
             seed_file = openai_client.files.create(
                 file=(seed_filename, seed_stream, "text/plain"),
@@ -135,9 +129,7 @@ with (
             print(".", end="", flush=True)
         print()
         if seed_file.status != "processed":
-            raise RuntimeError(
-                f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`."
-            )
+            raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
 
         # ------------------------------------------------------------------
         # 2. Submit a multi-source SimpleQnA data generation job.
@@ -158,13 +150,13 @@ with (
                     prompt="Generate expert-level questions of high difficulty.",
                 ),
             ],
-            generation_configuration=SimpleQnADataGenerationJobOptions(
+            generation_configuration=SimpleQnADataGenerationJobConfiguration(
                 # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
                 max_samples=15,
                 # `simple_qna` REQUIRES model_options.
                 model_options=DataGenerationModelOptions(model=model_name),
             ),
-            output_configuration=EvaluationDataGenerationJobOutputTarget(
+            output_configuration=EvaluationDataGenerationJobOutputConfiguration(
                 name=output_dataset_name,
                 description=EXPECTED_OUTPUT_DESCRIPTION,
                 tags=EXPECTED_OUTPUT_TAGS,
@@ -198,9 +190,7 @@ with (
                 output_version = output.version or ""
                 break
         if not output_name or not output_version:
-            raise RuntimeError(
-                "The data generation job did not produce a dataset output."
-            )
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
         # ------------------------------------------------------------------
         # 3. Inspect the generated dataset and show metadata propagation.
@@ -209,9 +199,7 @@ with (
         # the generated dataset. The service also automatically adds a
         # `data_generation_job_id` tag pointing back at this job.
         dataset = project_client.datasets.get(name=output_name, version=output_version)
-        print(
-            f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`"
-        )
+        print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
         print(f"  description: {dataset.description}")
         print(f"  tags:        {dataset.tags}")
         if job_result.generated_samples is not None:
@@ -225,9 +213,7 @@ with (
         if dataset is not None:
             print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
             try:
-                project_client.datasets.delete(
-                    name=dataset.name or "", version=dataset.version or ""
-                )
+                project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
 
@@ -236,6 +222,4 @@ with (
             try:
                 openai_client.files.delete(file_id=seed_file_id)
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(
-                    f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}"
-                )
+                print(f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}")

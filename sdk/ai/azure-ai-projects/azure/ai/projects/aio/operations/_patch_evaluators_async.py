@@ -27,7 +27,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
     @overload
     async def begin_create_generation_job(
         self,
-        job: _models.EvaluatorGenerationJob,
+        job: _models.EvaluatorGenerationInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -57,15 +57,15 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncEvaluatorGenerationLROPoller:
         """Create an evaluator generation job.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The evaluator generation inputs. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -76,7 +76,9 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", headers.pop("Content-Type", None)
+        )
         cls = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -101,21 +103,29 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
 
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json().get("result", {}))
+            deserialized = _deserialize(
+                _models.EvaluatorVersion, response.json().get("result", {})
+            )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncLROBasePolling(
+                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

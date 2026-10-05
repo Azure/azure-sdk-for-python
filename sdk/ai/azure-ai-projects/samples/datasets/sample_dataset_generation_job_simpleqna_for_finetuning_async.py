@@ -65,10 +65,10 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
-    SimpleQnADataGenerationJobOptions,
+    SimpleQnADataGenerationJobConfiguration,
     SimpleQnAFineTuningQuestionType,
     SupervisedFineTuningDataGenerationJobInputs,
-    SupervisedFineTuningDataGenerationJobOutputTarget,
+    SupervisedFineTuningDataGenerationJobOutputConfiguration,
 )
 
 load_dotenv()
@@ -80,9 +80,7 @@ poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run output name so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
-run_id = (
-    f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-)
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_name = f"{dataset_name}-{run_id}"
 if len(output_name) > 50:
     raise ValueError(
@@ -108,9 +106,7 @@ async def main() -> None:
             # 1. Upload the seed reference document as an Azure OpenAI file.
             # ------------------------------------------------------------------
             seed_filename = SEED_REFERENCE_PATH.name
-            print(
-                f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`."
-            )
+            print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
             with SEED_REFERENCE_PATH.open("rb") as seed_stream:
                 seed_file = await openai_client.files.create(
                     file=(seed_filename, seed_stream, "text/plain"),
@@ -144,7 +140,7 @@ async def main() -> None:
                         id=seed_file.id,
                     ),
                 ],
-                generation_configuration=SimpleQnADataGenerationJobOptions(
+                generation_configuration=SimpleQnADataGenerationJobConfiguration(
                     # For fine-tuning jobs, the service requires max_samples to be between 15 and 1000.
                     max_samples=15,
                     # `simple_qna` REQUIRES model_options.
@@ -157,9 +153,7 @@ async def main() -> None:
                         SimpleQnAFineTuningQuestionType.LONG_ANSWER,
                     ],
                 ),
-                output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(
-                    name=output_name
-                ),
+                output_configuration=SupervisedFineTuningDataGenerationJobOutputConfiguration(name=output_name),
             )
 
             print("Begin creating a dataset generation job.")
@@ -179,14 +173,10 @@ async def main() -> None:
             # and a validation partition. Both are emitted as FileDataGenerationJobOutput
             # entries in `job_result.outputs`.
             file_outputs = [
-                output
-                for output in (job_result.outputs or [])
-                if isinstance(output, FileDataGenerationJobOutput)
+                output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)
             ]
             if not file_outputs:
-                raise RuntimeError(
-                    "The data generation job did not produce any file outputs."
-                )
+                raise RuntimeError("The data generation job did not produce any file outputs.")
 
             print(f"Generated {len(file_outputs)} fine-tuning file(s):")
             for output in file_outputs:
@@ -195,9 +185,7 @@ async def main() -> None:
                 generated_file_ids.append(output.id)
                 # Resolve the Azure OpenAI file to surface its real filename and size.
                 file_info = await openai_client.files.retrieve(file_id=output.id)
-                print(
-                    f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}"
-                )
+                print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
             if job_result.generated_samples is not None:
                 print(f"Generated samples: {job_result.generated_samples}")
 
@@ -211,18 +199,14 @@ async def main() -> None:
                 try:
                     await openai_client.files.delete(file_id=generated_file_id)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(
-                        f"  (warning) could not delete Azure OpenAI file `{generated_file_id}`: {exc}"
-                    )
+                    print(f"  (warning) could not delete Azure OpenAI file `{generated_file_id}`: {exc}")
 
             if seed_file_id:
                 print(f"Delete the Azure OpenAI input file `{seed_file_id}`.")
                 try:
                     await openai_client.files.delete(file_id=seed_file_id)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(
-                        f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}"
-                    )
+                    print(f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}")
 
 
 if __name__ == "__main__":
