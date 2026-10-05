@@ -152,6 +152,9 @@ def add_entry(data, trusted, *, direct=False, release="2.0.0 (2026-09-22)"):
 
 def lock_json(name):
     lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
+    scalar = re.search(rf'(?m)^\s+{re.escape(name)}: (".*")$', lock)
+    if scalar:
+        return json.loads(json.loads(scalar[1]))
     block = lock.split(name + ": |\n", 1)[1]
     return json.JSONDecoder().raw_decode(textwrap.dedent(block).lstrip())[0]
 
@@ -772,6 +775,28 @@ class PublicationIntegrationTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stderr)
             self.assertEqual({"type", "body"}, set(output["items"][0]))
             self.assertIn("## Management SDK PR review", output["items"][0]["body"])
+
+    def test_cli_records_incomplete_without_claiming_validated_publication(self):
+        _, trusted = production_fixture()
+        payload = {
+            "items": [
+                {"type": "noop", **MODULE.incomplete_submission("Evidence service returned HTTP 503 <unavailable>.")}
+            ],
+            "errors": [],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            summary = Path(directory) / "summary.md"
+            with mock.patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": str(summary)}):
+                result, output = self.run_publisher(directory, payload, trusted)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(payload, output)
+            status = json.loads(result.stdout.splitlines()[0])
+            self.assertEqual("incomplete", status["automation"])
+            self.assertEqual("skipped", status["publication"])
+            self.assertIn("::warning::", result.stdout)
+            self.assertNotIn("pending_builtin_handler", result.stdout)
+            self.assertIn("not a clean review", summary.read_text(encoding="utf-8"))
+            self.assertIn("&lt;unavailable&gt;", summary.read_text(encoding="utf-8"))
 
     def test_rejected_submission_never_reaches_publisher_or_hides_existing_review(self):
         with tempfile.TemporaryDirectory() as directory:
