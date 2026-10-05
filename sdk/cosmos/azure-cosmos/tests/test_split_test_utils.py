@@ -3,9 +3,15 @@
 
 import io
 import json
+import os
+import subprocess
+import sys
+import textwrap
 import time
 import unittest
+import uuid
 from contextlib import redirect_stdout
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -102,22 +108,41 @@ class TestSplitTestUtils(unittest.TestCase):
             wait_for_split_ranges(container, "0", time.monotonic() - 1)
 
     def test_collects_independent_failures_without_exposing_error_messages(self):
+        def first_failure():
+            raise ValueError("secret-token-first")
+
+        def second_failure():
+            raise RuntimeError("secret-token-second")
+
         output = io.StringIO()
         failures = []
         with redirect_stdout(output):
-            with split_stage("read_items_after", failures):
-                raise ValueError("secret-token")
-            with split_stage("change_feed_after", failures):
-                raise RuntimeError("secret-token")
+            with split_stage("read_items_after", failures) as diagnostics:
+                diagnostics.update(expected_count=5, actual_count=4, session_token="secret-token")
+                first_failure()
+            with split_stage("change_feed_after", failures) as diagnostics:
+                diagnostics.update(expected_count=3, actual_count="secret-token")
+                second_failure()
             with self.assertRaisesRegex(
                 AssertionError, "read_items_after.*change_feed_after"
-            ):
+            ) as caught:
                 assert_no_stage_failures(failures)
         records = [json.loads(line) for line in output.getvalue().splitlines()]
         self.assertEqual(
             [r["outcome"] for r in records], ["started", "failed", "started", "failed"]
         )
         self.assertNotIn("secret-token", output.getvalue())
+        self.assertNotIn("secret-token", json.dumps(failures))
+        self.assertNotIn("secret-token", str(caught.exception))
+        self.assertIsNone(caught.exception.__cause__)
+        self.assertTrue(caught.exception.__suppress_context__)
+        self.assertEqual(failures[0]["context"], {"expected_count": 5, "actual_count": 4})
+        self.assertEqual(failures[1]["context"], {"expected_count": 3})
+        for failure, function in zip(failures, ("first_failure", "second_failure")):
+            self.assertEqual(failure["locations"][-1]["file"], Path(__file__).name)
+            self.assertEqual(failure["locations"][-1]["function"], function)
+            self.assertGreater(failure["locations"][-1]["line"], 0)
+            self.assertIn(function, str(caught.exception))
 
     def test_precondition_failure_propagates(self):
         with redirect_stdout(io.StringIO()), self.assertRaisesRegex(
@@ -174,3 +199,75 @@ class TestSplitTestUtilsAsync(unittest.IsolatedAsyncioTestCase):
             await wait_for_split_ranges_async(
                 _container(read_ranges), "0", time.monotonic() - 1
             )
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.parametrize("showlocals", [False, True])
+def test_aggregate_pytest_output_is_sanitized(tmp_path: Path, showlocals: bool):
+    source = textwrap.dedent(
+        """\
+        import os
+        from _split_test_utils import assert_no_stage_failures, split_stage
+
+        def first_stage_failure():
+            raise ValueError(os.environ["SPLIT_FIRST_SENTINEL"])
+
+        def second_stage_failure():
+            raise RuntimeError(os.environ["SPLIT_SECOND_SENTINEL"])
+
+        def test_two_failed_stages():
+            failures = []
+            with split_stage("read_items_after", failures) as diagnostics:
+                diagnostics.update(expected_count=5, actual_count=4)
+                first_stage_failure()
+            with split_stage("change_feed_after", failures) as diagnostics:
+                diagnostics.update(expected_count=3, actual_count=2)
+                second_stage_failure()
+            assert_no_stage_failures(failures)
+        """
+    )
+    test_file = tmp_path / "test_aggregate_failure.py"
+    test_file.write_text(source, encoding="utf-8")
+    first_marker = str(uuid.uuid4())
+    second_marker = str(uuid.uuid4())
+    environment = os.environ.copy()
+    environment.update(
+        SPLIT_FIRST_SENTINEL=first_marker,
+        SPLIT_SECOND_SENTINEL=second_marker,
+        PYTEST_DISABLE_PLUGIN_AUTOLOAD="1",
+    )
+    environment.pop("PYTEST_ADDOPTS", None)
+    tests = Path(__file__).resolve().parent
+    environment["PYTHONPATH"] = os.pathsep.join(
+        (str(tests.parent), str(tests), environment.get("PYTHONPATH", ""))
+    )
+    command = [
+        sys.executable, "-m", "pytest", "--noconftest", "--color=no", "--tb=long", "-q", str(test_file)
+    ]
+    if showlocals:
+        command.append("--showlocals")
+    result = subprocess.run(
+        command,
+        cwd=tmp_path,
+        env=environment,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 1, result.stdout
+    assert first_marker not in result.stdout
+    assert second_marker not in result.stdout
+    assert "read_items_after (ValueError)" in result.stdout
+    assert "change_feed_after (RuntimeError)" in result.stdout
+    assert '"expected_count": 5' in result.stdout
+    assert '"actual_count": 4' in result.stdout
+    for error_type, function in (
+        ("ValueError", "first_stage_failure"),
+        ("RuntimeError", "second_stage_failure"),
+    ):
+        line = next(
+            number for number, text in enumerate(source.splitlines(), 1) if f"raise {error_type}" in text
+        )
+        assert f"{test_file.name}:{line} ({function})" in result.stdout

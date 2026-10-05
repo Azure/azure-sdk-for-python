@@ -5,14 +5,28 @@
 
 import asyncio
 import json
+import os
 import random
 import time
+import traceback
 import unittest
 import uuid
 from contextlib import contextmanager
 
 from azure.cosmos import _base
 from azure.cosmos.http_constants import HttpHeaders
+
+
+_CONTEXT_FIELDS = (
+    "expected_count",
+    "actual_count",
+    "missing_count",
+    "unexpected_count",
+    "ids_match",
+    "token_matches",
+    "lsn_not_regressed",
+    "expected_range_present",
+)
 
 
 def create_item(hpk):
@@ -42,40 +56,77 @@ def _record(stage, outcome, **details):
     )
 
 
+def _failure_details(error, context):
+    headers = getattr(error, "headers", None) or {}
+    return {
+        "error_type": type(error).__name__,
+        "status_code": getattr(error, "status_code", None),
+        "sub_status": getattr(error, "sub_status", None),
+        "activity_id": headers.get(HttpHeaders.ActivityId),
+        "locations": [
+            {
+                "file": os.path.basename(frame.f_code.co_filename),
+                "function": frame.f_code.co_name,
+                "line": line,
+            }
+            for frame, line in traceback.walk_tb(error.__traceback__)
+        ],
+        "context": {
+            key: context[key]
+            for key in _CONTEXT_FIELDS
+            if type(context.get(key)) in (int, bool)
+        },
+    }
+
+
 @contextmanager
 def split_stage(name, failures=None):
-    """Report a stage and optionally collect independent post-split failures."""
+    """Report a stage, yielding optional count/boolean diagnostics for failures."""
     start = time.monotonic()
+    context = {}
     _record(name, "started")
     try:
-        yield
+        yield context
     except unittest.SkipTest:
         _record(name, "skipped", elapsed_seconds=round(time.monotonic() - start, 1))
         raise
     except Exception as error:
-        headers = getattr(error, "headers", None) or {}
+        details = _failure_details(error, context)
         _record(
             name,
             "failed",
             elapsed_seconds=round(time.monotonic() - start, 1),
-            error_type=type(error).__name__,
-            status_code=getattr(error, "status_code", None),
-            sub_status=getattr(error, "sub_status", None),
-            activity_id=headers.get(HttpHeaders.ActivityId),
+            **details,
         )
         if failures is None:
             raise
-        failures.append((name, error))
+        failures.append({"stage": name, **details})
     else:
         _record(name, "passed", elapsed_seconds=round(time.monotonic() - start, 1))
 
 
 def assert_no_stage_failures(failures):
     if failures:
-        summary = ", ".join(
-            "{} ({})".format(name, type(error).__name__) for name, error in failures
-        )
-        raise AssertionError("Post-split checks failed: " + summary) from failures[0][1]
+        summaries = []
+        for failure in failures:
+            locations = " -> ".join(
+                "{file}:{line} ({function})".format(**location)
+                for location in failure["locations"]
+            )
+            metadata = {
+                key: failure[key]
+                for key in ("status_code", "sub_status", "activity_id", "context")
+                if failure[key] is not None and failure[key] != {}
+            }
+            summaries.append(
+                "{} ({}) [{}] {}".format(
+                    failure["stage"],
+                    failure["error_type"],
+                    locations,
+                    json.dumps(metadata, sort_keys=True),
+                )
+            )
+        raise AssertionError("Post-split checks failed: " + ", ".join(summaries)) from None
 
 
 def snapshot_split_routing_map(container, collection_rid):

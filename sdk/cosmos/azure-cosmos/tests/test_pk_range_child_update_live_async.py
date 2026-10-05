@@ -29,7 +29,7 @@ import pytest
 import test_config
 
 import azure.cosmos
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, _base
 from azure.cosmos._constants import _Constants
 from azure.cosmos._routing.aio import routing_map_provider
 from azure.cosmos.aio import CosmosClient
@@ -141,6 +141,16 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
             raise
         _record("database_deleted", database=self.database.id)
 
+    def _scan_routing_state(self):
+        collection_id = _base.GetResourceIdOrFullNameFromLink(self.container.container_link)
+        cached_map = self.provider._collection_routing_map_by_item.get(collection_id)
+        return {
+            "last_polled_ranges": _range_state(self.routing_map),
+            "last_polled_etag": self.routing_map.change_feed_etag if self.routing_map is not None else None,
+            "cached_ranges": _range_state(cached_map),
+            "cached_etag": cached_map.change_feed_etag if cached_map is not None else None,
+        }
+
     async def _scan(self):
         # Retain only this scan's last 50 backend requests; do not log raw tokens or ordinary successful scans.
         requests = deque(maxlen=50)
@@ -156,13 +166,13 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                 ids = [item["id"] async for item in items]
         except (Exception, asyncio.CancelledError) as error:
             _record(
-                "scan_failed", scans=self.scans, ranges=_range_state(self.routing_map),
+                "scan_failed", scans=self.scans, **self._scan_routing_state(),
                 requests=list(requests), **_error_fields(error),
             )
             raise
         if sorted(ids) != self.expected_ids:
             _record(
-                "scan_mismatch", scans=self.scans, ranges=_range_state(self.routing_map),
+                "scan_mismatch", scans=self.scans, **self._scan_routing_state(),
                 expected_count=len(self.expected_ids), actual_count=len(ids),
                 missing=sorted(set(self.expected_ids) - set(ids)),
                 unexpected=sorted(set(ids) - set(self.expected_ids)),
@@ -172,7 +182,7 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                 requests=list(requests),
             )
         elif any(request.get("status_code") == 410 for request in requests):
-            _record("scan_split_recovered", scans=self.scans, requests=list(requests))
+            _record("scan_split_recovered", scans=self.scans, requests=list(requests), **self._scan_routing_state())
         self.assertEqual(sorted(ids), self.expected_ids)
         self.scans += 1
 

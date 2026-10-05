@@ -126,14 +126,19 @@ class TestPartitionSplitScenarios(unittest.TestCase):
             wait_for_split_ranges(key_container_for_split, initial_ranges[0]["id"], deadline)
 
         failures = []
-        with split_stage("read_items_after", failures):
+        with split_stage("read_items_after", failures) as diagnostics:
             restore_routing_map()
             final_read_items = read_items_container.read_items(items=items_to_read)
+            diagnostics.update(expected_count=len(items_to_read), actual_count=len(final_read_items))
             self.assertEqual(len(final_read_items), len(items_to_read))
             final_read_ids = {item['id'] for item in final_read_items}
+            diagnostics.update(
+                missing_count=len(set(item_ids) - final_read_ids),
+                unexpected_count=len(final_read_ids - set(item_ids)),
+            )
             self.assertSetEqual(final_read_ids, set(item_ids))
 
-        with split_stage("change_feed_after", failures):
+        with split_stage("change_feed_after", failures) as diagnostics:
             restore_routing_map()
             new_documents = [{'pk': 'pk2', 'id': 'doc2'}, {'pk': 'pk3', 'id': 'doc3'}, {'pk': 'pk4', 'id': 'doc4'}]
             expected_ids = ['doc2', 'doc3', 'doc4']
@@ -141,22 +146,30 @@ class TestPartitionSplitScenarios(unittest.TestCase):
                 created_collection.create_item(body=document)
             query_iterable = created_collection.query_items_change_feed(continuation=continuation)
             actual_ids = [item['id'] for item in query_iterable]
+            diagnostics.update(
+                expected_count=len(expected_ids), actual_count=len(actual_ids), ids_match=actual_ids == expected_ids
+            )
             assert actual_ids == expected_ids
 
-        with split_stage("logical_session_token_after", failures):
+        with split_stage("logical_session_token_after", failures) as diagnostics:
             restore_routing_map()
             target_session_token, _ = self.create_items_logical_pk(
                 container, target_feed_range, session_token, feed_ranges_and_session_tokens)
             target_feed_range = container.feed_range_from_partition_key(target_pk)
             session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
+            diagnostics["token_matches"] = session_token == target_session_token
             assert session_token == target_session_token
 
-        with split_stage("physical_session_token_after", failures):
+        with split_stage("physical_session_token_after", failures) as diagnostics:
             _, phys_target_feed_range, phys_previous_session_token = self.create_items_physical_pk(
                 container, pk_feed_range, phys_session_token, phys_feed_ranges_and_session_tokens)
             phys_session_token = container.get_latest_session_token(
                 phys_feed_ranges_and_session_tokens, phys_target_feed_range)
             pk_range_id, session_token = parse_session_token(phys_session_token)
+            diagnostics.update(
+                lsn_not_regressed=session_token.global_lsn >= pre_split_session_token.global_lsn,
+                expected_range_present='2' in pk_range_id,
+            )
             assert session_token.global_lsn >= pre_split_session_token.global_lsn
             assert '2' in pk_range_id
 

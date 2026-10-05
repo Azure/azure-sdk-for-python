@@ -20,15 +20,27 @@ from azure.cosmos.http_constants import HttpHeaders
 @pytest.mark.cosmosEmulator
 class TestChildRangeDiagnostics(unittest.IsolatedAsyncioTestCase):
     @staticmethod
-    def _case():
+    def _map(ids, etag):
+        ranges = [
+            SimpleNamespace(id=range_id, parents=[] if range_id == "0" else ["0"], status="online")
+            for range_id in ids
+        ]
+        return SimpleNamespace(
+            _rangeById={item.id: item for item in ranges},
+            get_ordered_partition_key_ranges=lambda: ranges,
+            change_feed_etag=etag,
+        )
+
+    @classmethod
+    def _case(cls):
         case = child_tests.TestPkRangeChildUpdateLiveAsync(
             "test_existing_child_revision_does_not_full_reload"
         )
-        case.routing_map = SimpleNamespace(
-            _rangeById={"0": object()},
-            get_ordered_partition_key_ranges=lambda: [
-                SimpleNamespace(id="0", parents=[], status="online")
-            ],
+        case.routing_map = cls._map(("0",), "parent-etag")
+        case.container = SimpleNamespace(container_link="dbs/test/colls/split")
+        case.provider = SimpleNamespace(
+            _collection_routing_map_by_item={case.container.container_link: case.routing_map},
+            get_routing_map=AsyncMock(side_effect=AssertionError("Diagnostics must not refresh routing")),
         )
         case.scans = 0
         return case
@@ -134,13 +146,16 @@ class TestChildRangeDiagnostics(unittest.IsolatedAsyncioTestCase):
         case.client = SimpleNamespace(client_connection=connection)
 
         async def query_items(**kwargs):
+            case.provider._collection_routing_map_by_item[case.container.container_link] = self._map(
+                ("1", "2"), "child-etag"
+            )
             result, _ = await connection._CosmosClientConnection__Post(
                 "/dbs/db/colls/c/docs", None, {}, {HttpHeaders.IsQuery: "true"}
             )
             for item in result["Documents"]:
                 yield item
 
-        case.container = SimpleNamespace(query_items=query_items)
+        case.container.query_items = query_items
         output = io.StringIO()
         with redirect_stdout(output), self.assertRaises(AssertionError):
             await case._scan()
@@ -148,5 +163,50 @@ class TestChildRangeDiagnostics(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(records[0]["event"], "scan_mismatch")
         self.assertEqual(records[0]["duplicate_ids"], {"item-000": 2})
         self.assertEqual(records[0]["requests"][0]["ids"], ["item-000", "item-000", "item-001"])
+        self.assertEqual(records[0]["last_polled_etag"], "parent-etag")
+        self.assertEqual([item["id"] for item in records[0]["last_polled_ranges"]], ["0"])
+        self.assertEqual(records[0]["cached_etag"], "child-etag")
+        self.assertEqual([item["id"] for item in records[0]["cached_ranges"]], ["1", "2"])
+        self.assertNotIn("ranges", records[0])
+        case.provider.get_routing_map.assert_not_awaited()
         self.assertEqual(case.scans, 0)
         self.assertIs(connection._CosmosClientConnection__Post, original_post)
+
+    async def test_scan_error_preserves_failure_and_distinguishes_cache_generation(self):
+        case = self._case()
+        failure = RuntimeError("query failed")
+        original_post = AsyncMock(side_effect=failure)
+        connection = SimpleNamespace(_CosmosClientConnection__Post=original_post)
+        case.client = SimpleNamespace(client_connection=connection)
+
+        async def query_items(**kwargs):
+            case.provider._collection_routing_map_by_item[case.container.container_link] = self._map(
+                ("1", "2"), "child-etag"
+            )
+            result, _ = await connection._CosmosClientConnection__Post(
+                "/dbs/db/colls/c/docs", None, {}, {HttpHeaders.IsQuery: "true"}
+            )
+            for item in result["Documents"]:
+                yield item
+
+        case.container.query_items = query_items
+        output = io.StringIO()
+        with redirect_stdout(output), self.assertRaises(RuntimeError) as caught:
+            await case._scan()
+        self.assertIs(caught.exception, failure)
+        record = json.loads(output.getvalue())
+        self.assertEqual(record["event"], "scan_failed")
+        self.assertEqual(record["last_polled_etag"], "parent-etag")
+        self.assertEqual(record["cached_etag"], "child-etag")
+        self.assertEqual([item["id"] for item in record["cached_ranges"]], ["1", "2"])
+        case.provider.get_routing_map.assert_not_awaited()
+        self.assertIs(connection._CosmosClientConnection__Post, original_post)
+
+    async def test_missing_cached_map_is_reported_without_refreshing(self):
+        case = self._case()
+        case.provider._collection_routing_map_by_item.clear()
+        state = case._scan_routing_state()
+        self.assertEqual(state["last_polled_etag"], "parent-etag")
+        self.assertIsNone(state["cached_ranges"])
+        self.assertIsNone(state["cached_etag"])
+        case.provider.get_routing_map.assert_not_awaited()
