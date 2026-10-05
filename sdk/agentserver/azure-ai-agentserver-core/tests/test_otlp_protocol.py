@@ -38,7 +38,7 @@ from opentelemetry._logs import LogRecord, SeverityNumber, get_logger_provider
 configure_observability()
 
 with trace.get_tracer("agentserver.otlp.test").start_as_current_span("otlp-test-span") as span:
-    span.set_attribute("gen_ai.provider.name", "framework-provider")
+    span.set_attribute("microsoft.foundry", "framework-value")
     logging.getLogger("agentserver.otlp.test").warning("otlp-python-log")
 
 metrics.get_meter("agentserver.otlp.test").create_counter("otlp.test").add(1)
@@ -55,7 +55,7 @@ get_logger_provider().get_logger("agentserver.otlp.test").emit(
         severity_text="INFO",
         severity_number=SeverityNumber.INFO,
         body="otlp-conflicting-provider-log",
-        attributes={"gen_ai.provider.name": "other-provider"},
+        attributes={"microsoft.foundry": "other-value"},
     )
 )
 
@@ -268,7 +268,7 @@ def test_otlp_protocol_exports_all_signals(
     for records in receiver.records.values():
         for record in records:
             attributes = {attr.key: attr.value.string_value for attr in record.attributes}
-            assert attributes.get("gen_ai.provider.name") == "microsoft.foundry"
+            assert attributes.get("microsoft.foundry") == "True"
     if protocol == "grpc":
         assert "otlp-test-span" not in result.stdout
         assert "otlp-test-log" not in result.stdout

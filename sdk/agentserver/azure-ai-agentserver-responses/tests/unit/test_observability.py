@@ -18,7 +18,8 @@ from azure.ai.agentserver.responses.hosting._observability import (
 
 
 def test_observability__initial_span_tags_use_foundry_provider() -> None:
-    assert _initial_create_span_tags()["gen_ai.provider.name"] == "microsoft.foundry"
+    assert _initial_create_span_tags()["gen_ai.provider.name"] == "AzureAI Hosted Agents"
+    assert _initial_create_span_tags()["microsoft.foundry"] == "True"
 
 
 def test_observability__build_platform_server_header_includes_extra_identity() -> None:
@@ -62,7 +63,8 @@ def test_observability__build_create_span_tags_uses_agent_name_and_model() -> No
 
     assert tags["service.name"] == "azure.ai.agentserver"
     assert tags["gen_ai.operation.name"] == "invoke_agent"
-    assert tags["gen_ai.provider.name"] == "microsoft.foundry"
+    assert tags["gen_ai.provider.name"] == "AzureAI Hosted Agents"
+    assert tags["microsoft.foundry"] == "True"
     assert tags["gen_ai.response.id"] == "resp_abc"
     assert tags["gen_ai.request.model"] == "gpt-4o-mini"
     assert tags["gen_ai.agent.name"] == "agent-one"
@@ -174,7 +176,8 @@ def test_observability__build_create_otel_attrs_includes_all_fields() -> None:
 
     assert attrs["gen_ai.response.id"] == "resp_1"
     assert attrs["service.name"] == "azure.ai.agentserver"
-    assert attrs["gen_ai.provider.name"] == "microsoft.foundry"
+    assert attrs["gen_ai.provider.name"] == "AzureAI Hosted Agents"
+    assert attrs["microsoft.foundry"] == "True"
     assert attrs["gen_ai.operation.name"] == "invoke_agent"
     assert attrs["gen_ai.request.model"] == "gpt-4o"
     assert attrs["gen_ai.conversation.id"] == "conv_x"
