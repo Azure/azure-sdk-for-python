@@ -23,6 +23,8 @@ Java (`AmqpRetryOptions.tryTimeout`) SDKs, which default it on at 60 seconds.
 import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event, Lock
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import azure.servicebus._common.utils as utils_module
@@ -955,6 +957,72 @@ class TestPyamqpManagementRequestReadiness:
 
         with pytest.raises(TimeoutError):
             operation.execute(MagicMock(), timeout=5)
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    def test_sync_management_callback_selected_before_timeout_cannot_corrupt_retry(self, late_result):
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        selected, release = Event(), Event()
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+        mgmt_link.lock = Lock()
+        operation = ManagementOperation(MagicMock())
+        operation._mgmt_link = mgmt_link
+
+        def execute_operation(message, callback, **kwargs):
+            pending = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending)
+            return pending
+
+        mgmt_link.execute_operation = execute_operation
+
+        with ThreadPoolExecutor(max_workers=1) as listener:
+            late_callback = None
+
+            def invoke_selected_callback(callback):
+                selected.set()
+                assert release.wait(5)
+                callback(
+                    getattr(ManagementExecuteOperationResult, late_result),
+                    200,
+                    "OK",
+                    "late response",
+                    error=RuntimeError("late error"),
+                )
+
+            def time_out():
+                nonlocal late_callback
+                callback = mgmt_link._pending_operations[0].on_execute_operation_complete
+                late_callback = listener.submit(invoke_selected_callback, callback)
+                assert selected.wait(5)
+                raise TimeoutError("transport timed out")
+
+            operation._connection.listen.side_effect = time_out
+            try:
+                with pytest.raises(TimeoutError):
+                    operation.execute(MagicMock(), timeout=5)
+
+                assert operation._responses == {}
+                assert mgmt_link._pending_operations == []
+
+                def respond_to_retry():
+                    release.set()
+                    late_callback.result(timeout=5)
+                    assert len(operation._responses) == 1
+                    assert operation._mgmt_error is None
+                    mgmt_link._pending_operations[0].on_execute_operation_complete(
+                        ManagementExecuteOperationResult.OK, 200, "OK", "retry response"
+                    )
+
+                operation._connection.listen.side_effect = respond_to_retry
+                assert operation.execute(MagicMock(), timeout=5) == (200, "OK", "retry response")
+            finally:
+                release.set()
 
         assert operation._responses == {}
         assert mgmt_link._pending_operations == []

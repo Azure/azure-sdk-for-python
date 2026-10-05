@@ -63,13 +63,19 @@ class ManagementOperation(object):
             extra=self._network_trace_params,
         )
 
-        if operation_result in (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
-            self._mgmt_error = error
-            _LOGGER.error(
-                "Failed to complete management operation due to error: %r.", error, extra=self._network_trace_params
-            )
-        else:
-            self._responses[operation_id] = (status_code, status_description, raw_message)
+        with self._mgmt_link.lock:
+            if operation_id not in self._responses:
+                return
+            if operation_result in (
+                ManagementExecuteOperationResult.ERROR,
+                ManagementExecuteOperationResult.LINK_CLOSED,
+            ):
+                self._mgmt_error = error
+                _LOGGER.error(
+                    "Failed to complete management operation due to error: %r.", error, extra=self._network_trace_params
+                )
+            else:
+                self._responses[operation_id] = (status_code, status_description, raw_message)
 
     def execute(self, message, operation=None, operation_type=None, timeout=0):
         start_time = time.time()
@@ -99,9 +105,10 @@ class ManagementOperation(object):
 
             return self._responses[operation_id]
         finally:
-            self._responses.pop(operation_id, None)
             if pending_operation:
                 self._mgmt_link.cancel_operation(pending_operation)
+            with self._mgmt_link.lock:
+                self._responses.pop(operation_id, None)
 
     def open(self):
         self._mgmt_link_open_status = ManagementOpenResult.OPENING
