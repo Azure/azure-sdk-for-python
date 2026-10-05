@@ -334,6 +334,7 @@ class TestNativeDownloadDispatch(unittest.TestCase):
             container_name="container",
             version_id="client-version",
         )
+        client._config.max_chunk_get_size = 4 * 1024 * 1024
         cpk = MagicMock(key_value="key", key_hash="hash", algorithm="AES256")
         lease = MagicMock(id="lease-id")
         modified_since = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
@@ -384,6 +385,7 @@ class TestNativeDownloadDispatch(unittest.TestCase):
         self.assertEqual(forwarded["version_id"], "requested-version")
         self.assertEqual(forwarded["timeout"], 30)
         self.assertEqual(forwarded["max_concurrency"], 4)
+        self.assertEqual(forwarded["max_chunk_size"], 4 * 1024 * 1024)
 
 
 class TestBuildTokenProvider(unittest.TestCase):

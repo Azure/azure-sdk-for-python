@@ -460,6 +460,7 @@ def try_native_download_eager(
         version_id=version_id,
         timeout=kwargs.get("timeout", None),
         max_concurrency=max_concurrency,
+        max_chunk_size=blob_client._config.max_chunk_get_size,  # pylint: disable=protected-access
     )
     _LOGGER.info("Used native Rust extension for blob download.")
     return NativeStorageStreamDownloader(
