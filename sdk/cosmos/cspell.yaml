@@ -37,7 +37,6 @@ words:
   - mypk
   - mytext
   - myval
-  - noconftest
   - opqrs
   - paas
   - perfdb

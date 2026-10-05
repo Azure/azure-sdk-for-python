@@ -61,6 +61,7 @@ from azure.ai.projects.models import (
     AgentEvaluatorGenerationJobSource,
     DatasetEvaluatorGenerationJobSource,
     EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
     EvaluatorGenerationJobSource,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
@@ -127,12 +128,14 @@ with (
     print("Begin creating an evaluator generation job.")
     try:
         poller = project_client.evaluators.begin_create_generation_job(
-            job=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=multi_name,
-                evaluator_display_name="Customer Support Quality (multi-source)",
-                evaluator_description="Generated from prompt, agent, and dataset signals.",
-                sources=multi_sources,
+            job=EvaluatorGenerationJob(
+                inputs=EvaluatorGenerationInputs(
+                    model=model_name,
+                    evaluator_name=multi_name,
+                    evaluator_display_name="Customer Support Quality (multi-source)",
+                    evaluator_description="Generated from prompt, agent, and dataset signals.",
+                    sources=multi_sources,
+                ),
             ),
             operation_id=f"rubric-multi-{short}",
             polling_interval=poll_interval_seconds,
@@ -173,23 +176,25 @@ with (
         print("Begin creating an evaluator generation job.")
         try:
             poller = project_client.evaluators.begin_create_generation_job(
-                job=EvaluatorGenerationInputs(
-                    model=model_name,
-                    evaluator_name=traces_name,
-                    evaluator_display_name="Customer Support Quality (from traces)",
-                    evaluator_description="Generated from real Application Insights conversation traces.",
-                    sources=[
-                        TracesEvaluatorGenerationJobSource(
-                            description="Application Insights conversation traces for the agent.",
-                            agent_name=agent_name,
-                            start_time=start_time,
-                            end_time=end_time,
-                        ),
-                        AgentEvaluatorGenerationJobSource(
-                            description="Companion source (service rejects traces-only).",
-                            agent_name=agent_name,
-                        ),
-                    ],
+                job=EvaluatorGenerationJob(
+                    inputs=EvaluatorGenerationInputs(
+                        model=model_name,
+                        evaluator_name=traces_name,
+                        evaluator_display_name="Customer Support Quality (from traces)",
+                        evaluator_description="Generated from real Application Insights conversation traces.",
+                        sources=[
+                            TracesEvaluatorGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                            AgentEvaluatorGenerationJobSource(
+                                description="Companion source (service rejects traces-only).",
+                                agent_name=agent_name,
+                            ),
+                        ],
+                    ),
                 ),
                 operation_id=f"rubric-traces-{short}",
                 polling_interval=poll_interval_seconds,

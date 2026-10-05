@@ -20,7 +20,7 @@ DESCRIPTION:
          `desired_num_turns`.
       4. Cleans up the generated dataset.
 
-    `SimulationSeedDataGenerationJobConfiguration` can be used with prompt, file, or
+    `SimulationSeedDataGenerationJobOptions` can be used with prompt, file, or
     agent sources. The service requires `max_samples` (1-1000) for this generation
     type; because the options class does not expose it as a keyword argument, the
     sample sets it through the model's mapping interface.
@@ -65,9 +65,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputConfiguration,
+    EvaluationDataGenerationJobOutputTarget,
     PromptDataGenerationJobSource,
-    SimulationSeedDataGenerationJobConfiguration,
+    SimulationSeedDataGenerationJobOptions,
 )
 
 load_dotenv()
@@ -132,11 +132,11 @@ def main() -> None:
             # ------------------------------------------------------------------
             # 1. Submit a simulation seed data generation job.
             # ------------------------------------------------------------------
-            generation_configuration = SimulationSeedDataGenerationJobConfiguration(
+            generation_configuration = SimulationSeedDataGenerationJobOptions(
                 model_options=DataGenerationModelOptions(model=model_name),
             )
             # The service currently requires `max_samples` (1-1000) for `simulation_seed`
-            # jobs, but `SimulationSeedDataGenerationJobConfiguration` does not expose it as a
+            # jobs, but `SimulationSeedDataGenerationJobOptions` does not expose it as a
             # keyword argument, so set it through the model's mapping interface.
             generation_configuration["max_samples"] = 15
 
@@ -149,7 +149,7 @@ def main() -> None:
                     ),
                 ],
                 generation_configuration=generation_configuration,
-                output_configuration=EvaluationDataGenerationJobOutputConfiguration(
+                output_configuration=EvaluationDataGenerationJobOutputTarget(
                     name=output_dataset_name,
                     description="Simulation seeds for multi-turn evaluation of the Widgets & Gizmos support agent.",
                     tags={"sample": "dataset-generation-simulation-seed"},

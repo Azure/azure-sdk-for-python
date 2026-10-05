@@ -53,6 +53,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
     EvaluatorVersion,
     JobStatus,
     PageOrder,
@@ -72,17 +73,19 @@ evaluator_name = f"lifecycle-demo-{ts}-{short}"
 operation_id = f"rubric-lifecycle-{short}"
 
 # Shared job used both for the initial create and the idempotency replay.
-job_body = EvaluatorGenerationInputs(
-    model=model_name,
-    evaluator_name=evaluator_name,
-    evaluator_display_name="Lifecycle demo",
-    evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
-    sources=[
-        PromptEvaluatorGenerationJobSource(
-            description="Inline application overview.",
-            prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
-        ),
-    ],
+job_body = EvaluatorGenerationJob(
+    inputs=EvaluatorGenerationInputs(
+        model=model_name,
+        evaluator_name=evaluator_name,
+        evaluator_display_name="Lifecycle demo",
+        evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
+        sources=[
+            PromptEvaluatorGenerationJobSource(
+                description="Inline application overview.",
+                prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
+            ),
+        ],
+    ),
 )
 
 with (
@@ -114,24 +117,16 @@ with (
     )
 
     # Retrieve the persisted generation job using the id returned in the LRO result.
-    assert (
-        evaluator.generation_job_id is not None
-    ), "Expected the generated evaluator to include a generation job id."
-    replay_job = project_client.evaluators.get_generation_job(
-        evaluator.generation_job_id
-    )
+    assert evaluator.generation_job_id is not None, "Expected the generated evaluator to include a generation job id."
+    replay_job = project_client.evaluators.get_generation_job(evaluator.generation_job_id)
     assert replay_job.id == evaluator.generation_job_id
 
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(
-        project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
-    ):
-        print(
-            f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` "
-            f"evaluator_name=`{entry.evaluator_name}`"
-        )
+    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
+        entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
+        print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
     # 3. Cancel a running job (not exercised here; the job above already completed).
     # cancelled = project_client.evaluators.cancel_generation_job(some_running_job_id)
@@ -139,9 +134,7 @@ with (
     # 4. Clean up. `delete_version` cascades to the generation job record, so
     # the explicit delete below may return 404.
     print("Cleaning up.")
-    project_client.evaluators.delete_version(
-        name=evaluator.name, version=evaluator.version
-    )
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
         project_client.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:

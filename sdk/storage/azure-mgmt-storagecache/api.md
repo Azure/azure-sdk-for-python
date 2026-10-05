@@ -11,7 +11,6 @@ namespace azure.mgmt.storagecache
         expansion_jobs: ExpansionJobsOperations
         import_jobs: ImportJobsOperations
         operations: Operations
-        rebalance_jobs: RebalanceJobsOperations
         skus: SkusOperations
         storage_target: StorageTargetOperations
         storage_targets: StorageTargetsOperations
@@ -106,7 +105,6 @@ namespace azure.mgmt.storagecache.aio
         expansion_jobs: ExpansionJobsOperations
         import_jobs: ImportJobsOperations
         operations: Operations
-        rebalance_jobs: RebalanceJobsOperations
         skus: SkusOperations
         storage_target: StorageTargetOperations
         storage_targets: StorageTargetsOperations
@@ -1110,80 +1108,6 @@ namespace azure.mgmt.storagecache.aio.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> AsyncItemPaged[ApiOperation]: ...
-
-
-    class azure.mgmt.storagecache.aio.operations.RebalanceJobsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'rebalance_job_name']}, api_versions_list=['2026-08-01'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: RebalanceJobUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RebalanceJob]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: RebalanceJobUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RebalanceJob]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RebalanceJob]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'rebalance_job_name', 'accept']}, api_versions_list=['2026-08-01'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                **kwargs: Any
-            ) -> RebalanceJob: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'accept']}, api_versions_list=['2026-08-01'])
-        def list_by_aml_filesystem(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RebalanceJob]: ...
 
 
     class azure.mgmt.storagecache.aio.operations.SkusOperations:
@@ -2615,8 +2539,6 @@ namespace azure.mgmt.storagecache.models
     class azure.mgmt.storagecache.models.ExpansionJobProperties(_Model):
         new_storage_capacity_ti_b: Optional[float]
         provisioning_state: Optional[Union[str, ExpansionJobPropertiesProvisioningState]]
-        rebalance_job_id: Optional[str]
-        run_rebalance_job: Optional[bool]
         status: Optional[ExpansionJobPropertiesStatus]
 
         def __getattr__(self, name: str) -> Any: ...
@@ -2625,8 +2547,7 @@ namespace azure.mgmt.storagecache.models
         def __init__(
                 self, 
                 *, 
-                new_storage_capacity_ti_b: Optional[float] = ..., 
-                run_rebalance_job: Optional[bool] = ...
+                new_storage_capacity_ti_b: Optional[float] = ...
             ) -> None: ...
 
         @overload
@@ -3114,101 +3035,6 @@ namespace azure.mgmt.storagecache.models
     class azure.mgmt.storagecache.models.ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
         QUOTA_ID = "QuotaId"
-
-
-    class azure.mgmt.storagecache.models.RebalanceJob(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[RebalanceJobProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[RebalanceJobProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ACTIVE = "Active"
-        CANCEL = "Cancel"
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobProperties(_Model):
-        admin_status: Optional[Union[str, RebalanceJobAdminStatus]]
-        expansion_job_id: Optional[str]
-        provisioning_state: Optional[Union[str, RebalanceJobPropertiesProvisioningState]]
-        status: Optional[RebalanceJobPropertiesStatus]
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CREATING = "Creating"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-        UPDATING = "Updating"
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobPropertiesStatus(_Model):
-        balance_percent: Optional[float]
-        bytes_moved: Optional[int]
-        completion_time_utc: Optional[datetime]
-        dirs_migrated: Optional[int]
-        estimated_remaining_seconds: Optional[int]
-        files_migrated: Optional[int]
-        files_moved_per_second: Optional[float]
-        percent_complete: Optional[float]
-        start_time_utc: Optional[datetime]
-        state: Optional[Union[str, RebalanceJobStatusType]]
-        status_code: Optional[str]
-        status_message: Optional[str]
-        throughput_mi_bps: Optional[float]
-        total_errors: Optional[int]
-        total_skipped: Optional[int]
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CANCELLING = "Cancelling"
-        COMPLETED = "Completed"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        IN_PROGRESS = "InProgress"
-        ROLLING_BACK = "RollingBack"
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobUpdate(_Model):
-        properties: Optional[RebalanceJobUpdateProperties]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[RebalanceJobUpdateProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.storagecache.models.RebalanceJobUpdateProperties(_Model):
-        admin_status: Optional[Union[str, RebalanceJobAdminStatus]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                admin_status: Optional[Union[str, RebalanceJobAdminStatus]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize(_Model):
@@ -4464,80 +4290,6 @@ namespace azure.mgmt.storagecache.operations
         def list(self, **kwargs: Any) -> ItemPaged[ApiOperation]: ...
 
 
-    class azure.mgmt.storagecache.operations.RebalanceJobsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'rebalance_job_name']}, api_versions_list=['2026-08-01'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: RebalanceJobUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RebalanceJob]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: RebalanceJobUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RebalanceJob]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RebalanceJob]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'rebalance_job_name', 'accept']}, api_versions_list=['2026-08-01'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                rebalance_job_name: str, 
-                **kwargs: Any
-            ) -> RebalanceJob: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01', params_added_on={'2026-08-01': ['api_version', 'subscription_id', 'resource_group_name', 'aml_filesystem_name', 'accept']}, api_versions_list=['2026-08-01'])
-        def list_by_aml_filesystem(
-                self, 
-                resource_group_name: str, 
-                aml_filesystem_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[RebalanceJob]: ...
-
-
     class azure.mgmt.storagecache.operations.SkusOperations:
 
         def __init__(
@@ -4715,7 +4467,7 @@ namespace azure.mgmt.storagecache.types
         name: str
         properties: AmlFilesystemProperties
         sku: SkuName
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
         zones: list[str]
@@ -4724,13 +4476,13 @@ namespace azure.mgmt.storagecache.types
     class azure.mgmt.storagecache.types.AmlFilesystemArchive(TypedDict, total=False):
         key "filesystemPath": str
         key "status": ForwardRef('AmlFilesystemArchiveStatus', module='types')
-        filesystemPath: str
+        filesystem_path: str
         status: AmlFilesystemArchiveStatus
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemArchiveInfo(TypedDict, total=False):
         key "filesystemPath": str
-        filesystemPath: str
+        filesystem_path: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemArchiveStatus(TypedDict, total=False):
@@ -4740,11 +4492,11 @@ namespace azure.mgmt.storagecache.types
         key "lastStartedTime": str
         key "percentComplete": int
         key "state": Union[str, ArchiveStatusType]
-        errorCode: str
-        errorMessage: str
-        lastCompletionTime: str
-        lastStartedTime: str
-        percentComplete: int
+        error_code: str
+        error_message: str
+        last_completion_time: str
+        last_started_time: str
+        percent_complete: int
         state: Union[str, ArchiveStatusType]
 
 
@@ -4753,24 +4505,24 @@ namespace azure.mgmt.storagecache.types
         key "lustreVersion": str
         key "mgsAddress": str
         key "mountCommand": str
-        containerStorageInterface: AmlFilesystemContainerStorageInterface
-        lustreVersion: str
-        mgsAddress: str
-        mountCommand: str
+        container_storage_interface: AmlFilesystemContainerStorageInterface
+        lustre_version: str
+        mgs_address: str
+        mount_command: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemContainerStorageInterface(TypedDict, total=False):
         key "persistentVolume": str
         key "persistentVolumeClaim": str
         key "storageClass": str
-        persistentVolume: str
-        persistentVolumeClaim: str
-        storageClass: str
+        persistent_volume: str
+        persistent_volume_claim: str
+        storage_class: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemEncryptionSettings(TypedDict, total=False):
         key "keyEncryptionKey": ForwardRef('KeyVaultKeyReference', module='types')
-        keyEncryptionKey: KeyVaultKeyReference
+        key_encryption_key: KeyVaultKeyReference
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemHealth(TypedDict, total=False):
@@ -4778,8 +4530,8 @@ namespace azure.mgmt.storagecache.types
         key "statusCode": str
         key "statusDescription": str
         state: Union[str, AmlFilesystemHealthStateType]
-        statusCode: str
-        statusDescription: str
+        status_code: str
+        status_description: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemHsmSettings(TypedDict, total=False):
@@ -4787,19 +4539,21 @@ namespace azure.mgmt.storagecache.types
         key "importPrefix": str
         key "loggingContainer": Required[str]
         container: str
-        importPrefix: str
         importPrefixesInitial: list[str]
-        loggingContainer: str
+        import_prefix: str
+        import_prefixes_initial: list[str]
+        logging_container: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, AmlFilesystemIdentityType]
-        principalId: str
-        tenantId: str
+        principal_id: str
+        tenant_id: str
         type: Union[str, AmlFilesystemIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemProperties(TypedDict, total=False):
@@ -4815,31 +4569,32 @@ namespace azure.mgmt.storagecache.types
         key "rootSquashSettings": ForwardRef('AmlFilesystemRootSquashSettings', module='types')
         key "storageCapacityTiB": Required[float]
         key "throughputProvisionedMBps": int
-        clientInfo: AmlFilesystemClientInfo
-        clusterUuid: str
-        currentStorageCapacityTiB: float
-        encryptionSettings: AmlFilesystemEncryptionSettings
-        filesystemSubnet: str
+        client_info: AmlFilesystemClientInfo
+        cluster_uuid: str
+        current_storage_capacity_ti_b: float
+        encryption_settings: AmlFilesystemEncryptionSettings
+        filesystem_subnet: str
         health: AmlFilesystemHealth
         hsm: AmlFilesystemPropertiesHsm
-        maintenanceWindow: AmlFilesystemPropertiesMaintenanceWindow
-        provisioningState: Union[str, AmlFilesystemProvisioningStateType]
-        rootSquashSettings: AmlFilesystemRootSquashSettings
-        storageCapacityTiB: float
-        throughputProvisionedMBps: int
+        maintenance_window: AmlFilesystemPropertiesMaintenanceWindow
+        provisioning_state: Union[str, AmlFilesystemProvisioningStateType]
+        root_squash_settings: AmlFilesystemRootSquashSettings
+        storage_capacity_ti_b: float
+        throughput_provisioned_m_bps: int
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemPropertiesHsm(TypedDict, total=False):
         key "settings": ForwardRef('AmlFilesystemHsmSettings', module='types')
         archiveStatus: list[AmlFilesystemArchive]
+        archive_status: list[AmlFilesystemArchive]
         settings: AmlFilesystemHsmSettings
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemPropertiesMaintenanceWindow(TypedDict, total=False):
         key "dayOfWeek": Union[str, MaintenanceDayOfWeekType]
         key "timeOfDayUTC": str
-        dayOfWeek: Union[str, MaintenanceDayOfWeekType]
-        timeOfDayUTC: str
+        day_of_week: Union[str, MaintenanceDayOfWeekType]
+        time_of_day_utc: str
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemRootSquashSettings(TypedDict, total=False):
@@ -4849,9 +4604,9 @@ namespace azure.mgmt.storagecache.types
         key "squashUID": int
         key "status": str
         mode: Union[str, AmlFilesystemSquashMode]
-        noSquashNidLists: str
-        squashGID: int
-        squashUID: int
+        no_squash_nid_lists: str
+        squash_gid: int
+        squash_uid: int
         status: str
 
 
@@ -4860,10 +4615,10 @@ namespace azure.mgmt.storagecache.types
         key "location": str
         key "sku": ForwardRef('SkuName', module='types')
         key "storageCapacityTiB": float
-        filesystemSubnet: str
+        filesystem_subnet: str
         location: str
         sku: SkuName
-        storageCapacityTiB: float
+        storage_capacity_ti_b: float
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemUpdate(TypedDict, total=False):
@@ -4876,16 +4631,16 @@ namespace azure.mgmt.storagecache.types
         key "encryptionSettings": ForwardRef('AmlFilesystemEncryptionSettings', module='types')
         key "maintenanceWindow": ForwardRef('AmlFilesystemUpdatePropertiesMaintenanceWindow', module='types')
         key "rootSquashSettings": ForwardRef('AmlFilesystemRootSquashSettings', module='types')
-        encryptionSettings: AmlFilesystemEncryptionSettings
-        maintenanceWindow: AmlFilesystemUpdatePropertiesMaintenanceWindow
-        rootSquashSettings: AmlFilesystemRootSquashSettings
+        encryption_settings: AmlFilesystemEncryptionSettings
+        maintenance_window: AmlFilesystemUpdatePropertiesMaintenanceWindow
+        root_squash_settings: AmlFilesystemRootSquashSettings
 
 
     class azure.mgmt.storagecache.types.AmlFilesystemUpdatePropertiesMaintenanceWindow(TypedDict, total=False):
         key "dayOfWeek": Union[str, MaintenanceDayOfWeekType]
         key "timeOfDayUTC": str
-        dayOfWeek: Union[str, MaintenanceDayOfWeekType]
-        timeOfDayUTC: str
+        day_of_week: Union[str, MaintenanceDayOfWeekType]
+        time_of_day_utc: str
 
 
     class azure.mgmt.storagecache.types.AutoExportJob(TrackedResource):
@@ -4899,7 +4654,7 @@ namespace azure.mgmt.storagecache.types
         location: str
         name: str
         properties: AutoExportJobProperties
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4908,9 +4663,10 @@ namespace azure.mgmt.storagecache.types
         key "adminStatus": Union[str, AutoExportJobAdminStatus]
         key "provisioningState": Union[str, AutoExportJobProvisioningStateType]
         key "status": ForwardRef('AutoExportJobPropertiesStatus', module='types')
-        adminStatus: Union[str, AutoExportJobAdminStatus]
+        admin_status: Union[str, AutoExportJobAdminStatus]
         autoExportPrefixes: list[str]
-        provisioningState: Union[str, AutoExportJobProvisioningStateType]
+        auto_export_prefixes: list[str]
+        provisioning_state: Union[str, AutoExportJobProvisioningStateType]
         status: AutoExportJobPropertiesStatus
 
 
@@ -4930,21 +4686,21 @@ namespace azure.mgmt.storagecache.types
         key "totalFilesExported": int
         key "totalFilesFailed": int
         key "totalMiBExported": int
-        currentIterationFilesDiscovered: int
-        currentIterationFilesExported: int
-        currentIterationFilesFailed: int
-        currentIterationMiBDiscovered: int
-        currentIterationMiBExported: int
-        exportIterationCount: int
-        lastCompletionTimeUTC: str
-        lastStartedTimeUTC: str
-        lastSuccessfulIterationCompletionTimeUTC: str
+        current_iteration_files_discovered: int
+        current_iteration_files_exported: int
+        current_iteration_files_failed: int
+        current_iteration_mi_b_discovered: int
+        current_iteration_mi_b_exported: int
+        export_iteration_count: int
+        last_completion_time_utc: str
+        last_started_time_utc: str
+        last_successful_iteration_completion_time_utc: str
         state: Union[str, AutoExportStatusType]
-        statusCode: str
-        statusMessage: str
-        totalFilesExported: int
-        totalFilesFailed: int
-        totalMiBExported: int
+        status_code: str
+        status_message: str
+        total_files_exported: int
+        total_files_failed: int
+        total_mi_b_exported: int
 
 
     class azure.mgmt.storagecache.types.AutoExportJobUpdate(TypedDict, total=False):
@@ -4955,7 +4711,7 @@ namespace azure.mgmt.storagecache.types
 
     class azure.mgmt.storagecache.types.AutoExportJobUpdateProperties(TypedDict, total=False):
         key "adminStatus": Union[str, AutoExportJobAdminStatus]
-        adminStatus: Union[str, AutoExportJobAdminStatus]
+        admin_status: Union[str, AutoExportJobAdminStatus]
 
 
     class azure.mgmt.storagecache.types.AutoImportJob(TrackedResource):
@@ -4969,7 +4725,7 @@ namespace azure.mgmt.storagecache.types
         location: str
         name: str
         properties: AutoImportJobProperties
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4981,12 +4737,13 @@ namespace azure.mgmt.storagecache.types
         key "maximumErrors": int
         key "provisioningState": Union[str, AutoImportJobPropertiesProvisioningState]
         key "status": ForwardRef('AutoImportJobPropertiesStatus', module='types')
-        adminStatus: Union[str, AutoImportJobPropertiesAdminStatus]
+        admin_status: Union[str, AutoImportJobPropertiesAdminStatus]
         autoImportPrefixes: list[str]
-        conflictResolutionMode: Union[str, ConflictResolutionMode]
-        enableDeletions: bool
-        maximumErrors: int
-        provisioningState: Union[str, AutoImportJobPropertiesProvisioningState]
+        auto_import_prefixes: list[str]
+        conflict_resolution_mode: Union[str, ConflictResolutionMode]
+        enable_deletions: bool
+        maximum_errors: int
+        provisioning_state: Union[str, AutoImportJobPropertiesProvisioningState]
         status: AutoImportJobPropertiesStatus
 
 
@@ -5011,26 +4768,26 @@ namespace azure.mgmt.storagecache.types
         key "totalBlobsWalked": int
         key "totalConflicts": int
         key "totalErrors": int
-        blobSyncEvents: AutoImportJobPropertiesStatusBlobSyncEvents
-        importedDirectories: int
-        importedFiles: int
-        importedSymlinks: int
-        lastCompletionTimeUTC: str
-        lastStartedTimeUTC: str
-        preexistingDirectories: int
-        preexistingFiles: int
-        preexistingSymlinks: int
-        rateOfBlobImport: int
-        rateOfBlobWalk: int
-        scanEndTime: str
-        scanStartTime: str
+        blob_sync_events: AutoImportJobPropertiesStatusBlobSyncEvents
+        imported_directories: int
+        imported_files: int
+        imported_symlinks: int
+        last_completion_time_utc: str
+        last_started_time_utc: str
+        preexisting_directories: int
+        preexisting_files: int
+        preexisting_symlinks: int
+        rate_of_blob_import: int
+        rate_of_blob_walk: int
+        scan_end_time: str
+        scan_start_time: str
         state: Union[str, AutoImportJobState]
-        statusCode: str
-        statusMessage: str
-        totalBlobsImported: int
-        totalBlobsWalked: int
-        totalConflicts: int
-        totalErrors: int
+        status_code: str
+        status_message: str
+        total_blobs_imported: int
+        total_blobs_walked: int
+        total_conflicts: int
+        total_errors: int
 
 
     class azure.mgmt.storagecache.types.AutoImportJobPropertiesStatusBlobSyncEvents(TypedDict, total=False):
@@ -5048,18 +4805,18 @@ namespace azure.mgmt.storagecache.types
         key "totalConflicts": int
         key "totalErrors": int
         deletions: int
-        importedDirectories: int
-        importedFiles: int
-        importedSymlinks: int
-        lastChangeFeedEventConsumedTime: str
-        lastTimeFullySynchronized: str
-        preexistingDirectories: int
-        preexistingFiles: int
-        preexistingSymlinks: int
-        rateOfBlobImport: int
-        totalBlobsImported: int
-        totalConflicts: int
-        totalErrors: int
+        imported_directories: int
+        imported_files: int
+        imported_symlinks: int
+        last_change_feed_event_consumed_time: str
+        last_time_fully_synchronized: str
+        preexisting_directories: int
+        preexisting_files: int
+        preexisting_symlinks: int
+        rate_of_blob_import: int
+        total_blobs_imported: int
+        total_conflicts: int
+        total_errors: int
 
 
     class azure.mgmt.storagecache.types.AutoImportJobUpdate(TypedDict, total=False):
@@ -5070,7 +4827,7 @@ namespace azure.mgmt.storagecache.types
 
     class azure.mgmt.storagecache.types.AutoImportJobUpdateProperties(TypedDict, total=False):
         key "adminStatus": Union[str, AutoImportJobUpdatePropertiesAdminStatus]
-        adminStatus: Union[str, AutoImportJobUpdatePropertiesAdminStatus]
+        admin_status: Union[str, AutoImportJobUpdatePropertiesAdminStatus]
 
 
     class azure.mgmt.storagecache.types.BlobNfsTarget(TypedDict, total=False):
@@ -5079,9 +4836,9 @@ namespace azure.mgmt.storagecache.types
         key "verificationTimer": int
         key "writeBackTimer": int
         target: str
-        usageModel: str
-        verificationTimer: int
-        writeBackTimer: int
+        usage_model: str
+        verification_timer: int
+        write_back_timer: int
 
 
     class azure.mgmt.storagecache.types.Cache(ProxyResource):
@@ -5099,7 +4856,7 @@ namespace azure.mgmt.storagecache.types
         name: str
         properties: CacheProperties
         sku: CacheSku
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5112,13 +4869,13 @@ namespace azure.mgmt.storagecache.types
         key "domainNetBiosName": Required[str]
         key "primaryDnsIpAddress": Required[str]
         key "secondaryDnsIpAddress": str
-        cacheNetBiosName: str
+        cache_net_bios_name: str
         credentials: CacheActiveDirectorySettingsCredentials
-        domainJoined: Union[str, DomainJoinedType]
-        domainName: str
-        domainNetBiosName: str
-        primaryDnsIpAddress: str
-        secondaryDnsIpAddress: str
+        domain_joined: Union[str, DomainJoinedType]
+        domain_name: str
+        domain_net_bios_name: str
+        primary_dns_ip_address: str
+        secondary_dns_ip_address: str
 
 
     class azure.mgmt.storagecache.types.CacheActiveDirectorySettingsCredentials(TypedDict, total=False):
@@ -5131,15 +4888,15 @@ namespace azure.mgmt.storagecache.types
     class azure.mgmt.storagecache.types.CacheDirectorySettings(TypedDict, total=False):
         key "activeDirectory": ForwardRef('CacheActiveDirectorySettings', module='types')
         key "usernameDownload": ForwardRef('CacheUsernameDownloadSettings', module='types')
-        activeDirectory: CacheActiveDirectorySettings
-        usernameDownload: CacheUsernameDownloadSettings
+        active_directory: CacheActiveDirectorySettings
+        username_download: CacheUsernameDownloadSettings
 
 
     class azure.mgmt.storagecache.types.CacheEncryptionSettings(TypedDict, total=False):
         key "keyEncryptionKey": ForwardRef('KeyVaultKeyReference', module='types')
         key "rotationToLatestKeyVersionEnabled": bool
-        keyEncryptionKey: KeyVaultKeyReference
-        rotationToLatestKeyVersionEnabled: bool
+        key_encryption_key: KeyVaultKeyReference
+        rotation_to_latest_key_version_enabled: bool
 
 
     class azure.mgmt.storagecache.types.CacheHealth(TypedDict, total=False):
@@ -5147,28 +4904,31 @@ namespace azure.mgmt.storagecache.types
         key "statusDescription": str
         conditions: list[Condition]
         state: Union[str, HealthStateType]
-        statusDescription: str
+        status_description: str
 
 
     class azure.mgmt.storagecache.types.CacheIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, CacheIdentityType]
-        principalId: str
-        tenantId: str
+        principal_id: str
+        tenant_id: str
         type: Union[str, CacheIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
 
 
     class azure.mgmt.storagecache.types.CacheNetworkSettings(TypedDict, total=False):
         key "dnsSearchDomain": str
         key "mtu": int
         key "ntpServer": str
-        dnsSearchDomain: str
         dnsServers: list[str]
+        dns_search_domain: str
+        dns_servers: list[str]
         mtu: int
-        ntpServer: str
+        ntp_server: str
         utilityAddresses: list[str]
+        utility_addresses: list[str]
 
 
     class azure.mgmt.storagecache.types.CacheProperties(TypedDict, total=False):
@@ -5182,24 +4942,28 @@ namespace azure.mgmt.storagecache.types
         key "subnet": str
         key "upgradeSettings": ForwardRef('CacheUpgradeSettings', module='types')
         key "upgradeStatus": ForwardRef('CacheUpgradeStatus', module='types')
-        cacheSizeGB: int
-        directoryServicesSettings: CacheDirectorySettings
-        encryptionSettings: CacheEncryptionSettings
+        cache_size_gb: int
+        directory_services_settings: CacheDirectorySettings
+        encryption_settings: CacheEncryptionSettings
         health: CacheHealth
         mountAddresses: list[str]
-        networkSettings: CacheNetworkSettings
+        mount_addresses: list[str]
+        network_settings: CacheNetworkSettings
         primingJobs: list[PrimingJob]
-        provisioningState: Union[str, ProvisioningStateType]
-        securitySettings: CacheSecuritySettings
+        priming_jobs: list[PrimingJob]
+        provisioning_state: Union[str, ProvisioningStateType]
+        security_settings: CacheSecuritySettings
         spaceAllocation: list[StorageTargetSpaceAllocation]
+        space_allocation: list[StorageTargetSpaceAllocation]
         subnet: str
-        upgradeSettings: CacheUpgradeSettings
-        upgradeStatus: CacheUpgradeStatus
+        upgrade_settings: CacheUpgradeSettings
+        upgrade_status: CacheUpgradeStatus
         zones: list[str]
 
 
     class azure.mgmt.storagecache.types.CacheSecuritySettings(TypedDict, total=False):
         accessPolicies: list[NfsAccessPolicy]
+        access_policies: list[NfsAccessPolicy]
 
 
     class azure.mgmt.storagecache.types.CacheSku(TypedDict, total=False):
@@ -5210,8 +4974,8 @@ namespace azure.mgmt.storagecache.types
     class azure.mgmt.storagecache.types.CacheUpgradeSettings(TypedDict, total=False):
         key "scheduledTime": str
         key "upgradeScheduleEnabled": bool
-        scheduledTime: str
-        upgradeScheduleEnabled: bool
+        scheduled_time: str
+        upgrade_schedule_enabled: bool
 
 
     class azure.mgmt.storagecache.types.CacheUpgradeStatus(TypedDict, total=False):
@@ -5220,11 +4984,11 @@ namespace azure.mgmt.storagecache.types
         key "firmwareUpdateStatus": Union[str, FirmwareStatusType]
         key "lastFirmwareUpdate": str
         key "pendingFirmwareVersion": str
-        currentFirmwareVersion: str
-        firmwareUpdateDeadline: str
-        firmwareUpdateStatus: Union[str, FirmwareStatusType]
-        lastFirmwareUpdate: str
-        pendingFirmwareVersion: str
+        current_firmware_version: str
+        firmware_update_deadline: str
+        firmware_update_status: Union[str, FirmwareStatusType]
+        last_firmware_update: str
+        pending_firmware_version: str
 
 
     class azure.mgmt.storagecache.types.CacheUsernameDownloadSettings(TypedDict, total=False):
@@ -5240,25 +5004,25 @@ namespace azure.mgmt.storagecache.types
         key "userFileURI": str
         key "usernameDownloaded": Union[str, UsernameDownloadedType]
         key "usernameSource": Union[str, UsernameSource]
-        autoDownloadCertificate: bool
-        caCertificateURI: str
+        auto_download_certificate: bool
+        ca_certificate_uri: str
         credentials: CacheUsernameDownloadSettingsCredentials
-        encryptLdapConnection: bool
-        extendedGroups: bool
-        groupFileURI: str
-        ldapBaseDN: str
-        ldapServer: str
-        requireValidCertificate: bool
-        userFileURI: str
-        usernameDownloaded: Union[str, UsernameDownloadedType]
-        usernameSource: Union[str, UsernameSource]
+        encrypt_ldap_connection: bool
+        extended_groups: bool
+        group_file_uri: str
+        ldap_base_dn: str
+        ldap_server: str
+        require_valid_certificate: bool
+        user_file_uri: str
+        username_downloaded: Union[str, UsernameDownloadedType]
+        username_source: Union[str, UsernameSource]
 
 
     class azure.mgmt.storagecache.types.CacheUsernameDownloadSettingsCredentials(TypedDict, total=False):
         key "bindDn": str
         key "bindPassword": str
-        bindDn: str
-        bindPassword: str
+        bind_dn: str
+        bind_password: str
 
 
     class azure.mgmt.storagecache.types.ClfsTarget(TypedDict, total=False):
@@ -5284,7 +5048,7 @@ namespace azure.mgmt.storagecache.types
         location: str
         name: str
         properties: ExpansionJobProperties
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5292,13 +5056,9 @@ namespace azure.mgmt.storagecache.types
     class azure.mgmt.storagecache.types.ExpansionJobProperties(TypedDict, total=False):
         key "newStorageCapacityTiB": float
         key "provisioningState": Union[str, ExpansionJobPropertiesProvisioningState]
-        key "rebalanceJobId": str
-        key "runRebalanceJob": bool
         key "status": ForwardRef('ExpansionJobPropertiesStatus', module='types')
-        newStorageCapacityTiB: float
-        provisioningState: Union[str, ExpansionJobPropertiesProvisioningState]
-        rebalanceJobId: str
-        runRebalanceJob: bool
+        new_storage_capacity_ti_b: float
+        provisioning_state: Union[str, ExpansionJobPropertiesProvisioningState]
         status: ExpansionJobPropertiesStatus
 
 
@@ -5309,12 +5069,12 @@ namespace azure.mgmt.storagecache.types
         key "state": Union[str, ExpansionJobStatusType]
         key "statusCode": str
         key "statusMessage": str
-        completionTimeUTC: str
-        percentComplete: float
-        startTimeUTC: str
+        completion_time_utc: str
+        percent_complete: float
+        start_time_utc: str
         state: Union[str, ExpansionJobStatusType]
-        statusCode: str
-        statusMessage: str
+        status_code: str
+        status_message: str
 
 
     class azure.mgmt.storagecache.types.ExpansionJobUpdate(TypedDict, total=False):
@@ -5332,7 +5092,7 @@ namespace azure.mgmt.storagecache.types
         location: str
         name: str
         properties: ImportJobProperties
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5343,11 +5103,12 @@ namespace azure.mgmt.storagecache.types
         key "maximumErrors": int
         key "provisioningState": Union[str, ImportJobProvisioningStateType]
         key "status": ForwardRef('ImportJobPropertiesStatus', module='types')
-        adminStatus: Union[str, ImportJobAdminStatus]
-        conflictResolutionMode: Union[str, ConflictResolutionMode]
+        admin_status: Union[str, ImportJobAdminStatus]
+        conflict_resolution_mode: Union[str, ConflictResolutionMode]
         importPrefixes: list[str]
-        maximumErrors: int
-        provisioningState: Union[str, ImportJobProvisioningStateType]
+        import_prefixes: list[str]
+        maximum_errors: int
+        provisioning_state: Union[str, ImportJobProvisioningStateType]
         status: ImportJobPropertiesStatus
 
 
@@ -5368,22 +5129,22 @@ namespace azure.mgmt.storagecache.types
         key "totalBlobsWalked": int
         key "totalConflicts": int
         key "totalErrors": int
-        blobsImportedPerSecond: int
-        blobsWalkedPerSecond: int
-        importedDirectories: int
-        importedFiles: int
-        importedSymlinks: int
-        lastCompletionTime: str
-        lastStartedTime: str
-        preexistingDirectories: int
-        preexistingFiles: int
-        preexistingSymlinks: int
+        blobs_imported_per_second: int
+        blobs_walked_per_second: int
+        imported_directories: int
+        imported_files: int
+        imported_symlinks: int
+        last_completion_time: str
+        last_started_time: str
+        preexisting_directories: int
+        preexisting_files: int
+        preexisting_symlinks: int
         state: Union[str, ImportStatusType]
-        statusMessage: str
-        totalBlobsImported: int
-        totalBlobsWalked: int
-        totalConflicts: int
-        totalErrors: int
+        status_message: str
+        total_blobs_imported: int
+        total_blobs_walked: int
+        total_conflicts: int
+        total_errors: int
 
 
     class azure.mgmt.storagecache.types.ImportJobUpdate(TypedDict, total=False):
@@ -5394,14 +5155,14 @@ namespace azure.mgmt.storagecache.types
 
     class azure.mgmt.storagecache.types.ImportJobUpdateProperties(TypedDict, total=False):
         key "adminStatus": Union[str, ImportJobAdminStatus]
-        adminStatus: Union[str, ImportJobAdminStatus]
+        admin_status: Union[str, ImportJobAdminStatus]
 
 
     class azure.mgmt.storagecache.types.KeyVaultKeyReference(TypedDict, total=False):
         key "keyUrl": Required[str]
         key "sourceVault": Required[KeyVaultKeyReferenceSourceVault]
-        keyUrl: str
-        sourceVault: KeyVaultKeyReferenceSourceVault
+        key_url: str
+        source_vault: KeyVaultKeyReferenceSourceVault
 
 
     class azure.mgmt.storagecache.types.KeyVaultKeyReferenceSourceVault(TypedDict, total=False):
@@ -5414,10 +5175,10 @@ namespace azure.mgmt.storagecache.types
         key "nfsAccessPolicy": str
         key "nfsExport": str
         key "targetPath": str
-        namespacePath: str
-        nfsAccessPolicy: str
-        nfsExport: str
-        targetPath: str
+        namespace_path: str
+        nfs_access_policy: str
+        nfs_export: str
+        target_path: str
 
 
     class azure.mgmt.storagecache.types.Nfs3Target(TypedDict, total=False):
@@ -5426,15 +5187,15 @@ namespace azure.mgmt.storagecache.types
         key "verificationTimer": int
         key "writeBackTimer": int
         target: str
-        usageModel: str
-        verificationTimer: int
-        writeBackTimer: int
+        usage_model: str
+        verification_timer: int
+        write_back_timer: int
 
 
     class azure.mgmt.storagecache.types.NfsAccessPolicy(TypedDict, total=False):
         key "accessRules": Required[list[NfsAccessRule]]
         key "name": Required[str]
-        accessRules: list[NfsAccessRule]
+        access_rules: list[NfsAccessRule]
         name: str
 
 
@@ -5448,12 +5209,12 @@ namespace azure.mgmt.storagecache.types
         key "submountAccess": bool
         key "suid": bool
         access: Union[str, NfsAccessRuleAccess]
-        anonymousGID: str
-        anonymousUID: str
+        anonymous_gid: str
+        anonymous_uid: str
         filter: str
-        rootSquash: bool
+        root_squash: bool
         scope: Union[str, NfsAccessRuleScope]
-        submountAccess: bool
+        submount_access: bool
         suid: bool
 
 
@@ -5465,18 +5226,18 @@ namespace azure.mgmt.storagecache.types
         key "primingJobState": Union[str, PrimingJobState]
         key "primingJobStatus": str
         key "primingManifestUrl": Required[str]
-        primingJobDetails: str
-        primingJobId: str
-        primingJobName: str
-        primingJobPercentComplete: float
-        primingJobState: Union[str, PrimingJobState]
-        primingJobStatus: str
-        primingManifestUrl: str
+        priming_job_details: str
+        priming_job_id: str
+        priming_job_name: str
+        priming_job_percent_complete: float
+        priming_job_state: Union[str, PrimingJobState]
+        priming_job_status: str
+        priming_manifest_url: str
 
 
     class azure.mgmt.storagecache.types.PrimingJobIdParameter(TypedDict, total=False):
         key "primingJobId": Required[str]
-        primingJobId: str
+        priming_job_id: str
 
 
     class azure.mgmt.storagecache.types.ProxyResource(Resource):
@@ -5486,25 +5247,15 @@ namespace azure.mgmt.storagecache.types
         key "type": str
         id: str
         name: str
-        systemData: SystemData
+        system_data: SystemData
         type: str
-
-
-    class azure.mgmt.storagecache.types.RebalanceJobUpdate(TypedDict, total=False):
-        key "properties": ForwardRef('RebalanceJobUpdateProperties', module='types')
-        properties: RebalanceJobUpdateProperties
-
-
-    class azure.mgmt.storagecache.types.RebalanceJobUpdateProperties(TypedDict, total=False):
-        key "adminStatus": Union[str, RebalanceJobAdminStatus]
-        adminStatus: Union[str, RebalanceJobAdminStatus]
 
 
     class azure.mgmt.storagecache.types.RequiredAmlFilesystemSubnetsSizeInfo(TypedDict, total=False):
         key "sku": ForwardRef('SkuName', module='types')
         key "storageCapacityTiB": float
         sku: SkuName
-        storageCapacityTiB: float
+        storage_capacity_ti_b: float
 
 
     class azure.mgmt.storagecache.types.Resource(TypedDict, total=False):
@@ -5514,7 +5265,7 @@ namespace azure.mgmt.storagecache.types
         key "type": str
         id: str
         name: str
-        systemData: SystemData
+        system_data: SystemData
         type: str
 
 
@@ -5534,7 +5285,7 @@ namespace azure.mgmt.storagecache.types
         location: str
         name: str
         properties: StorageTargetProperties
-        systemData: SystemData
+        system_data: SystemData
         type: str
 
 
@@ -5547,21 +5298,21 @@ namespace azure.mgmt.storagecache.types
         key "state": Union[str, OperationalStateType]
         key "targetType": Required[Union[str, StorageTargetType]]
         key "unknown": ForwardRef('UnknownTarget', module='types')
-        allocationPercentage: int
-        blobNfs: BlobNfsTarget
+        allocation_percentage: int
+        blob_nfs: BlobNfsTarget
         clfs: ClfsTarget
         junctions: list[NamespaceJunction]
         nfs3: Nfs3Target
-        provisioningState: Union[str, ProvisioningStateType]
+        provisioning_state: Union[str, ProvisioningStateType]
         state: Union[str, OperationalStateType]
-        targetType: Union[str, StorageTargetType]
+        target_type: Union[str, StorageTargetType]
         unknown: UnknownTarget
 
 
     class azure.mgmt.storagecache.types.StorageTargetSpaceAllocation(TypedDict, total=False):
         key "allocationPercentage": int
         key "name": str
-        allocationPercentage: int
+        allocation_percentage: int
         name: str
 
 
@@ -5572,12 +5323,12 @@ namespace azure.mgmt.storagecache.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        createdAt: str
-        createdBy: str
-        createdByType: Union[str, CreatedByType]
-        lastModifiedAt: str
-        lastModifiedBy: str
-        lastModifiedByType: Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
 
 
     class azure.mgmt.storagecache.types.TrackedResource(Resource):
@@ -5589,7 +5340,7 @@ namespace azure.mgmt.storagecache.types
         id: str
         location: str
         name: str
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5601,8 +5352,8 @@ namespace azure.mgmt.storagecache.types
     class azure.mgmt.storagecache.types.UserAssignedIdentitiesValue(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        clientId: str
-        principalId: str
+        client_id: str
+        principal_id: str
 
 
 ```

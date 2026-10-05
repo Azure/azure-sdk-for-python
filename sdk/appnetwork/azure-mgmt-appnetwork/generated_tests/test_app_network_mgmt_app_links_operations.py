@@ -68,13 +68,7 @@ class TestAppNetworkMgmtAppLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.app_links.begin_update(
             resource_group_name=resource_group.name,
             app_link_name="str",
-            properties={
-                "identity": {
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
-                "tags": {"str": "str"},
-            },
+            properties={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

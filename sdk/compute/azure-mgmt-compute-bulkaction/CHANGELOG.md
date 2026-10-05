@@ -1,28 +1,5 @@
 # Release History
 
-## 1.0.0b5 (2026-09-29)
-
-### Features Added
-
-  - Model `ExecutionParameters` added property `additional_create_parameters`
-  - Added model `AcknowledgeBulkOperationErrorsRequest`
-  - Added model `AcknowledgeBulkOperationErrorsResponse`
-  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_acknowledge_operation_errors`
-  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_list_operation_errors`
-
-### Breaking Changes
-
-  - Model `BulkCreateCustomPriorityProfile` deleted or renamed its instance variable `allocation_strategy`
-  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `vm_sizes_profile`
-  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `zone_allocation_policy`
-  - Model `BulkCreateProperties` deleted or renamed its instance variable `vm_sizes_profile`
-  - Model `BulkCreateProperties` deleted or renamed its instance variable `zone_allocation_policy`
-  - Model `PriorityProfile` deleted or renamed its instance variable `allocation_strategy`
-
-### Other Changes
-
-  - Deleted model `AllocationStrategy`/`BulkCreateCustomAllocationStrategy`/`BulkCreateCustomDistributionStrategy`/`BulkCreateCustomOverrideBase`/`BulkCreateCustomVmSizeProfile`/`BulkCreateCustomZoneAllocationPolicy`/`BulkCreateVmSizeProfile`/`DistributionStrategy`/`ZoneAllocationPolicy`/`ZonePreference` which actually were not used by SDK users
-
 ## 1.0.0b4 (2026-09-11)
 
 ### Features Added

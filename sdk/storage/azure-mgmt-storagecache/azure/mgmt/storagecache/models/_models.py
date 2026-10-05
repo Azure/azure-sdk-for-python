@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TrackedResource(Resource):
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystem(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystem(TrackedResource):
     """An AML file system instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -205,7 +205,7 @@ class AmlFilesystemArchive(_Model):
     """The status of the archive."""
 
 
-class AmlFilesystemArchiveInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemArchiveInfo(_Model):
     """Information required to execute the archive operation.
 
     :ivar filesystem_path: Lustre file system path to archive relative to the file system root.
@@ -275,7 +275,7 @@ class AmlFilesystemArchiveStatus(_Model):
     """Server-defined error message for the archive operation."""
 
 
-class AmlFilesystemCheckSubnetError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemCheckSubnetError(_Model):
     """The error details provided when the checkAmlFSSubnets call fails.
 
     :ivar filesystem_subnet: The error details for the AML file system's subnet.
@@ -306,9 +306,7 @@ class AmlFilesystemCheckSubnetError(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemCheckSubnetErrorFilesystemSubnet(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class AmlFilesystemCheckSubnetErrorFilesystemSubnet(_Model):  # pylint: disable=name-too-long
     """The error details for the AML file system's subnet.
 
     :ivar status: The status of the AML file system subnet check. Known values are: "Ok" and
@@ -394,7 +392,7 @@ class AmlFilesystemContainerStorageInterface(_Model):
     """Recommended AKS Storage Class for the CSI driver, in Base64 encoded YAML."""
 
 
-class AmlFilesystemEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemEncryptionSettings(_Model):
     """AML file system encryption settings.
 
     :ivar key_encryption_key: Specifies the location of the encryption key in Key Vault.
@@ -424,7 +422,7 @@ class AmlFilesystemEncryptionSettings(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemHealth(_Model):
     """An indication of AML file system health. Gives more information about health than just that
     related to provisioning.
 
@@ -471,7 +469,7 @@ class AmlFilesystemHealth(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemHsmSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemHsmSettings(_Model):
     """AML file system HSM settings.
 
     :ivar container: Resource ID of storage container used for hydrating the namespace and
@@ -539,7 +537,7 @@ class AmlFilesystemHsmSettings(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemIdentity(_Model):
     """Managed Identity properties.
 
     :ivar principal_id: The principal ID for the user-assigned identity of the resource.
@@ -588,7 +586,7 @@ class AmlFilesystemIdentity(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemProperties(_Model):
     """Properties of the AML file system.
 
     :ivar storage_capacity_ti_b: The size of the AML file system, in TiB. This might be rounded up.
@@ -687,7 +685,7 @@ class AmlFilesystemProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemPropertiesHsm(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemPropertiesHsm(_Model):
     """Hydration and archive settings and status.
 
     :ivar settings: Specifies HSM settings of the AML file system.
@@ -723,7 +721,7 @@ class AmlFilesystemPropertiesHsm(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemPropertiesMaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemPropertiesMaintenanceWindow(_Model):
     """Start time of a 30-minute weekly maintenance window.
 
     :ivar day_of_week: Day of the week on which the maintenance window will occur. Known values
@@ -762,7 +760,7 @@ class AmlFilesystemPropertiesMaintenanceWindow(_Model):  # pylint: disable=docst
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemRootSquashSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemRootSquashSettings(_Model):
     """AML file system squash settings.
 
     :ivar mode: Squash mode of the AML file system. 'All': User and Group IDs on files will be
@@ -822,7 +820,7 @@ class AmlFilesystemRootSquashSettings(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemSubnetInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemSubnetInfo(_Model):
     """Information required to validate the subnet that will be used in AML file system create.
 
     :ivar filesystem_subnet: Subnet used for managing the AML file system and for client-facing
@@ -871,7 +869,7 @@ class AmlFilesystemSubnetInfo(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemUpdate(_Model):
     """An AML file system update instance.
 
     :ivar tags: Resource tags.
@@ -926,7 +924,7 @@ class AmlFilesystemUpdate(_Model):  # pylint: disable=docstring-keyword-should-m
             super().__setattr__(key, value)
 
 
-class AmlFilesystemUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AmlFilesystemUpdateProperties(_Model):
     """Properties of the AML file system.
 
     :ivar encryption_settings: Specifies encryption settings of the AML file system.
@@ -971,9 +969,7 @@ class AmlFilesystemUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class AmlFilesystemUpdatePropertiesMaintenanceWindow(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class AmlFilesystemUpdatePropertiesMaintenanceWindow(_Model):  # pylint: disable=name-too-long
     """Start time of a 30-minute weekly maintenance window.
 
     :ivar day_of_week: Day of the week on which the maintenance window will occur. Known values
@@ -1012,7 +1008,7 @@ class AmlFilesystemUpdatePropertiesMaintenanceWindow(
         super().__init__(*args, **kwargs)
 
 
-class ApiOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ApiOperation(_Model):
     """REST API operation description: see
     `https://github.com/Azure/azure-rest-api-specs/blob/master/documentation/openapi-authoring-automated-guidelines.md#r3023-operationsapiimplementation
     <https://github.com/Azure/azure-rest-api-specs/blob/master/documentation/openapi-authoring-automated-guidelines.md#r3023-operationsapiimplementation>`_.
@@ -1088,7 +1084,7 @@ class ApiOperation(_Model):  # pylint: disable=docstring-keyword-should-match-ke
             super().__setattr__(key, value)
 
 
-class ApiOperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ApiOperationDisplay(_Model):
     """The object that represents the operation.
 
     :ivar operation: Operation type: Read, write, delete, etc.
@@ -1131,7 +1127,7 @@ class ApiOperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class ApiOperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ApiOperationProperties(_Model):
     """Additional details about an operation.
 
     :ivar service_specification: Specification of the all the metrics provided for a resource type.
@@ -1162,9 +1158,7 @@ class ApiOperationProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class ApiOperationPropertiesServiceSpecification(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+class ApiOperationPropertiesServiceSpecification(_Model):  # pylint: disable=name-too-long
     """Specification of the all the metrics provided for a resource type.
 
     :ivar metric_specifications: Details about operations related to metrics.
@@ -1201,7 +1195,7 @@ class ApiOperationPropertiesServiceSpecification(
         super().__init__(*args, **kwargs)
 
 
-class AscOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AscOperation(_Model):
     """The status of operation.
 
     :ivar id: The operation Id.
@@ -1283,7 +1277,7 @@ class AscOperation(_Model):  # pylint: disable=docstring-keyword-should-match-ke
             super().__setattr__(key, value)
 
 
-class AscOperationErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AscOperationErrorResponse(_Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -1316,7 +1310,7 @@ class AscOperationErrorResponse(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class AscOperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AscOperationProperties(_Model):
     """Additional operation-specific output.
 
     :ivar output: Additional operation-specific output.
@@ -1344,7 +1338,7 @@ class AscOperationProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class AutoExportJob(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoExportJob(TrackedResource):
     """An auto export job instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -1393,7 +1387,7 @@ class AutoExportJob(TrackedResource):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class AutoExportJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoExportJobProperties(_Model):
     """Properties of the auto export job.
 
     :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
@@ -1484,7 +1478,7 @@ class AutoExportJobProperties(_Model):  # pylint: disable=docstring-keyword-shou
             super().__setattr__(key, value)
 
 
-class AutoExportJobPropertiesStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoExportJobPropertiesStatus(_Model):
     """The status of the auto export.
 
     :ivar state: The operational state of auto export. InProgress indicates the export is running.
@@ -1603,7 +1597,7 @@ class AutoExportJobPropertiesStatus(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class AutoExportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoExportJobUpdate(_Model):
     """An auto export job update instance.
 
     :ivar tags: Resource tags.
@@ -1657,8 +1651,8 @@ class AutoExportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-m
             super().__setattr__(key, value)
 
 
-class AutoExportJobUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties for updating an auto export job.
+class AutoExportJobUpdateProperties(_Model):
+    """AutoExportJobUpdateProperties.
 
     :ivar admin_status: The administrative status of the auto export job. Possible values:
      'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
@@ -1691,7 +1685,7 @@ class AutoExportJobUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class AutoImportJob(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoImportJob(TrackedResource):
     """An auto import job instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -1740,7 +1734,7 @@ class AutoImportJob(TrackedResource):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class AutoImportJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoImportJobProperties(_Model):
     """Properties of the auto import job.
 
     :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
@@ -2039,7 +2033,7 @@ class AutoImportJobPropertiesStatusBlobSyncEvents(_Model):  # pylint: disable=na
     """Date and time when last fully synchronized."""
 
 
-class AutoImportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AutoImportJobUpdate(_Model):
     """An auto import job update instance.
 
     :ivar tags: Resource tags.
@@ -2093,8 +2087,8 @@ class AutoImportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-m
             super().__setattr__(key, value)
 
 
-class AutoImportJobUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties for updating an auto import job.
+class AutoImportJobUpdateProperties(_Model):
+    """AutoImportJobUpdateProperties.
 
     :ivar admin_status: The administrative status of the auto import job. Possible values:
      'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
@@ -2128,7 +2122,7 @@ class AutoImportJobUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class BlobNfsTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class BlobNfsTarget(_Model):
     """Properties pertaining to the BlobNfsTarget.
 
     :ivar target: Resource ID of the storage container.
@@ -2198,7 +2192,7 @@ class ProxyResource(Resource):
     """
 
 
-class Cache(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Cache(ProxyResource):
     """A cache instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -2296,7 +2290,7 @@ class Cache(ProxyResource):  # pylint: disable=docstring-keyword-should-match-ke
             super().__setattr__(key, value)
 
 
-class CacheActiveDirectorySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheActiveDirectorySettings(_Model):
     """Active Directory settings used to join a cache to a domain.
 
     :ivar primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
@@ -2375,7 +2369,7 @@ class CacheActiveDirectorySettings(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class CacheActiveDirectorySettingsCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheActiveDirectorySettingsCredentials(_Model):
     """Active Directory admin credentials used to join the HPC Cache to a domain.
 
     :ivar username: Username of the Active Directory domain administrator. This value is stored
@@ -2412,7 +2406,7 @@ class CacheActiveDirectorySettingsCredentials(_Model):  # pylint: disable=docstr
         super().__init__(*args, **kwargs)
 
 
-class CacheDirectorySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheDirectorySettings(_Model):
     """Cache Directory Services settings.
 
     :ivar active_directory: Specifies settings for joining the HPC Cache to an Active Directory
@@ -2452,7 +2446,7 @@ class CacheDirectorySettings(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class CacheEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheEncryptionSettings(_Model):
     """Cache encryption settings.
 
     :ivar key_encryption_key: Specifies the location of the key encryption key in key vault.
@@ -2491,7 +2485,7 @@ class CacheEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class CacheHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheHealth(_Model):
     """An indication of cache health. Gives more information about health than just that related to
     provisioning.
 
@@ -2545,7 +2539,7 @@ class CacheHealth(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class CacheIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheIdentity(_Model):
     """Cache identity properties.
 
     :ivar principal_id: The principal ID for the system-assigned identity of the cache.
@@ -2595,7 +2589,7 @@ class CacheIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class CacheNetworkSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheNetworkSettings(_Model):
     """Cache network settings.
 
     :ivar mtu: The IPv4 maximum transmission unit configured for the subnet.
@@ -2649,7 +2643,7 @@ class CacheNetworkSettings(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class CacheProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheProperties(_Model):
     """Properties of the cache.
 
     :ivar cache_size_gb: The size of this Cache, in GB.
@@ -2762,7 +2756,7 @@ class CacheProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class CacheSecuritySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheSecuritySettings(_Model):
     """Cache security settings.
 
     :ivar access_policies: NFS access policies defined for this cache.
@@ -2792,7 +2786,7 @@ class CacheSecuritySettings(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class CacheSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheSku(_Model):
     """SKU for the cache.
 
     :ivar name: SKU name for this cache.
@@ -2820,7 +2814,7 @@ class CacheSku(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
-class CacheUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheUpgradeSettings(_Model):
     """Cache Upgrade Settings.
 
     :ivar upgrade_schedule_enabled: True if the user chooses to select an installation time between
@@ -2904,7 +2898,7 @@ class CacheUpgradeStatus(_Model):
     """When firmwareUpdateAvailable is true, this field holds the version string for the update."""
 
 
-class CacheUsernameDownloadSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheUsernameDownloadSettings(_Model):
     """Settings for Extended Groups username and group download.
 
     :ivar extended_groups: Whether or not Extended Groups is enabled.
@@ -3024,7 +3018,7 @@ class CacheUsernameDownloadSettings(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class CacheUsernameDownloadSettingsCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CacheUsernameDownloadSettingsCredentials(_Model):
     """When present, these are the credentials for the secure LDAP connection.
 
     :ivar bind_dn: The Bind Distinguished Name identity to be used in the secure LDAP connection.
@@ -3063,7 +3057,7 @@ class CacheUsernameDownloadSettingsCredentials(_Model):  # pylint: disable=docst
         super().__init__(*args, **kwargs)
 
 
-class ClfsTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ClfsTarget(_Model):
     """Properties pertaining to the ClfsTarget.
 
     :ivar target: Resource ID of storage container.
@@ -3091,7 +3085,7 @@ class ClfsTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CloudError(_Model):
     """An error response.
 
     :ivar error: The body of the error.
@@ -3119,7 +3113,7 @@ class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CloudErrorBody(_Model):
     """An error response.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -3227,7 +3221,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object.
@@ -3255,7 +3249,7 @@ class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class ExpansionJob(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ExpansionJob(TrackedResource):
     """An expansion job instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -3304,7 +3298,7 @@ class ExpansionJob(TrackedResource):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class ExpansionJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ExpansionJobProperties(_Model):
     """Properties of the expansion job.
 
     :ivar provisioning_state: ARM provisioning state, see
@@ -3319,12 +3313,6 @@ class ExpansionJobProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     :vartype new_storage_capacity_ti_b: float
     :ivar status: The status of the expansion job.
     :vartype status: ~azure.mgmt.storagecache.models.ExpansionJobPropertiesStatus
-    :ivar run_rebalance_job: When true, expansion creates a RebalanceJob after completing.
-     Optional, defaults to true.
-    :vartype run_rebalance_job: bool
-    :ivar rebalance_job_id: Fully qualified ARM resource ID of the child rebalance job created by
-     this expansion. Populated after RebalanceJob is created.
-    :vartype rebalance_job_id: str
     """
 
     provisioning_state: Optional[Union[str, "_models.ExpansionJobPropertiesProvisioningState"]] = rest_field(
@@ -3341,11 +3329,6 @@ class ExpansionJobProperties(_Model):  # pylint: disable=docstring-keyword-shoul
      system."""
     status: Optional["_models.ExpansionJobPropertiesStatus"] = rest_field(visibility=["read"])
     """The status of the expansion job."""
-    run_rebalance_job: Optional[bool] = rest_field(name="runRebalanceJob", visibility=["read", "create"])
-    """When true, expansion creates a RebalanceJob after completing. Optional, defaults to true."""
-    rebalance_job_id: Optional[str] = rest_field(name="rebalanceJobId", visibility=["read"])
-    """Fully qualified ARM resource ID of the child rebalance job created by this expansion. Populated
-     after RebalanceJob is created."""
 
     __flattened_items = [
         "state",
@@ -3361,7 +3344,6 @@ class ExpansionJobProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         new_storage_capacity_ti_b: Optional[float] = None,
-        run_rebalance_job: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -3434,7 +3416,7 @@ class ExpansionJobPropertiesStatus(_Model):
      state."""
 
 
-class ExpansionJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ExpansionJobUpdate(_Model):
     """An expansion job update instance.
 
     :ivar tags: Resource tags.
@@ -3462,7 +3444,7 @@ class ExpansionJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class ImportJob(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ImportJob(TrackedResource):
     """An import job instance. Follows Azure Resource Manager standards:
     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
@@ -3511,7 +3493,7 @@ class ImportJob(TrackedResource):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class ImportJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ImportJobProperties(_Model):
     """Properties of the import job.
 
     :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
@@ -3728,7 +3710,7 @@ class ImportJobPropertiesStatus(_Model):
     """Number of conflicts in the import job."""
 
 
-class ImportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ImportJobUpdate(_Model):
     """An import job update instance.
 
     :ivar tags: Resource tags.
@@ -3782,8 +3764,8 @@ class ImportJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match
             super().__setattr__(key, value)
 
 
-class ImportJobUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties for updating an import job.
+class ImportJobUpdateProperties(_Model):
+    """ImportJobUpdateProperties.
 
     :ivar admin_status: The administrative status of the import job. Possible values: 'Active',
      'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. Known
@@ -3816,7 +3798,7 @@ class ImportJobUpdateProperties(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultKeyReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class KeyVaultKeyReference(_Model):
     """Describes a reference to key vault key.
 
     :ivar key_url: The URL referencing a key encryption key in key vault. Required.
@@ -3851,7 +3833,7 @@ class KeyVaultKeyReference(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultKeyReferenceSourceVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class KeyVaultKeyReferenceSourceVault(_Model):
     """Describes a resource Id to source key vault.
 
     :ivar id: Resource Id.
@@ -3879,7 +3861,7 @@ class KeyVaultKeyReferenceSourceVault(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LogSpecification(_Model):
     """Details about operation related to logs.
 
     :ivar name: The name of the log.
@@ -3914,7 +3896,7 @@ class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class MetricDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MetricDimension(_Model):
     """Specifications of the Dimension of metrics.
 
     :ivar name: Name of the dimension.
@@ -3963,7 +3945,7 @@ class MetricDimension(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MetricSpecification(_Model):
     """Details about operation related to metrics.
 
     :ivar name: The name of the metric.
@@ -4039,7 +4021,7 @@ class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class NamespaceJunction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NamespaceJunction(_Model):
     """A namespace junction.
 
     :ivar namespace_path: Namespace path on a cache for a Storage Target.
@@ -4088,7 +4070,7 @@ class NamespaceJunction(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class Nfs3Target(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Nfs3Target(_Model):
     """Properties pertaining to the Nfs3Target.
 
     :ivar target: IP address or host name of an NFSv3 host (e.g., 10.0.44.44).
@@ -4141,7 +4123,7 @@ class Nfs3Target(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class NfsAccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NfsAccessPolicy(_Model):
     """A set of rules describing access policies applied to NFSv3 clients of the cache.
 
     :ivar name: Name identifying this policy. Access Policy names are not case sensitive. Required.
@@ -4177,7 +4159,7 @@ class NfsAccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class NfsAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NfsAccessRule(_Model):
     """Rule to place restrictions on portions of the cache namespace being presented to clients.
 
     :ivar scope: Scope for this rule. The scope and filter determine which clients match the rule.
@@ -4269,7 +4251,7 @@ class NfsAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class PrimingJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrimingJob(_Model):
     """A priming job instance.
 
     :ivar priming_job_name: The priming job name. Required.
@@ -4330,7 +4312,7 @@ class PrimingJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class PrimingJobIdParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class PrimingJobIdParameter(_Model):
     """Object containing the priming job ID.
 
     :ivar priming_job_id: The unique identifier of the priming job. Required.
@@ -4358,263 +4340,7 @@ class PrimingJobIdParameter(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class RebalanceJob(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A rebalance job instance. Rebalances OST data across storage targets after a cluster expansion.
-    Follows Azure Resource Manager standards:
-    `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md
-    <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md>`_.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
-    :ivar properties: Properties of the rebalance job.
-    :vartype properties: ~azure.mgmt.storagecache.models.RebalanceJobProperties
-    """
-
-    properties: Optional["_models.RebalanceJobProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the rebalance job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.RebalanceJobProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RebalanceJobProperties(_Model):
-    """Properties of the rebalance job.
-
-    :ivar provisioning_state: ARM provisioning state, see
-     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
-     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property>`_.
-     Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.storagecache.models.RebalanceJobPropertiesProvisioningState
-    :ivar admin_status: The current administrative status of the rebalance job. 'Active' indicates
-     the job is running normally; 'Cancel' indicates cancellation has been requested. Known values
-     are: "Active" and "Cancel".
-    :vartype admin_status: str or ~azure.mgmt.storagecache.models.RebalanceJobAdminStatus
-    :ivar expansion_job_id: Fully qualified ARM resource ID of the parent expansion job that
-     initiated this rebalance. Populated when the rebalance was created as part of an expansion.
-    :vartype expansion_job_id: str
-    :ivar status: The status of the rebalance job.
-    :vartype status: ~azure.mgmt.storagecache.models.RebalanceJobPropertiesStatus
-    """
-
-    provisioning_state: Optional[Union[str, "_models.RebalanceJobPropertiesProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """ARM provisioning state, see
-     `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
-     <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property>`_.
-     Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and
-     \"Deleting\"."""
-    admin_status: Optional[Union[str, "_models.RebalanceJobAdminStatus"]] = rest_field(
-        name="adminStatus", visibility=["read"]
-    )
-    """The current administrative status of the rebalance job. 'Active' indicates the job is running
-     normally; 'Cancel' indicates cancellation has been requested. Known values are: \"Active\" and
-     \"Cancel\"."""
-    expansion_job_id: Optional[str] = rest_field(name="expansionJobId", visibility=["read"])
-    """Fully qualified ARM resource ID of the parent expansion job that initiated this rebalance.
-     Populated when the rebalance was created as part of an expansion."""
-    status: Optional["_models.RebalanceJobPropertiesStatus"] = rest_field(visibility=["read"])
-    """The status of the rebalance job."""
-
-
-class RebalanceJobPropertiesStatus(_Model):
-    """The status of the rebalance job.
-
-    :ivar state: The operational state of the rebalance job. InProgress indicates the rebalance is
-     running on the cluster. Cancelling indicates a cancel has been requested. Canceled indicates
-     the rebalance was cancelled. Completed indicates the rebalance finished successfully. Failed
-     indicates the rebalance was unable to complete due to a fatal error. Deleting indicates the job
-     is being cleaned up during deletion. RollingBack indicates the orchestrator is rolling back
-     provisioned resources after a failure. Known values are: "InProgress", "Cancelling",
-     "Canceled", "Completed", "Failed", "Deleting", and "RollingBack".
-    :vartype state: str or ~azure.mgmt.storagecache.models.RebalanceJobStatusType
-    :ivar status_code: Server-defined status code for rebalance job.
-    :vartype status_code: str
-    :ivar status_message: Server-defined status message for rebalance job.
-    :vartype status_message: str
-    :ivar percent_complete: The percentage of rebalance job completion.
-    :vartype percent_complete: float
-    :ivar balance_percent: The balance percentage (0-100). Represents cumulative progress since the
-     rebalance started. Reported in periodic rebalance status updates. Resets to 0 if the rebalancer
-     node restarts.
-    :vartype balance_percent: float
-    :ivar estimated_remaining_seconds: Estimated remaining time in seconds. Omitted during initial
-     assessment before the rebalancer has enough data to estimate.
-    :vartype estimated_remaining_seconds: int
-    :ivar files_migrated: Total number of files migrated since the rebalance started. Counts
-     OST-phase (data) work items. Reported in periodic rebalance status updates. Resets to 0 if the
-     rebalancer node restarts.
-    :vartype files_migrated: int
-    :ivar dirs_migrated: Total number of directories migrated since the rebalance started. Counts
-     MDT-phase (metadata) work items, reported separately from filesMigrated (OST-phase data
-     migrations). Reported in periodic rebalance status updates. Resets to 0 if the rebalancer node
-     restarts.
-    :vartype dirs_migrated: int
-    :ivar bytes_moved: Total number of bytes moved since the rebalance started. Reported in
-     periodic rebalance status updates. Resets to 0 if the rebalancer node restarts.
-    :vartype bytes_moved: int
-    :ivar files_moved_per_second: Average files moved per second over the most recent reporting
-     interval.
-    :vartype files_moved_per_second: float
-    :ivar throughput_mi_bps: Average throughput in mebibytes per second (1024x1024 bytes per
-     second) over the most recent reporting interval.
-    :vartype throughput_mi_bps: float
-    :ivar total_errors: Total cumulative non-skip errors since the rebalance started. Reported in
-     periodic rebalance status updates. Resets to 0 if the rebalancer node restarts.
-    :vartype total_errors: int
-    :ivar total_skipped: Total cumulative benign skips since the rebalance started: files
-     intentionally not migrated (for example, a lost migration lease or a stale layout), as distinct
-     from the hard failures counted in totalErrors. Reported in periodic rebalance status updates.
-     Resets to 0 if the rebalancer node restarts.
-    :vartype total_skipped: int
-    :ivar start_time_utc: The time (in UTC) the rebalance job started.
-    :vartype start_time_utc: ~datetime.datetime
-    :ivar completion_time_utc: The time (in UTC) when the rebalance job completed. Only populated
-     when the job reaches a terminal state (Completed, Failed, or Canceled).
-    :vartype completion_time_utc: ~datetime.datetime
-    """
-
-    state: Optional[Union[str, "_models.RebalanceJobStatusType"]] = rest_field(visibility=["read"])
-    """The operational state of the rebalance job. InProgress indicates the rebalance is running on
-     the cluster. Cancelling indicates a cancel has been requested. Canceled indicates the rebalance
-     was cancelled. Completed indicates the rebalance finished successfully. Failed indicates the
-     rebalance was unable to complete due to a fatal error. Deleting indicates the job is being
-     cleaned up during deletion. RollingBack indicates the orchestrator is rolling back provisioned
-     resources after a failure. Known values are: \"InProgress\", \"Cancelling\", \"Canceled\",
-     \"Completed\", \"Failed\", \"Deleting\", and \"RollingBack\"."""
-    status_code: Optional[str] = rest_field(name="statusCode", visibility=["read"])
-    """Server-defined status code for rebalance job."""
-    status_message: Optional[str] = rest_field(name="statusMessage", visibility=["read"])
-    """Server-defined status message for rebalance job."""
-    percent_complete: Optional[float] = rest_field(name="percentComplete", visibility=["read"])
-    """The percentage of rebalance job completion."""
-    balance_percent: Optional[float] = rest_field(name="balancePercent", visibility=["read"])
-    """The balance percentage (0-100). Represents cumulative progress since the rebalance started.
-     Reported in periodic rebalance status updates. Resets to 0 if the rebalancer node restarts."""
-    estimated_remaining_seconds: Optional[int] = rest_field(name="estimatedRemainingSeconds", visibility=["read"])
-    """Estimated remaining time in seconds. Omitted during initial assessment before the rebalancer
-     has enough data to estimate."""
-    files_migrated: Optional[int] = rest_field(name="filesMigrated", visibility=["read"])
-    """Total number of files migrated since the rebalance started. Counts OST-phase (data) work items.
-     Reported in periodic rebalance status updates. Resets to 0 if the rebalancer node restarts."""
-    dirs_migrated: Optional[int] = rest_field(name="dirsMigrated", visibility=["read"])
-    """Total number of directories migrated since the rebalance started. Counts MDT-phase (metadata)
-     work items, reported separately from filesMigrated (OST-phase data migrations). Reported in
-     periodic rebalance status updates. Resets to 0 if the rebalancer node restarts."""
-    bytes_moved: Optional[int] = rest_field(name="bytesMoved", visibility=["read"])
-    """Total number of bytes moved since the rebalance started. Reported in periodic rebalance status
-     updates. Resets to 0 if the rebalancer node restarts."""
-    files_moved_per_second: Optional[float] = rest_field(name="filesMovedPerSecond", visibility=["read"])
-    """Average files moved per second over the most recent reporting interval."""
-    throughput_mi_bps: Optional[float] = rest_field(name="throughputMiBps", visibility=["read"])
-    """Average throughput in mebibytes per second (1024x1024 bytes per second) over the most recent
-     reporting interval."""
-    total_errors: Optional[int] = rest_field(name="totalErrors", visibility=["read"])
-    """Total cumulative non-skip errors since the rebalance started. Reported in periodic rebalance
-     status updates. Resets to 0 if the rebalancer node restarts."""
-    total_skipped: Optional[int] = rest_field(name="totalSkipped", visibility=["read"])
-    """Total cumulative benign skips since the rebalance started: files intentionally not migrated
-     (for example, a lost migration lease or a stale layout), as distinct from the hard failures
-     counted in totalErrors. Reported in periodic rebalance status updates. Resets to 0 if the
-     rebalancer node restarts."""
-    start_time_utc: Optional[datetime.datetime] = rest_field(name="startTimeUTC", visibility=["read"], format="rfc3339")
-    """The time (in UTC) the rebalance job started."""
-    completion_time_utc: Optional[datetime.datetime] = rest_field(
-        name="completionTimeUTC", visibility=["read"], format="rfc3339"
-    )
-    """The time (in UTC) when the rebalance job completed. Only populated when the job reaches a
-     terminal state (Completed, Failed, or Canceled)."""
-
-
-class RebalanceJobUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A rebalance job update instance.
-
-    :ivar properties: Properties for the rebalance job update.
-    :vartype properties: ~azure.mgmt.storagecache.models.RebalanceJobUpdateProperties
-    """
-
-    properties: Optional["_models.RebalanceJobUpdateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for the rebalance job update."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.RebalanceJobUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RebalanceJobUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties for updating a rebalance job.
-
-    :ivar admin_status: The administrative status of the rebalance job. Passing in a value of
-     'Cancel' will cancel the current active rebalance job. Known values are: "Active" and "Cancel".
-    :vartype admin_status: str or ~azure.mgmt.storagecache.models.RebalanceJobAdminStatus
-    """
-
-    admin_status: Optional[Union[str, "_models.RebalanceJobAdminStatus"]] = rest_field(
-        name="adminStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The administrative status of the rebalance job. Passing in a value of 'Cancel' will cancel the
-     current active rebalance job. Known values are: \"Active\" and \"Cancel\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        admin_status: Optional[Union[str, "_models.RebalanceJobAdminStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RequiredAmlFilesystemSubnetsSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class RequiredAmlFilesystemSubnetsSize(_Model):
     """Information about the number of available IP addresses that are required for the AML file
     system.
 
@@ -4646,7 +4372,7 @@ class RequiredAmlFilesystemSubnetsSize(_Model):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
-class RequiredAmlFilesystemSubnetsSizeInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class RequiredAmlFilesystemSubnetsSizeInfo(_Model):
     """Information required to get the number of available IP addresses a subnet should have that will
     be used in AML file system create.
 
@@ -4682,7 +4408,7 @@ class RequiredAmlFilesystemSubnetsSizeInfo(_Model):  # pylint: disable=docstring
         super().__init__(*args, **kwargs)
 
 
-class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ResourceSku(_Model):
     """A resource SKU.
 
     :ivar resource_type: The type of resource the SKU applies to.
@@ -4743,7 +4469,7 @@ class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ResourceSkuCapabilities(_Model):
     """A resource SKU capability.
 
     :ivar name: Name of a capability, such as ops/sec.
@@ -4776,7 +4502,7 @@ class ResourceSkuCapabilities(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuLocationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ResourceSkuLocationInfo(_Model):
     """Resource SKU location information.
 
     :ivar location: Location where this SKU is available.
@@ -4832,7 +4558,7 @@ class ResourceUsage(_Model):
     """Naming information for this resource type."""
 
 
-class ResourceUsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ResourceUsageName(_Model):
     """Naming information for this resource type.
 
     :ivar value: Canonical name for this resource type.
@@ -4867,7 +4593,7 @@ class ResourceUsageName(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class Restriction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Restriction(_Model):
     """The restrictions preventing this SKU from being used.
 
     :ivar type: The type of restrictions. In this version, the only possible value for this is
@@ -4915,7 +4641,7 @@ class Restriction(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class SkuName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SkuName(_Model):
     """SKU for the resource.
 
     :ivar name: SKU name for this resource.
@@ -4943,7 +4669,7 @@ class SkuName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
-class StorageTarget(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageTarget(ProxyResource):
     """Type of the Storage Target.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5018,7 +4744,7 @@ class StorageTarget(ProxyResource):  # pylint: disable=docstring-keyword-should-
             super().__setattr__(key, value)
 
 
-class StorageTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageTargetProperties(_Model):
     """Properties of the Storage Target.
 
     :ivar junctions: List of cache namespace junctions to target for namespace associations.
@@ -5103,7 +4829,7 @@ class StorageTargetProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class StorageTargetSpaceAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageTargetSpaceAllocation(_Model):
     """Storage Target space allocation properties.
 
     :ivar name: Name of the storage target.
@@ -5138,7 +4864,7 @@ class StorageTargetSpaceAllocation(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5205,7 +4931,7 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class UnknownTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UnknownTarget(_Model):
     """Properties pertaining to the UnknownTarget.
 
     :ivar attributes: Dictionary of string->string pairs containing information about the Storage
@@ -5234,7 +4960,7 @@ class UnknownTarget(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class UsageModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UsageModel(_Model):
     """A usage model.
 
     :ivar display: Localized information describing this usage model.
@@ -5277,7 +5003,7 @@ class UsageModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class UsageModelDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UsageModelDisplay(_Model):
     """Localized information describing this usage model.
 
     :ivar description: String to display for this usage model.
@@ -5306,7 +5032,7 @@ class UsageModelDisplay(_Model):  # pylint: disable=docstring-keyword-should-mat
 
 
 class UserAssignedIdentitiesValue(_Model):
-    """User-assigned identity properties.
+    """UserAssignedIdentitiesValue.
 
     :ivar principal_id: The principal ID of the user-assigned identity.
     :vartype principal_id: str

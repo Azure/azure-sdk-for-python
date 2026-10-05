@@ -119,7 +119,6 @@ def sample_conv_pii_no_mask_policy():
                         returned_text = (item.redacted_content.text or "").strip()
                         print(f"Returned text: '{returned_text}'")
 
-
 # [END conversation_pii_with_no_mask_policy]
 
 

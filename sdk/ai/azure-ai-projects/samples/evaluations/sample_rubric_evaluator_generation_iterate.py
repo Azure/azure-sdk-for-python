@@ -49,6 +49,7 @@ from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
 )
@@ -71,22 +72,24 @@ with (
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
     poller = project_client.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationInputs(
-            model=model_name,
-            evaluator_name=evaluator_name,
-            evaluator_display_name="Reservation Quality (iterate)",
-            evaluator_description="Starting point for human-in-the-loop iteration.",
-            sources=[
-                PromptEvaluatorGenerationJobSource(
-                    description="Inline application overview.",
-                    prompt=(
-                        "You are evaluating a restaurant reservation assistant that creates, "
-                        "modifies, and cancels reservations. It uses tools for restaurant "
-                        "lookup, availability checking, and notifications. It must confirm "
-                        "user intent before committing changes."
+        job=EvaluatorGenerationJob(
+            inputs=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=evaluator_name,
+                evaluator_display_name="Reservation Quality (iterate)",
+                evaluator_description="Starting point for human-in-the-loop iteration.",
+                sources=[
+                    PromptEvaluatorGenerationJobSource(
+                        description="Inline application overview.",
+                        prompt=(
+                            "You are evaluating a restaurant reservation assistant that creates, "
+                            "modifies, and cancels reservations. It uses tools for restaurant "
+                            "lookup, availability checking, and notifications. It must confirm "
+                            "user intent before committing changes."
+                        ),
                     ),
-                ),
-            ],
+                ],
+            ),
         ),
         operation_id=f"rubric-iterate-{short}",
         polling_interval=poll_interval_seconds,

@@ -129,12 +129,6 @@ Ask the user for clarification if repository path or configuration file is ambig
 
 ---
 
-## Generated SDK Patches and Customizations
-
-Before adding or changing handwritten patches or customizations of generated Python SDK code (including `_patch.py`), investigate whether the behavior comes from the service spec/configuration or the emitter/generator rather than an intentional SDK customization. Follow the [patch diagnosis checklist](../doc/dev/customize_code/how-to-patch-sdk-code.md#before-you-customize) before applying a package-local workaround, including through customization tools. Document the diagnosis and evidence or any investigation blockers; do not claim a generator bug was ruled out without evidence.
-
----
-
 ## MGMT SDK Code Review Rules
 
 ### SCOPE

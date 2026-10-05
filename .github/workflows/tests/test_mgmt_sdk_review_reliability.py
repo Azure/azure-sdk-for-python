@@ -116,9 +116,7 @@ def submit(data, trusted):
     result = service.ReviewService(trusted).call({"operation": "preflight", "draft": data})
     if not result["ok"]:
         raise AssertionError(result)
-    payload = envelope(result["submission"]["data"])
-    payload["items"][0]["item_number"] = result["submission"]["item_number"]
-    return payload
+    return envelope(result["submission"]["data"])
 
 
 class EvidenceAndChecksTests(unittest.TestCase):
@@ -994,122 +992,6 @@ class PublicSpecificationReadsTests(unittest.TestCase):
 
 
 class ServiceAndPublicationTests(unittest.TestCase):
-    def test_canonical_draft_covers_packages_checks_and_entry_ids_without_claiming_review(self):
-        _, trusted = multipackage_fixture(2)
-        trusted["breakingChangeContext"][0]["introducedEntries"] = [
-            {"text": "Removed an operation.", "release": "2.0.0", "startLine": 4, "endLine": 4, "changeKind": "added"}
-        ]
-        host = service.ReviewService(trusted)
-        draft = host.call({"operation": "describe"})["draft"]
-        self.assertEqual([], contract.schema_errors(draft))
-        self.assertEqual(trusted["affectedPackages"], [item["package"] for item in draft["packages"]])
-        for package in draft["packages"]:
-            self.assertEqual(set(evidence.SEMANTIC_CHECKS), set(package["checks"]))
-            self.assertTrue(all(check["outcome"] == "unverified" for check in package["checks"].values()))
-        self.assertEqual(
-            evidence.entry_id(trusted["breakingChangeContext"][0]["introducedEntries"][0]),
-            draft["packages"][0]["attribution"][0]["entry_id"],
-        )
-        self.assertFalse(contract.preflight(draft, trusted)["ok"])
-        draft["packages"].clear()
-        self.assertEqual(2, len(host.call({"operation": "describe"})["draft"]["packages"]))
-
-    def test_empty_canonical_draft_still_requires_complete_discovery(self):
-        _, trusted = fixture()
-        trusted["affectedPackages"] = []
-        trusted["breakingChangeContext"] = []
-        draft = contract.draft_template(trusted)
-        self.assertEqual({"schema_version": "2", "outcome": "not_applicable", "packages": []}, draft)
-        trusted["packageDiscovery"] = {"status": "unverified", "error": "Changed-file pagination was incomplete."}
-        self.assertFalse(contract.preflight(draft, trusted)["ok"])
-
-    def test_pinned_file_lines_do_not_require_a_changed_file_or_diff_anchor(self):
-        # Run 36515583252 mislabeled an unchanged README citation as unavailable.
-        draft, trusted = fixture()
-        source = draft["packages"][0]["checks"]["README snippets"]["sources"][0]
-        record = next(item for item in trusted["sources"] if item["id"] == source["source_id"])
-        old = evidence.citation(record, source["start_line"], source["end_line"])
-        old.update(line_status="unavailable", reason="README was not changed in the PR.")
-        with self.assertRaisesRegex(contract.ReviewError, "citation_state_conflict"):
-            contract.source_identity(old, "readme")
-        self.assertTrue(contract.preflight(draft, trusted)["ok"])
-
-    def test_production_shape_failures_leave_semantic_budget_for_correction(self):
-        # Run 36528442672 spent all three attempts on these successive draft errors.
-        draft, trusted = fixture()
-        host = service.ReviewService(trusted)
-        broken = copy.deepcopy(draft)
-        broken["attributions"] = []
-        broken["packages"][0].pop("attribution")
-        for current in (broken, {key: value for key, value in broken.items() if key != "attributions"}):
-            result = host.call({"operation": "preflight", "draft": current})
-            self.assertFalse(result["ok"])
-            self.assertEqual("format", result["phase"])
-            self.assertEqual(0, result["attempt"])
-            self.assertEqual(3, result["correctionsRemaining"])
-            self.assertNotIn("submission", result)
-        broken = copy.deepcopy(draft)
-        for check in broken["packages"][0]["checks"].values():
-            check["reason"] = "The signature was checked."
-            for source in check["sources"]:
-                source["reason"] = "The source supports this check."
-        result = host.call({"operation": "preflight", "draft": broken})
-        self.assertFalse(result["ok"])
-        self.assertEqual(1, result["attempt"])
-        self.assertEqual({"citation_state_conflict"}, {error["code"] for error in result["errors"]})
-        result = host.call({"operation": "preflight", "draft": draft})
-        self.assertTrue(result["ok"], result)
-        self.assertEqual(2, result["attempt"])
-        self.assertEqual(1, len(contract.prepare_output(envelope(result["submission"]["data"]), trusted)["items"]))
-
-    def test_shape_checks_are_bounded_and_never_authorize_publication(self):
-        draft, trusted = fixture()
-        host = service.ReviewService(trusted)
-        for number in range(10):
-            result = host.call({"operation": "check", "draft": draft})
-            self.assertTrue(result["ok"])
-            self.assertEqual(0, result["attempt"])
-            self.assertEqual(9 - number, result["formatChecksRemaining"])
-            self.assertNotIn("submission", result)
-        for operation in ("check", "preflight"):
-            with self.assertRaisesRegex(contract.ReviewError, "format_check_limit"):
-                host.call({"operation": operation, "draft": draft})
-        result = host.call({"operation": "incomplete", "reason": "Format correction budget was exhausted."})
-        self.assertIn("incompleteSubmission", result)
-        self.assertNotIn("submission", result)
-
-    def test_incomplete_is_terminal_and_not_a_clean_review(self):
-        draft, trusted = fixture()
-        host = service.ReviewService(trusted)
-        for value in ("", "todo", "Review pending", "x" * 12001, False):
-            with self.subTest(value=str(value)[:20]), self.assertRaises(contract.ReviewError):
-                host.call({"operation": "incomplete", "reason": value})
-        result = host.call({"operation": "incomplete", "reason": "Required source could not be retrieved."})
-        payload = {"items": [{"type": "noop", **result["incompleteSubmission"]}], "errors": []}
-        self.assertEqual(payload, contract.prepare_output(payload, trusted))
-        with self.assertRaisesRegex(contract.ReviewError, "correction_limit"):
-            host.call({"operation": "preflight", "draft": draft})
-        accepted = service.ReviewService(trusted)
-        self.assertTrue(accepted.call({"operation": "preflight", "draft": draft})["ok"])
-        with self.assertRaisesRegex(contract.ReviewError, "correction_limit"):
-            accepted.call({"operation": "incomplete", "reason": "Discard the accepted review."})
-
-    def test_incomplete_does_not_bypass_transport_validation(self):
-        draft, trusted = fixture()
-        item = {"type": "noop", **contract.incomplete_submission("Three semantic attempts were exhausted.")}
-        for payload in (
-            {"items": [item], "errors": ["Rejected extra submission"]},
-            {"items": [item, item], "errors": []},
-            {"items": [item, *submit(draft, trusted)["items"]], "errors": []},
-            {"items": [{**item, "item_number": 123}], "errors": []},
-            {"items": [{**item, "body": "Publish this instead"}], "errors": []},
-            {"items": [{**item, "message": "No issues found."}], "errors": []},
-            {"items": [{**item, "message": contract.INCOMPLETE + "todo"}], "errors": []},
-            {"items": [{**item, "message": None}], "errors": []},
-        ):
-            with self.subTest(payload=payload), self.assertRaises(contract.ReviewError):
-                contract.prepare_output(payload, trusted)
-
     def test_retained_production_shapes_require_explicit_new_contract(self):
         corpus = json.loads(
             (Path(__file__).parent / "fixtures" / "mgmt-review" / "historical" / "contract-failures.json").read_text()
@@ -1210,31 +1092,10 @@ class ServiceAndPublicationTests(unittest.TestCase):
     def test_target_is_checked_and_removed(self):
         draft, trusted = fixture()
         payload = submit(draft, trusted)
-        expected = trusted["pullRequestNumber"]
-        self.assertEqual(str(expected), payload["items"][0]["item_number"])
-        for number in (expected, str(expected)):
-            payload["items"][0]["item_number"] = number
-            output = contract.prepare_output(payload, trusted)
-            self.assertEqual({"type", "body"}, set(output["items"][0]))
-        for number in (
-            False,
-            True,
-            float(expected),
-            None,
-            expected + 1,
-            str(expected + 1),
-            f"0{expected}",
-            f"+{expected}",
-            f" {expected}",
-            f"{expected} ",
-            f"{expected}.0",
-            f"{expected}e0",
-            "４９１０７",
-            "#aw_example",
-            "",
-            [],
-            {},
-        ):
+        payload["items"][0]["item_number"] = trusted["pullRequestNumber"]
+        output = contract.prepare_output(payload, trusted)
+        self.assertEqual({"type", "body"}, set(output["items"][0]))
+        for number in (False, str(trusted["pullRequestNumber"]), trusted["pullRequestNumber"] + 1):
             payload["items"][0]["item_number"] = number
             with self.assertRaisesRegex(contract.ReviewError, "conflicting_target"):
                 contract.prepare_output(payload, trusted)
@@ -1389,81 +1250,6 @@ class ServiceAndPublicationTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("GH_AW_RUNTIME"), "Set GH_AW_RUNTIME to v0.88.8 runtime; required for release.")
 class PinnedPreflightRuntimeTests(unittest.TestCase):
-    def test_live_manual_targets_survive_tool_ingestion_and_publication(self):
-        harness = Path(__file__).with_name("mgmt_review_runtime.cjs")
-        tool_config = lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"]
-        # Activation cannot resolve needs.review_context.outputs.pr_number yet.
-        self.assertEqual("", tool_config["target"])
-        for pr in (49229, 49247):
-            for event in ("workflow_dispatch", "pull_request_target"):
-                for as_integer in (False, True):
-                    with self.subTest(pr=pr, event=event, as_integer=as_integer):
-                        draft, trusted = fixture()
-                        trusted["pullRequestNumber"] = pr
-                        result = service.ReviewService(trusted).call({"operation": "preflight", "draft": draft})
-                        submission = result["submission"]
-                        self.assertEqual(str(pr), submission["item_number"])
-                        if as_integer:
-                            submission["item_number"] = pr
-                        submissions = [submission]
-                        if event == "workflow_dispatch":
-                            submissions.insert(
-                                0, {key: value for key, value in submission.items() if key != "item_number"}
-                            )
-                        response = subprocess.run(
-                            ["node", str(harness)],
-                            input=json.dumps(
-                                {
-                                    "mode": "submit",
-                                    "eventName": event,
-                                    "prNumber": pr,
-                                    "submissions": submissions,
-                                    "toolConfig": tool_config,
-                                    "validation": lock_json("GH_AW_VALIDATION_JSON"),
-                                }
-                            ),
-                            capture_output=True,
-                            text=True,
-                            check=True,
-                            timeout=30,
-                        )
-                        transport = json.loads(response.stdout)
-                        if event == "workflow_dispatch":
-                            self.assertTrue(transport["responses"][0]["isError"], transport)
-                        self.assertEqual(1, len(transport["appended"]), transport)
-                        ingested = transport["ingestion"][0]
-                        self.assertTrue(ingested["isValid"], ingested)
-                        self.assertEqual(submission["item_number"], ingested["normalizedItem"]["item_number"])
-                        prepared = contract.prepare_output(
-                            {"items": [ingested["normalizedItem"]], "errors": []}, trusted
-                        )
-                        self.assertNotIn("item_number", prepared["items"][0])
-                        config = lock_json("GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG")["add_comment"]
-                        self.assertEqual("${{ needs.review_context.outputs.pr_number }}", config["target"])
-                        config["target"] = str(pr)
-                        response = subprocess.run(
-                            ["node", str(harness)],
-                            input=json.dumps(
-                                {
-                                    "mode": "publish",
-                                    "eventName": event,
-                                    "prNumber": pr,
-                                    "payload": prepared,
-                                    "handlerConfig": config,
-                                    "existing": True,
-                                }
-                            ),
-                            capture_output=True,
-                            text=True,
-                            check=True,
-                            timeout=30,
-                        )
-                        published = json.loads(response.stdout)
-                        self.assertTrue(published["result"]["success"], published)
-                        self.assertEqual(pr, published["comment"]["issue_number"])
-                        self.assertEqual(1, published["writes"])
-                        self.assertEqual(1, published["hides"])
-
     def publish_multi_package(self, draft, trusted):
         payload = submit(draft, trusted)
         payload["items"][0]["body"] = contract.SUBMISSION
@@ -1604,12 +1390,10 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                 else:
                     self.fail("Host service not responsive")
                 jq = shutil.which("jq") or os.environ["JQ"]
+                expression = re.search(r"(?m)^jq '([^']+)' .* \| mcpscripts review \.$", SOURCE)[1]
                 broken = copy.deepcopy(draft)
                 broken["packages"][0]["checks"]["README snippets"]["sources"][0]["end_line"] = 999
-                for operation, current in (("check", draft), ("preflight", broken), ("preflight", draft)):
-                    expression = re.search(
-                        rf"""(?m)^jq '([^']+operation: "{operation}"[^']+)' .* \| mcpscripts review \.$""", SOURCE
-                    )[1]
+                for current in (broken, draft):
                     arguments = subprocess.run(
                         [jq, expression], input=json.dumps(current), capture_output=True, text=True, check=True
                     )
@@ -1629,11 +1413,6 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                     self.assertEqual(0, result.returncode, result.stderr)
                     tool_response = json.loads(result.stdout)
                     answer = json.loads(tool_response["content"][0]["text"])
-                    if operation == "check":
-                        self.assertTrue(answer["ok"])
-                        self.assertEqual("format", answer["phase"])
-                        self.assertEqual(0, answer["attempt"])
-                        self.assertNotIn("submission", answer)
                     if current is broken:
                         self.assertFalse(answer["ok"])
                         self.assertNotIn("submission", answer)
@@ -1649,7 +1428,7 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                         {
                             "mode": "submit",
                             "submissions": [json.loads(submission.stdout)] * 2,
-                            "toolConfig": lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"],
+                            "schema": contract.SCHEMA,
                             "validation": lock_json("GH_AW_VALIDATION_JSON"),
                         }
                     ),
@@ -1694,7 +1473,7 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
                 {
                     "mode": "submit",
                     "submissions": submissions,
-                    "toolConfig": lock_json("GH_AW_SAFE_OUTPUTS_CONFIG")["add_comment"],
+                    "schema": contract.SCHEMA,
                     "validation": lock_json("GH_AW_VALIDATION_JSON"),
                 }
             ),
@@ -1718,45 +1497,6 @@ class PinnedPreflightRuntimeTests(unittest.TestCase):
         )
         self.assertEqual(0, json.loads(response.stdout)["hides"])
         self.assertEqual(0, json.loads(response.stdout)["writes"])
-        incomplete = host.call(
-            {"operation": "incomplete", "reason": "Three semantic attempts failed to cover the trusted packages."}
-        )
-        expression = re.search(r"(?m)^jq '([^']+)' .* \| safeoutputs noop \.$", SOURCE)[1]
-        result = subprocess.run(
-            [shutil.which("jq") or os.environ["JQ"], expression],
-            input=json.dumps(incomplete),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        response = subprocess.run(
-            ["node", str(harness)],
-            input=json.dumps(
-                {
-                    "mode": "ingest",
-                    "item": {"type": "noop", **json.loads(result.stdout)},
-                    "validation": lock_json("GH_AW_VALIDATION_JSON"),
-                }
-            ),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        ingested = json.loads(response.stdout)
-        self.assertTrue(ingested["isValid"], ingested)
-        prepared = contract.prepare_output({"items": [ingested["normalizedItem"]], "errors": []}, trusted)
-        response = subprocess.run(
-            ["node", str(harness)],
-            input=json.dumps({"mode": "publish", "payload": prepared, "existing": True}),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        recorded = json.loads(response.stdout)
-        self.assertTrue(recorded["result"]["success"], recorded)
-        self.assertIn(contract.INCOMPLETE, recorded["result"]["message"])
-        self.assertEqual(0, recorded["hides"])
-        self.assertEqual(0, recorded["writes"])
         # Positive control: this very same existing comment is hidden after an accepted review.
         draft, trusted = fixture()
         prepared = contract.prepare_output(submit(draft, trusted), trusted)

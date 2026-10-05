@@ -3,8 +3,10 @@
 ## 12.32.0b1 (Unreleased)
 
 ### Features Added
+- Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
 
 ### Bugs Fixed
+- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
   an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
@@ -13,17 +15,6 @@
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
-
-## 12.31.0 (2026-09-30)
-
-This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
-
-### Features Added
-- Stable release of features from 12.31.0b1
-- Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
-
-### Bugs Fixed
-- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
 
 ## 12.30.3 (2026-09-22)
 

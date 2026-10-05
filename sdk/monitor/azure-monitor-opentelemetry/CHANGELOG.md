@@ -1,6 +1,12 @@
 # Release History
 
-## 1.8.11 (2026-10-05)
+## 1.8.11 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
 - Corrected the package metadata to require Python 3.10 or later, matching the existing support policy

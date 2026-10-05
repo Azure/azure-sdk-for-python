@@ -515,6 +515,15 @@ DAC substitutes a `FailedDACCredential` placeholder that raises `CredentialUnava
 error message. This placeholder pattern exists specifically because some credentials fail *by
 design* during construction.
 
+### `WorkloadIdentityCredential` AKS "binding mode" (FIC-per-MI ceiling workaround)
+PR [#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287) (2025-11)
+
+Entra limits Federated Identity Credentials (FICs) per managed identity, which large AKS
+clusters can exhaust. Binding mode routes the FIC exchange through an AKS-side proxy
+(`enable_azure_proxy=True`, configured via `AZURE_KUBERNETES_TOKEN_PROXY` and SNI/CA env vars)
+so a single set of FICs serves many pods. The proxy path is intentionally skipped when running
+inside a `ChainedTokenCredential`.
+
 ---
 
 ## Recurring patterns worth internalizing
