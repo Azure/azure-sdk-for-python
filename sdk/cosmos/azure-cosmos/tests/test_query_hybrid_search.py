@@ -50,7 +50,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
             full_text_policy=test_config.get_full_text_policy(path="/text"))
-        data = hybrid_search_data.get_full_text_items()
+        data = hybrid_search_data.get_hybrid_search_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
@@ -195,7 +195,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 13
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 1, 4]
+            assert res['index'] in [61, 49, 51, 24, 54, 75, 77, 76, 2, 80, 22, 57, 85]
 
         item_vector = self.test_container.read_item('50', '1')['vector']
         query = "SELECT c.index, c.title FROM c " \

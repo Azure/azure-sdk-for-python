@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,16 @@ def main():
     response = client.servers.begin_update(
         resource_group_name="exampleresourcegroup",
         server_name="exampleserver",
-        parameters={"properties": {"replica": {"promoteMode": "Switchover", "promoteOption": "Forced"}}},
+        parameters={
+            "properties": {
+                "replica": {"promoteMode": "Switchover", "promoteOption": "Forced"},
+                "sourceServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/exampleresourcegroup/providers/Microsoft.DBforPostgreSQL/flexibleServers/examplesourceserver",
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ServersPromoteReplicaAsForcedSwitchover.json
+# x-ms-original-file: 2026-07-01-preview/ServersPromoteReplicaAsForcedSwitchover.json
 if __name__ == "__main__":
     main()

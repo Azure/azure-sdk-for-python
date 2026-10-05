@@ -51,9 +51,9 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     EvaluationDataGenerationJobInputs,
-    EvaluationDataGenerationJobOutputTarget,
+    EvaluationDataGenerationJobOutputConfiguration,
     PromptAgentDefinition,
-    TracesDataGenerationJobOptions,
+    TracesDataGenerationJobConfiguration,
     TracesDataGenerationJobSource,
 )
 
@@ -119,10 +119,18 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                extra_body={
+                    "agent_reference": {
+                        "name": created_agent.name,
+                        "type": "agent_reference",
+                    }
+                },
             )
 
-        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        print(
+            f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
+            flush=True,
+        )
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
         start_time = seed_start - timedelta(minutes=5)
@@ -150,8 +158,8 @@ with (
                         ],
                         # max_samples is optional and caps the output dataset size. If omitted,
                         # sampling is turned off. Private content is redacted by default.
-                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15),
-                        output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
+                        generation_configuration=TracesDataGenerationJobConfiguration(max_samples=15),
+                        output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )
