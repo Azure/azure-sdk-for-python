@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-01-01/StorageTargets_Invalidate.json
+# x-ms-original-file: 2026-08-01/StorageTargets_Invalidate.json
 if __name__ == "__main__":
     main()

@@ -45,8 +45,8 @@ Breaking changes in preview classes:
 * Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
 * Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
 * Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
-* Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in the BYOM/tools sample.
+* Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
 
 ## 2.7.0 (2026-09-18)
 

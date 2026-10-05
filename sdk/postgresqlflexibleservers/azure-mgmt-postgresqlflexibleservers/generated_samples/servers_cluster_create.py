@@ -38,7 +38,7 @@ def main():
             "properties": {
                 "administratorLogin": "examplelogin",
                 "administratorLoginPassword": "examplepassword",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled", "immutableBackup": "Enabled"},
                 "cluster": {"clusterSize": 2, "defaultDatabaseName": "clusterdb"},
                 "createMode": "Create",
                 "highAvailability": {"mode": "Disabled"},
@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ServersClusterCreate.json
+# x-ms-original-file: 2026-07-01-preview/ServersClusterCreate.json
 if __name__ == "__main__":
     main()
