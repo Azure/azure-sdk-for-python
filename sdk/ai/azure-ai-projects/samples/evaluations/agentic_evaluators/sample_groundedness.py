@@ -309,7 +309,7 @@ def main() -> None:  # pylint: disable=too-many-locals
                         "messages": {"type": "array", "items": {"type": "object"}},
                         "context": {"type": "string"},
                     },
-                    "required": ["messages"],
+                    "required": ["messages", "context"],
                 },
                 include_sample_schema=False,
             ),
