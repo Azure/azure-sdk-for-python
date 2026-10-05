@@ -31,6 +31,10 @@ pr:
     - eng/common/
 
 parameters:
+  - name: ReleasePlanId
+    displayName: 'Release plan ID (0 means no manual association)'
+    type: string
+    default: '0'
   - name: ReleaseToDevOpsOnly
     displayName: 'Release package to DevOps feed instead of PyPi'
     type: boolean
@@ -57,7 +61,20 @@ extends:
       PublicPublishEnvironment: none
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     ServiceDirectory: template
+    ReleasePlanId: ${{ parameters.ReleasePlanId }}
     TestProxy: true
+    # Diagnostic branch only: exercise the actual completion script against built package metadata,
+    # with an argv-capturing CLI that cannot contact Azure DevOps or publish a package.
+    BeforePublishSteps:
+    - task: PowerShell@2
+      displayName: Test release-plan ID handoff without live updates
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+      inputs:
+        pwsh: true
+        filePath: $(Build.SourcesDirectory)/eng/scripts/tests/Test-ReleasePlanHandoff.ps1
+        arguments: >
+          -ReleasePlanId '${{ parameters.ReleasePlanId }}'
+          -PackageInfoFilePath '$(Build.ArtifactStagingDirectory)/PackageInfo/azure-template.json'
     Artifacts:
     - name: azure-template
       safeName: azuretemplate
