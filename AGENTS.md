@@ -53,6 +53,9 @@ AI agents can assist with the following activities:
   - Follow official guidelines and existing patterns
   - Make minimal, surgical changes
 
+- **Generated SDK Patches**: Before adding or changing handwritten patches or customizations of generated Python SDK code (including `_patch.py`), investigate spec/configuration and emitter/generator causes.
+  - Follow the [patch diagnosis checklist](doc/dev/customize_code/how-to-patch-sdk-code.md#before-adding-or-changing-a-patch) and document the evidence, rationale, and any investigation blockers before adopting a package-local workaround.
+
 - **Documentation**: Update CHANGELOG.md, README files, and API documentation
   - Follow existing formatting conventions
   - Include version information and release dates
