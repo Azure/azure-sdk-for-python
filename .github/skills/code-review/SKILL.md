@@ -22,7 +22,7 @@ without imposing SDK-specific conventions.
 
 | Changed surface or risk | Guidance |
 | --- | --- |
-| SDK source or public API | `.github/instructions/reviewer/sdk-source.instructions.md` |
+| SDK source or public API | `.github/instructions/reviewer/sdk-source.instructions.md` and the [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html) |
 | Tests or coverage implications | `.github/instructions/reviewer/testing.instructions.md` |
 | README, CHANGELOG, docstrings, or samples | `.github/instructions/reviewer/documentation.instructions.md` |
 | Packaging or dependencies | `.github/instructions/reviewer/dependencies.instructions.md` |
