@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -75,7 +75,7 @@ def main() -> None:
                 type="azure_ai_evaluator",
                 name="tool_call_accuracy",
                 evaluator_name="builtin.tool_call_accuracy",
-                initialization_parameters={"deployment_name": model_deployment_name},
+                initialization_parameters={"model": f"{model_deployment_name}"},
                 data_mapping={
                     "query": "{{item.query}}",
                     "tool_definitions": "{{item.tool_definitions}}",
@@ -98,7 +98,6 @@ def main() -> None:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
-        # Single-turn, structured tool-call and JSON response inputs
         # Example 1: Simple tool call evaluation
         query1 = "What's the weather like in New York?"
         tool_definitions1 = [
@@ -249,10 +248,6 @@ def main() -> None:
             },
         ]
 
-        # Single-turn, string response input describing the selected tool
-        string_query = "What's the weather like in Chicago?"
-        string_response = "Called get_weather with location='Chicago' to look up the current weather."
-
         print("Creating Eval Run with Inline Data")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
@@ -290,14 +285,6 @@ def main() -> None:
                                 "tool_calls": None,
                             }
                         ),
-                        SourceFileContentContent(
-                            item={
-                                "query": string_query,
-                                "tool_definitions": tool_definitions1,
-                                "response": string_response,
-                                "tool_calls": None,
-                            }
-                        ),
                     ],
                 ),
             ),
@@ -315,7 +302,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status in ("completed", "failed", "canceled", "cancelled"):
+            if run.status in ("completed", "failed"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")
@@ -323,87 +310,6 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
-
-        client.evals.delete(eval_id=eval_object.id)
-        if run.status != "completed" or run.result_counts.errored:
-            raise RuntimeError(f"Evaluation {run.status}, {run.result_counts.errored} errored item(s): {run.error}")
-
-        # Single-turn, messages input
-        messages = [
-            {"role": "user", "content": [{"type": "text", "text": "What's the weather like in Portland?"}]},
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_weather_portland",
-                        "name": "get_weather",
-                        "arguments": {"location": "Portland"},
-                    }
-                ],
-            },
-            {
-                "role": "tool",
-                "tool_call_id": "call_weather_portland",
-                "content": [{"type": "tool_result", "tool_result": {"weather": "Sunny, 20°C"}}],
-            },
-            {"role": "assistant", "content": [{"type": "text", "text": "It's sunny and 20°C in Portland."}]},
-        ]
-        messages_eval = client.evals.create(
-            name="Test Tool Call Accuracy Evaluator with messages",
-            data_source_config=DataSourceConfigCustom(
-                type="custom",
-                item_schema={
-                    "type": "object",
-                    "properties": {
-                        "messages": {"type": "array", "items": {"type": "object"}},
-                        "tool_definitions": {"type": "array", "items": {"type": "object"}},
-                    },
-                    "required": ["messages", "tool_definitions"],
-                },
-                include_sample_schema=False,
-            ),
-            testing_criteria=[
-                TestingCriterionAzureAIEvaluator(
-                    type="azure_ai_evaluator",
-                    name="tool_call_accuracy_messages",
-                    evaluator_name="builtin.tool_call_accuracy",
-                    initialization_parameters={"deployment_name": model_deployment_name},
-                    data_mapping={
-                        "messages": "{{item.messages}}",
-                        "tool_definitions": "{{item.tool_definitions}}",
-                    },
-                )
-            ],  # type: ignore
-        )
-        try:
-            messages_run = client.evals.runs.create(
-                eval_id=messages_eval.id,
-                name="messages_inline_run",
-                extra_body={"evaluation_level": "turn"},
-                data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl",
-                    source=SourceFileContent(
-                        type="file_content",
-                        content=[
-                            SourceFileContentContent(item={"messages": messages, "tool_definitions": tool_definitions1})
-                        ],
-                    ),
-                ),
-            )
-            while messages_run.status not in ("completed", "failed", "canceled", "cancelled"):
-                time.sleep(5)
-                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
-            print(f"Messages eval run status: {messages_run.status}")
-            print(f"Messages eval run report: {messages_run.report_url}")
-            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
-            if messages_run.status != "completed" or messages_run.result_counts.errored:
-                raise RuntimeError(
-                    f"Messages evaluation {messages_run.status}, "
-                    f"{messages_run.result_counts.errored} errored item(s): {messages_run.error}"
-                )
-        finally:
-            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":

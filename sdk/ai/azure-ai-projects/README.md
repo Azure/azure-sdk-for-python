@@ -63,7 +63,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-* Python 3.10 or later.
+* Python 3.9 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
@@ -231,7 +231,7 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). Logs can include request, response, and transport details that are useful when troubleshooting or reporting an issue to Microsoft.
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
 
 #### Default console logging
 
@@ -261,20 +261,13 @@ openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False
 openai_logger.addHandler(handler)
 
-# Optional: Voice Agent WebSocket transport logger.
-voice_logger = logging.getLogger("azure.ai.projects.realtime")
-voice_logger.setLevel(logging.DEBUG)
-voice_logger.propagate = False
-voice_logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
-# formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-# handler.setFormatter(formatter)
+#formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+#handler.setFormatter(formatter)
 ```
 
-The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
-
-By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
 project_client = AIProjectClient(

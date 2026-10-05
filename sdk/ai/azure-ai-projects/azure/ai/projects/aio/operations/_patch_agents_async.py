@@ -325,6 +325,10 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
+
+class BetaAgentsOperations(BetaAgentsOperationsGenerated):
+    """Custom async operations for beta agent optimization jobs."""
+
     @overload
     async def begin_create_optimization_job(
         self,
@@ -433,7 +437,3 @@ class AgentsOperations(GeneratedAgentsOperations):
         return AsyncAgentOptimizationLROPoller(  # type: ignore
             self._client, raw_result, get_long_running_output, polling_method
         )
-
-
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom async operations for beta agents."""

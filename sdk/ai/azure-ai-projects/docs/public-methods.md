@@ -6,22 +6,21 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 192 unique public methods:
+There are a total of 188 unique public methods:
 
 - 5 stable methods on the client
-- 84 stable methods on top-level sub-clients
-- 103 beta methods on nested beta sub-clients
+- 59 stable methods on top-level sub-clients
+- 124 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `agents` | AgentsOperations | 35 |
+| `agents` | AgentsOperations | 26 |
 | `connections` | ConnectionsOperations | 3 |
-| `datasets` | DatasetsOperations | 14 |
+| `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
-| `evaluators` | EvaluatorsOperations | 11 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
@@ -31,9 +30,10 @@ There are a total of 192 unique public methods:
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
-| `beta.agents` | BetaAgentsOperations | 1 |
+| `beta.agents` | BetaAgentsOperations | 6 |
+| `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
-| `beta.evaluators` | BetaEvaluatorsOperations | 2 |
+| `beta.evaluators` | BetaEvaluatorsOperations | 13 |
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
 | `beta.models` | BetaModelsOperations | 9 |
@@ -62,14 +62,11 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.agents.begin_create_optimization_job*
-.agents.cancel_optimization_job
 .agents.create_session
 .agents.create_version*
 .agents.create_version_from_code*
 .agents.create_version_from_manifest
 .agents.delete
-.agents.delete_optimization_job
 .agents.delete_session
 .agents.delete_session_file
 .agents.delete_version
@@ -77,22 +74,16 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .agents.download_code
 .agents.download_session_file
 .agents.enable
-.agents.estimate_optimization_job
 .agents.get
 .agents.get_microsoft365_package
 .agents.get_microsoft365_publish_defaults
-.agents.get_optimization_candidate
-.agents.get_optimization_job
 .agents.get_session
 .agents.get_session_log_stream
 .agents.get_version
 .agents.list
-.agents.list_optimization_candidates
-.agents.list_optimization_jobs
 .agents.list_session_files
 .agents.list_sessions
 .agents.list_versions
-.agents.promote_optimization_candidate
 .agents.publish_to_microsoft365
 .agents.stop_session
 .agents.update_details
@@ -102,16 +93,11 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .connections.get_default*
 .connections.list
 
-.datasets.begin_create_generation_job*
-.datasets.cancel_generation_job*
 .datasets.create_or_update
 .datasets.delete
-.datasets.delete_generation_job*
 .datasets.get
 .datasets.get_credentials
-.datasets.get_generation_job*
 .datasets.list
-.datasets.list_generation_jobs*
 .datasets.list_versions
 .datasets.pending_upload
 .datasets.upload_file*
@@ -124,18 +110,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .evaluation_rules.delete
 .evaluation_rules.get
 .evaluation_rules.list
-
-.evaluators.begin_create_generation_job*
-.evaluators.cancel_generation_job
-.evaluators.create_version
-.evaluators.delete_generation_job
-.evaluators.delete_version
-.evaluators.get_generation_job
-.evaluators.get_version
-.evaluators.list
-.evaluators.list_generation_jobs
-.evaluators.list_versions
-.evaluators.update_version
 
 .indexes.create_or_update
 .indexes.delete
@@ -175,7 +149,18 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
+.beta.agents.begin_create_optimization_job*
+.beta.agents.cancel_optimization_job
 .beta.agents.create_from_prompt
+.beta.agents.delete_optimization_job
+.beta.agents.get_optimization_job
+.beta.agents.list_optimization_jobs
+
+.beta.datasets.begin_create_generation_job*
+.beta.datasets.cancel_generation_job
+.beta.datasets.delete_generation_job
+.beta.datasets.get_generation_job
+.beta.datasets.list_generation_jobs
 
 .beta.evaluation_taxonomies.create
 .beta.evaluation_taxonomies.delete
@@ -183,8 +168,19 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.evaluation_taxonomies.list
 .beta.evaluation_taxonomies.update
 
+.beta.evaluators.begin_create_generation_job*
+.beta.evaluators.cancel_generation_job
+.beta.evaluators.create_version
+.beta.evaluators.delete_generation_job
+.beta.evaluators.delete_version
 .beta.evaluators.get_credentials
+.beta.evaluators.get_generation_job
+.beta.evaluators.get_version
+.beta.evaluators.list
+.beta.evaluators.list_generation_jobs
+.beta.evaluators.list_versions
 .beta.evaluators.pending_upload
+.beta.evaluators.update_version
 
 .beta.insights.generate
 .beta.insights.get

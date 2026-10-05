@@ -6,15 +6,15 @@
 
 """
 DESCRIPTION:
-    Generates supervised fine-tuning data from a plain-text reference document
+    Generates supervised fine-tuning data from a Markdown reference document
     uploaded as an Azure OpenAI File. The sample:
 
-      1. Uploads `simpleqna_seed_reference.txt` via the Azure OpenAI Files API
+      1. Uploads a short reference document via the Azure OpenAI Files API
          (`purpose=user_data`) so it can be referenced by file id.
-      2. Submits a `SupervisedFineTuningDataGenerationJobInputs` job (scenario
-         `supervised_finetuning_preview`, generation type `simple_qna`) that
-         synthesizes short-answer and long-answer question / answer pairs from
-         the file content and emits them as training and validation JSONL files.
+      2. Creates a `DataGenerationJob` (scenario=SUPERVISED_FINETUNING,
+         type=simple_qna) that synthesizes short-answer and long-answer
+         question / answer pairs from the file content and emits them as
+         training and validation JSONL files.
       3. Waits for job completion and prints every generated file output.
       4. Cleans up the generated fine-tuning files and the Azure OpenAI input file.
 
@@ -22,19 +22,12 @@ DESCRIPTION:
     to synthesize the QnA pairs. Setting `train_split` triggers a split of
     the generated samples into two Azure OpenAI output files.
 
-    Supervised fine-tuning data generation (scenario `supervised_finetuning_preview`),
-    `question_types`, and Azure OpenAI file outputs are preview features. The client
-    automatically sends the required `Foundry-Features: DataGenerationJobs=V1Preview`
-    opt-in header on all data generation job operations.
-
 USAGE:
     python sample_dataset_generation_job_simpleqna_for_finetuning_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv aiohttp
-
-    Keep `simpleqna_seed_reference.txt` in the same directory as this sample.
+    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -51,24 +44,25 @@ USAGE:
 """
 
 import asyncio
+import io
 import os
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import List, Optional
 
 from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    DataGenerationJob,
+    DataGenerationJobInputs,
+    DataGenerationJobOutputOptions,
+    DataGenerationJobScenario,
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
-    SimpleQnADataGenerationJobConfiguration,
+    SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
-    SupervisedFineTuningDataGenerationJobInputs,
-    SupervisedFineTuningDataGenerationJobOutputConfiguration,
 )
 
 load_dotenv()
@@ -88,7 +82,33 @@ if len(output_name) > 50:
         f"Lower DATASET_NAME (currently `{dataset_name}`) so that `<DATASET_NAME>-<run id>` fits within 50 characters."
     )
 
-SEED_REFERENCE_PATH = Path(__file__).with_name("simpleqna_seed_reference.txt")
+# Reference document the sample uploads as an Azure OpenAI file. The service
+# requires the file to contain at least 1 KB of content to generate QnA from.
+SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
+
+## Products
+- Widget: blue, manufactured at Factory 7 in Acme, carbon-fiber, rated to 80 C, sold in packs of 4, 250 g each.
+- Gizmo: red, manufactured at Factory 12 in Bedrock, carbon-fiber, rated to 80 C, sold individually, 1.2 kg each.
+- Sprocket: green, manufactured at Factory 3 in Acme, stainless steel, rated to 200 C, sold individually, 500 g each.
+
+## Operations
+- Factory operates weekdays 0700-1900 local time.
+- Closed on public holidays, except for the annual maintenance run on December 27.
+- ISO 9001 certified; audited annually by an independent third party.
+- Quality control samples every 100th unit and runs full destructive testing on every 5000th unit.
+
+## Customer support
+- Warranty claims: email support@example.com with the serial number printed on the underside of the product.
+- Returns: accepted within 30 days if unopened; opened items are eligible for repair only.
+- Bulk orders (50+ units): contact sales@example.com for volume pricing and an extended 90-day return window.
+- Replacement parts: orderable directly from the support portal using the original order number.
+
+## Pricing and SLAs
+- Widget pack: USD 24.99 per 4-pack; free shipping on orders over USD 75.
+- Gizmo unit: USD 49.99; free shipping on orders over USD 75.
+- Sprocket unit: USD 14.99; ships from regional warehouses in 1-2 business days.
+- Standard support response: within one business day. Priority support response: within four hours.
+"""
 
 
 async def main() -> None:
@@ -98,50 +118,44 @@ async def main() -> None:
         project_client.get_openai_client() as openai_client,
     ):
 
-        seed_file_id: Optional[str] = None
-        generated_file_ids: List[str] = []
+        # ------------------------------------------------------------------
+        # 1. Upload the seed reference document as an Azure OpenAI file.
+        # ------------------------------------------------------------------
+        seed_filename = f"widgets-gizmos-seed-{run_id}.md"
+        print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
+        seed_file = await openai_client.files.create(
+            file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8"))),
+            purpose="user_data",
+        )
+        print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
 
-        try:
-            # ------------------------------------------------------------------
-            # 1. Upload the seed reference document as an Azure OpenAI file.
-            # ------------------------------------------------------------------
-            seed_filename = SEED_REFERENCE_PATH.name
-            print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
-            with SEED_REFERENCE_PATH.open("rb") as seed_stream:
-                seed_file = await openai_client.files.create(
-                    file=(seed_filename, seed_stream, "text/plain"),
-                    purpose="user_data",
-                )
-            seed_file_id = seed_file.id
-            print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
+        # Wait for the file to finish processing — the data generation service
+        # rejects references to files that are not yet in the `processed` state.
+        print("Wait for the Azure OpenAI file to be processed.", end="", flush=True)
+        while seed_file.status not in ("processed", "error"):
+            await asyncio.sleep(2)
+            seed_file = await openai_client.files.retrieve(file_id=seed_file.id)
+            print(".", end="", flush=True)
+        print()
+        if seed_file.status != "processed":
+            raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
 
-            # Wait for the file to finish processing — the data generation service
-            # rejects references to files that are not yet in the `processed` state.
-            print("Wait for the Azure OpenAI file to be processed.", end="", flush=True)
-            while seed_file.status not in ("processed", "error"):
-                await asyncio.sleep(2)
-                seed_file = await openai_client.files.retrieve(file_id=seed_file.id)
-                print(".", end="", flush=True)
-            print()
-            if seed_file.status != "processed":
-                raise RuntimeError(
-                    f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`."
-                )
+        # ------------------------------------------------------------------
+        # 2. Submit a fine-tuning data generation job that consumes the file.
+        # ------------------------------------------------------------------
 
-            # ------------------------------------------------------------------
-            # 2. Submit a fine-tuning data generation job that consumes the file.
-            # ------------------------------------------------------------------
-
-            job = SupervisedFineTuningDataGenerationJobInputs(
+        job = DataGenerationJob(
+            inputs=DataGenerationJobInputs(
                 name=f"simpleqna-finetuning-{run_id}",
+                scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
                 sources=[
                     FileDataGenerationJobSource(
-                        description="Synthetic primary care conversation reference (Azure OpenAI file).",
+                        description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
                         id=seed_file.id,
                     ),
                 ],
-                generation_configuration=SimpleQnADataGenerationJobConfiguration(
-                    # For fine-tuning jobs, the service requires max_samples to be between 15 and 1000.
+                options=SimpleQnADataGenerationJobOptions(
+                    # Service requires max_samples to be between 15 and 1000.
                     max_samples=15,
                     # `simple_qna` REQUIRES model_options.
                     model_options=DataGenerationModelOptions(model=model_name),
@@ -153,60 +167,51 @@ async def main() -> None:
                         SimpleQnAFineTuningQuestionType.LONG_ANSWER,
                     ],
                 ),
-                output_configuration=SupervisedFineTuningDataGenerationJobOutputConfiguration(name=output_name),
-            )
+                output_options=DataGenerationJobOutputOptions(name=output_name),
+            ),
+        )
 
-            print("Begin creating a dataset generation job.")
-            poller = await project_client.datasets.begin_create_generation_job(
-                job=job,
-                polling_interval=poll_interval_seconds,
-            )
+        print("Begin creating a dataset generation job.")
+        poller = await project_client.beta.datasets.begin_create_generation_job(
+            job=job,
+            polling_interval=poll_interval_seconds,
+        )
 
-            print("Waiting for the dataset generation job to complete.")
-            job_result = await poller.result()
-            print(f"Data generation result: {job_result}")
+        print("Waiting for the dataset generation job to complete.")
+        job_result = await poller.result()
+        print(f"Data generation result: {job_result}")
 
-            # ------------------------------------------------------------------
-            # 3. Inspect the generated fine-tuning file outputs.
-            # ------------------------------------------------------------------
-            # `train_split=0.8` produces two Azure OpenAI files: a training partition
-            # and a validation partition. Both are emitted as FileDataGenerationJobOutput
-            # entries in `job_result.outputs`.
-            file_outputs = [
-                output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)
-            ]
-            if not file_outputs:
-                raise RuntimeError("The data generation job did not produce any file outputs.")
+        # ------------------------------------------------------------------
+        # 3. Inspect the generated fine-tuning file outputs.
+        # ------------------------------------------------------------------
+        # `train_split=0.8` produces two Azure OpenAI files: a training partition
+        # and a validation partition. Both are emitted as FileDataGenerationJobOutput
+        # entries in `job_result.outputs`.
+        file_outputs = [
+            output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)
+        ]
+        if not file_outputs:
+            raise RuntimeError("The data generation job did not produce any file outputs.")
 
-            print(f"Generated {len(file_outputs)} fine-tuning file(s):")
-            for output in file_outputs:
-                if not output.id:
-                    raise RuntimeError("A file output was returned without an id.")
-                generated_file_ids.append(output.id)
-                # Resolve the Azure OpenAI file to surface its real filename and size.
-                file_info = await openai_client.files.retrieve(file_id=output.id)
-                print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
-            if job_result.generated_samples is not None:
-                print(f"Generated samples: {job_result.generated_samples}")
+        print(f"Generated {len(file_outputs)} fine-tuning file(s):")
+        for output in file_outputs:
+            if not output.id:
+                raise RuntimeError("A file output was returned without an id.")
+            # Resolve the Azure OpenAI file to surface its real filename and size.
+            file_info = await openai_client.files.retrieve(file_id=output.id)
+            print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
-        finally:
-            # ------------------------------------------------------------------
-            # 4. Clean up (best effort, so partial failures do not leak resources).
-            # ------------------------------------------------------------------
-            # Delete the generated files.
-            for generated_file_id in generated_file_ids:
-                print(f"Delete the generated Azure OpenAI file `{generated_file_id}`.")
-                try:
-                    await openai_client.files.delete(file_id=generated_file_id)
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete Azure OpenAI file `{generated_file_id}`: {exc}")
+        # ------------------------------------------------------------------
+        # 4. Clean up.
+        # ------------------------------------------------------------------
+        for output in file_outputs:
+            print(f"Delete the generated Azure OpenAI file `{output.id}`.")
+            await openai_client.files.delete(file_id=output.id)
 
-            if seed_file_id:
-                print(f"Delete the Azure OpenAI input file `{seed_file_id}`.")
-                try:
-                    await openai_client.files.delete(file_id=seed_file_id)
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    print(f"  (warning) could not delete Azure OpenAI file `{seed_file_id}`: {exc}")
+        print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
+        await openai_client.files.delete(file_id=seed_file.id)
 
 
 if __name__ == "__main__":

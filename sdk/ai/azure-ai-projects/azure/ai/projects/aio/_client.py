@@ -23,7 +23,6 @@ from .operations import (
     DatasetsOperations,
     DeploymentsOperations,
     EvaluationRulesOperations,
-    EvaluatorsOperations,
     IndexesOperations,
     ToolboxesOperations,
 )
@@ -46,16 +45,14 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
     :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
-    :ivar datasets: DatasetsOperations operations
-    :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
+    :ivar datasets: DatasetsOperations operations
+    :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
-    :ivar evaluators: EvaluatorsOperations operations
-    :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar toolboxes: ToolboxesOperations operations
     :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
@@ -112,11 +109,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(

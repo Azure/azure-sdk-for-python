@@ -168,7 +168,7 @@ namespace azure.mgmt.computefleet.aio.operations
             ) -> AsyncItemPaged[VirtualMachineScaleSet]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'filter', 'skiptoken', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-06-01-preview', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'filter', 'skiptoken', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-06-01-preview'])
         def list_virtual_machines(
                 self, 
                 resource_group_name: str, 
@@ -624,6 +624,7 @@ namespace azure.mgmt.computefleet.models
         vm_attributes: Optional[VMAttributes]
         vm_name_prefix: Optional[str]
         vm_sizes_profile: list[VmSizeProfile]
+        zone_allocation_policy: Optional[ZoneAllocationPolicy]
 
         @overload
         def __init__(
@@ -637,7 +638,8 @@ namespace azure.mgmt.computefleet.models
                 spot_priority_profile: Optional[SpotPriorityProfile] = ..., 
                 vm_attributes: Optional[VMAttributes] = ..., 
                 vm_name_prefix: Optional[str] = ..., 
-                vm_sizes_profile: list[VmSizeProfile]
+                vm_sizes_profile: list[VmSizeProfile], 
+                zone_allocation_policy: Optional[ZoneAllocationPolicy] = ...
             ) -> None: ...
 
         @overload
@@ -2093,6 +2095,43 @@ namespace azure.mgmt.computefleet.models
         MANUAL = "Manual"
 
 
+    class azure.mgmt.computefleet.models.ZoneAllocationPolicy(_Model):
+        distribution_strategy: Union[str, ZoneDistributionStrategy]
+        zone_preferences: Optional[list[ZonePreference]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                distribution_strategy: Union[str, ZoneDistributionStrategy], 
+                zone_preferences: Optional[list[ZonePreference]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.computefleet.models.ZoneDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
+        PRIORITIZED = "Prioritized"
+
+
+    class azure.mgmt.computefleet.models.ZonePreference(_Model):
+        rank: Optional[int]
+        zone: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rank: Optional[int] = ..., 
+                zone: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
 namespace azure.mgmt.computefleet.operations
 
     class azure.mgmt.computefleet.operations.FleetsOperations:
@@ -2204,7 +2243,7 @@ namespace azure.mgmt.computefleet.operations
             ) -> ItemPaged[VirtualMachineScaleSet]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'filter', 'skiptoken', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-06-01-preview', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'name', 'filter', 'skiptoken', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-06-01-preview'])
         def list_virtual_machines(
                 self, 
                 resource_group_name: str, 
@@ -2233,13 +2272,13 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.AdditionalCapabilities(TypedDict, total=False):
         key "hibernationEnabled": bool
         key "ultraSSDEnabled": bool
-        hibernationEnabled: bool
-        ultraSSDEnabled: bool
+        hibernation_enabled: bool
+        ultra_ssd_enabled: bool
 
 
     class azure.mgmt.computefleet.types.AdditionalLocationsProfile(TypedDict, total=False):
         key "locationProfiles": Required[list[LocationProfile]]
-        locationProfiles: list[LocationProfile]
+        location_profiles: list[LocationProfile]
 
 
     class azure.mgmt.computefleet.types.AdditionalUnattendContent(TypedDict, total=False):
@@ -2247,10 +2286,10 @@ namespace azure.mgmt.computefleet.types
         key "content": str
         key "passName": Literal["OobeSystem"]
         key "settingName": Union[str, SettingNames]
-        componentName: Literal[Microsoft-Windows-Shell-Setup]
+        component_name: Literal[Microsoft-Windows-Shell-Setup]
         content: str
-        passName: Literal[OobeSystem]
-        settingName: Union[str, SettingNames]
+        pass_name: Literal[OobeSystem]
+        setting_name: Union[str, SettingNames]
 
 
     class azure.mgmt.computefleet.types.ApiEntityReference(TypedDict, total=False):
@@ -2260,6 +2299,7 @@ namespace azure.mgmt.computefleet.types
 
     class azure.mgmt.computefleet.types.ApplicationProfile(TypedDict, total=False):
         galleryApplications: list[VMGalleryApplication]
+        gallery_applications: list[VMGalleryApplication]
 
 
     class azure.mgmt.computefleet.types.BaseVirtualMachineProfile(TypedDict, total=False):
@@ -2278,33 +2318,33 @@ namespace azure.mgmt.computefleet.types
         key "storageProfile": ForwardRef('VirtualMachineScaleSetStorageProfile', module='types')
         key "timeCreated": str
         key "userData": str
-        applicationProfile: ApplicationProfile
-        capacityReservation: CapacityReservationProfile
-        diagnosticsProfile: DiagnosticsProfile
-        extensionProfile: VirtualMachineScaleSetExtensionProfile
-        hardwareProfile: VirtualMachineScaleSetHardwareProfile
-        licenseType: str
-        networkProfile: VirtualMachineScaleSetNetworkProfile
-        osProfile: VirtualMachineScaleSetOSProfile
-        scheduledEventsProfile: ScheduledEventsProfile
-        securityPostureReference: SecurityPostureReference
-        securityProfile: SecurityProfile
-        serviceArtifactReference: ServiceArtifactReference
-        storageProfile: VirtualMachineScaleSetStorageProfile
-        timeCreated: str
-        userData: str
+        application_profile: ApplicationProfile
+        capacity_reservation: CapacityReservationProfile
+        diagnostics_profile: DiagnosticsProfile
+        extension_profile: VirtualMachineScaleSetExtensionProfile
+        hardware_profile: VirtualMachineScaleSetHardwareProfile
+        license_type: str
+        network_profile: VirtualMachineScaleSetNetworkProfile
+        os_profile: VirtualMachineScaleSetOSProfile
+        scheduled_events_profile: ScheduledEventsProfile
+        security_posture_reference: SecurityPostureReference
+        security_profile: SecurityProfile
+        service_artifact_reference: ServiceArtifactReference
+        storage_profile: VirtualMachineScaleSetStorageProfile
+        time_created: str
+        user_data: str
 
 
     class azure.mgmt.computefleet.types.BootDiagnostics(TypedDict, total=False):
         key "enabled": bool
         key "storageUri": str
         enabled: bool
-        storageUri: str
+        storage_uri: str
 
 
     class azure.mgmt.computefleet.types.CapacityReservationProfile(TypedDict, total=False):
         key "capacityReservationGroup": ForwardRef('SubResource', module='types')
-        capacityReservationGroup: SubResource
+        capacity_reservation_group: SubResource
 
 
     class azure.mgmt.computefleet.types.ComputeProfile(TypedDict, total=False):
@@ -2312,15 +2352,15 @@ namespace azure.mgmt.computefleet.types
         key "baseVirtualMachineProfile": Required[BaseVirtualMachineProfile]
         key "computeApiVersion": str
         key "platformFaultDomainCount": int
-        additionalVirtualMachineCapabilities: AdditionalCapabilities
-        baseVirtualMachineProfile: BaseVirtualMachineProfile
-        computeApiVersion: str
-        platformFaultDomainCount: int
+        additional_virtual_machine_capabilities: AdditionalCapabilities
+        base_virtual_machine_profile: BaseVirtualMachineProfile
+        compute_api_version: str
+        platform_fault_domain_count: int
 
 
     class azure.mgmt.computefleet.types.DiagnosticsProfile(TypedDict, total=False):
         key "bootDiagnostics": ForwardRef('BootDiagnostics', module='types')
-        bootDiagnostics: BootDiagnostics
+        boot_diagnostics: BootDiagnostics
 
 
     class azure.mgmt.computefleet.types.DiffDiskSettings(TypedDict, total=False):
@@ -2337,7 +2377,7 @@ namespace azure.mgmt.computefleet.types
 
     class azure.mgmt.computefleet.types.EncryptionIdentity(TypedDict, total=False):
         key "userAssignedIdentityResourceId": str
-        userAssignedIdentityResourceId: str
+        user_assigned_identity_resource_id: str
 
 
     class azure.mgmt.computefleet.types.Fleet(TrackedResource):
@@ -2355,7 +2395,7 @@ namespace azure.mgmt.computefleet.types
         name: str
         plan: Plan
         properties: FleetProperties
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
         zones: list[str]
@@ -2374,18 +2414,20 @@ namespace azure.mgmt.computefleet.types
         key "vmAttributes": ForwardRef('VMAttributes', module='types')
         key "vmNamePrefix": str
         key "vmSizesProfile": Required[list[VmSizeProfile]]
-        additionalLocationsProfile: AdditionalLocationsProfile
-        capacityType: Union[str, CapacityType]
-        computeProfile: ComputeProfile
+        key "zoneAllocationPolicy": ForwardRef('ZoneAllocationPolicy', module='types')
+        additional_locations_profile: AdditionalLocationsProfile
+        capacity_type: Union[str, CapacityType]
+        compute_profile: ComputeProfile
         mode: Union[str, FleetMode]
-        provisioningState: Union[str, ProvisioningState]
-        regularPriorityProfile: RegularPriorityProfile
-        spotPriorityProfile: SpotPriorityProfile
-        timeCreated: str
-        uniqueId: str
-        vmAttributes: VMAttributes
-        vmNamePrefix: str
-        vmSizesProfile: list[VmSizeProfile]
+        provisioning_state: Union[str, ProvisioningState]
+        regular_priority_profile: RegularPriorityProfile
+        spot_priority_profile: SpotPriorityProfile
+        time_created: str
+        unique_id: str
+        vm_attributes: VMAttributes
+        vm_name_prefix: str
+        vm_sizes_profile: list[VmSizeProfile]
+        zone_allocation_policy: ZoneAllocationPolicy
 
 
     class azure.mgmt.computefleet.types.FleetUpdate(TypedDict, total=False):
@@ -2407,12 +2449,12 @@ namespace azure.mgmt.computefleet.types
         key "sharedGalleryImageId": str
         key "sku": str
         key "version": str
-        communityGalleryImageId: str
-        exactVersion: str
+        community_gallery_image_id: str
+        exact_version: str
         id: str
         offer: str
         publisher: str
-        sharedGalleryImageId: str
+        shared_gallery_image_id: str
         sku: str
         version: str
 
@@ -2420,8 +2462,8 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.KeyVaultSecretReference(TypedDict, total=False):
         key "secretUrl": Required[str]
         key "sourceVault": Required[SubResource]
-        secretUrl: str
-        sourceVault: SubResource
+        secret_url: str
+        source_vault: SubResource
 
 
     class azure.mgmt.computefleet.types.LinuxConfiguration(TypedDict, total=False):
@@ -2430,10 +2472,10 @@ namespace azure.mgmt.computefleet.types
         key "patchSettings": ForwardRef('LinuxPatchSettings', module='types')
         key "provisionVMAgent": bool
         key "ssh": ForwardRef('SshConfiguration', module='types')
-        disablePasswordAuthentication: bool
-        enableVMAgentPlatformUpdates: bool
-        patchSettings: LinuxPatchSettings
-        provisionVMAgent: bool
+        disable_password_authentication: bool
+        enable_vm_agent_platform_updates: bool
+        patch_settings: LinuxPatchSettings
+        provision_vm_agent: bool
         ssh: SshConfiguration
 
 
@@ -2441,46 +2483,48 @@ namespace azure.mgmt.computefleet.types
         key "assessmentMode": Union[str, LinuxPatchAssessmentMode]
         key "automaticByPlatformSettings": ForwardRef('LinuxVMGuestPatchAutomaticByPlatformSettings', module='types')
         key "patchMode": Union[str, LinuxVMGuestPatchMode]
-        assessmentMode: Union[str, LinuxPatchAssessmentMode]
-        automaticByPlatformSettings: LinuxVMGuestPatchAutomaticByPlatformSettings
-        patchMode: Union[str, LinuxVMGuestPatchMode]
+        assessment_mode: Union[str, LinuxPatchAssessmentMode]
+        automatic_by_platform_settings: LinuxVMGuestPatchAutomaticByPlatformSettings
+        patch_mode: Union[str, LinuxVMGuestPatchMode]
 
 
     class azure.mgmt.computefleet.types.LinuxVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):
         key "bypassPlatformSafetyChecksOnUserSchedule": bool
         key "rebootSetting": Union[str, LinuxVMGuestPatchAutomaticByPlatformRebootSetting]
-        bypassPlatformSafetyChecksOnUserSchedule: bool
-        rebootSetting: Union[str, LinuxVMGuestPatchAutomaticByPlatformRebootSetting]
+        bypass_platform_safety_checks_on_user_schedule: bool
+        reboot_setting: Union[str, LinuxVMGuestPatchAutomaticByPlatformRebootSetting]
 
 
     class azure.mgmt.computefleet.types.LocationProfile(TypedDict, total=False):
         key "location": Required[str]
         key "virtualMachineProfileOverride": ForwardRef('BaseVirtualMachineProfile', module='types')
         location: str
-        virtualMachineProfileOverride: BaseVirtualMachineProfile
+        virtual_machine_profile_override: BaseVirtualMachineProfile
 
 
     class azure.mgmt.computefleet.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principalId: str
-        tenantId: str
+        principal_id: str
+        tenant_id: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
+        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.computefleet.types.ManagedServiceIdentityUpdate(TypedDict, total=False):
         key "type": Union[str, ManagedServiceIdentityType]
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
+        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.computefleet.types.OSImageNotificationProfile(TypedDict, total=False):
         key "enable": bool
         key "notBeforeTimeout": str
         enable: bool
-        notBeforeTimeout: str
+        not_before_timeout: str
 
 
     class azure.mgmt.computefleet.types.PatchSettings(TypedDict, total=False):
@@ -2488,10 +2532,10 @@ namespace azure.mgmt.computefleet.types
         key "automaticByPlatformSettings": ForwardRef('WindowsVMGuestPatchAutomaticByPlatformSettings', module='types')
         key "enableHotpatching": bool
         key "patchMode": Union[str, WindowsVMGuestPatchMode]
-        assessmentMode: Union[str, WindowsPatchAssessmentMode]
-        automaticByPlatformSettings: WindowsVMGuestPatchAutomaticByPlatformSettings
-        enableHotpatching: bool
-        patchMode: Union[str, WindowsVMGuestPatchMode]
+        assessment_mode: Union[str, WindowsPatchAssessmentMode]
+        automatic_by_platform_settings: WindowsVMGuestPatchAutomaticByPlatformSettings
+        enable_hotpatching: bool
+        patch_mode: Union[str, WindowsVMGuestPatchMode]
 
 
     class azure.mgmt.computefleet.types.Plan(TypedDict, total=False):
@@ -2502,7 +2546,7 @@ namespace azure.mgmt.computefleet.types
         key "version": str
         name: str
         product: str
-        promotionCode: str
+        promotion_code: str
         publisher: str
         version: str
 
@@ -2512,7 +2556,7 @@ namespace azure.mgmt.computefleet.types
         key "keyIncarnationId": int
         key "mode": Union[str, Mode]
         enabled: bool
-        keyIncarnationId: int
+        key_incarnation_id: int
         mode: Union[str, Mode]
 
 
@@ -2527,9 +2571,9 @@ namespace azure.mgmt.computefleet.types
         key "allocationStrategy": Union[str, RegularPriorityAllocationStrategy]
         key "capacity": int
         key "minCapacity": int
-        allocationStrategy: Union[str, RegularPriorityAllocationStrategy]
+        allocation_strategy: Union[str, RegularPriorityAllocationStrategy]
         capacity: int
-        minCapacity: int
+        min_capacity: int
 
 
     class azure.mgmt.computefleet.types.Resource(TypedDict, total=False):
@@ -2539,7 +2583,7 @@ namespace azure.mgmt.computefleet.types
         key "type": str
         id: str
         name: str
-        systemData: SystemData
+        system_data: SystemData
         type: str
 
 
@@ -2551,7 +2595,7 @@ namespace azure.mgmt.computefleet.types
         key "version": str
         name: str
         product: str
-        promotionCode: str
+        promotion_code: str
         publisher: str
         version: str
 
@@ -2559,16 +2603,17 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.ScheduledEventsProfile(TypedDict, total=False):
         key "osImageNotificationProfile": ForwardRef('OSImageNotificationProfile', module='types')
         key "terminateNotificationProfile": ForwardRef('TerminateNotificationProfile', module='types')
-        osImageNotificationProfile: OSImageNotificationProfile
-        terminateNotificationProfile: TerminateNotificationProfile
+        os_image_notification_profile: OSImageNotificationProfile
+        terminate_notification_profile: TerminateNotificationProfile
 
 
     class azure.mgmt.computefleet.types.SecurityPostureReference(TypedDict, total=False):
         key "id": str
         key "isOverridable": bool
         excludeExtensions: list[str]
+        exclude_extensions: list[str]
         id: str
-        isOverridable: bool
+        is_overridable: bool
 
 
     class azure.mgmt.computefleet.types.SecurityProfile(TypedDict, total=False):
@@ -2577,11 +2622,11 @@ namespace azure.mgmt.computefleet.types
         key "proxyAgentSettings": ForwardRef('ProxyAgentSettings', module='types')
         key "securityType": Union[str, SecurityTypes]
         key "uefiSettings": ForwardRef('UefiSettings', module='types')
-        encryptionAtHost: bool
-        encryptionIdentity: EncryptionIdentity
-        proxyAgentSettings: ProxyAgentSettings
-        securityType: Union[str, SecurityTypes]
-        uefiSettings: UefiSettings
+        encryption_at_host: bool
+        encryption_identity: EncryptionIdentity
+        proxy_agent_settings: ProxyAgentSettings
+        security_type: Union[str, SecurityTypes]
+        uefi_settings: UefiSettings
 
 
     class azure.mgmt.computefleet.types.ServiceArtifactReference(TypedDict, total=False):
@@ -2596,22 +2641,23 @@ namespace azure.mgmt.computefleet.types
         key "maintain": bool
         key "maxPricePerVM": float
         key "minCapacity": int
-        allocationStrategy: Union[str, SpotAllocationStrategy]
+        allocation_strategy: Union[str, SpotAllocationStrategy]
         capacity: int
-        evictionPolicy: Union[str, EvictionPolicy]
+        eviction_policy: Union[str, EvictionPolicy]
         maintain: bool
-        maxPricePerVM: float
-        minCapacity: int
+        max_price_per_vm: float
+        min_capacity: int
 
 
     class azure.mgmt.computefleet.types.SshConfiguration(TypedDict, total=False):
         publicKeys: list[SshPublicKey]
+        public_keys: list[SshPublicKey]
 
 
     class azure.mgmt.computefleet.types.SshPublicKey(TypedDict, total=False):
         key "keyData": str
         key "path": str
-        keyData: str
+        key_data: str
         path: str
 
 
@@ -2627,19 +2673,19 @@ namespace azure.mgmt.computefleet.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        createdAt: str
-        createdBy: str
-        createdByType: Union[str, CreatedByType]
-        lastModifiedAt: str
-        lastModifiedBy: str
-        lastModifiedByType: Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
 
 
     class azure.mgmt.computefleet.types.TerminateNotificationProfile(TypedDict, total=False):
         key "enable": bool
         key "notBeforeTimeout": str
         enable: bool
-        notBeforeTimeout: str
+        not_before_timeout: str
 
 
     class azure.mgmt.computefleet.types.TrackedResource(Resource):
@@ -2651,7 +2697,7 @@ namespace azure.mgmt.computefleet.types
         id: str
         location: str
         name: str
-        systemData: SystemData
+        system_data: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2659,15 +2705,15 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.UefiSettings(TypedDict, total=False):
         key "secureBootEnabled": bool
         key "vTpmEnabled": bool
-        secureBootEnabled: bool
-        vTpmEnabled: bool
+        secure_boot_enabled: bool
+        v_tpm_enabled: bool
 
 
     class azure.mgmt.computefleet.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        clientId: str
-        principalId: str
+        client_id: str
+        principal_id: str
 
 
     class azure.mgmt.computefleet.types.VMAttributeMinMaxDouble(TypedDict, total=False):
@@ -2698,33 +2744,40 @@ namespace azure.mgmt.computefleet.types
         key "rdmaNetworkInterfaceCount": ForwardRef('VMAttributeMinMaxInteger', module='types')
         key "rdmaSupport": Union[str, VMAttributeSupport]
         key "vCpuCount": Required[VMAttributeMinMaxInteger]
-        acceleratorCount: VMAttributeMinMaxInteger
         acceleratorManufacturers: list[Union[str, AcceleratorManufacturer]]
-        acceleratorSupport: Union[str, VMAttributeSupport]
         acceleratorTypes: list[Union[str, AcceleratorType]]
+        accelerator_count: VMAttributeMinMaxInteger
+        accelerator_manufacturers: list[Union[str, AcceleratorManufacturer]]
+        accelerator_support: Union[str, VMAttributeSupport]
+        accelerator_types: list[Union[str, AcceleratorType]]
         architectureTypes: list[Union[str, ArchitectureType]]
-        burstableSupport: Union[str, VMAttributeSupport]
+        architecture_types: list[Union[str, ArchitectureType]]
+        burstable_support: Union[str, VMAttributeSupport]
         cpuManufacturers: list[Union[str, CpuManufacturer]]
-        dataDiskCount: VMAttributeMinMaxInteger
+        cpu_manufacturers: list[Union[str, CpuManufacturer]]
+        data_disk_count: VMAttributeMinMaxInteger
         excludedVMSizes: list[str]
+        excluded_vm_sizes: list[str]
         localStorageDiskTypes: list[Union[str, LocalStorageDiskType]]
-        localStorageInGiB: VMAttributeMinMaxDouble
-        localStorageSupport: Union[str, VMAttributeSupport]
-        memoryInGiB: VMAttributeMinMaxDouble
-        memoryInGiBPerVCpu: VMAttributeMinMaxDouble
-        networkBandwidthInMbps: VMAttributeMinMaxDouble
-        networkInterfaceCount: VMAttributeMinMaxInteger
-        rdmaNetworkInterfaceCount: VMAttributeMinMaxInteger
-        rdmaSupport: Union[str, VMAttributeSupport]
-        vCpuCount: VMAttributeMinMaxInteger
+        local_storage_disk_types: list[Union[str, LocalStorageDiskType]]
+        local_storage_in_gi_b: VMAttributeMinMaxDouble
+        local_storage_support: Union[str, VMAttributeSupport]
+        memory_in_gi_b: VMAttributeMinMaxDouble
+        memory_in_gi_b_per_v_cpu: VMAttributeMinMaxDouble
+        network_bandwidth_in_mbps: VMAttributeMinMaxDouble
+        network_interface_count: VMAttributeMinMaxInteger
+        rdma_network_interface_count: VMAttributeMinMaxInteger
+        rdma_support: Union[str, VMAttributeSupport]
+        v_cpu_count: VMAttributeMinMaxInteger
         vmCategories: list[Union[str, VMCategory]]
+        vm_categories: list[Union[str, VMCategory]]
 
 
     class azure.mgmt.computefleet.types.VMDiskSecurityProfile(TypedDict, total=False):
         key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
         key "securityEncryptionType": Union[str, SecurityEncryptionTypes]
-        diskEncryptionSet: DiskEncryptionSetParameters
-        securityEncryptionType: Union[str, SecurityEncryptionTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        security_encryption_type: Union[str, SecurityEncryptionTypes]
 
 
     class azure.mgmt.computefleet.types.VMGalleryApplication(TypedDict, total=False):
@@ -2734,32 +2787,33 @@ namespace azure.mgmt.computefleet.types
         key "packageReferenceId": Required[str]
         key "tags": str
         key "treatFailureAsDeploymentFailure": bool
-        configurationReference: str
-        enableAutomaticUpgrade: bool
+        configuration_reference: str
+        enable_automatic_upgrade: bool
         order: int
-        packageReferenceId: str
+        package_reference_id: str
         tags: str
-        treatFailureAsDeploymentFailure: bool
+        treat_failure_as_deployment_failure: bool
 
 
     class azure.mgmt.computefleet.types.VMSizeProperties(TypedDict, total=False):
         key "vCPUsAvailable": int
         key "vCPUsPerCore": int
-        vCPUsAvailable: int
-        vCPUsPerCore: int
+        v_cpus_available: int
+        v_cpus_per_core: int
 
 
     class azure.mgmt.computefleet.types.VaultCertificate(TypedDict, total=False):
         key "certificateStore": str
         key "certificateUrl": str
-        certificateStore: str
-        certificateUrl: str
+        certificate_store: str
+        certificate_url: str
 
 
     class azure.mgmt.computefleet.types.VaultSecretGroup(TypedDict, total=False):
         key "sourceVault": ForwardRef('SubResource', module='types')
-        sourceVault: SubResource
+        source_vault: SubResource
         vaultCertificates: list[VaultCertificate]
+        vault_certificates: list[VaultCertificate]
 
 
     class azure.mgmt.computefleet.types.VirtualHardDisk(TypedDict, total=False):
@@ -2779,15 +2833,15 @@ namespace azure.mgmt.computefleet.types
         key "name": str
         key "writeAcceleratorEnabled": bool
         caching: Union[str, CachingTypes]
-        createOption: Union[str, DiskCreateOptionTypes]
-        deleteOption: Union[str, DiskDeleteOptionTypes]
-        diskIOPSReadWrite: int
-        diskMBpsReadWrite: int
-        diskSizeGB: int
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        disk_iops_read_write: int
+        disk_m_bps_read_write: int
+        disk_size_gb: int
         lun: int
-        managedDisk: VirtualMachineScaleSetManagedDiskParameters
+        managed_disk: VirtualMachineScaleSetManagedDiskParameters
         name: str
-        writeAcceleratorEnabled: bool
+        write_accelerator_enabled: bool
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetExtension(TypedDict, total=False):
@@ -2804,7 +2858,7 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetExtensionProfile(TypedDict, total=False):
         key "extensionsTimeBudget": str
         extensions: list[VirtualMachineScaleSetExtension]
-        extensionsTimeBudget: str
+        extensions_time_budget: str
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetExtensionProperties(TypedDict, total=False):
@@ -2817,23 +2871,25 @@ namespace azure.mgmt.computefleet.types
         key "suppressFailures": bool
         key "type": str
         key "typeHandlerVersion": str
-        autoUpgradeMinorVersion: bool
-        enableAutomaticUpgrade: bool
-        forceUpdateTag: str
+        auto_upgrade_minor_version: bool
+        enable_automatic_upgrade: bool
+        force_update_tag: str
         protectedSettings: dict[str, Any]
-        protectedSettingsFromKeyVault: KeyVaultSecretReference
+        protected_settings: dict[str, Any]
+        protected_settings_from_key_vault: KeyVaultSecretReference
         provisionAfterExtensions: list[str]
-        provisioningState: str
+        provision_after_extensions: list[str]
+        provisioning_state: str
         publisher: str
         settings: dict[str, Any]
-        suppressFailures: bool
+        suppress_failures: bool
         type: str
-        typeHandlerVersion: str
+        type_handler_version: str
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetHardwareProfile(TypedDict, total=False):
         key "vmSizeProperties": ForwardRef('VMSizeProperties', module='types')
-        vmSizeProperties: VMSizeProperties
+        vm_size_properties: VMSizeProperties
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetIPConfiguration(TypedDict, total=False):
@@ -2850,18 +2906,22 @@ namespace azure.mgmt.computefleet.types
         key "subnet": ForwardRef('ApiEntityReference', module='types')
         applicationGatewayBackendAddressPools: list[SubResource]
         applicationSecurityGroups: list[SubResource]
+        application_gateway_backend_address_pools: list[SubResource]
+        application_security_groups: list[SubResource]
         loadBalancerBackendAddressPools: list[SubResource]
         loadBalancerInboundNatPools: list[SubResource]
+        load_balancer_backend_address_pools: list[SubResource]
+        load_balancer_inbound_nat_pools: list[SubResource]
         primary: bool
-        privateIPAddressVersion: Union[str, IPVersion]
-        publicIPAddressConfiguration: VirtualMachineScaleSetPublicIPAddressConfiguration
+        private_ip_address_version: Union[str, IPVersion]
+        public_ip_address_configuration: VirtualMachineScaleSetPublicIPAddressConfiguration
         subnet: ApiEntityReference
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetIpTag(TypedDict, total=False):
         key "ipTagType": str
         key "tag": str
-        ipTagType: str
+        ip_tag_type: str
         tag: str
 
 
@@ -2869,9 +2929,9 @@ namespace azure.mgmt.computefleet.types
         key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
         key "securityProfile": ForwardRef('VMDiskSecurityProfile', module='types')
         key "storageAccountType": Union[str, StorageAccountTypes]
-        diskEncryptionSet: DiskEncryptionSetParameters
-        securityProfile: VMDiskSecurityProfile
-        storageAccountType: Union[str, StorageAccountTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        security_profile: VMDiskSecurityProfile
+        storage_account_type: Union[str, StorageAccountTypes]
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetNetworkConfiguration(TypedDict, total=False):
@@ -2883,6 +2943,7 @@ namespace azure.mgmt.computefleet.types
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetNetworkConfigurationDnsSettings(TypedDict, total=False):
         dnsServers: list[str]
+        dns_servers: list[str]
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetNetworkConfigurationProperties(TypedDict, total=False):
@@ -2897,25 +2958,26 @@ namespace azure.mgmt.computefleet.types
         key "ipConfigurations": Required[list[VirtualMachineScaleSetIPConfiguration]]
         key "networkSecurityGroup": ForwardRef('SubResource', module='types')
         key "primary": bool
-        auxiliaryMode: Union[str, NetworkInterfaceAuxiliaryMode]
-        auxiliarySku: Union[str, NetworkInterfaceAuxiliarySku]
-        deleteOption: Union[str, DeleteOptions]
-        disableTcpStateTracking: bool
-        dnsSettings: VirtualMachineScaleSetNetworkConfigurationDnsSettings
-        enableAcceleratedNetworking: bool
-        enableFpga: bool
-        enableIPForwarding: bool
-        ipConfigurations: list[VirtualMachineScaleSetIPConfiguration]
-        networkSecurityGroup: SubResource
+        auxiliary_mode: Union[str, NetworkInterfaceAuxiliaryMode]
+        auxiliary_sku: Union[str, NetworkInterfaceAuxiliarySku]
+        delete_option: Union[str, DeleteOptions]
+        disable_tcp_state_tracking: bool
+        dns_settings: VirtualMachineScaleSetNetworkConfigurationDnsSettings
+        enable_accelerated_networking: bool
+        enable_fpga: bool
+        enable_ip_forwarding: bool
+        ip_configurations: list[VirtualMachineScaleSetIPConfiguration]
+        network_security_group: SubResource
         primary: bool
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetNetworkProfile(TypedDict, total=False):
         key "healthProbe": ForwardRef('ApiEntityReference', module='types')
         key "networkApiVersion": Union[str, NetworkApiVersion]
-        healthProbe: ApiEntityReference
-        networkApiVersion: Union[str, NetworkApiVersion]
+        health_probe: ApiEntityReference
         networkInterfaceConfigurations: list[VirtualMachineScaleSetNetworkConfiguration]
+        network_api_version: Union[str, NetworkApiVersion]
+        network_interface_configurations: list[VirtualMachineScaleSetNetworkConfiguration]
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetOSDisk(TypedDict, total=False):
@@ -2930,16 +2992,17 @@ namespace azure.mgmt.computefleet.types
         key "osType": Union[str, OperatingSystemTypes]
         key "writeAcceleratorEnabled": bool
         caching: Union[str, CachingTypes]
-        createOption: Union[str, DiskCreateOptionTypes]
-        deleteOption: Union[str, DiskDeleteOptionTypes]
-        diffDiskSettings: DiffDiskSettings
-        diskSizeGB: int
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        diff_disk_settings: DiffDiskSettings
+        disk_size_gb: int
         image: VirtualHardDisk
-        managedDisk: VirtualMachineScaleSetManagedDiskParameters
+        managed_disk: VirtualMachineScaleSetManagedDiskParameters
         name: str
-        osType: Union[str, OperatingSystemTypes]
+        os_type: Union[str, OperatingSystemTypes]
         vhdContainers: list[str]
-        writeAcceleratorEnabled: bool
+        vhd_containers: list[str]
+        write_accelerator_enabled: bool
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetOSProfile(TypedDict, total=False):
@@ -2951,15 +3014,15 @@ namespace azure.mgmt.computefleet.types
         key "linuxConfiguration": ForwardRef('LinuxConfiguration', module='types')
         key "requireGuestProvisionSignal": bool
         key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
-        adminPassword: str
-        adminUsername: str
-        allowExtensionOperations: bool
-        computerNamePrefix: str
-        customData: str
-        linuxConfiguration: LinuxConfiguration
-        requireGuestProvisionSignal: bool
+        admin_password: str
+        admin_username: str
+        allow_extension_operations: bool
+        computer_name_prefix: str
+        custom_data: str
+        linux_configuration: LinuxConfiguration
+        require_guest_provision_signal: bool
         secrets: list[VaultSecretGroup]
-        windowsConfiguration: WindowsConfiguration
+        windows_configuration: WindowsConfiguration
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetPublicIPAddressConfiguration(TypedDict, total=False):
@@ -2974,8 +3037,8 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(TypedDict, total=False):
         key "domainNameLabel": Required[str]
         key "domainNameLabelScope": Union[str, DomainNameLabelScopeTypes]
-        domainNameLabel: str
-        domainNameLabelScope: Union[str, DomainNameLabelScopeTypes]
+        domain_name_label: str
+        domain_name_label_scope: Union[str, DomainNameLabelScopeTypes]
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetPublicIPAddressConfigurationProperties(TypedDict, total=False):
@@ -2984,12 +3047,13 @@ namespace azure.mgmt.computefleet.types
         key "idleTimeoutInMinutes": int
         key "publicIPAddressVersion": Union[str, IPVersion]
         key "publicIPPrefix": ForwardRef('SubResource', module='types')
-        deleteOption: Union[str, DeleteOptions]
-        dnsSettings: VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
-        idleTimeoutInMinutes: int
+        delete_option: Union[str, DeleteOptions]
+        dns_settings: VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+        idle_timeout_in_minutes: int
         ipTags: list[VirtualMachineScaleSetIpTag]
-        publicIPAddressVersion: Union[str, IPVersion]
-        publicIPPrefix: SubResource
+        ip_tags: list[VirtualMachineScaleSetIpTag]
+        public_ip_address_version: Union[str, IPVersion]
+        public_ip_prefix: SubResource
 
 
     class azure.mgmt.computefleet.types.VirtualMachineScaleSetStorageProfile(TypedDict, total=False):
@@ -2997,9 +3061,10 @@ namespace azure.mgmt.computefleet.types
         key "imageReference": ForwardRef('ImageReference', module='types')
         key "osDisk": ForwardRef('VirtualMachineScaleSetOSDisk', module='types')
         dataDisks: list[VirtualMachineScaleSetDataDisk]
-        diskControllerType: Union[str, DiskControllerTypes]
-        imageReference: ImageReference
-        osDisk: VirtualMachineScaleSetOSDisk
+        data_disks: list[VirtualMachineScaleSetDataDisk]
+        disk_controller_type: Union[str, DiskControllerTypes]
+        image_reference: ImageReference
+        os_disk: VirtualMachineScaleSetOSDisk
 
 
     class azure.mgmt.computefleet.types.VmSizeProfile(TypedDict, total=False):
@@ -3016,7 +3081,7 @@ namespace azure.mgmt.computefleet.types
     class azure.mgmt.computefleet.types.WinRMListener(TypedDict, total=False):
         key "certificateUrl": str
         key "protocol": Union[str, ProtocolTypes]
-        certificateUrl: str
+        certificate_url: str
         protocol: Union[str, ProtocolTypes]
 
 
@@ -3028,19 +3093,34 @@ namespace azure.mgmt.computefleet.types
         key "timeZone": str
         key "winRM": ForwardRef('WinRMConfiguration', module='types')
         additionalUnattendContent: list[AdditionalUnattendContent]
-        enableAutomaticUpdates: bool
-        enableVMAgentPlatformUpdates: bool
-        patchSettings: PatchSettings
-        provisionVMAgent: bool
-        timeZone: str
-        winRM: WinRMConfiguration
+        additional_unattend_content: list[AdditionalUnattendContent]
+        enable_automatic_updates: bool
+        enable_vm_agent_platform_updates: bool
+        patch_settings: PatchSettings
+        provision_vm_agent: bool
+        time_zone: str
+        win_rm: WinRMConfiguration
 
 
     class azure.mgmt.computefleet.types.WindowsVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):
         key "bypassPlatformSafetyChecksOnUserSchedule": bool
         key "rebootSetting": Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
-        bypassPlatformSafetyChecksOnUserSchedule: bool
-        rebootSetting: Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
+        bypass_platform_safety_checks_on_user_schedule: bool
+        reboot_setting: Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
+
+
+    class azure.mgmt.computefleet.types.ZoneAllocationPolicy(TypedDict, total=False):
+        key "distributionStrategy": Required[Union[str, ZoneDistributionStrategy]]
+        distribution_strategy: Union[str, ZoneDistributionStrategy]
+        zonePreferences: list[ZonePreference]
+        zone_preferences: list[ZonePreference]
+
+
+    class azure.mgmt.computefleet.types.ZonePreference(TypedDict, total=False):
+        key "rank": int
+        key "zone": Required[str]
+        rank: int
+        zone: str
 
 
 ```

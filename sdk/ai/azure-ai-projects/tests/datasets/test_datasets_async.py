@@ -12,7 +12,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live, is_live_and_not_recording, add_general_regex_sanitizer
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.aio.operations._patch_datasets_async import DatasetsOperations
+from azure.ai.projects.aio.operations._patch_datasets_async import BetaDatasetsOperations
 from azure.ai.projects.models import AsyncDatasetGenerationLROPoller, DatasetVersion, DatasetType
 from azure.ai.projects.models._enums import ConnectionType
 from azure.core.exceptions import HttpResponseError
@@ -27,7 +27,7 @@ data_file2 = os.path.join(data_folder, "data_file2.txt")
 @pytest.mark.asyncio
 async def test_begin_create_generation_job_exposes_job_id_async():
     """The async create operation exposes its job ID without SDK polling."""
-    operation = DatasetsOperations.__new__(DatasetsOperations)
+    operation = BetaDatasetsOperations.__new__(BetaDatasetsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
     operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access

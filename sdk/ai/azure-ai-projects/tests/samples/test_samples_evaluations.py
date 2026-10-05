@@ -98,12 +98,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_evaluations_ai_assisted.py (AI-assisted evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU)
     - sample_evaluation_cluster_insight.py (cluster insights generation)
 
-    Agentic evaluator samples (17):
+    Agentic evaluator samples (15):
     - sample_coherence.py
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
-    - sample_output_quality.py
+    - sample_quality_grader.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -114,7 +114,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_tool_input_accuracy.py
     - sample_tool_output_utilization.py
     - sample_tool_selection.py
-    - sample_tool_use_quality.py
     - sample_generic_agentic_evaluator.py
 
     Excluded samples and reasons:
@@ -234,10 +233,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
                 "sample_quality_grader.py",
-                "sample_output_quality.py",  # New composite evaluator sample; recording not yet available
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
-                "sample_tool_use_quality.py",  # New composite evaluator sample; recording not yet available
             ],
         ),
     )

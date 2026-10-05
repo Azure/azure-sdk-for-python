@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -96,7 +96,6 @@ def main() -> None:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
-        # Single-turn, string response input
         # Failure example - vague adherence to the task
         failure_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
         failure_response = "Make sure to water your roses regularly and trim them occasionally."
@@ -105,7 +104,7 @@ def main() -> None:
         success_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
         success_response = "For optimal summer care of your rose garden, start by watering deeply early in the morning to ensure the roots are well-hydrated without encouraging fungal growth. Apply a 2-3 inch layer of organic mulch around the base of the plants to conserve moisture and regulate soil temperature. Fertilize with a balanced rose fertilizer every 4–6 weeks to support healthy growth. Prune away any dead or diseased wood to promote good air circulation, and inspect regularly for pests such as aphids or spider mites, treating them promptly with an appropriate organic insecticidal soap. Finally, ensure that your roses receive at least 6 hours of direct sunlight daily for robust flowering."
 
-        # Single-turn, structured JSON response input with tool calls
+        # Complex conversation example with tool calls
         complex_query = [
             {"role": "system", "content": "You are an expert in literature and can provide book recommendations."},
             {
@@ -189,13 +188,13 @@ def main() -> None:
                     content=[
                         # Failure example - vague adherence
                         SourceFileContentContent(
-                            item={"query": failure_query, "response": failure_response, "tool_definitions": []}
+                            item={"query": failure_query, "response": failure_response, "tool_definitions": None}
                         ),
                         # Success example - full adherence
                         SourceFileContentContent(
-                            item={"query": success_query, "response": success_response, "tool_definitions": []}
+                            item={"query": success_query, "response": success_response, "tool_definitions": None}
                         ),
-                        # Structured response example with tool calls
+                        # Complex conversation example with tool calls
                         SourceFileContentContent(
                             item={
                                 "query": complex_query,
@@ -220,7 +219,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status in ("completed", "failed", "canceled", "cancelled"):
+            if run.status in ("completed", "failed"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")
@@ -228,67 +227,6 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
-
-        client.evals.delete(eval_id=eval_object.id)
-        if run.status != "completed" or run.result_counts.errored:
-            raise RuntimeError(f"Evaluation {run.status}, {run.result_counts.errored} errored item(s): {run.error}")
-
-        # Single-turn, messages input
-        messages = [
-            {"role": "system", "content": [{"type": "text", "text": "Answer with exactly one sentence."}]},
-            {"role": "user", "content": [{"type": "text", "text": "How should I care for houseplants?"}]},
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "Water houseplants when the topsoil dries out."}],
-            },
-        ]
-        messages_eval = client.evals.create(
-            name="Test Task Adherence Evaluator with messages",
-            data_source_config=DataSourceConfigCustom(
-                type="custom",
-                item_schema={
-                    "type": "object",
-                    "properties": {"messages": {"type": "array", "items": {"type": "object"}}},
-                    "required": ["messages"],
-                },
-                include_sample_schema=False,
-            ),
-            testing_criteria=[
-                TestingCriterionAzureAIEvaluator(
-                    type="azure_ai_evaluator",
-                    name="task_adherence_messages",
-                    evaluator_name="builtin.task_adherence",
-                    initialization_parameters={"deployment_name": model_deployment_name},
-                    data_mapping={"messages": "{{item.messages}}"},
-                )
-            ],
-        )
-        try:
-            messages_run = client.evals.runs.create(
-                eval_id=messages_eval.id,
-                name="messages_inline_run",
-                extra_body={"evaluation_level": "turn"},
-                data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl",
-                    source=SourceFileContent(
-                        type="file_content",
-                        content=[SourceFileContentContent(item={"messages": messages})],
-                    ),
-                ),
-            )
-            while messages_run.status not in ("completed", "failed", "canceled", "cancelled"):
-                time.sleep(5)
-                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
-            print(f"Messages eval run status: {messages_run.status}")
-            print(f"Messages eval run report: {messages_run.report_url}")
-            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
-            if messages_run.status != "completed" or messages_run.result_counts.errored:
-                raise RuntimeError(
-                    f"Messages evaluation {messages_run.status}, "
-                    f"{messages_run.result_counts.errored} errored item(s): {messages_run.error}"
-                )
-        finally:
-            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":

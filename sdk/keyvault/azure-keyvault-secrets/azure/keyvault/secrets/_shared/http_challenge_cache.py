@@ -51,36 +51,17 @@ def _get_cache_key(url: str) -> str:
     return parsed.netloc
 
 
-def remove_challenge_for_url(url: str, expected_challenge: Optional[HttpChallenge] = None) -> None:
+def remove_challenge_for_url(url: str) -> None:
     """Removes the cached challenge for the specified URL.
 
     :param str url: the URL for which to remove the cached challenge
-    :param expected_challenge: Remove only this challenge, if it is still cached. None removes any cached challenge.
-    :type expected_challenge: HttpChallenge or None
     """
     if not url:
         raise ValueError("URL cannot be empty")
 
-    key = _get_cache_key(url).lower()
+    key = _get_cache_key(url)
     with _lock:
-        if expected_challenge is None or _cache.get(key) is expected_challenge:
-            _cache.pop(key, None)
-
-
-def remove_challenge_for_url_if_matches(url: str, expected_challenge: Optional[HttpChallenge]) -> None:
-    """Remove only the cached challenge observed by the caller.
-
-    :param str url: The URL for which to remove the cached challenge.
-    :param expected_challenge: The observed challenge, or None when no challenge was observed.
-    :type expected_challenge: HttpChallenge or None
-    """
-    if not url:
-        raise ValueError("URL cannot be empty")
-
-    key = _get_cache_key(url).lower()
-    with _lock:
-        if expected_challenge is not None and _cache.get(key) is expected_challenge:
-            _cache.pop(key, None)
+        del _cache[key.lower()]
 
 
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:

@@ -7,16 +7,6 @@
 ### Bugs Fixed
 - Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 
-## 12.27.0 (2026-09-30)
-
-This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
-
-### Breaking Changes
-- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
-
-### Features Added
-- Stable release of features from 12.27.0b1
-
 ## 12.27.0b1 (2026-08-10)
 
 ### Features Added

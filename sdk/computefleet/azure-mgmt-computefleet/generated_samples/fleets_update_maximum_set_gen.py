@@ -661,6 +661,7 @@ def main():
                     "vmCategories": ["GeneralPurpose"],
                 },
                 "vmSizesProfile": [{"name": "Standard_D1_v2", "rank": 0}, {"name": "Standard_D2_v2", "rank": 1}],
+                "zoneAllocationPolicy": {"distributionStrategy": "BestEffortSingleZone"},
             },
             "tags": {},
         },
@@ -668,6 +669,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/Fleets_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01-preview/Fleets_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

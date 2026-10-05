@@ -16,19 +16,17 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob import ContainerClient
-from azure.core.paging import ItemPaged
 from azure.core.polling import NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
-from ._operations import DatasetsOperations as DatasetsOperationsGenerated
+from azure.core.utils import case_insensitive_dict
+from ._operations import (
+    BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
+    DatasetsOperations as DatasetsOperationsGenerated,
+)
 from .. import models as _models
 from .._utils.model_base import _deserialize
 from ..models import DatasetGenerationLROPoller
-from ..models._patch import (
-    _DATA_GENERATION_JOBS_FEATURE_HEADER,
-    _FOUNDRY_FEATURES_HEADER_NAME,
-    _merge_foundry_features_header,
-)
 from ..models._models import (
     FileDatasetVersion,
     FolderDatasetVersion,
@@ -42,18 +40,13 @@ logger = logging.getLogger(__name__)
 JSON = MutableMapping[str, Any]
 
 
-class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
-    """Custom operations for data generation jobs.
-
-    Every data generation job method sends the ``Foundry-Features: DataGenerationJobs=V1Preview``
-    opt-in header, merged with any caller-supplied ``Foundry-Features`` value. Other dataset
-    operations are not affected.
-    """
+class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
+    """Custom operations for beta data generation jobs."""
 
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.DataGenerationJobInputs,
+        job: _models.DataGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -83,7 +76,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -91,7 +84,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
         """Create a data generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -99,9 +92,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.DatasetGenerationLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        headers = _merge_foundry_features_header(kwargs.pop("headers", None), _DATA_GENERATION_JOBS_FEATURE_HEADER)
-        # Status polling requests carry the same opt-in header as the create request.
-        polling_headers = {_FOUNDRY_FEATURES_HEADER_NAME: headers[_FOUNDRY_FEATURES_HEADER_NAME]}
+        headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", headers.pop("Content-Type", None))
@@ -142,10 +133,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod,
-                LROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, headers=polling_headers, **kwargs
-                ),
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -161,93 +149,8 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
         assert raw_result is not None
         return DatasetGenerationLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @distributed_trace
-    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Get a data generation job.
 
-        Retrieves the specified data generation job and its current status.
-
-        :param job_id: The ID of the job. Required.
-        :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        kwargs["headers"] = _merge_foundry_features_header(
-            kwargs.pop("headers", None), _DATA_GENERATION_JOBS_FEATURE_HEADER
-        )
-        return super().get_generation_job(job_id, **kwargs)
-
-    @distributed_trace
-    def list_generation_jobs(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any,
-    ) -> ItemPaged["_models.DataGenerationJob"]:
-        """List data generation jobs.
-
-        Returns a list of data generation jobs.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and ``desc`` for descending order. Known values are: "asc" and "desc".
-         Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list. For instance, if you make a list request and receive 100 objects, ending
-         with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous
-         page of the list. Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of DataGenerationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DataGenerationJob]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        kwargs["headers"] = _merge_foundry_features_header(
-            kwargs.pop("headers", None), _DATA_GENERATION_JOBS_FEATURE_HEADER
-        )
-        return super().list_generation_jobs(limit=limit, order=order, before=before, **kwargs)
-
-    @distributed_trace
-    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Cancel a data generation job.
-
-        Cancels the specified data generation job if it is still in progress.
-
-        :param job_id: The ID of the job to cancel. Required.
-        :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        kwargs["headers"] = _merge_foundry_features_header(
-            kwargs.pop("headers", None), _DATA_GENERATION_JOBS_FEATURE_HEADER
-        )
-        return super().cancel_generation_job(job_id, **kwargs)
-
-    @distributed_trace
-    def delete_generation_job(self, job_id: str, **kwargs: Any) -> None:
-        """Delete a data generation job.
-
-        Removes the specified data generation job and its associated output.
-
-        :param job_id: The ID of the job to delete. Required.
-        :type job_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        kwargs["headers"] = _merge_foundry_features_header(
-            kwargs.pop("headers", None), _DATA_GENERATION_JOBS_FEATURE_HEADER
-        )
-        return super().delete_generation_job(job_id, **kwargs)
-
-
-class DatasetsOperations(_DatasetsOperationsWithGeneration):
+class DatasetsOperations(DatasetsOperationsGenerated):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
