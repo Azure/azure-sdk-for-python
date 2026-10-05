@@ -175,7 +175,7 @@ User-based authentication is preferred when using test resources. The `New-TestR
 - Choose a development tool to authenticate with by setting an `AZURE_TEST_USE_*_AUTH` environment variable to "true" (tests will authenticate as the tool's logged-in user). The following tools are supported, listed in the order that authentication will be attempted in if requested:
   1. Azure PowerShell: set `AZURE_TEST_USE_PWSH_AUTH`.
   2. Azure CLI (`az`): set `AZURE_TEST_USE_CLI_AUTH`.
-  4. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
+  3. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
 - Ensure you're logged into the tool you choose -- if you used `New-TestResources` to deploy resources, you'll already have logged in with Azure PowerShell.
 
 **Important:** these environment variables will only be successfully used if test credentials are fetched with the
@@ -213,7 +213,7 @@ Since `New-TestResources` defaults to user-based authentication, choose a develo
 authenticate with by setting an `AZURE_TEST_USE_*_AUTH` environment variable to "true". The following tools are supported, listed in the order that authentication will be attempted in if requested:
   1. Azure PowerShell: set `AZURE_TEST_USE_PWSH_AUTH`.
   2. Azure CLI (`az`): set `AZURE_TEST_USE_CLI_AUTH`.
-  4. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
+  3. Azure Developer CLI (`azd`): set `AZURE_TEST_USE_AZD_AUTH`.
 
 **Important:** these environment variables will only be successfully used if test credentials are fetched with the
 [`AzureRecordedTestCase.get_credential`][get_credential] method. See [Write your tests](#write-your-tests) for details.

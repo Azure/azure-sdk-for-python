@@ -75,7 +75,7 @@ All build definitions allow choice at queue time as to which checks actually run
 3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-The screenshot above narrows the default PR build set (`whl`, `sdist`, `mindependency`) to a specific subset.
+The screenshot above narrows the default PR build set (`whl`, `sdist`) to a specific subset.
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
@@ -234,18 +234,20 @@ There are three distinct build modes, each with different behavior:
 
 In all three modes, pip (and uv) are authenticated against the Azure Artifacts dev feed via `auth-dev-feed.yml`, which configures `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` to the feed with PyPI as an upstream source. All package installs go through this feed regardless of build mode.
 
-The canonical definition of which install-and-test checks run in each mode lives in [`eng/scripts/set_checks.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/scripts/set_checks.py):
+The canonical definition of which install-and-test checks run in each mode lives in [`eng/scripts/set_checks.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/scripts/set_checks.py). `devtest` and `regression` are not controlled by this file; they run as separate pipeline jobs defined in [`eng/pipelines/templates/jobs/regression.yml`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/jobs/regression.yml) and related templates.
 
 | Check | PR | Nightly CI | Release |
 |---|---|---|---|
 | `whl` | ✓ | ✓ | ✓ |
 | `sdist` | ✓ | ✓ | ✓ |
-| `mindependency` | ✓ | ✓ | ✓ |
+| `mindependency`[^mindependency] | — | — | — |
 | `import_all` | — | ✓ | ✓ |
 | `whl_no_aio` | — | ✓ | ✓ |
 | `latestdependency` | — | ✓ | ✓ |
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
+
+[^mindependency]: `mindependency` is currently disabled for CFS onboarding; see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346).
 
 Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 

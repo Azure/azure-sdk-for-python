@@ -38,15 +38,15 @@ Validate artifacts prior to clicking `approve` on the release stage for the pack
 # NOTE REGARDING ARTIFACTS
 Note that the unified pipeline will maintain a separate release step for each defined artifact in the `Artifacts` parameter in the relevant `ci.yml` file. [Example](https://github.com/Azure/azure-sdk-for-python/blob/cffaa424f4198bae99033c8ab2474fe87fb2451a/sdk/storage/ci.yml#L44)
 
-The `name` parameter is **required** to be the exact package name with `_` in place of `-`. `safeName` must be unique.
+The `name` parameter is **required** to be the exact package name (with hyphens, e.g. `azure-core`). `safeName` must be unique.
 
 Example Artifact List in `ci.yml`:
 
 ```
     Artifacts:
-    - name: azure_core
+    - name: azure-core
       safeName: azurecore
-    - name: azure_core_tracing_opencensus
+    - name: azure-core-tracing-opencensus
       safeName: azurecorecoretracingopencensus
 ```
 

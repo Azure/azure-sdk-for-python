@@ -98,9 +98,9 @@ In live mode, you need to use real credentials like those you obtained in the pr
 Then make the following changes:
 
 * Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal][azure_portal].)
-* Change the `get_azure_core_credential()` function to construct and return a `ClientSecretCredential`:
+* Change the `get_azure_core_credentials()` function to construct and return a `ClientSecretCredential`:
 ```python
-def get_azure_core_credential(**kwargs):
+def get_azure_core_credentials(**kwargs):
     from azure.identity import ClientSecretCredential
     import os
     return ClientSecretCredential(
@@ -109,9 +109,9 @@ def get_azure_core_credential(**kwargs):
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 ```
-* Or you could use the `get_credential()` function to construct and return a `DefaultAzureCredential`:
+* Or you could use the `get_credentials()` function to construct and return a `DefaultAzureCredential`:
 ```
-def get_credential(**kwargs):
+def get_credentials(**kwargs):
     from azure.identity import DefaultAzureCredential
     return DefaultAzureCredential()
 ```
