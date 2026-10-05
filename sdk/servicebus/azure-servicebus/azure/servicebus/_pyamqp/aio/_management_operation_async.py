@@ -72,7 +72,7 @@ class ManagementOperation(object):
             self._responses[operation_id] = (status_code, status_description, raw_message)
 
     async def execute(self, message, operation=None, operation_type=None, timeout: float = 0):
-        start_time = time.time()
+        start_time = time.monotonic()
         operation_id = str(uuid.uuid4())
         self._responses[operation_id] = None
         self._mgmt_error = None
@@ -89,9 +89,9 @@ class ManagementOperation(object):
 
             while not self._responses[operation_id] and not self._mgmt_error:
                 if timeout and timeout > 0:
-                    now = time.time()
+                    now = time.monotonic()
                     if (now - start_time) >= timeout:
-                        raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
+                        raise TimeoutError("Failed to receive mgmt response in {} seconds".format(timeout))
                 await self._connection.listen()
 
             if self._mgmt_error:

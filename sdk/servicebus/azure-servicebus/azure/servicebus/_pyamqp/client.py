@@ -60,9 +60,12 @@ _logger = logging.getLogger(__name__)
 
 def _get_mgmt_request_remaining_timeout(timeout, started):
     if timeout and timeout > 0:
-        remaining = timeout - (time.monotonic() - started)
+        elapsed = time.monotonic() - started
+        remaining = timeout - elapsed
         if remaining <= 0:
-            raise TimeoutError("Management request timed out.")
+            raise TimeoutError(
+                "Management request timed out after {:.3f} seconds (timeout: {} seconds).".format(elapsed, timeout)
+            )
         return remaining
     return timeout
 

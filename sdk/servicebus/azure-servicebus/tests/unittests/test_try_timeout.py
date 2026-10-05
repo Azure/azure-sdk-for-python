@@ -869,6 +869,49 @@ class TestManagementLinkSettlementIsBounded:
 class TestPyamqpManagementRequestReadiness:
     """Management links must not depend on the associated receiver link remaining attached."""
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("wall_clock_jump", [-3600, 3600])
+    async def test_management_response_deadline_ignores_wall_clock_adjustments(self, asynchronous, wall_clock_jump):
+        from azure.servicebus._pyamqp import management_operation
+        from azure.servicebus._pyamqp.aio import _management_operation_async
+
+        module = _management_operation_async if asynchronous else management_operation
+        clock = VirtualClock()
+        clock.time = MagicMock(side_effect=[0, wall_clock_jump])
+        operation = module.ManagementOperation(MagicMock())
+        operation._mgmt_link._pending_operations = []
+        operation._mgmt_link.lock = Lock()
+
+        def listen():
+            clock.sleep(0.02)
+
+        if asynchronous:
+            operation._mgmt_link.execute_operation = AsyncMock(return_value=None)
+            operation._connection.listen = AsyncMock(side_effect=listen)
+        else:
+            operation._mgmt_link.execute_operation.return_value = None
+            operation._connection.listen.side_effect = listen
+
+        with patch.object(module, "time", clock):
+            with pytest.raises(TimeoutError, match="0.05 seconds"):
+                if asynchronous:
+                    await operation.execute(MagicMock(), timeout=0.05)
+                else:
+                    operation.execute(MagicMock(), timeout=0.05)
+
+        clock.time.assert_not_called()
+        assert operation._connection.listen.call_count == 3
+        assert operation._responses == {}
+
+    def test_management_timeout_reports_budget_and_elapsed_seconds(self):
+        clock = VirtualClock()
+        started = clock.monotonic()
+        clock.sleep(0.06)
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError, match=r"after 0.060 seconds \(timeout: 0.05 seconds\)"):
+                pyamqp_client_module._get_mgmt_request_remaining_timeout(0.05, started)
+
     def test_sync_management_request_skips_broken_primary_link(self):
         from azure.servicebus._pyamqp.client import AMQPClient
 
