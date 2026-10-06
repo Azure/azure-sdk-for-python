@@ -51,6 +51,13 @@ def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1
     return digest.hexdigest()
 
 
+class _AgentOptimizationPolling(LROBasePolling):
+    def status(self) -> str:
+        status = super().status()
+        # Azure Core uses the single-L spelling for terminal cancellation.
+        return "canceled" if status.lower() == "cancelled" else status
+
+
 class AgentsOperations(GeneratedAgentsOperations):
     """
     .. warning::
@@ -449,7 +456,8 @@ class AgentsOperations(GeneratedAgentsOperations):
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                _AgentOptimizationPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

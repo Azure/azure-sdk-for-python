@@ -33,6 +33,13 @@ from ...models._patch import (
 )
 
 
+class _AsyncAgentOptimizationPolling(AsyncLROBasePolling):
+    def status(self) -> str:
+        status = super().status()
+        # Azure Core uses the single-L spelling for terminal cancellation.
+        return "canceled" if status.lower() == "cancelled" else status
+
+
 class AgentsOperations(GeneratedAgentsOperations):
     """
     .. warning::
@@ -416,7 +423,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                _AsyncAgentOptimizationPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
