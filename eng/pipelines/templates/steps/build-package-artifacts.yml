@@ -143,6 +143,23 @@ steps:
         Write-Error "Failed to download pythonarm64 $version"
         exit 1
       }
+
+      $virtualenvVersion = "20.30.0"
+      $virtualenvStage = Join-Path "$(Agent.TempDirectory)" "virtualenv-$virtualenvVersion"
+      $virtualenvApp = Join-Path $cache "virtualenv-$virtualenvVersion.pyz"
+      Remove-Item $virtualenvStage -Recurse -Force -ErrorAction SilentlyContinue
+      $(PIP_EXE) install --target $virtualenvStage "virtualenv==$virtualenvVersion"
+      if ($LASTEXITCODE) {
+        Write-Error "Failed to download virtualenv $virtualenvVersion"
+        exit 1
+      }
+      python -m zipapp $virtualenvStage --output $virtualenvApp --main "virtualenv.__main__:run_with_catch"
+      if ($LASTEXITCODE) {
+        Write-Error "Failed to create $virtualenvApp"
+        exit 1
+      }
+      Remove-Item $virtualenvStage -Recurse -Force
+
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
@@ -156,17 +173,6 @@ steps:
     displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
-  - pwsh: |
-      python -c "import urllib.request; print(urllib.request.urlopen('https://github.com').status)"
-      python -c "import ssl; print(ssl.get_default_verify_paths())"
-    displayName: 'Test Python network and SSL configuration'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
-  - powershell: |
-      D:\a\_work\1\s\venv\Scripts\python.exe -c "import urllib.request; print(urllib.request.urlopen('https://github.com/pypa/get-virtualenv/blob/20.30.0/public/virtualenv.pyz?raw=true').status)"
-    displayName: 'Test exact cibuildwheel download'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-    
   - pwsh: |
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
