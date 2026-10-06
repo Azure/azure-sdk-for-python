@@ -71,6 +71,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._output_handles = {}
         self._input_handles = {}
         self._outgoing_transfer_lock = asyncio.Lock()
+        self._discarding_links_pending = False
 
     async def __aenter__(self):
         await self.begin()
@@ -107,6 +108,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
             if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
                 await self._set_state(SessionState.DISCARDING)
+
+    async def _notify_discarding_links(self):
+        if self._discarding_links_pending:
+            await self._set_state(SessionState.DISCARDING)
+            self._discarding_links_pending = False
 
     def _get_next_output_handle(self) -> int:
         """Get the next available outgoing handle number within the max handle limit.
@@ -259,6 +265,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         if not transfer_complete:
             delivery.transfer_state = SessionTransferState.ERROR
         self.state = SessionState.DISCARDING
+        self._discarding_links_pending = True
         self._connection._error = error  # pylint: disable=protected-access
         self._connection.state = ConnectionState.DISCARDING
         frame_write.cancel()

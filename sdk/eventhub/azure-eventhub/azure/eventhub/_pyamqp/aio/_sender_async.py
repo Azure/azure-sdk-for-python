@@ -135,6 +135,7 @@ class SenderLink(Link):
                     sent_and_settled = True
                 if sent_and_settled and delivery in self._pending_deliveries:
                     self._pending_deliveries.remove(delivery)
+            await self._session._notify_discarding_links()  # pylint: disable=protected-access
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
         return sent_and_settled

@@ -31,6 +31,7 @@ from azure.servicebus._pyamqp.sender import SenderLink
 from azure.servicebus._pyamqp.management_link import ManagementLink
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink as AsyncManagementLink
+from azure.servicebus._pyamqp.aio._connection_async import Connection as AsyncConnection
 from azure.servicebus._pyamqp.aio._session_async import Session as AsyncSession
 from azure.servicebus._pyamqp.aio._sender_async import SenderLink as AsyncSenderLink
 
@@ -99,6 +100,40 @@ def test_outgoing_window_replenishes_after_transfers():
         session._outgoing_transfer(delivery, None)
         assert delivery.transfer_state == SessionTransferState.OKAY
     _assert_transfers_and_credit(session, connection)
+
+
+@pytest.mark.parametrize("early_ack", [False, True])
+def test_sync_flow_failure_preserves_completed_transfer(monkeypatch, early_ack):
+    sender, session, connection = _sender(monkeypatch, False)
+    connection._remote_max_frame_size = 1024
+    written, reasons = [], []
+    send = connection._process_outgoing_frame
+
+    def completed(reason, state):
+        reasons.append((reason, state))
+
+    def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            raise RuntimeError("Flow failed")
+        written.append(frame)
+        send(channel, frame)
+        if early_ack:
+            sender._incoming_disposition([None, frame.delivery_id, None, True, b"accepted"])
+
+    connection._process_outgoing_frame = send_frame
+    delivery = sender.send_transfer(
+        MagicMock(_code=0, payload=b"message"),
+        send_async=True, settled=False, on_send_complete=completed
+    )
+    with pytest.raises(RuntimeError, match="Flow failed"):
+        sender.update_pending_deliveries()
+    assert delivery.transfer_state == SessionTransferState.OKAY and delivery.sent
+    assert sender.delivery_count == 1 and sender.current_link_credit == 9
+    assert reasons == ([(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")] if early_ack else [])
+    assert (delivery in sender._pending_deliveries) is not early_ack
+    sender.update_pending_deliveries()
+    assert len(written) == 1 and session.next_outgoing_id == 1
+    assert reasons == ([(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")] if early_ack else [])
 
 
 @pytest.mark.asyncio
@@ -831,6 +866,65 @@ async def test_cancelled_stalled_replenishment_preserves_transfer(monkeypatch, c
     await sender.update_pending_deliveries()
     assert len([frame for frame in written if isinstance(frame, TransferFrame)]) == 1
     assert len([frame for frame in written if isinstance(frame, FlowFrame)]) == 1
+
+
+@pytest.mark.asyncio
+async def test_stalled_flow_disconnect_notifies_other_sender_after_active_bookkeeping(monkeypatch):
+    from azure.servicebus._pyamqp.aio import _session_async
+
+    monkeypatch.setattr(_session_async, "_CANCELLED_FRAME_WRITE_GRACE", 0.01)
+    sender, session, connection = _sender(monkeypatch, True)
+    session.outgoing_window = 1
+    connection._remote_max_frame_size = 1024
+    connection.state = ConnectionState.OPENED
+    connection._network_trace_params = {}
+    connection._outgoing_endpoints = {session.channel: session}
+    connection._transport = SimpleNamespace(close=AsyncMock())
+    connection._set_state = AsyncConnection._set_state.__get__(connection)
+    connection._disconnect = AsyncConnection._disconnect.__get__(connection)
+    sender._on_link_state_change = None
+    other = AsyncSenderLink(session, 2, "other", network_trace=False, network_trace_params={})
+    other.state = LinkState.ATTACHED
+    session.links = {1: sender, 2: other}
+    reasons = []
+
+    async def other_completed(reason, state):
+        reasons.append(("other", reason))
+
+    async def active_completed(reason, state):
+        reasons.append(("active", reason, active.sent, sender.delivery_count))
+
+    queued = await other.send_transfer(
+        MagicMock(_code=0, payload=b"queued"), send_async=True,
+        settled=False, on_send_complete=other_completed
+    )
+    flow_started, never = asyncio.Event(), asyncio.Event()
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            flow_started.set()
+            await never.wait()
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"active"), settled=False, on_send_complete=active_completed
+    ))
+    await asyncio.wait_for(flow_started.wait(), 5)
+    active = sender._pending_deliveries[0]
+    task.cancel()
+    with pytest.raises(AMQPConnectionError, match="Flow write did not finish"):
+        await asyncio.wait_for(task, 5)
+    assert active.sent and active.transfer_state == SessionTransferState.OKAY
+    assert sender.delivery_count == 1 and session.next_outgoing_id == 1
+    assert connection.state == ConnectionState.END
+    connection._transport.close.assert_awaited_once()
+    assert sender.state == other.state == LinkState.DETACHED
+    assert sender._pending_deliveries == other._pending_deliveries == []
+    assert queued.settled
+    assert reasons == [
+        ("active", LinkDeliverySettleReason.NOT_DELIVERED, True, 1),
+        ("other", LinkDeliverySettleReason.NOT_DELIVERED),
+    ]
 
 
 def test_threaded_early_disposition_during_replenishment(monkeypatch):

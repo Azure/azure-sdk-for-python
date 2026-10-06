@@ -106,20 +106,24 @@ class SenderLink(Link):
                 "batchable": None,
                 "payload": output,
             }
-        self._session._outgoing_transfer(  # pylint:disable=protected-access
-            delivery, self.network_trace_params if self.network_trace else None
-        )
         sent_and_settled = False
-        if delivery.transfer_state == SessionTransferState.OKAY:
-            self.delivery_count = delivery_count
-            self.current_link_credit -= 1
-            delivery.sent = True
-            if delivery.settled:
-                delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
-                sent_and_settled = True
-            elif delivery.early_disposition_received:
-                delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
-                sent_and_settled = True
+        try:
+            self._session._outgoing_transfer(  # pylint:disable=protected-access
+                delivery, self.network_trace_params if self.network_trace else None
+            )
+        finally:
+            if delivery.transfer_state == SessionTransferState.OKAY and not delivery.sent:
+                self.delivery_count = delivery_count
+                self.current_link_credit -= 1
+                delivery.sent = True
+                if delivery.settled:
+                    delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
+                    sent_and_settled = True
+                elif delivery.early_disposition_received:
+                    delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
+                    sent_and_settled = True
+                if sent_and_settled and delivery in self._pending_deliveries:
+                    self._pending_deliveries.remove(delivery)
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
         return sent_and_settled
