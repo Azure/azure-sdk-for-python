@@ -8,23 +8,15 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to evaluate multi-turn
     agent conversations by filtering traces from Application Insights using an
-    agent name/version or agent ID, with optional smart filtering.
+    agent name and optional version.
 
     This is Scenario 3 of multi-turn evaluations: instead of providing specific
     conversation or trace IDs, you specify an agent identity and a time window.
     The service samples traces from App Insights matching that agent and evaluates
     the reconstructed conversations.
 
-    Three agent filter forms are supported:
-      - agent_name + agent_version: Specify the agent by name and version separately.
-      - agent_id: Specify the agent as a single "name:version" string.
-      - smart_filtering: Use filter_strategy="smart_filtering" to bias trace
-        selection toward more interesting conversations.
-
 USAGE:
     python sample_multiturn_trace_evaluation_agent_filter.py
-    python sample_multiturn_trace_evaluation_agent_filter.py --agent-id "my-agent:1"
-    python sample_multiturn_trace_evaluation_agent_filter.py --smart-filter
 
     Before running the sample:
 
@@ -35,9 +27,11 @@ USAGE:
     2) FOUNDRY_MODEL_NAME - Required. The model deployment name for AI-assisted evaluators.
     3) FOUNDRY_AGENT_NAME - Required. The name of the agent whose traces to evaluate.
     4) FOUNDRY_AGENT_VERSION - Optional. The agent version. If not set, latest is used.
+    5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back for agent traces.
+       Defaults to 168 (7 days).
+    6) TRACE_MAX_TRACES - Optional. Maximum number of traces to evaluate. Defaults to 5.
 """
 
-import argparse
 import os
 import time
 from pprint import pprint
@@ -52,16 +46,11 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 agent_version = os.environ.get("FOUNDRY_AGENT_VERSION", "")
+lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "168"))
+max_traces = int(os.environ.get("TRACE_MAX_TRACES", "5"))
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate agent traces using agent filter.")
-    parser.add_argument("--agent-id", default=None, help='Agent ID in "name:version" format')
-    parser.add_argument("--smart-filter", action="store_true", help="Use smart_filtering strategy")
-    parser.add_argument("--max-traces", type=int, default=5, help="Max traces to evaluate (default: 5)")
-    parser.add_argument("--lookback-hours", type=int, default=24, help="Hours to look back (default: 24)")
-    args = parser.parse_args()
-
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -116,30 +105,19 @@ def main() -> None:
         # Pad end_time by +600s (10 min) to avoid ingestion-delay edge exclusion
         now_unix = int(time.time())
         end_time = now_unix + 600
-        start_time = now_unix - (args.lookback_hours * 3600)
+        start_time = now_unix - (lookback_hours * 3600)
 
-        # Build trace_source based on mode
         trace_source: dict = {
             "type": "agent_filter",
+            "agent_name": agent_name,
             "start_time": start_time,
             "end_time": end_time,
-            "max_traces": args.max_traces,
+            "max_traces": max_traces,
         }
 
-        if args.agent_id:
-            # agent_id form: single "name:version" string
-            trace_source["agent_id"] = args.agent_id
-            print(f"Using agent_id filter: {args.agent_id}")
-        else:
-            # agent_name + agent_version form
-            trace_source["agent_name"] = agent_name
-            if agent_version:
-                trace_source["agent_version"] = agent_version
-            print(f"Using agent filter: {agent_name} v{agent_version or '(latest)'}")
-
-        if args.smart_filter:
-            trace_source["filter_strategy"] = "smart_filtering"
-            print("Filter strategy: smart_filtering")
+        if agent_version:
+            trace_source["agent_version"] = agent_version
+        print(f"Using agent filter: {agent_name} v{agent_version or '(latest)'}")
 
         data_source = {
             "type": "azure_ai_trace_data_source",
