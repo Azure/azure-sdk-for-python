@@ -253,7 +253,7 @@ class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """C."""
 
 
-class ManagedHsmSkuNameV2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU of the managed HSM Pool."""
 
     STANDARD_B1 = "Standard_B1"

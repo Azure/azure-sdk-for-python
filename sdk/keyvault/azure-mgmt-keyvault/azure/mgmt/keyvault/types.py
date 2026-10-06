@@ -25,7 +25,7 @@ if TYPE_CHECKING:
         KeyPermissions,
         KeyRotationPolicyActionType,
         ManagedHsmSkuFamily,
-        ManagedHsmSkuNameV2,
+        ManagedHsmSkuName,
         ManagedServiceIdentityType,
         NetworkRuleAction,
         NetworkRuleBypassOptions,
@@ -672,12 +672,12 @@ class ManagedHsmSku(TypedDict, total=False):
     :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
      "Custom_B32", "Custom_B6", "Custom_C42", "Custom_C10", "Standard_B1v2", "Standard_B5v2",
      "Standard_B10v2", "Standard_B15v2", and "Standard_B20v2".
-    :vartype name: Union[str, "ManagedHsmSkuNameV2"]
+    :vartype name: Union[str, "ManagedHsmSkuName"]
     """
 
     family: Required[Union[str, "ManagedHsmSkuFamily"]]
     """SKU Family of the managed HSM Pool. Required. Known values are: \"B\" and \"C\"."""
-    name: Required[Union[str, "ManagedHsmSkuNameV2"]]
+    name: Required[Union[str, "ManagedHsmSkuName"]]
     """SKU of the managed HSM Pool. Required. Known values are: \"Standard_B1\", \"Custom_B32\",
      \"Custom_B6\", \"Custom_C42\", \"Custom_C10\", \"Standard_B1v2\", \"Standard_B5v2\",
      \"Standard_B10v2\", \"Standard_B15v2\", and \"Standard_B20v2\"."""

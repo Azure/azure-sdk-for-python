@@ -1663,14 +1663,14 @@ class ManagedHsmSku(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
      "Custom_B32", "Custom_B6", "Custom_C42", "Custom_C10", "Standard_B1v2", "Standard_B5v2",
      "Standard_B10v2", "Standard_B15v2", and "Standard_B20v2".
-    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuNameV2
+    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuName
     """
 
     family: Union[str, "_models.ManagedHsmSkuFamily"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU Family of the managed HSM Pool. Required. Known values are: \"B\" and \"C\"."""
-    name: Union[str, "_models.ManagedHsmSkuNameV2"] = rest_field(
+    name: Union[str, "_models.ManagedHsmSkuName"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU of the managed HSM Pool. Required. Known values are: \"Standard_B1\", \"Custom_B32\",
@@ -1682,7 +1682,7 @@ class ManagedHsmSku(_Model):  # pylint: disable=docstring-keyword-should-match-k
         self,
         *,
         family: Union[str, "_models.ManagedHsmSkuFamily"],
-        name: Union[str, "_models.ManagedHsmSkuNameV2"],
+        name: Union[str, "_models.ManagedHsmSkuName"],
     ) -> None: ...
 
     @overload

@@ -1873,14 +1873,14 @@ namespace azure.mgmt.keyvault.models
 
     class azure.mgmt.keyvault.models.ManagedHsmSku(_Model):
         family: Union[str, ManagedHsmSkuFamily]
-        name: Union[str, ManagedHsmSkuNameV2]
+        name: Union[str, ManagedHsmSkuName]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 family: Union[str, ManagedHsmSkuFamily], 
-                name: Union[str, ManagedHsmSkuNameV2]
+                name: Union[str, ManagedHsmSkuName]
             ) -> None: ...
 
         @overload
@@ -1892,7 +1892,7 @@ namespace azure.mgmt.keyvault.models
         C = "C"
 
 
-    class azure.mgmt.keyvault.models.ManagedHsmSkuNameV2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.mgmt.keyvault.models.ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CUSTOM_B32 = "Custom_B32"
         CUSTOM_B6 = "Custom_B6"
         CUSTOM_C10 = "Custom_C10"
@@ -3918,9 +3918,9 @@ namespace azure.mgmt.keyvault.types
 
     class azure.mgmt.keyvault.types.ManagedHsmSku(TypedDict, total=False):
         key "family": Required[Union[str, ManagedHsmSkuFamily]]
-        key "name": Required[Union[str, ManagedHsmSkuNameV2]]
+        key "name": Required[Union[str, ManagedHsmSkuName]]
         family: Union[str, ManagedHsmSkuFamily]
-        name: Union[str, ManagedHsmSkuNameV2]
+        name: Union[str, ManagedHsmSkuName]
 
 
     class azure.mgmt.keyvault.types.ManagedHsmTrigger(TypedDict, total=False):

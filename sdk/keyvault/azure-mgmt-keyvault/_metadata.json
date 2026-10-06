@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.KeyVault": "2026-05-15"
   },
-  "commit": "80b3f7b9bdd7757783cfa8c35f06a299bd5dedad",
+  "commit": "3d13a66faf3cdca3fc4178de005faab79c7bcdad",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/keyvault/resource-manager/Microsoft.KeyVault/KeyVault",
   "emitterVersion": "0.63.8",
