@@ -340,6 +340,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     try:
                         cancellation_deadline = await self._await_outgoing_write(frame_write, delivery)
                         frame_write.result()
+                        connection_error = getattr(self._connection, "_error", None)  # pylint: disable=protected-access
+                        if isinstance(connection_error, Exception):
+                            raise connection_error
                     except Exception:
                         delivery.cancel_requested = True
                         delivery.transfer_state = SessionTransferState.ERROR

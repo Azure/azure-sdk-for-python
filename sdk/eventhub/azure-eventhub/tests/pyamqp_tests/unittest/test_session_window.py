@@ -719,20 +719,27 @@ async def test_failed_older_queued_delivery_withdraws_immediate_caller(monkeypat
                 if isinstance(call.args[1], TransferFrame)]
 
 
+@pytest.mark.parametrize("stored_error", [False, True])
 @pytest.mark.asyncio
-async def test_frame_write_failure_marks_delivery_failed(monkeypatch):
+async def test_frame_write_failure_marks_delivery_failed(monkeypatch, stored_error):
     sender, session, connection = _sender(monkeypatch, True)
     connection._remote_max_frame_size = 1024
+    connection._error = None
 
     async def fail_write(_channel, frame):
         if isinstance(frame, TransferFrame):
-            raise RuntimeError("frame write failed")
+            if stored_error:
+                connection._error = RuntimeError("frame write failed")
+            else:
+                raise RuntimeError("frame write failed")
 
     connection._process_outgoing_frame = fail_write
     with pytest.raises(RuntimeError, match="frame write failed"):
         await sender.send_transfer(MagicMock(_code=0, payload=b"message"))
     assert not sender._pending_deliveries
     assert session.next_outgoing_id == 0
+    assert session.outgoing_window == 1
+    assert session.remote_incoming_window == 1
     await sender.update_pending_deliveries()
     assert session.next_outgoing_id == 0
 
@@ -955,6 +962,50 @@ async def test_cancelled_immediate_send_does_not_withdraw_older_queued_delivery(
     assert older.sent and sender.delivery_count == 1
     transfers = [call.args[1] for call in original_send.call_args_list if isinstance(call.args[1], TransferFrame)]
     assert len(transfers) == 1 and transfers[0].payload == b"older"
+
+
+@pytest.mark.asyncio
+async def test_cancel_busy_caller_while_later_timeout_callback_waits(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    session.remote_incoming_window = 0
+    timed_out, release = asyncio.Event(), asyncio.Event()
+    reasons = []
+
+    async def completed(reason, _state):
+        reasons.append(reason)
+
+    async def timeout_completed(reason, _state):
+        reasons.append(reason)
+        timed_out.set()
+        await release.wait()
+
+    async with session._outgoing_transfer_lock:
+        task = asyncio.create_task(sender.send_transfer(
+            MagicMock(_code=0, payload=b"first"), settled=False, on_send_complete=completed
+        ))
+        await asyncio.sleep(0)
+        first = sender._pending_deliveries[0]
+        second = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"second"), send_async=True,
+            settled=False, timeout=1, on_send_complete=timeout_completed
+        )
+        second.start -= 10
+    try:
+        await asyncio.wait_for(timed_out.wait(), 5)
+        assert first.frame is not None and first._inflight_more is None
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        assert first not in sender._pending_deliveries
+        assert reasons == [LinkDeliverySettleReason.TIMEOUT, LinkDeliverySettleReason.CANCELLED]
+    finally:
+        release.set()
+    await asyncio.sleep(0)
+    session.remote_incoming_window = 1
+    await sender.update_pending_deliveries()
+    assert not sender._pending_deliveries
+    assert not [call for call in connection._process_outgoing_frame.call_args_list
+                if isinstance(call.args[1], TransferFrame)]
 
 
 @pytest.mark.asyncio

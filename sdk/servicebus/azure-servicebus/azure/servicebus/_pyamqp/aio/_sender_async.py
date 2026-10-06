@@ -255,7 +255,7 @@ class SenderLink(Link):
                     await asyncio.shield(drain)
                 except asyncio.CancelledError:
                     if delivery in self._pending_deliveries and not delivery.sent:
-                        if delivery.frame is not None:
+                        if delivery._inflight_more is not None:  # pylint: disable=protected-access
                             drain.cancel()
                             try:
                                 await drain
