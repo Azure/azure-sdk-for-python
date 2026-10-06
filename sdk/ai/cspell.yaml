@@ -120,11 +120,13 @@ words:
   - VELRAIL
   - viseme
   - Vnext
+  - vnext
   - wasb
   - wday
   - webrtc
   - westus
   - wsid
+  - xffbinary
   - xhigh
 ignorePaths:
   - sdk/ai/azure-ai-agents/**/*.csv
