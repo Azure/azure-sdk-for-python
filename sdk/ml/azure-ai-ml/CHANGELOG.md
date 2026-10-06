@@ -6,6 +6,7 @@
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
+- Fixed `MLClient.models.list(name=..., list_view_type=...)` not forwarding `list_view_type` when listing model versions in a registry.
 
 ## 1.35.1 (2026-09-30)
 
