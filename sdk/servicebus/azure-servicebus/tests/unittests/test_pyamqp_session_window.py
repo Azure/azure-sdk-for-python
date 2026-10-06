@@ -713,6 +713,52 @@ async def test_cancelled_stalled_transfer_invalidates_connection(monkeypatch, tc
     assert len(written) == 1 and session.next_outgoing_id == 0
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cancel_during_flow", [False, True])
+async def test_cancelled_stalled_replenishment_preserves_transfer(monkeypatch, cancel_during_flow):
+    from azure.servicebus._pyamqp.aio import _session_async
+
+    monkeypatch.setattr(_session_async, "_CANCELLED_FRAME_WRITE_GRACE", 0.03)
+    sender, session, connection = _sender(monkeypatch, True)
+    session.outgoing_window = 1
+    transfer_started, release_transfer, flow_started, never = (asyncio.Event() for _ in range(4))
+    written = []
+    connection._transport = SimpleNamespace()
+    connection._disconnect = AsyncMock()
+
+    async def send_frame(channel, frame):
+        written.append(frame)
+        if isinstance(frame, TransferFrame):
+            transfer_started.set()
+            await release_transfer.wait()
+        else:
+            flow_started.set()
+            await never.wait()
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False))
+    await asyncio.wait_for(transfer_started.wait(), 5)
+    delivery = sender._pending_deliveries[0]
+    if not cancel_during_flow:
+        task.cancel()
+        await asyncio.sleep(0)
+    release_transfer.set()
+    await asyncio.wait_for(flow_started.wait(), 5)
+    if cancel_during_flow:
+        task.cancel()
+    with pytest.raises(AMQPConnectionError, match="Flow write did not finish"):
+        await asyncio.wait_for(task, 5)
+    assert delivery.sent and delivery.cancel_requested
+    assert delivery.transfer_state == SessionTransferState.OKAY
+    assert sender.delivery_count == 1 and sender.current_link_credit == 9
+    assert session.next_outgoing_id == 1 and session.state == SessionState.DISCARDING
+    assert connection.state == ConnectionState.DISCARDING
+    connection._disconnect.assert_awaited_once()
+    await sender.update_pending_deliveries()
+    assert len([frame for frame in written if isinstance(frame, TransferFrame)]) == 1
+    assert len([frame for frame in written if isinstance(frame, FlowFrame)]) == 1
+
+
 def test_threaded_early_disposition_during_replenishment(monkeypatch):
     sender, session, connection = _sender(monkeypatch, False)
     connection._remote_max_frame_size = 1024
