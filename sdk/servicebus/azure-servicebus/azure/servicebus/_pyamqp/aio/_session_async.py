@@ -277,9 +277,23 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     )
                 delivery._inflight_more = more  # pylint: disable=protected-access
                 try:
-                    await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                        self.channel, TransferFrame(payload=fragment, **frame)
+                    frame_write = asyncio.create_task(
+                        self._connection._process_outgoing_frame(  # pylint: disable=protected-access
+                            self.channel, TransferFrame(payload=fragment, **frame)
+                        )
                     )
+                    cancelled = False
+                    while not frame_write.done():
+                        try:
+                            await asyncio.shield(frame_write)
+                        except asyncio.CancelledError:
+                            cancelled = True
+                    try:
+                        frame_write.result()
+                    except Exception:
+                        delivery.cancel_requested = True
+                        delivery.transfer_state = SessionTransferState.ERROR
+                        raise
                     delivery.frame["payload"] = payload[len(fragment) :] if more else b""
                     delivery.frame["more"] = more
                     self.next_outgoing_id += 1
@@ -289,6 +303,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     if self.outgoing_window == 0:
                         self.outgoing_window = self.target_outgoing_window
                         await self._outgoing_flow_locked()
+                    if cancelled:
+                        raise asyncio.CancelledError
                     if delivery.abort_requested and more:
                         delivery.abort_pending = True
                         delivery.frame["aborted"] = True

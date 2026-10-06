@@ -608,6 +608,73 @@ async def test_cancelled_final_replenishment_does_not_resend(monkeypatch, early_
     assert (delivery in sender._pending_deliveries) is not early_ack
 
 
+@pytest.mark.asyncio
+async def test_cancelled_send_waiting_for_session_lock_is_withdrawn(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    reasons = []
+
+    async def completed(reason, state):
+        reasons.append(reason)
+
+    async with session._outgoing_transfer_lock:
+        task = asyncio.create_task(sender.send_transfer(
+            MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=completed
+        ))
+        await asyncio.sleep(0)
+        assert len(sender._pending_deliveries) == 1
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+    assert sender._pending_deliveries == []
+    assert reasons == [LinkDeliverySettleReason.CANCELLED]
+    await sender.update_pending_deliveries()
+    assert not any(isinstance(call.args[1], TransferFrame) for call in connection._process_outgoing_frame.call_args_list)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("partial", [False, True])
+async def test_cancelled_transport_drain_does_not_retransmit(monkeypatch, partial):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 80 if partial else 1024
+    started, release = asyncio.Event(), asyncio.Event()
+    written = []
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            written.append(frame)
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"message" * (20 if partial else 1)), settled=False
+    ))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        task.cancel()
+        await asyncio.sleep(0)
+        assert not task.done()
+    finally:
+        release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert len(written) == 1
+    assert session.next_outgoing_id == 1
+    if partial:
+        assert delivery.abort_pending
+        session.remote_incoming_window = 1
+        await sender.update_pending_deliveries()
+        assert written[-1].aborted and written[-1].delivery_id == written[0].delivery_id
+        assert len([frame for frame in written if not frame.aborted]) == 1
+    else:
+        assert delivery.sent and sender.delivery_count == 1
+        await sender.update_pending_deliveries()
+        assert len(written) == 1
+
+
 def test_threaded_early_disposition_during_replenishment(monkeypatch):
     sender, session, connection = _sender(monkeypatch, False)
     connection._remote_max_frame_size = 1024
