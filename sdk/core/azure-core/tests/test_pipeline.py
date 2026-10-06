@@ -666,9 +666,10 @@ def test_sensitive_headers_stripped_on_cross_domain_redirect():
         ) as pipeline:
             pipeline.run(req)
 
-        assert "api-key" not in captured.get("headers", {})
-        assert "ocp-apim-subscription-key" not in captured.get("headers", {})
-        assert "authorization" not in captured.get("headers", {})
+        assert "headers" in captured, "redirect target was never reached"
+        assert "api-key" not in captured["headers"]
+        assert "ocp-apim-subscription-key" not in captured["headers"]
+        assert "authorization" not in captured["headers"]
     finally:
         server_a.shutdown()
         server_a.server_close()
