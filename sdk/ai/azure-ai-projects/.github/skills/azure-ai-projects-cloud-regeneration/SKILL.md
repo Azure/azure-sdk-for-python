@@ -76,7 +76,12 @@ Download to a fresh temporary directory outside the repository:
 ```bash
 gh run download <RUN_ID> --repo Azure/azure-sdk-for-python \
   --name azure-ai-projects-regeneration-<RUN_ID> --dir <temporary-directory>
-python .github/skills/azure-ai-projects-cloud-regeneration/scripts/regenerate.py \
+WORKFLOW_SHA="$(gh run view <RUN_ID> --repo Azure/azure-sdk-for-python \
+  --json headSha --jq '.headSha')" &&
+gh api -H 'Accept: application/vnd.github.raw+json' \
+  "repos/Azure/azure-sdk-for-python/contents/sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-cloud-regeneration/scripts/regenerate.py?ref=$WORKFLOW_SHA" \
+  > <temporary-directory>/regenerate.py &&
+python <temporary-directory>/regenerate.py \
   apply --artifact-dir <temporary-directory> \
   --typespec-commit "<full-TypeSpec-SHA-or-empty>"
 ```
