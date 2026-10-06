@@ -63,6 +63,8 @@ class ManagementOperation(object):
             extra=self._network_trace_params,
         )
 
+        if operation_id not in self._responses:
+            return
         if operation_result in (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
             self._mgmt_error = error
             _LOGGER.error(

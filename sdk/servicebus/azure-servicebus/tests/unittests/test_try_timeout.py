@@ -1176,22 +1176,33 @@ class TestPyamqpManagementRequestReadiness:
         assert operation._responses == {"concurrent-request": None}
 
     @pytest.mark.asyncio
-    async def test_cancelled_async_management_request_cleans_operation_state(self):
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    @pytest.mark.parametrize("cleanup", ["cancel", "timeout"])
+    async def test_async_management_cleanup_ignores_late_callbacks_during_retry(self, late_result, cleanup):
+        from azure.servicebus._pyamqp.aio import _management_operation_async as module
         from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
         from azure.servicebus._pyamqp.aio._management_operation_async import ManagementOperation
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
         from azure.servicebus._pyamqp.management_link import PendingManagementOperation
 
         listening = asyncio.Event()
+        clock = VirtualClock()
+        captured_callback = None
         mgmt_link = ManagementLink.__new__(ManagementLink)
         mgmt_link._pending_operations = []
 
         async def execute_operation(message, callback, **kwargs):
+            nonlocal captured_callback
+            captured_callback = callback
             pending_operation = PendingManagementOperation(message, callback)
             mgmt_link._pending_operations.append(pending_operation)
             return pending_operation
 
         async def listen():
             listening.set()
+            if cleanup == "timeout":
+                clock.sleep(5)
+                return
             await asyncio.Event().wait()
 
         mgmt_link.execute_operation = execute_operation
@@ -1199,18 +1210,92 @@ class TestPyamqpManagementRequestReadiness:
         operation._mgmt_link = mgmt_link
         operation._responses = {}
         operation._mgmt_error = None
+        operation._network_trace_params = {}
         operation._connection = MagicMock()
         operation._connection.listen = listen
 
-        task = asyncio.create_task(operation.execute(MagicMock(), timeout=5))
-        await listening.wait()
-        task.cancel()
-
-        with pytest.raises(asyncio.CancelledError):
-            await task
+        with patch.object(module, "time", clock):
+            task = asyncio.create_task(operation.execute(MagicMock(), timeout=5))
+            await listening.wait()
+            late_callback = captured_callback
+            if cleanup == "cancel":
+                task.cancel()
+            with pytest.raises(asyncio.CancelledError if cleanup == "cancel" else TimeoutError):
+                await task
 
         assert operation._responses == {}
         assert mgmt_link._pending_operations == []
+
+        async def respond_to_retry():
+            await late_callback(
+                getattr(ManagementExecuteOperationResult, late_result),
+                200,
+                "OK",
+                "late response",
+                error=RuntimeError("late error"),
+            )
+            assert len(operation._responses) == 1
+            assert operation._mgmt_error is None
+            await mgmt_link._pending_operations[0].on_execute_operation_complete(
+                ManagementExecuteOperationResult.OK, 200, "OK", "retry response"
+            )
+
+        operation._connection.listen = respond_to_retry
+        assert await operation.execute(MagicMock(), timeout=5) == (200, "OK", "retry response")
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+    @pytest.mark.asyncio
+    async def test_async_management_response_removes_registration_before_awaiting_callback(self):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        entered, release = asyncio.Event(), asyncio.Event()
+        link = ManagementLink.__new__(ManagementLink)
+        link._status_code_field = b"status-code"
+        link._status_description_field = b"status-description"
+
+        async def callback(*args):
+            entered.set()
+            await release.wait()
+
+        pending = PendingManagementOperation(MagicMock(), callback)
+        link._pending_operations = [pending]
+        response = MagicMock()
+        response.properties = [None] * 5 + [pending.message.properties.message_id]
+        response.application_properties = {b"status-code": 200, b"status-description": "OK"}
+        task = asyncio.create_task(link._on_message_received(None, response))
+        try:
+            await asyncio.wait_for(entered.wait(), timeout=5)
+            link.cancel_operation(pending)
+        finally:
+            release.set()
+            await asyncio.wait_for(task, timeout=5)
+        assert link._pending_operations == []
+
+    @pytest.mark.asyncio
+    async def test_async_management_close_snapshots_registrations_before_awaiting_callbacks(self):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult, ManagementLinkState
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        link = ManagementLink.__new__(ManagementLink)
+        link.state = ManagementLinkState.OPEN
+        link._response_link = AsyncMock()
+        link._request_link = AsyncMock()
+        second_callback = AsyncMock()
+        second = PendingManagementOperation(MagicMock(), second_callback)
+
+        async def first_callback(*args):
+            await asyncio.sleep(0)
+            link.cancel_operation(second)
+
+        link._pending_operations = [PendingManagementOperation(MagicMock(), first_callback), second]
+        await link.close()
+        second_callback.assert_awaited_once()
+        assert second_callback.call_args.args[0] == ManagementExecuteOperationResult.LINK_CLOSED
+        assert link._pending_operations == []
+        assert link.state == ManagementLinkState.IDLE
 
     @pytest.mark.asyncio
     async def test_async_management_request_skips_broken_primary_link(self):
