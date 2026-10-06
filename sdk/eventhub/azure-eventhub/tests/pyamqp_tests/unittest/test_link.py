@@ -4,8 +4,13 @@ from azure.eventhub._pyamqp.link import Link
 from azure.eventhub._pyamqp.receiver import ReceiverLink
 from azure.eventhub._pyamqp.constants import LinkState
 from azure.eventhub._pyamqp.link import Source, Target
-from unittest.mock import Mock, patch
+from unittest.mock import patch, AsyncMock
 from azure.eventhub._pyamqp.constants import LINK_MAX_MESSAGE_SIZE
+from azure.eventhub._pyamqp.aio._receiver_async import ReceiverLink as ReceiverLinkAsync
+from azure.eventhub._pyamqp.outcomes import Rejected
+from azure.eventhub._pyamqp.error import ErrorCondition
+from azure.eventhub._pyamqp._decode import _MAX_NESTING_DEPTH
+import asyncio
 import pytest
 
 
@@ -87,6 +92,7 @@ def test_receive_transfer_frame_multiple():
     link._incoming_transfer(transfer_frame_two)
     assert link.current_link_credit == 1
 
+
 def test_max_message_size_negotiation_with_client_unlimited():
     """
     Test AMQP attach frame negotiation where client sends max_message_size=0 ( unlimited )
@@ -110,36 +116,36 @@ def test_max_message_size_negotiation_with_client_unlimited():
         TEST_HANDLE,
         name=TEST_LINK_NAME,
         role=False,  # Sender role
-        source_address=TEST_SOURCE_ADDRESS, 
+        source_address=TEST_SOURCE_ADDRESS,
         target_address=TEST_TARGET_ADDRESS,
         network_trace=False,
         network_trace_params={},
-        max_message_size=LINK_MAX_MESSAGE_SIZE
+        max_message_size=LINK_MAX_MESSAGE_SIZE,
     )
 
     # Verifying that client sends 0 (unlimited) in attach frame
     assert link.max_message_size == 0, f"Expected client max_message_size=0, got {link.max_message_size}"
-    
+
     # Simulating server's attach response with 20MB limit, Mock incoming attach frame from server
     mock_attach_frame = [
-        TEST_LINK_NAME,                           # 0: name
-        TEST_HANDLE,                              # 1: handle
-        False,                                    # 2: role
-        TEST_SND_SETTLE_MODE,                     # 3: snd-settle-mode
-        TEST_RCV_SETTLE_MODE,                     # 4: rcv-settle-mode
-        Source(address=TEST_SOURCE_ADDRESS),      # 5: source
-        Target(address=TEST_TARGET_ADDRESS),      # 6: target
-        None,                                     # 7: unsettled
-        False,                                    # 8: incomplete-unsettled
-        None,                                     # 9: initial-delivery-count
-        SERVER_MAX_MESSAGE_SIZE,                  # 10: max-message-size
-        None,                                     # 11: offered_capabilities
-        None,                                     # 12: desired_capabilities
-        None,                                     # 13: remote_properties
+        TEST_LINK_NAME,  # 0: name
+        TEST_HANDLE,  # 1: handle
+        False,  # 2: role
+        TEST_SND_SETTLE_MODE,  # 3: snd-settle-mode
+        TEST_RCV_SETTLE_MODE,  # 4: rcv-settle-mode
+        Source(address=TEST_SOURCE_ADDRESS),  # 5: source
+        Target(address=TEST_TARGET_ADDRESS),  # 6: target
+        None,  # 7: unsettled
+        False,  # 8: incomplete-unsettled
+        None,  # 9: initial-delivery-count
+        SERVER_MAX_MESSAGE_SIZE,  # 10: max-message-size
+        None,  # 11: offered_capabilities
+        None,  # 12: desired_capabilities
+        None,  # 13: remote_properties
     ]
 
     # Testing _outgoing_attach()
-    with patch.object(link, '_outgoing_attach') as mock_outgoing_attach:
+    with patch.object(link, "_outgoing_attach") as mock_outgoing_attach:
         # Trigger outgoing attach
         link.attach()
 
@@ -150,17 +156,22 @@ def test_max_message_size_negotiation_with_client_unlimited():
         call_args = mock_outgoing_attach.call_args
         if call_args and call_args[0]:
             attach_frame = call_args[0][0]
-            assert attach_frame.max_message_size == 0, f"Expected client to send max_message_size=0, got {attach_frame.max_message_size}"
+            assert (
+                attach_frame.max_message_size == 0
+            ), f"Expected client to send max_message_size=0, got {attach_frame.max_message_size}"
 
     # Testing _incoming_attach()
-    with patch.object(link, '_outgoing_attach') as mock_outgoing_response:
+    with patch.object(link, "_outgoing_attach") as mock_outgoing_response:
 
         # Calling _incoming_attach to process server's response
         link._incoming_attach(mock_attach_frame)
 
         expected_final_size = SERVER_MAX_MESSAGE_SIZE
         # Verifying remote_max_message_size is set correctly
-        assert link.remote_max_message_size == expected_final_size, f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
+        assert (
+            link.remote_max_message_size == expected_final_size
+        ), f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
+
 
 def test_receive_transfer_continuation_frame():
     session = None
@@ -227,22 +238,30 @@ def test_receive_transfer_and_flow():
     link._incoming_transfer(transfer_frame_three)
     assert link.current_link_credit == 98
 
+
 @pytest.mark.parametrize(
     "frame",
     [
-        [2, True, [b'amqp:link:detach-forced', b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.", None]],
-        [2, True, [b'amqp:link:detach-forced', None, b'something random']],
-        [2, True, [b'amqp:link:detach-forced', None, None]],
-        [2, True, [b'amqp:link:detach-forced']],
-        
+        [
+            2,
+            True,
+            [
+                b"amqp:link:detach-forced",
+                b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.",
+                None,
+            ],
+        ],
+        [2, True, [b"amqp:link:detach-forced", None, b"something random"]],
+        [2, True, [b"amqp:link:detach-forced", None, None]],
+        [2, True, [b"amqp:link:detach-forced"]],
     ],
     ids=["description and info", "info only", "description only", "no info or description"],
 )
 def test_detach_with_error(frame):
-    '''
-      A detach can optionally include an description and info field.
-      https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
-    '''
+    """
+    A detach can optionally include an description and info field.
+    https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
+    """
     session = None
     link = Link(
         session,
@@ -263,4 +282,217 @@ def test_detach_with_error(frame):
         assert ae.info == frame[2][2]
 
 
+def _over_depth_body():
+    # amqp-value body section whose value nests one level past the decoder limit.
+    value = b"\x40"
+    for _ in range(_MAX_NESTING_DEPTH + 1):
+        body = b"\x00\x00\x00\x01" + value
+        value = b"\xd0" + len(body).to_bytes(4, "big") + body
+    return b"\x00\x53\x77" + value
 
+
+def _transfer_frame(delivery_id, delivery_tag, payload):
+    # handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted,
+    # batchable, payload
+    return [3, delivery_id, delivery_tag, 0, False, False, None, None, None, None, False, payload]
+
+
+def _receiver(link_cls, on_transfer):
+    return link_cls(
+        None,
+        3,
+        source_address="test_source",
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+        on_transfer=on_transfer,
+    )
+
+
+def test_incoming_transfer_rejects_malformed_payload():
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+
+    link._incoming_transfer(_transfer_frame(0, b"/tag", _over_depth_body()))
+
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_called_once()
+    state = link._outgoing_disposition.call_args.kwargs["state"]
+    assert isinstance(state, Rejected)
+    assert state.error.condition == ErrorCondition.DecodeError
+
+    # A subsequent valid delivery is still processed.
+    link._outgoing_disposition.reset_mock()
+    link._incoming_transfer(_transfer_frame(1, b"/tag2", b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_called_once()
+
+
+def test_incoming_transfer_rejects_malformed_payload_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+
+        await link._incoming_transfer(_transfer_frame(0, b"/tag", _over_depth_body()))
+
+        link._on_transfer.assert_not_called()
+        assert link._received_payload == bytearray()
+        link._outgoing_disposition.assert_awaited_once()
+        state = link._outgoing_disposition.call_args.kwargs["state"]
+        assert isinstance(state, Rejected)
+        assert state.error.condition == ErrorCondition.DecodeError
+
+        # A subsequent valid delivery is still processed.
+        link._outgoing_disposition.reset_mock()
+        await link._incoming_transfer(_transfer_frame(1, b"/tag2", b"\x00\x53\x77\x50\x01"))
+        link._on_transfer.assert_awaited_once()
+
+    asyncio.run(run())
+
+
+def _transfer_frame_full(delivery_id, delivery_tag, settled, more, payload):
+    return [3, delivery_id, delivery_tag, 0, settled, more, None, None, None, None, False, payload]
+
+
+def test_incoming_transfer_settled_multiframe_not_rejected():
+    # A delivery settled on its first transfer must not be rejected when the continuation frame
+    # omits the settled flag (which inherits True), even if the assembled payload is malformed.
+    body = _over_depth_body()
+    half = len(body) // 2
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, True, body[:half]))
+    link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
+
+
+def test_incoming_transfer_settled_multiframe_not_rejected_async():
+    async def run():
+        body = _over_depth_body()
+        half = len(body) // 2
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, True, body[:half]))
+        await link._incoming_transfer(_transfer_frame_full(None, None, None, False, body[half:]))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_delivery_tags == set()
+
+    asyncio.run(run())
+
+
+_NON_DEPTH_MALFORMED = [
+    b"\x00\x53\x77\x94\x5f" + b"\xff" * 15,  # out-of-range decimal128 -> ValueError
+    b"\x00\x53\x77\xd0\x00",  # truncated list32 size -> struct.error
+]
+
+
+@pytest.mark.parametrize("payload", _NON_DEPTH_MALFORMED)
+def test_incoming_transfer_rejects_non_depth_malformed_payload(payload):
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame(7, b"/tag", payload))
+    link._on_transfer.assert_not_called()
+    assert link._received_payload == bytearray()
+    link._outgoing_disposition.assert_called_once()
+    assert isinstance(link._outgoing_disposition.call_args.kwargs["state"], Rejected)
+
+
+@pytest.mark.parametrize("payload", _NON_DEPTH_MALFORMED)
+def test_incoming_transfer_rejects_non_depth_malformed_payload_async(payload):
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame(7, b"/tag", payload))
+        link._on_transfer.assert_not_called()
+        assert link._received_payload == bytearray()
+        link._outgoing_disposition.assert_awaited_once()
+        assert isinstance(link._outgoing_disposition.call_args.kwargs["state"], Rejected)
+
+    asyncio.run(run())
+
+
+def test_incoming_transfer_presettled_delivery_does_not_track_tag():
+    # A pre-settled delivery needs no local disposition, so its tag must not be retained.
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_called_once()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_delivery_tags == set()
+
+
+def test_incoming_transfer_presettled_delivery_does_not_track_tag_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame_full(7, b"/tag", True, False, b"\x00\x53\x77\x50\x01"))
+        link._on_transfer.assert_awaited_once()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_delivery_tags == set()
+
+    asyncio.run(run())
+
+
+def _aborted_frame(delivery_id, delivery_tag, more, payload):
+    return [3, delivery_id, delivery_tag, 0, False, more, None, None, None, True, False, payload]
+
+
+def test_incoming_transfer_aborted_is_discarded():
+    # An aborted delivery is discarded and implicitly settled: no callback, no disposition.
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_aborted_frame(7, b"/tag", False, b"\x00\x53\x77\x50\x01"))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+    assert link._received_delivery_tags == set()
+
+
+def test_incoming_transfer_aborted_multiframe_is_not_rejected():
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link._incoming_transfer(_transfer_frame_full(7, b"/tag", False, True, b"\x00\x53\x77"))
+    link._incoming_transfer(_aborted_frame(None, None, False, b""))
+    link._on_transfer.assert_not_called()
+    link._outgoing_disposition.assert_not_called()
+    assert link._received_payload == bytearray()
+
+
+def test_incoming_transfer_aborted_is_discarded_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_aborted_frame(7, b"/tag", False, b"\x00\x53\x77\x50\x01"))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_payload == bytearray()
+        assert link._received_delivery_tags == set()
+
+    asyncio.run(run())
+
+
+def test_incoming_transfer_aborted_multiframe_is_not_rejected_async():
+    async def run():
+        link = _receiver(ReceiverLinkAsync, AsyncMock())
+        link._outgoing_disposition = AsyncMock()
+        await link._incoming_transfer(_transfer_frame_full(7, b"/tag", False, True, b"\x00\x53\x77"))
+        await link._incoming_transfer(_aborted_frame(None, None, False, b""))
+        link._on_transfer.assert_not_called()
+        link._outgoing_disposition.assert_not_called()
+        assert link._received_payload == bytearray()
+
+    asyncio.run(run())
+
+
+def test_incoming_transfer_aborted_completes_delivery_for_credit():
+    # Aborted takes precedence over `more`: the delivery still completes for flow-control accounting.
+    link = _receiver(ReceiverLink, Mock())
+    link._outgoing_disposition = Mock()
+    link.current_link_credit = 5
+    link.delivery_count = 0
+    link._incoming_transfer(_aborted_frame(7, b"/tag", True, b"\x00\x53\x77"))
+    assert link.current_link_credit == 4
+    assert link.delivery_count == 1
