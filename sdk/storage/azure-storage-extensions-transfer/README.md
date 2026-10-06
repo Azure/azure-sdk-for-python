@@ -24,6 +24,13 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 * Python 3.10 or later is required.
 * A Rust toolchain is required to build from source. Pre-built wheels are provided for common platforms.
 
+## Rust source layout
+
+- `src/lib.rs`: Python module registration, shared runtime/transport, client construction, and transfer defaults.
+- `src/credentials.rs`: Python token callback credential and process-wide credential cache.
+- `src/upload.rs`: Upload bindings, zero-copy Python buffer ownership, and upload response conversion.
+- `src/download.rs`: Download bindings and the windowed download stream.
+
 ## What it accelerates
 
 When installed, this package transparently accelerates:
