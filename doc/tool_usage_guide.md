@@ -103,7 +103,7 @@ source .venv/bin/activate
 
 ### Setup with pip/python
 
-`python3.11 -m venv .venv` (Windows: `py -3.11 -m venv .venv`)
+`python -m venv .venv`
 
 ```bash
 # for WSL
