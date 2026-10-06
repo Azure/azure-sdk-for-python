@@ -381,8 +381,12 @@ class AMQPClientAsync(AMQPClientSync):
                 await mgmt_link.open()
                 self._mgmt_links[node] = mgmt_link
 
-        while not await self.auth_complete_async():
+        while True:
+            _get_mgmt_request_remaining_timeout(timeout, started)
+            authenticated = await self.auth_complete_async()
             remaining = _get_mgmt_request_remaining_timeout(timeout, started)
+            if authenticated:
+                break
             await asyncio.sleep(min(0.05, remaining) if remaining else 0.05)
 
         while not await mgmt_link.ready():

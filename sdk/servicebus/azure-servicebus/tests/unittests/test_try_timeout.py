@@ -975,6 +975,50 @@ class TestPyamqpManagementRequestReadiness:
             with pytest.raises(TimeoutError, match=r"after 0.060 seconds \(timeout: 0.05 seconds\)"):
                 pyamqp_client_module._get_mgmt_request_remaining_timeout(0.05, started)
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("expiry", ["before-auth", "after-sleep", "auth-pending", "auth-ready"])
+    async def test_management_authentication_checks_deadline_before_and_after_call(self, asynchronous, expiry):
+        clock = VirtualClock(stall_before_first_check=0.06 if expiry == "before-auth" else 0)
+        module = pyamqp_async_client_module if asynchronous else pyamqp_client_module
+        client_type = module.AMQPClientAsync if asynchronous else module.AMQPClient
+        client = client_type.__new__(client_type)
+        mgmt_link = MagicMock()
+        client._mgmt_links = {"$management": mgmt_link}
+        auth_times = []
+
+        def authenticate():
+            auth_times.append(clock.now)
+            if expiry in ("auth-pending", "auth-ready"):
+                clock.sleep(0.06)
+            return expiry == "auth-ready"
+
+        if asynchronous:
+            client._mgmt_link_lock_async = AsyncMock()
+            client.auth_complete_async = AsyncMock(side_effect=authenticate)
+            mgmt_link.ready = AsyncMock(return_value=True)
+        else:
+            client._mgmt_link_lock = MagicMock()
+            client.auth_complete = MagicMock(side_effect=authenticate)
+            mgmt_link.ready.return_value = True
+
+        with (
+            patch.object(pyamqp_client_module, "time", clock),
+            patch.object(pyamqp_async_client_module, "time", clock),
+            patch.object(pyamqp_async_client_module.asyncio, "sleep", clock.sleep_async),
+        ):
+            with pytest.raises(TimeoutError):
+                if asynchronous:
+                    await client.mgmt_request_async(MagicMock(), timeout=0.03125)
+                else:
+                    client.mgmt_request(MagicMock(), timeout=0.03125)
+
+        assert len(auth_times) == (0 if expiry == "before-auth" else 1)
+        assert all(start < 1000.03125 for start in auth_times)
+        assert clock.now == pytest.approx(1000.03125 if expiry == "after-sleep" else 1000.06)
+        mgmt_link.ready.assert_not_called()
+        mgmt_link.execute.assert_not_called()
+
     def test_sync_management_request_skips_broken_primary_link(self):
         from azure.servicebus._pyamqp.client import AMQPClient
 

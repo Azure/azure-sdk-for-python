@@ -479,8 +479,12 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
-        while not self.auth_complete():
+        while True:
+            _get_mgmt_request_remaining_timeout(timeout, started)
+            authenticated = self.auth_complete()
             remaining = _get_mgmt_request_remaining_timeout(timeout, started)
+            if authenticated:
+                break
             time.sleep(min(0.05, remaining) if remaining else 0.05)
 
         while not mgmt_link.ready():
