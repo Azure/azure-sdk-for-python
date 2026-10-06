@@ -27,7 +27,7 @@ if (!(Test-Path $venvPath)) {
 
     if (Get-Command uv -ErrorAction SilentlyContinue) {
         Write-Host "Creating virtual environment '$VenvName' using uv."
-        uv venv $venvPath --verbose
+        uv venv $venvPath  --verbose
     }
     else {
         Write-Host "Creating virtual environment '$VenvName' using virtualenv and python located at '$invokingPython'."
