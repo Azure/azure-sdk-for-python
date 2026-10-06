@@ -4501,4 +4501,5 @@ class TestStorageFile(StorageRecordedTestCase):
             file_client.get_file_links()
         assert e.value.error_code is not None
 
+
 # ------------------------------------------------------------------------------

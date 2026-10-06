@@ -659,7 +659,9 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         account_url = self.account_url(storage_account_name, "file").rstrip("/")
 
-        file_client = ShareFileClient.from_file_url(f"{account_url}/myshare?fileid=123", credential=self.account_key.secret)
+        file_client = ShareFileClient.from_file_url(
+            f"{account_url}/myshare?fileid=123", credential=self.account_key.secret
+        )
         assert file_client.share_name == "myshare"
         assert file_client.file_id == "123"
         assert file_client.url == f"{account_url}/myshare?fileid=123"
@@ -671,7 +673,9 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         assert snapshot_client.snapshot == snapshot
         assert snapshot_client.url == f"{account_url}/myshare?fileid=123&sharesnapshot={snapshot}"
 
-        path_client = ShareFileClient.from_file_url(f"{account_url}/myshare/dir/file", credential=self.account_key.secret)
+        path_client = ShareFileClient.from_file_url(
+            f"{account_url}/myshare/dir/file", credential=self.account_key.secret
+        )
         assert path_client.file_id is None
         assert path_client.url == f"{account_url}/myshare/dir/file"
 
