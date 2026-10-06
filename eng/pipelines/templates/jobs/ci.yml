@@ -208,6 +208,9 @@ jobs:
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
+    variables:
+      PythonVersion: '3.11'
+
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
     dependsOn:

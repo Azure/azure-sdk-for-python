@@ -12,7 +12,7 @@ from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.logging import logger
 
-PYTHON_VERSION = "3.10"
+PYTHON_VERSION = "3.11"
 MYPY_VERSION = "1.19.1"
 NEXT_MYPY_VERSION = "2.1.0"
 ADDITIONAL_LOCKED_DEPENDENCIES = [

@@ -167,11 +167,11 @@ After it is implemented, the `relative_cov` key will enable the prevention of **
 
 <a name="analyze-python-version"></a>
 
-By default, the analyze checks (mypy, pylint, pyright, etc.) run against an agreed minimum Python version (currently 3.10). A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
+By default, the analyze checks (mypy, pylint, pyright, etc.) run on Python 3.11. This is the tooling runtime, not the SDK minimum supported Python version. A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
 
 ```toml
 [tool.azure-sdk-build]
-analyze_python_version = "3.11"
+analyze_python_version = "3.12"
 ```
 
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
@@ -247,7 +247,9 @@ The canonical definition of which install-and-test checks run in each mode lives
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
 
-Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
+Static analysis checks run on **Python 3.11** by default (configured via the Analyze job's local `PythonVersion` in `eng/pipelines/templates/jobs/ci.yml`). Weekly next-tool checks and API-stub generation also select Python 3.11. Documentation generation retains its separate Python 3.13 runtime.
+
+The shared `PythonVersion` in `eng/pipelines/templates/variables/globals.yml` is unchanged. Analyze's job-local override also applies when optional AutoRest verification reselects Python. Isolated check environments use the selected interpreter unless a package supplies `analyze_python_version`.
 
 The install-and-test checks run across the Python version and platform matrix defined in [`platform-matrix.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/platform-matrix.json).
 
@@ -259,7 +261,7 @@ Static analysis runs on every changed package in every PR and every nightly buil
 
 <a name="mypy"></a>
 
-[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.10 by default and respects `py.typed` markers and stub files.
+[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. Both the pinned and next-tool checks explicitly target Python 3.11 and respect `py.typed` markers and stub files.
 
 To run locally:
 
@@ -272,6 +274,8 @@ azpysdk mypy .
 <a name="pyright"></a>
 
 [`Pyright`](https://github.com/microsoft/pyright/) is Microsoft's static type checker. It offers faster incremental analysis and stricter inference than MyPy, and the two tools catch different classes of type errors — running both provides broader coverage.
+
+The repository's default `pyrightconfig.json` targets Python 3.11. Package-specific Pyright configurations still take precedence.
 
 To run locally:
 
@@ -295,7 +299,7 @@ azpysdk verifytypes .
 
 <a name="pylint"></a>
 
-[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.10 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
+[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.11 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
 
 To run locally:
 

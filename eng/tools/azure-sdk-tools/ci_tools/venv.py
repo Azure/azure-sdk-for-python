@@ -19,7 +19,7 @@ from typing import List, Optional
 def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str] = None) -> List[str]:
     """Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
 
-    :param str python_exe: The Python executable to use (if not using the default).
+    :param str python_exe: The Python executable to use (defaults to the invoking interpreter).
     :param str python_version: Optional Python version string to pass through to ``uv venv --python``.
         Only valid when the backend is ``uv``; raises if used with the ``pip`` backend.
     :return: List of command arguments for venv.
@@ -32,10 +32,7 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
-        cmd = ["uv", "venv"]
-        if python_version:
-            cmd += ["--python", python_version]
-        return cmd
+        return ["uv", "venv", "--python", python_version or python_exe or sys.executable]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "venv"]
 
