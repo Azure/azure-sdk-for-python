@@ -296,7 +296,7 @@ class SenderLink(Link):
                 ErrorCondition.ClientError,
                 message="Transfer cannot be cancelled. Message has already been sent and awaiting disposition.",
             )
-        if delivery.abort_pending:
+        if delivery.abort_pending or delivery.abort_requested:
             raise MessageException(ErrorCondition.ClientError, message="Transfer cancellation is already pending.")
         if delivery._inflight_more is not None:  # pylint: disable=protected-access
             if not delivery._inflight_more:  # pylint: disable=protected-access

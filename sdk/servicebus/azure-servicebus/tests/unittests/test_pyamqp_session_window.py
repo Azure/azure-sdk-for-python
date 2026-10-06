@@ -530,6 +530,51 @@ async def test_cancellation_during_async_transfer_write(monkeypatch, final_frame
 
 
 @pytest.mark.asyncio
+async def test_concurrent_partial_cancellations_notify_once(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    session.remote_incoming_window = 10
+    write_started, write_release = asyncio.Event(), asyncio.Event()
+    callback_started, callback_release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+    callbacks = []
+    writes = 0
+
+    async def send_frame(channel, frame):
+        nonlocal writes
+        if isinstance(frame, TransferFrame):
+            writes += 1
+            if writes == 2:
+                write_started.set()
+                await write_release.wait()
+        await send(channel, frame)
+
+    async def completed(reason, _state):
+        callbacks.append(reason)
+        callback_started.set()
+        await callback_release.wait()
+
+    connection._process_outgoing_frame = send_frame
+    sending = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"a" * 120), settled=False, on_send_complete=completed
+    ))
+    try:
+        await asyncio.wait_for(write_started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        cancelling = asyncio.create_task(sender.cancel_transfer(delivery))
+        await asyncio.wait_for(callback_started.wait(), 5)
+        with pytest.raises(MessageException, match="already pending"):
+            await sender.cancel_transfer(delivery)
+    finally:
+        callback_release.set()
+        write_release.set()
+    await cancelling
+    await sending
+    assert callbacks == [LinkDeliverySettleReason.CANCELLED]
+    transfers = [call.args[1] for call in send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    assert len([frame for frame in transfers if frame.aborted]) == 1
+
+
+@pytest.mark.asyncio
 async def test_disposition_during_async_send_preserves_queued_deliveries(monkeypatch):
     sender, session, connection = _sender(monkeypatch, True)
     connection._remote_max_frame_size = 1024
