@@ -1,5 +1,26 @@
 # Release History
 
+## 2.3.0 (2026-10-05)
+
+### Bugs Fixed
+
+- Preserved the canonical request `agent_reference` on lifecycle snapshots when
+  handlers emit a partial reference, preventing stored response updates from
+  losing the agent name or version.
+
+### Other Changes
+
+- Stable release incorporating the changes from 2.3.0b1 and 2.3.0b2.
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
 ## 2.3.0b2 (2026-09-30)
 
 ### Bugs Fixed
