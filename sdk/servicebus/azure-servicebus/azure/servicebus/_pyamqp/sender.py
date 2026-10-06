@@ -17,7 +17,7 @@ from .error import AMQPLinkError, ErrorCondition, MessageException
 _LOGGER = logging.getLogger(__name__)
 
 
-class PendingDelivery(object):
+class PendingDelivery(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.message = kwargs.get("message")
         self.sent = False
