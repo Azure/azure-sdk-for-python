@@ -63,7 +63,7 @@ To utilize this feature, add `--isolate` to any `azpysdk` invocation:
 ## Prerequisite
 
 - You need to have Python installed
-- The monorepo requires a minimum of `python 3.10`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
+- SDKs retain their minimum supported Python version of `3.10`. Use Python `3.11` to reproduce the default azpysdk analyze checks locally; MyPy and the repository's default Pyright configuration also target `3.11`. The `sphinx` check requires `>=3.11` and runs separately on `3.13` in CI.
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
 
 ## Package Index (CFS)
@@ -141,6 +141,6 @@ You need to install [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#in
 
 To switch Python versions:
 ```
-pyenv install 3.10
-pyenv global 3.10
+pyenv install 3.11
+pyenv global 3.11
 ```

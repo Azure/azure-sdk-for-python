@@ -65,8 +65,8 @@ Read the issue to understand which files/modules and specific error codes to fix
 # Activate the provided virtual environment (e.g., envml, env, venv)
 .\<venv-name>\Scripts\Activate.ps1
 
-# If creating new virtual environment (Python 3.10+):
-python -m venv env
+# If creating new virtual environment for azpysdk mypy (Python 3.11):
+py -3.11 -m venv env
 .\env\Scripts\Activate.ps1
 ```
 
@@ -85,7 +85,7 @@ pip install -r dev_requirements.txt
 pip install -e .
 ```
 
-**Important:** Use Python 3.10 compatible environment for mypy checks.
+**Important:** Use Python 3.11 for the azpysdk mypy check. This does not change the SDK's minimum supported Python version.
 
 ### Step 3: Identify Target Files (within activated venv)
 

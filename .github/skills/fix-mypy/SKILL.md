@@ -74,8 +74,8 @@ Ask: "Do you have an existing virtual environment path, or should I create 'env'
 # Activate the provided virtual environment (e.g., env, venv)
 .\<venv-name>\Scripts\Activate.ps1
 
-# If creating new virtual environment
-python -m venv env
+# If creating new virtual environment for azpysdk mypy (Python 3.11)
+py -3.11 -m venv env
 .\env\Scripts\Activate.ps1
 ```
 
