@@ -117,5 +117,5 @@
         "azure.mgmt.privatetrafficmanager.operations.TopologyMapsOperations.list_by_subscription": "Microsoft.Network.TopologyMaps.listBySubscription",
         "azure.mgmt.privatetrafficmanager.aio.operations.TopologyMapsOperations.list_by_subscription": "Microsoft.Network.TopologyMaps.listBySubscription"
     },
-    "CrossLanguageVersion": "05b4914667ea"
+    "CrossLanguageVersion": "1289fb4a2e85"
 }
