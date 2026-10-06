@@ -1,5 +1,6 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 from threading import RLock
 from threading import Event
 from unittest.mock import AsyncMock, MagicMock
@@ -16,6 +17,8 @@ from azure.eventhub._pyamqp._encode import (
 from azure.eventhub._pyamqp.constants import (
     LinkDeliverySettleReason,
     LinkState,
+    ManagementExecuteOperationResult,
+    SEND_DISPOSITION_REJECT,
     SenderSettleMode,
     SessionState,
     SessionTransferState,
@@ -24,6 +27,9 @@ from azure.eventhub._pyamqp.performatives import FlowFrame, TransferFrame
 from azure.eventhub._pyamqp.error import MessageException
 from azure.eventhub._pyamqp.session import Session
 from azure.eventhub._pyamqp.sender import SenderLink
+from azure.eventhub._pyamqp.management_link import ManagementLink
+from azure.eventhub._pyamqp.message import Message
+from azure.eventhub._pyamqp.aio._management_link_async import ManagementLink as AsyncManagementLink
 from azure.eventhub._pyamqp.aio._session_async import Session as AsyncSession
 from azure.eventhub._pyamqp.aio._sender_async import SenderLink as AsyncSenderLink
 
@@ -560,6 +566,48 @@ async def test_async_early_disposition_during_replenishment(monkeypatch):
     assert delivery.sent and delivery not in sender._pending_deliveries
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("early_ack", [False, True])
+async def test_cancelled_final_replenishment_does_not_resend(monkeypatch, early_ack):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+    started, release = asyncio.Event(), asyncio.Event()
+    reasons = []
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    async def completed(reason, state):
+        reasons.append((reason, state))
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=completed
+    ))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        assert not delivery.sent
+        assert delivery.transfer_state == SessionTransferState.OKAY
+        if early_ack:
+            await sender._incoming_disposition([None, delivery.frame["delivery_id"], None, True, b"accepted"])
+        task.cancel()
+    finally:
+        release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert delivery.sent and sender.delivery_count == 1 and sender.current_link_credit == 9
+    await sender.update_pending_deliveries()
+    transfers = [call.args[1] for call in send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) == 1
+    assert reasons == ([(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")] if early_ack else [])
+    assert (delivery in sender._pending_deliveries) is not early_ack
+
+
 def test_threaded_early_disposition_during_replenishment(monkeypatch):
     sender, session, connection = _sender(monkeypatch, False)
     connection._remote_max_frame_size = 1024
@@ -618,6 +666,67 @@ def test_reentrant_disposition_during_sync_replenishment(monkeypatch):
     )
     assert delivery.sent and delivery not in sender._pending_deliveries
     assert reasons == [(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")]
+
+
+@pytest.mark.parametrize("send_fails", [False, True])
+def test_management_rejection_before_send_returns(send_fails):
+    management = ManagementLink.__new__(ManagementLink)
+    management.lock = RLock()
+    management._pending_operations = []
+    completed = []
+
+    def send_transfer(message, *, on_send_complete, timeout):
+        assert management._pending_operations[0].message is not None
+        if send_fails:
+            raise RuntimeError("send failed")
+        on_send_complete(
+            LinkDeliverySettleReason.DISPOSITION_RECEIVED,
+            {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]},
+        )
+
+    management._request_link = SimpleNamespace(send_transfer=send_transfer)
+    if send_fails:
+        with pytest.raises(RuntimeError, match="send failed"):
+            management.execute_operation(Message(application_properties={}), lambda *a, **kw: completed.append((a, kw)))
+        assert not completed
+    else:
+        management.execute_operation(Message(application_properties={}), lambda *a, **kw: completed.append((a, kw)))
+        assert len(completed) == 1
+        assert completed[0][0][0] is ManagementExecuteOperationResult.ERROR
+        assert completed[0][1]["error"].description == b"rejected"
+    assert management._pending_operations == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("send_failure", [None, RuntimeError, asyncio.CancelledError])
+async def test_async_management_rejection_before_send_returns(send_failure):
+    management = AsyncManagementLink.__new__(AsyncManagementLink)
+    management._pending_operations = []
+    completed = []
+
+    async def on_complete(*args, **kwargs):
+        completed.append((args, kwargs))
+
+    async def send_transfer(message, *, on_send_complete, timeout):
+        assert management._pending_operations[0].message is not None
+        if send_failure:
+            raise send_failure("send failed")
+        await on_send_complete(
+            LinkDeliverySettleReason.DISPOSITION_RECEIVED,
+            {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]},
+        )
+
+    management._request_link = SimpleNamespace(send_transfer=send_transfer)
+    if send_failure:
+        with pytest.raises(send_failure, match="send failed"):
+            await management.execute_operation(Message(application_properties={}), on_complete)
+        assert not completed
+    else:
+        await management.execute_operation(Message(application_properties={}), on_complete)
+        assert len(completed) == 1
+        assert completed[0][0][0] is ManagementExecuteOperationResult.ERROR
+        assert completed[0][1]["error"].description == b"rejected"
+    assert management._pending_operations == []
 
 
 @pytest.mark.parametrize("async_session", [False, True])

@@ -285,6 +285,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     self.next_outgoing_id += 1
                     self.remote_incoming_window -= 1
                     self.outgoing_window -= 1
+                    delivery.transfer_state = SessionTransferState.BUSY if more else SessionTransferState.OKAY
                     if self.outgoing_window == 0:
                         self.outgoing_window = self.target_outgoing_window
                         await self._outgoing_flow_locked()
@@ -295,7 +296,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                         delivery.transfer_state = SessionTransferState.BUSY
                         return
                     if not more:
-                        delivery.transfer_state = SessionTransferState.OKAY
                         return
                     if self.remote_incoming_window <= 0:
                         delivery.transfer_state = SessionTransferState.BUSY

@@ -240,8 +240,18 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
-        self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
+        with self.lock:
+            self._pending_operations.append(pending_operation)
+        sent = False
+        try:
+            self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
+            sent = True
+        finally:
+            if not sent:
+                with self.lock:
+                    if pending_operation in self._pending_operations:
+                        self._pending_operations.remove(pending_operation)
 
     def close(self):
         if self.state != ManagementLinkState.IDLE:
