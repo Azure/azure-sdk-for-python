@@ -1447,7 +1447,7 @@ class FileRangePaged(PageIterator):
 
 
 class HardLink(DictMixin):
-    """NFS only. A hard link to a file.
+    """A hard link to a file.
 
     :param str name: The name of the hard link.
     :param str parent_id: The file ID of the directory that contains the hard link.

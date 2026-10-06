@@ -2098,7 +2098,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> List["HardLink"]:
-        """NFS only. Lists all hard links to the file. Only supported on a client created from a file ID.
+        """Lists all hard links to the file. Only supported on a client created from a file ID.
 
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object

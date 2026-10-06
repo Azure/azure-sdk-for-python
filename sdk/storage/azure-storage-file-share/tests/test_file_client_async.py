@@ -651,3 +651,64 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
                 file_path="baz",
             )
             await service.close()
+
+    @FileSharePreparer()
+    def test_create_file_client_from_file_id_url(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+        account_url = self.account_url(storage_account_name, "file").rstrip("/")
+
+        file_client = ShareFileClient.from_file_url(f"{account_url}/myshare?fileid=123", credential=self.account_key.secret)
+        assert file_client.share_name == "myshare"
+        assert file_client.file_id == "123"
+        assert file_client.url == f"{account_url}/myshare?fileid=123"
+
+        snapshot = "2026-01-01T00:00:00.0000000Z"
+        snapshot_client = ShareFileClient.from_file_url(
+            f"{account_url}/myshare?fileid=123&sharesnapshot={snapshot}", credential=self.account_key.secret
+        )
+        assert snapshot_client.snapshot == snapshot
+        assert snapshot_client.url == f"{account_url}/myshare?fileid=123&sharesnapshot={snapshot}"
+
+        path_client = ShareFileClient.from_file_url(f"{account_url}/myshare/dir/file", credential=self.account_key.secret)
+        assert path_client.file_id is None
+        assert path_client.url == f"{account_url}/myshare/dir/file"
+
+        directory_client = ShareDirectoryClient.from_directory_url(
+            f"{account_url}/myshare?fileid=456", credential=self.account_key.secret
+        )
+        assert directory_client.file_id == "456"
+        assert directory_client.url == f"{account_url}/myshare?fileid=456"
+
+    @FileSharePreparer()
+    async def test_file_id_client_unsupported_operations(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+        account_url = self.account_url(storage_account_name, "file").rstrip("/")
+
+        share_client = ShareClient(account_url, "myshare", credential=self.account_key.secret)
+        file_client = share_client.get_file_client_by_file_id("123")
+        directory_client = share_client.get_directory_client_by_file_id("456")
+        assert file_client.url == f"{account_url}/myshare?fileid=123"
+        assert directory_client.url == f"{account_url}/myshare?fileid=456"
+
+        with pytest.raises(ValueError):
+            await file_client.create_file(1024)
+        with pytest.raises(ValueError):
+            await file_client.download_file()
+        with pytest.raises(ValueError):
+            file_client.list_ranges()
+        with pytest.raises(ValueError):
+            directory_client.get_file_client("foo")
+        with pytest.raises(ValueError):
+            directory_client.list_directories_and_files()
+        with pytest.raises(ValueError):
+            await share_client.get_file_client("foo").get_file_links()
+        with pytest.raises(ValueError):
+            await directory_client.create_directory()
+        with pytest.raises(ValueError):
+            await directory_client.delete_directory()
+        with pytest.raises(ValueError):
+            await directory_client.exists()
