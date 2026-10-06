@@ -14,7 +14,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
+from contextlib import asynccontextmanager
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -439,12 +440,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         #   / C-WQ-1..3 — per-task write-queue
         # registry. A single asyncio.Lock per task_id serializes all
         # in-process PATCHes against that task so etag conflicts become
-        # rare (only cross-process). Lazy-created on first use; dropped
-        # in ``_active_tasks_pop`` (no leaks).
+        # rare (only cross-process). Lazy-created on first use; guards
+        # track holders + waiters so remote-task entries can be reclaimed
+        # safely when the final user exits.
         #   — also tracks the latest known etag
         # per task_id outside the _ActiveTask entry, so reclaim/scan
         # paths (which have no _ActiveTask yet) can still benefit.
         self._task_write_locks: dict[str, asyncio.Lock] = {}
+        self._task_write_lock_users: dict[str, int] = {}
+        self._task_write_cleanup_pending: set[str] = set()
         self._task_etag_cache: dict[str, str] = {}
         # SOT §52 — per-turn timeout watchdog registry. Each per-turn
         # watchdog gets registered here so that the steering-drain
@@ -690,7 +694,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         from ._attachments import _is_ref, _ref_key  # pylint: disable=import-outside-toplevel
         from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
 
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             try:
                 task_info = await self._provider_get_tracked(task_id)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -2357,7 +2361,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # cross-process conflicts retry OUTSIDE the lock via the recursion
         # below (the per-task ``asyncio.Lock`` is non-reentrant).
         drain_conflict: BaseException | None = None
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             task_info = await self._provider_get_tracked(task_id)
             if task_info is None:
                 return None
@@ -3138,6 +3142,36 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._task_write_locks[task_id] = lock
         return lock
 
+    @asynccontextmanager
+    async def _task_write_guard(self, task_id: str) -> AsyncIterator[asyncio.Lock]:
+        """Hold the per-task write lock and reclaim it after its final user.
+
+        Holder/waiter accounting is incremented before lock acquisition, so a
+        releasing holder cannot delete the registry entry while another caller
+        is queued on the same lock.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The acquired per-task write lock.
+        :rtype: ~collections.abc.AsyncIterator[asyncio.Lock]
+        """
+        lock = self._get_task_write_lock(task_id)
+        self._task_write_lock_users[task_id] = self._task_write_lock_users.get(task_id, 0) + 1
+        try:
+            async with lock:
+                yield lock
+        finally:
+            remaining = self._task_write_lock_users[task_id] - 1
+            if remaining:
+                self._task_write_lock_users[task_id] = remaining
+            else:
+                self._task_write_lock_users.pop(task_id, None)
+                if task_id not in self._active_tasks and self._task_write_locks.get(task_id) is lock:
+                    self._task_write_locks.pop(task_id, None)
+                    if task_id in self._task_write_cleanup_pending:
+                        self._task_write_cleanup_pending.discard(task_id)
+                        self._task_etag_cache.pop(task_id, None)
+
     def _track_etag(self, task_id: str, etag: str | None) -> None:
         """— refresh the latest known etag for a task.
 
@@ -3185,7 +3219,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :type task_id: str
         """
         self._active_tasks.pop(task_id, None)
+        if self._task_write_lock_users.get(task_id):
+            self._task_write_cleanup_pending.add(task_id)
+            return
         self._task_write_locks.pop(task_id, None)
+        self._task_write_cleanup_pending.discard(task_id)
         self._task_etag_cache.pop(task_id, None)
 
     async def _provider_get_tracked(self, task_id: str) -> Any:
@@ -3288,7 +3326,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: The provider update response.
         :rtype: Any
         """
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             return await self._provider_update_lock_held(task_id, patch, force_if_match=force_if_match)
 
     async def _terminal_write_locked(  # pylint: disable=too-many-statements
@@ -3334,7 +3372,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """
         prior_lease_owner = patch.lease_owner
         prior_lease_instance = patch.lease_instance_id
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             attempts = 0
             cached_expiry_count = self._cached_expiry_count(task_id)
             while True:

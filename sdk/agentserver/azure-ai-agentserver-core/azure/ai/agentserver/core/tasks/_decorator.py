@@ -826,12 +826,25 @@ class Task(Generic[Input, Output]):
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             SteeringQueueFull,
         )
+        from ._attachments import (  # pylint: disable=import-outside-toplevel
+            _STEERING_INPUT_KEY_PREFIX,
+            _STEERING_THRESHOLD_BYTES,
+            _resolve_input_storage,
+            _steering_pending_ack_ids,
+        )
         from ._models import (  # pylint: disable=import-outside-toplevel
             TaskPatchRequest,
         )
 
         max_retries = 5
         serialized = _serialize_input(input_val)
+
+        def _signal_accepted_append(pending_count: int) -> None:
+            manager._note_lease_refreshed(task_id)  # pylint: disable=protected-access
+            active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access  # noqa: SLF001
+            if active and hasattr(active, "context") and active.context is not None:
+                active._pending_input_count = pending_count  # pylint: disable=protected-access  # noqa: SLF001
+                active.context.cancel.set()
 
         for _attempt in range(max_retries):
             task_info = (
@@ -842,9 +855,22 @@ class Task(Generic[Input, Output]):
             if task_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared during steering append")
 
-            #  Re-check the input precondition on each retry to
-            # catch a concurrent steer that may have advanced `last_input_id`
-            # since we last looked.
+            payload = dict(task_info.payload) if task_info.payload else {}
+            steering = dict(payload.get("steering", {}))
+            pending: list[Any] = list(steering.get("pending_inputs", []))
+            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
+
+            # The hosted pipeline may retry a PATCH after the service committed
+            # it but the response was lost. Its retry then receives 412 on the
+            # old etag. Re-reading can prove this exact request already landed,
+            # so return success before predecessor/capacity checks can reject it.
+            if ack_id in pending_ack_ids:
+                _signal_accepted_append(len(pending))
+                return
+
+            # Re-check the input precondition on each genuine retry to catch a
+            # concurrent steer that advanced `last_input_id`. A persisted
+            # `ack_id` above proves this request itself already advanced it.
             if _attempt > 0:
                 _check_input_precondition(
                     existing=task_info,
@@ -852,10 +878,6 @@ class Task(Generic[Input, Output]):
                     input_id=input_id,
                     if_last_input_id=if_last_input_id,
                 )
-
-            payload = dict(task_info.payload) if task_info.payload else {}
-            steering = dict(payload.get("steering", {}))
-            pending: list[Any] = list(steering.get("pending_inputs", []))
 
             if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
                 raise SteeringQueueFull(task_id, _DEFAULT_MAX_PENDING_STEERING)
@@ -866,14 +888,6 @@ class Task(Generic[Input, Output]):
             # ``attachments["_steering_input_<seq>"]`` with a ref slot in
             # the queue. The seq counter is monotonic (never reused) so
             # other entries' attachment keys are stable across drains.
-            from ._attachments import (  # pylint: disable=import-outside-toplevel
-                _STEERING_INPUT_KEY_PREFIX,
-                _STEERING_THRESHOLD_BYTES,
-                _resolve_input_storage,
-                _steering_pending_ack_ids,
-            )
-
-            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
             next_seq = int(steering.get("next_input_seq", 0))
             steering_key = f"{_STEERING_INPUT_KEY_PREFIX}{next_seq}"
             store_mode, queue_entry = _resolve_input_storage(
@@ -924,16 +938,12 @@ class Task(Generic[Input, Output]):
                         **lease_kwargs,
                     ),
                 )
-                manager._note_lease_refreshed(task_id)  # pylint: disable=protected-access
                 # Signal the running task's cancel event so it can short-circuit.
                 # Spec 031 / FR-001a + SOT §13 ordering invariant: record the
                 # live pending count BEFORE setting cancel, so a handler that
                 # observes ``ctx.cancel.is_set()`` already sees
                 # ``ctx.pending_input_count >= 1``.
-                active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access  # noqa: SLF001
-                if active and hasattr(active, "context") and active.context is not None:
-                    active._pending_input_count = len(pending)  # pylint: disable=protected-access  # noqa: SLF001
-                    active.context.cancel.set()
+                _signal_accepted_append(len(pending))
                 return
             except _HostedConflict as exc:
                 translated = _translate_hosted_conflict(exc, task_id=task_id)
@@ -1312,7 +1322,7 @@ class Task(Generic[Input, Output]):
                 # Steering path: append input to queue, signal cancel, return ack
                 # pylint: disable=protected-access
                 # Keep drain from binding a future before its append is accepted.
-                async with manager._get_task_write_lock(task_id):
+                async with manager._task_write_guard(task_id):
                     ack_id = _generate_input_id()
                     ack_future = manager._register_steering_future(task_id, ack_id)
                     appended = False
