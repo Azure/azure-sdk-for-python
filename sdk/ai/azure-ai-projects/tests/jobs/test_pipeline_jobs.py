@@ -459,14 +459,15 @@ def test_pipeline_uploads_both_local_code_folders(tmp_path: Path, monkeypatch: p
     assert len(transport.requests) == 1
     _assert_two_code_request(
         transport.requests[0],
-        {name.removeprefix("two-code-").removesuffix("-code"): _code_uri(name, version) for name, version, _ in uploads},
+        {
+            name.removeprefix("two-code-").removesuffix("-code"): _code_uri(name, version)
+            for name, version, _ in uploads
+        },
     )
 
 
 @pytest.mark.asyncio
-async def test_pipeline_uploads_both_local_code_folders_async(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+async def test_pipeline_uploads_both_local_code_folders_async(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     pipeline, code_dirs = _two_code_job(tmp_path)
     transport = _AsyncTransport([_response("Pipeline")])
     uploads: list[tuple[str, str, str]] = []
@@ -499,7 +500,10 @@ async def test_pipeline_uploads_both_local_code_folders_async(
     assert len(transport.requests) == 1
     _assert_two_code_request(
         transport.requests[0],
-        {name.removeprefix("two-code-").removesuffix("-code"): _code_uri(name, version) for name, version, _ in uploads},
+        {
+            name.removeprefix("two-code-").removesuffix("-code"): _code_uri(name, version)
+            for name, version, _ in uploads
+        },
     )
 
 
