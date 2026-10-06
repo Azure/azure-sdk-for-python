@@ -361,6 +361,7 @@
     "nbytes",
     "nbsp",
     "noarch",
+    "nocae",
     "NOPERM",
     "norecursedirs",
     "northcentralus",
@@ -419,6 +420,7 @@
     "RAGRS",
     "rdbms",
     "rgeraghty",
+    "ROPC",
     "Rohit",
     "rohitganguly",
     "reauthenticated",
@@ -1679,6 +1681,16 @@
         "Inki",
         "NGZZN",
         "Igog",
+      ]
+    },
+    {
+      "filename": "sdk/dataai/azure-data-ai/**",
+      "words": [
+        "aisearch",
+        "dataai",
+        "rerank",
+        "reranker",
+        "reranks"
       ]
     },
     {
