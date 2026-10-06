@@ -193,7 +193,19 @@ class SenderLink(Link):
                     delivery.frame["aborted"] = True
                     delivery.frame["payload"] = b""
                 if not delivery.sent and not blocked:
-                    sent_and_settled = await self._outgoing_transfer(delivery)
+                    try:
+                        sent_and_settled = await self._outgoing_transfer(delivery)
+                    except asyncio.CancelledError:
+                        if delivery in self._pending_deliveries and not delivery.sent:
+                            if delivery.frame and delivery.frame["more"]:
+                                delivery.abort_pending = True
+                                delivery.frame["aborted"] = True
+                                delivery.frame["payload"] = b""
+                            elif not delivery.frame or "delivery_id" not in delivery.frame:
+                                delivery.cancel_requested = True
+                                self._pending_deliveries.remove(delivery)
+                            await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
+                        raise
                     if delivery not in self._pending_deliveries:
                         index = 0
                         continue
@@ -235,19 +247,7 @@ class SenderLink(Link):
         )
         self._pending_deliveries.append(delivery)
         if not send_async and self.current_link_credit != 0:
-            try:
-                await self.update_pending_deliveries()
-            except asyncio.CancelledError:
-                if delivery in self._pending_deliveries and not delivery.sent:
-                    if delivery.frame and delivery.frame["more"]:
-                        delivery.abort_pending = True
-                        delivery.frame["aborted"] = True
-                        delivery.frame["payload"] = b""
-                    elif not delivery.frame or "delivery_id" not in delivery.frame:
-                        delivery.cancel_requested = True
-                        self._pending_deliveries.remove(delivery)
-                    await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
-                raise
+            await self.update_pending_deliveries()
         return delivery
 
     async def cancel_transfer(self, delivery):

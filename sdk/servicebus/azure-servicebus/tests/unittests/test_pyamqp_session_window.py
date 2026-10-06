@@ -569,7 +569,8 @@ async def test_async_early_disposition_during_replenishment(monkeypatch):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("early_ack", [False, True])
-async def test_cancelled_final_replenishment_does_not_resend(monkeypatch, early_ack):
+@pytest.mark.parametrize("queued", [False, True])
+async def test_cancelled_final_replenishment_does_not_resend(monkeypatch, early_ack, queued):
     sender, session, connection = _sender(monkeypatch, True)
     connection._remote_max_frame_size = 1024
     started, release = asyncio.Event(), asyncio.Event()
@@ -586,9 +587,14 @@ async def test_cancelled_final_replenishment_does_not_resend(monkeypatch, early_
         reasons.append((reason, state))
 
     connection._process_outgoing_frame = send_frame
-    task = asyncio.create_task(sender.send_transfer(
-        MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=completed
-    ))
+    message = MagicMock(_code=0, payload=b"message")
+    if queued:
+        await sender.send_transfer(
+            message, send_async=True, settled=False, on_send_complete=completed
+        )
+        task = asyncio.create_task(sender.update_pending_deliveries())
+    else:
+        task = asyncio.create_task(sender.send_transfer(message, settled=False, on_send_complete=completed))
     try:
         await asyncio.wait_for(started.wait(), 5)
         delivery = sender._pending_deliveries[0]
@@ -630,6 +636,74 @@ async def test_cancelled_send_waiting_for_session_lock_is_withdrawn(monkeypatch)
     assert reasons == [LinkDeliverySettleReason.CANCELLED]
     await sender.update_pending_deliveries()
     assert not any(isinstance(call.args[1], TransferFrame) for call in connection._process_outgoing_frame.call_args_list)
+
+
+@pytest.mark.asyncio
+async def test_cancelled_queued_drain_waiting_for_session_lock_is_withdrawn(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    reasons = []
+
+    async def completed(reason, state):
+        reasons.append(reason)
+
+    delivery = await sender.send_transfer(
+        MagicMock(_code=0, payload=b"message"), send_async=True, settled=False, on_send_complete=completed
+    )
+    async with session._outgoing_transfer_lock:
+        task = asyncio.create_task(sender.update_pending_deliveries())
+        await asyncio.sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+    assert delivery.cancel_requested and delivery not in sender._pending_deliveries
+    assert reasons == [LinkDeliverySettleReason.CANCELLED]
+    await sender.update_pending_deliveries()
+    assert not any(isinstance(call.args[1], TransferFrame) for call in connection._process_outgoing_frame.call_args_list)
+    assert reasons == [LinkDeliverySettleReason.CANCELLED]
+
+
+@pytest.mark.asyncio
+async def test_cancelled_queued_drain_aborts_partial_transfer(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 80
+    started, release = asyncio.Event(), asyncio.Event()
+    reasons, written = [], []
+    send = connection._process_outgoing_frame
+
+    async def completed(reason, state):
+        reasons.append(reason)
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            written.append(frame)
+            if not frame.aborted:
+                started.set()
+                await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    delivery = await sender.send_transfer(
+        MagicMock(_code=0, payload=b"message" * 20),
+        send_async=True, settled=False, on_send_complete=completed
+    )
+    task = asyncio.create_task(sender.update_pending_deliveries())
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        task.cancel()
+        await asyncio.sleep(0)
+        assert not task.done()
+    finally:
+        release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert delivery.abort_pending and delivery.frame["aborted"]
+    assert reasons == [LinkDeliverySettleReason.CANCELLED]
+    session.remote_incoming_window = 1
+    await sender.update_pending_deliveries()
+    assert delivery not in sender._pending_deliveries
+    assert len(written) == 2 and written[1].aborted
+    assert written[1].delivery_id == written[0].delivery_id
+    assert reasons == [LinkDeliverySettleReason.CANCELLED]
 
 
 @pytest.mark.asyncio
