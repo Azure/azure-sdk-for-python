@@ -1234,7 +1234,7 @@ class DirectoryProperties(DictMixin):
     """NFS only. The type of the directory."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = None  # type: ignore [assignment]
+        self.name = kwargs.get("x-ms-file-name")  # type: ignore [assignment]
         self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
         self.etag = kwargs.get("ETag")  # type: ignore [assignment]
         self.server_encrypted = kwargs.get("x-ms-server-encrypted")  # type: ignore [assignment]
@@ -1446,6 +1446,23 @@ class FileRangePaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
+class HardLink(DictMixin):
+    """NFS only. A hard link to a file.
+
+    :param str name: The name of the hard link.
+    :param str parent_id: The file ID of the directory that contains the hard link.
+    """
+
+    name: str
+    """The name of the hard link."""
+    parent_id: str
+    """The file ID of the directory that contains the hard link."""
+
+    def __init__(self, name: str, parent_id: str) -> None:
+        self.name = name
+        self.parent_id = parent_id
+
+
 class CopyProperties(DictMixin):
     """File Copy Properties.
 
@@ -1580,7 +1597,7 @@ class FileProperties(DictMixin):
     """NFS only. The type of the file."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get("name")  # type: ignore [assignment]
+        self.name = kwargs.get("name") or kwargs.get("x-ms-file-name")  # type: ignore [assignment]
         self.path = None
         self.share = None
         self.snapshot = None

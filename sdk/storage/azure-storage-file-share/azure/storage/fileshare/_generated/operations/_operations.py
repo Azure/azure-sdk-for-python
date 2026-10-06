@@ -1559,6 +1559,43 @@ def build_file_create_hard_link_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_file_get_hard_links_request(
+    *,
+    sharesnapshot: Optional[str] = None,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = "?comp=hardlinks"
+
+    # Construct parameters
+    if sharesnapshot is not None:
+        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if lease_id is not None:
+        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_service_set_properties_request(
     *,
     timeout: Optional[int] = None,
@@ -2581,6 +2618,7 @@ class DirectoryOperations:  # pylint: disable=docstring-missing-param
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
         response_headers["x-ms-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-server-encrypted")
         )
@@ -4213,6 +4251,7 @@ class FileOperations:  # pylint: disable=docstring-missing-param,too-many-public
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
@@ -6538,6 +6577,177 @@ class FileOperations:  # pylint: disable=docstring-missing-param,too-many-public
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2027-03-07",
+        params_added_on={
+            "2027-03-07": [
+                "version",
+                "client_request_id",
+                "sharesnapshot",
+                "timeout",
+                "lease_id",
+                "allow_trailing_dot",
+                "file_request_intent",
+                "accept",
+            ]
+        },
+        api_versions_list=["2027-03-07"],
+    )
+    def get_hard_links(
+        self,
+        *,
+        sharesnapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> _models.HardLinkList:
+        """Returns the hard links of a file, along with all user-defined metadata, content properties, and
+        system properties for the file. NFS only.
+
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: HardLinkList. The HardLinkList is compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.HardLinkList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.HardLinkList] = kwargs.pop("cls", None)
+
+        _request = build_file_get_hard_links_request(
+            sharesnapshot=sharesnapshot,
+            timeout=timeout,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-type"] = self._deserialize("str", response.headers.get("x-ms-type"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-content-type"] = self._deserialize("str", response.headers.get("x-ms-content-type"))
+        response_headers["x-ms-content-length"] = self._deserialize("int", response.headers.get("x-ms-content-length"))
+        response_headers["x-ms-content-md5"] = self._deserialize("bytearray", response.headers.get("x-ms-content-md5"))
+        response_headers["x-ms-content-encoding"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-encoding")
+        )
+        response_headers["x-ms-content-language"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-language")
+        )
+        response_headers["x-ms-cache-control"] = self._deserialize("str", response.headers.get("x-ms-cache-control"))
+        response_headers["x-ms-content-disposition"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-disposition")
+        )
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.HardLinkList, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
@@ -7198,9 +7408,6 @@ class ShareOperations:  # pylint: disable=docstring-missing-param
         )
         response_headers["x-ms-enable-smb-directory-lease"] = self._deserialize(
             "bool", response.headers.get("x-ms-enable-smb-directory-lease")
-        )
-        response_headers["x-ms-share-creation-time"] = self._deserialize(
-            "rfc-1123", response.headers.get("x-ms-share-creation-time")
         )
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
