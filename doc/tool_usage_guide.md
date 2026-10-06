@@ -89,7 +89,7 @@ azpysdk --pypi <command>
 
 ### Setup with uv
 
-`uv venv --python 3.11`
+`uv venv`
 
 ```bash
 # for WSL
