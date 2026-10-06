@@ -102,6 +102,50 @@ def test_outgoing_window_replenishes_after_transfers():
     _assert_transfers_and_credit(session, connection)
 
 
+def test_sync_incoming_flow_accounts_before_outgoing_lock_wait():
+    session, _ = _session(Session)
+    session.next_incoming_id = None
+    session.remote_outgoing_window = 0
+    session._input_handles[1] = MagicMock()
+    lock = session._outgoing_transfer_lock
+    attempting = Event()
+
+    class ObservedLock:
+        def __enter__(self):
+            attempting.set()
+            lock.acquire()
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            lock.release()
+
+    session._outgoing_transfer_lock = ObservedLock()
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        with lock:
+            flow = executor.submit(session._incoming_flow, [0, 10, 0, 5, None])
+            assert attempting.wait(5)
+            session._incoming_transfer([1])
+            assert session.next_incoming_id == 1
+            assert session.remote_outgoing_window == 4
+        flow.result(timeout=5)
+    assert session.remote_incoming_window == 10
+
+
+@pytest.mark.asyncio
+async def test_async_incoming_flow_accounts_before_outgoing_lock_wait():
+    session, _ = _session(AsyncSession, async_connection=True)
+    session.next_incoming_id = None
+    session.remote_outgoing_window = 0
+    session._input_handles[1] = MagicMock(_incoming_transfer=AsyncMock())
+    async with session._outgoing_transfer_lock:
+        flow = asyncio.create_task(session._incoming_flow([0, 10, 0, 5, None]))
+        await asyncio.sleep(0)
+        await session._incoming_transfer([1])
+        assert session.next_incoming_id == 1
+        assert session.remote_outgoing_window == 4
+    await flow
+    assert session.remote_incoming_window == 10
+
+
 @pytest.mark.parametrize("early_ack", [False, True])
 def test_sync_flow_failure_preserves_completed_transfer(monkeypatch, early_ack):
     sender, session, connection = _sender(monkeypatch, False)
@@ -1008,6 +1052,37 @@ async def test_stalled_flow_disconnect_notifies_other_sender_after_active_bookke
         ("active", LinkDeliverySettleReason.NOT_DELIVERED, True, 1),
         ("other", LinkDeliverySettleReason.NOT_DELIVERED),
     ]
+
+
+@pytest.mark.asyncio
+async def test_concurrent_discarding_notifications_settle_once(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, True)
+    sender._on_link_state_change = None
+    session.links = {1: sender}
+    session.state = SessionState.DISCARDING
+    session._discarding_links_pending = True
+    callback_started, release = asyncio.Event(), asyncio.Event()
+    reasons = []
+
+    async def completed(reason, state):
+        reasons.append(reason)
+        callback_started.set()
+        await release.wait()
+
+    await sender.send_transfer(
+        MagicMock(_code=0, payload=b"queued"), send_async=True,
+        settled=False, on_send_complete=completed
+    )
+    first = asyncio.create_task(session._notify_discarding_links())
+    try:
+        await asyncio.wait_for(callback_started.wait(), 5)
+        second = asyncio.create_task(session._notify_discarding_links())
+        await asyncio.wait_for(second, 5)
+        assert reasons == [LinkDeliverySettleReason.NOT_DELIVERED]
+    finally:
+        release.set()
+        await first
+    assert sender._pending_deliveries == [] and sender.state == LinkState.DETACHED
 
 
 def test_threaded_early_disposition_during_replenishment(monkeypatch):
