@@ -250,6 +250,23 @@ impl TokenCredential for PyCallbackCredential {
     }
 }
 
+const DEFAULT_PARTITION_SIZE: u64 = 4 * 1024 * 1024;
+
+fn transfer_sizes(
+    max_concurrency: Option<usize>,
+    partition_size: Option<u64>,
+) -> Result<(NonZero<usize>, NonZero<u64>), String> {
+    let concurrency = match max_concurrency {
+        Some(value) => NonZero::new(value)
+            .ok_or_else(|| "max_concurrency must be greater than zero.".to_string())?,
+        None => std::thread::available_parallelism()
+            .unwrap_or(NonZero::new(8).expect("Fallback concurrency is nonzero")),
+    };
+    let partition_size = NonZero::new(partition_size.unwrap_or(DEFAULT_PARTITION_SIZE))
+        .ok_or_else(|| "Chunk/block size must be greater than zero.".to_string())?;
+    Ok((concurrency, partition_size))
+}
+
 /// Upload a block blob using the Rust SDK.
 ///
 /// This function releases the GIL during the entire Rust I/O operation,
@@ -424,13 +441,10 @@ fn upload_blob<'py>(
             Some(AccessTier::from_str(tier).map_err(|e| PyValueError::new_err(e.to_string()))?);
     }
 
-    if let Some(concurrency) = max_concurrency {
-        options.parallel = NonZero::new(concurrency);
-    }
-
-    if let Some(block_size) = max_block_size {
-        options.partition_size = NonZero::new(block_size);
-    }
+    let (concurrency, block_size) =
+        transfer_sizes(max_concurrency, max_block_size).map_err(PyValueError::new_err)?;
+    options.parallel = Some(concurrency);
+    options.partition_size = Some(block_size);
 
     // Release the interpreter (detach this thread) and perform the upload on the shared tokio runtime
     let result = py
@@ -464,9 +478,6 @@ fn upload_blob<'py>(
     Ok(dict)
 }
 
-/// Default download window size.
-const DEFAULT_WINDOW_SIZE: u64 = 256 * 1024 * 1024;
-
 /// The `Content-Range` response header (`bytes start-end/total`).
 const CONTENT_RANGE: HeaderName = HeaderName::from_static("content-range");
 
@@ -493,7 +504,6 @@ fn parse_content_range_total(value: &str) -> Option<u64> {
 struct NativeDownloadStream {
     client: BlobClient,
     download_options: BlobClientDownloadOptions<'static>,
-    max_concurrency: Option<usize>,
     window_size: u64,
     /// Absolute blob offset of the next window to fetch.
     next_offset: u64,
@@ -513,16 +523,12 @@ impl NativeDownloadStream {
     fn fetch_window<'py>(
         client: &BlobClient,
         download_options: &BlobClientDownloadOptions<'static>,
-        max_concurrency: Option<usize>,
         py: Python<'py>,
         offset: u64,
         len: u64,
     ) -> PyResult<(Bound<'py, PyBytes>, u64)> {
         let mut options = download_options.clone();
         options.range = Some(HttpRange::new(offset, len));
-        if let Some(concurrency) = max_concurrency {
-            options.parallel = NonZero::new(concurrency);
-        }
 
         let (buffer, written) = py.detach(move || {
             RUNTIME.block_on(async {
@@ -565,7 +571,6 @@ impl NativeDownloadStream {
         let (chunk, written) = NativeDownloadStream::fetch_window(
             &self.client,
             &self.download_options,
-            self.max_concurrency,
             py,
             self.next_offset,
             len,
@@ -629,24 +634,17 @@ fn download_blob(
 ) -> PyResult<NativeDownloadStream> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
 
-    let window_size = match (max_concurrency, max_chunk_size) {
-        (Some(concurrency), Some(chunk_size)) => {
-            let concurrency = u64::try_from(concurrency).map_err(|e| {
-                PyValueError::new_err(format!("Invalid max_concurrency value: {e}"))
-            })?;
-            concurrency.checked_mul(chunk_size).ok_or_else(|| {
-                PyValueError::new_err(
-                    "max_concurrency multiplied by max_chunk_size exceeds the supported window size.",
-                )
-            })?
-        }
-        _ => DEFAULT_WINDOW_SIZE,
-    };
-    if window_size == 0 {
-        return Err(PyValueError::new_err(
-            "max_concurrency and max_chunk_size must be greater than zero.",
-        ));
-    }
+    let (concurrency, chunk_size) =
+        transfer_sizes(max_concurrency, max_chunk_size).map_err(PyValueError::new_err)?;
+    let concurrency_u64 = u64::try_from(concurrency.get())
+        .map_err(|e| PyValueError::new_err(format!("Invalid max_concurrency value: {e}")))?;
+    let window_size = concurrency_u64
+        .checked_mul(chunk_size.get())
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "max_concurrency multiplied by max_chunk_size exceeds the supported window size.",
+            )
+        })?;
     let start = offset.unwrap_or(0);
     // First window is bounded by the window size and, if the caller requested a range, by the
     // requested length.
@@ -672,11 +670,10 @@ fn download_blob(
     download_options.if_tags = if_tags.map(str::to_string);
     download_options.version_id = version_id.map(str::to_string);
     download_options.timeout = timeout;
-    if let Some(chunk_size) = max_chunk_size {
-        let chunk_size = usize::try_from(chunk_size)
-            .map_err(|e| PyValueError::new_err(format!("Invalid max_chunk_size value: {e}")))?;
-        download_options.partition_size = NonZero::new(chunk_size);
-    }
+    let chunk_size = usize::try_from(chunk_size.get())
+        .map_err(|e| PyValueError::new_err(format!("Invalid max_chunk_size value: {e}")))?;
+    download_options.partition_size = NonZero::new(chunk_size);
+    download_options.parallel = Some(concurrency);
 
     if let Some(algorithm) = encryption_algorithm {
         download_options.encryption_algorithm = Some(
@@ -687,9 +684,6 @@ fn download_blob(
 
     let mut first_options = download_options.clone();
     first_options.range = Some(HttpRange::new(start, first_len));
-    if let Some(concurrency) = max_concurrency {
-        first_options.parallel = NonZero::new(concurrency);
-    }
 
     // Fetch the first window and, from its response, learn the total blob size.
     // The closure borrows `blob_client` (only `&self` is needed by `download_into`) so we retain
@@ -733,7 +727,6 @@ fn download_blob(
     Ok(NativeDownloadStream {
         client: blob_client,
         download_options,
-        max_concurrency,
         window_size,
         next_offset: start + written,
         end_offset,
