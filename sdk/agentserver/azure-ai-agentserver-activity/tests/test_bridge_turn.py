@@ -97,8 +97,8 @@ def test_claims_digital_worker_is_anonymous():
     """Digital-worker model uses anonymous claims (FMI patch supplies the token)."""
     claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=True, is_hosted=True, bot_app_id="ignored")
 
-    assert claims.is_authenticated is False
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_ANONYMOUS
+    assert claims.claims == {}
 
 
 def test_claims_simple_local_no_creds_is_anonymous(caplog):
@@ -108,8 +108,8 @@ def test_claims_simple_local_no_creds_is_anonymous(caplog):
     with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver.activity.bridge"):
         claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=False, is_hosted=False, bot_app_id="")
 
-    assert claims.is_authenticated is False
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_ANONYMOUS
+    assert claims.claims == {}
     assert any("LOCAL DEV" in r.message for r in caplog.records)
 
 
@@ -120,7 +120,6 @@ def test_claims_simple_hosted_is_authenticated_bearer():
         ClaimsIdentity, digital_worker=False, is_hosted=True, bot_app_id="client-xyz"
     )
 
-    assert claims.is_authenticated is True
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_BEARER
     assert claims.get_claim_value(OutboundAuth.CLAIM_APP_ID) == "client-xyz"
     assert claims.get_claim_value(OutboundAuth.CLAIM_AUDIENCE) == "client-xyz"
@@ -133,7 +132,6 @@ def test_claims_simple_with_credential_local_is_authenticated():
         ClaimsIdentity, digital_worker=False, is_hosted=False, bot_app_id="client-xyz"
     )
 
-    assert claims.is_authenticated is True
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_BEARER
 
 
@@ -179,7 +177,6 @@ def test_process_delegates_to_process_request():
     # The adapted request exposes the synthesized outbound claims (authenticated
     # Bearer because hosted + bot app id) and the parsed activity dict.
     claims = adapted_request.get_claims_identity()
-    assert claims.is_authenticated is True
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_BEARER
     assert _run(adapted_request.json()) == {"type": "message", "conversation": {"id": "c1"}}
 
@@ -252,7 +249,7 @@ def test_request_adapter_exposes_request_surface():
     """The adapter maps method / headers / json / path params from the request,
     and reads the claims identity attached to ``request.state`` (as auth
     middleware / the bridge sets it)."""
-    claims = ClaimsIdentity({}, is_authenticated=False)
+    claims = ClaimsIdentity({})
     request = _make_request(
         {"type": "message"},
         method="POST",
@@ -350,7 +347,9 @@ def test_build_bridge_handler_returns_working_handler():
     adapted_request, passed_agent = adapter.calls[0]
     assert passed_agent is agent_app
     # Digital-worker model -> anonymous outbound claims bound into the request.
-    assert adapted_request.get_claims_identity().is_authenticated is False
+    claims = adapted_request.get_claims_identity()
+    assert claims.authentication_type == OutboundAuth.AUTH_TYPE_ANONYMOUS
+    assert claims.claims == {}
 
 
 # ---------------------------------------------------------------------------
