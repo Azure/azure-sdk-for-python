@@ -113,7 +113,9 @@ def upload_blob(
     :keyword str tier: Access tier to set on the blob.
     :keyword int timeout: Server-side timeout applied to each upload request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked uploads.
+        Defaults to the available CPU count when not specified, or 8 if it cannot be determined.
     :keyword int max_block_size: Maximum size per block for chunked uploads.
+        Defaults to 4 MiB when not specified.
     :returns: A dict containing available upload response values.
     :rtype: dict
     :raises ValueError: If the native module is not available.
@@ -180,8 +182,8 @@ def download_blob(
 ) -> "Iterator[bytes]":
     """Begin a windowed download of a block blob using the native Rust extension.
 
-    The returned object is a lazy iterator: each iteration downloads one window (up to
-    ``max_chunk_size`` bytes, 256 MiB by default) via the Rust SDK's parallel ``download_into``.
+    The returned object is a lazy iterator: each iteration downloads one window of up to
+    ``max_concurrency * max_chunk_size`` bytes via the Rust SDK's parallel ``download_into``.
     Peak memory is therefore bounded to a single window rather than the whole blob, while each
     window still benefits from concurrent range requests. This handles blobs of any size,
     including those larger than a single buffer.
@@ -213,9 +215,10 @@ def download_blob(
     :keyword str version_id: Blob version to download.
     :keyword int timeout: Server-side timeout applied to each download request.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
-    :keyword int max_chunk_size: Maximum size of each ranged download request. When both
-        ``max_concurrency`` and ``max_chunk_size`` are provided, each download window is their
-        product. Otherwise, the window size defaults to 256 MiB.
+        Defaults to the available CPU count when not specified, or 8 if it cannot be determined.
+    :keyword int max_chunk_size: Maximum size of each ranged download request.
+        Defaults to 4 MiB when not specified. Each download window is the product of the
+        resolved concurrency and chunk size.
     :returns: A lazy iterator yielding the blob content one window at a time. The object also
         exposes ``size`` (total bytes to be delivered).
     :rtype: Iterator[bytes]
