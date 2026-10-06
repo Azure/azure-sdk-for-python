@@ -8,14 +8,14 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.ai.projects.aio.operations._patch_evaluators_async import BetaEvaluatorsOperations
+from azure.ai.projects.aio.operations._patch_evaluators_async import EvaluatorsOperations
 from azure.ai.projects.models import AsyncEvaluatorGenerationLROPoller
 
 
 @pytest.mark.asyncio
 async def test_begin_create_generation_job_exposes_job_id_async():
     """The async create operation exposes its job ID without SDK polling."""
-    operation = BetaEvaluatorsOperations.__new__(BetaEvaluatorsOperations)
+    operation = EvaluatorsOperations.__new__(EvaluatorsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
     operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access
@@ -33,3 +33,6 @@ async def test_begin_create_generation_job_exposes_job_id_async():
 
     assert isinstance(poller, AsyncEvaluatorGenerationLROPoller)
     assert poller.details["job_id"] == "evaluator-job-async"
+    initial_call = operation._create_generation_job_initial.call_args  # pylint: disable=protected-access
+    assert initial_call.kwargs["job"] == {}
+    assert "body" not in initial_call.kwargs

@@ -53,8 +53,6 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """MODELS_V1_PREVIEW."""
-    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
-    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
     MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
@@ -247,13 +245,95 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_CONTAINER."""
 
 
-class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for the dataset input union."""
+class AgentOptimizationCandidateExpand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Vocabulary for the ``expand`` query parameter on the candidate LIST endpoint. This open union
+    keeps SDKs usable when new expand keys ship server-side. Multiple values are serialized as one
+    comma-separated query parameter.
+    """
+
+    MUTATIONS = "mutations"
+    """Include mutation ``value`` fields in ``AgentOptimizationCandidate.output.mutations``. Without
+    this key each mutation item contains only its ``type``."""
+
+
+class AgentOptimizationCandidateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The candidate's lifecycle state."""
+
+    GENERATING = "generating"
+    """The optimizer is proposing and screening mutations for this candidate."""
+    EVALUATING = "evaluating"
+    """The accepted candidate is undergoing full evaluation."""
+    COMPLETED = "completed"
+    """The candidate completed full evaluation."""
+    FAILED = "failed"
+    """The optimizer stopped before this candidate completed."""
+
+
+class AgentOptimizationConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optimization job configuration types."""
+
+    AGENT_OPTIMIZATION = "agent_optimization"
+    """Comparative agent optimization."""
+    PROMPT_OPTIMIZATION = "prompt_optimization"
+    """One-shot prompt optimization."""
+
+
+class AgentOptimizationDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source types supported by optimization evaluation sets."""
 
     INLINE = "inline"
-    """Inline dataset — items are provided directly in the request body."""
-    REFERENCE = "reference"
-    """Reference to a registered Foundry dataset by name and version."""
+    """Test cases supplied directly in the optimization request."""
+    DATASET_REFERENCE = "dataset_reference"
+    """An explicitly versioned registered Foundry dataset."""
+
+
+class AgentOptimizationEvaluationSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Logical row formats supported by optimization evaluation sets."""
+
+    TARGET_COMPLETION = "target_completion"
+    """Independent single-turn queries evaluated against each candidate."""
+    USER_CONVERSATION_SIMULATION = "user_conversation_simulation"
+    """Scenarios used to simulate conversations against each candidate."""
+
+
+class AgentOptimizationGoal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Goal for an agent-optimization job."""
+
+    IMPROVE_QUALITY = "improve_quality"
+    """Search for agent configurations that improve measured evaluation quality."""
+
+
+class AgentOptimizationStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stage of optimization that consumed model resources."""
+
+    AGENT = "agent"
+    """Calls made by the agent being optimized."""
+    EVALUATION = "evaluation"
+    """Calls that evaluate candidate quality."""
+    OPTIMIZATION = "optimization"
+    """Calls that generate candidate changes."""
+
+
+class AgentOptimizationTargetConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target configuration types supported by optimization jobs."""
+
+    FOUNDRY_AGENT = "foundry_agent"
+    """A registered Foundry agent."""
+
+
+class AgentOptimizationTerminationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason the optimization process ended. Early termination reasons still indicate a successful
+    job; completed candidates remain available.
+    """
+
+    COMPLETED = "completed"
+    """The optimization process completed normally."""
+    BUDGET_EXHAUSTED = "budget_exhausted"
+    """The job succeeded with its completed candidates, but stopped before producing more candidates
+    because its bounded evaluation-call budget was consumed."""
+    CANDIDATE_SCREENING_STALLED = "candidate_screening_stalled"
+    """The job succeeded with its completed candidates, but stopped after the configured number of
+    consecutive proposed candidates failed screening."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -455,6 +535,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Keys."""
     REMOTE_TOOL = "RemoteTool_Preview"
     """Remote tool."""
+    OPEN_API = "OpenAPI"
+    """OpenAPI connection."""
+    REMOTE_A2A = "RemoteA2A"
+    """Remote agent-to-agent (A2A) connection."""
 
 
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -536,21 +620,22 @@ class DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumM
     """The supported write modes for data generation job outputs."""
 
     OVERWRITE = "overwrite"
-    """Default behavior. Create the next dataset version using only newly generated rows, replacing
-    the previous version's rows in the new version."""
+    """Default behavior. Write newly generated output without merging it with an existing output. For
+    dataset outputs, creates the next dataset version using only newly generated rows."""
     MERGE = "merge"
-    """Applicable only for trace data generation jobs that output evaluation datasets. Create the next
-    dataset version by merging newly generated rows with the latest existing dataset version and
-    de-duping trace rows."""
+    """Merge newly generated output into an existing output. For trace data generation jobs that
+    output evaluation datasets, creates the next dataset version by merging newly generated rows
+    with the latest existing dataset version and de-duping trace rows. For fine-tuning file
+    outputs, merges into the file identified by ``merge_file_id``."""
 
 
 class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported scenarios for a data generation job."""
 
-    SUPERVISED_FINETUNING = "supervised_finetuning"
-    """Supervised Fine-tuning scenario."""
-    REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
-    """Reinforcement Fine-tuning scenario."""
+    SUPERVISED_FINETUNING_PREVIEW = "supervised_finetuning_preview"
+    """Supervised Fine-tuning preview scenario."""
+    REINFORCEMENT_FINETUNING_PREVIEW = "reinforcement_finetuning_preview"
+    """Reinforcement Fine-tuning preview scenario."""
     EVALUATION = "evaluation"
     """Evaluation scenario."""
 
@@ -975,6 +1060,19 @@ class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Publish the app tenant-wide."""
 
 
+class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MisalignmentErrorType."""
+
+    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
+    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
+    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
+    OTHER = "other"
+    """OTHER."""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -1004,6 +1102,13 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
+
+
+class OptimizationContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of context supplied to an optimization workflow."""
+
+    STEERING_PROMPT = "steering_prompt"
+    """Natural-language guidance that steers the desired optimization."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1560,12 +1665,27 @@ class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios."""
+    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios.
+    This is a preview feature.
+    """
 
     SHORT_ANSWER = "short_answer"
     """Short answer question type."""
     LONG_ANSWER = "long_answer"
     """Long answer question type."""
+
+
+class TargetAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Agent attribute that can be optimized."""
+
+    INSTRUCTIONS = "instructions"
+    """Rewrites agent instructions."""
+    MODEL = "model"
+    """Model selection from optimization_configuration.agent_optimization_space.model_search_space."""
+    SKILLS = "skills"
+    """Generates or modifies agent skill descriptions and bodies."""
+    TOOLS = "tools"
+    """Optimizes function tool descriptions and parameter descriptions."""
 
 
 class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2060,6 +2180,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """BROWSER_AUTOMATION."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2214,6 +2336,23 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class UserConversationSimulationAudioEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Effect that can be applied to simulated conversation audio. The union is extensible for
+    additional effects.
+    """
+
+    STREET_TRAFFIC = "street_traffic"
+    """STREET_TRAFFIC."""
+    CROWD_CHATTER = "crowd_chatter"
+    """CROWD_CHATTER."""
+    BACKGROUND_TV = "background_tv"
+    """BACKGROUND_TV."""
+    METRO_STATION = "metro_station"
+    """METRO_STATION."""
+    TELEPHONIC_VOICE = "telephonic_voice"
+    """TELEPHONIC_VOICE."""
 
 
 class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
