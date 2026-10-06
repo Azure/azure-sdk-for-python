@@ -258,9 +258,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 delivery.frame["delivery_id"] = self.next_outgoing_id
             frame = {key: value for key, value in delivery.frame.items() if key != "payload"}
             encoded_frame = encode_frame(TransferFrame(payload=b"", **frame))[1]
-            available_frame_size = (
-                self._connection._remote_max_frame_size - len(encoded_frame) - 8
-            )  # pylint: disable=protected-access
+            available_frame_size = self._connection.remote_max_frame_size - len(encoded_frame) - 8
             if available_frame_size <= 0:
                 raise ValueError("Remote max frame size is too small for a Transfer frame.")
 

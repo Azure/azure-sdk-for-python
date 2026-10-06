@@ -210,6 +210,13 @@ class Connection:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args: Any) -> None:
         self.close()
 
+    @property
+    def remote_max_frame_size(self) -> Optional[int]:
+        """The maximum frame size the remote peer supports, as negotiated on Open.
+        :rtype: Optional[int]
+        """
+        return self._remote_max_frame_size
+
     def _set_state(self, new_state: ConnectionState) -> None:
         """Update the connection state.
         :param ~pyamqp.constants.ConnectionState new_state: The new state of the connection.

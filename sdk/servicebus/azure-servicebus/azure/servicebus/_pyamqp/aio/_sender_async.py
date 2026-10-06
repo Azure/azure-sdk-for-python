@@ -17,7 +17,7 @@ from ..error import AMQPLinkError, ErrorCondition, MessageException
 _LOGGER = logging.getLogger(__name__)
 
 
-class PendingDelivery(object):
+class PendingDelivery(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.message = kwargs.get("message")
         self.sent = False
@@ -127,7 +127,9 @@ class SenderLink(Link):
                 await delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
                 sent_and_settled = True
             elif delivery.early_disposition_received:
-                await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
+                await delivery.on_settled(
+                    LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state
+                )
                 sent_and_settled = True
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
