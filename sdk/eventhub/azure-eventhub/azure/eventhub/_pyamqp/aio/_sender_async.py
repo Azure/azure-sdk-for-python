@@ -24,6 +24,7 @@ class PendingDelivery(object):
         self.frame = None
         self.abort_pending = False
         self.abort_requested = False
+        self.cancel_requested = False
         self._inflight_more = None
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
@@ -93,7 +94,12 @@ class SenderLink(Link):
         delivery_count = self.delivery_count + 1
         if not delivery.frame or not delivery.frame["more"]:
             output = bytearray()
-            encode_payload(output, delivery.message)
+            try:
+                encode_payload(output, delivery.message)
+            except Exception:
+                if delivery in self._pending_deliveries:
+                    self._pending_deliveries.remove(delivery)
+                raise
             delivery.frame = {
                 "handle": self.handle,
                 "delivery_tag": struct.pack(">I", abs(delivery_count)),
@@ -127,13 +133,11 @@ class SenderLink(Link):
             return
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
-        unsettled = []
-        for delivery in self._pending_deliveries:
+        for delivery in list(self._pending_deliveries):
             if delivery.sent and delivery.frame["delivery_id"] in settled_ids:
                 await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
-                continue
-            unsettled.append(delivery)
-        self._pending_deliveries = unsettled
+                if delivery in self._pending_deliveries:
+                    self._pending_deliveries.remove(delivery)
 
     async def _remove_pending_deliveries(self):
         futures = []
@@ -163,6 +167,10 @@ class SenderLink(Link):
                 delivery = self._pending_deliveries[index]
                 if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
                     await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                    if delivery not in self._pending_deliveries:
+                        index = 0
+                        continue
+                    index = self._pending_deliveries.index(delivery)
                     if not delivery.frame or not delivery.frame["more"]:
                         self._pending_deliveries.pop(index)
                         continue
@@ -171,6 +179,10 @@ class SenderLink(Link):
                     delivery.frame["payload"] = b""
                 if not delivery.sent and not blocked:
                     sent_and_settled = await self._outgoing_transfer(delivery)
+                    if delivery not in self._pending_deliveries:
+                        index = 0
+                        continue
+                    index = self._pending_deliveries.index(delivery)
                     if sent_and_settled or (
                         delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
                     ):
@@ -230,10 +242,11 @@ class SenderLink(Link):
             delivery.abort_requested = True
             await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
             return
-        await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
         if delivery.frame and delivery.frame["more"]:
             delivery.abort_pending = True
             delivery.frame["aborted"] = True
             delivery.frame["payload"] = b""
         else:
-            self._pending_deliveries.pop(index)
+            delivery.cancel_requested = True
+            self._pending_deliveries.remove(delivery)
+        await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)

@@ -31,6 +31,7 @@ from azure.eventhub._pyamqp.aio._sender_async import SenderLink as AsyncSenderLi
 def _delivery():
     return MagicMock(
         abort_requested=False,
+        cancel_requested=False,
         frame={
             "handle": 1,
             "delivery_tag": b"tag",
@@ -420,6 +421,108 @@ async def test_cancellation_during_async_transfer_write(monkeypatch, final_frame
         assert transfers[-1].aborted and transfers[-1].delivery_id == transfers[0].delivery_id
         assert not delivery.frame["payload"]
         assert reasons == [LinkDeliverySettleReason.CANCELLED]
+
+
+@pytest.mark.asyncio
+async def test_disposition_during_async_send_preserves_queued_deliveries(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+    session.remote_incoming_window = 10
+    first = await sender.send_transfer(MagicMock(_code=0, payload=b"first"), settled=False)
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame) and frame.delivery_id == 1:
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"second")))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        queued = await sender.send_transfer(MagicMock(_code=0, payload=b"third"), send_async=True, settled=False)
+        await sender._incoming_disposition([None, first.frame["delivery_id"], None, True, None])
+        assert first not in sender._pending_deliveries
+    finally:
+        release.set()
+    await task
+    assert queued.sent and queued in sender._pending_deliveries
+    assert [bytes(frame.payload) for frame in (call.args[1] for call in send.call_args_list)
+            if isinstance(frame, TransferFrame)] == [b"first", b"second", b"third"]
+
+
+@pytest.mark.asyncio
+async def test_async_encoding_failure_does_not_block_next_send(monkeypatch):
+    from azure.eventhub._pyamqp.aio import _sender_async as async_sender_module
+
+    sender, session, connection = _sender(monkeypatch, True)
+    session.remote_incoming_window = 10
+    connection._remote_max_frame_size = 1024
+
+    def encode(output, message):
+        if message.payload == b"bad":
+            raise ValueError("Unsupported message value")
+        output.extend(message.payload)
+
+    monkeypatch.setattr(async_sender_module, "encode_payload", encode)
+    with pytest.raises(ValueError, match="Unsupported message value"):
+        await sender.send_transfer(MagicMock(_code=0, payload=b"bad"))
+    assert not sender._pending_deliveries
+    good = await sender.send_transfer(MagicMock(_code=0, payload=b"good"), settled=False)
+    assert good.sent and good in sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+async def test_cancel_async_delivery_waiting_for_session_lock(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    async with session._outgoing_transfer_lock:
+        task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"never")))
+        await asyncio.sleep(0)
+        delivery = sender._pending_deliveries[0]
+        await sender.cancel_transfer(delivery)
+        assert delivery.cancel_requested and delivery not in sender._pending_deliveries
+    await task
+    assert not [call for call in connection._process_outgoing_frame.call_args_list
+                if isinstance(call.args[1], TransferFrame)]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("final_frame", [False, True])
+async def test_cancel_async_delivery_during_replenishment_flow(monkeypatch, final_frame):
+    sender, session, connection = _sender(monkeypatch, True)
+    session.remote_incoming_window = 10
+    if final_frame:
+        connection._remote_max_frame_size = 1024
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame) and not started.is_set():
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120)))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        if final_frame:
+            with pytest.raises(MessageException, match="already in flight"):
+                await sender.cancel_transfer(delivery)
+        else:
+            await sender.cancel_transfer(delivery)
+    finally:
+        release.set()
+    await task
+    transfers = [call.args[1] for call in send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    if final_frame:
+        assert delivery.sent and not any(frame.aborted for frame in transfers)
+    else:
+        assert transfers[-1].aborted and transfers[-1].delivery_id == transfers[0].delivery_id
+        assert len([frame for frame in transfers if frame.aborted]) == 1
 
 
 @pytest.mark.parametrize("async_session", [False, True])

@@ -246,6 +246,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._outgoing_transfer_locked(delivery, network_trace_params)
 
     async def _outgoing_transfer_locked(self, delivery, network_trace_params):
+        if delivery.cancel_requested:
+            return
         if self.state != SessionState.MAPPED:
             delivery.transfer_state = SessionTransferState.ERROR
             return
@@ -278,28 +280,28 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
                         self.channel, TransferFrame(payload=fragment, **frame)
                     )
+                    delivery.frame["payload"] = payload[len(fragment) :] if more else b""
+                    delivery.frame["more"] = more
+                    self.next_outgoing_id += 1
+                    self.remote_incoming_window -= 1
+                    self.outgoing_window -= 1
+                    if self.outgoing_window == 0:
+                        self.outgoing_window = self.target_outgoing_window
+                        await self._outgoing_flow_locked()
+                    if delivery.abort_requested and more:
+                        delivery.abort_pending = True
+                        delivery.frame["aborted"] = True
+                        delivery.frame["payload"] = b""
+                        delivery.transfer_state = SessionTransferState.BUSY
+                        return
+                    if not more:
+                        delivery.transfer_state = SessionTransferState.OKAY
+                        return
+                    if self.remote_incoming_window <= 0:
+                        delivery.transfer_state = SessionTransferState.BUSY
+                        return
                 finally:
                     delivery._inflight_more = None  # pylint: disable=protected-access
-                delivery.frame["payload"] = payload[len(fragment) :] if more else b""
-                delivery.frame["more"] = more
-                self.next_outgoing_id += 1
-                self.remote_incoming_window -= 1
-                self.outgoing_window -= 1
-                if self.outgoing_window == 0:
-                    self.outgoing_window = self.target_outgoing_window
-                    await self._outgoing_flow_locked()
-                if delivery.abort_requested and more:
-                    delivery.abort_pending = True
-                    delivery.frame["aborted"] = True
-                    delivery.frame["payload"] = b""
-                    delivery.transfer_state = SessionTransferState.BUSY
-                    return
-                if not more:
-                    delivery.transfer_state = SessionTransferState.OKAY
-                    return
-                if self.remote_incoming_window <= 0:
-                    delivery.transfer_state = SessionTransferState.BUSY
-                    return
 
     async def _incoming_transfer(self, frame):
         # TODO: should this be only if more=False?
