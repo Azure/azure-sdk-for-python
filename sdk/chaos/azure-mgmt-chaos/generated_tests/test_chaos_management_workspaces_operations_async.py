@@ -120,9 +120,22 @@ class TestChaosManagementWorkspacesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workspaces_begin_refresh_recommendations(self, resource_group):
+    async def test_workspaces_begin_discover(self, resource_group):
         response = await (
-            await self.client.workspaces.begin_refresh_recommendations(
+            await self.client.workspaces.begin_discover(
+                resource_group_name=resource_group.name,
+                workspace_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_workspaces_begin_evaluate(self, resource_group):
+        response = await (
+            await self.client.workspaces.begin_evaluate(
                 resource_group_name=resource_group.name,
                 workspace_name="str",
             )

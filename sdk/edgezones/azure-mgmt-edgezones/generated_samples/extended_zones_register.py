@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/ExtendedZones_Register.json
+# x-ms-original-file: 2026-10-01/ExtendedZones_Register.json
 if __name__ == "__main__":
     main()

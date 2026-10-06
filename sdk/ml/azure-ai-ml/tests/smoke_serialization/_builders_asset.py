@@ -8,7 +8,9 @@ Uses remote ``azureml://`` / image references so ``_to_rest_object`` does not ne
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data, Environment, Model
 from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 from azure.ai.ml.entities._assets.environment import BuildContext
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 
 _REMOTE = "azureml://datastores/workspaceblobstore/paths/smoke/"
 
@@ -105,9 +107,41 @@ def build_code_full():
     )
 
 
+def build_model_with_deployment_template():
+    """Model with default + allowed deployment templates (arm-absent template fields, special wire-keying)."""
+    return Model(
+        name="smoke-model-template",
+        version="1",
+        type=AssetTypes.CUSTOM_MODEL,
+        path=_REMOTE + "model-template/",
+        default_deployment_template=DeploymentTemplateReference(asset_id="azureml:smoke-default-template:1"),
+        allowed_deployment_templates=[
+            DeploymentTemplateReference(asset_id="azureml:smoke-allowed-template-a:1"),
+            DeploymentTemplateReference(asset_id="azureml:smoke-allowed-template-b:2"),
+        ],
+    )
+
+
+def build_workspace_asset_reference():
+    """WorkspaceAssetReference (arm-absent registry copy; hand-built JSON-direct wire)."""
+    return WorkspaceAssetReference(
+        name="smoke-shared-model",
+        version="3",
+        asset_id=(
+            "azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg"
+            "/providers/Microsoft.MachineLearningServices/workspaces/smoke-ws/models/smoke-model/versions/1"
+        ),
+    )
+
+
 MODEL_BUILDERS = {
     "model_full": build_model_full,
     "model_mlflow": build_model_mlflow,
+    "model_with_deployment_template": build_model_with_deployment_template,
+}
+
+WORKSPACE_ASSET_REFERENCE_BUILDERS = {
+    "workspace_asset_reference": build_workspace_asset_reference,
 }
 
 ENVIRONMENT_BUILDERS = {

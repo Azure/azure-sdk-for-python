@@ -135,7 +135,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword str connection_string: Connection string for App Configuration resource.
     :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
     filter configuration settings
-    :keyword trim_prefixes: Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
     :keyword ~azure.core.credentials_async.AsyncTokenCredential keyvault_credential: A credential for authenticating
     with the key vault. This is optional if keyvault_client_configs is provided.
     :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
@@ -148,9 +148,6 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
     after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
     not supported).
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Defaults to

@@ -1,6 +1,5 @@
-# Spell checking is not case sensitive
-# Keep word lists in alphabetical order so the file is easier to manage
-version: "0.2"
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
 import:
   - ../../.vscode/cspell.json
 words:

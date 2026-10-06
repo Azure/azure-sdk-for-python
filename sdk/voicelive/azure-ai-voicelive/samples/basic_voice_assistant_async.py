@@ -403,9 +403,7 @@ class BasicVoiceAssistant:
         """Handle different types of events from VoiceLive."""
         logger.debug("Received event: %s", event.type)
         ap = self.audio_processor
-        conn = self.connection
         assert ap is not None, "AudioProcessor must be initialized"
-        assert conn is not None, "Connection must be established"
 
         if event.type == ServerEventType.SESSION_UPDATED:
             logger.info("Session ready: %s", event.session.id)
@@ -420,12 +418,6 @@ class BasicVoiceAssistant:
 
             # skip queued audio
             ap.skip_pending_audio()
-
-            # Cancel any ongoing response
-            try:
-                await conn.response.cancel()
-            except Exception:
-                logger.exception("No response to cancel")
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")

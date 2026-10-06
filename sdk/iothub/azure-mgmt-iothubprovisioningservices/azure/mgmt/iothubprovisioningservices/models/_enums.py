@@ -14,26 +14,37 @@ class AccessRightsDescription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Rights that this key has."""
 
     SERVICE_CONFIG = "ServiceConfig"
+    """SERVICE_CONFIG."""
     ENROLLMENT_READ = "EnrollmentRead"
+    """ENROLLMENT_READ."""
     ENROLLMENT_WRITE = "EnrollmentWrite"
+    """ENROLLMENT_WRITE."""
     DEVICE_CONNECT = "DeviceConnect"
+    """DEVICE_CONNECT."""
     REGISTRATION_STATUS_READ = "RegistrationStatusRead"
+    """REGISTRATION_STATUS_READ."""
     REGISTRATION_STATUS_WRITE = "RegistrationStatusWrite"
+    """REGISTRATION_STATUS_WRITE."""
 
 
 class AllocationPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation policy to be used by this provisioning service."""
 
     HASHED = "Hashed"
+    """HASHED."""
     GEO_LATENCY = "GeoLatency"
+    """GEO_LATENCY."""
     STATIC = "Static"
+    """STATIC."""
 
 
 class CertificatePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CertificatePurpose."""
 
     CLIENT_AUTHENTICATION = "clientAuthentication"
+    """CLIENT_AUTHENTICATION."""
     SERVER_AUTHENTICATION = "serverAuthentication"
+    """SERVER_AUTHENTICATION."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -49,34 +60,42 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
-class DeviceRegistryNamespaceAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Device Registry Namespace MI authentication type: UserAssigned, SystemAssigned."""
+class IotDpsSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sku name."""
 
+    S1 = "S1"
+    """S1."""
+
+
+class IotHubAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IotHub MI authentication type: KeyBased, UserAssigned, SystemAssigned."""
+
+    KEY_BASED = "KeyBased"
+    """Key Based authentication type."""
     USER_ASSIGNED = "UserAssigned"
     """User assigned authentication type."""
     SYSTEM_ASSIGNED = "SystemAssigned"
     """System assigned authentication type."""
 
 
-class IotDpsSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sku name."""
-
-    S1 = "S1"
-
-
 class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The desired action for requests captured by this rule."""
 
     ACCEPT = "Accept"
+    """ACCEPT."""
     REJECT = "Reject"
+    """REJECT."""
 
 
 class IpFilterTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target for requests captured by this rule."""
 
     ALL = "all"
+    """ALL."""
     SERVICE_API = "serviceApi"
+    """SERVICE_API."""
     DEVICE_API = "deviceApi"
+    """DEVICE_API."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,37 +117,57 @@ class NameUnavailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """specifies the reason a name is unavailable."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ALREADY_EXISTS = "AlreadyExists"
+    """ALREADY_EXISTS."""
 
 
 class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of a private endpoint connection."""
 
     PENDING = "Pending"
+    """PENDING."""
     APPROVED = "Approved"
+    """APPROVED."""
     REJECTED = "Rejected"
+    """REJECTED."""
     DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current state of the provisioning service."""
 
     ACTIVATING = "Activating"
+    """ACTIVATING."""
     ACTIVE = "Active"
+    """ACTIVE."""
     DELETING = "Deleting"
+    """DELETING."""
     DELETED = "Deleted"
+    """DELETED."""
     ACTIVATION_FAILED = "ActivationFailed"
+    """ACTIVATION_FAILED."""
     DELETION_FAILED = "DeletionFailed"
+    """DELETION_FAILED."""
     TRANSITIONING = "Transitioning"
+    """TRANSITIONING."""
     SUSPENDING = "Suspending"
+    """SUSPENDING."""
     SUSPENDED = "Suspended"
+    """SUSPENDED."""
     RESUMING = "Resuming"
+    """RESUMING."""
     FAILING_OVER = "FailingOver"
+    """FAILING_OVER."""
     FAILOVER_FAILED = "FailoverFailed"
+    """FAILOVER_FAILED."""

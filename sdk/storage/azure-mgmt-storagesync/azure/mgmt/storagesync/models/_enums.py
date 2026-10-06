@@ -247,6 +247,15 @@ class ServerEndpointSyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INITIAL_FULL_DOWNLOAD."""
 
 
+class ServerEndpointSyncSessionWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Warning types for sync sessions."""
+
+    NO_WARNING = "NoWarning"
+    """No warning."""
+    BLOCKED_BY_LARGE_FILE = "BlockedByLargeFile"
+    """Sync is blocked by a large file."""
+
+
 class ServerProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server provisioning status."""
 

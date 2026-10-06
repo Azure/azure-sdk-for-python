@@ -24,13 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import pytest
+from utils import request_and_responses_product, create_http_response, HTTP_RESPONSES
+
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     map_error,
     ErrorMap,
 )
-from utils import request_and_responses_product, create_http_response, HTTP_RESPONSES
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))

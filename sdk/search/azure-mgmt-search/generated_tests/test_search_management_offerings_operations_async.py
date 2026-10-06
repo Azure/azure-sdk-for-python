@@ -21,8 +21,8 @@ class TestSearchManagementOfferingsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_offerings_list(self, resource_group):
-        response = await self.client.offerings.list()
+    async def test_offerings_fetch(self, resource_group):
+        response = await self.client.offerings.fetch()
 
         # please add some check logic here by yourself
         # ...

@@ -29,12 +29,12 @@ PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 class AdditionalIncludes:
     """Initialize the AdditionalIncludes object.
 
-    :param origin_code_value: The origin code value.
-    :type origin_code_value: Optional[str]
-    :param base_path: The base path for origin code path and additional include configs.
-    :type base_path: Path
-    :param configs: The additional include configs.
-    :type configs: List[Union[str, dict]]
+    :keyword origin_code_value: The origin code value.
+    :paramtype origin_code_value: Optional[str]
+    :keyword base_path: The base path for origin code path and additional include configs.
+    :paramtype base_path: Path
+    :keyword configs: The additional include configs.
+    :paramtype configs: List[Union[str, dict]]
     """
 
     def __init__(

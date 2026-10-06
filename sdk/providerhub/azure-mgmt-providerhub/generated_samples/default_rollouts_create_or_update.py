@@ -38,6 +38,10 @@ def main():
                 "specification": {
                     "canary": {"skipRegions": ["eastus2euap"]},
                     "expeditedRollout": {"enabled": True},
+                    "manifestCheckinSpecification": {
+                        "manifestCheckinOption": "AttemptAutomaticManifestCheckin",
+                        "manifestCheckinParams": {"baselineArmManifestLocation": "EastUS2EUAP", "environment": "Prod"},
+                    },
                     "restOfTheWorldGroupTwo": {"waitDuration": "PT4H"},
                 }
             }
@@ -46,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/DefaultRollouts_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/DefaultRollouts_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

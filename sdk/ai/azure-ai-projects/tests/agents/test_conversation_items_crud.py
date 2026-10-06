@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 class TestConversationItemsCrud(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_conversation_items_crud(self, **kwargs):
         """
         Test CRUD operations for Conversation Items.

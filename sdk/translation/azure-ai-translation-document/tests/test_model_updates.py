@@ -11,6 +11,10 @@ from azure.ai.translation.document.models import (
     TranslationStatusSummary,
     TranslationGlossary,
     TranslationStatus,
+    BatchOptions,
+    StartTranslationDetails,
+    DocumentTranslationInput,
+    TranslationTarget,
 )
 from testcase import DocumentTranslationTest
 from preparer import (
@@ -18,7 +22,8 @@ from preparer import (
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer,
 )
 from devtools_testutils import recorded_by_proxy
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document._patch import get_translation_input
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
@@ -207,6 +212,155 @@ class TestModelUpdates(DocumentTranslationTest):
         }
         translation_status_dict = TranslationStatus(**params)
         self.validate_translation_status(translation_status_dict)
+
+    def test_translation_target_deployment_name(self):
+        # deployment_name is exposed publicly and serialized to the wire property "deploymentName".
+        target = TranslationTarget(
+            target_url="https://t7d8641d8f25ec940prim.blob.core.windows.net/target-67890",
+            language="es",
+            deployment_name="my-deployment",
+        )
+        assert target.deployment_name == "my-deployment"
+
+        wire = target.as_dict()
+        assert wire["deploymentName"] == "my-deployment"
+
+    def test_start_translation_details_translate_text_within_image(self):
+        # translate_text_within_image is carried on BatchOptions via StartTranslationDetails.options.
+        options = BatchOptions(translate_text_within_image=True)
+        assert options.translate_text_within_image is True
+
+        details = StartTranslationDetails(inputs=[], options=options)
+        wire = details.as_dict()
+        assert wire["options"]["translateTextWithinImage"] is True
+
+    def test_document_status_deserializes_new_fields(self):
+        # DocumentStatus exposes the deployment name and image scan usage returned by the service.
+        payload = {
+            "path": "https://target/doc.txt",
+            "sourcePath": "https://source/doc.txt",
+            "createdDateTimeUtc": "2026-03-01T00:00:00Z",
+            "lastActionDateTimeUtc": "2026-03-01T00:05:00Z",
+            "status": "Succeeded",
+            "to": "es",
+            "progress": 1.0,
+            "id": "doc-1",
+            "characterCharged": 100,
+            "deploymentName": "my-deployment",
+            "totalImageScansSucceeded": 6,
+            "totalImageScansFailed": 1,
+            "imageCharged": 3,
+            "imageCharacterDetected": 1257,
+        }
+        status = DocumentStatus(payload)
+        assert status.deployment_name == "my-deployment"
+        assert status.total_image_scans_succeeded == 6
+        assert status.total_image_scans_failed == 1
+        assert status.images_charged == 3
+        assert status.image_characters_detected == 1257
+
+    def test_translation_status_summary_deserializes_image_totals(self):
+        # TranslationStatusSummary exposes the image scan totals returned by the service,
+        # mapping the wire names totalImageScansSucceeded / totalImageScansFailed / totalImageCharged.
+        payload = {
+            "total": 10,
+            "failed": 2,
+            "success": 5,
+            "inProgress": 3,
+            "notYetStarted": 0,
+            "cancelled": 0,
+            "totalCharacterCharged": 10000,
+            "totalImageScansSucceeded": 6,
+            "totalImageScansFailed": 1,
+            "totalImageCharged": 3,
+        }
+        summary = TranslationStatusSummary(payload)
+        assert summary.total_image_scans_succeeded == 6
+        assert summary.total_image_scans_failed == 1
+        assert summary.total_images_charged == 3
+
+    def test_begin_translation_overloaded_inputs_dispatch(self):
+        # begin_translation accepts a list of DocumentTranslationInput positionally or via the
+        # 'inputs=' keyword; both build the same StartTranslationDetails. This is SDK request
+        # dispatch (not service behavior), so it is validated without the live service.
+        inputs = [
+            DocumentTranslationInput(
+                source_url="https://source",
+                targets=[TranslationTarget(target_url="https://target", language="es")],
+            )
+        ]
+
+        positional = get_translation_input((inputs,), {}, None)
+        keyword = get_translation_input((), {"inputs": inputs}, None)
+
+        for request in (positional, keyword):
+            assert isinstance(request, StartTranslationDetails)
+            batch = request.inputs[0]
+            assert batch.source.source_url == "https://source"
+            assert batch.targets[0].target_url == "https://target"
+            assert batch.targets[0].language == "es"
+
+    def test_begin_translation_list_inputs_translate_text_within_image(self):
+        # Regression: translate_text_within_image must be honored for the List[DocumentTranslationInput]
+        # batch form (it was previously read only on the single-URL form and silently dropped here).
+        inputs = [
+            DocumentTranslationInput(
+                source_url="https://source",
+                targets=[TranslationTarget(target_url="https://target", language="es")],
+            )
+        ]
+
+        request = get_translation_input((inputs,), {"translate_text_within_image": True}, None)
+        assert isinstance(request, StartTranslationDetails)
+        assert request.options is not None
+        assert request.options.translate_text_within_image is True
+
+        # When the option is not provided, no BatchOptions is attached.
+        request_without = get_translation_input((inputs,), {}, None)
+        assert request_without.options is None
+
+    def test_begin_translation_single_input_dispatch(self):
+        # The single-input convenience form accepts source/target/language positionally or by
+        # keyword; both build an equivalent StartTranslationDetails.
+        positional = get_translation_input(("https://source", "https://target", "es"), {}, None)
+        keyword = get_translation_input(
+            (), {"source_url": "https://source", "target_url": "https://target", "target_language": "es"}, None
+        )
+
+        for request in (positional, keyword):
+            assert isinstance(request, StartTranslationDetails)
+            batch = request.inputs[0]
+            assert batch.source.source_url == "https://source"
+            assert batch.targets[0].target_url == "https://target"
+            assert batch.targets[0].language == "es"
+
+    def test_begin_translation_single_input_serialization(self):
+        # The keyword options on the single-input begin_translation form serialize onto the
+        # request as expected (previously covered by a live raw_response_hook test).
+        request = get_translation_input(
+            ("https://source", "https://target", "es"),
+            {
+                "storage_type": "File",
+                "source_language": "en",
+                "prefix": "",
+                "suffix": ".txt",
+                "category_id": "fake",
+                "glossaries": [TranslationGlossary(glossary_url="https://glossaryfile.txt", file_format="txt")],
+            },
+            None,
+        )
+
+        batch = request.inputs[0]
+        assert batch.source.source_url == "https://source"
+        assert batch.source.language == "en"
+        assert batch.source.filter.prefix == ""
+        assert batch.source.filter.suffix == ".txt"
+        assert batch.storage_type == "File"
+        assert batch.targets[0].category_id == "fake"
+        assert batch.targets[0].glossaries[0].file_format == "txt"
+        assert batch.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
+        assert batch.targets[0].language == "es"
+        assert batch.targets[0].target_url == "https://target"
 
     def validate_translation_target(self, translation_target):
         assert translation_target is not None

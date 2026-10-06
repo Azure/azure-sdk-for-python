@@ -32,11 +32,11 @@ def main():
 
     response = client.bookshelves.get(
         resource_group_name="rgdiscovery",
-        bookshelf_name="85c2fc6e437c0b608b",
+        bookshelf_name="cfa586c95413ca2f8a",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Bookshelves_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Bookshelves_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

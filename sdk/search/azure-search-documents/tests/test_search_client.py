@@ -12,7 +12,12 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.paging import ItemPaged
 
-from azure.search.documents import ApiVersion, IndexDocumentsBatch, RequestEntityTooLargeError, SearchClient
+from azure.search.documents import (
+    ApiVersion,
+    IndexDocumentsBatch,
+    RequestEntityTooLargeError,
+    SearchClient,
+)
 from azure.search.documents._operations._patch import SearchPageIterator
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
 
@@ -92,6 +97,14 @@ class TestSearchClientConstructor:
         client = create_search_client(api_version=ApiVersion.V2020_06_30)
 
         assert client._config.api_version == ApiVersion.V2020_06_30
+
+    def test_api_version_enum_includes_2026_08_01_preview(self):
+        assert ApiVersion.V2026_08_01_PREVIEW == "2026-08-01-preview"
+
+    def test_constructor_accepts_2026_08_01_preview_api_version_enum(self):
+        client = create_search_client(api_version=ApiVersion.V2026_08_01_PREVIEW)
+
+        assert client._config.api_version == "2026-08-01-preview"
 
 
 class TestSearchRequestBuilding:

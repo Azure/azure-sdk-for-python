@@ -46,7 +46,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
     return events
 
 
-def _output_manipulation_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _output_manipulation_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that directly manipulates Output without emitting output_item events.
 
     This violates FR-008a — the SDK should detect this and fail.

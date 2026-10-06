@@ -1,5 +1,39 @@
 # Release History
 
+## 2.1.0 (2026-08-27)
+
+### Features Added
+
+  - Client `ServiceNetworkingMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ServiceNetworkingMgmtClient` added operation group `private_endpoint_connections_interface`
+  - Client `ServiceNetworkingMgmtClient` added operation group `private_link_resources_interface`
+  - Model `FrontendProperties` added property `association`
+  - Model `FrontendProperties` added property `public_network_access`
+  - Model `FrontendProperties` added property `security_policy_configurations`
+  - Model `FrontendUpdate` added property `properties`
+  - Enum `PolicyType` added member `IP_ACCESS_RULES`
+  - Model `SecurityPolicyConfigurations` added property `ip_access_rules_security_policy`
+  - Model `SecurityPolicyProperties` added property `ip_access_rules_policy`
+  - Model `SecurityPolicyUpdateProperties` added property `ip_access_rules_policy`
+  - Model `TrafficControllerProperties` added property `private_endpoint_connections`
+  - Added model `FrontendAssociation`
+  - Added model `FrontendUpdateProperties`
+  - Added model `IpAccessRule`
+  - Added enum `IpAccessRuleAction`
+  - Added model `IpAccessRulesPolicy`
+  - Added model `IpAccessRulesSecurityPolicy`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateEndpointReference`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PrivateLinkServiceConnectionStatus`
+  - Added model `ProxyResource`
+  - Added enum `PublicNetworkAccess`
+  - Added operation group `PrivateEndpointConnectionsInterfaceOperations`
+  - Added operation group `PrivateLinkResourcesInterfaceOperations`
+
 ## 2.1.0b1 (2025-05-12)
 
 ### Features Added

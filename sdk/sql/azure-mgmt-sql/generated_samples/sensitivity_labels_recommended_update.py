@@ -44,6 +44,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-01-01/SensitivityLabelsRecommendedUpdate.json
+# x-ms-original-file: 2025-08-01-preview/SensitivityLabelsRecommendedUpdate.json
 if __name__ == "__main__":
     main()

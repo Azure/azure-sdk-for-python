@@ -68,6 +68,10 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         client = self.create_client_from_credential(
             ConfidentialLedgerCertificateClient,
             credential=None,
+            certificate_endpoint=os.environ.get(
+                "CONFIDENTIALLEDGER_IDENTITY_ENDPOINT",
+                "https://identity.confidential-ledger.core.azure.com",
+            ),
         )
 
         network_identity = client.get_ledger_identity(ledger_id=confidentialledger_id)
@@ -91,6 +95,10 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         client = self.create_client_from_credential(
             ConfidentialLedgerCertificateClientAsync,
             credential=None,
+            certificate_endpoint=os.environ.get(
+                "CONFIDENTIALLEDGER_IDENTITY_ENDPOINT",
+                "https://identity.confidential-ledger.core.azure.com",
+            ),
         )
 
         try:

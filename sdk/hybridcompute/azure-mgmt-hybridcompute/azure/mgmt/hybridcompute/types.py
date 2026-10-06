@@ -36,11 +36,12 @@ if TYPE_CHECKING:
         LicenseStatus,
         LicenseTarget,
         LicenseType,
+        MachineStatusReason,
+        ManagedServiceIdentityType,
         PatchModeTypes,
         ProgramYear,
         ProvisioningState,
         PublicNetworkAccessType,
-        ResourceIdentityType,
         ServiceExtensionPublicNetworkAccess,
         StatusLevelTypes,
         StatusTypes,
@@ -429,6 +430,9 @@ class GatewayProperties(TypedDict, total=False):
     :vartype gateway_endpoint: str
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -443,6 +447,9 @@ class GatewayProperties(TypedDict, total=False):
     """The endpoint fqdn for the Gateway."""
     allowedFeatures: list[str]
     """Specifies the list of features that are enabled for this Gateway."""
+    gatewayBypass: list[str]
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
 
 class ResourceUpdate(TypedDict, total=False):
@@ -457,7 +464,7 @@ class ResourceUpdate(TypedDict, total=False):
 
 
 class GatewayUpdate(ResourceUpdate):
-    """Describes a License Update.
+    """Describes a Gateway Update.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -474,10 +481,16 @@ class GatewayUpdateProperties(TypedDict, total=False):
 
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     allowedFeatures: list[str]
     """Specifies the list of features that are enabled for this Gateway."""
+    gatewayBypass: list[str]
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
 
 class HardwareProfile(TypedDict, total=False):
@@ -559,25 +572,6 @@ class HybridComputePrivateLinkScopeProperties(TypedDict, total=False):
     """Enable private link validation for an Azure Arc Extension."""
 
 
-class Identity(TypedDict, total=False):
-    """Identity for the resource.
-
-    :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource. The value must be an UUID.
-    :vartype tenant_id: str
-    :ivar type: The identity type. "SystemAssigned"
-    :vartype type: Union[str, "ResourceIdentityType"]
-    """
-
-    principalId: str
-    """The principal ID of resource identity. The value must be an UUID."""
-    tenantId: str
-    """The tenant ID of resource. The value must be an UUID."""
-    type: Union[str, "ResourceIdentityType"]
-    """The identity type. \"SystemAssigned\""""
-
-
 class IpAddress(TypedDict, total=False):
     """Describes properties of the IP address.
 
@@ -629,8 +623,8 @@ class LicenseDetails(TypedDict, total=False):
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: Union[str, "LicenseState"]
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: Union[str, "LicenseTarget"]
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -651,8 +645,8 @@ class LicenseDetails(TypedDict, total=False):
     state: Union[str, "LicenseState"]
     """Describes the state of the license. Known values are: \"Activated\" and \"Deactivated\"."""
     target: Union[str, "LicenseTarget"]
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Union[str, "LicenseEdition"]
     """Describes the edition of the license. The values are either Standard or Datacenter. Known
      values are: \"Standard\" and \"Datacenter\"."""
@@ -1016,8 +1010,8 @@ class LicenseUpdatePropertiesLicenseDetails(TypedDict, total=False):
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: Union[str, "LicenseState"]
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: Union[str, "LicenseTarget"]
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -1032,8 +1026,8 @@ class LicenseUpdatePropertiesLicenseDetails(TypedDict, total=False):
     state: Union[str, "LicenseState"]
     """Describes the state of the license. Known values are: \"Activated\" and \"Deactivated\"."""
     target: Union[str, "LicenseTarget"]
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Union[str, "LicenseEdition"]
     """Describes the edition of the license. The values are either Standard or Datacenter. Known
      values are: \"Standard\" and \"Datacenter\"."""
@@ -1111,7 +1105,7 @@ class Machine(TrackedResource):
     :ivar resources: The list of extensions affiliated to the machine.
     :vartype resources: list["MachineExtension"]
     :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
+    :vartype identity: "ManagedServiceIdentity"
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: Union[str, "ArcKindEnum"]
@@ -1121,7 +1115,7 @@ class Machine(TrackedResource):
     """Hybrid Compute Machine properties."""
     resources: list["MachineExtension"]
     """The list of extensions affiliated to the machine."""
-    identity: "Identity"
+    identity: "ManagedServiceIdentity"
     """Identity for the resource."""
     kind: Union[str, "ArcKindEnum"]
     """Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or VMware etc.
@@ -1387,6 +1381,9 @@ class MachineProperties(TypedDict, total=False):
     :vartype os_profile: "OSProfile"
     :ivar license_profile: Specifies the License related properties for a machine.
     :vartype license_profile: "LicenseProfileMachineInstanceView"
+    :ivar status_reason: Indicates whether the service has detected that this Arc machine is a
+     clone of another onboarded machine. Service-computed; not settable by the user. "Cloned"
+    :vartype status_reason: Union[str, "MachineStatusReason"]
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
@@ -1471,6 +1468,9 @@ class MachineProperties(TypedDict, total=False):
     """Specifies the operating system settings for the hybrid machine."""
     licenseProfile: "LicenseProfileMachineInstanceView"
     """Specifies the License related properties for a machine."""
+    statusReason: Union[str, "MachineStatusReason"]
+    """Indicates whether the service has detected that this Arc machine is a clone of another
+     onboarded machine. Service-computed; not settable by the user. \"Cloned\""""
     provisioningState: str
     """The provisioning state, which only appears in the response."""
     status: Union[str, "StatusTypes"]
@@ -1731,7 +1731,7 @@ class MachineUpdate(ResourceUpdate):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
+    :vartype identity: "ManagedServiceIdentity"
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: Union[str, "ArcKindEnum"]
@@ -1739,7 +1739,7 @@ class MachineUpdate(ResourceUpdate):
     :vartype properties: "MachineUpdateProperties"
     """
 
-    identity: "Identity"
+    identity: "ManagedServiceIdentity"
     """Identity for the resource."""
     kind: Union[str, "ArcKindEnum"]
     """Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or VMware etc.
@@ -1789,6 +1789,35 @@ class MachineUpdateProperties(TypedDict, total=False):
     tpmEkCertificate: str
     """Endorsement Key Certificate of the Trusted Platform Module (TPM) that the client provides to be
      used during initial resource onboarding."""
+
+
+class ManagedServiceIdentity(TypedDict, total=False):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: Union[str, "ManagedServiceIdentityType"]
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    """
+
+    principalId: str
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenantId: str
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Required[Union[str, "ManagedServiceIdentityType"]]
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """The identities assigned to this resource by the user."""
 
 
 class NetworkInterface(TypedDict, total=False):
@@ -2322,6 +2351,21 @@ class TagsResource(TypedDict, total=False):
 
     tags: dict[str, str]
     """Resource tags."""
+
+
+class UserAssignedIdentity(TypedDict, total=False):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principalId: str
+    """The principal ID of the assigned identity."""
+    clientId: str
+    """The client ID of the assigned identity."""
 
 
 class VolumeLicenseDetails(TypedDict, total=False):

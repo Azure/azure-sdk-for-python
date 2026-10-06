@@ -1242,15 +1242,6 @@ namespace azure.mgmt.powerbidedicated.types
         type: str
 
 
-    class azure.mgmt.powerbidedicated.types.CheckCapacityNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": str
-        message: str
-        name_available: bool
-        reason: str
-
-
     class azure.mgmt.powerbidedicated.types.DedicatedCapacity(TrackedResource):
         key "id": str
         key "location": Required[str]
@@ -1307,77 +1298,6 @@ namespace azure.mgmt.powerbidedicated.types
         tags: dict[str, str]
 
 
-    class azure.mgmt.powerbidedicated.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorResponseError', module='types')
-        error: ErrorResponseError
-
-
-    class azure.mgmt.powerbidedicated.types.ErrorResponseError(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        code: str
-        message: str
-
-
-    class azure.mgmt.powerbidedicated.types.LogSpecification(TypedDict, total=False):
-        key "blobDuration": str
-        key "displayName": str
-        key "name": str
-        blob_duration: str
-        display_name: str
-        name: str
-
-
-    class azure.mgmt.powerbidedicated.types.MetricSpecification(TypedDict, total=False):
-        key "aggregationType": str
-        key "displayDescription": str
-        key "displayName": str
-        key "metricFilterPattern": str
-        key "name": str
-        key "unit": str
-        aggregation_type: str
-        dimensions: list[MetricSpecificationDimensionsItem]
-        display_description: str
-        display_name: str
-        metric_filter_pattern: str
-        name: str
-        unit: str
-
-
-    class azure.mgmt.powerbidedicated.types.MetricSpecificationDimensionsItem(TypedDict, total=False):
-        key "displayName": str
-        key "name": str
-        display_name: str
-        name: str
-
-
-    class azure.mgmt.powerbidedicated.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "name": str
-        key "origin": str
-        key "properties": ForwardRef('OperationProperties', module='types')
-        display: OperationDisplay
-        name: str
-        origin: str
-        properties: OperationProperties
-
-
-    class azure.mgmt.powerbidedicated.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.powerbidedicated.types.OperationProperties(TypedDict, total=False):
-        key "serviceSpecification": ForwardRef('ServiceSpecification', module='types')
-        service_specification: ServiceSpecification
-
-
     class azure.mgmt.powerbidedicated.types.Resource(TypedDict, total=False):
         key "id": str
         key "name": str
@@ -1387,28 +1307,6 @@ namespace azure.mgmt.powerbidedicated.types
         name: str
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.powerbidedicated.types.ServiceSpecification(TypedDict, total=False):
-        logSpecifications: list[LogSpecification]
-        log_specifications: list[LogSpecification]
-        metricSpecifications: list[MetricSpecification]
-        metric_specifications: list[MetricSpecification]
-
-
-    class azure.mgmt.powerbidedicated.types.SkuDetailsForExistingResource(TypedDict, total=False):
-        key "resourceType": str
-        key "sku": ForwardRef('CapacitySku', module='types')
-        resource_type: str
-        sku: CapacitySku
-
-
-    class azure.mgmt.powerbidedicated.types.SkuEnumerationForExistingResourceResult(TypedDict, total=False):
-        value: list[SkuDetailsForExistingResource]
-
-
-    class azure.mgmt.powerbidedicated.types.SkuEnumerationForNewResourceResult(TypedDict, total=False):
-        value: list[CapacitySku]
 
 
     class azure.mgmt.powerbidedicated.types.SystemData(TypedDict, total=False):

@@ -3,10 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import (
+    DocumentBatch,
+    SourceInput,
+    StartTranslationDetails,
+    DocumentTranslationInput,
+    TranslationTarget,
+)
 from devtools_testutils import AzureRecordedTestCase
 from testcase import DocumentTranslationTest, Document
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
 class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCase):

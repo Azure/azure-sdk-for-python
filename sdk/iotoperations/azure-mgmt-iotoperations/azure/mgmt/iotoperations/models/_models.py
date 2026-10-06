@@ -919,6 +919,36 @@ class AkriConnectorTemplateDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AkriConnectorTemplateExecAction(_Model):
+    """AkriConnectorTemplateExecAction properties. Describes a command to execute in a container.
+
+    :ivar command: The command to execute inside the container. Exit status of 0 is treated as
+     healthy, non-zero is unhealthy. Required.
+    :vartype command: list[str]
+    """
+
+    command: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The command to execute inside the container. Exit status of 0 is treated as healthy, non-zero
+     is unhealthy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        command: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AkriConnectorTemplateRuntimeConfiguration(_Model):  # pylint: disable=name-too-long
     """AkriConnectorTemplateRuntimeConfiguration properties.
 
@@ -1203,6 +1233,75 @@ class AkriConnectorTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AkriConnectorTemplateReadinessProbe(_Model):
+    """AkriConnectorTemplateReadinessProbe properties. Defines a readiness probe for the connector
+    container.
+
+    :ivar exec_property: Exec specifies a command to execute in the container.
+    :vartype exec_property: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateExecAction
+    :ivar failure_threshold: Minimum consecutive failures for the probe to be considered failed
+     after having succeeded.
+    :vartype failure_threshold: int
+    :ivar initial_delay_seconds: Number of seconds after the container has started before the probe
+     is initiated.
+    :vartype initial_delay_seconds: int
+    :ivar period_seconds: How often (in seconds) to perform the probe.
+    :vartype period_seconds: int
+    :ivar success_threshold: Minimum consecutive successes for the probe to be considered
+     successful after having failed.
+    :vartype success_threshold: int
+    :ivar timeout_seconds: Number of seconds after which the probe times out.
+    :vartype timeout_seconds: int
+    """
+
+    exec_property: Optional["_models.AkriConnectorTemplateExecAction"] = rest_field(
+        name="exec", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exec specifies a command to execute in the container."""
+    failure_threshold: Optional[int] = rest_field(
+        name="failureThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum consecutive failures for the probe to be considered failed after having succeeded."""
+    initial_delay_seconds: Optional[int] = rest_field(
+        name="initialDelaySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of seconds after the container has started before the probe is initiated."""
+    period_seconds: Optional[int] = rest_field(
+        name="periodSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How often (in seconds) to perform the probe."""
+    success_threshold: Optional[int] = rest_field(
+        name="successThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum consecutive successes for the probe to be considered successful after having failed."""
+    timeout_seconds: Optional[int] = rest_field(
+        name="timeoutSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of seconds after which the probe times out."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exec_property: Optional["_models.AkriConnectorTemplateExecAction"] = None,
+        failure_threshold: Optional[int] = None,
+        initial_delay_seconds: Optional[int] = None,
+        period_seconds: Optional[int] = None,
+        success_threshold: Optional[int] = None,
+        timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AkriConnectorTemplateResource(ProxyResource):
     """AkriConnectorTemplate resource.
 
@@ -1324,6 +1423,10 @@ class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint:
      "IfNotPresent", and "Never".
     :vartype image_pull_policy: str or
      ~azure.mgmt.iotoperations.models.AkriConnectorsImagePullPolicy
+    :ivar readiness_probe: Optional readiness probe for the connector container. When set, the
+     operator injects this into the pod spec and uses the pod's ``Ready`` condition for health
+     reporting instead of crash-based detection.
+    :vartype readiness_probe: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateReadinessProbe
     :ivar replicas: The number of replicas to be set up.
     :vartype replicas: int
     :ivar registry_settings: The registry settings for the image. You can omit this field if using
@@ -1340,6 +1443,12 @@ class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint:
         name="imagePullPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The pull policy of the image. Known values are: \"Always\", \"IfNotPresent\", and \"Never\"."""
+    readiness_probe: Optional["_models.AkriConnectorTemplateReadinessProbe"] = rest_field(
+        name="readinessProbe", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional readiness probe for the connector container. When set, the operator injects this into
+     the pod spec and uses the pod's ``Ready`` condition for health reporting instead of crash-based
+     detection."""
     replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of replicas to be set up."""
     registry_settings: Optional["_models.AkriConnectorsRegistrySettings"] = rest_field(
@@ -1358,6 +1467,7 @@ class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint:
         *,
         image_name: str,
         image_pull_policy: Optional[Union[str, "_models.AkriConnectorsImagePullPolicy"]] = None,
+        readiness_probe: Optional["_models.AkriConnectorTemplateReadinessProbe"] = None,
         replicas: Optional[int] = None,
         registry_settings: Optional["_models.AkriConnectorsRegistrySettings"] = None,
         tag_digest_settings: Optional["_models.AkriConnectorsTagDigestSettings"] = None,
@@ -2476,6 +2586,17 @@ class BrokerProperties(_Model):
      of CPU resources requested. If this setting is enabled and there are insufficient CPU
      resources, an error will be emitted.
     :vartype generate_resource_limits: ~azure.mgmt.iotoperations.models.GenerateResourceLimits
+    :ivar high_priority_messages_backpressure_handling:   Handling of high-priority messages in the
+     event that regular-priority messages are being backpressured.
+
+       When set to "Accept", the broker continues to accept high-priority messages even while
+     regular-priority messages are rejected due to backpressure.
+
+       When set to "Reject", backpressure also affects high-priority messages.
+
+       Defaults to "Accept". Known values are: "Accept" and "Reject".
+    :vartype high_priority_messages_backpressure_handling: str or
+     ~azure.mgmt.iotoperations.models.HighPriorityMessagesBackpressureHandling
     :ivar memory_profile: Memory profile of Broker. Known values are: "Tiny", "Low", "Medium", and
      "High".
     :vartype memory_profile: str or ~azure.mgmt.iotoperations.models.BrokerMemoryProfile
@@ -2509,6 +2630,20 @@ class BrokerProperties(_Model):
     """This setting controls whether Kubernetes CPU resource limits are requested. Increasing the
      number of replicas or workers proportionally increases the amount of CPU resources requested.
      If this setting is enabled and there are insufficient CPU resources, an error will be emitted."""
+    high_priority_messages_backpressure_handling: Optional[
+        Union[str, "_models.HighPriorityMessagesBackpressureHandling"]
+    ] = rest_field(
+        name="highPriorityMessagesBackpressureHandling", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """  Handling of high-priority messages in the event that regular-priority messages are being
+     backpressured.
+     
+       When set to \"Accept\", the broker continues to accept high-priority messages even while
+     regular-priority messages are rejected due to backpressure.
+     
+       When set to \"Reject\", backpressure also affects high-priority messages.
+     
+       Defaults to \"Accept\". Known values are: \"Accept\" and \"Reject\"."""
     memory_profile: Optional[Union[str, "_models.BrokerMemoryProfile"]] = rest_field(
         name="memoryProfile", visibility=["read", "create"]
     )
@@ -2539,6 +2674,9 @@ class BrokerProperties(_Model):
         diagnostics: Optional["_models.BrokerDiagnostics"] = None,
         disk_backed_message_buffer: Optional["_models.DiskBackedMessageBuffer"] = None,
         generate_resource_limits: Optional["_models.GenerateResourceLimits"] = None,
+        high_priority_messages_backpressure_handling: Optional[
+            Union[str, "_models.HighPriorityMessagesBackpressureHandling"]
+        ] = None,
         memory_profile: Optional[Union[str, "_models.BrokerMemoryProfile"]] = None,
         persistence: Optional["_models.BrokerPersistence"] = None,
     ) -> None: ...

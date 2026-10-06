@@ -23,10 +23,11 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
+    from ... import models as _models2
     from ...indexes import models as _indexes_models3
 
 
-class AIServices(_Model):
+class AIServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for AI Services.
 
     :ivar uri: The URI of the AI Services endpoint. Required.
@@ -59,7 +60,7 @@ class AIServices(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetStore(_Model):
+class AssetStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for an asset store used to store extracted assets such as images.
 
     :ivar connection_string: The connection string for the asset store. Required.
@@ -96,7 +97,7 @@ class AssetStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceParams(_Model):
+class KnowledgeSourceParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for knowledge source runtime parameters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -118,12 +119,22 @@ class KnowledgeSourceParams(_Model):
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -156,6 +167,12 @@ class KnowledgeSourceParams(_Model):
     )
     """Indicates that this knowledge source should bypass source selection and always be queried at
      retrieval time."""
+    never_query_source: Optional[bool] = rest_field(
+        name="neverQuerySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates that this knowledge source should be excluded from the request's candidate set and
+     never queried at retrieval time. The exclusion is request-local and does not modify knowledge
+     base membership. Cannot be combined with alwaysQuerySource on the same knowledge source."""
     fail_on_error: Optional[bool] = rest_field(
         name="failOnError", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -165,6 +182,11 @@ class KnowledgeSourceParams(_Model):
         name="rerankerThreshold", visibility=["read", "create", "update", "delete", "query"]
     )
     """The reranker threshold all retrieved documents must meet to be included in the response."""
+    results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = rest_field(
+        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Overrides the knowledge source's stored resultsProcessing for this retrieve call only. When
+     omitted, the stored knowledge source value applies. Known values are: \"rerank\" and \"none\"."""
     max_output_documents: Optional[int] = rest_field(
         name="maxOutputDocuments", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -188,8 +210,10 @@ class KnowledgeSourceParams(_Model):
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
     ) -> None: ...
@@ -205,7 +229,9 @@ class KnowledgeSourceParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azureBlob"):
+class AzureBlobKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a azure blob knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -219,12 +245,22 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -235,11 +271,21 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
     :ivar kind: The discriminator value. Required. A knowledge source that read and ingest data
      from Azure Blob Storage to a Search Index.
     :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_BLOB
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.AZURE_BLOB] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that read and ingest data from Azure Blob
      Storage to a Search Index."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -249,10 +295,13 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -267,7 +316,7 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
         self.kind = KnowledgeSourceKind.AZURE_BLOB  # type: ignore
 
 
-class CompletedSynchronizationState(_Model):
+class CompletedSynchronizationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the completed state of the last synchronization.
 
     :ivar start_time: The start time of the last completed synchronization. Required.
@@ -325,7 +374,9 @@ class CompletedSynchronizationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator="fabricDataAgent"):
+class FabricDataAgentKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="fabricDataAgent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a Fabric Data Agent knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -339,12 +390,22 @@ class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator=
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -369,8 +430,10 @@ class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator=
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
     ) -> None: ...
@@ -387,7 +450,9 @@ class FabricDataAgentKnowledgeSourceParams(KnowledgeSourceParams, discriminator=
         self.kind = KnowledgeSourceKind.FABRIC_DATA_AGENT  # type: ignore
 
 
-class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="fabricOntology"):
+class FabricOntologyKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="fabricOntology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a Fabric Ontology knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -401,12 +466,22 @@ class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -431,8 +506,10 @@ class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
     ) -> None: ...
@@ -449,7 +526,9 @@ class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         self.kind = KnowledgeSourceKind.FABRIC_ONTOLOGY  # type: ignore
 
 
-class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
+class FileKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a File knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -463,12 +542,22 @@ class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -479,11 +568,21 @@ class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
     :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
      upload and indexing.
     :vartype kind: str or ~azure.search.documents.indexes.models.FILE
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.FILE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that supports direct file upload and
      indexing."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -493,10 +592,13 @@ class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -511,7 +613,7 @@ class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
         self.kind = KnowledgeSourceKind.FILE  # type: ignore
 
 
-class FreshnessPolicy(_Model):
+class FreshnessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for freshness-aware retrieval. When set, newer documents receive a ranking boost
     during retrieval.
 
@@ -544,7 +646,7 @@ class FreshnessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageServingStatistics(_Model):
+class ImageServingStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistics about image serving during a retrieval activity.
 
     :ivar images_retrieved: The number of images retrieved from the asset store.
@@ -556,6 +658,9 @@ class ImageServingStatistics(_Model):
     :ivar verbalization_used: Indicates whether image verbalization was used instead of direct
      image serving.
     :vartype verbalization_used: bool
+    :ivar served_images: The set of images the model selected to be served to the downstream model
+     for this retrieval activity.
+    :vartype served_images: list[~azure.search.documents.knowledgebases.models.ServedImage]
     """
 
     images_retrieved: Optional[int] = rest_field(
@@ -574,6 +679,11 @@ class ImageServingStatistics(_Model):
         name="verbalizationUsed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether image verbalization was used instead of direct image serving."""
+    served_images: Optional[list["_models.ServedImage"]] = rest_field(
+        name="servedImages", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The set of images the model selected to be served to the downstream model for this retrieval
+     activity."""
 
     @overload
     def __init__(
@@ -583,6 +693,7 @@ class ImageServingStatistics(_Model):
         images_sent_to_model: Optional[int] = None,
         total_image_size_bytes: Optional[int] = None,
         verbalization_used: Optional[bool] = None,
+        served_images: Optional[list["_models.ServedImage"]] = None,
     ) -> None: ...
 
     @overload
@@ -596,7 +707,9 @@ class ImageServingStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedOneLake"):
+class IndexedOneLakeKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedOneLake"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a indexed OneLake knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -610,12 +723,22 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -626,10 +749,20 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      OneLake.
     :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_ONELAKE
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from indexed OneLake."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -639,10 +772,13 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -657,7 +793,9 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         self.kind = KnowledgeSourceKind.INDEXED_ONELAKE  # type: ignore
 
 
-class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedSharePoint"):
+class IndexedSharePointKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a indexed SharePoint knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -671,12 +809,22 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -687,10 +835,20 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      SharePoint.
     :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_SHARE_POINT
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from indexed SharePoint."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -700,10 +858,13 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -718,7 +879,9 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
         self.kind = KnowledgeSourceKind.INDEXED_SHARE_POINT  # type: ignore
 
 
-class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedSql"):
+class IndexedSqlKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for an indexed SQL knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -732,12 +895,22 @@ class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="inde
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -748,11 +921,21 @@ class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="inde
     :ivar kind: The discriminator value. Required. A knowledge source that retrieves and ingests
      data from Azure SQL Database or SQL Managed Instance to a Search Index.
     :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_SQL
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.INDEXED_SQL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that retrieves and ingests data from
      Azure SQL Database or SQL Managed Instance to a Search Index."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -762,10 +945,13 @@ class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="inde
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -780,7 +966,7 @@ class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="inde
         self.kind = KnowledgeSourceKind.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseActivityRecord(_Model):
+class KnowledgeBaseActivityRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for activity records. Tracks execution details, timing, and errors for knowledge base
     operations.
 
@@ -803,6 +989,10 @@ class KnowledgeBaseActivityRecord(_Model):
      "modelAnswerSynthesis", "modelWebSummarization", and "agenticReasoning".
     :vartype type: str or
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -823,6 +1013,14 @@ class KnowledgeBaseActivityRecord(_Model):
      \"fabricDataAgent\", \"fabricOntology\", \"mcpServer\", \"file\", \"indexedSql\",
      \"modelQueryPlanning\", \"modelAnswerSynthesis\", \"modelWebSummarization\", and
      \"agenticReasoning\"."""
+    started_at: Optional[datetime.datetime] = rest_field(
+        name="startedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the activity started."""
+    completed_at: Optional[datetime.datetime] = rest_field(
+        name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the activity completed."""
     elapsed_ms: Optional[int] = rest_field(name="elapsedMs", visibility=["read", "create", "update", "delete", "query"])
     """The elapsed time in milliseconds for the retrieval activity."""
     error: Optional["_models.KnowledgeBaseErrorDetail"] = rest_field(
@@ -840,6 +1038,8 @@ class KnowledgeBaseActivityRecord(_Model):
         *,
         id: int,  # pylint: disable=redefined-builtin
         type: str,
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -856,13 +1056,113 @@ class KnowledgeBaseActivityRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
+class KnowledgeBaseActivityRecordModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the model used for a knowledge base LLM activity, including its model name and
+    deployment identifier.
+
+    :ivar model_name: The name of the model used for the activity. Required.
+    :vartype model_name: str
+    :ivar deployment_id: The deployment identifier of the model used for the activity.
+    :vartype deployment_id: str
+    """
+
+    model_name: str = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the model used for the activity. Required."""
+    deployment_id: Optional[str] = rest_field(
+        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deployment identifier of the model used for the activity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_name: str,
+        deployment_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseActivityStartedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted immediately before an individual retrieval activity begins executing.
+
+    :ivar id: The ID of the activity record, matching the ``id`` on the corresponding
+     ``activity.completed`` event. Required.
+    :vartype id: int
+    :ivar type: The type of the activity that has started. Required. Known values are:
+     "searchIndex", "azureBlob", "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint",
+     "workIQ", "fabricDataAgent", "fabricOntology", "mcpServer", "file", "indexedSql",
+     "modelQueryPlanning", "modelAnswerSynthesis", "modelWebSummarization", and "agenticReasoning".
+    :vartype type: str or
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType
+    :ivar started_at: The time at which the activity started. Required.
+    :vartype started_at: ~datetime.datetime
+    :ivar knowledge_source_name: The knowledge source used by the activity, when the activity
+     targets a knowledge source.
+    :vartype knowledge_source_name: str
+    """
+
+    id: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the activity record, matching the ``id`` on the corresponding ``activity.completed``
+     event. Required."""
+    type: Union[str, "_models.KnowledgeBaseActivityRecordType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the activity that has started. Required. Known values are: \"searchIndex\",
+     \"azureBlob\", \"indexedSharePoint\", \"indexedOneLake\", \"web\", \"remoteSharePoint\",
+     \"workIQ\", \"fabricDataAgent\", \"fabricOntology\", \"mcpServer\", \"file\", \"indexedSql\",
+     \"modelQueryPlanning\", \"modelAnswerSynthesis\", \"modelWebSummarization\", and
+     \"agenticReasoning\"."""
+    started_at: datetime.datetime = rest_field(
+        name="startedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the activity started. Required."""
+    knowledge_source_name: Optional[str] = rest_field(
+        name="knowledgeSourceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The knowledge source used by the activity, when the activity targets a knowledge source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: int,  # pylint: disable=redefined-builtin
+        type: Union[str, "_models.KnowledgeBaseActivityRecordType"],
+        started_at: datetime.datetime,
+        knowledge_source_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeBaseAgenticReasoningActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="agenticReasoning"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an agentic reasoning activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -879,6 +1179,11 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
     :vartype retrieval_reasoning_effort:
      ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
+    :ivar logical_reasoning_effort: The logical reasoning effort requested by the customer. This is
+     distinct from ``retrievalReasoningEffort``, which reports the reasoning effort used for
+     billing.
+    :vartype logical_reasoning_effort:
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.AGENTIC_REASONING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -891,17 +1196,25 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
         name="retrievalReasoningEffort", visibility=["read", "create", "update", "delete", "query"]
     )
     """The retrieval reasoning effort configuration."""
+    logical_reasoning_effort: Optional["_models.KnowledgeRetrievalReasoningEffort"] = rest_field(
+        name="logicalReasoningEffort", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The logical reasoning effort requested by the customer. This is distinct from
+     ``retrievalReasoningEffort``, which reports the reasoning effort used for billing."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
         reasoning_tokens: Optional[int] = None,
         retrieval_reasoning_effort: Optional["_models.KnowledgeRetrievalReasoningEffort"] = None,
+        logical_reasoning_effort: Optional["_models.KnowledgeRetrievalReasoningEffort"] = None,
     ) -> None: ...
 
     @overload
@@ -916,7 +1229,41 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.AGENTIC_REASONING  # type: ignore
 
 
-class KnowledgeBaseAzureBlobActivityArguments(_Model):
+class KnowledgeBaseAnswerCompletedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted when a fully validated and post-processed synthesized answer is available.
+
+    :ivar message_index: The zero-based index of the completed message in the final response array.
+     Required.
+    :vartype message_index: int
+    :ivar message: The completed answer message. Required.
+    :vartype message: ~azure.search.documents.knowledgebases.models.KnowledgeBaseMessage
+    """
+
+    message_index: int = rest_field(name="messageIndex", visibility=["read", "create", "update", "delete", "query"])
+    """The zero-based index of the completed message in the final response array. Required."""
+    message: "_models.KnowledgeBaseMessage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The completed answer message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message_index: int,
+        message: "_models.KnowledgeBaseMessage",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseAzureBlobActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the azure blob retrieval activity was run with.
 
     :ivar search: The search string used to query blob contents.
@@ -944,11 +1291,17 @@ class KnowledgeBaseAzureBlobActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discriminator="azureBlob"):
+class KnowledgeBaseAzureBlobActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a azure blob retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -972,6 +1325,10 @@ class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discrimi
     :ivar azure_blob_arguments: The azure blob arguments for the retrieval activity.
     :vartype azure_blob_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -995,12 +1352,18 @@ class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discrimi
         name="azureBlobArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The azure blob arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1009,6 +1372,7 @@ class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discrimi
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         azure_blob_arguments: Optional["_models.KnowledgeBaseAzureBlobActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -1023,7 +1387,7 @@ class KnowledgeBaseAzureBlobActivityRecord(KnowledgeBaseActivityRecord, discrimi
         self.type = KnowledgeBaseActivityRecordType.AZURE_BLOB  # type: ignore
 
 
-class KnowledgeBaseReference(_Model):
+class KnowledgeBaseReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for references.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1088,7 +1452,9 @@ class KnowledgeBaseReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azureBlob"):
+class KnowledgeBaseAzureBlobReference(
+    KnowledgeBaseReference, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure Blob Storage document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1106,6 +1472,9 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
     :ivar search_sensitivity_label_info: The sensitivity label information for the reference.
     :vartype search_sensitivity_label_info:
      ~azure.search.documents.knowledgebases.models.PurviewSensitivityLabelInfo
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.AZURE_BLOB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1116,6 +1485,11 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
         name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The sensitivity label information for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -1127,6 +1501,7 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
         reranker_score: Optional[float] = None,
         blob_url: Optional[str] = None,
         search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1186,7 +1561,9 @@ class KnowledgeBaseErrorDetail(_Model):
     """The error additional info."""
 
 
-class KnowledgeBaseFabricDataAgentActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseFabricDataAgentActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the Fabric Data Agent retrieval activity was run with.
 
     :ivar search: The search string used to query the Fabric Data Agent knowledge source.
@@ -1216,11 +1593,15 @@ class KnowledgeBaseFabricDataAgentActivityArguments(_Model):  # pylint: disable=
 
 class KnowledgeBaseFabricDataAgentActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="fabricDataAgent"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a Fabric Data Agent retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -1273,6 +1654,8 @@ class KnowledgeBaseFabricDataAgentActivityRecord(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1295,7 +1678,9 @@ class KnowledgeBaseFabricDataAgentActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.FABRIC_DATA_AGENT  # type: ignore
 
 
-class KnowledgeBaseFabricDataAgentReference(KnowledgeBaseReference, discriminator="fabricDataAgent"):
+class KnowledgeBaseFabricDataAgentReference(
+    KnowledgeBaseReference, discriminator="fabricDataAgent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Fabric Data Agent document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1349,7 +1734,9 @@ class KnowledgeBaseFabricDataAgentReference(KnowledgeBaseReference, discriminato
         self.type = KnowledgeBaseReferenceType.FABRIC_DATA_AGENT  # type: ignore
 
 
-class KnowledgeBaseFabricOntologyActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseFabricOntologyActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the Fabric Ontology retrieval activity was run with.
 
     :ivar search: The search string used to query the Fabric Ontology knowledge source.
@@ -1379,11 +1766,15 @@ class KnowledgeBaseFabricOntologyActivityArguments(_Model):  # pylint: disable=n
 
 class KnowledgeBaseFabricOntologyActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="fabricOntology"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a Fabric Ontology retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -1436,6 +1827,8 @@ class KnowledgeBaseFabricOntologyActivityRecord(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1458,7 +1851,9 @@ class KnowledgeBaseFabricOntologyActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.FABRIC_ONTOLOGY  # type: ignore
 
 
-class KnowledgeBaseFabricOntologyReference(KnowledgeBaseReference, discriminator="fabricOntology"):
+class KnowledgeBaseFabricOntologyReference(
+    KnowledgeBaseReference, discriminator="fabricOntology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Fabric Ontology document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1512,7 +1907,7 @@ class KnowledgeBaseFabricOntologyReference(KnowledgeBaseReference, discriminator
         self.type = KnowledgeBaseReferenceType.FABRIC_ONTOLOGY  # type: ignore
 
 
-class KnowledgeBaseFileActivityArguments(_Model):
+class KnowledgeBaseFileActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the File retrieval activity was run with.
 
     :ivar search: The search string used to query file contents.
@@ -1540,11 +1935,17 @@ class KnowledgeBaseFileActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator="file"):
+class KnowledgeBaseFileActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a File retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -1568,6 +1969,10 @@ class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator
     :ivar file_arguments: The File arguments for the retrieval activity.
     :vartype file_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseFileActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -1591,12 +1996,18 @@ class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator
         name="fileArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The File arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1605,6 +2016,7 @@ class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         file_arguments: Optional["_models.KnowledgeBaseFileActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -1619,7 +2031,9 @@ class KnowledgeBaseFileActivityRecord(KnowledgeBaseActivityRecord, discriminator
         self.type = KnowledgeBaseActivityRecordType.FILE  # type: ignore
 
 
-class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
+class KnowledgeBaseFileReference(
+    KnowledgeBaseReference, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1634,12 +2048,20 @@ class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
     :vartype type: str or ~azure.search.documents.knowledgebases.models.FILE
     :ivar doc_name: The document name for the reference.
     :vartype doc_name: str
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. File document reference."""
     doc_name: Optional[str] = rest_field(name="docName", visibility=["read", "create", "update", "delete", "query"])
     """The document name for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -1650,6 +2072,7 @@ class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
         source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         doc_name: Optional[str] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1664,7 +2087,7 @@ class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
         self.type = KnowledgeBaseReferenceType.FILE  # type: ignore
 
 
-class KnowledgeBaseImageContent(_Model):
+class KnowledgeBaseImageContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Image content.
 
     :ivar url: The url of the image. Required.
@@ -1692,7 +2115,9 @@ class KnowledgeBaseImageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseIndexedOneLakeActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseIndexedOneLakeActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed OneLake retrieval activity was run with.
 
     :ivar search: The search string used to query indexed OneLake contents.
@@ -1722,11 +2147,15 @@ class KnowledgeBaseIndexedOneLakeActivityArguments(_Model):  # pylint: disable=n
 
 class KnowledgeBaseIndexedOneLakeActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="indexedOneLake"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a indexed OneLake retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -1750,6 +2179,10 @@ class KnowledgeBaseIndexedOneLakeActivityRecord(
     :ivar indexed_one_lake_arguments: The indexed OneLake arguments for the retrieval activity.
     :vartype indexed_one_lake_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -1773,12 +2206,18 @@ class KnowledgeBaseIndexedOneLakeActivityRecord(
         name="indexedOneLakeArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indexed OneLake arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1787,6 +2226,7 @@ class KnowledgeBaseIndexedOneLakeActivityRecord(
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         indexed_one_lake_arguments: Optional["_models.KnowledgeBaseIndexedOneLakeActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -1801,7 +2241,9 @@ class KnowledgeBaseIndexedOneLakeActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.INDEXED_ONELAKE  # type: ignore
 
 
-class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator="indexedOneLake"):
+class KnowledgeBaseIndexedOneLakeReference(
+    KnowledgeBaseReference, discriminator="indexedOneLake"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed OneLake document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1819,6 +2261,9 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
     :ivar search_sensitivity_label_info: The sensitivity label information for the reference.
     :vartype search_sensitivity_label_info:
      ~azure.search.documents.knowledgebases.models.PurviewSensitivityLabelInfo
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.INDEXED_ONELAKE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1829,6 +2274,11 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
         name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The sensitivity label information for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -1840,6 +2290,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
         reranker_score: Optional[float] = None,
         doc_url: Optional[str] = None,
         search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1854,7 +2305,9 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
         self.type = KnowledgeBaseReferenceType.INDEXED_ONELAKE  # type: ignore
 
 
-class KnowledgeBaseIndexedSharePointActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseIndexedSharePointActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed SharePoint retrieval activity was run with.
 
     :ivar search: The search string used to query indexed SharePoint contents.
@@ -1884,11 +2337,15 @@ class KnowledgeBaseIndexedSharePointActivityArguments(_Model):  # pylint: disabl
 
 class KnowledgeBaseIndexedSharePointActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="indexedSharePoint"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a indexed SharePoint retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -1913,6 +2370,10 @@ class KnowledgeBaseIndexedSharePointActivityRecord(
      activity.
     :vartype indexed_share_point_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -1936,12 +2397,18 @@ class KnowledgeBaseIndexedSharePointActivityRecord(
         name="indexedSharePointArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indexed SharePoint arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -1950,6 +2417,7 @@ class KnowledgeBaseIndexedSharePointActivityRecord(
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         indexed_share_point_arguments: Optional["_models.KnowledgeBaseIndexedSharePointActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -1964,7 +2432,9 @@ class KnowledgeBaseIndexedSharePointActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.INDEXED_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discriminator="indexedSharePoint"):
+class KnowledgeBaseIndexedSharePointReference(
+    KnowledgeBaseReference, discriminator="indexedSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed SharePoint document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -1982,6 +2452,9 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
     :ivar search_sensitivity_label_info: The sensitivity label information for the reference.
     :vartype search_sensitivity_label_info:
      ~azure.search.documents.knowledgebases.models.PurviewSensitivityLabelInfo
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.INDEXED_SHARE_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1992,6 +2465,11 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
         name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The sensitivity label information for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -2003,6 +2481,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
         reranker_score: Optional[float] = None,
         doc_url: Optional[str] = None,
         search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2017,7 +2496,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
         self.type = KnowledgeBaseReferenceType.INDEXED_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseIndexedSqlActivityArguments(_Model):
+class KnowledgeBaseIndexedSqlActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the indexed SQL retrieval activity was run with.
 
     :ivar search: The search string used to query indexed SQL contents.
@@ -2045,11 +2524,17 @@ class KnowledgeBaseIndexedSqlActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discriminator="indexedSql"):
+class KnowledgeBaseIndexedSqlActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexed SQL retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2073,6 +2558,10 @@ class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discrim
     :ivar indexed_sql_arguments: The indexed SQL arguments for the retrieval activity.
     :vartype indexed_sql_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -2096,12 +2585,18 @@ class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discrim
         name="indexedSqlArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indexed SQL arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -2110,6 +2605,7 @@ class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discrim
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         indexed_sql_arguments: Optional["_models.KnowledgeBaseIndexedSqlActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -2124,7 +2620,9 @@ class KnowledgeBaseIndexedSqlActivityRecord(KnowledgeBaseActivityRecord, discrim
         self.type = KnowledgeBaseActivityRecordType.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="indexedSql"):
+class KnowledgeBaseIndexedSqlReference(
+    KnowledgeBaseReference, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure SQL document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2139,12 +2637,20 @@ class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="in
     :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_SQL
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.INDEXED_SQL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Indexed SQL document reference."""
     doc_url: Optional[str] = rest_field(name="docUrl", visibility=["read", "create", "update", "delete", "query"])
     """The document URL for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -2155,6 +2661,7 @@ class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="in
         source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         doc_url: Optional[str] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2169,7 +2676,7 @@ class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="in
         self.type = KnowledgeBaseReferenceType.INDEXED_SQL  # type: ignore
 
 
-class KnowledgeBaseMcpServerActivityArguments(_Model):
+class KnowledgeBaseMcpServerActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the MCP server retrieval activity was run with.
 
     :ivar tool_name: The name of the MCP server tool used for the retrieval activity.
@@ -2204,11 +2711,17 @@ class KnowledgeBaseMcpServerActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discriminator="mcpServer"):
+class KnowledgeBaseMcpServerActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an MCP server retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2261,6 +2774,8 @@ class KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discrimi
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -2283,7 +2798,9 @@ class KnowledgeBaseMcpServerActivityRecord(KnowledgeBaseActivityRecord, discrimi
         self.type = KnowledgeBaseActivityRecordType.MCP_SERVER  # type: ignore
 
 
-class KnowledgeBaseMcpServerReference(KnowledgeBaseReference, discriminator="mcpServer"):
+class KnowledgeBaseMcpServerReference(
+    KnowledgeBaseReference, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an MCP server document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2333,7 +2850,7 @@ class KnowledgeBaseMcpServerReference(KnowledgeBaseReference, discriminator="mcp
         self.type = KnowledgeBaseReferenceType.MCP_SERVER  # type: ignore
 
 
-class KnowledgeBaseMessage(_Model):
+class KnowledgeBaseMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The natural language message style object.
 
     :ivar role: The role of the tool response.
@@ -2369,7 +2886,7 @@ class KnowledgeBaseMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMessageContent(_Model):
+class KnowledgeBaseMessageContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the type of the message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2402,7 +2919,9 @@ class KnowledgeBaseMessageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseMessageImageContent(KnowledgeBaseMessageContent, discriminator="image"):
+class KnowledgeBaseMessageImageContent(
+    KnowledgeBaseMessageContent, discriminator="image"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Image message type.
 
     :ivar type: The discriminator value. Required. Image message content kind.
@@ -2435,7 +2954,9 @@ class KnowledgeBaseMessageImageContent(KnowledgeBaseMessageContent, discriminato
         self.type = KnowledgeBaseMessageContentType.IMAGE  # type: ignore
 
 
-class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator="text"):
+class KnowledgeBaseMessageTextContent(
+    KnowledgeBaseMessageContent, discriminator="text"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Text message type.
 
     :ivar type: The discriminator value. Required. Text message content kind.
@@ -2470,11 +2991,15 @@ class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator
 
 class KnowledgeBaseModelAnswerSynthesisActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelAnswerSynthesis"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM answer synthesis activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2490,8 +3015,8 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM answer synthesis activity.
     :vartype output_tokens: int
-    :ivar model_name: The name of the model used for the LLM answer synthesis activity.
-    :vartype model_name: str
+    :ivar model: The model used for the LLM answer synthesis activity.
+    :vartype model: ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.MODEL_ANSWER_SYNTHESIS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2504,20 +3029,24 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
         name="outputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The number of output tokens for the LLM answer synthesis activity."""
-    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the model used for the LLM answer synthesis activity."""
+    model: Optional["_models.KnowledgeBaseActivityRecordModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model used for the LLM answer synthesis activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
         input_tokens: Optional[int] = None,
         output_tokens: Optional[int] = None,
-        model_name: Optional[str] = None,
+        model: Optional["_models.KnowledgeBaseActivityRecordModel"] = None,
     ) -> None: ...
 
     @overload
@@ -2534,11 +3063,15 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
 
 class KnowledgeBaseModelQueryPlanningActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelQueryPlanning"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM query planning activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2554,8 +3087,8 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM query planning activity.
     :vartype output_tokens: int
-    :ivar model_name: The name of the model used for the LLM query planning activity.
-    :vartype model_name: str
+    :ivar model: The model used for the LLM query planning activity.
+    :vartype model: ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.MODEL_QUERY_PLANNING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2568,20 +3101,24 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
         name="outputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The number of output tokens for the LLM query planning activity."""
-    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the model used for the LLM query planning activity."""
+    model: Optional["_models.KnowledgeBaseActivityRecordModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model used for the LLM query planning activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
         input_tokens: Optional[int] = None,
         output_tokens: Optional[int] = None,
-        model_name: Optional[str] = None,
+        model: Optional["_models.KnowledgeBaseActivityRecordModel"] = None,
     ) -> None: ...
 
     @overload
@@ -2598,11 +3135,15 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
 
 class KnowledgeBaseModelWebSummarizationActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="modelWebSummarization"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents an LLM web summarization activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2618,8 +3159,8 @@ class KnowledgeBaseModelWebSummarizationActivityRecord(
     :vartype input_tokens_count: int
     :ivar output_tokens_count: The number of output tokens for the LLM web summarization activity.
     :vartype output_tokens_count: int
-    :ivar model_name: The name of the model used for the LLM web summarization activity.
-    :vartype model_name: str
+    :ivar model: The model used for the LLM web summarization activity.
+    :vartype model: ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2632,20 +3173,24 @@ class KnowledgeBaseModelWebSummarizationActivityRecord(
         name="outputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The number of output tokens for the LLM web summarization activity."""
-    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the model used for the LLM web summarization activity."""
+    model: Optional["_models.KnowledgeBaseActivityRecordModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model used for the LLM web summarization activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
         input_tokens_count: Optional[int] = None,
         output_tokens_count: Optional[int] = None,
-        model_name: Optional[str] = None,
+        model: Optional["_models.KnowledgeBaseActivityRecordModel"] = None,
     ) -> None: ...
 
     @overload
@@ -2660,7 +3205,46 @@ class KnowledgeBaseModelWebSummarizationActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION  # type: ignore
 
 
-class KnowledgeBaseRemoteSharePointActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseQueryHintProcessing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details about the expressions generated from query hints for a retrieval activity.
+
+    :ivar generated_boost: The search clause generated from boost hints for this activity.
+    :vartype generated_boost: str
+    :ivar generated_filter: The filter expression generated from filter hints for this activity.
+    :vartype generated_filter: str
+    """
+
+    generated_boost: Optional[str] = rest_field(
+        name="generatedBoost", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The search clause generated from boost hints for this activity."""
+    generated_filter: Optional[str] = rest_field(
+        name="generatedFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The filter expression generated from filter hints for this activity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        generated_boost: Optional[str] = None,
+        generated_filter: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseRemoteSharePointActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the remote SharePoint retrieval activity was run with.
 
     :ivar search: The search string used to query the remote SharePoint knowledge source.
@@ -2697,11 +3281,15 @@ class KnowledgeBaseRemoteSharePointActivityArguments(_Model):  # pylint: disable
 
 class KnowledgeBaseRemoteSharePointActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="remoteSharePoint"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents a remote SharePoint retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -2754,6 +3342,8 @@ class KnowledgeBaseRemoteSharePointActivityRecord(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -2776,7 +3366,9 @@ class KnowledgeBaseRemoteSharePointActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.REMOTE_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminator="remoteSharePoint"):
+class KnowledgeBaseRemoteSharePointReference(
+    KnowledgeBaseReference, discriminator="remoteSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a remote SharePoint document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -2829,7 +3421,46 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
         self.type = KnowledgeBaseReferenceType.REMOTE_SHARE_POINT  # type: ignore
 
 
-class KnowledgeBaseRetrievalRequest(_Model):
+class KnowledgeBaseResponseCompletedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted after retrieval completes successfully.
+
+    :ivar status_code: The semantic HTTP status of the completed retrieval. Required. Known values
+     are: 200 and 206.
+    :vartype status_code: int or
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStatusCode
+    :ivar response: The authoritative completed retrieval response. Required.
+    :vartype response: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
+    """
+
+    status_code: Union[int, "_models.KnowledgeBaseRetrievalStatusCode"] = rest_field(
+        name="statusCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic HTTP status of the completed retrieval. Required. Known values are: 200 and 206."""
+    response: "_models.KnowledgeBaseRetrievalResponse" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authoritative completed retrieval response. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status_code: Union[int, "_models.KnowledgeBaseRetrievalStatusCode"],
+        response: "_models.KnowledgeBaseRetrievalResponse",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseRetrievalRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input contract for the retrieval request.
 
     :ivar messages: A list of chat message style input.
@@ -2927,7 +3558,7 @@ class KnowledgeBaseRetrievalRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseRetrievalResponse(_Model):
+class KnowledgeBaseRetrievalResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The output contract for the retrieval response.
 
     :ivar response: The response messages.
@@ -2981,7 +3612,63 @@ class KnowledgeBaseRetrievalResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name-too-long
+class KnowledgeBaseRetrievalStartedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted once retrieval preflight validation completes, before any activity begins.
+
+    :ivar request_id: A service-generated identifier that correlates all events in this retrieval
+     stream. Required.
+    :vartype request_id: str
+    :ivar knowledge_base_name: The name of the knowledge base being queried. Required.
+    :vartype knowledge_base_name: str
+    :ivar output_mode: The effective output mode for this retrieval. Required. Known values are:
+     "extractiveData" and "answerSynthesis".
+    :vartype output_mode: str or
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalOutputMode
+    :ivar reasoning_effort: The effective reasoning effort for this retrieval. Required.
+    :vartype reasoning_effort:
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
+    """
+
+    request_id: str = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """A service-generated identifier that correlates all events in this retrieval stream. Required."""
+    knowledge_base_name: str = rest_field(
+        name="knowledgeBaseName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the knowledge base being queried. Required."""
+    output_mode: Union[str, "_models.KnowledgeRetrievalOutputMode"] = rest_field(
+        name="outputMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The effective output mode for this retrieval. Required. Known values are: \"extractiveData\"
+     and \"answerSynthesis\"."""
+    reasoning_effort: "_models.KnowledgeRetrievalReasoningEffort" = rest_field(
+        name="reasoningEffort", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The effective reasoning effort for this retrieval. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        request_id: str,
+        knowledge_base_name: str,
+        output_mode: Union[str, "_models.KnowledgeRetrievalOutputMode"],
+        reasoning_effort: "_models.KnowledgeRetrievalReasoningEffort",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseSearchIndexActivityArguments(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the arguments the search index retrieval activity was run with.
 
     :ivar search: The search string used to query the search index.
@@ -2995,6 +3682,9 @@ class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name
     :vartype search_fields: list[~azure.search.documents.indexes.models.SearchIndexFieldReference]
     :ivar semantic_configuration_name: What semantic configuration was used from the search index.
     :vartype semantic_configuration_name: str
+    :ivar query_type: The query syntax used to execute the search. Query hints can cause semantic
+     queries to use full query syntax. Known values are: "simple", "full", and "semantic".
+    :vartype query_type: str or ~azure.search.documents.models.QueryType
     """
 
     search: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3013,6 +3703,11 @@ class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name
         name="semanticConfigurationName", visibility=["read", "create", "update", "delete", "query"]
     )
     """What semantic configuration was used from the search index."""
+    query_type: Optional[Union[str, "_models2.QueryType"]] = rest_field(
+        name="queryType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The query syntax used to execute the search. Query hints can cause semantic queries to use full
+     query syntax. Known values are: \"simple\", \"full\", and \"semantic\"."""
 
     @overload
     def __init__(
@@ -3023,6 +3718,7 @@ class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name
         source_data_fields: Optional[list["_indexes_models3.SearchIndexFieldReference"]] = None,
         search_fields: Optional[list["_indexes_models3.SearchIndexFieldReference"]] = None,
         semantic_configuration_name: Optional[str] = None,
+        query_type: Optional[Union[str, "_models2.QueryType"]] = None,
     ) -> None: ...
 
     @overload
@@ -3036,11 +3732,17 @@ class KnowledgeBaseSearchIndexActivityArguments(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discriminator="searchIndex"):
+class KnowledgeBaseSearchIndexActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a search index retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -3064,6 +3766,10 @@ class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discri
     :ivar search_index_arguments: The search index arguments for the retrieval activity.
     :vartype search_index_arguments:
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityArguments
+    :ivar query_hint_processing: Details about the expressions generated from query hints for this
+     activity.
+    :vartype query_hint_processing:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseQueryHintProcessing
     """
 
     knowledge_source_name: Optional[str] = rest_field(
@@ -3087,12 +3793,18 @@ class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discri
         name="searchIndexArguments", visibility=["read", "create", "update", "delete", "query"]
     )
     """The search index arguments for the retrieval activity."""
+    query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = rest_field(
+        name="queryHintProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about the expressions generated from query hints for this activity."""
 
     @overload
     def __init__(
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -3101,6 +3813,7 @@ class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discri
         count: Optional[int] = None,
         image_serving: Optional["_models.ImageServingStatistics"] = None,
         search_index_arguments: Optional["_models.KnowledgeBaseSearchIndexActivityArguments"] = None,
+        query_hint_processing: Optional["_models.KnowledgeBaseQueryHintProcessing"] = None,
     ) -> None: ...
 
     @overload
@@ -3115,7 +3828,9 @@ class KnowledgeBaseSearchIndexActivityRecord(KnowledgeBaseActivityRecord, discri
         self.type = KnowledgeBaseActivityRecordType.SEARCH_INDEX  # type: ignore
 
 
-class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="searchIndex"):
+class KnowledgeBaseSearchIndexReference(
+    KnowledgeBaseReference, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an Azure Search document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -3133,6 +3848,9 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
     :ivar search_sensitivity_label_info: The sensitivity label information for the reference.
     :vartype search_sensitivity_label_info:
      ~azure.search.documents.knowledgebases.models.PurviewSensitivityLabelInfo
+    :ivar citation_url: A Search-owned URL that points at the backing document for this reference,
+     usable as a citation target.
+    :vartype citation_url: str
     """
 
     type: Literal[KnowledgeBaseReferenceType.SEARCH_INDEX] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3143,6 +3861,11 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
         name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The sensitivity label information for the reference."""
+    citation_url: Optional[str] = rest_field(
+        name="citationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A Search-owned URL that points at the backing document for this reference, usable as a citation
+     target."""
 
     @overload
     def __init__(
@@ -3154,6 +3877,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
         reranker_score: Optional[float] = None,
         doc_key: Optional[str] = None,
         search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = None,
+        citation_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3168,7 +3892,43 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
         self.type = KnowledgeBaseReferenceType.SEARCH_INDEX  # type: ignore
 
 
-class KnowledgeBaseWebActivityArguments(_Model):
+class KnowledgeBaseStreamErrorEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted in place of ``response.completed`` if retrieval fails after the stream starts.
+
+    :ivar error: The error detail explaining why the retrieval stream failed. Required.
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
+    :ivar activity: Activity records that completed before the retrieval failed.
+    :vartype activity:
+     list[~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord]
+    """
+
+    error: "_models.KnowledgeBaseErrorDetail" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error detail explaining why the retrieval stream failed. Required."""
+    activity: Optional[list["_models.KnowledgeBaseActivityRecord"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Activity records that completed before the retrieval failed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.KnowledgeBaseErrorDetail",
+        activity: Optional[list["_models.KnowledgeBaseActivityRecord"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseWebActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the web retrieval activity was run with.
 
     :ivar search: The search string used to query the web.
@@ -3216,11 +3976,17 @@ class KnowledgeBaseWebActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator="web"):
+class KnowledgeBaseWebActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a web retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -3273,6 +4039,8 @@ class KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator=
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -3295,7 +4063,9 @@ class KnowledgeBaseWebActivityRecord(KnowledgeBaseActivityRecord, discriminator=
         self.type = KnowledgeBaseActivityRecordType.WEB  # type: ignore
 
 
-class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
+class KnowledgeBaseWebReference(
+    KnowledgeBaseReference, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a web document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -3345,7 +4115,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
         self.type = KnowledgeBaseReferenceType.WEB  # type: ignore
 
 
-class KnowledgeBaseWorkIQActivityArguments(_Model):
+class KnowledgeBaseWorkIQActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the arguments the WorkIQ retrieval activity was run with.
 
     :ivar search: The search string used to query the WorkIQ knowledge source.
@@ -3373,11 +4143,17 @@ class KnowledgeBaseWorkIQActivityArguments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminator="workIQ"):
+class KnowledgeBaseWorkIQActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a WorkIQ retrieval activity record.
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
+    :ivar started_at: The time at which the activity started.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the activity completed.
+    :vartype completed_at: ~datetime.datetime
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -3430,6 +4206,8 @@ class KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminat
         self,
         *,
         id: int,  # pylint: disable=redefined-builtin
+        started_at: Optional[datetime.datetime] = None,
+        completed_at: Optional[datetime.datetime] = None,
         elapsed_ms: Optional[int] = None,
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
@@ -3452,7 +4230,9 @@ class KnowledgeBaseWorkIQActivityRecord(KnowledgeBaseActivityRecord, discriminat
         self.type = KnowledgeBaseActivityRecordType.WORK_IQ  # type: ignore
 
 
-class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ"):
+class KnowledgeBaseWorkIQReference(
+    KnowledgeBaseReference, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a WorkIQ document reference.
 
     :ivar id: The ID of the reference. Required.
@@ -3465,16 +4245,17 @@ class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Work IQ document reference.
     :vartype type: str or ~azure.search.documents.knowledgebases.models.WORK_IQ
-    :ivar attributions: The attributions for the reference.
-    :vartype attributions: list[~azure.search.documents.knowledgebases.models.WorkIQAttribution]
+    :ivar search_sensitivity_label_info: The sensitivity label information for the reference.
+    :vartype search_sensitivity_label_info:
+     ~azure.search.documents.knowledgebases.models.PurviewSensitivityLabelInfo
     """
 
     type: Literal[KnowledgeBaseReferenceType.WORK_IQ] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Work IQ document reference."""
-    attributions: Optional[list["_models.WorkIQAttribution"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = rest_field(
+        name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The attributions for the reference."""
+    """The sensitivity label information for the reference."""
 
     @overload
     def __init__(
@@ -3484,7 +4265,7 @@ class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ
         activity_source: int,
         source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
-        attributions: Optional[list["_models.WorkIQAttribution"]] = None,
+        search_sensitivity_label_info: Optional["_models.PurviewSensitivityLabelInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -3499,7 +4280,74 @@ class KnowledgeBaseWorkIQReference(KnowledgeBaseReference, discriminator="workIQ
         self.type = KnowledgeBaseReferenceType.WORK_IQ  # type: ignore
 
 
-class KnowledgeRetrievalIntent(_Model):
+class KnowledgeRetrievalReasoningEffort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base type for reasoning effort.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KnowledgeRetrievalAutoReasoningEffort, KnowledgeRetrievalLowReasoningEffort,
+    KnowledgeRetrievalMediumReasoningEffort, KnowledgeRetrievalMinimalReasoningEffort
+
+    :ivar kind: The kind of reasoning effort. Required. Known values are: "minimal", "low",
+     "medium", and "auto".
+    :vartype kind: str or
+     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of reasoning effort. Required. Known values are: \"minimal\", \"low\", \"medium\", and
+     \"auto\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeRetrievalAutoReasoningEffort(KnowledgeRetrievalReasoningEffort, discriminator="auto"):
+    """Automatically select the reasoning effort during retrieval. The service seeds every request at
+    the cheapest tier and escalates only as far as needed, up to the service's maximum available
+    tier.
+
+    :ivar kind: The discriminator value. Required. Automatically select the reasoning effort during
+     retrieval, escalating from the cheapest tier only as far as needed.
+    :vartype kind: str or ~azure.search.documents.knowledgebases.models.AUTO
+    """
+
+    kind: Literal[KnowledgeRetrievalReasoningEffortKind.AUTO] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Automatically select the reasoning effort during retrieval,
+     escalating from the cheapest tier only as far as needed."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeRetrievalReasoningEffortKind.AUTO  # type: ignore
+
+
+class KnowledgeRetrievalIntent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An intended query to execute without model query planning.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3519,41 +4367,6 @@ class KnowledgeRetrievalIntent(_Model):
         self,
         *,
         type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class KnowledgeRetrievalReasoningEffort(_Model):
-    """Base type for reasoning effort.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    KnowledgeRetrievalLowReasoningEffort, KnowledgeRetrievalMediumReasoningEffort,
-    KnowledgeRetrievalMinimalReasoningEffort
-
-    :ivar kind: The kind of reasoning effort. Required. Known values are: "minimal", "low", and
-     "medium".
-    :vartype kind: str or
-     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of reasoning effort. Required. Known values are: \"minimal\", \"low\", and \"medium\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
     ) -> None: ...
 
     @overload
@@ -3651,7 +4464,9 @@ class KnowledgeRetrievalMinimalReasoningEffort(KnowledgeRetrievalReasoningEffort
         self.kind = KnowledgeRetrievalReasoningEffortKind.MINIMAL  # type: ignore
 
 
-class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="semantic"):
+class KnowledgeRetrievalSemanticIntent(
+    KnowledgeRetrievalIntent, discriminator="semantic"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A semantic query intent.
 
     :ivar type: The discriminator value. Required. A natural language semantic query intent.
@@ -3684,7 +4499,7 @@ class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="
         self.type = KnowledgeRetrievalIntentType.SEMANTIC  # type: ignore
 
 
-class KnowledgeSourceVectorizer(_Model):
+class KnowledgeSourceVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the vectorization method to be used for knowledge source embedding model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3720,7 +4535,9 @@ class KnowledgeSourceVectorizer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discriminator="azureOpenAI"):
+class KnowledgeSourceAzureOpenAIVectorizer(
+    KnowledgeSourceVectorizer, discriminator="azureOpenAI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure OpenAI resource used to vectorize a query string.
 
     :ivar kind: The discriminator value. Required. Generate embeddings using an Azure OpenAI
@@ -3759,7 +4576,7 @@ class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discrimina
         self.kind = VectorSearchVectorizerKind.AZURE_OPEN_AI  # type: ignore
 
 
-class KnowledgeSourceIngestionParameters(_Model):
+class KnowledgeSourceIngestionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Consolidates all general ingestion settings for knowledge sources.
 
     :ivar identity: An explicit identity to use for this knowledge source.
@@ -3790,6 +4607,12 @@ class KnowledgeSourceIngestionParameters(_Model):
     :vartype asset_store: ~azure.search.documents.knowledgebases.models.AssetStore
     :ivar freshness_policy: Optional freshness policy for biasing retrieval toward newer documents.
     :vartype freshness_policy: ~azure.search.documents.knowledgebases.models.FreshnessPolicy
+    :ivar network_access_mode: Optional network access mode for ingestion. Set to 'private' to run
+     ingestion in a private execution environment that can reach data sources and dependencies over
+     a private network. Default is 'public'. This is a create-time setting and cannot be changed
+     after the knowledge source is created. Known values are: "public" and "private".
+    :vartype network_access_mode: str or
+     ~azure.search.documents.knowledgebases.models.KnowledgeSourceNetworkAccessMode
     """
 
     identity: Optional["_indexes_models3.SearchIndexerDataIdentity"] = rest_field(
@@ -3834,6 +4657,13 @@ class KnowledgeSourceIngestionParameters(_Model):
         name="freshnessPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional freshness policy for biasing retrieval toward newer documents."""
+    network_access_mode: Optional[Union[str, "_models.KnowledgeSourceNetworkAccessMode"]] = rest_field(
+        name="networkAccessMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional network access mode for ingestion. Set to 'private' to run ingestion in a private
+     execution environment that can reach data sources and dependencies over a private network.
+     Default is 'public'. This is a create-time setting and cannot be changed after the knowledge
+     source is created. Known values are: \"public\" and \"private\"."""
 
     @overload
     def __init__(
@@ -3851,6 +4681,7 @@ class KnowledgeSourceIngestionParameters(_Model):
         ai_services: Optional["_models.AIServices"] = None,
         asset_store: Optional["_models.AssetStore"] = None,
         freshness_policy: Optional["_models.FreshnessPolicy"] = None,
+        network_access_mode: Optional[Union[str, "_models.KnowledgeSourceNetworkAccessMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -3864,7 +4695,7 @@ class KnowledgeSourceIngestionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceStatistics(_Model):
+class KnowledgeSourceStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistical information about knowledge source synchronization history.
 
     :ivar total_synchronization: Total number of synchronizations. Required.
@@ -3910,7 +4741,7 @@ class KnowledgeSourceStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceStatus(_Model):
+class KnowledgeSourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the status and synchronization history of a knowledge source.
 
     :ivar kind: Identifies the Knowledge Source kind directly from the Status response. Known
@@ -3990,7 +4821,7 @@ class KnowledgeSourceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSourceSynchronizationError(_Model):
+class KnowledgeSourceSynchronizationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a document-level indexing error encountered during a knowledge source
     synchronization run.
 
@@ -4049,7 +4880,9 @@ class KnowledgeSourceSynchronizationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpServer"):
+class McpServerKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for an MCP server knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4063,12 +4896,22 @@ class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpSe
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -4093,8 +4936,10 @@ class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpSe
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
     ) -> None: ...
@@ -4111,7 +4956,7 @@ class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpSe
         self.kind = KnowledgeSourceKind.MCP_SERVER  # type: ignore
 
 
-class PurviewSensitivityLabelInfo(_Model):
+class PurviewSensitivityLabelInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the sensitivity label applied to a document.
 
     :ivar display_name: The display name for the sensitivity label.
@@ -4170,7 +5015,9 @@ class PurviewSensitivityLabelInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator="remoteSharePoint"):
+class RemoteSharePointKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="remoteSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a remote SharePoint knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4184,12 +5031,22 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -4223,8 +5080,10 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
         filter_expression_add_on: Optional[str] = None,
@@ -4242,7 +5101,9 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
         self.kind = KnowledgeSourceKind.REMOTE_SHARE_POINT  # type: ignore
 
 
-class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="searchIndex"):
+class SearchIndexKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a search index knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4256,12 +5117,22 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -4274,6 +5145,11 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
     :vartype kind: str or ~azure.search.documents.indexes.models.SEARCH_INDEX
     :ivar filter_add_on: A filter condition applied to the index (e.g., 'State eq VA').
     :vartype filter_add_on: str
+    :ivar query_hint_overrides: Hints that guide query planning toward useful filters and boosts.
+     If specified, this object replaces the complete set of query hints configured on the knowledge
+     source.
+    :vartype query_hint_overrides:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     kind: Literal[KnowledgeSourceKind.SEARCH_INDEX] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4282,6 +5158,11 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
         name="filterAddOn", visibility=["read", "create", "update", "delete", "query"]
     )
     """A filter condition applied to the index (e.g., 'State eq VA')."""
+    query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHintOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hints that guide query planning toward useful filters and boosts. If specified, this object
+     replaces the complete set of query hints configured on the knowledge source."""
 
     @overload
     def __init__(
@@ -4291,11 +5172,14 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
         filter_add_on: Optional[str] = None,
+        query_hint_overrides: Optional["_indexes_models3.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -4310,7 +5194,47 @@ class SearchIndexKnowledgeSourceParams(KnowledgeSourceParams, discriminator="sea
         self.kind = KnowledgeSourceKind.SEARCH_INDEX  # type: ignore
 
 
-class SynchronizationState(_Model):
+class ServedImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes a single image that the model selected to be served during a retrieval activity.
+
+    :ivar image_id: The image label extracted from the source document by Content Understanding
+     enrichment. Corresponds to the figure numbering in the original document.
+    :vartype image_id: str
+    :ivar image_path: The relative path to the image within the asset store. Required.
+    :vartype image_path: str
+    :ivar size_bytes: The size in bytes of this image as sent to the model. Required.
+    :vartype size_bytes: int
+    """
+
+    image_id: Optional[str] = rest_field(name="imageId", visibility=["read", "create", "update", "delete", "query"])
+    """The image label extracted from the source document by Content Understanding enrichment.
+     Corresponds to the figure numbering in the original document."""
+    image_path: str = rest_field(name="imagePath", visibility=["read", "create", "update", "delete", "query"])
+    """The relative path to the image within the asset store. Required."""
+    size_bytes: int = rest_field(name="sizeBytes", visibility=["read", "create", "update", "delete", "query"])
+    """The size in bytes of this image as sent to the model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_path: str,
+        size_bytes: int,
+        image_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SynchronizationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the current state of an ongoing synchronization that spans multiple indexer runs.
 
     :ivar start_time: The start time of the current synchronization. Required.
@@ -4371,7 +5295,9 @@ class SynchronizationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
+class WebKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a web knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4385,12 +5311,22 @@ class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -4429,8 +5365,10 @@ class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
         language: Optional[str] = None,
@@ -4451,37 +5389,9 @@ class WebKnowledgeSourceParams(KnowledgeSourceParams, discriminator="web"):
         self.kind = KnowledgeSourceKind.WEB  # type: ignore
 
 
-class WorkIQAttribution(_Model):
-    """Attribution information for a WorkIQ reference.
-
-    :ivar see_more_web_url: The URL for the attribution.
-    :vartype see_more_web_url: str
-    """
-
-    see_more_web_url: Optional[str] = rest_field(
-        name="seeMoreWebUrl", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The URL for the attribution."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        see_more_web_url: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class WorkIQKnowledgeSourceParams(KnowledgeSourceParams, discriminator="workIQ"):
+class WorkIQKnowledgeSourceParams(
+    KnowledgeSourceParams, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies runtime parameters for a WorkIQ knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -4495,12 +5405,22 @@ class WorkIQKnowledgeSourceParams(KnowledgeSourceParams, discriminator="workIQ")
     :ivar always_query_source: Indicates that this knowledge source should bypass source selection
      and always be queried at retrieval time.
     :vartype always_query_source: bool
+    :ivar never_query_source: Indicates that this knowledge source should be excluded from the
+     request's candidate set and never queried at retrieval time. The exclusion is request-local and
+     does not modify knowledge base membership. Cannot be combined with alwaysQuerySource on the
+     same knowledge source.
+    :vartype never_query_source: bool
     :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
      this knowledge source encounters an error. Defaults to false.
     :vartype fail_on_error: bool
     :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
      included in the response.
     :vartype reranker_threshold: float
+    :ivar results_processing: Overrides the knowledge source's stored resultsProcessing for this
+     retrieve call only. When omitted, the stored knowledge source value applies. Known values are:
+     "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
      source.
     :vartype max_output_documents: int
@@ -4523,8 +5443,10 @@ class WorkIQKnowledgeSourceParams(KnowledgeSourceParams, discriminator="workIQ")
         include_references: Optional[bool] = None,
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
+        never_query_source: Optional[bool] = None,
         fail_on_error: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
+        results_processing: Optional[Union[str, "_indexes_models3.KnowledgeSourceResultsProcessing"]] = None,
         max_output_documents: Optional[int] = None,
         enable_image_serving: Optional[bool] = None,
     ) -> None: ...

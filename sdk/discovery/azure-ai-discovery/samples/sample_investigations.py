@@ -45,11 +45,15 @@ def sample_investigations():
     print(f"  Status: {investigation.status}")
     print(f"  Created at: {investigation.created_at}")
 
-    # List all investigations in the project
-    investigations = list(client.investigations.list(project_name=project_name))
-    print(f"\nFound {len(investigations)} investigation(s):")
-    for inv in investigations:
+    # List all investigations in the project. ``list`` returns a
+    # ``PagedInvestigation`` envelope with ``.value`` (items) and optional
+    # ``.next_link``. Always read ``.value`` rather than iterating the model.
+    page = client.investigations.list(project_name=project_name)
+    print(f"\nFound {len(page.value)} investigation(s) on the first page:")
+    for inv in page.value:
         print(f"  - {inv.name} ({inv.status})")
+    if page.next_link:
+        print(f"  (additional pages available via next_link={page.next_link})")
 
     # Get a specific investigation
     fetched = client.investigations.get(

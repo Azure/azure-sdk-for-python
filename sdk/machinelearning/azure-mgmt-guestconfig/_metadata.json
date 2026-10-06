@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.GuestConfiguration": "2024-04-05"
   },
-  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "commit": "52872c1f699ca9dfbf721c79b6e50fed8b041335",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/guestconfiguration/resource-manager/Microsoft.GuestConfiguration/Assignments",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.0"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

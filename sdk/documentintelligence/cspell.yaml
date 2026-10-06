@@ -1,0 +1,20 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - allinone
+  - ctxt
+  - deserializers
+  - dmac
+  - heif
+  - ierr
+  - mros
+  - mymodel
+  - Nify
+  - racwd
+  - rrggbb
+  - UPCA
+  - UPCE
+  - wday
+  - WDLABCD

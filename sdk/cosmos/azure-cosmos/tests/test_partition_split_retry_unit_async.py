@@ -1175,28 +1175,118 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert mock_post.await_count == 1
         assert result == ([], {})
 
-    async def test_queryfeed_full_pk_no_overlap_fallback_preserves_partition_key_header_async(self):
-        """Async full-PK no-overlap fallback must retain legacy PartitionKey header on __Post."""
+    async def test_queryfeed_full_partition_key_count_uses_partition_key_routing_async(self):
+        """Complete single-path and hierarchical keys must avoid EPK feed-range routing."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default
         client._routing_map_provider = MagicMock()
-        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[])
-
-        seen_partition_key_headers = []
-
-        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
-            seen_partition_key_headers.append(req_headers.get(HttpHeaders.PartitionKey))
-            return {"Documents": [{"id": "doc-1"}]}, {}
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(
+            side_effect=AssertionError("complete partition keys must not resolve EPK overlaps")
+        )
 
         async def _noop_set_session(*args, **kwargs):
             return None
 
-        container_properties = {"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
-        options = {"partitionKey": ["mypk"]}
+        for partition_key, partition_key_header, container_properties in (
+            (
+                "PowerCut",
+                '["PowerCut"]',
+                {"partitionKey": {"paths": ["/documentType"], "kind": "Hash", "version": 2}},
+            ),
+            (
+                ["tenant", "user"],
+                '["tenant","user"]',
+                {
+                    "partitionKey": {
+                        "paths": ["/tenant", "/user"],
+                        "kind": "MultiHash",
+                        "version": 2,
+                    }
+                },
+            ),
+        ):
+            with self.subTest(partition_key=partition_key):
+                seen_headers = []
+
+                async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+                    seen_headers.append(dict(req_headers))
+                    return {"Documents": [30735986]}, {}
+
+                async def get_container_properties(_options):
+                    return container_properties
+
+                with patch(
+                    "azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders",
+                    return_value={HttpHeaders.PartitionKey: partition_key_header},
+                ):
+                    with patch(
+                        "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                        side_effect=_noop_set_session,
+                    ):
+                        with patch.object(
+                            client,
+                            "_CosmosClientConnection__Post",
+                            side_effect=post_side_effect,
+                        ):
+                            docs, headers = await client.QueryFeed(
+                                path="/dbs/db/colls/c1/docs",
+                                collection_id="rid-c1",
+                                query="SELECT VALUE COUNT(1) FROM c",
+                                options={
+                                    "partitionKey": partition_key,
+                                    "enableCrossPartitionQuery": False,
+                                    "populateQueryMetrics": True,
+                                },
+                                containerProperties=get_container_properties,
+                            )
+
+                assert docs == [30735986]
+                assert HttpHeaders.Continuation not in headers
+                assert len(seen_headers) == 1
+                assert seen_headers[0][HttpHeaders.PartitionKey] == partition_key_header
+                assert HttpHeaders.PartitionKeyRangeID not in seen_headers[0]
+                assert HttpHeaders.ReadFeedKeyType not in seen_headers[0]
+                assert HttpHeaders.StartEpkString not in seen_headers[0]
+                assert HttpHeaders.EndEpkString not in seen_headers[0]
+
+        client._routing_map_provider.get_overlapping_ranges.assert_not_awaited()
+
+    async def test_queryfeed_hpk_prefix_count_keeps_split_safe_epk_routing_async(self):
+        """A hierarchical-key prefix still spans logical partitions and uses EPK pagination."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        async def overlap_side_effect(_rid, ranges, _options):
+            requested = ranges[0]
+            return [{
+                "id": "0",
+                "minInclusive": requested.min,
+                "maxExclusive": requested.max,
+            }]
+
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(side_effect=overlap_side_effect)
+        seen_headers = []
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_headers.append(dict(req_headers))
+            return {"Documents": [42]}, {}
+
+        async def get_container_properties(_options):
+            return {
+                "partitionKey": {
+                    "paths": ["/tenant", "/user"],
+                    "kind": "MultiHash",
+                    "version": 2,
+                }
+            }
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
 
         with patch(
             "azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders",
-            return_value={HttpHeaders.PartitionKey: '["mypk"]'},
+            return_value={HttpHeaders.PartitionKey: '["tenant"]'},
         ):
             with patch(
                 "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
@@ -1207,19 +1297,21 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
                     "_CosmosClientConnection__Post",
                     side_effect=post_side_effect,
                 ):
-                    docs, _headers = await client.QueryFeed(
+                    docs, headers = await client.QueryFeed(
                         path="/dbs/db/colls/c1/docs",
                         collection_id="rid-c1",
-                        query="SELECT * FROM c",
-                        options=options,
-                        container_property=container_properties,
+                        query="SELECT VALUE COUNT(1) FROM c",
+                        options={"partitionKey": ["tenant"]},
+                        containerProperties=get_container_properties,
                     )
 
-        assert docs == [{"id": "doc-1"}]
-        assert seen_partition_key_headers == ['["mypk"]'], (
-            "When async full-PK routing finds no overlaps and falls back to __Post, "
-            "the legacy PartitionKey header must be preserved."
-        )
+        assert docs == [42]
+        assert HttpHeaders.Continuation not in headers
+        assert len(seen_headers) == 1
+        assert HttpHeaders.PartitionKey not in seen_headers[0]
+        assert seen_headers[0][HttpHeaders.PartitionKeyRangeID] == "0"
+        assert seen_headers[0][HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
+        assert client._routing_map_provider.get_overlapping_ranges.await_count >= 2
 
     async def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy_async(self):
         """Async: legacy inbound continuation is honored when feed_range maps to one partition."""

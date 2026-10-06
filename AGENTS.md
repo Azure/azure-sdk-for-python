@@ -53,6 +53,9 @@ AI agents can assist with the following activities:
   - Follow official guidelines and existing patterns
   - Make minimal, surgical changes
 
+- **Generated SDK Patches**: Before adding or changing handwritten patches or customizations of generated Python SDK code (including `_patch.py`), investigate spec/configuration and emitter/generator causes.
+  - Follow the [patch diagnosis checklist](doc/dev/customize_code/how-to-patch-sdk-code.md#before-you-customize) and document the evidence, rationale, and any investigation blockers before adopting a package-local workaround.
+
 - **Documentation**: Update CHANGELOG.md, README files, and API documentation
   - Follow existing formatting conventions
   - Include version information and release dates
@@ -161,11 +164,11 @@ azpysdk mypy .
 ⚠️ Changing API signatures (requires design review)  
 ⚠️ Disabling or removing tests (requires explanation)  
 ⚠️ Large-scale refactoring (requires approval)  
+⚠️ Modifying CI/CD pipeline definitions (requires explicit human prompting)
 
 #### Prohibited Operations
 ❌ Merging PRs without human review  
 ❌ Releasing packages to PyPI  
-❌ Modifying CI/CD pipeline definitions  
 ❌ Changing security or authentication logic without security review  
 ❌ Committing secrets or credentials  
 ❌ Force pushing to protected branches  

@@ -374,7 +374,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 usage = MemoryStoreOperationUsage(
                     embedding_tokens=0,
                     input_tokens=0,
-                    input_tokens_details=ResponseUsageInputTokensDetails(cached_tokens=0),
+                    input_tokens_details=ResponseUsageInputTokensDetails(cached_tokens=0, cache_write_tokens=0),
                     output_tokens=0,
                     output_tokens_details=ResponseUsageOutputTokensDetails(reasoning_tokens=0),
                     total_tokens=0,

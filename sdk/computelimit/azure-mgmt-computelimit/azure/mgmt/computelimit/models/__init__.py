@@ -38,6 +38,7 @@ from ._models import (  # type: ignore
     SharedLimitCapProperties,
     SharedLimitProperties,
     SystemData,
+    TrustedHostSubscription,
     VmFamily,
     VmFamilyProperties,
 )
@@ -78,6 +79,7 @@ __all__ = [
     "SharedLimitCapProperties",
     "SharedLimitProperties",
     "SystemData",
+    "TrustedHostSubscription",
     "VmFamily",
     "VmFamilyProperties",
     "ActionType",

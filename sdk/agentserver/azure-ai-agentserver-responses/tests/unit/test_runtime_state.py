@@ -4,10 +4,12 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
 
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-from azure.ai.agentserver.responses.models._generated import ResponseObject
+from azure.ai.agentserver.responses.models import ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
 # ---------------------------------------------------------------------------
@@ -39,6 +41,7 @@ def _make_execution(
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_add_and_get() -> None:
     state = _RuntimeState()
     execution = _make_execution("caresp_aaa0000000000000000000000000000")
@@ -52,6 +55,7 @@ async def test_add_and_get() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_get_nonexistent_returns_none() -> None:
     state = _RuntimeState()
     assert await state.get("unknown_id") is None
@@ -62,6 +66,7 @@ async def test_get_nonexistent_returns_none() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_delete_marks_deleted() -> None:
     state = _RuntimeState()
     execution = _make_execution("caresp_bbb0000000000000000000000000000")
@@ -79,6 +84,7 @@ async def test_delete_marks_deleted() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_delete_nonexistent_returns_false() -> None:
     state = _RuntimeState()
     assert await state.delete("nonexistent_id") is False
@@ -89,6 +95,7 @@ async def test_delete_nonexistent_returns_false() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_get_input_items_single() -> None:
     state = _RuntimeState()
     items = [{"id": "item_1", "type": "message"}]
@@ -96,6 +103,7 @@ async def test_get_input_items_single() -> None:
         "caresp_ccc0000000000000000000000000000",
         input_items=items,
         previous_response_id=None,
+        status="completed",
     )
     await state.add(execution)
 
@@ -108,13 +116,14 @@ async def test_get_input_items_single() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_get_input_items_chain_walk() -> None:
     state = _RuntimeState()
     parent_id = "caresp_parent000000000000000000000000"
     child_id = "caresp_child0000000000000000000000000"
 
-    parent = _make_execution(parent_id, input_items=[{"id": "a"}])
-    child = _make_execution(child_id, input_items=[{"id": "b"}], previous_response_id=parent_id)
+    parent = _make_execution(parent_id, input_items=[{"id": "a"}], status="completed")
+    child = _make_execution(child_id, input_items=[{"id": "b"}], previous_response_id=parent_id, status="completed")
 
     await state.add(parent)
     await state.add(child)
@@ -129,6 +138,7 @@ async def test_get_input_items_chain_walk() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_get_input_items_deleted_raises_value_error() -> None:
     state = _RuntimeState()
     execution = _make_execution("caresp_ddd0000000000000000000000000000")
@@ -147,7 +157,8 @@ async def test_get_input_items_deleted_raises_value_error() -> None:
 def test_to_snapshot_with_response() -> None:
     rid = "caresp_eee0000000000000000000000000000"
     execution = _make_execution(rid, status="completed")
-    execution.response = ResponseObject(
+    execution.response = cast(
+        ResponseObject,
         {
             "id": rid,
             "response_id": rid,
@@ -155,7 +166,7 @@ def test_to_snapshot_with_response() -> None:
             "object": "response",
             "status": "completed",
             "output": [],
-        }
+        },
     )
 
     snapshot = _RuntimeState.to_snapshot(execution)
@@ -194,7 +205,7 @@ def test_to_snapshot_status_matches_execution_status() -> None:
     rid = "caresp_ggg0000000000000000000000000000"
     execution = _make_execution(rid, status="in_progress")
     # Give a response that says completed but execution.status says in_progress
-    execution.response = ResponseObject({"id": rid, "status": "completed", "output": []})
+    execution.response = cast(ResponseObject, {"id": rid, "status": "completed", "output": []})
 
     snapshot = _RuntimeState.to_snapshot(execution)
 
@@ -210,7 +221,7 @@ def test_to_snapshot_injects_defaults_when_response_missing_ids() -> None:
     rid = "caresp_hhh0000000000000000000000000000"
     execution = _make_execution(rid, status="completed")
     # Response without id/response_id
-    execution.response = ResponseObject({"status": "completed", "output": []})
+    execution.response = cast(ResponseObject, {"status": "completed", "output": []})
 
     snapshot = _RuntimeState.to_snapshot(execution)
 
@@ -224,6 +235,7 @@ def test_to_snapshot_injects_defaults_when_response_missing_ids() -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.asyncio
 async def test_list_records_returns_all() -> None:
     state = _RuntimeState()
     e1 = _make_execution("caresp_iii0000000000000000000000000000")
@@ -237,6 +249,19 @@ async def test_list_records_returns_all() -> None:
     assert ids == {"caresp_iii0000000000000000000000000000", "caresp_jjj0000000000000000000000000000"}
 
 
+@pytest.mark.asyncio
+async def test_begin_draining_rejects_new_pending_work() -> None:
+    state = _RuntimeState()
+    accepted = _make_execution("caresp_pending00000000000000000000000")
+    rejected = _make_execution("caresp_rejected0000000000000000000000")
+
+    assert await state.add_pending(accepted) is True
+    records = await state.begin_draining()
+    assert records == [accepted]
+    assert await state.add_pending(rejected) is False
+    assert await state.list_records() == [accepted]
+
+
 # ---------------------------------------------------------------------------
 # T1 (Task 7.1) – _ExecutionRecord is no longer exported from _runtime_state
 # ---------------------------------------------------------------------------
@@ -247,6 +272,33 @@ def test_import_does_not_expose_execution_record() -> None:
     import importlib
 
     mod = importlib.import_module("azure.ai.agentserver.responses.hosting._runtime_state")
-    assert not hasattr(mod, "_ExecutionRecord"), (
-        "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
+    assert not hasattr(
+        mod, "_ExecutionRecord"
+    ), "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
+
+
+def test_to_snapshot_agent_reference_is_json_safe() -> None:
+    """Status-only snapshot must coerce an AgentReference model to a JSON-safe dict.
+
+    Regression: a steered/in-progress turn polled via GET hit the status-only
+    fallback snapshot, which deep-copied the gateway-injected ``AgentReference``
+    model straight into a ``JSONResponse`` — raising ``TypeError: Object of type
+    AgentReference is not JSON serializable``.
+    """
+    import json
+
+    from azure.ai.agentserver.responses.models import AgentReference
+
+    record = ResponseExecution(
+        response_id="caresp_agentref0000000000000000000000",
+        mode_flags=ResponseModeFlags(stream=False, background=True, store=True),
+        status="in_progress",
+        initial_agent_reference=AgentReference(name="my-agent", version="3"),
     )
+    snapshot = _RuntimeState.to_snapshot(record)
+    # Must be JSON-serializable (no leaked model) ...
+    json.dumps(snapshot)
+    # ... and preserve the reference fields as a plain dict.
+    assert isinstance(snapshot["agent_reference"], dict)
+    assert snapshot["agent_reference"].get("name") == "my-agent"
+    assert snapshot["agent_reference"].get("version") == "3"

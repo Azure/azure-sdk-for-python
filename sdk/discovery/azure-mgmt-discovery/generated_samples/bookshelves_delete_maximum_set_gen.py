@@ -32,10 +32,10 @@ def main():
 
     client.bookshelves.begin_delete(
         resource_group_name="rgdiscovery",
-        bookshelf_name="cdaa070c4d0ea7b9c9",
+        bookshelf_name="507b19b0687a8924a5",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/Bookshelves_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Bookshelves_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

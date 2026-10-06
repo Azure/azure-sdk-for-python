@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
+  "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
+  "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling", "input-chunk-discriminator", "canonical-foundry-features", "sampling-prompt-tokens"],
+  "foundry_features_contract": {
+    "version": 1,
+    "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
+    "type": "FoundryFeaturesOptInKeys",
+    "members": {
+      "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+      "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+      "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+      "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+      "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
+      "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+      "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
+      "SKILLS_V1_PREVIEW": "Skills=V1Preview",
+      "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
+      "MODELS_V1_PREVIEW": "Models=V1Preview",
+      "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
+      "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview"
+    },
+    "header": "FineTuningSessions=V1Preview",
+    "behavior": "Preserve six existing members, signatures and wire headers; add only six canonical members"
+  },
+  "sampling_prompt_tokens_contract": {
+    "version": 1,
+    "source_commit": "3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377",
+    "model": "SampleOperationResult",
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": true},
+    "field": {
+      "name": "prompt_tokens",
+      "type": "Optional[int]",
+      "wire_name": "prompt_tokens",
+      "visibility": ["read"],
+      "discriminator": false,
+      "format": null
+    },
+    "deserialization": "value if type(value) is int and value >= 0 else None",
+    "missing": null,
+    "constructor": "Existing keyword overload unchanged; no prompt_tokens parameter",
+    "semantics": "Backend count once per prompt; no inference or metrics/usage fallback",
+    "wire": "Absent stays absent; present field excluded from writable serialization"
+  },
+  "input_chunk_contract": {
+    "version": 1,
+    "exports": ["InputChunk", "InputChunkType"],
+    "base": {"name": "InputChunk", "field": "type", "type": "str", "discriminator": true},
+    "variants": {"ModelInputChunk": "text", "ImageChunk": "image"},
+    "enum": {"TEXT": "text", "IMAGE": "image"},
+    "chunks": "list[InputChunk]",
+    "legacy_text": "Only input chunk mappings with tokens and no type acquire type=text",
+    "image": "Generated public subclass; existing validation and base64 bytes preserved",
+    "wire_scope": ["model_input.chunks", "prompt.chunks"]
+  },
+  "service_contracts": {
+    "version": 1,
+    "required_lora": {
+      "models": {"LoRAConfig": "rank", "CreateSessionRequest": "lora_config"},
+      "methods": ["sync.create", "sync.create_from_checkpoint", "async.create_session", "async.create_session_from_checkpoint"],
+      "default": "required; no client default"
+    },
+    "response_format": {"model": "SamplingParams", "field": "response_format", "type": "Optional[Dict[str, Any]]", "default": null},
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": true},
+    "security": {
+      "api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
+      "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides"
+    },
+    "retry": {"default_post_retries": 0, "caller_owned_policy": "unchanged"},
+    "raw_polling": {
+      "acceptance_status": 200,
+      "locator": ["session_id", "request_id"],
+      "poll": "GET pending then completed; never repeat POST",
+      "result": "exact OperationResult deserialization and cls",
+      "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
+      "legacy_cases": 336
+    }
+  },
+  "adapted_upstream_tests": {
+    "tests/test_async_poll_error_budget.py": "dda840723dc5d9aa28c871d625b35a0c8bd5793b088048f9895e07bb1460a29f",
+    "tests/test_checkpoint_results.py": "b4fa3f14bb2182437759393d4a29c0329e83e3ad7d548b911b972ae2de5768e1",
+    "tests/test_create_session_id_normalization.py": "f65969ebaf192b170a2e95bfe15e685a8ec17beec4c5cfe93b0ec71788c00007",
+    "tests/test_create_session_user_metadata.py": "5e4040faf9db0e6176acaee05c127d939ecf577455fa0e3e1fe1d1e37c91771f",
+    "tests/test_direct_path_headers.py": "90aa498548b1adb6c5ba83ecec3ed8fe951a13265b0fc28c9d95f9ec04c48681",
+    "tests/test_exceptions.py": "3a24a48f3d599399876f860e5edbdbf3119db22569a18ec6975d06bb1dc7c4a4",
+    "tests/test_session_delete.py": "30d2a24decf9192f49005779bfb62d0591ebd2ea0fd203c338c8e232e03b5592",
+    "tests/test_forward_backward_waves.py": "598544e6f1e88a8b4335ef1567ffecbb0ea9a21b7a3f2be961da0ca5e63f4436",
+    "tests/test_forward_result.py": "5045dc1800820408004e96bce747bae2d51521db23ab01fd67418654f611311a",
+    "tests/test_image_chunks.py": "7ab4d271f6dcb3fa81cd7a56ae51d7ea875a2554e38868fe6f008ff54b405532",
+    "tests/test_logging_setup.py": "7f3f615a0f7ca14e7c173901e7d1d317d79d0f6f57426c1f1c97c5f79fd38f53",
+    "tests/test_maybe_log_poll_progress.py": "e27fa18c022795c100ea8bbfa981a464318cf40deb349d10393753cc5a2a0d65",
+    "tests/test_poll_error_budget_async.py": "46c056fe9f22dea2e29af706143b0edc64fe38fcb79631ad00d7578fecf5a23e",
+    "tests/test_post_and_poll_error_budget.py": "1ed7ac9c012e348e91e8be05d4c7d5c96d1857ae8a941b7389e82c76e2ba56af",
+    "tests/test_proxy_jwt_retry.py": "1312345b9b2a007498c07151381fdb29e851f0b4d044c16e4e83f3f00dc77a88",
+    "tests/test_retry_policy.py": "bb2ff380f20a9978e1f9712ce554ba948a96a4e93aaab05e08cf99ab489cc104",
+    "tests/test_sampling_limits.py": "581f7c434c8db7dc8d7c80b9ffba2d9c6e6129208fc87ba6b623097650d026af"
+  },
+  "ci_test_source_changes": {
+    "tests/test_forward_backward_waves.py": "Formatting preserves all earlier assertions; retain the additional upstream synchronous chunk-accumulation regression before one optimizer step.",
+    "tests/test_forward_result.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_image_chunks.py": "Generator formatting only; complete AST including every assertion verified unchanged.",
+    "tests/test_review_regressions.py": "Inspect shipped overload definitions using AST instead of Python 3.11-only typing.get_overloads; retain exact discriminator-base annotation assertions, resolving the known generated forward reference on Python 3.10.",
+    "tests/test_service_contracts.py": "Resolve the generated model namespace while checking inherited annotations; include the reviewed text discriminator in expected input chunks, without changing tensor or returned-token expectations."
+  },
+  "added_tests": {
+    "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
+    "tests/test_review_regressions.py": "1670f3e7f3dddbcf77b5d6751251ca6d5e70e06ee39e2d8c80fecfababda3206",
+    "tests/test_input_chunk_discriminator.py": "0897165999bdee26a0599213498039e5e0fc07daac137d613841678d66675efe",
+    "tests/test_foundry_features.py": "3df2140dab9f24987f280515757d3160477e370f7b712b02f11074acc1945a8c",
+    "tests/test_training_type.py": "09b805c8b34aa658e5f5cccbe0ffaf0cff7055f5db1b0ab0f025bebd7379a13b",
+    "tests/test_error_image_regressions.py": "aaed6c38c42c431406a2c5d3572087b9468a73d43fa33c06d35cb9198d1443d9",
+    "tests/test_mutation_transport_retry.py": "a4d6ae70a0e54cf3ba99d128b8013317ddd147f34311afeaef0052e4751145ee",
+    "tests/test_raw_request_polling.py": "da74993c5b0a9269d8bbd621e3c561173ace928f954a3a590c85c04e8ed4daaa",
+    "tests/test_sampling_response_format.py": "56fdaa780d42c87dd0b643b6b20587c91a9a517d7c290299f965c329d739fecf",
+    "tests/test_service_contracts.py": "d2ff87689bad9b12751c6ead7be5f5f58f840b66f8b38ac77ac5f4f0d1a12879",
+    "tests/test_transport_security.py": "df2c5e7d79f1431792b3c3ff0496c2a64acb746093f4668fa30582908e415f8f",
+    "tests/test_sample_prompt_tokens.py": "f36bb2feaf7605b4d35f5a5d11027c73cecad9c867840ce503a93c3cb0a15c60",
+    "tests/test_max_chunk_bytes_env.py": "a1b57c16b3f40abaa45e1b8de5e3e422ec18db1c1b2f9547d168ca404de9e004"
+  },
+  "training_type_contract": {
+    "type": "TrainingType",
+    "source": "Azure.AI.Projects.SessionFineTuning.FineTuningTrainingType",
+    "members": {"GLOBAL_STANDARD": "GlobalStandard", "DATAZONE_STANDARD": "DatazoneStandard", "DEVELOPER_TIER": "DeveloperTier"},
+    "annotation_sites": ["CreateSessionRequest.training_type", "CreateSessionRequest.__init__ keyword overload", "FineTuningSession.create.training_type", "aio.FineTuningSessionClient.create_session.training_type"],
+    "behavior": "String inputs remain accepted without coercion; omission stays omitted; no client-side default or service validation change. Only this export, exact members, and four annotation sites are allowed by the comparison."
+  },
+  "changes": [
+    {"comments": [], "change": "Record official generator formatting only after full AST equality for existing tests. The original 48-file oracle is unchanged. Additional test changes are the canonical 12-member feature expectation and the exact upstream chunk-size/prompt-count regressions; no assertions were removed."},
+    {"comments": [4099598821, 4099604743], "change": "Reuse canonical ModelInput and the sole shared FoundryFeaturesOptInKeys declaration; retain 18 aliases, 22 justified Python-only model projections, and three compatibility unions. The canonical feature enum now has 12 members after upstream removal of the obsolete optimization key: add exactly six members to the immutable six-member preview, preserving existing names, values, operation signatures and the FineTuningSessions header."},
+    {"comments": [], "change": "Sync Loom master 3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377: add only maintained read-only Optional[int] SampleOperationResult.prompt_tokens and preserve identical SamplingOperationResult alias identity and constructor overloads. Accept only nonnegative exact int values; absent or malformed evidence is None without coercion or fallback. Guard fixed surface/serialization projections; retain all 20 convenience, 336 original raw and 328 service cases and unchanged immutable baseline hashes."},
+    {"comments": [], "change": "Generate an open InputChunk discriminator hierarchy while preserving ModelInputChunk and ImageChunk constructors and image validation. Add type=text only in input text chunks. Actual unmodified Loom API schemas and offline handlers accept tagged and legacy forms with identical internal encoded_text payloads; strict service discriminator enforcement is deferred to PuPr. No production API, engine, APIM, RP, route or authentication changes."},
+    {"comments": [], "change": "Explicitly approved service contracts supersede the earlier deferred decisions: require LoRAConfig.rank and CreateSessionRequest.lora_config plus four convenience arguments, without inferred defaults; add optional SamplingParams.response_format and an identical SamplingOperationResult alias. Guard the original immutable reference before each exact projection."},
+    {"comments": [4049473726, 4066580692], "change": "Explicitly approved API-key HTTPS/origin protection, cleanup of prepopulated SDK-default direct headers outside scope, and no automatic POST retries in the default policy; distinct caller-owned overrides remain unchanged."},
+    {"comments": [4071314957], "change": "Explicitly approved raw begin service protocol: real HTTP 200 acceptance plus request_id and session_id, pending/completed GET polling, no POST replay, and caller-owned custom polling/continuation retained. Execute all original 336 reference fixtures unchanged and transform only fixed contract observations for the candidate; do not waive or remove begin cases."},
+    {"comments": [], "change": "Address the training_type enum review by reusing the canonical REST union, adding the string-backed TrainingType export and four explicit optional str-or-enum annotation sites. Existing wire values, future strings, and omission behavior remain unchanged."},
+    {"comments": [], "change": "Replace 17 duplicated SDK TypeSpec definitions with canonical references, retain documented compatibility exceptions, and correct copied documentation without changing existing constructors or operation behavior."},
+    {"comments": [], "change": "Document explicit training-tier selection rather than promoting legacy DeveloperTier metadata; preserve the service fallback and do not introduce a client default."},
+    {"comments": [4049473889, 4049474086, 4049474688, 4066580814], "change": "Reuse one generated sync pipeline; custom policies work and normal close releases the session transport."},
+    {"comments": [4049474583, 4066580951], "change": "Drain cancelled heartbeat tasks before session close/delete and async client close; concurrent cancellation does not interrupt cleanup."},
+    {"comments": [4049473646, 4049473833, 4066929882], "change": "Default raw-operation pipelines receive existing environment-backed identity headers scoped to the configured origin and session path; caller overrides and custom pipelines are preserved."},
+    {"comments": [3411972606, 3411972633, 4066580877], "change": "Public credential annotations resolve and include the already-supported API-key credential; no authentication-policy tightening."},
+    {"comments": [4049474025, 4066580850], "change": "Explicit non-batch 413 fields retain generic handling; invalid/non-finite/negative 503 retry hints do not replace the typed service error."},
+    {"comments": [4049474057, 4066580978], "change": "Reject empty logical training batches before any POST or fabricated successful handle."},
+    {"comments": [3411972577, 4049474318], "change": "Require a sampler path or sampling-session ordinal instead of creating ssNone identifiers."},
+    {"comments": [4049474193, 4049474454, 4066580904], "change": "Creation polls reject malformed/unknown status and tolerate bounded request-store 404 without resubmitting creation."},
+    {"comments": [4049474244, 4049474375], "change": "Creation and sustained-error retry waits are clamped to remaining deadlines/budgets."},
+    {"comments": [4049474495, 4049474534, 4066929810], "change": "Forward chunking runs off-loop like forward/backward; synchronous chunk fan-out has a fixed 32-worker ceiling."},
+    {"comments": [4066580932], "change": "Deletion accepts only 2xx or idempotent 404; unhandled redirects fail without deleting async resource mappings."},
+    {"comments": [4067553898, 4067553921], "change": "Normal INFO create/completion logs contain identifiers rather than response payloads; explicit verbose body logging remains opt-in."},
+    {"comments": [], "change": "An empty raw continuation token raises ValueError before submission instead of an unbound-local implementation error."},
+    {"reviews": [5272424055, 5274881761], "change": "Sync heartbeat requests use bounded I/O options; if join times out, lifecycle raises and retains the live thread reference instead of racing close/delete."},
+    {"reviews": [5272424055], "change": "Image mappings pass through ImageChunk validation; invalid signatures and token counts cannot bypass the handwritten checks."},
+    {"reviews": [5274881761], "change": "Completed-wave and multichunk async methods return an actual completed Task, not a plain Future, matching their public annotation."},
+    {"reviews": [5272785483], "change": "Correct the lastResort message-only formatter documentation; no logging behavior change."},
+    {"comments": [4071315065], "change": "ModelInput field and constructor overload accept the already-supported ImageChunk alongside token chunks."}
+  ],
+  "deferred_contract_decisions": [
+    {"comments": [3411972551], "reason": "Changing heartbeat startup to opt-in changes the tested session-liveness default; retain until an explicit API/lifecycle decision."}
+  ]
+}

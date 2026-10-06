@@ -17,7 +17,7 @@ class TestConversationCrudAsync(TestBase):
     # To run only this test:
     # pytest tests/agents/test_conversation_crud_async.py::TestConversationCrudAsync::test_conversation_crud_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_conversation_crud_async(self, **kwargs):
 
         async with self.create_async_client(operation_group="agents", **kwargs).get_openai_client() as client:

@@ -5,9 +5,9 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from typing import AsyncIterator
+from typing import AsyncIterator, cast
+from .. import models as _public_models
 
-from ..models._generated import ResponseStreamEvent
 
 
 class _ResponseEventSubject:
@@ -29,15 +29,15 @@ class _ResponseEventSubject:
 
     def __init__(self) -> None:
         """Initialise the subject with an empty event buffer and no subscribers."""
-        self._events: list[ResponseStreamEvent] = []
-        self._subscribers: list[asyncio.Queue[ResponseStreamEvent | object]] = []
+        self._events: list[_public_models.ResponseStreamEvent] = []
+        self._subscribers: list[asyncio.Queue[_public_models.ResponseStreamEvent | object]] = []
         self._done: bool = False
         self._lock: asyncio.Lock = asyncio.Lock()
 
-    async def publish(self, event: ResponseStreamEvent) -> None:
+    async def publish(self, event: _public_models.ResponseStreamEvent) -> None:
         """Push a new event to all current subscribers and append it to the replay buffer.
 
-        :param event: The normalised event (``ResponseStreamEvent`` model instance).
+        :param event: The normalised event wire payload.
         :type event: ResponseStreamEvent
         """
         async with self._lock:
@@ -56,7 +56,7 @@ class _ResponseEventSubject:
             for q in self._subscribers:
                 q.put_nowait(self._DONE)
 
-    async def subscribe(self, cursor: int = -1) -> AsyncIterator[ResponseStreamEvent]:
+    async def subscribe(self, cursor: int = -1) -> AsyncIterator[_public_models.ResponseStreamEvent]:
         """Subscribe to events, yielding buffered history then live events.
 
         :param cursor: Sequence-number cursor.  Only events whose
@@ -66,7 +66,7 @@ class _ResponseEventSubject:
         :returns: An async iterator of event instances.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
-        q: asyncio.Queue[ResponseStreamEvent | object] = asyncio.Queue()
+        q: asyncio.Queue[_public_models.ResponseStreamEvent | object] = asyncio.Queue()
         async with self._lock:
             # Replay all buffered events that are after the cursor
             for event in self._events:
@@ -84,8 +84,8 @@ class _ResponseEventSubject:
                 item = await q.get()
                 if item is self._DONE:
                     return
-                assert isinstance(item, ResponseStreamEvent)
-                yield item
+                assert isinstance(item, dict) and isinstance(item.get("type"), str)
+                yield cast("_public_models.ResponseStreamEvent", item)
         finally:
             # Clean up subscription on client disconnect or normal completion
             async with self._lock:

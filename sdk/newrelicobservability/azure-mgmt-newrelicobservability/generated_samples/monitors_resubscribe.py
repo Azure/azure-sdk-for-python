@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Monitors_Resubscribe.json
+# x-ms-original-file: 2026-06-01/Monitors_Resubscribe.json
 if __name__ == "__main__":
     main()

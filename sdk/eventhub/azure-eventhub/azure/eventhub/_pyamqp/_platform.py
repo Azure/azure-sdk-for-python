@@ -31,20 +31,19 @@ def _versionatom(s):
     return int(match.groups()[0]) if match else 0
 
 
-# available socket options for TCP level
+# TCP socket options that are safe to set on this platform.
+# Used by _transport.py to filter DEFAULT_SOCKET_SETTINGS — any option
+# not in this set is skipped during socket configuration.
+#
+# Not all platforms support all TCP options via setsockopt(). For example,
+# Windows only supports TCP_NODELAY, and macOS/BSD do not support
+# TCP_USER_TIMEOUT. This set is trimmed per-platform below.
 KNOWN_TCP_OPTS = {
-    "TCP_CORK",
-    "TCP_DEFER_ACCEPT",
     "TCP_KEEPCNT",
     "TCP_KEEPIDLE",
     "TCP_KEEPINTVL",
-    "TCP_LINGER2",
-    "TCP_MAXSEG",
     "TCP_NODELAY",
-    "TCP_QUICKACK",
-    "TCP_SYNCNT",
     "TCP_USER_TIMEOUT",
-    "TCP_WINDOW_CLAMP",
 }
 
 LINUX_VERSION = None
@@ -64,23 +63,13 @@ elif sys.platform.startswith("darwin"):
 elif "bsd" in sys.platform:
     KNOWN_TCP_OPTS.remove("TCP_USER_TIMEOUT")
 
-# According to MSDN Windows platforms support getsockopt(TCP_MAXSSEG) but not
-# setsockopt(TCP_MAXSEG) on IPPROTO_TCP sockets.
 elif sys.platform.startswith("win"):
     KNOWN_TCP_OPTS = {"TCP_NODELAY"}
 
 elif sys.platform.startswith("cygwin"):
     KNOWN_TCP_OPTS = {"TCP_NODELAY"}
 
-# illumos does not allow to set the TCP_MAXSEG socket option,
-# even if the Oracle documentation says otherwise.
-elif sys.platform.startswith("sunos"):
-    KNOWN_TCP_OPTS.remove("TCP_MAXSEG")
-
-# aix does not allow to set the TCP_MAXSEG
-# or the TCP_USER_TIMEOUT socket options.
 elif sys.platform.startswith("aix"):
-    KNOWN_TCP_OPTS.remove("TCP_MAXSEG")
     KNOWN_TCP_OPTS.remove("TCP_USER_TIMEOUT")
 
 pack = struct.pack

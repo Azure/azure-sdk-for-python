@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import GuestSubscriptionsOperations  # type: ignore
+from ._operations import TrustedHostSubscriptionsOperations  # type: ignore
 from ._operations import SharedLimitsOperations  # type: ignore
 from ._operations import FeaturesOperations  # type: ignore
 from ._operations import VmFamiliesOperations  # type: ignore
@@ -27,6 +28,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "GuestSubscriptionsOperations",
+    "TrustedHostSubscriptionsOperations",
     "SharedLimitsOperations",
     "FeaturesOperations",
     "VmFamiliesOperations",

@@ -106,6 +106,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             connection_string=connection_string,
             is_customer_sdkstats=True,
             credential=self.mock_credential,
+            disable_offline_storage=False,
         )
         mock_metric_reader.assert_called_once()
         mock_meter_provider.assert_called_once()
@@ -157,6 +158,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             connection_string=connection_string,
             is_customer_sdkstats=True,
             credential=mock_credential,
+            disable_offline_storage=False,
         )
 
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
@@ -179,6 +181,30 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         mock_exporter.assert_called_once_with(
             connection_string=connection_string,
             is_customer_sdkstats=True,
+            disable_offline_storage=False,
+        )
+
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
+    def test_initialize_honors_disable_offline_storage(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
+        """Customer sdkstats shares the user's storage directory, so it honors the user's opt-out."""
+        mock_meter = Mock()
+        mock_meter_provider_instance = Mock()
+        mock_meter_provider_instance.get_meter.return_value = mock_meter
+        mock_meter_provider.return_value = mock_meter_provider_instance
+
+        connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+
+        result = self.manager.initialize(connection_string, disable_offline_storage=True)
+
+        self.assertTrue(result)
+        mock_exporter.assert_called_once_with(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+            disable_offline_storage=True,
         )
 
     def test_initialize_multiple_calls(self):

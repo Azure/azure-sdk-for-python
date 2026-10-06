@@ -24,6 +24,10 @@ DESCRIPTION:
     - Inspecting prebuilt analyzers: Learn about available prebuilt analyzers and their capabilities
     - Debugging: Understand why an analyzer behaves a certain way
 
+
+    You can dump the analyzer configuration as JSON (for example via the model's serialization
+    helpers) to inspect the full schema, config, and model mappings returned by the service.
+
 USAGE:
     python sample_get_analyzer_async.py
 
@@ -58,9 +62,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START get_prebuilt_analyzer]
         print("Retrieving prebuilt-documentSearch analyzer...")
         analyzer = await client.get_analyzer(analyzer_id="prebuilt-documentSearch")
@@ -126,7 +128,7 @@ async def main() -> None:
             description="Test analyzer for GetAnalyzer sample",
             config=config,
             field_schema=field_schema,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Create the analyzer
@@ -146,9 +148,7 @@ async def main() -> None:
             print("\n" + "=" * 80)
             print(f"Custom Analyzer '{analyzer_id}':")
             print("=" * 80)
-            retrieved_json = json.dumps(
-                retrieved_analyzer.as_dict(), indent=2, default=str
-            )
+            retrieved_json = json.dumps(retrieved_analyzer.as_dict(), indent=2, default=str)
             print(retrieved_json)
             print("=" * 80)
         finally:

@@ -73,6 +73,7 @@ def main():
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
+                        "eventStreams": [],
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "storageContainers": [],
@@ -90,13 +91,13 @@ def main():
                     "$default": {"connectionString": "", "containerName": "", "sasTtlAsIso8601": "PT1H"}
                 },
             },
-            "sku": {"capacity": 1, "name": "GEN2"},
+            "sku": {"capacity": 1, "name": "S1"},
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_IoTHub_With_DeviceRegistry.json
+# x-ms-original-file: 2026-05-01-preview/CreateOrReplace_IoTHub_With_DeviceRegistry.json
 if __name__ == "__main__":
     main()

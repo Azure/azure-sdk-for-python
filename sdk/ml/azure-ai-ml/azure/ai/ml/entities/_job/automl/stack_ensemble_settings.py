@@ -4,8 +4,8 @@
 
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import StackEnsembleSettings as RestStackEnsembleSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import StackMetaLearnerType
+from azure.ai.ml._restclient.arm_ml_service.models import StackEnsembleSettings as RestStackEnsembleSettings
+from azure.ai.ml._restclient.arm_ml_service.models import StackMetaLearnerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -21,18 +21,18 @@ class StackEnsembleSettings(RestTranslatableMixin):
         **kwargs: Any
     ):
         """
-        :param stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the
+        :keyword stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the
          meta-learner.
-        :type stack_meta_learner_k_wargs: any
-        :param stack_meta_learner_train_percentage: Specifies the proportion of the training set
+        :paramtype stack_meta_learner_k_wargs: any
+        :keyword stack_meta_learner_train_percentage: Specifies the proportion of the training set
          (when choosing train and validation type of training) to be reserved for training the
          meta-learner. Default value is 0.2.
-        :type stack_meta_learner_train_percentage: float
-        :param stack_meta_learner_type: The meta-learner is a model trained on the output of the
+        :paramtype stack_meta_learner_train_percentage: float
+        :keyword stack_meta_learner_type: The meta-learner is a model trained on the output of the
          individual heterogeneous models. Possible values include: "None", "LogisticRegression",
          "LogisticRegressionCV", "LightGBMClassifier", "ElasticNet", "ElasticNetCV",
          "LightGBMRegressor", "LinearRegression".
-        :type stack_meta_learner_type: str or
+        :paramtype stack_meta_learner_type: str or
          ~azure.mgmt.machinelearningservices.models.StackMetaLearnerType
         """
         super(StackEnsembleSettings, self).__init__(**kwargs)

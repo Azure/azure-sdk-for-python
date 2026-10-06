@@ -32,11 +32,11 @@ def main():
 
     client.chat_model_deployments.begin_delete(
         resource_group_name="rgdiscovery",
-        workspace_name="015403a79d07536250",
-        chat_model_deployment_name="7a1ee53e20d918a13d",
+        workspace_name="b8412416e166a6c264",
+        chat_model_deployment_name="aaf6134e93bb6af594",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/ChatModelDeployments_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ChatModelDeployments_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
