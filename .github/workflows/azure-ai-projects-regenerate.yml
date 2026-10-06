@@ -7,7 +7,7 @@ on:
       sdk_ref:
         description: SDK branch, tag, or commit to regenerate
         required: true
-        default: feature/azure-ai-projects/vnext
+        default: feature/azure-ai-projects/vnext # cspell:ignore vnext
         type: string
       typespec_commit:
         description: Full TypeSpec commit SHA (empty preserves tsp-location.yaml)
