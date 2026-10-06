@@ -1,0 +1,88 @@
+name: Regenerate azure-ai-projects
+run-name: azure-ai-projects regeneration (${{ inputs.request_id || github.run_id }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk_ref:
+        description: SDK branch, tag, or commit to regenerate
+        required: true
+        default: feature/azure-ai-projects/vnext
+        type: string
+      typespec_commit:
+        description: Full TypeSpec commit SHA (empty preserves tsp-location.yaml)
+        required: false
+        type: string
+      request_id:
+        description: Optional unique identifier for a cloud-agent request
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PIP_INDEX_URL: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+      UV_DEFAULT_INDEX: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+      npm_config_registry: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-js/npm/registry/
+      AZURE_TEST_RUN_LIVE: 'false'
+      TYPESPEC_COMMIT: ${{ inputs.typespec_commit }}
+
+    steps:
+      - name: Checkout the workflow's package orchestration
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+
+      - name: Preserve orchestration outside the SDK checkout
+        shell: bash
+        run: |
+          cp sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-cloud-regeneration/scripts/regenerate.py \
+            "$RUNNER_TEMP/azure-ai-projects-regenerate.py"
+
+      - name: Checkout the requested SDK revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sdk_ref }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.10'
+
+      - name: Create an isolated Python environment
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/azure-ai-projects-venv"
+          echo "VIRTUAL_ENV=$RUNNER_TEMP/azure-ai-projects-venv" >> "$GITHUB_ENV"
+          echo "$RUNNER_TEMP/azure-ai-projects-venv/bin" >> "$GITHUB_PATH"
+
+      - name: Install dependencies, regenerate, and validate azure-ai-projects
+        working-directory: sdk/ai/azure-ai-projects
+        shell: bash
+        run: |
+          python "$RUNNER_TEMP/azure-ai-projects-regenerate.py" \
+            generate \
+            --typespec-commit "$TYPESPEC_COMMIT" \
+            --output-dir "$RUNNER_TEMP/azure-ai-projects-regeneration"
+
+      - name: Upload the validated package-only patch
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: azure-ai-projects-regeneration-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/azure-ai-projects-regeneration/regeneration.patch
+            ${{ runner.temp }}/azure-ai-projects-regeneration/result.json
+          if-no-files-found: error
+          retention-days: 7
