@@ -24,8 +24,8 @@
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
-* Added `PipelineJob` support to `.beta.jobs.create_or_update`, `.get`, and `.list` (sync and async). Pipeline graph nodes, inputs, outputs, and settings are sent as provided; local asset handling and validation remain specific to Command jobs.
-* When constructing `PipelineJob`, `jobs` accepts `CommandJob` instances with literal inputs and converts them to inline command nodes. Raw graph dictionaries remain supported for other node features.
+* Added `PipelineJob` support to `.beta.jobs.create_or_update`, `.get`, and `.list` (sync and async). Local code folders on inline command nodes are registered as Code datasets before submission; local input handling and validation remain specific to standalone Command jobs.
+* When constructing `PipelineJob`, `jobs` accepts `CommandJob` instances with value-bound inputs, code, and outputs and converts them to inline command nodes. Raw graph dictionaries remain supported for other node features.
 * New optional `priority` property on class `CommandJob`, typed as the new `JobPriority` enum (`LOW`, `MID`, `HIGH`). If omitted, the service defaults to `LOW`.
 * New optional `experiment_name` property on class `CommandJob`, used to group related runs. If omitted, the service uses `Default`.
 * `.beta.jobs.create_or_update` now emits a `UserWarning` when a newly created job sets `resources.instance_type`, `resources.shm_size`, `resources.docker_args` or `resources.properties`. The service infers these from the target compute and ignores them, so they were previously dropped silently. The call still succeeds, and jobs retrieved with `.beta.jobs.get` are not affected.
@@ -88,6 +88,7 @@ Breaking changes in beta classes:
 * Refreshed evaluation samples under `samples/evaluations/` and `samples/evaluations/agentic_evaluators/` (including `sample_agent_evaluation`, `sample_agent_response_evaluation`, `sample_eval_catalog_prompt_based_evaluators`, `sample_evaluations_ai_assisted`, `sample_evaluations_builtin_with_csv`, `sample_evaluations_builtin_with_dataset_id`, `sample_evaluations_builtin_with_inline_data`, `sample_evaluations_builtin_with_inline_data_oai`, `sample_scheduled_evaluations`, `sample_coherence`, `sample_fluency`, `sample_intent_resolution`, `sample_relevance`, `sample_response_completeness`, `sample_tool_call_accuracy`, `sample_tool_call_success`, `sample_tool_input_accuracy`, `sample_tool_output_utilization`, `sample_tool_selection`, and `sample_generic_agentic_evaluator`).
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 * Updated job samples `sample_jobs.py` and `sample_jobs_async.py` to show requesting GPUs with `gpu_count` on a GPU cluster versus whole nodes with `instance_count` on a CPU cluster, and to set the new `priority` property.
+* Added `sample_pipeline_two_code.py` to demonstrate a producer and consumer using separate local code folders and a mounted file output.
 
 ## 2.1.0 (2026-04-20)
 

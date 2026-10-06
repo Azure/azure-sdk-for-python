@@ -244,6 +244,16 @@ class JobsOperations(_GeneratedJobsOps):
         self._resolve_code(name, job)
         self._resolve_input_paths(name, job)
 
+    def _resolve_pipeline_code(self, name: str, job: PipelineJob) -> None:
+        """Resolve local code folders on inline command nodes to dataset asset URIs."""
+        for node_name, node in (job.jobs or {}).items():
+            if not isinstance(node, dict) or node.get("type") != "command":
+                continue
+            component = node.get("component")
+            if not isinstance(component, dict) or not isinstance(component.get("code"), str):
+                continue
+            component["code"] = self._resolve_asset_uri(component["code"], f"{name}-{node_name}-code")
+
     def _inject_preview_header(self, kwargs: dict) -> None:
         """Add the Jobs preview feature header if not already present.
 
@@ -349,7 +359,7 @@ class JobsOperations(_GeneratedJobsOps):
         :param job: The Command or Pipeline job to create or update. Required.
         :type job: ~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob
         :keyword skip_validation: If ``True``, skip local CommandJob validation.
-            PipelineJob is submitted as-is. Defaults to ``False``.
+            PipelineJob nodes are not locally validated. Defaults to ``False``.
         :paramtype skip_validation: bool
         :return: The created/updated job.
         :rtype: ~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob
@@ -360,7 +370,9 @@ class JobsOperations(_GeneratedJobsOps):
             if not skip_validation:
                 _emit_validation_warnings(_validate_command_job(job).try_raise(raise_on_failure=True))
             self._resolve_local_paths(name, job)
-        elif not isinstance(job, PipelineJob):
+        elif isinstance(job, PipelineJob):
+            self._resolve_pipeline_code(name, job)
+        else:
             raise TypeError("job must be a CommandJob or PipelineJob")
         self._inject_preview_header(kwargs)
         # Wrap the flat job inside the Job envelope required by the wire format.
