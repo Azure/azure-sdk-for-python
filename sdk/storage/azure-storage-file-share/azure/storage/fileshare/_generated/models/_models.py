@@ -79,6 +79,168 @@ class AccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class BlockDeviceItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A listed block device item.
+
+    :ivar name: The block device name. Required.
+    :vartype name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar file_id: The file ID.
+    :vartype file_id: str
+    :ivar properties: File properties. Required.
+    :vartype properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :ivar link_count: The link count of the block device.
+    :vartype link_count: int
+    :ivar device_major: The major device number of the block device.
+    :vartype device_major: int
+    :ivar device_minor: The minor device number of the block device.
+    :vartype device_minor: int
+    """
+
+    name: "_models.StringEncoded" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
+    """The block device name. Required."""
+    file_id: Optional[str] = rest_field(
+        name="fileId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The file ID."""
+    properties: "_models.FileProperty" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
+    """File properties. Required."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the block device."""
+    device_major: Optional[int] = rest_field(
+        name="deviceMajor",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DeviceMajor", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The major device number of the block device."""
+    device_minor: Optional[int] = rest_field(
+        name="deviceMinor",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DeviceMinor", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The minor device number of the block device."""
+
+    _xml = {"attribute": False, "name": "BlockDevice", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: "_models.StringEncoded",
+        properties: "_models.FileProperty",
+        file_id: Optional[str] = None,
+        link_count: Optional[int] = None,
+        device_major: Optional[int] = None,
+        device_minor: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CharDeviceItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A listed character device item.
+
+    :ivar name: The character device name. Required.
+    :vartype name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar file_id: The file ID.
+    :vartype file_id: str
+    :ivar properties: File properties. Required.
+    :vartype properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :ivar link_count: The link count of the character device.
+    :vartype link_count: int
+    :ivar device_major: The major device number of the character device.
+    :vartype device_major: int
+    :ivar device_minor: The minor device number of the character device.
+    :vartype device_minor: int
+    """
+
+    name: "_models.StringEncoded" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
+    """The character device name. Required."""
+    file_id: Optional[str] = rest_field(
+        name="fileId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The file ID."""
+    properties: "_models.FileProperty" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
+    """File properties. Required."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the character device."""
+    device_major: Optional[int] = rest_field(
+        name="deviceMajor",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DeviceMajor", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The major device number of the character device."""
+    device_minor: Optional[int] = rest_field(
+        name="deviceMinor",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DeviceMinor", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The minor device number of the character device."""
+
+    _xml = {"attribute": False, "name": "CharDevice", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: "_models.StringEncoded",
+        properties: "_models.FileProperty",
+        file_id: Optional[str] = None,
+        link_count: Optional[int] = None,
+        device_major: Optional[int] = None,
+        device_minor: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClearRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A clear range.
 
@@ -227,6 +389,8 @@ class DirectoryItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :vartype attributes: str
     :ivar permission_key: The permission key.
     :vartype permission_key: str
+    :ivar link_count: The link count of the directory.
+    :vartype link_count: int
     """
 
     name: "_models.StringEncoded" = rest_field(
@@ -259,6 +423,13 @@ class DirectoryItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
         deserializer=_xml_deser_str,
     )
     """The permission key."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the directory."""
 
     _xml = {"attribute": False, "name": "Directory", "text": False, "unwrapped": False}
 
@@ -271,6 +442,7 @@ class DirectoryItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
         properties: Optional["_models.FileProperty"] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
+        link_count: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -414,6 +586,67 @@ class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-o
         super().__init__(*args, **kwargs)
 
 
+class FifoItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A listed FIFO item.
+
+    :ivar name: The FIFO name. Required.
+    :vartype name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar file_id: The file ID.
+    :vartype file_id: str
+    :ivar properties: File properties. Required.
+    :vartype properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :ivar link_count: The link count of the FIFO.
+    :vartype link_count: int
+    """
+
+    name: "_models.StringEncoded" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
+    """The FIFO name. Required."""
+    file_id: Optional[str] = rest_field(
+        name="fileId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The file ID."""
+    properties: "_models.FileProperty" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
+    """File properties. Required."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the FIFO."""
+
+    _xml = {"attribute": False, "name": "Fifo", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: "_models.StringEncoded",
+        properties: "_models.FileProperty",
+        file_id: Optional[str] = None,
+        link_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FileItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A listed file item.
 
@@ -427,6 +660,8 @@ class FileItem(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype attributes: str
     :ivar permission_key: The permission key.
     :vartype permission_key: str
+    :ivar link_count: The link count of the file.
+    :vartype link_count: int
     """
 
     name: "_models.StringEncoded" = rest_field(
@@ -459,6 +694,13 @@ class FileItem(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         deserializer=_xml_deser_str,
     )
     """The permission key."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the file."""
 
     _xml = {"attribute": False, "name": "File", "text": False, "unwrapped": False}
 
@@ -471,6 +713,7 @@ class FileItem(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         file_id: Optional[str] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
+        link_count: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -504,6 +747,12 @@ class FileProperty(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :vartype last_modified: ~datetime.datetime
     :ivar etag: The ETag of the file.
     :vartype etag: str
+    :ivar owner: NFS only. The owner user identifier (UID) of the file.
+    :vartype owner: str
+    :ivar group: NFS only. The owner group identifier (GID) of the file.
+    :vartype group: str
+    :ivar file_mode: NFS only. The mode of the file.
+    :vartype file_mode: str
     """
 
     content_length: int = rest_field(
@@ -558,6 +807,25 @@ class FileProperty(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         deserializer=_xml_deser_str,
     )
     """The ETag of the file."""
+    owner: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Uid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """NFS only. The owner user identifier (UID) of the file."""
+    group: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Gid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """NFS only. The owner group identifier (GID) of the file."""
+    file_mode: Optional[str] = rest_field(
+        name="fileMode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Mode", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """NFS only. The mode of the file."""
 
     _xml = {"attribute": False, "name": "FileProperty", "text": False, "unwrapped": False}
 
@@ -572,6 +840,9 @@ class FileProperty(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         change_time: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -635,6 +906,16 @@ class FilesAndDirectoriesListSegment(_Model):  # pylint: disable=docstring-keywo
     :vartype directory_items: ~azure.storage.fileshare._generated.models.DirectoryItem
     :ivar file_items: The file items. Required.
     :vartype file_items: ~azure.storage.fileshare._generated.models.FileItem
+    :ivar sym_link_items: The symbolic link items.
+    :vartype sym_link_items: ~azure.storage.fileshare._generated.models.SymLinkItem
+    :ivar block_device_items: The block device items.
+    :vartype block_device_items: ~azure.storage.fileshare._generated.models.BlockDeviceItem
+    :ivar char_device_items: The character device items.
+    :vartype char_device_items: ~azure.storage.fileshare._generated.models.CharDeviceItem
+    :ivar fifo_items: The FIFO items.
+    :vartype fifo_items: ~azure.storage.fileshare._generated.models.FifoItem
+    :ivar socket_items: The socket items.
+    :vartype socket_items: ~azure.storage.fileshare._generated.models.SocketItem
     """
 
     directory_items: list["_models.DirectoryItem"] = rest_field(
@@ -649,6 +930,36 @@ class FilesAndDirectoriesListSegment(_Model):  # pylint: disable=docstring-keywo
         xml={"attribute": False, "itemsName": "File", "name": "File", "text": False, "unwrapped": True},
     )
     """The file items. Required."""
+    sym_link_items: Optional[list["_models.SymLinkItem"]] = rest_field(
+        name="symLinkItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "SymLink", "name": "SymLink", "text": False, "unwrapped": True},
+    )
+    """The symbolic link items."""
+    block_device_items: Optional[list["_models.BlockDeviceItem"]] = rest_field(
+        name="blockDeviceItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "BlockDevice", "name": "BlockDevice", "text": False, "unwrapped": True},
+    )
+    """The block device items."""
+    char_device_items: Optional[list["_models.CharDeviceItem"]] = rest_field(
+        name="charDeviceItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "CharDevice", "name": "CharDevice", "text": False, "unwrapped": True},
+    )
+    """The character device items."""
+    fifo_items: Optional[list["_models.FifoItem"]] = rest_field(
+        name="fifoItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Fifo", "name": "Fifo", "text": False, "unwrapped": True},
+    )
+    """The FIFO items."""
+    socket_items: Optional[list["_models.SocketItem"]] = rest_field(
+        name="socketItems",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Socket", "name": "Socket", "text": False, "unwrapped": True},
+    )
+    """The socket items."""
 
     _xml = {"attribute": False, "name": "FilesAndDirectoriesListSegment", "text": False, "unwrapped": False}
 
@@ -658,6 +969,11 @@ class FilesAndDirectoriesListSegment(_Model):  # pylint: disable=docstring-keywo
         *,
         directory_items: list["_models.DirectoryItem"],
         file_items: list["_models.FileItem"],
+        sym_link_items: Optional[list["_models.SymLinkItem"]] = None,
+        block_device_items: Optional[list["_models.BlockDeviceItem"]] = None,
+        char_device_items: Optional[list["_models.CharDeviceItem"]] = None,
+        fifo_items: Optional[list["_models.FifoItem"]] = None,
+        socket_items: Optional[list["_models.SocketItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -2096,6 +2412,67 @@ class SmbMultichannel(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
+class SocketItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A listed socket item.
+
+    :ivar name: The socket name. Required.
+    :vartype name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar file_id: The file ID.
+    :vartype file_id: str
+    :ivar properties: File properties. Required.
+    :vartype properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :ivar link_count: The link count of the socket.
+    :vartype link_count: int
+    """
+
+    name: "_models.StringEncoded" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
+    """The socket name. Required."""
+    file_id: Optional[str] = rest_field(
+        name="fileId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The file ID."""
+    properties: "_models.FileProperty" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
+    """File properties. Required."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the socket."""
+
+    _xml = {"attribute": False, "name": "Socket", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: "_models.StringEncoded",
+        properties: "_models.FileProperty",
+        file_id: Optional[str] = None,
+        link_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StorageServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage service properties.
 
@@ -2187,6 +2564,77 @@ class StringEncoded(_Model):  # pylint: disable=docstring-keyword-should-match-k
         *,
         encoded: Optional[bool] = None,
         content: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SymLinkItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A listed symbolic link item.
+
+    :ivar name: The symbolic link name. Required.
+    :vartype name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar file_id: The file ID.
+    :vartype file_id: str
+    :ivar properties: File properties. Required.
+    :vartype properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :ivar link_count: The link count of the symbolic link.
+    :vartype link_count: int
+    :ivar link_text: The path to the original file, the symbolic link is pointing to.
+    :vartype link_text: str
+    """
+
+    name: "_models.StringEncoded" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+    )
+    """The symbolic link name. Required."""
+    file_id: Optional[str] = rest_field(
+        name="fileId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The file ID."""
+    properties: "_models.FileProperty" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
+    )
+    """File properties. Required."""
+    link_count: Optional[int] = rest_field(
+        name="linkCount",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The link count of the symbolic link."""
+    link_text: Optional[str] = rest_field(
+        name="linkText",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "LinkText", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The path to the original file, the symbolic link is pointing to."""
+
+    _xml = {"attribute": False, "name": "SymLink", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: "_models.StringEncoded",
+        properties: "_models.FileProperty",
+        file_id: Optional[str] = None,
+        link_count: Optional[int] = None,
+        link_text: Optional[str] = None,
     ) -> None: ...
 
     @overload

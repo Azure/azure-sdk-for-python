@@ -135,6 +135,14 @@ class ListFilesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Attributes."""
     PERMISSION_KEY = "PermissionKey"
     """PermissionKey."""
+    PERMISSIONS = "Permissions"
+    """Permissions."""
+    LINK_COUNT = "LinkCount"
+    """LinkCount."""
+    NFS_ATTRIBUTES = "NfsAttributes"
+    """NfsAttributes."""
+    ALL = "All"
+    """All."""
 
 
 class ListSharesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

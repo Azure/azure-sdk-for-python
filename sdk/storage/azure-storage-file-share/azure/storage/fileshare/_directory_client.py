@@ -588,7 +588,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             begin with the specified prefix.
         :keyword List[str] include:
             Include this parameter to specify one or more datasets to include in the response.
-            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
+            Possible str values are "Timestamps", "Etag", "Attributes", "PermissionKey",
+            "Permissions", "LinkCount", "NfsAttributes", and "All".
+            The values "Permissions", "LinkCount", and "NfsAttributes" apply only to NFS shares.
 
             .. versionadded:: 12.6.0
 
