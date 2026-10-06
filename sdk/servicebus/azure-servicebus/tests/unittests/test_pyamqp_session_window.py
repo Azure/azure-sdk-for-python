@@ -574,6 +574,44 @@ async def test_concurrent_partial_cancellations_notify_once(monkeypatch):
     assert len([frame for frame in transfers if frame.aborted]) == 1
 
 
+@pytest.mark.parametrize("partial", [False, True])
+@pytest.mark.asyncio
+async def test_cancel_during_timeout_callback_does_not_notify_twice(monkeypatch, partial):
+    sender, session, connection = _sender(monkeypatch, True)
+    started, release = asyncio.Event(), asyncio.Event()
+    reasons = []
+
+    async def completed(reason, _state):
+        reasons.append(reason)
+        started.set()
+        await release.wait()
+
+    if partial:
+        first = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"a" * 120), settled=False, on_send_complete=completed
+        )
+        assert first.frame["more"]
+        session.remote_incoming_window = 10
+    else:
+        first = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"message"), send_async=True, settled=False, on_send_complete=completed
+        )
+    first.timeout = 1
+    first.start -= 10
+    draining = asyncio.create_task(sender.update_pending_deliveries())
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        with pytest.raises((ValueError, MessageException)):
+            await sender.cancel_transfer(first)
+    finally:
+        release.set()
+    await draining
+    assert reasons == [LinkDeliverySettleReason.TIMEOUT]
+    transfers = [call.args[1] for call in connection._process_outgoing_frame.call_args_list
+                 if isinstance(call.args[1], TransferFrame)]
+    assert len([frame for frame in transfers if frame.aborted]) == int(partial)
+
+
 @pytest.mark.asyncio
 async def test_disposition_during_async_send_preserves_queued_deliveries(monkeypatch):
     sender, session, connection = _sender(monkeypatch, True)
@@ -885,6 +923,52 @@ async def test_cancelled_immediate_send_does_not_withdraw_older_queued_delivery(
     assert older.sent and sender.delivery_count == 1
     transfers = [call.args[1] for call in original_send.call_args_list if isinstance(call.args[1], TransferFrame)]
     assert len(transfers) == 1 and transfers[0].payload == b"older"
+
+
+@pytest.mark.asyncio
+async def test_cancel_first_caller_while_drain_sends_second(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+    session.remote_incoming_window = 10
+    first_started, second_started = asyncio.Event(), asyncio.Event()
+    first_release, second_release = asyncio.Event(), asyncio.Event()
+    reasons = []
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            if bytes(frame.payload) == b"first":
+                first_started.set()
+                await first_release.wait()
+            elif bytes(frame.payload) == b"second":
+                second_started.set()
+                await second_release.wait()
+        await send(channel, frame)
+
+    async def completed(reason, _state):
+        reasons.append(reason)
+
+    connection._process_outgoing_frame = send_frame
+    first_task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"first")))
+    try:
+        await asyncio.wait_for(first_started.wait(), 5)
+        second = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"second"), send_async=True, settled=False, on_send_complete=completed
+        )
+        first_release.set()
+        await asyncio.wait_for(second_started.wait(), 5)
+        first_task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await first_task
+        assert second in sender._pending_deliveries and not second.cancel_requested
+    finally:
+        first_release.set()
+        second_release.set()
+    for _ in range(20):
+        await asyncio.sleep(0)
+        if second.sent:
+            break
+    assert second.sent and reasons == []
 
 
 @pytest.mark.asyncio

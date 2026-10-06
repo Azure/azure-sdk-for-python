@@ -182,17 +182,18 @@ class SenderLink(Link):
             while index < len(self._pending_deliveries):
                 delivery = self._pending_deliveries[index]
                 if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    if not delivery.frame or not delivery.frame["more"]:
+                        self._pending_deliveries.pop(index)
+                        await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                        continue
+                    delivery.abort_pending = True
+                    delivery.frame["aborted"] = True
+                    delivery.frame["payload"] = b""
                     await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                     if delivery not in self._pending_deliveries:
                         index = 0
                         continue
                     index = self._pending_deliveries.index(delivery)
-                    if not delivery.frame or not delivery.frame["more"]:
-                        self._pending_deliveries.pop(index)
-                        continue
-                    delivery.abort_pending = True
-                    delivery.frame["aborted"] = True
-                    delivery.frame["payload"] = b""
                 if not delivery.sent and not blocked:
                     try:
                         sent_and_settled = await self._outgoing_transfer(delivery)
@@ -249,26 +250,23 @@ class SenderLink(Link):
         self._pending_deliveries.append(delivery)
         try:
             if not send_async and self.current_link_credit != 0:
-                if len(self._pending_deliveries) == 1:
-                    await self.update_pending_deliveries()
-                else:
-                    drain = asyncio.create_task(self.update_pending_deliveries())
-                    try:
-                        await asyncio.shield(drain)
-                    except asyncio.CancelledError:
-                        if delivery in self._pending_deliveries and not delivery.sent:
-                            if delivery.frame is not None:
-                                drain.cancel()
-                                try:
-                                    await drain
-                                except asyncio.CancelledError:
-                                    pass
-                            else:
-                                await self.cancel_transfer(delivery)
-                                drain.add_done_callback(self._log_cancelled_send_drain)
+                drain = asyncio.create_task(self.update_pending_deliveries())
+                try:
+                    await asyncio.shield(drain)
+                except asyncio.CancelledError:
+                    if delivery in self._pending_deliveries and not delivery.sent:
+                        if delivery.frame is not None:
+                            drain.cancel()
+                            try:
+                                await drain
+                            except asyncio.CancelledError:
+                                pass
                         else:
+                            await self.cancel_transfer(delivery)
                             drain.add_done_callback(self._log_cancelled_send_drain)
-                        raise
+                    else:
+                        drain.add_done_callback(self._log_cancelled_send_drain)
+                    raise
         except Exception:
             if delivery in self._pending_deliveries and not delivery.sent and (
                 delivery.frame is None or delivery.transfer_state == SessionTransferState.ERROR
