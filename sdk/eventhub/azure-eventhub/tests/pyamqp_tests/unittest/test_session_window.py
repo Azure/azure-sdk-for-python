@@ -698,6 +698,89 @@ async def test_cancelled_queued_drain_waiting_for_session_lock_is_withdrawn(monk
 
 
 @pytest.mark.asyncio
+async def test_cancelled_immediate_send_does_not_withdraw_older_queued_delivery(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    reasons = []
+    drain_finished = asyncio.Event()
+    original_drain = sender.update_pending_deliveries
+    original_send = connection._process_outgoing_frame
+
+    async def drain():
+        try:
+            await original_drain()
+        finally:
+            drain_finished.set()
+
+    async def completed(reason, state):
+        reasons.append(reason)
+
+    sender.update_pending_deliveries = drain
+    older = await sender.send_transfer(
+        MagicMock(_code=0, payload=b"older"), send_async=True, settled=False
+    )
+    async with session._outgoing_transfer_lock:
+        task = asyncio.create_task(sender.send_transfer(
+            MagicMock(_code=0, payload=b"cancelled"), settled=False, on_send_complete=completed
+        ))
+        await asyncio.sleep(0)
+        cancelled = sender._pending_deliveries[1]
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        assert older in sender._pending_deliveries
+        assert cancelled not in sender._pending_deliveries
+        assert reasons == [LinkDeliverySettleReason.CANCELLED]
+    await asyncio.wait_for(drain_finished.wait(), 5)
+    assert older.sent and sender.delivery_count == 1
+    transfers = [call.args[1] for call in original_send.call_args_list if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) == 1 and transfers[0].payload == b"older"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("partial", [False, True])
+async def test_cancelled_immediate_send_after_older_queued_delivery(monkeypatch, partial):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 80 if partial else 1024
+    session.remote_incoming_window = 10
+    started, release = asyncio.Event(), asyncio.Event()
+    written = []
+    original_send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            written.append(frame)
+            if frame.payload and bytes(frame.payload).startswith(b"message"):
+                started.set()
+                await release.wait()
+        await original_send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    older = await sender.send_transfer(MagicMock(_code=0, payload=b"older"), send_async=True, settled=False)
+    task = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"message" * (20 if partial else 1)), settled=False
+    ))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        active = sender._pending_deliveries[1]
+        task.cancel()
+        await asyncio.sleep(0)
+        assert not task.done()
+    finally:
+        release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert older.sent and sender.delivery_count == (1 if partial else 2)
+    if partial:
+        assert active.abort_pending
+        await sender.update_pending_deliveries()
+        assert written[-1].aborted and active not in sender._pending_deliveries
+    else:
+        assert active.sent
+        await sender.update_pending_deliveries()
+    assert len([frame for frame in written if not frame.aborted]) == 2
+
+
+@pytest.mark.asyncio
 async def test_cancelled_queued_drain_aborts_partial_transfer(monkeypatch):
     sender, session, connection = _sender(monkeypatch, True)
     connection._remote_max_frame_size = 80

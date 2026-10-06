@@ -248,8 +248,35 @@ class SenderLink(Link):
         )
         self._pending_deliveries.append(delivery)
         if not send_async and self.current_link_credit != 0:
-            await self.update_pending_deliveries()
+            if len(self._pending_deliveries) == 1:
+                await self.update_pending_deliveries()
+            else:
+                drain = asyncio.create_task(self.update_pending_deliveries())
+                try:
+                    await asyncio.shield(drain)
+                except asyncio.CancelledError:
+                    if delivery in self._pending_deliveries and not delivery.sent:
+                        if delivery.frame is not None:
+                            drain.cancel()
+                            try:
+                                await drain
+                            except asyncio.CancelledError:
+                                pass
+                        else:
+                            await self.cancel_transfer(delivery)
+                            drain.add_done_callback(self._log_cancelled_send_drain)
+                    else:
+                        drain.add_done_callback(self._log_cancelled_send_drain)
+                    raise
         return delivery
+
+    def _log_cancelled_send_drain(self, drain):
+        try:
+            drain.result()
+        except asyncio.CancelledError:
+            return
+        except Exception:
+            _LOGGER.exception("Queued delivery drain failed after send cancellation.", extra=self.network_trace_params)
 
     async def cancel_transfer(self, delivery):
         try:
