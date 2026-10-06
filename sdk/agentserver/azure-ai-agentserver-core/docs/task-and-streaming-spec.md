@@ -1555,8 +1555,11 @@ Lock lifecycle:
 
 - Per-`task_id` `asyncio.Lock` allocated lazily on first write.
 - Released after the PATCH response is recorded (etag updated).
+- A holder/waiter count is registered before acquisition, so releasing
+  a holder cannot remove the lock while another caller is queued.
 - Removed from the in-memory lock table when the local active-task
-  entry is torn down (no leaked locks).
+  entry is torn down, or when the final holder/waiter exits for a task
+  that has no local active entry (no leaked remote-task locks).
 
 In-process contention now serializes; cross-process contention
 (another worker reclaimed the lease) still surfaces as 412 because

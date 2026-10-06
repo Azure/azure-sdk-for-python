@@ -315,6 +315,129 @@ class TestSteering:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
+    async def test_committed_append_conflict_reconciles_ack_before_precondition_and_capacity(
+        self, tmp_path, monkeypatch
+    ):
+        from azure.ai.agentserver.core.tasks._client import TransportClassifiedError
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                return {"msg": ctx.input["msg"]}
+
+            first = await chat.start(task_id="t1", input={"msg": "first"}, input_id="input-0")
+            accepted = []
+            predecessor = "input-0"
+            for i in range(1, 9):
+                input_id = f"input-{i}"
+                accepted.append(
+                    await chat.start(
+                        task_id="t1",
+                        input={"msg": f"accepted-{i}"},
+                        input_id=input_id,
+                        if_last_input_id=predecessor,
+                    )
+                )
+                predecessor = input_id
+
+            original_update = manager.provider.update
+            update_calls = 0
+
+            async def commit_then_conflict(task_id: str, patch: Any) -> Any:
+                nonlocal update_calls
+                update_calls += 1
+                result = await original_update(task_id, patch)
+                raise TransportClassifiedError(
+                    status=412,
+                    classification="conflict",
+                    message="response retry observed the committed etag",
+                )
+
+            with monkeypatch.context() as patcher:
+                patcher.setattr(manager.provider, "update", commit_then_conflict)
+                final = await chat.start(
+                    task_id="t1",
+                    input={"msg": "final"},
+                    input_id="input-9",
+                    if_last_input_id=predecessor,
+                )
+
+            assert update_calls == 1
+            info = await manager.provider.get("t1")
+            assert info is not None
+            pending = info.payload["steering"]["pending_inputs"]
+            ack_ids = info.payload["steering"]["pending_ack_ids"]
+            assert len(pending) == len(ack_ids) == 9
+            assert pending.count({"msg": "final"}) == 1
+            assert len(ack_ids) == len(set(ack_ids))
+            assert info.payload["last_input_id"] == "input-9"
+
+            await final.cancel()
+            with pytest.raises(TaskCancelled):
+                await final.result()
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert len(info.payload["steering"]["pending_inputs"]) == 8
+            assert {"msg": "final"} not in info.payload["steering"]["pending_inputs"]
+
+            gate.set()
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first"}
+            for i, run in enumerate(accepted, start=1):
+                assert await asyncio.wait_for(run.result(), timeout=5.0) == {"msg": f"accepted-{i}"}
+        finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_rejected_remote_steers_do_not_cache_write_locks(self, tmp_path):
+        from azure.ai.agentserver.core.tasks._models import TaskCreateRequest
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                return {"msg": ctx.input["msg"]}
+
+            for i in range(20):
+                task_id = f"remote-full-{i}"
+                await manager.provider.create(
+                    TaskCreateRequest(
+                        id=task_id,
+                        agent_name="test-agent",
+                        session_id="test-session",
+                        status="in_progress",
+                        title="remote full queue",
+                        payload={
+                            "input": {"msg": "remote-active"},
+                            "schema_version": "1",
+                            "steering": {
+                                "pending_inputs": [{"msg": f"queued-{j}"} for j in range(9)],
+                                "pending_ack_ids": [None] * 9,
+                                "next_input_seq": 0,
+                                "cancel_requested": True,
+                            },
+                        },
+                        lease_owner="foreign-agent:foreign-session",
+                        lease_instance_id=f"foreign-instance-{i}",
+                        lease_duration_seconds=60,
+                    )
+                )
+
+                with pytest.raises(SteeringQueueFull):
+                    await chat.start(task_id=task_id, input={"msg": "rejected"})
+
+                assert task_id not in manager._task_write_locks
+
+            assert manager._task_write_locks == {}
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
     async def test_legacy_backlog_does_not_claim_new_steering_ack(self, tmp_path):
         from azure.ai.agentserver.core.tasks._models import TaskPatchRequest
 
