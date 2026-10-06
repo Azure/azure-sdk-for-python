@@ -169,12 +169,15 @@ class SenderLink(Link):
                 if delivery not in self._pending_deliveries:
                     continue
                 if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                     if not delivery.frame or not delivery.frame["more"]:
+                        if delivery in self._pending_deliveries:
+                            self._pending_deliveries.remove(delivery)
+                        delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                         continue
                     delivery.abort_pending = True
                     delivery.frame["aborted"] = True
                     delivery.frame["payload"] = b""
+                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                 if not delivery.sent and not blocked:
                     sent_and_settled = self._outgoing_transfer(delivery)
                     if sent_and_settled or (
@@ -240,10 +243,10 @@ class SenderLink(Link):
             )
         if delivery.abort_pending:
             raise MessageException(ErrorCondition.ClientError, message="Transfer cancellation is already pending.")
-        delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
         if delivery.frame and delivery.frame["more"]:
             delivery.abort_pending = True
             delivery.frame["aborted"] = True
             delivery.frame["payload"] = b""
         else:
             self._pending_deliveries.pop(index)
+        delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)

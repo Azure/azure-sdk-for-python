@@ -239,7 +239,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.next_incoming_id = frame[2]  # next_outgoing_id
         self.remote_outgoing_window = frame[3]  # outgoing_window
         async with self._outgoing_transfer_lock:
-            remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+            remote_incoming_id = self.next_outgoing_id if frame[0] is None else frame[0]
             self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
         if frame[4] is not None:  # handle
             await self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
@@ -337,8 +337,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                             self.channel, TransferFrame(payload=fragment, **frame)
                         )
                     )
-                    cancellation_deadline = await self._await_outgoing_write(frame_write, delivery)
                     try:
+                        cancellation_deadline = await self._await_outgoing_write(frame_write, delivery)
                         frame_write.result()
                     except Exception:
                         delivery.cancel_requested = True

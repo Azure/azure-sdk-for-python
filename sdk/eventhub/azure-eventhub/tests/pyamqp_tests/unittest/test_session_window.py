@@ -146,6 +146,26 @@ async def test_async_incoming_flow_accounts_before_outgoing_lock_wait():
     assert session.remote_incoming_window == 10
 
 
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.asyncio
+async def test_zero_next_incoming_id_does_not_grant_extra_credit(async_session):
+    session, _ = _session(AsyncSession if async_session else Session, async_connection=async_session)
+    if async_session:
+        async with session._outgoing_transfer_lock:
+            flow = asyncio.create_task(session._incoming_flow([0, 1, 0, 5, None]))
+            await asyncio.sleep(0)
+            await session._outgoing_transfer_locked(_delivery(), None)
+        await flow
+    else:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            with session._outgoing_transfer_lock:
+                flow = executor.submit(session._incoming_flow, [0, 1, 0, 5, None])
+                session._outgoing_transfer_locked(_delivery(), None)
+            flow.result(timeout=5)
+    assert session.next_outgoing_id == 1
+    assert session.remote_incoming_window == 0
+
+
 @pytest.mark.parametrize("early_ack", [False, True])
 def test_sync_flow_failure_preserves_completed_transfer(monkeypatch, early_ack):
     sender, session, connection = _sender(monkeypatch, False)
@@ -558,6 +578,48 @@ async def test_async_encoding_failure_does_not_block_next_send(monkeypatch):
     assert not sender._pending_deliveries
     good = await sender.send_transfer(MagicMock(_code=0, payload=b"good"), settled=False)
     assert good.sent and good in sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+async def test_failed_older_queued_delivery_withdraws_immediate_caller(monkeypatch):
+    from azure.eventhub._pyamqp.aio import _sender_async as async_sender_module
+
+    sender, session, connection = _sender(monkeypatch, True)
+    session.remote_incoming_window = 10
+    connection._remote_max_frame_size = 1024
+
+    def encode(output, message):
+        if message.payload == b"bad":
+            raise ValueError("Unsupported message value")
+        output.extend(message.payload)
+
+    monkeypatch.setattr(async_sender_module, "encode_payload", encode)
+    bad = await sender.send_transfer(MagicMock(_code=0, payload=b"bad"), send_async=True)
+    with pytest.raises(ValueError, match="Unsupported message value"):
+        await sender.send_transfer(MagicMock(_code=0, payload=b"good"))
+    assert bad not in sender._pending_deliveries
+    assert not sender._pending_deliveries
+    await sender.update_pending_deliveries()
+    assert not [call for call in connection._process_outgoing_frame.call_args_list
+                if isinstance(call.args[1], TransferFrame)]
+
+
+@pytest.mark.asyncio
+async def test_frame_write_failure_marks_delivery_failed(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+
+    async def fail_write(_channel, frame):
+        if isinstance(frame, TransferFrame):
+            raise RuntimeError("frame write failed")
+
+    connection._process_outgoing_frame = fail_write
+    with pytest.raises(RuntimeError, match="frame write failed"):
+        await sender.send_transfer(MagicMock(_code=0, payload=b"message"))
+    assert not sender._pending_deliveries
+    assert session.next_outgoing_id == 0
+    await sender.update_pending_deliveries()
+    assert session.next_outgoing_id == 0
 
 
 @pytest.mark.asyncio
@@ -1285,6 +1347,28 @@ async def test_partial_delivery_aborts_before_next_and_checks_later_timeouts(
     assert not aborted[0].more
     assert transfers[-1].payload == b"next"
     assert transfers[-1].delivery_id == len(transfers) - 1
+
+
+@pytest.mark.parametrize("termination", ["cancel", "timeout"])
+def test_reentrant_settlement_aborts_before_draining(monkeypatch, termination):
+    sender, session, connection = _sender(monkeypatch, False)
+    first = sender.send_transfer(
+        MagicMock(_code=0, payload=b"a" * 120), settled=False,
+        on_send_complete=lambda _reason, _state: sender.update_pending_deliveries(),
+    )
+    assert first.frame["more"]
+    session.remote_incoming_window = 10
+    if termination == "cancel":
+        sender.cancel_transfer(first)
+    else:
+        first.timeout = 1
+        first.start -= 10
+        sender.update_pending_deliveries()
+    transfers = [call.args[1] for call in connection._process_outgoing_frame.call_args_list
+                 if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) == 2
+    assert transfers[1].aborted and not transfers[1].payload
+    assert transfers[1].delivery_id == transfers[0].delivery_id
 
 
 @pytest.mark.parametrize("async_session", [False, True])
