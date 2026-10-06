@@ -1304,7 +1304,7 @@ Platform environment variables (read once at startup via `AgentConfig`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SSE_KEEPALIVE_INTERVAL` | Disabled | Interval (seconds) between SSE keep-alive comments |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval (seconds) between SSE keep-alive comments; `0` disables keep-alive |
 | `PORT` | `8088` | HTTP listen port |
 | `DEFAULT_FETCH_HISTORY_ITEM_COUNT` | `-1` | Override for `default_fetch_history_count` when using `ResponsesServerOptions.from_env()` |
 | `FOUNDRY_PROJECT_ENDPOINT` | — | Foundry project endpoint (enables persistence) |
