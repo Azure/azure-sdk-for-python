@@ -23,9 +23,10 @@ from ..performatives import (
     DispositionFrame,
 )
 from .._encode import encode_frame
-from ..error import AMQPError, ErrorCondition
+from ..error import AMQPError, AMQPConnectionError, ErrorCondition
 
 _LOGGER = logging.getLogger(__name__)
+_CANCELLED_FRAME_WRITE_GRACE = 1.0
 
 
 class Session(object):  # pylint: disable=too-many-instance-attributes
@@ -245,6 +246,26 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         async with self._outgoing_transfer_lock:
             await self._outgoing_transfer_locked(delivery, network_trace_params)
 
+    async def _invalidate_stalled_transfer(self, frame_write, delivery):
+        error = AMQPConnectionError(
+            ErrorCondition.SocketError,
+            description="Transfer write did not finish after cancellation; connection invalidated.",
+        )
+        delivery.cancel_requested = True
+        delivery.transfer_state = SessionTransferState.ERROR
+        self.state = SessionState.DISCARDING
+        self._connection._error = error  # pylint: disable=protected-access
+        self._connection.state = ConnectionState.DISCARDING
+        frame_write.cancel()
+        writer = getattr(self._connection._transport, "writer", None)  # pylint: disable=protected-access
+        if writer is not None:
+            writer.transport.abort()
+        try:
+            await asyncio.wait_for(self._connection._disconnect(), timeout=_CANCELLED_FRAME_WRITE_GRACE)  # pylint: disable=protected-access
+        except asyncio.TimeoutError:
+            _LOGGER.error("Timed out closing connection after a stalled Transfer write.", extra=self.network_trace_params)
+        raise error
+
     async def _outgoing_transfer_locked(self, delivery, network_trace_params):
         if delivery.cancel_requested:
             return
@@ -283,11 +304,21 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                         )
                     )
                     cancelled = False
+                    cancellation_deadline = None
                     while not frame_write.done():
                         try:
-                            await asyncio.shield(frame_write)
+                            if cancellation_deadline is None:
+                                await asyncio.shield(frame_write)
+                            else:
+                                remaining = max(0, cancellation_deadline - asyncio.get_running_loop().time())
+                                await asyncio.wait_for(asyncio.shield(frame_write), remaining)
                         except asyncio.CancelledError:
                             cancelled = True
+                            if cancellation_deadline is None:
+                                cancellation_deadline = asyncio.get_running_loop().time() + _CANCELLED_FRAME_WRITE_GRACE
+                        except asyncio.TimeoutError:
+                            if not frame_write.done():
+                                await self._invalidate_stalled_transfer(frame_write, delivery)
                     try:
                         frame_write.result()
                     except Exception:

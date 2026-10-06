@@ -15,6 +15,7 @@ from azure.servicebus._pyamqp._encode import (
     encode_ushort,
 )
 from azure.servicebus._pyamqp.constants import (
+    ConnectionState,
     LinkDeliverySettleReason,
     LinkState,
     ManagementExecuteOperationResult,
@@ -24,7 +25,7 @@ from azure.servicebus._pyamqp.constants import (
     SessionTransferState,
 )
 from azure.servicebus._pyamqp.performatives import FlowFrame, TransferFrame
-from azure.servicebus._pyamqp.error import MessageException
+from azure.servicebus._pyamqp.error import AMQPConnectionError, MessageException
 from azure.servicebus._pyamqp.session import Session
 from azure.servicebus._pyamqp.sender import SenderLink
 from azure.servicebus._pyamqp.management_link import ManagementLink
@@ -673,6 +674,43 @@ async def test_cancelled_transport_drain_does_not_retransmit(monkeypatch, partia
         assert delivery.sent and sender.delivery_count == 1
         await sender.update_pending_deliveries()
         assert len(written) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("tcp_transport", [False, True])
+async def test_cancelled_stalled_transfer_invalidates_connection(monkeypatch, tcp_transport):
+    from azure.servicebus._pyamqp.aio import _session_async
+
+    monkeypatch.setattr(_session_async, "_CANCELLED_FRAME_WRITE_GRACE", 0.01)
+    sender, session, connection = _sender(monkeypatch, True)
+    started = asyncio.Event()
+    never = asyncio.Event()
+    written = []
+    writer = MagicMock()
+    connection._transport = SimpleNamespace(writer=writer) if tcp_transport else SimpleNamespace()
+    connection._disconnect = AsyncMock()
+
+    async def send_frame(channel, frame):
+        written.append(frame)
+        started.set()
+        await never.wait()
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False))
+    await asyncio.wait_for(started.wait(), 5)
+    delivery = sender._pending_deliveries[0]
+    task.cancel()
+    with pytest.raises(AMQPConnectionError, match="Transfer write did not finish"):
+        await asyncio.wait_for(task, 5)
+    assert delivery.cancel_requested and delivery.transfer_state == SessionTransferState.ERROR
+    assert session.state == SessionState.DISCARDING
+    assert connection.state == ConnectionState.DISCARDING
+    assert isinstance(connection._error, AMQPConnectionError)
+    connection._disconnect.assert_awaited_once()
+    if tcp_transport:
+        writer.transport.abort.assert_called_once()
+    await sender.update_pending_deliveries()
+    assert len(written) == 1 and session.next_outgoing_id == 0
 
 
 def test_threaded_early_disposition_during_replenishment(monkeypatch):
