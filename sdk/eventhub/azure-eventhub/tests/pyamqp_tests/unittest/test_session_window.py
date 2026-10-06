@@ -242,6 +242,38 @@ async def test_concurrent_async_transfers_do_not_reuse_delivery_ids():
     assert session.next_outgoing_id == 2
 
 
+@pytest.mark.parametrize("partial", [False, True])
+@pytest.mark.parametrize("failure", ["raise", "connection_error"])
+def test_sync_failed_transfer_write_is_not_retried(monkeypatch, partial, failure):
+    sender, session, connection = _sender(monkeypatch, False)
+    if not partial:
+        connection._remote_max_frame_size = 1024
+    session.remote_incoming_window = 10
+    connection._error = None
+    send = connection._process_outgoing_frame
+    transfers = []
+
+    def send_frame(channel, frame):
+        if isinstance(frame, TransferFrame):
+            transfers.append(frame)
+            if len(transfers) == (2 if partial else 1):
+                if failure == "raise":
+                    raise RuntimeError("Transfer write failed")
+                connection._error = RuntimeError("Transfer write failed")
+                return
+        send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    with pytest.raises(RuntimeError, match="Transfer write failed"):
+        sender.send_transfer(MagicMock(_code=0, payload=b"a" * 120), settled=False)
+    assert session.state == SessionState.DISCARDING
+    connection._disconnect.assert_called_once()
+    assert not sender._pending_deliveries
+    written_before_drain = len(transfers)
+    sender.update_pending_deliveries()
+    assert len(transfers) == written_before_drain
+
+
 @pytest.mark.asyncio
 async def test_async_flow_waits_for_transfer_accounting():
     session, connection = _session(AsyncSession, async_connection=True)

@@ -219,8 +219,13 @@ class SenderLink(Link):
                 try:
                     sent_and_settled = self._outgoing_transfer(delivery)
                 except Exception:
-                    if delivery.frame is None and delivery in self._pending_deliveries:
-                        self._pending_deliveries.remove(delivery)
+                    if delivery in self._pending_deliveries and not delivery.sent:
+                        if delivery.frame and delivery.frame["more"] and self._session.state == SessionState.MAPPED:
+                            delivery.abort_pending = True
+                            delivery.frame["aborted"] = True
+                            delivery.frame["payload"] = b""
+                        else:
+                            self._pending_deliveries.remove(delivery)
                     raise
                 if sent_and_settled and delivery in self._pending_deliveries:
                     self._pending_deliveries.remove(delivery)

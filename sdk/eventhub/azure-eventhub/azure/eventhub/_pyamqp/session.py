@@ -273,9 +273,21 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                         TransferFrame(payload=b"***", **frame),
                         extra=network_trace_params,
                     )
-                self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                    self.channel, TransferFrame(payload=fragment, **frame)
-                )
+                try:
+                    self._connection._process_outgoing_frame(  # pylint: disable=protected-access
+                        self.channel, TransferFrame(payload=fragment, **frame)
+                    )
+                    connection_error = getattr(self._connection, "_error", None)
+                    if isinstance(connection_error, Exception):
+                        raise connection_error
+                except Exception:
+                    delivery.transfer_state = SessionTransferState.ERROR
+                    try:
+                        self._connection._disconnect()  # pylint: disable=protected-access
+                    finally:
+                        if self.state != SessionState.DISCARDING:
+                            self._set_state(SessionState.DISCARDING)
+                    raise
                 delivery.frame["payload"] = payload[len(fragment) :] if more else b""
                 delivery.frame["more"] = more
                 self.next_outgoing_id += 1
