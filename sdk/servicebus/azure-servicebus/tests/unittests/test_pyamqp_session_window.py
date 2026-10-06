@@ -1,6 +1,6 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from threading import Lock
+from threading import RLock
 from threading import Event
 from unittest.mock import AsyncMock, MagicMock
 
@@ -292,7 +292,7 @@ def _sender(monkeypatch, async_session):
     sender.state = LinkState.ATTACHED
     sender.send_settle_mode = SenderSettleMode.Mixed
     if not async_session:
-        sender.lock = Lock()
+        sender.lock = RLock()
     return sender, session, connection
 
 
@@ -523,6 +523,101 @@ async def test_cancel_async_delivery_during_replenishment_flow(monkeypatch, fina
     else:
         assert transfers[-1].aborted and transfers[-1].delivery_id == transfers[0].delivery_id
         assert len([frame for frame in transfers if frame.aborted]) == 1
+
+
+@pytest.mark.asyncio
+async def test_async_early_disposition_during_replenishment(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+    reasons = []
+
+    async def completed(reason, state):
+        reasons.append((reason, state))
+
+    started, release = asyncio.Event(), asyncio.Event()
+    send = connection._process_outgoing_frame
+
+    async def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            started.set()
+            await release.wait()
+        await send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    task = asyncio.create_task(sender.send_transfer(
+        MagicMock(_code=0, payload=b"accepted"), settled=False, on_send_complete=completed
+    ))
+    try:
+        await asyncio.wait_for(started.wait(), 5)
+        delivery = sender._pending_deliveries[0]
+        assert not delivery.sent
+        await sender._incoming_disposition([None, delivery.frame["delivery_id"], None, True, b"accepted"])
+        assert delivery.early_disposition_received and delivery in sender._pending_deliveries
+    finally:
+        release.set()
+    assert await task is delivery
+    assert reasons == [(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")]
+    assert delivery.sent and delivery not in sender._pending_deliveries
+
+
+def test_threaded_early_disposition_during_replenishment(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, False)
+    connection._remote_max_frame_size = 1024
+    reasons = []
+
+    def completed(reason, state):
+        reasons.append((reason, state))
+
+    started, release = Event(), Event()
+    send = connection._process_outgoing_frame
+
+    def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            started.set()
+            assert release.wait(5)
+        send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        task = pool.submit(sender.send_transfer, MagicMock(_code=0, payload=b"accepted"),
+                           settled=False, on_send_complete=completed)
+        try:
+            assert started.wait(5)
+            delivery = sender._pending_deliveries[0]
+            assert not delivery.sent
+            disposition = pool.submit(
+                sender._incoming_disposition, [None, delivery.frame["delivery_id"], None, True, b"accepted"]
+            )
+            assert not disposition.done()
+        finally:
+            release.set()
+        disposition.result(timeout=5)
+        assert task.result(timeout=5) is delivery
+    assert reasons == [(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")]
+    assert delivery.sent and delivery not in sender._pending_deliveries
+
+
+def test_reentrant_disposition_during_sync_replenishment(monkeypatch):
+    sender, session, connection = _sender(monkeypatch, False)
+    connection._remote_max_frame_size = 1024
+    reasons = []
+    send = connection._process_outgoing_frame
+
+    def send_frame(channel, frame):
+        if isinstance(frame, FlowFrame):
+            delivery = sender._pending_deliveries[0]
+            assert not delivery.sent
+            sender._incoming_disposition([None, delivery.frame["delivery_id"], None, True, b"accepted"])
+            assert delivery.early_disposition_received
+        send(channel, frame)
+
+    connection._process_outgoing_frame = send_frame
+    delivery = sender.send_transfer(
+        MagicMock(_code=0, payload=b"accepted"), settled=False,
+        on_send_complete=lambda reason, state: reasons.append((reason, state)),
+    )
+    assert delivery.sent and delivery not in sender._pending_deliveries
+    assert reasons == [(LinkDeliverySettleReason.DISPOSITION_RECEIVED, b"accepted")]
 
 
 @pytest.mark.parametrize("async_session", [False, True])

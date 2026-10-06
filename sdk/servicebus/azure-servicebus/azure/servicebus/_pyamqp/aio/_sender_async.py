@@ -22,6 +22,8 @@ class PendingDelivery(object):
         self.message = kwargs.get("message")
         self.sent = False
         self.frame = None
+        self.early_disposition_received = False
+        self.early_disposition_state = None
         self.abort_pending = False
         self.abort_requested = False
         self.cancel_requested = False
@@ -124,6 +126,9 @@ class SenderLink(Link):
             if delivery.settled:
                 await delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
                 sent_and_settled = True
+            elif delivery.early_disposition_received:
+                await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
+                sent_and_settled = True
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
         return sent_and_settled
@@ -134,10 +139,14 @@ class SenderLink(Link):
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
         for delivery in list(self._pending_deliveries):
-            if delivery.sent and delivery.frame["delivery_id"] in settled_ids:
-                await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
-                if delivery in self._pending_deliveries:
-                    self._pending_deliveries.remove(delivery)
+            if delivery.frame and delivery.frame.get("delivery_id") in settled_ids:
+                if not delivery.sent:
+                    delivery.early_disposition_received = True
+                    delivery.early_disposition_state = frame[4]
+                else:
+                    await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
+                    if delivery in self._pending_deliveries:
+                        self._pending_deliveries.remove(delivery)
 
     async def _remove_pending_deliveries(self):
         futures = []
