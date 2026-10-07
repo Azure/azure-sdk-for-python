@@ -3,8 +3,6 @@
 ## 1.8.11 (2026-10-05)
 
 ### Other Changes
-- Update OpenTelemetry SDK dependencies to 1.45 and instrumentations to 0.66b0, and require
-  `azure-monitor-opentelemetry-exporter` 1.0.0b58 or later.
 - Corrected the package metadata to require Python 3.10 or later, matching the existing support policy
   ([#49200](https://github.com/Azure/azure-sdk-for-python/pull/49200))
 
