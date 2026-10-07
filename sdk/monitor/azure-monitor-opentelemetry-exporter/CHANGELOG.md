@@ -13,7 +13,7 @@
   ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
 
 ### Other Changes
-- Update the OpenTelemetry API and SDK dependencies to 1.45.
+- Support OpenTelemetry API and SDK versions 1.44 and 1.45.
 
 ## 1.0.0b57 (2026-09-02)
 
