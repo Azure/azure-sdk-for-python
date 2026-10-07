@@ -387,7 +387,7 @@ def pipeline(
                                 f"Node output '{value.node}.{value.name}' cannot bind to multiple pipeline outputs."
                             )
                         node_output["path"] = f"${{{{parent.outputs.{name}}}}}"
-                        job_outputs[name] = {"type": value.type, "mode": value.mode}
+                        job_outputs[name] = {"jobOutputType": value.type, "mode": value.mode}
 
                 job = PipelineJob(
                     display_name=func.__name__,

@@ -639,7 +639,7 @@ def _assert_dsl_request(request: HttpRequest, uploaded: dict[str, str]) -> None:
             "computeId": _COMPUTE,
             "settings": {"default_compute": _COMPUTE, "force_rerun": True},
             "inputs": {"text": {"jobInputType": "literal", "value": "hello"}},
-            "outputs": {"receipt": {"type": "uri_file", "mode": "ReadWriteMount"}},
+            "outputs": {"receipt": {"jobOutputType": "uri_file", "mode": "ReadWriteMount"}},
             "jobs": {
                 "produce": {
                     "type": "command",
