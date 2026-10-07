@@ -4675,11 +4675,11 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype type: str
     :ivar misalignment:
     :vartype misalignment: ~azure.ai.projects.models.MisalignmentErrorDetailsResource
-    :ivar details:
+    :ivar details: Additional errors that contributed to this failure.
     :vartype details: list[~azure.ai.projects.models.ApiError]
-    :ivar additional_info:
+    :ivar additional_info: Additional structured information about the failure.
     :vartype additional_info: dict[str, any]
-    :ivar debug_info:
+    :ivar debug_info: Diagnostic information supplied by the service for troubleshooting.
     :vartype debug_info: dict[str, any]
     """
 
@@ -4693,12 +4693,15 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         visibility=["read", "create", "update", "delete", "query"]
     )
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional errors that contributed to this failure."""
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Additional structured information about the failure."""
     debug_info: Optional[dict[str, Any]] = rest_field(
         name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Diagnostic information supplied by the service for troubleshooting."""
 
     @overload
     def __init__(
@@ -4892,6 +4895,123 @@ class ArtifactProfile(_Model):  # pylint: disable=docstring-keyword-should-match
         *,
         category: Union[str, "_models.FoundryModelArtifactProfileCategory"],
         signals: Optional[list[Union[str, "_models.FoundryModelArtifactProfileSignal"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AudioTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AudioTranscription.
+
+    :ivar model: The model to use for transcription. Current options are ``whisper-1``,
+     ``gpt-transcribe``, ``gpt-live-transcribe``, ``gpt-4o-mini-transcribe``,
+     ``gpt-4o-mini-transcribe-2025-12-15``, ``gpt-4o-transcribe``, ``gpt-4o-transcribe-diarize``,
+     and ``gpt-realtime-whisper``. Use ``gpt-4o-transcribe-diarize`` when you need diarization with
+     speaker labels. Is one of the following types: Literal["whisper-1"], Literal["gpt-transcribe"],
+     Literal["gpt-live-transcribe"], Literal["gpt-4o-mini-transcribe"],
+     Literal["gpt-4o-mini-transcribe-2025-12-15"], Literal["gpt-4o-transcribe"],
+     Literal["gpt-4o-transcribe-diarize"], Literal["gpt-realtime-whisper"], str
+    :vartype model: str or str or str or str or str or str or str or str or str
+    :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
+     accuracy and latency.
+    :vartype language: str
+    :ivar languages: Possible languages of the input audio, in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ format. Supported by
+     ``gpt-transcribe`` and ``gpt-live-transcribe``.
+    :vartype languages: list[str]
+    :ivar keywords: Words or phrases to guide transcription of the input audio. Supported by
+     ``gpt-transcribe`` and ``gpt-live-transcribe``.
+    :vartype keywords: list[str]
+    :ivar prompt: An optional text to guide the model's style or continue a previous audio segment.
+     For ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_.
+     For ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a
+     free text string, for example "expect words related to technology". Prompt is not supported
+     with ``gpt-realtime-whisper`` in GA Realtime sessions.
+    :vartype prompt: str
+    :ivar delay: Controls how long the model waits before emitting transcription text. Higher
+     values can improve transcription accuracy at the cost of latency. Only supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions. Is one of the following types:
+     Literal["minimal"], Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
+    :vartype delay: str or str or str or str or str
+    """
+
+    model: Optional[
+        Union[
+            Literal["whisper-1"],
+            Literal["gpt-transcribe"],
+            Literal["gpt-live-transcribe"],
+            Literal["gpt-4o-mini-transcribe"],
+            Literal["gpt-4o-mini-transcribe-2025-12-15"],
+            Literal["gpt-4o-transcribe"],
+            Literal["gpt-4o-transcribe-diarize"],
+            Literal["gpt-realtime-whisper"],
+            str,
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model to use for transcription. Current options are ``whisper-1``, ``gpt-transcribe``,
+     ``gpt-live-transcribe``, ``gpt-4o-mini-transcribe``, ``gpt-4o-mini-transcribe-2025-12-15``,
+     ``gpt-4o-transcribe``, ``gpt-4o-transcribe-diarize``, and ``gpt-realtime-whisper``. Use
+     ``gpt-4o-transcribe-diarize`` when you need diarization with speaker labels. Is one of the
+     following types: Literal[\"whisper-1\"], Literal[\"gpt-transcribe\"],
+     Literal[\"gpt-live-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"],
+     Literal[\"gpt-4o-mini-transcribe-2025-12-15\"], Literal[\"gpt-4o-transcribe\"],
+     Literal[\"gpt-4o-transcribe-diarize\"], Literal[\"gpt-realtime-whisper\"], str"""
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language of the input audio. Supplying the input language in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
+     accuracy and latency."""
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Possible languages of the input audio, in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ format. Supported by
+     ``gpt-transcribe`` and ``gpt-live-transcribe``."""
+    keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Words or phrases to guide transcription of the input audio. Supported by ``gpt-transcribe`` and
+     ``gpt-live-transcribe``."""
+    prompt: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional text to guide the model's style or continue a previous audio segment. For
+     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
+     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
+     text string, for example \"expect words related to technology\". Prompt is not supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions."""
+    delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls how long the model waits before emitting transcription text. Higher values can improve
+     transcription accuracy at the cost of latency. Only supported with ``gpt-realtime-whisper`` in
+     GA Realtime sessions. Is one of the following types: Literal[\"minimal\"], Literal[\"low\"],
+     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Optional[
+            Union[
+                Literal["whisper-1"],
+                Literal["gpt-transcribe"],
+                Literal["gpt-live-transcribe"],
+                Literal["gpt-4o-mini-transcribe"],
+                Literal["gpt-4o-mini-transcribe-2025-12-15"],
+                Literal["gpt-4o-transcribe"],
+                Literal["gpt-4o-transcribe-diarize"],
+                Literal["gpt-realtime-whisper"],
+                str,
+            ]
+        ] = None,
+        language: Optional[str] = None,
+        languages: Optional[list[str]] = None,
+        keywords: Optional[list[str]] = None,
+        prompt: Optional[str] = None,
+        delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]] = None,
     ) -> None: ...
 
     @overload
@@ -7679,10 +7799,10 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     """The request to create a telephony binding.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CreateTeamsPhoneExtensionTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
+    CreateTeamsPhoneExtensibilityTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
 
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -7692,7 +7812,8 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
 
     __mapping__: dict[str, _Model] = {}
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7718,18 +7839,18 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class CreateTeamsPhoneExtensionTelephonyBindingRequest(
-    CreateTelephonyBindingRequest, discriminator="teams_phone_extension"
+class CreateTeamsPhoneExtensibilityTelephonyBindingRequest(
+    CreateTelephonyBindingRequest, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The request to create a Microsoft Teams Phone Extension binding.
+    """The request to create a Microsoft Teams Phone extensibility binding.
 
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
     :ivar label: An optional display label for the binding.
     :vartype label: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -7737,8 +7858,9 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7763,7 +7885,7 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -7772,13 +7894,13 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
-     inbound telephony binding is required. Required.
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
+     No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
-     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
-     connection, provide the Teams Resource Account object ID. The identity type is inferred from
-     the connection category; originating does not change inbound routing. Required.
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     extensibility connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
     :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
@@ -7800,11 +7922,11 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
-     binding is required. Required."""
+     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
-     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     E.164 phone number. For an Azure Communication Services / Teams Phone extensibility connection,
      provide the Teams Resource Account object ID. The identity type is inferred from the connection
      category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -18651,6 +18773,192 @@ class RealtimeReasoning(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class RealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response resource.
+
+    :ivar id: The unique ID of the response, will look like ``resp_1234``.
+    :vartype id: str
+    :ivar object: The object type, must be ``realtime.response``. Default value is
+     "realtime.response".
+    :vartype object: str
+    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
+     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
+     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
+    :vartype status: str or str or str or str or str
+    :ivar status_details: Additional details about the status.
+    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar output: The list of output items generated by the response.
+    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
+    :ivar metadata:
+    :vartype metadata: ~azure.ai.projects.models.Metadata
+    :ivar audio: Configuration for audio output.
+    :vartype audio: ~azure.ai.projects.models.RealtimeResponseAudio
+    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
+     session will maintain a conversation context and append new Items to the Conversation, thus
+     output from previous turns (text and audio tokens) will become the input for later turns.
+    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
+    :ivar conversation_id: Which conversation the response is added to, determined by the
+     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
+     added to the default conversation and the value of ``conversation_id`` will be an id like
+     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
+     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
+     response will be added to the default conversation.
+    :vartype conversation_id: str
+    :ivar output_modalities: The set of modalities the model used to respond, currently the only
+     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
+     transcript. Setting the output to mode ``text`` will disable audio output from the model.
+    :vartype output_modalities: list[str or str]
+    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
+     inclusive of tool calls, that was used in this response. Is either a int type or a
+     Literal["inf"] type.
+    :vartype max_output_tokens: int or str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the response, will look like ``resp_1234``."""
+    object: Optional[Literal["realtime.response"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
+    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
+     ``in_progress``). Is one of the following types: Literal[\"completed\"],
+     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
+    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional details about the status."""
+    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of output items generated by the response."""
+    metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    audio: Optional["_models.RealtimeResponseAudio"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for audio output."""
+    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
+     maintain a conversation context and append new Items to the Conversation, thus output from
+     previous turns (text and audio tokens) will become the input for later turns."""
+    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Which conversation the response is added to, determined by the ``conversation`` field in the
+     ``response.create`` event. If ``auto``, the response will be added to the default conversation
+     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
+     response will not be added to any conversation and the value of ``conversation_id`` will be
+     ``null``. If responses are being triggered automatically by VAD the response will be added to
+     the default conversation."""
+    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The set of modalities the model used to respond, currently the only possible values are
+     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
+     output to mode ``text`` will disable audio output from the model."""
+    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
+     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.response"]] = None,
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
+        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        output: Optional[list["_models.RealtimeConversationItem"]] = None,
+        metadata: Optional["_models.Metadata"] = None,
+        audio: Optional["_models.RealtimeResponseAudio"] = None,
+        usage: Optional["_models.RealtimeResponseUsage"] = None,
+        conversation_id: Optional[str] = None,
+        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
+        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RealtimeResponseAudio(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """RealtimeResponseAudio.
+
+    :ivar output:
+    :vartype output: ~azure.ai.projects.models.RealtimeResponseAudioOutput
+    """
+
+    output: Optional["_models.RealtimeResponseAudioOutput"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        output: Optional["_models.RealtimeResponseAudioOutput"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RealtimeResponseAudioOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """RealtimeResponseAudioOutput.
+
+    :ivar format:
+    :vartype format: ~azure.ai.projects.models.RealtimeAudioFormats
+    :ivar voice: Known values are: "alloy", "ash", "ballad", "coral", "echo", "sage", "shimmer",
+     "verse", "marin", and "cedar".
+    :vartype voice: str or ~azure.ai.projects.models.VoiceIdsShared
+    """
+
+    format: Optional["_models.RealtimeAudioFormats"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    voice: Optional[Union[str, "_models.VoiceIdsShared"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"alloy\", \"ash\", \"ballad\", \"coral\", \"echo\", \"sage\", \"shimmer\",
+     \"verse\", \"marin\", and \"cedar\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: Optional["_models.RealtimeAudioFormats"] = None,
+        voice: Optional[Union[str, "_models.VoiceIdsShared"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RealtimeResponseStatusDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseStatusDetails.
 
@@ -22601,16 +22909,16 @@ class SessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-
     """Session defaults applied to sessions created for a hosted agent version.
 
     :ivar idle_timeout_seconds: The idle duration, in seconds, before a session's sandbox is
-     suspended. Optional — when unset, the server default of 900 seconds is used. Must be between
-     120 and 3600 seconds (inclusive).
+     suspended. When omitted, the server defaults to 900 seconds. Must be between 120 and 14400
+     seconds (4 hours).
     :vartype idle_timeout_seconds: ~datetime.timedelta
     """
 
     idle_timeout_seconds: Optional[datetime.timedelta] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
     )
-    """The idle duration, in seconds, before a session's sandbox is suspended. Optional — when unset,
-     the server default of 900 seconds is used. Must be between 120 and 3600 seconds (inclusive)."""
+    """The idle duration, in seconds, before a session's sandbox is suspended. When omitted, the
+     server defaults to 900 seconds. Must be between 120 and 14400 seconds (4 hours)."""
 
     @overload
     def __init__(
@@ -23799,12 +24107,12 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     """A telephony binding owned by a voice agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensionTelephonyBinding, TwilioTelephonyBinding
+    TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -23821,7 +24129,8 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23856,10 +24165,10 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class TeamsPhoneExtensionTelephonyBinding(
-    TelephonyBinding, discriminator="teams_phone_extension"
+class TeamsPhoneExtensibilityTelephonyBinding(
+    TelephonyBinding, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A Microsoft Teams Phone Extension binding owned by a voice agent.
+    """A Microsoft Teams Phone extensibility binding owned by a voice agent.
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
@@ -23872,9 +24181,9 @@ class TeamsPhoneExtensionTelephonyBinding(
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
      provider. Required.
     :vartype incoming_call_url: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -23882,8 +24191,9 @@ class TeamsPhoneExtensionTelephonyBinding(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23911,19 +24221,19 @@ class TeamsPhoneExtensionTelephonyBinding(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A telephony binding returned in a list, including its entity tag.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensionTelephonyBindingListItem, TwilioTelephonyBindingListItem
+    TeamsPhoneExtensibilityTelephonyBindingListItem, TwilioTelephonyBindingListItem
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -23943,7 +24253,8 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23981,10 +24292,10 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class TeamsPhoneExtensionTelephonyBindingListItem(
-    TelephonyBindingListItem, discriminator="teams_phone_extension"
+class TeamsPhoneExtensibilityTelephonyBindingListItem(
+    TelephonyBindingListItem, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A Microsoft Teams Phone Extension binding returned in a list, including its entity tag.
+    """A Microsoft Teams Phone extensibility binding returned in a list, including its entity tag.
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
@@ -24000,9 +24311,9 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
     :vartype etag: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -24010,8 +24321,9 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24039,7 +24351,7 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class TeamsTelephonyTransferDestination(
@@ -24115,13 +24427,13 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
-     inbound telephony binding is required. Required.
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
+     No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
-     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
-     connection, provide the Teams Resource Account object ID. The identity type is inferred from
-     the connection category; originating does not change inbound routing. Required.
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     extensibility connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
     :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
@@ -24178,11 +24490,11 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
-     binding is required. Required."""
+     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
-     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     E.164 phone number. For an Azure Communication Services / Teams Phone extensibility connection,
      provide the Teams Resource Account object ID. The identity type is inferred from the connection
      category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24378,7 +24690,7 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
      "telephony.call.transfer", "telephony.call.hangup", and "telephony.call.disconnect".
     :vartype name: str or ~azure.ai.projects.models.TelephonyCallLifecycleEventName
     :ivar source: The component that supplied the observation. Required. Known values are:
-     "gateway", "teams_phone_extension", "twilio", and "voice_agent".
+     "gateway", "teams_phone_extensibility", "twilio", and "voice_agent".
     :vartype source: str or ~azure.ai.projects.models.TelephonyCallLifecycleEventSource
     :ivar outcome: The outcome of the observed lifecycle operation. Required. Known values are:
      "observed", "started", "succeeded", "failed", "rejected", and "cancelled".
@@ -24429,7 +24741,7 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The component that supplied the observation. Required. Known values are: \"gateway\",
-     \"teams_phone_extension\", \"twilio\", and \"voice_agent\"."""
+     \"teams_phone_extensibility\", \"twilio\", and \"voice_agent\"."""
     outcome: Union[str, "_models.TelephonyCallLifecycleEventOutcome"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24505,14 +24817,14 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
     :ivar caller_number: The caller's phone number, when supplied by the provider.
     :vartype caller_number: str
-    :ivar provider_number: The Teams Phone Extension or Twilio number that received the call.
+    :ivar provider_number: The Teams Phone extensibility or Twilio number that received the call.
     :vartype provider_number: str
     :ivar status: The lifecycle status of the call. Required. Known values are: "in_progress",
      "success", and "failed".
@@ -24571,13 +24883,14 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller's phone number, when supplied by the provider."""
     provider_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Teams Phone Extension or Twilio number that received the call."""
+    """The Teams Phone extensibility or Twilio number that received the call."""
     status: Union[str, "_models.TelephonyCallStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24691,14 +25004,14 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
     :ivar caller_number: The caller's phone number, when supplied by the provider.
     :vartype caller_number: str
-    :ivar provider_number: The Teams Phone Extension or Twilio number that received the call.
+    :ivar provider_number: The Teams Phone extensibility or Twilio number that received the call.
     :vartype provider_number: str
     :ivar status: The lifecycle status of the call. Required. Known values are: "in_progress",
      "success", and "failed".
@@ -24748,13 +25061,14 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller's phone number, when supplied by the provider."""
     provider_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Teams Phone Extension or Twilio number that received the call."""
+    """The Teams Phone extensibility or Twilio number that received the call."""
     status: Union[str, "_models.TelephonyCallStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -27045,11 +27359,11 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
      clear it.
     :vartype label: str
     :ivar connection_name: The replacement Foundry connection name. This property is valid only for
-     a Teams Phone Extension binding; a Twilio binding's connection is immutable.
+     a Teams Phone extensibility binding; a Twilio binding's connection is immutable.
     :vartype connection_name: str
-    :ivar phone_number: The replacement Teams Phone Extension display phone number. Omit it to
+    :ivar phone_number: The replacement Teams Phone extensibility display phone number. Omit it to
      preserve the current value; use null to clear it. This property is valid only for a Teams Phone
-     Extension binding.
+     extensibility binding.
     :vartype phone_number: str
     """
 
@@ -27061,10 +27375,11 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     """The replacement display label. Omit it to preserve the current value; use null to clear it."""
     connection_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement Foundry connection name. This property is valid only for a Teams Phone
-     Extension binding; a Twilio binding's connection is immutable."""
+     extensibility binding; a Twilio binding's connection is immutable."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Teams Phone Extension display phone number. Omit it to preserve the current
-     value; use null to clear it. This property is valid only for a Teams Phone Extension binding."""
+    """The replacement Teams Phone extensibility display phone number. Omit it to preserve the current
+     value; use null to clear it. This property is valid only for a Teams Phone extensibility
+     binding."""
 
     @overload
     def __init__(
@@ -29081,7 +29396,7 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceAgentInputTranscription(AudioTranscription):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
     options with the Azure and MAI transcription models, custom speech models, and phrase hints.
 
@@ -29118,30 +29433,6 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
     :vartype phrase_list: list[str]
     """
 
-    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language of the input audio. Supplying the input language in `ISO-639-1
-     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
-     accuracy and latency."""
-    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Possible languages of the input audio, in `ISO-639-1
-     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ format. Supported by
-     ``gpt-transcribe`` and ``gpt-live-transcribe``."""
-    keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Words or phrases to guide transcription of the input audio. Supported by ``gpt-transcribe`` and
-     ``gpt-live-transcribe``."""
-    prompt: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional text to guide the model's style or continue a previous audio segment. For
-     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
-     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
-     text string, for example \"expect words related to technology\". Prompt is not supported with
-     ``gpt-realtime-whisper`` in GA Realtime sessions."""
-    delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls how long the model waits before emitting transcription text. Higher values can improve
-     transcription accuracy at the cost of latency. Only supported with ``gpt-realtime-whisper`` in
-     GA Realtime sessions. Is one of the following types: Literal[\"minimal\"], Literal[\"low\"],
-     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
     model: Union[str, "_models.VoiceAgentInputTranscriptionModel"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29326,10 +29617,14 @@ class VoiceAgentLlmInterimResponseConfig(
 class VoiceAgentMcpTool(
     VoiceAgentTool, discriminator="mcp"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An MCP tool available to a voice agent.
+    """An MCP tool available to a voice agent. Server endpoints use ``server_url``; connector and
+    tunnel identifiers are not supported.
 
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
+    :vartype server_url: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -29356,8 +29651,6 @@ class VoiceAgentMcpTool(
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. Default value is "mcp".
     :vartype type: str
-    :ivar server_url: The URL for the MCP server.
-    :vartype server_url: str
     :ivar response_scheduling: When the MCP invocation creates a follow-up response. Defaults to
      ``when_idle``. Known values are: "silent", "when_idle", "interrupt", and "skip_if_busy".
     :vartype response_scheduling: str or ~azure.ai.projects.models.VoiceAgentToolResponseScheduling
@@ -29365,6 +29658,9 @@ class VoiceAgentMcpTool(
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -29394,8 +29690,6 @@ class VoiceAgentMcpTool(
     """Deprecated. This property is deprecated and will be removed in a future version."""
     type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"mcp\"."""
-    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server."""
     response_scheduling: Optional[Union[str, "_models.VoiceAgentToolResponseScheduling"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29407,6 +29701,7 @@ class VoiceAgentMcpTool(
         self,
         *,
         server_label: str,
+        server_url: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -29416,7 +29711,6 @@ class VoiceAgentMcpTool(
         defer_loading: Optional[bool] = None,
         project_connection_id: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-        server_url: Optional[str] = None,
         response_scheduling: Optional[Union[str, "_models.VoiceAgentToolResponseScheduling"]] = None,
     ) -> None: ...
 
@@ -29464,114 +29758,7 @@ class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties shared by realtime responses returned by the voice-agent service.
-
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar metadata:
-    :vartype metadata: ~azure.ai.projects.models.Metadata
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the response, will look like ``resp_1234``."""
-    object: Optional[Literal["realtime.response"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
-     ``in_progress``). Is one of the following types: Literal[\"completed\"],
-     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional details about the status."""
-    metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
-     maintain a conversation context and append new Items to the Conversation, thus output from
-     previous turns (text and audio tokens) will become the input for later turns."""
-    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Which conversation the response is added to, determined by the ``conversation`` field in the
-     ``response.create`` event. If ``auto``, the response will be added to the default conversation
-     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
-     response will not be added to any conversation and the value of ``conversation_id`` will be
-     ``null``. If responses are being triggered automatically by VAD the response will be added to
-     the default conversation."""
-    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The set of modalities the model used to respond, currently the only possible values are
-     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
-     output to mode ``text`` will disable audio output from the model."""
-    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
-     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        metadata: Optional["_models.Metadata"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        conversation_id: Optional[str] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceAgentRealtimeResponse(
-    VoiceAgentRealtimeResponseBase
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceAgentRealtimeResponse(RealtimeResponse):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A live realtime response returned by the voice-agent service in both ``response.created`` and
     ``response.done`` events.
 
@@ -29586,6 +29773,8 @@ class VoiceAgentRealtimeResponse(
     :vartype status: str or str or str or str or str
     :ivar status_details: Additional details about the status.
     :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar output: The list of output items generated by the response.
+    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar metadata:
     :vartype metadata: ~azure.ai.projects.models.Metadata
     :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
@@ -29610,8 +29799,6 @@ class VoiceAgentRealtimeResponse(
     :ivar audio: The audio configuration used by the live response, including flat voice provider,
      locale, and format fields under ``output``.
     :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
-    :ivar output: The items produced by the live response.
-    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
     """
 
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
@@ -29619,10 +29806,6 @@ class VoiceAgentRealtimeResponse(
     )
     """The audio configuration used by the live response, including flat voice provider, locale, and
      format fields under ``output``."""
-    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The items produced by the live response."""
 
     @overload
     def __init__(
@@ -29632,13 +29815,13 @@ class VoiceAgentRealtimeResponse(
         object: Optional[Literal["realtime.response"]] = None,
         status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
         status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        output: Optional[list["_models.RealtimeConversationItem"]] = None,
         metadata: Optional["_models.Metadata"] = None,
         usage: Optional["_models.RealtimeResponseUsage"] = None,
         conversation_id: Optional[str] = None,
         output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         audio: Optional["_models.VoiceResponseAudio"] = None,
-        output: Optional[list["_models.RealtimeConversationItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -29690,12 +29873,15 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
     :vartype conversation: str or str or str
     :ivar metadata:
     :vartype metadata: ~azure.ai.projects.models.Metadata
+    :ivar input: Input items to include in the prompt for the model. Using this field creates a new
+     context for this Response instead of using the default conversation. An empty array ``[]`` will
+     clear the context for this Response. Note that this can include references to items that
+     previously appeared in the session using their id.
+    :vartype input: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar output_modalities: Modalities that the response may return.
     :vartype output_modalities: list[str or ~azure.ai.projects.models.VoiceOutputModality]
     :ivar audio: Response-specific audio settings.
     :vartype audio: ~azure.ai.projects.models.PickPropertiesVoiceAgentAudioConfig
-    :ivar input: Conversation items used as inline response input.
-    :vartype input: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar pre_generated_assistant_message: A pre-generated assistant message used to begin the
      response.
     :vartype pre_generated_assistant_message: ~azure.ai.projects.models.RealtimeConversationItem
@@ -29744,6 +29930,13 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
      response which will not add items to default conversation. Is one of the following types:
      Literal[\"auto\"], Literal[\"none\"], str"""
     metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input items to include in the prompt for the model. Using this field creates a new context for
+     this Response instead of using the default conversation. An empty array ``[]`` will clear the
+     context for this Response. Note that this can include references to items that previously
+     appeared in the session using their id."""
     output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29752,10 +29945,6 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response-specific audio settings."""
-    input: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Conversation items used as inline response input."""
     pre_generated_assistant_message: Optional["_models.RealtimeConversationItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29779,9 +29968,9 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         conversation: Optional[Union[Literal["auto"], Literal["none"], str]] = None,
         metadata: Optional["_models.Metadata"] = None,
+        input: Optional[list["_models.RealtimeConversationItem"]] = None,
         output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = None,
         audio: Optional["_models.PickPropertiesVoiceAgentAudioConfig"] = None,
-        input: Optional[list["_models.RealtimeConversationItem"]] = None,
         pre_generated_assistant_message: Optional["_models.RealtimeConversationItem"] = None,
         interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
     ) -> None: ...
@@ -32029,94 +32218,15 @@ class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-
         self.right: Literal["agent"] = "agent"
 
 
-class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties shared by persisted voice responses.
-
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    """
-
-    object: Optional[Literal["realtime.response"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
-     ``in_progress``). Is one of the following types: Literal[\"completed\"],
-     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional details about the status."""
-    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
-     maintain a conversation context and append new Items to the Conversation, thus output from
-     previous turns (text and audio tokens) will become the input for later turns."""
-    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The set of modalities the model used to respond, currently the only possible values are
-     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
-     output to mode ``text`` will disable audio output from the model."""
-    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
-     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceResponse(RealtimeResponse):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persisted voice response representing one model inference turn within a conversation. In list
     results the ``output`` projection may be omitted; retrieve the full response (``GET
     .../responses/{response_id}``) or the paged response-items route (``GET
     .../responses/{response_id}/items``) for its output items. ``created_at``/``completed_at`` are
     Foundry durable ordering extensions.
 
+    :ivar id: The unique ID of the response, will look like ``resp_1234``.
+    :vartype id: str
     :ivar object: The object type, must be ``realtime.response``. Default value is
      "realtime.response".
     :vartype object: str
@@ -32126,10 +32236,23 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     :vartype status: str or str or str or str or str
     :ivar status_details: Additional details about the status.
     :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar output: The list of output items generated by the response.
+    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
+    :ivar metadata:
+    :vartype metadata: ~azure.ai.projects.models.Metadata
+    :ivar audio: Configuration for audio output.
+    :vartype audio: ~azure.ai.projects.models.RealtimeResponseAudio
     :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
      session will maintain a conversation context and append new Items to the Conversation, thus
      output from previous turns (text and audio tokens) will become the input for later turns.
     :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
+    :ivar conversation_id: Which conversation the response is added to, determined by the
+     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
+     added to the default conversation and the value of ``conversation_id`` will be an id like
+     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
+     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
+     response will be added to the default conversation.
+    :vartype conversation_id: str
     :ivar output_modalities: The set of modalities the model used to respond, currently the only
      possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
      transcript. Setting the output to mode ``text`` will disable audio output from the model.
@@ -32138,20 +32261,6 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
      inclusive of tool calls, that was used in this response. Is either a int type or a
      Literal["inf"] type.
     :vartype max_output_tokens: int or str
-    :ivar id: The unique id of the response. Required.
-    :vartype id: str
-    :ivar output: The output items produced by the response. May be omitted in list results;
-     retrieve the full response (GET .../responses/{response_id}) or use the paged response-items
-     route (GET .../responses/{response_id}/items) for its output items. Each item's ``response_id``
-     also links it back to this response in the conversation-level items list.
-    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
-    :ivar conversation_id: The id of the conversation this response belongs to. Required.
-    :vartype conversation_id: str
-    :ivar audio: The audio configuration used for the response, including the voice and audio
-     format used for output.
-    :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
-    :ivar metadata: A set of key-value pairs attached to the response.
-    :vartype metadata: dict[str, str]
     :ivar temperature: The sampling temperature used for the response.
     :vartype temperature: float
     :ivar created_at: The Unix timestamp (in seconds) for when the response was created.
@@ -32160,24 +32269,6 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     :vartype completed_at: ~datetime.datetime
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique id of the response. Required."""
-    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output items produced by the response. May be omitted in list results; retrieve the full
-     response (GET .../responses/{response_id}) or use the paged response-items route (GET
-     .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
-     it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The id of the conversation this response belongs to. Required."""
-    audio: Optional["_models.VoiceResponseAudio"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The audio configuration used for the response, including the voice and audio format used for
-     output."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A set of key-value pairs attached to the response."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sampling temperature used for the response."""
     created_at: Optional[datetime.datetime] = rest_field(
@@ -32193,17 +32284,17 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        conversation_id: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         object: Optional[Literal["realtime.response"]] = None,
         status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
         status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        output: Optional[list["_models.RealtimeConversationItem"]] = None,
+        metadata: Optional["_models.Metadata"] = None,
+        audio: Optional["_models.RealtimeResponseAudio"] = None,
         usage: Optional["_models.RealtimeResponseUsage"] = None,
+        conversation_id: Optional[str] = None,
         output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-        output: Optional[list["_models.RealtimeConversationItem"]] = None,
-        audio: Optional["_models.VoiceResponseAudio"] = None,
-        metadata: Optional[dict[str, str]] = None,
         temperature: Optional[float] = None,
         created_at: Optional[datetime.datetime] = None,
         completed_at: Optional[datetime.datetime] = None,
