@@ -978,7 +978,7 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
         assert (snapshot / "steps" / "helpers.py").is_file()
         assert (snapshot / "steps" / "greeting.txt").read_text(encoding="utf-8").strip() == "hello"
         assert job.jobs["produce"]["component"]["command"] == (
-            f'python {_RUNNER_NAME} steps.components produce text:str,message:str '
+            f"python {_RUNNER_NAME} steps.components produce text:str,message:str "
             '"${{inputs.text}}" "${{outputs.message}}"'
         )
         assert job.jobs["consume"]["inputs"]["message"]["value"] == "${{parent.jobs.produce.outputs.message}}"
@@ -989,8 +989,15 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
         message = tmp_path / "message.txt"
         receipt = tmp_path / "receipt.txt"
         subprocess.run(
-            [sys.executable, str(snapshot / _RUNNER_NAME), "steps.components", "produce", "text:str,message:str",
-             " world ", str(message)],
+            [
+                sys.executable,
+                str(snapshot / _RUNNER_NAME),
+                "steps.components",
+                "produce",
+                "text:str,message:str",
+                " world ",
+                str(message),
+            ],
             cwd=tmp_path,
             env=environment,
             check=True,
@@ -998,8 +1005,15 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
             text=True,
         )
         subprocess.run(
-            [sys.executable, str(snapshot / _RUNNER_NAME), "steps.components", "consume",
-             "message:str,receipt:str", str(message), str(receipt)],
+            [
+                sys.executable,
+                str(snapshot / _RUNNER_NAME),
+                "steps.components",
+                "consume",
+                "message:str,receipt:str",
+                str(message),
+                str(receipt),
+            ],
             cwd=tmp_path,
             env=environment,
             check=True,

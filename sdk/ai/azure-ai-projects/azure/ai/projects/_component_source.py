@@ -49,7 +49,9 @@ def _source_for_component(func: Callable[..., object], code: Union[str, PathLike
         raise ValueError(f"Source-backed component '{func.__name__}' must be a module-level function.")
     free_vars = inspect.getclosurevars(func)
     if free_vars.nonlocals:
-        raise ValueError(f"Component '{func.__name__}' cannot capture enclosing variables: {sorted(free_vars.nonlocals)}.")
+        raise ValueError(
+            f"Component '{func.__name__}' cannot capture enclosing variables: {sorted(free_vars.nonlocals)}."
+        )
 
     module_path = relative_file.parent if relative_file.name == "__init__.py" else relative_file.with_suffix("")
     if not module_path.parts or any(not part.isidentifier() or keyword.iskeyword(part) for part in module_path.parts):
@@ -75,7 +77,10 @@ def _copy_source_tree(
         if ignore_path.is_symlink() or not ignore_path.is_file():
             raise ValueError(f"Code ignore file '{ignore_path}' must be a regular file.")
         relative_directory = source.relative_to(code_root)
-        rules = [*rules, (relative_directory, GitIgnoreSpec.from_lines(ignore_path.read_text(encoding="utf-8").splitlines()))]
+        rules = [
+            *rules,
+            (relative_directory, GitIgnoreSpec.from_lines(ignore_path.read_text(encoding="utf-8").splitlines())),
+        ]
 
     for path in sorted(source.iterdir()):
         if path.name in _IGNORE_FILES:

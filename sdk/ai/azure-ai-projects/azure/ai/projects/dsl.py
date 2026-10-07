@@ -221,12 +221,14 @@ class _PipelineContext:
             (Path(code_dir.name) / "component.py").write_text(_function_script(func, inputs, outputs), encoding="utf-8")
             command = "python component.py " + arguments_in_command
         else:
-            code_dir = self.code_dirs_by_root.get(source.root)
-            if code_dir is None:
+            shared_code_dir = self.code_dirs_by_root.get(source.root)
+            if shared_code_dir is None:
                 code_dir = TemporaryDirectory(prefix="foundry-component-source-")
                 self.code_dirs.append(code_dir)
                 self.code_dirs_by_root[source.root] = code_dir
                 _stage_component_source(source.root, Path(code_dir.name))
+            else:
+                code_dir = shared_code_dir
             if not (Path(code_dir.name) / source.relative_file).is_file():
                 raise ValueError(f"Component '{func.__name__}' source file is excluded by its code ignore rules.")
             port_spec = ",".join(f"{port.name}:{port.conversion}" for port in inputs + outputs) or "-"
@@ -294,7 +296,11 @@ def component(
         source = _source_for_component(source_func, code) if code is not None else None
         input_names = {port.name for port in inputs}
         input_signature = inspect.Signature(
-            [parameter for parameter in inspect.signature(source_func).parameters.values() if parameter.name in input_names]
+            [
+                parameter
+                for parameter in inspect.signature(source_func).parameters.values()
+                if parameter.name in input_names
+            ]
         )
 
         @wraps(source_func)
