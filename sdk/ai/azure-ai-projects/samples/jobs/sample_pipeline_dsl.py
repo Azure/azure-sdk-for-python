@@ -13,22 +13,22 @@ Running this sample uploads both folders and submits a job.
 import os
 from pathlib import Path
 
-from azure.ai.projects import AIProjectClient, dsl
-from azure.ai.projects.dsl import Input, Output
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.dsl import Input, Output, component, pipeline
 from azure.identity import AzureCliCredential
 
 
-@dsl.component
+@component
 def produce(text: str, message: Output(type="uri_file")) -> None:  # type: ignore[valid-type]
     Path(message).write_text(text, encoding="utf-8")
 
 
-@dsl.component
+@component
 def consume(message: Input(type="uri_file"), receipt: Output(type="uri_file")) -> None:  # type: ignore[valid-type]
     Path(receipt).write_text(Path(message).read_text(encoding="utf-8").upper(), encoding="utf-8")
 
 
-@dsl.pipeline(
+@pipeline(
     compute_id=os.environ["JOB_COMPUTE_ID"],
     environment_image_reference=os.environ["JOB_ENVIRONMENT_IMAGE"],
     user_assigned_identity_id=os.environ["JOB_NODE_UAI_RESOURCE_ID"],
