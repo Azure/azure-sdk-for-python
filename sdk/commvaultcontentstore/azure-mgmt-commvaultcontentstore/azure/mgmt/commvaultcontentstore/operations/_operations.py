@@ -3266,9 +3266,9 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-08-01-preview",
+        method_added_on="2026-07-03-preview",
         params_added_on={
-            "2026-08-01-preview": [
+            "2026-07-03-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3277,7 +3277,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def enable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -3355,9 +3355,9 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-08-01-preview",
+        method_added_on="2026-07-03-preview",
         params_added_on={
-            "2026-08-01-preview": [
+            "2026-07-03-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3366,7 +3366,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def disable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -3447,9 +3447,9 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-08-01-preview",
+        method_added_on="2026-07-03-preview",
         params_added_on={
-            "2026-08-01-preview": [
+            "2026-07-03-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3458,7 +3458,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def refresh(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any

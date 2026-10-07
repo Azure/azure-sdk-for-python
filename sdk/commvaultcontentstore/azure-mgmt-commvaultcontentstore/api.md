@@ -760,7 +760,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         async def disable_compliance_lock(
                 self, 
                 resource_group_name: str, 
@@ -770,7 +770,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> Storage: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         async def enable_compliance_lock(
                 self, 
                 resource_group_name: str, 
@@ -797,7 +797,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> AsyncItemPaged[Storage]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         async def refresh(
                 self, 
                 resource_group_name: str, 
@@ -2593,7 +2593,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def disable_compliance_lock(
                 self, 
                 resource_group_name: str, 
@@ -2603,7 +2603,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> Storage: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def enable_compliance_lock(
                 self, 
                 resource_group_name: str, 
@@ -2630,7 +2630,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> ItemPaged[Storage]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def refresh(
                 self, 
                 resource_group_name: str, 

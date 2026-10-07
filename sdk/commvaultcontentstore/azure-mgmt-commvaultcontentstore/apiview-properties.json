@@ -158,5 +158,5 @@
         "azure.mgmt.commvaultcontentstore.operations.RoleMappingsOperations.list": "Commvault.ContentStore.RoleMappings.list",
         "azure.mgmt.commvaultcontentstore.aio.operations.RoleMappingsOperations.list": "Commvault.ContentStore.RoleMappings.list"
     },
-    "CrossLanguageVersion": "105e0f7136be"
+    "CrossLanguageVersion": "d06346f1f5bf"
 }

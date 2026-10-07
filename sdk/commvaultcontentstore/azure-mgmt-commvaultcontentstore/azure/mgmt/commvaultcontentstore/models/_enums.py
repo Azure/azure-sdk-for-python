@@ -285,7 +285,9 @@ class RetentionTime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported Commvault role names."""
+    """Supported Commvault role names. Extensible enum — additional roles may be added in future
+    versions without a breaking change.
+    """
 
     BACKUP_ADMIN = "BackupAdmin"
     """Backup Administrator - full access to all resources."""
