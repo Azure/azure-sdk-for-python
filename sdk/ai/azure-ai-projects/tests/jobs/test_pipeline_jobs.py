@@ -28,8 +28,10 @@ from azure.ai.projects.models import (
     CommandJob,
     DatasetVersion,
     Input,
+    InputOutputModes,
     JobResourceConfiguration,
     JobType,
+    Output,
     PipelineJob,
 )
 
@@ -427,6 +429,76 @@ def test_pipeline_composes_commands_and_preserves_raw_graph_nodes() -> None:
     assert first.jobs["hello"] == _INLINE_PIPELINE_PROPERTIES["jobs"]["hello"]
 
 
+def test_pipeline_converts_value_bound_uri_folder_input() -> None:
+    producer = CommandJob(
+        command="python produce.py ${{outputs.bundle}}",
+        environment_image_reference="example.azurecr.io/train:latest",
+        compute=_COMPUTE,
+        outputs={
+            "bundle": Output(
+                type=AssetTypes.URI_FOLDER,
+                asset_name="bundle",
+                mode=InputOutputModes.READ_WRITE_MOUNT,
+            )
+        },
+    )
+    consumer = CommandJob(
+        command="python consume.py ${{inputs.bundle}}",
+        environment_image_reference="example.azurecr.io/train:latest",
+        compute=_COMPUTE,
+        inputs={
+            "bundle": Input(
+                type=AssetTypes.URI_FOLDER,
+                value="${{parent.jobs.producer.outputs.bundle}}",
+            )
+        },
+    )
+
+    pipeline = PipelineJob(
+        compute_id=_COMPUTE,
+        settings={"default_compute": _COMPUTE},
+        jobs={"producer": producer, "consumer": consumer},
+    )
+    graph = pipeline.as_dict(exclude_readonly=True)["jobs"]
+
+    assert graph["producer"]["component"]["outputs"]["bundle"] == {
+        "type": "uri_folder"
+    }
+    assert graph["producer"]["outputs"]["bundle"] == {
+        "job_output_type": "uri_folder",
+        "mode": "ReadWriteMount",
+    }
+    assert graph["consumer"]["component"]["inputs"]["bundle"] == {
+        "type": "uri_folder"
+    }
+    assert graph["consumer"]["inputs"]["bundle"] == {
+        "job_input_type": "literal",
+        "value": "${{parent.jobs.producer.outputs.bundle}}",
+    }
+
+    transport = _Transport([_response("Pipeline")])
+    with AIProjectClient(
+        endpoint=_ENDPOINT,
+        credential=_Credential(),
+        transport=transport,  # type: ignore[arg-type]
+    ) as client:
+        _assert_job(
+            client.beta.jobs.create_or_update("folder-handoff", pipeline),
+            "Pipeline",
+        )
+
+    submitted_jobs = json.loads(transport.requests[0].body)[
+        "properties"
+    ]["jobs"]
+    assert submitted_jobs["consumer"]["component"]["inputs"][
+        "bundle"
+    ] == {"type": "uri_folder"}
+    assert submitted_jobs["consumer"]["inputs"]["bundle"] == {
+        "job_input_type": "literal",
+        "value": "${{parent.jobs.producer.outputs.bundle}}",
+    }
+
+
 def test_pipeline_uploads_both_local_code_folders(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     pipeline, code_dirs = _two_code_job(tmp_path)
     transport = _Transport([_response("Pipeline")])
@@ -534,6 +606,18 @@ def test_pipeline_does_not_submit_when_code_upload_fails(tmp_path: Path, monkeyp
         (
             {"outputs": {"message": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}}},
             "output 'message'",
+        ),
+        (
+            {
+                "inputs": {
+                    "folder": Input(
+                        type=AssetTypes.URI_FOLDER,
+                        value="${{parent.inputs.folder}}",
+                        mode=InputOutputModes.READ_ONLY_MOUNT,
+                    )
+                }
+            },
+            "input 'folder'",
         ),
         ({"compute": "/subscriptions/test/computes/other"}, "default compute"),
         ({"resources": JobResourceConfiguration({"shmSize": "1g"})}, "shmSize"),

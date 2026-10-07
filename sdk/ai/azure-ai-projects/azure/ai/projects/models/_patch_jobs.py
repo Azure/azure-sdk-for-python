@@ -109,9 +109,9 @@ class PipelineJob(_RestPipelineJob):
     """A pipeline job with graph nodes, inputs, and outputs.
 
     When constructing a pipeline, ``jobs`` accepts raw graph node dictionaries
-    or :class:`CommandJob` instances with value-bound inputs, code, and outputs.
-    Command jobs are converted to inline command nodes; use raw dictionaries
-    for other features.
+    or :class:`CommandJob` instances with value-bound literal, URI file, and
+    URI folder inputs, code, and outputs. Command jobs are converted to inline
+    command nodes; use raw dictionaries for other features.
 
     :ivar name: The name of the job. Read-only; populated after the job is created.
     :vartype name: str or None
@@ -177,13 +177,18 @@ class PipelineJob(_RestPipelineJob):
         for input_name, job_input in (job.inputs or {}).items():
             if (
                 not isinstance(job_input, Input)
-                or job_input.type not in ("literal", "uri_file")
+                or job_input.type not in (
+                    "literal",
+                    "uri_file",
+                    "uri_folder",
+                )
                 or job_input.value is None
                 or set(job_input.as_dict()) - {"jobInputType", "value"}
             ):
                 raise ValueError(
                     f"Pipeline node '{name}' cannot convert input '{input_name}'; "
-                    "only value-bound literal and uri_file CommandJob inputs are supported. "
+                    "only value-bound literal, uri_file, and uri_folder "
+                    "CommandJob inputs are supported. "
                     "Use a raw graph node for other inputs."
                 )
             inputs[input_name] = {"job_input_type": "literal", "value": job_input.value}

@@ -25,7 +25,7 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
 * Added `PipelineJob` support to `.beta.jobs.create_or_update`, `.get`, and `.list` (sync and async). Local code folders on inline command nodes are registered as Code datasets before submission; local input handling and validation remain specific to standalone Command jobs.
-* When constructing `PipelineJob`, `jobs` accepts `CommandJob` instances with value-bound inputs, code, and outputs and converts them to inline command nodes. Raw graph dictionaries remain supported for other node features.
+* When constructing `PipelineJob`, `jobs` accepts `CommandJob` instances with value-bound literal, `uri_file`, and `uri_folder` inputs, code, and outputs and converts them to inline command nodes. Raw graph dictionaries remain supported for other node features.
 * New optional `priority` property on class `CommandJob`, typed as the new `JobPriority` enum (`LOW`, `MID`, `HIGH`). If omitted, the service defaults to `LOW`.
 * New optional `experiment_name` property on class `CommandJob`, used to group related runs. If omitted, the service uses `Default`.
 * `.beta.jobs.create_or_update` now emits a `UserWarning` when a newly created job sets `resources.instance_type`, `resources.shm_size`, `resources.docker_args` or `resources.properties`. The service infers these from the target compute and ignores them, so they were previously dropped silently. The call still succeeds, and jobs retrieved with `.beta.jobs.get` are not affected.
