@@ -1,7 +1,7 @@
 # Source-backed Python pipeline components
 
 `sample_pipeline_source.py` builds a native two-node Foundry PipelineJob from
-`steps/components.py`. Both components use `@component(code="..")`, so the Code
+`steps/source_pipeline_components.py`. Both components use `@component(code="..")`, so the Code
 snapshot includes the sibling `helpers.py` module and `greeting.txt` resource.
 The pipeline is built locally; component bodies run on the selected compute.
 Both nodes share the same uploaded Code asset.

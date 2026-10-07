@@ -13,7 +13,7 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.dsl import pipeline
 from azure.identity import AzureCliCredential
-from steps.components import consume, produce
+from steps.source_pipeline_components import consume, produce
 
 
 @pipeline(

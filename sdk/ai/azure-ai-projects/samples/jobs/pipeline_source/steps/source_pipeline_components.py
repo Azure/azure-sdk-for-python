@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Import-safe component definitions; the pipeline submission lives elsewhere."""
+"""Import-safe source-backed components; the pipeline submission lives elsewhere."""
 
 from pathlib import Path
 

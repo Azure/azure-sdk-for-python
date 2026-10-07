@@ -75,7 +75,11 @@ TIMEOUT_SAMPLES = {
 
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
-    "azure-ai-projects": ["sample_pipeline_hello_world.py"],
+    "azure-ai-projects": [
+        "sample_pipeline_hello_world.py",
+        "sample_pipeline_source.py",  # Submits a live PipelineJob.
+        "source_pipeline_components.py",  # Imports helpers relative to its package.
+    ],
     "azure-appconfiguration-provider": [
         "key_vault_reference_customized_clients_sample.py",
         "aad_sample.py",

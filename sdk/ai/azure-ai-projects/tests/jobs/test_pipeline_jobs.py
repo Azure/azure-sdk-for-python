@@ -974,11 +974,11 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
         assert snapshot == paths["consume"]
         assert len(job._component_code_dirs) == 1
         assert (snapshot / _RUNNER_NAME).is_file()
-        assert (snapshot / "steps" / "components.py").is_file()
+        assert (snapshot / "steps" / "source_pipeline_components.py").is_file()
         assert (snapshot / "steps" / "helpers.py").is_file()
         assert (snapshot / "steps" / "greeting.txt").read_text(encoding="utf-8").strip() == "hello"
         assert job.jobs["produce"]["component"]["command"] == (
-            f"python {_RUNNER_NAME} steps.components produce text:str,message:str "
+            f"python {_RUNNER_NAME} steps.source_pipeline_components produce text:str,message:str "
             '"${{inputs.text}}" "${{outputs.message}}"'
         )
         assert job.jobs["consume"]["inputs"]["message"]["value"] == "${{parent.jobs.produce.outputs.message}}"
@@ -992,7 +992,7 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
             [
                 sys.executable,
                 str(snapshot / _RUNNER_NAME),
-                "steps.components",
+                "steps.source_pipeline_components",
                 "produce",
                 "text:str,message:str",
                 " world ",
@@ -1008,7 +1008,7 @@ def test_dsl_source_components_run_with_helpers_imports_and_resources(
             [
                 sys.executable,
                 str(snapshot / _RUNNER_NAME),
-                "steps.components",
+                "steps.source_pipeline_components",
                 "consume",
                 "message:str,receipt:str",
                 str(message),
