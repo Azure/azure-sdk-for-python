@@ -105,7 +105,8 @@ def _copy_source_tree(
         ):
             continue
         if _is_link(path):
-            raise ValueError(f"Code root '{code_root}' contains an included link or junction: '{relative_path}'.")
+            kind = "symbolic link" if path.is_symlink() else "junction"
+            raise ValueError(f"Code root '{code_root}' contains an included {kind}: '{relative_path}'.")
         target = destination / path.name
         if is_directory:
             target.mkdir()

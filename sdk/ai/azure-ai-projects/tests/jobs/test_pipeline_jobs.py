@@ -1152,6 +1152,32 @@ def test_dsl_source_snapshot_rejects_included_symlinks(tmp_path: Path) -> None:
         _stage_component_source(root, stage)
 
 
+@pytest.mark.skipif(os.name != "nt", reason="Windows junctions only")
+def test_dsl_source_snapshot_rejects_included_junctions(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    outside = tmp_path / "outside"
+    root.mkdir()
+    outside.mkdir()
+    link = str(root / "link").replace("'", "''")
+    target = str(outside).replace("'", "''")
+    subprocess.run(
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            f"New-Item -ItemType Junction -Path '{link}' -Target '{target}' | Out-Null",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    with pytest.raises(ValueError, match="included junction"):
+        _stage_component_source(root, stage)
+
+
 def test_dsl_source_requires_importable_function_inside_root(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="inside its code root"):
 
