@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.6, 3.7 and 3.8 are no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0b4 (2022-04-29)
 ### Other Changes
 Deprecated. We’re retiring the Azure Video Analyzer preview service, you're advised to transition your applications off of Video Analyzer by 01 December 2022. This SDK is not longer maintained. 

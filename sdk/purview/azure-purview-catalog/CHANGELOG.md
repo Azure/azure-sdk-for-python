@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.6, 3.7 and 3.8 are no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0b5 (2024-04-17)
 
 ### Other Changes

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 1.0.0 (2024-06-13)
 

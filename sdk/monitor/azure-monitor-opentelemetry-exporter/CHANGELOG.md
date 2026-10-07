@@ -25,6 +25,8 @@
 ### Other Changes
 - Update the OpenTelemetry API and SDK dependencies to 1.45.
 
+- Python 3.8 and 3.9 is no longer supported. Please use Python version 3.10 or later.
+
 ## 1.0.0b57 (2026-09-02)
 
 ### Features Added

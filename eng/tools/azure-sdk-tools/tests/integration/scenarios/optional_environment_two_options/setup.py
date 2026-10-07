@@ -68,9 +68,9 @@ setup(
         "azure": ["py.typed"],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.38.0",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",

@@ -38,7 +38,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_abstract_summary.py][abstract_summary_sample] and [sample_abstract_summary_async.py][abstract_summary_sample_async]|Run abstractive text summarization on documents|
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.9 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Language account][azure_language_account] to run these samples.
 

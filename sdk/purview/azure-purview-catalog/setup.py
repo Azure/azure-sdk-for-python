@@ -51,9 +51,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
@@ -71,7 +68,7 @@ setup(
     },
     install_requires=[
         'msrest>=0.6.21',
-        'azure-core>=1.23.0,<2.0.0',
+        'azure-core>=1.38.0,<2.0.0',
     ],
-    python_requires=">=3.6"
+    python_requires=">=3.9"
 )
