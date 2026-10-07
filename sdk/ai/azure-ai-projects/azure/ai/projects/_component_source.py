@@ -6,7 +6,9 @@
 
 import inspect
 import keyword
+import os
 import shutil
+import stat
 from dataclasses import dataclass
 from os import PathLike
 from pathlib import Path
@@ -17,6 +19,13 @@ from pathspec import GitIgnoreSpec
 _RUNNER_NAME = "__foundry_component_runner__.py"
 _IGNORE_FILES = (".amlignore", ".gitignore")
 _EXCLUDED_DIRECTORIES = frozenset((".git", ".venv", "__pycache__"))
+
+
+def _is_link(path: Path) -> bool:
+    """Detect symlinks and Windows junctions before copying any source files."""
+    return path.is_symlink() or (
+        os.name == "nt" and bool(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+    )
 
 
 @dataclass(frozen=True)
@@ -74,7 +83,7 @@ def _copy_source_tree(
 ) -> None:
     ignore_path = next((source / name for name in _IGNORE_FILES if (source / name).exists()), None)
     if ignore_path is not None:
-        if ignore_path.is_symlink() or not ignore_path.is_file():
+        if _is_link(ignore_path) or not ignore_path.is_file():
             raise ValueError(f"Code ignore file '{ignore_path}' must be a regular file.")
         relative_directory = source.relative_to(code_root)
         rules = [
@@ -95,8 +104,8 @@ def _copy_source_tree(
             or _is_ignored(relative_path, is_directory, rules)
         ):
             continue
-        if path.is_symlink():
-            raise ValueError(f"Code root '{code_root}' contains an included symbolic link: '{relative_path}'.")
+        if _is_link(path):
+            raise ValueError(f"Code root '{code_root}' contains an included link or junction: '{relative_path}'.")
         target = destination / path.name
         if is_directory:
             target.mkdir()
