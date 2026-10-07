@@ -256,11 +256,9 @@ class JobsOperations(_GeneratedJobsOps):
                     continue
                 component["code"] = self._resolve_asset_uri(component["code"], f"{name}-{node_name}-code")
         finally:
-            code_dirs = getattr(job, "_component_code_dirs", None)
-            if code_dirs is not None:
-                for directory in code_dirs:
-                    directory.cleanup()
-                code_dirs.clear()
+            for directory in job._component_code_dirs:
+                directory.cleanup()
+            job._component_code_dirs.clear()
 
     def _inject_preview_header(self, kwargs: dict) -> None:
         """Add the Jobs preview feature header if not already present.
@@ -352,7 +350,7 @@ class JobsOperations(_GeneratedJobsOps):
         return _from_rest_job(rest_result)
 
     @overload
-    def create_or_update(
+    def create_or_update(  # type: ignore[override]
         self,
         name: PipelineJob,
         job: None = None,

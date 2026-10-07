@@ -251,7 +251,7 @@ def component(func: Callable[..., Any]) -> Callable[..., SimpleNamespace]:
     inputs, outputs = _component_ports(func)
     input_names = {port.name for port in inputs}
     input_signature = inspect.Signature(
-        parameter for parameter in inspect.signature(func).parameters.values() if parameter.name in input_names
+        [parameter for parameter in inspect.signature(func).parameters.values() if parameter.name in input_names]
     )
 
     @wraps(func)
@@ -308,7 +308,7 @@ def pipeline(
                             f"Pipeline input '{name}' requires a remote URI; local files are not supported."
                         )
                     job_inputs[name] = value
-                    port_type = AssetTypes.URI_FILE
+                    port_type: str = AssetTypes.URI_FILE
                 elif annotation in _PRIMITIVES and type(value) is annotation:
                     job_inputs[name] = Input(type=AssetTypes.LITERAL, value=str(value))
                     port_type = _PRIMITIVES[annotation][0]
