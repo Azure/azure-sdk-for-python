@@ -17,7 +17,7 @@ from ..error import AMQPLinkError, ErrorCondition, MessageException
 _LOGGER = logging.getLogger(__name__)
 
 
-class PendingDelivery(object):
+class PendingDelivery(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.message = kwargs.get("message")
         self.sent = False
@@ -36,12 +36,14 @@ class PendingDelivery(object):
         self._network_trace_params = kwargs.get("network_trace_params")
 
     async def on_settled(self, reason, state):
-        if self.on_delivery_settled and not self.settled:
+        callback = self.on_delivery_settled
+        self.on_delivery_settled = None
+        self.settled = True
+        if callback:
             try:
-                await self.on_delivery_settled(reason, state)
+                await callback(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e, extra=self._network_trace_params)
-        self.settled = True
 
 
 class SenderLink(Link):
@@ -86,8 +88,8 @@ class SenderLink(Link):
                     "Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
                     extra=self.network_trace_params,
                 )
-                await self._remove_pending_deliveries()
                 await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+                await self._remove_pending_deliveries()
             else:
                 self.current_link_credit = rcv_delivery_count + rcv_link_credit - self.delivery_count
         await self.update_pending_deliveries()
@@ -156,18 +158,21 @@ class SenderLink(Link):
                         self._pending_deliveries.remove(delivery)
 
     async def _remove_pending_deliveries(self):
-        futures = []
-        for delivery in self._pending_deliveries:
-            futures.append(asyncio.ensure_future(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)))
-        await asyncio.gather(*futures)
+        pending = self._pending_deliveries
         self._pending_deliveries = []
+        await asyncio.gather(
+            *(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None) for delivery in pending)
+        )
 
     async def _on_session_state_change(self):
+        await super()._on_session_state_change()
         if self._session.state == SessionState.DISCARDING:
             await self._remove_pending_deliveries()
-        await super()._on_session_state_change()
 
-    async def update_pending_deliveries(self):
+    async def update_pending_deliveries(self):  # pylint: disable=too-many-statements
+        if self._session.state == SessionState.DISCARDING:
+            await self._session._notify_discarding_links()  # pylint: disable=protected-access
+            return
         if self._updating_deliveries:
             self._update_requested = True
             return
@@ -280,7 +285,7 @@ class SenderLink(Link):
             drain.result()
         except asyncio.CancelledError:
             return
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             _LOGGER.exception("Queued delivery drain failed after send cancellation.", extra=self.network_trace_params)
 
     async def cancel_transfer(self, delivery):

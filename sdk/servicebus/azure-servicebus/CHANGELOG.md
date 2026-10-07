@@ -1,11 +1,5 @@
 # Release History
 
-## 7.15.1 (Unreleased)
-
-### Bugs Fixed
-
-- Fixed a pyAMQP session-window error after many outgoing management requests on a long-lived receiver. The client now replenishes its outgoing session window before it can become negative, and unsigned AMQP fields reject negative values rather than encoding them as positive values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
-
 ## 7.15.0 (2026-10-06)
 
 ### Features Added
@@ -23,6 +17,7 @@
 
 ### Bugs Fixed
 
+- Fixed a pyAMQP session-window error after many outgoing management requests on a long-lived receiver. The client now replenishes its outgoing session window before it can become negative, and unsigned AMQP fields reject negative values rather than encoding them as positive values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
 - Bounded the nesting depth of AMQP compound types (lists, maps, arrays, and described types) in the pyAMQP decoder to a maximum of 64. A payload nested deeper than that is now rejected early with a `ValueError`; previously such payloads were bounded only by the Python recursion limit and raised `RecursionError`.
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
 

@@ -25,7 +25,7 @@ from azure.servicebus._pyamqp.constants import (
     SessionTransferState,
 )
 from azure.servicebus._pyamqp.performatives import FlowFrame, TransferFrame
-from azure.servicebus._pyamqp.error import AMQPConnectionError, MessageException
+from azure.servicebus._pyamqp.error import AMQPConnectionError, AMQPLinkError, MessageException
 from azure.servicebus._pyamqp.session import Session
 from azure.servicebus._pyamqp.sender import SenderLink
 from azure.servicebus._pyamqp.management_link import ManagementLink
@@ -62,6 +62,8 @@ def _session(session_type, async_connection=False, outgoing_window=2):
     connection._process_outgoing_frame = (
         AsyncMock() if async_connection else MagicMock()
     )
+    if async_connection:
+        connection._disconnect = AsyncMock()
     session = session_type(
         connection,
         1,
@@ -274,6 +276,129 @@ def test_sync_failed_transfer_write_is_not_retried(monkeypatch, partial, failure
     assert len(transfers) == written_before_drain
 
 
+@pytest.mark.parametrize("early_notification", [False, True])
+def test_sync_failed_write_callback_reentry(monkeypatch, early_notification):
+    sender, session, connection = _sender(monkeypatch, False)
+    session.links["sender"] = sender
+    sender._on_link_state_change = None
+    connection._remote_max_frame_size = 1024
+    reasons, frames = [], []
+
+    def completed(reason, _state):
+        unlocked = session._outgoing_transfer_lock.acquire(blocking=False)
+        assert unlocked is not early_notification
+        if unlocked:
+            session._outgoing_transfer_lock.release()
+        reasons.append(reason)
+        sender.update_pending_deliveries()
+
+    def fail_write(_channel, frame):
+        frames.append(frame)
+        if isinstance(frame, TransferFrame):
+            if early_notification:
+                session._set_state(SessionState.DISCARDING)
+            raise RuntimeError("Transfer write failed")
+
+    connection._process_outgoing_frame = fail_write
+
+    def disconnect():
+        sender.current_link_credit = 0
+        sender.update_pending_deliveries()
+
+    connection._disconnect.side_effect = disconnect
+    sender.send_transfer(
+        MagicMock(_code=0, payload=b"queued"), send_async=True, settled=False, on_send_complete=completed
+    )
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        result = executor.submit(sender.send_transfer, MagicMock(_code=0, payload=b"failing"), settled=False)
+        with pytest.raises(RuntimeError, match="Transfer write failed"):
+            result.result(timeout=5)
+    assert reasons == [LinkDeliverySettleReason.NOT_DELIVERED]
+    assert session.state == SessionState.DISCARDING
+    assert not sender._pending_deliveries
+    assert len(frames) == 1 and isinstance(frames[0], TransferFrame)
+
+
+def test_sync_teardown_serializes_pending_queue_and_membership(monkeypatch):
+    sender, _, _ = _sender(monkeypatch, False)
+    delivery = sender.send_transfer(MagicMock(_code=0, payload=b"queued"), send_async=True)
+    started = Event()
+
+    def teardown():
+        started.set()
+        sender._remove_pending_deliveries()
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        with sender.lock:
+            result = executor.submit(teardown)
+            assert started.wait(5)
+            assert not result.done()
+            assert sender._pending_ids() == {id(delivery)}
+        result.result(timeout=5)
+    assert sender._pending_ids() == set()
+    assert not sender._pending_deliveries
+
+
+def test_sync_teardown_callback_cannot_queue_on_discarded_session(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, False)
+    session.links["sender"] = sender
+    sender._on_link_state_change = None
+    reasons = []
+
+    def completed(reason, _state):
+        reasons.append(reason)
+        with pytest.raises(AMQPLinkError, match="not attached"):
+            sender.send_transfer(MagicMock(_code=0, payload=b"late"), send_async=True)
+
+    sender.send_transfer(
+        MagicMock(_code=0, payload=b"queued"), send_async=True, settled=False, on_send_complete=completed
+    )
+    session._set_state(SessionState.DISCARDING)
+    assert reasons == [LinkDeliverySettleReason.NOT_DELIVERED]
+    assert not sender._pending_deliveries
+    assert not sender._pending_ids()
+
+
+def test_sync_pending_poll_uses_identity_membership(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, False)
+    session.remote_incoming_window = 0
+
+    class ObservedList(list):
+        comparisons = 0
+
+        def __contains__(self, value):
+            self.comparisons += 1
+            return super().__contains__(value)
+
+    for _ in range(500):
+        delivery = sender.send_transfer(MagicMock(_code=0, payload=b"queued"), send_async=True)
+        delivery.sent = True
+    observed = ObservedList(sender._pending_deliveries)
+    sender._pending_deliveries = observed
+    sender.update_pending_deliveries()
+    assert len(sender._pending_deliveries) == 500
+    assert observed.comparisons == 0
+
+
+def test_sync_poll_preserves_callback_queue_changes(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, False)
+    session.remote_incoming_window = 0
+    added = []
+
+    def completed(_reason, _state):
+        sender.cancel_transfer(second)
+        added.append(sender.send_transfer(MagicMock(_code=0, payload=b"new"), send_async=True))
+
+    first = sender.send_transfer(
+        MagicMock(_code=0, payload=b"expired"), send_async=True, settled=False, timeout=1, on_send_complete=completed
+    )
+    second = sender.send_transfer(MagicMock(_code=0, payload=b"cancel"), send_async=True)
+    first.start -= 10
+    sender.update_pending_deliveries()
+    assert sender._pending_deliveries == added
+    assert sender._pending_ids() == {id(added[0])}
+
+
 @pytest.mark.asyncio
 async def test_async_flow_waits_for_transfer_accounting():
     session, connection = _session(AsyncSession, async_connection=True)
@@ -430,8 +555,47 @@ def _sender(monkeypatch, async_session):
     sender.state = LinkState.ATTACHED
     sender.send_settle_mode = SenderSettleMode.Mixed
     if not async_session:
+        sender._pending_delivery_ids = set()
         sender.lock = RLock()
     return sender, session, connection
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("queued", [False, True])
+@pytest.mark.parametrize("settle_mode", [SenderSettleMode.Mixed, SenderSettleMode.Settled])
+@pytest.mark.asyncio
+async def test_presettled_send_completes_once(monkeypatch, async_session, queued, settle_mode):
+    sender, _, connection = _sender(monkeypatch, async_session)
+    sender.send_settle_mode = settle_mode
+    connection._remote_max_frame_size = 1024
+    reasons = []
+    disposition = [None, 0, None, True, b"accepted"]
+
+    def completed(reason, _state):
+        reasons.append(reason)
+        if len(reasons) == 1:
+            sender._incoming_disposition(disposition)
+
+    async def completed_async(reason, _state):
+        reasons.append(reason)
+        if len(reasons) == 1:
+            await sender._incoming_disposition(disposition)
+
+    kwargs = {"send_async": queued, "on_send_complete": completed_async if async_session else completed}
+    message = MagicMock(_code=0, payload=b"one")
+    if async_session:
+        delivery = await sender.send_transfer(message, **kwargs)
+        if queued:
+            await sender.update_pending_deliveries()
+        await delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
+    else:
+        delivery = sender.send_transfer(message, **kwargs)
+        if queued:
+            sender.update_pending_deliveries()
+        delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
+    assert delivery.sent
+    assert reasons == [LinkDeliverySettleReason.SETTLED]
+    assert not sender._pending_deliveries
 
 
 @pytest.mark.parametrize("async_session", [False, True])
@@ -1664,3 +1828,530 @@ def test_unsigned_encoders_preserve_valid_boundaries(encoder, maximum):
     match = "Unsigned short value must be 0-65535" if encoder == encode_ushort else None
     with pytest.raises(ValueError, match=match):
         encoder(bytearray(), maximum + 1)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+async def test_reentrant_disposition_completes_delivery_once(monkeypatch, async_sender):
+    sender, _, _ = _sender(monkeypatch, async_sender)
+    sender.send_settle_mode = SenderSettleMode.Unsettled
+    calls = []
+    frame = [True, 0, 0, True, {"accepted": []}, False]
+
+    async def async_complete(reason, state):
+        calls.append(reason)
+        if len(calls) == 1:
+            await sender._incoming_disposition(frame)
+
+    def sync_complete(reason, state):
+        calls.append(reason)
+        if len(calls) == 1:
+            sender._incoming_disposition(frame)
+
+    callback = async_complete if async_sender else sync_complete
+    if async_sender:
+        await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=callback)
+        await sender._incoming_disposition(frame)
+    else:
+        sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=callback)
+        sender._incoming_disposition(frame)
+    assert calls == [LinkDeliverySettleReason.DISPOSITION_RECEIVED]
+    assert not sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+async def test_async_discard_during_disposition_does_not_complete_twice(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, True)
+    session.links = {"sender": sender}
+    sender._on_link_state_change = None
+    sender.send_settle_mode = SenderSettleMode.Unsettled
+    entered = asyncio.Event()
+    release = asyncio.Event()
+    calls = []
+
+    async def complete(reason, state):
+        calls.append(reason)
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            entered.set()
+            await release.wait()
+
+    await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+    disposition = asyncio.create_task(sender._incoming_disposition([True, 0, 0, True, {"accepted": []}, False]))
+    try:
+        await asyncio.wait_for(entered.wait(), timeout=1)
+        await session._set_state(SessionState.DISCARDING)
+        assert calls == [LinkDeliverySettleReason.DISPOSITION_RECEIVED]
+        assert not sender._pending_deliveries
+    finally:
+        release.set()
+        await disposition
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+@pytest.mark.parametrize("stored_error", [False, True])
+async def test_partial_write_failure_discards_session_and_pending_deliveries(monkeypatch, async_sender, stored_error):
+    sender, session, connection = _sender(monkeypatch, async_sender)
+    session.links = {"sender": sender}
+    sender._on_link_state_change = None
+    session.remote_incoming_window = 10
+    connection._remote_max_frame_size = 80
+    calls = []
+    writes = []
+
+    def write(channel, frame, **kwargs):
+        if isinstance(frame, TransferFrame):
+            writes.append(frame)
+            if len(writes) == 2:
+                error = RuntimeError("uncertain partial write")
+                if stored_error:
+                    connection._error = error
+                else:
+                    raise error
+
+    async def async_write(channel, frame, **kwargs):
+        write(channel, frame, **kwargs)
+
+    async def async_complete(reason, state):
+        calls.append(reason)
+
+    def sync_complete(reason, state):
+        calls.append(reason)
+
+    connection._process_outgoing_frame.side_effect = async_write if async_sender else write
+    with pytest.raises(RuntimeError, match="uncertain partial write"):
+        if async_sender:
+            await sender.send_transfer(
+                MagicMock(_code=0, payload=b"x" * 100), settled=False, on_send_complete=async_complete
+            )
+        else:
+            sender.send_transfer(MagicMock(_code=0, payload=b"x" * 100), settled=False, on_send_complete=sync_complete)
+    assert len(writes) == 2
+    assert session.next_outgoing_id == 1
+    assert session.state == SessionState.DISCARDING
+    assert sender.state == LinkState.DETACHED
+    assert not sender._pending_deliveries
+    assert calls == [LinkDeliverySettleReason.NOT_DELIVERED]
+    connection._disconnect.assert_called_once()
+
+
+def test_sync_queued_encoding_failure_withdraws_delivery(monkeypatch):
+    sender, _, connection = _sender(monkeypatch, False)
+    sender.send_transfer(MagicMock(_code=0, payload=b"bad"), send_async=True)
+
+    def fail_encode(output, message):
+        raise ValueError("cannot encode")
+
+    with monkeypatch.context() as context:
+        context.setattr("azure.servicebus._pyamqp.sender.encode_payload", fail_encode)
+        with pytest.raises(ValueError, match="cannot encode"):
+            sender.update_pending_deliveries()
+    assert not sender._pending_deliveries
+    assert not sender._pending_delivery_ids
+    connection._process_outgoing_frame.assert_not_called()
+    sender.send_transfer(MagicMock(_code=0, payload=b"good"))
+    assert (
+        len(
+            [
+                call
+                for call in connection._process_outgoing_frame.call_args_list
+                if isinstance(call.args[1], TransferFrame)
+            ]
+        )
+        == 1
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+async def test_stored_flow_error_is_raised_without_resending_transfer(monkeypatch, async_sender):
+    sender, session, connection = _sender(monkeypatch, async_sender)
+    session.outgoing_window = 1
+    sender.send_settle_mode = SenderSettleMode.Unsettled
+
+    def write(channel, frame, **kwargs):
+        if isinstance(frame, FlowFrame):
+            connection._error = RuntimeError("stored Flow error")
+
+    async def async_write(channel, frame, **kwargs):
+        write(channel, frame, **kwargs)
+
+    connection._process_outgoing_frame.side_effect = async_write if async_sender else write
+    with pytest.raises(RuntimeError, match="stored Flow error"):
+        if async_sender:
+            await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False)
+        else:
+            sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False)
+    delivery = sender._pending_deliveries[0]
+    assert delivery.sent
+    assert delivery.transfer_state == SessionTransferState.OKAY
+    assert session.next_outgoing_id == 1
+    connection._error = None
+    if async_sender:
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+    assert (
+        len(
+            [
+                call
+                for call in connection._process_outgoing_frame.call_args_list
+                if isinstance(call.args[1], TransferFrame)
+            ]
+        )
+        == 1
+    )
+
+
+@pytest.mark.asyncio
+async def test_async_discard_callback_cannot_enqueue_delivery(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, True)
+    session.links = {"sender": sender}
+    sender._on_link_state_change = None
+    sender.send_settle_mode = SenderSettleMode.Unsettled
+    rejected = []
+
+    async def complete(reason, state):
+        with pytest.raises(AMQPLinkError):
+            await sender.send_transfer(MagicMock(_code=0, payload=b"late"), send_async=True)
+        rejected.append(reason)
+
+    await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+    await session._set_state(SessionState.DISCARDING)
+    assert rejected == [LinkDeliverySettleReason.NOT_DELIVERED]
+    assert sender.state == LinkState.DETACHED
+    assert not sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+async def test_discard_callback_can_remove_its_link(monkeypatch, async_sender):
+    sender, session, _ = _sender(monkeypatch, async_sender)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+
+    def complete(reason, state):
+        session.links.pop("sender", None)
+
+    async def async_complete(reason, state):
+        complete(reason, state)
+
+    if async_sender:
+        await sender.send_transfer(
+            MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=async_complete
+        )
+        await session._set_state(SessionState.DISCARDING)
+    else:
+        sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+        session._set_state(SessionState.DISCARDING)
+    assert not session.links
+    assert not sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+async def test_cancelled_discard_notification_finishes_remaining_links(monkeypatch):
+    sender, session, _ = _sender(monkeypatch, True)
+    sender._on_link_state_change = None
+    other = MagicMock()
+    other._on_session_state_change = AsyncMock()
+    session.links = {"sender": sender, "other": other}
+    started = asyncio.Event()
+
+    async def complete(reason, state):
+        started.set()
+        await asyncio.Event().wait()
+
+    await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+    session.state = SessionState.DISCARDING
+    session._discarding_links_pending = True
+    notification = asyncio.create_task(session._notify_discarding_links())
+    try:
+        await asyncio.wait_for(started.wait(), timeout=1)
+    finally:
+        notification.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await notification
+    await sender.update_pending_deliveries()
+    other._on_session_state_change.assert_awaited_once()
+    assert not session._discarding_links_pending
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+async def test_transport_close_notifies_after_transfer_lock_is_released(monkeypatch, async_sender):
+    sender, session, connection = _sender(monkeypatch, async_sender)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+    observed = []
+
+    def complete(reason, state):
+        observed.append(session._outgoing_transfer_lock.locked())
+
+    async def async_complete(reason, state):
+        complete(reason, state)
+
+    def write(channel, frame, **kwargs):
+        if isinstance(frame, TransferFrame):
+            connection.state = ConnectionState.END
+            session._on_connection_state_change()
+            raise RuntimeError("transport closed")
+
+    async def async_write(channel, frame, **kwargs):
+        if isinstance(frame, TransferFrame):
+            connection.state = ConnectionState.END
+            await session._on_connection_state_change()
+            raise RuntimeError("transport closed")
+
+    connection._process_outgoing_frame.side_effect = async_write if async_sender else write
+    with pytest.raises(RuntimeError, match="transport closed"):
+        if async_sender:
+            await sender.send_transfer(
+                MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=async_complete
+            )
+        else:
+            sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+    assert observed == [False]
+    assert sender.state == LinkState.DETACHED
+    assert not sender._pending_deliveries
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_management", [False, True])
+@pytest.mark.parametrize("send_fails", [False, True])
+async def test_early_management_response_reentry_completes_once(async_management, send_fails):
+    kind = AsyncManagementLink if async_management else ManagementLink
+    management = kind.__new__(kind)
+    management.lock = RLock()
+    management._pending_operations = []
+    management._status_code_field = b"statusCode"
+    management._status_description_field = b"statusDescription"
+    completed = []
+    received = []
+
+    def complete(*args, **kwargs):
+        completed.append((args, len(management._pending_operations)))
+        if not async_management and len(completed) == 1:
+            management._on_message_received(None, received[0])
+
+    async def async_complete(*args, **kwargs):
+        complete(*args, **kwargs)
+        if len(completed) == 1:
+            await management._on_message_received(None, received[0])
+
+    def response(message):
+        return message._replace(
+            properties=message.properties._replace(correlation_id=message.properties.message_id),
+            application_properties={b"statusCode": 200},
+        )
+
+    def send(message, **kwargs):
+        received.append(response(message))
+        management._on_message_received(None, received[0])
+        if send_fails:
+            raise RuntimeError("send failed after response")
+
+    async def async_send(message, **kwargs):
+        received.append(response(message))
+        await management._on_message_received(None, received[0])
+        if send_fails:
+            raise RuntimeError("send failed after response")
+
+    management._request_link = SimpleNamespace(send_transfer=async_send if async_management else send)
+
+    async def execute():
+        if async_management:
+            await management.execute_operation(Message(application_properties={}), async_complete)
+        else:
+            management.execute_operation(Message(application_properties={}), complete)
+
+    if send_fails:
+        with pytest.raises(RuntimeError, match="send failed after response"):
+            await execute()
+    else:
+        await execute()
+    assert len(completed) == 1
+    assert completed[0][0][0] == ManagementExecuteOperationResult.OK
+    assert completed[0][1] == 0
+    assert not management._pending_operations
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+async def test_discard_poll_waits_for_active_transfer_lock(monkeypatch, async_sender):
+    sender, session, _ = _sender(monkeypatch, async_sender)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+    observed = []
+
+    def complete(reason, state):
+        observed.append(session._outgoing_transfer_lock.locked())
+
+    async def async_complete(reason, state):
+        complete(reason, state)
+
+    if async_sender:
+        await sender.send_transfer(
+            MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=async_complete
+        )
+        await session._outgoing_transfer_lock.acquire()
+    else:
+        sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False, on_send_complete=complete)
+        session._outgoing_transfer_lock.acquire()
+    session.state = SessionState.DISCARDING
+    session._discarding_links_pending = True
+    try:
+        if async_sender:
+            await sender.update_pending_deliveries()
+        else:
+            sender.update_pending_deliveries()
+        assert not observed
+        assert session._discarding_links_pending
+    finally:
+        session._outgoing_transfer_lock.release()
+    if async_sender:
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+    assert observed == [False]
+    assert not session._discarding_links_pending
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+@pytest.mark.parametrize("stored_error", [False, True])
+@pytest.mark.parametrize("partial", [False, True])
+async def test_failed_replenishment_discards_delivery_without_resuming(
+    monkeypatch, async_sender, stored_error, partial
+):
+    sender, session, connection = _sender(monkeypatch, async_sender)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+    session.remote_incoming_window = 10
+    connection._error = None
+    frames, reasons = [], []
+    error = RuntimeError("replenishment failed")
+
+    def write(channel, frame, **kwargs):
+        frames.append(frame)
+        if isinstance(frame, FlowFrame):
+            if stored_error:
+                connection._error = error
+            else:
+                raise error
+
+    async def async_write(channel, frame, **kwargs):
+        write(channel, frame, **kwargs)
+
+    def complete(reason, state):
+        reasons.append(reason)
+
+    async def async_complete(reason, state):
+        complete(reason, state)
+
+    connection._process_outgoing_frame.side_effect = async_write if async_sender else write
+    message = MagicMock(_code=0, payload=b"x" * (120 if partial else 1))
+    if async_sender:
+        delivery = await sender.send_transfer(message, settled=False, send_async=True, on_send_complete=async_complete)
+        with pytest.raises(RuntimeError) as caught:
+            await sender.update_pending_deliveries()
+        await sender.update_pending_deliveries()
+    else:
+        delivery = sender.send_transfer(message, settled=False, send_async=True, on_send_complete=complete)
+        with pytest.raises(RuntimeError) as caught:
+            sender.update_pending_deliveries()
+        sender.update_pending_deliveries()
+    assert caught.value is error
+    assert [type(frame) for frame in frames] == [TransferFrame, FlowFrame]
+    assert session.next_outgoing_id == 1
+    assert session.remote_incoming_window == 9
+    assert delivery.sent is not partial
+    assert delivery.transfer_state == (SessionTransferState.BUSY if partial else SessionTransferState.OKAY)
+    assert sender.delivery_count == (0 if partial else 1)
+    assert sender.current_link_credit == (10 if partial else 9)
+    assert session.state == SessionState.DISCARDING
+    assert sender.state == LinkState.DETACHED
+    assert not sender._pending_deliveries
+    assert reasons == [LinkDeliverySettleReason.NOT_DELIVERED]
+    connection._disconnect.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("stored_error", [False, True])
+async def test_standalone_flow_failure_closes_after_releasing_lock(async_session, stored_error):
+    session, connection = _session(AsyncSession if async_session else Session, async_connection=async_session)
+    error = RuntimeError("Flow failed")
+    link = MagicMock()
+    link._on_session_state_change = AsyncMock() if async_session else MagicMock()
+    session.links = {"link": link}
+
+    def write(channel, frame, **kwargs):
+        if stored_error:
+            connection._error = error
+        else:
+            raise error
+
+    async def async_write(channel, frame, **kwargs):
+        write(channel, frame, **kwargs)
+
+    connection._process_outgoing_frame.side_effect = async_write if async_session else write
+    with pytest.raises(RuntimeError) as caught:
+        if async_session:
+            await session._outgoing_flow()
+        else:
+            session._outgoing_flow()
+    assert caught.value is error
+    assert session.state == SessionState.DISCARDING
+    assert not session._outgoing_transfer_lock.locked()
+    assert not session._discarding_links_pending
+    link._on_session_state_change.assert_called_once()
+    connection._disconnect.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("async_sender", [False, True])
+@pytest.mark.parametrize("fail_flow", [False, True])
+async def test_cleanup_failure_preserves_write_error_and_logs_secondary(monkeypatch, async_sender, fail_flow, caplog):
+    sender, session, connection = _sender(monkeypatch, async_sender)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+    error = RuntimeError("primary write failure")
+    connection._disconnect.side_effect = RuntimeError("secondary cleanup failure")
+
+    def write(channel, frame, **kwargs):
+        if isinstance(frame, FlowFrame if fail_flow else TransferFrame):
+            raise error
+
+    async def async_write(channel, frame, **kwargs):
+        write(channel, frame, **kwargs)
+
+    connection._process_outgoing_frame.side_effect = async_write if async_sender else write
+    with pytest.raises(RuntimeError) as caught:
+        if async_sender:
+            await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False)
+        else:
+            sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False)
+    assert caught.value is error
+    assert connection._error is error
+    assert "secondary cleanup failure" in caplog.text
+    assert session.state == SessionState.DISCARDING
+    assert not sender._pending_deliveries
+    connection._disconnect.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_transport_abort_failure_still_disconnects_and_preserves_write_error(monkeypatch, caplog):
+    sender, session, connection = _sender(monkeypatch, True)
+    sender._on_link_state_change = None
+    session.links = {"sender": sender}
+    error = RuntimeError("primary write failure")
+    connection._process_outgoing_frame.side_effect = error
+    connection._transport.writer.transport.abort.side_effect = RuntimeError("secondary abort failure")
+    with pytest.raises(RuntimeError) as caught:
+        await sender.send_transfer(MagicMock(_code=0, payload=b"message"), settled=False)
+    assert caught.value is error
+    assert connection._error is error
+    assert "secondary abort failure" in caplog.text
+    assert session.state == SessionState.DISCARDING
+    assert not sender._pending_deliveries
+    connection._disconnect.assert_awaited_once()

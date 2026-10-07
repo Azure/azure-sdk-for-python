@@ -101,18 +101,26 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             new_state,
             extra=self.network_trace_params,
         )
-        for link in self.links.values():
+        for link in list(self.links.values()):
             await link._on_session_state_change()  # pylint: disable=protected-access
 
     async def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
             if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
-                await self._set_state(SessionState.DISCARDING)
+                if self._outgoing_transfer_lock.locked():
+                    self.state = SessionState.DISCARDING
+                    self._discarding_links_pending = True
+                else:
+                    await self._set_state(SessionState.DISCARDING)
 
     async def _notify_discarding_links(self):
-        if self._discarding_links_pending:
+        if self._discarding_links_pending and not self._outgoing_transfer_lock.locked():
             self._discarding_links_pending = False
-            await self._set_state(SessionState.DISCARDING)
+            try:
+                await self._set_state(SessionState.DISCARDING)
+            except (Exception, asyncio.CancelledError):
+                self._discarding_links_pending = True
+                raise
 
     def _get_next_output_handle(self) -> int:
         """Get the next available outgoing handle number within the max handle limit.
@@ -215,8 +223,16 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
-        async with self._outgoing_transfer_lock:
-            await self._outgoing_flow_locked(frame)
+        try:
+            async with self._outgoing_transfer_lock:
+                await self._outgoing_flow_locked(frame)
+        except Exception as error:
+            if self.state == SessionState.DISCARDING:
+                if self._connection.state not in [ConnectionState.DISCARDING, ConnectionState.END]:
+                    await self._close_failed_connection(error)
+            raise
+        finally:
+            await self._notify_discarding_links()
 
     async def _outgoing_flow_locked(self, frame=None):
         link_flow = frame or {}
@@ -231,7 +247,15 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         flow_frame = FlowFrame(**link_flow)
         if self.network_trace:
             _LOGGER.debug("-> %r", flow_frame, extra=self.network_trace_params)
-        await self._connection._process_outgoing_frame(self.channel, flow_frame)  # pylint: disable=protected-access
+        try:
+            await self._connection._process_outgoing_frame(self.channel, flow_frame)  # pylint: disable=protected-access
+            connection_error = getattr(self._connection, "_error", None)  # pylint: disable=protected-access
+            if isinstance(connection_error, Exception):
+                raise connection_error
+        except Exception:
+            self.state = SessionState.DISCARDING
+            self._discarding_links_pending = True
+            raise
 
     async def _incoming_flow(self, frame):
         if self.network_trace:
@@ -244,13 +268,19 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         if frame[4] is not None:  # handle
             await self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
         else:
-            for link in self._output_handles.values():
+            for link in list(self._output_handles.values()):
                 if self.remote_incoming_window > 0 and not link._is_closed:  # pylint: disable=protected-access
                     await link._incoming_flow(frame)  # pylint: disable=protected-access
 
     async def _outgoing_transfer(self, delivery, network_trace_params):
-        async with self._outgoing_transfer_lock:
-            await self._outgoing_transfer_locked(delivery, network_trace_params)
+        try:
+            async with self._outgoing_transfer_lock:
+                await self._outgoing_transfer_locked(delivery, network_trace_params)
+        except Exception as error:
+            if self.state == SessionState.DISCARDING:
+                if self._connection.state not in [ConnectionState.DISCARDING, ConnectionState.END]:
+                    await self._close_failed_connection(error)
+            raise
 
     async def _invalidate_stalled_write(self, frame_write, delivery, *, transfer_complete=False):
         error = AMQPConnectionError(
@@ -266,19 +296,31 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             delivery.transfer_state = SessionTransferState.ERROR
         self.state = SessionState.DISCARDING
         self._discarding_links_pending = True
+        frame_write.cancel()
+        await self._close_failed_connection(error)
+        raise error
+
+    async def _close_failed_connection(self, error):
         self._connection._error = error  # pylint: disable=protected-access
         self._connection.state = ConnectionState.DISCARDING
-        frame_write.cancel()
         writer = getattr(self._connection._transport, "writer", None)  # pylint: disable=protected-access
-        if writer is not None:
-            writer.transport.abort()
+        try:
+            if writer is not None:
+                writer.transport.abort()
+        except Exception as cleanup_error:  # pylint: disable=broad-except
+            _LOGGER.warning(
+                "Transport abort failed after a write error: %r", cleanup_error, extra=self.network_trace_params
+            )
         try:
             await asyncio.wait_for(
                 self._connection._disconnect(), timeout=_CANCELLED_FRAME_WRITE_GRACE  # pylint: disable=protected-access
             )
         except asyncio.TimeoutError:
-            _LOGGER.error("Timed out closing connection after a stalled write.", extra=self.network_trace_params)
-        raise error
+            _LOGGER.error("Timed out closing connection after a failed write.", extra=self.network_trace_params)
+        except Exception as cleanup_error:  # pylint: disable=broad-except
+            _LOGGER.warning(
+                "Connection cleanup failed after a write error: %r", cleanup_error, extra=self.network_trace_params
+            )
 
     async def _await_outgoing_write(
         self, frame_write, delivery, cancellation_deadline=None, *, transfer_complete=False
@@ -300,7 +342,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     )
         return cancellation_deadline
 
-    async def _outgoing_transfer_locked(self, delivery, network_trace_params):
+    async def _outgoing_transfer_locked(self, delivery, network_trace_params):  # pylint: disable=too-many-statements
         if delivery.cancel_requested:
             return
         if self.state != SessionState.MAPPED:
@@ -314,8 +356,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             frame = {key: value for key, value in delivery.frame.items() if key != "payload"}
             encoded_frame = encode_frame(TransferFrame(payload=b"", **frame))[1]
             available_frame_size = (
-                self._connection._remote_max_frame_size - len(encoded_frame) - 8
-            )  # pylint: disable=protected-access
+                self._connection._remote_max_frame_size - len(encoded_frame) - 8  # pylint: disable=protected-access
+            )
             if available_frame_size <= 0:
                 raise ValueError("Remote max frame size is too small for a Transfer frame.")
 
@@ -346,6 +388,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     except Exception:
                         delivery.cancel_requested = True
                         delivery.transfer_state = SessionTransferState.ERROR
+                        self.state = SessionState.DISCARDING
+                        self._discarding_links_pending = True
                         raise
                     delivery.frame["payload"] = payload[len(fragment) :] if more else b""
                     delivery.frame["more"] = more
@@ -405,7 +449,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     async def _incoming_disposition(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
-        for link in self._input_handles.values():
+        for link in list(self._input_handles.values()):
             await link._incoming_disposition(frame)  # pylint: disable=protected-access
 
     async def _outgoing_detach(self, frame):
