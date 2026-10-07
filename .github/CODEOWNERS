@@ -217,7 +217,7 @@
 
 # ServiceLabel: %DevCenter
 # PRLabel: %DevCenter
-/sdk/devcenter/    @drielenr @leti367 @sebrenna
+/sdk/devcenter/    @ManishJayaswal
 
 # PRLabel: %Device Provisioning
 /sdk/iothub/azure-iot-deviceprovisioning    @c-ryan-k @digimaun
@@ -228,7 +228,7 @@
 
 # ServiceLabel: %Digital Twins
 # PRLabel: %Digital Twins
-/sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
+/sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri
 
 # AzureSdkOwners: @ahall-msft
 # ServiceLabel: %Discovery
@@ -276,7 +276,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
+/sdk/healthdataaiservices/    @jovinson-ms @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
 /sdk/agentserver/    @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
