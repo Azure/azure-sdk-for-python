@@ -858,6 +858,75 @@ def test_dsl_repeated_component_calls_get_distinct_nodes() -> None:
             directory.cleanup()
 
 
+def test_dsl_typed_primitives_and_remote_file_input(tmp_path: Path) -> None:
+    assert dsl.command_component is dsl.component
+
+    @dsl.component
+    def transform(
+        count: int,
+        scale: float,
+        enabled: bool,
+        source: dsl.Input(type="uri_file"),
+        result: dsl.Output(type="uri_file"),
+    ) -> None:
+        from pathlib import Path
+
+        if enabled:
+            Path(result).write_text(Path(source).read_text(encoding="utf-8") * count + str(scale), encoding="utf-8")
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow(count: int, scale: float, enabled: bool, source: dsl.Input(type="uri_file")):
+        node = transform(count=count, scale=scale, enabled=enabled, source=source)
+        return {"result": node.outputs.result}
+
+    job = workflow(
+        count=3,
+        scale=1.5,
+        enabled=True,
+        source=dsl.Input(type="uri_file", path="azureml://datastores/test/paths/input.txt"),
+    )
+    try:
+        assert job.inputs["count"].value == "3"
+        assert job.inputs["scale"].value == "1.5"
+        assert job.inputs["enabled"].value == "True"
+        assert job.inputs["source"].path == "azureml://datastores/test/paths/input.txt"
+        node = job.jobs["transform"]
+        assert node["component"]["inputs"] == {
+            "count": {"type": "integer"},
+            "scale": {"type": "number"},
+            "enabled": {"type": "boolean"},
+            "source": {"type": "uri_file"},
+        }
+        assert node["inputs"]["source"]["value"] == "${{parent.inputs.source}}"
+
+        source = tmp_path / "source.txt"
+        output = tmp_path / "output.txt"
+        source.write_text("go", encoding="utf-8")
+        subprocess.run(
+            [
+                sys.executable,
+                str(_dsl_code_paths(job)["transform"] / "component.py"),
+                "3",
+                "1.5",
+                "True",
+                str(source),
+                str(output),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert output.read_text(encoding="utf-8") == "gogogo1.5"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
 def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
     @dsl.component
     def write(result: dsl.Output(type="uri_file")) -> None:
