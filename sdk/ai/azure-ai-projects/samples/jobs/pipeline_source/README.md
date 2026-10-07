@@ -19,4 +19,5 @@ The code root is resolved relative to the file defining each component, not the
 working directory. `.amlignore` takes precedence over `.gitignore` within each
 directory; neither ignore file is uploaded. Common local artifacts and `.env`
 files are excluded. Include only files intended for remote execution in the
-code root; included symlinks cause an error rather than copying files outside it.
+code root; included symlinks and Windows junctions cause an error rather than copying
+files outside it.
