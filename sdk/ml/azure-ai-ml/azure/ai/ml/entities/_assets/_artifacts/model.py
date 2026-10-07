@@ -34,33 +34,33 @@ from .artifact import ArtifactStorageInfo
 class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
-    :param name: The name of the model. Defaults to a random GUID.
-    :type name: Optional[str]
-    :param version: The version of the model. Defaults to "1" if either no name or an unregistered name is provided.
+    :keyword name: The name of the model. Defaults to a random GUID.
+    :paramtype name: Optional[str]
+    :keyword version: The version of the model. Defaults to "1" if either no name or an unregistered name is provided.
         Otherwise, defaults to autoincrement from the last registered version of the model with that name.
-    :type version: Optional[str]
-    :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
+    :paramtype version: Optional[str]
+    :keyword type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
         "custom_model", "mlflow_model", or "triton_model". Defaults to "custom_model".
-    :type type: Optional[str]
-    :param utc_time_created: The date and time when the model was created, in
+    :paramtype type: Optional[str]
+    :keyword utc_time_created: The date and time when the model was created, in
         UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572').
-    :type utc_time_created: Optional[str]
-    :param flavors: The flavors in which the model can be interpreted. Defaults to None.
-    :type flavors: Optional[dict[str, Any]]
-    :param path: A remote uri or a local path pointing to a model. Defaults to None.
-    :type path: Optional[str]
-    :param description: The description of the resource. Defaults to None
-    :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict[str, str]]
-    :param properties: The asset property dictionary. Defaults to None.
-    :type properties: Optional[dict[str, str]]
-    :param stage: The stage of the resource. Defaults to None.
-    :type stage: Optional[str]
-    :param default_deployment_template: The default deployment template reference for the model. Defaults to None.
-    :type default_deployment_template: Optional[DeploymentTemplateReference]
-    :param allowed_deployment_templates: List of allowed deployment template references for the model.
-    :type allowed_deployment_templates: Optional[list[DeploymentTemplateReference]]
+    :paramtype utc_time_created: Optional[str]
+    :keyword flavors: The flavors in which the model can be interpreted. Defaults to None.
+    :paramtype flavors: Optional[dict[str, Any]]
+    :keyword path: A remote uri or a local path pointing to a model. Defaults to None.
+    :paramtype path: Optional[str]
+    :keyword description: The description of the resource. Defaults to None
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword properties: The asset property dictionary. Defaults to None.
+    :paramtype properties: Optional[dict[str, str]]
+    :keyword stage: The stage of the resource. Defaults to None.
+    :paramtype stage: Optional[str]
+    :keyword default_deployment_template: The default deployment template reference for the model. Defaults to None.
+    :paramtype default_deployment_template: Optional[DeploymentTemplateReference]
+    :keyword allowed_deployment_templates: List of allowed deployment template references for the model.
+    :paramtype allowed_deployment_templates: Optional[list[DeploymentTemplateReference]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: Optional[dict]
 

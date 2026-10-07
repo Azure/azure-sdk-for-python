@@ -1,15 +1,195 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.3.0 (2026-10-05)
+
+### Bugs Fixed
+
+- Preserved the canonical request `agent_reference` on lifecycle snapshots when
+  handlers emit a partial reference, preventing stored response updates from
+  losing the agent name or version.
 
 ### Other Changes
 
+- Stable release incorporating the changes from 2.3.0b1 and 2.3.0b2.
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
+## 2.3.0b2 (2026-09-30)
+
+### Bugs Fixed
+
+- Preserved the canonical request `agent_reference` on lifecycle snapshots when
+  handlers emit a partial reference, preventing stored response updates from
+  losing the agent name or version.
+
+## 2.3.0b1 (2026-09-29)
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Changed the default `AGENTSERVER_FLUSH_MODE` from `async` to `background`
+  so Responses request completion no longer awaits telemetry export.
+  Unset, empty, whitespace-only, and invalid values use `background`;
+  invalid values continue to log a warning. Explicit `async` and `sync`
+  selections retain their existing behavior.
+  Background export requires a platform drain window before suspension or
+  shutdown; request completion does not guarantee telemetry delivery.
+  Set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited flushing.
+
+## 2.2.0 (2026-09-28)
+
+### Other Changes
+
+- Stable release promoting the 2.2.0 preview series. No functional changes
+  since 2.2.0b2.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.2.0` release.
+
+## 2.2.0b2 (2026-09-24)
+
+### Features Added
+
+- Added optional response metadata to `ResponseEventStream.emit_failed`. Invalid failure metadata is logged and
+  omitted so metadata validation cannot suppress the original failure response.
+
+### Bugs Fixed
+
+- Closed a graceful-shutdown admission race for stored streams and bounded
+  DELETE waits when deferred terminal persistence is stalled.
+
+- Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
+  automatic truncation of conversation history. Positive limits remain supported.
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
+- The per-request span flush in the Responses endpoint no longer blocks the
+  asyncio event loop. The synchronous `flush_spans()` call in the request
+  `finally` block ran `TracerProvider.force_flush` inline, which blocks the
+  event loop until the exporter drains and serialises concurrent requests
+  behind a single export (head-of-line blocking). It now awaits the
+  non-blocking `flush_spans_async()` by default. A new `AGENTSERVER_FLUSH_MODE`
+  environment variable selects the strategy: `async` (default, off the event
+  loop), `background` (return the response first, flush in the background --
+  requires a platform drain window), or `sync` (legacy blocking behaviour).
+  Streaming requests use the same strategy for a single flush after stream
+  cleanup, without an additional pre-stream flush.
+
+- Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
+  available, preventing recreated same-name sessions from colliding with task
+  tombstones. Existing pre-rollout active chains remain resumable through a
+  legacy-ID lookup.
+
+### Other Changes
+
+- Optimized warm-path streaming last-byte latency: for in-process (non-resilient)
+  `store=true` streaming responses, the terminal `response.completed`/`response.failed`
+  event is now emitted to the client and the wire stream closed **before** the terminal
+  provider write, moving the terminal storage round-trip off the client's last-byte
+  path. A rare terminal-write failure now surfaces on a later GET (record stamped
+  `storage_error`) rather than on the stream. The resilient path is unchanged.
+  DELETE waits for pending execution and persistence before removing the response,
+  preventing deferred writes from recreating deleted data. Executions awaiting
+  their first event remain tracked for shutdown but are not publicly visible.
+- Reuse request-scoped history lookups and concurrent input-reference resolution without caching failed or cancelled reads.
+- Flush streaming telemetry after request-owned handler and iterator cleanup,
+  including on disconnects, and before HTTP completion instead of delaying the first stream event.
+- Construct generated model types on demand while preserving real TypedDict contracts and public exports.
+- Avoid redundant event and recovery-seed copies while retaining validation and caller-owned mutation isolation.
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`,
+  which provides the session GUID configuration and legacy task lookup used by
+  resilient Responses.
+
+## 2.2.0b1 (2026-08-27)
+
+### Breaking Changes
+
+- `ResponseUsageInputTokensDetails.cache_write_tokens` is now required by the latest AgentServer contract.
+
+### Features Added
+
+- Added prompt caching and programmatic tool-calling models from the latest AgentServer contract.
+
+### Bugs Fixed
+
+- Made `logprobs` optional in assistant output-text content to match the OpenAI Responses API runtime behavior.
+- Added validation for prompt-cache options and tool-call caller discriminators.
+
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
+
+## 2.1.0b2 (2026-08-21)
+
+### Bugs Fixed
+
+- Restored JSON-string encoding for response-level `internal_metadata` so resilient response checkpoints round-trip through Foundry storage.
+- Restored `get_request_context()` identity values while stored Responses handlers run inside durable tasks.
+- `get_history_item_ids` on `InMemoryResponseProvider` and `FileResponseStore` now keeps the newest item IDs when applying `limit`. (#48514)
+
+## 2.1.0b1 (2026-08-11)
+
+### Breaking Changes
+
+- The durable-response subsystem is now **opt-in**. A `store=true` response is
+  wrapped in a resilient task (with crash recovery) only when the resilient task
+  subsystem is enabled — which `resilient_background=True` (or
+  `set_resilient_tasks_enabled(True)`) now does automatically. On a host that
+  enables neither, `store=true` responses run **non-durably in-process**: they
+  execute and persist (GET works), but a response in-flight when the process is
+  ungracefully killed stays `in_progress` on a later GET (no mark-failed/recovery)
+  — matching a plain stateless server. A one-time startup log announces which
+  mode is active. Previously every responses host implicitly used the task
+  subsystem (and paid the boot recovery scan) regardless of these options.
+- Removed `ResponseContext.conversation_chain_metadata` and the
+  `ConversationChainMetadataNamespace` protocol. Resilient response
+  applications now persist cross-turn state explicitly with
+  `FoundryStateStore`.
+
+### Other Changes
+
+- Updated the resilient Responses samples to use conversation-scoped
+  `FoundryStateStore` instances directly.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1`,
+  which adds the local `FoundryStateStore` fallback used by the samples.
+
+## 2.0.0 (2026-08-07)
+
+### Features Added
+
+- First stable release of the Azure AI Agent Server Responses client library.
+
+### Breaking Changes
+
+- Removed the duplicate `azure.ai.agentserver.responses.get_input_expanded`
+  export. Import it from `azure.ai.agentserver.responses.models` instead.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to the stable `2.0.0` release.
+
+## 2.0.0b1 (2026-08-04)
+
+### Other Changes
+
+- Cleaned up the public API surface by moving validation-only error helpers to a private implementation module and renaming runtime terminal/replay helpers as private.
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery. The resilient Responses samples now call `set_resilient_tasks_enabled(True)` to explicitly opt in, mirroring the invocations resilient samples.
 
 ## 2.0.0b0 (2026-07-29)
 
 ### Features Added
 
+- Marked Foundry storage public APIs as experimental.
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10` so the shared experimental decorator is always available.
 - Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
 - Added local `TypedDict` model contract generation for the Responses protocol, including generated type aliases, union aliases, and `py.typed` packaging support.
 - Added dict-native wire payload helpers and request validators for validating protocol payloads without depending on generated model internals.

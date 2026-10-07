@@ -27,11 +27,13 @@
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateBucketizedAllocation": "Microsoft.IoTOperations.AkriConnectorTemplateBucketizedAllocation",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateDeviceInboundEndpointType": "Microsoft.IoTOperations.AkriConnectorTemplateDeviceInboundEndpointType",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateDiagnostics": "Microsoft.IoTOperations.AkriConnectorTemplateDiagnostics",
+        "azure.mgmt.iotoperations.models.AkriConnectorTemplateExecAction": "Microsoft.IoTOperations.AkriConnectorTemplateExecAction",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeConfiguration": "Microsoft.IoTOperations.AkriConnectorTemplateRuntimeConfiguration",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateManagedConfiguration": "Microsoft.IoTOperations.AkriConnectorTemplateManagedConfiguration",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateManagedConfigurationSettings": "Microsoft.IoTOperations.AkriConnectorTemplateManagedConfigurationSettings",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplatePersistentVolumeClaim": "Microsoft.IoTOperations.AkriConnectorTemplatePersistentVolumeClaim",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateProperties": "Microsoft.IoTOperations.AkriConnectorTemplateProperties",
+        "azure.mgmt.iotoperations.models.AkriConnectorTemplateReadinessProbe": "Microsoft.IoTOperations.AkriConnectorTemplateReadinessProbe",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateResource": "Microsoft.IoTOperations.AkriConnectorTemplateResource",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeImageConfiguration": "Microsoft.IoTOperations.AkriConnectorTemplateRuntimeImageConfiguration",
         "azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeImageConfigurationSettings": "Microsoft.IoTOperations.AkriConnectorTemplateRuntimeImageConfigurationSettings",
@@ -214,6 +216,7 @@
         "azure.mgmt.iotoperations.models.PrivateKeyAlgorithm": "Microsoft.IoTOperations.PrivateKeyAlgorithm",
         "azure.mgmt.iotoperations.models.PrivateKeyRotationPolicy": "Microsoft.IoTOperations.PrivateKeyRotationPolicy",
         "azure.mgmt.iotoperations.models.OperatorValues": "Microsoft.IoTOperations.OperatorValues",
+        "azure.mgmt.iotoperations.models.HighPriorityMessagesBackpressureHandling": "Microsoft.IoTOperations.HighPriorityMessagesBackpressureHandling",
         "azure.mgmt.iotoperations.models.BrokerMemoryProfile": "Microsoft.IoTOperations.BrokerMemoryProfile",
         "azure.mgmt.iotoperations.models.BrokerPersistencePolicyMode": "Microsoft.IoTOperations.BrokerPersistencePolicyMode",
         "azure.mgmt.iotoperations.models.BrokerStateStoreKeyType": "Microsoft.IoTOperations.BrokerStateStoreKeyType",
@@ -370,5 +373,6 @@
         "azure.mgmt.iotoperations.aio.operations.AkriServiceOperations.begin_delete": "Microsoft.IoTOperations.AkriService.delete",
         "azure.mgmt.iotoperations.operations.AkriServiceOperations.list_by_instance_resource": "Microsoft.IoTOperations.AkriService.listByInstanceResource",
         "azure.mgmt.iotoperations.aio.operations.AkriServiceOperations.list_by_instance_resource": "Microsoft.IoTOperations.AkriService.listByInstanceResource"
-    }
+    },
+    "CrossLanguageVersion": "15bb2b5bafae"
 }

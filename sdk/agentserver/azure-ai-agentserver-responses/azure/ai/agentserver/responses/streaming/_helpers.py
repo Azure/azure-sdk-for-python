@@ -9,11 +9,12 @@ from copy import deepcopy
 from typing import Any, AsyncIterator, cast
 
 from .. import models as response_models
-from ..models import AgentReference
+
 from . import _internals
 from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_event
+from .. import models as _public_models
 
 
 def strip_nulls(d: dict) -> dict:
@@ -35,7 +36,7 @@ def _build_events(
     response_id: str,
     *,
     include_progress: bool,
-    agent_reference: AgentReference | dict[str, Any] | None,
+    agent_reference: _public_models.AgentReference | dict[str, Any] | None,
     model: str | None,
 ) -> list[response_models.ResponseStreamEvent]:
     """Build a minimal lifecycle event sequence for a response.
@@ -112,14 +113,14 @@ def _coerce_handler_event(
     if not isinstance(event_type, str) or not event_type:
         raise ValueError("handler event must include a non-empty 'type'")
 
-    return cast(response_models.ResponseStreamEvent, event_data)
+    return cast("response_models.ResponseStreamEvent", event_data)
 
 
 def _apply_stream_event_defaults(
     event: response_models.ResponseStreamEvent,
     *,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _public_models.AgentReference | dict[str, Any],
     model: str | None,
     sequence_number: int | None,
     agent_session_id: str | None = None,
@@ -185,7 +186,7 @@ def _extract_response_snapshot_from_events(
     events: list[response_models.ResponseStreamEvent],
     *,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _public_models.AgentReference | dict[str, Any],
     model: str | None,
     remove_sequence_number: bool = False,
     agent_session_id: str | None = None,
@@ -222,11 +223,7 @@ def _extract_response_snapshot_from_events(
             snapshot.setdefault("id", response_id)
             snapshot.setdefault("response_id", response_id)
             existing_agent_reference = snapshot.get("agent_reference")
-            if (
-                not isinstance(existing_agent_reference, MutableMapping)
-                or not existing_agent_reference
-                or (_internals.is_default_agent_reference(existing_agent_reference) and bool(agent_reference))
-            ):
+            if _internals.should_replace_agent_reference(existing_agent_reference, agent_reference):
                 snapshot["agent_reference"] = _internals.response_agent_reference(agent_reference)
             snapshot.setdefault("object", "response")
             snapshot.setdefault("output", [])

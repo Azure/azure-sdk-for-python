@@ -10,11 +10,11 @@ DESCRIPTION:
     `.evaluators` methods to create, get and list evaluators.
 
 USAGE:
-    python sample_prompt_based_custom_evaluators.py
+    python sample_eval_catalog_prompt_based_evaluators.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -84,7 +84,7 @@ with (
 
     print("Creating a single evaluator version - Prompt based (json style)")
     # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
-    prompt_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
+    prompt_evaluator = project_client.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name="my_custom_evaluator_prompt",
         evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": "my_custom_evaluator_prompt",
@@ -262,7 +262,7 @@ with (
         print("Waiting for eval run to complete...")
 
     print("Deleting the created evaluator version")
-    project_client.beta.evaluators.delete_version(
+    project_client.evaluators.delete_version(
         name=prompt_evaluator.name,
         version=prompt_evaluator.version,
     )

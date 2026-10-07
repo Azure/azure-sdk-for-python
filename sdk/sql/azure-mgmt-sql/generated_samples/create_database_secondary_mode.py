@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/CreateDatabaseSecondaryMode.json
+# x-ms-original-file: 2025-08-01-preview/CreateDatabaseSecondaryMode.json
 if __name__ == "__main__":
     main()

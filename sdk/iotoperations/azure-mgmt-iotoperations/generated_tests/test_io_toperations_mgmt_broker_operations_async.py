@@ -114,6 +114,7 @@ class TestIoTOperationsMgmtBrokerOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "generateResourceLimits": {"cpu": "str"},
                         "healthState": "str",
+                        "highPriorityMessagesBackpressureHandling": "str",
                         "memoryProfile": "str",
                         "persistence": {
                             "maxSize": "str",

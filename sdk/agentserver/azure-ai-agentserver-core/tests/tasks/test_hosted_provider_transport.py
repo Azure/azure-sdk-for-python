@@ -206,7 +206,7 @@ async def test_no_retry_on_409_other_body() -> None:
 async def test_request_carries_user_agent_and_request_id() -> None:
     """SC-017(c)(d)(e): each request carries Authorization (via the
     bearer-token policy), a User-Agent prefixed with the sdk moniker,
-    and an x-ms-client-request-id."""
+    an x-ms-client-request-id, and the Routines preview opt-in header."""
 
     transport = FakeAsyncHttpTransport(
         [
@@ -234,6 +234,12 @@ async def test_request_carries_user_agent_and_request_id() -> None:
     # x-ms-client-request-id
     request_id = req.headers.get("x-ms-client-request-id") or req.headers.get("X-MS-Client-Request-Id")
     assert request_id, f"x-ms-client-request-id header missing from request; got " f"headers={req.headers!r}"
+    # Foundry-Features opt-in: must be exactly the Routines V2 preview key so the
+    # request targets the agentserver-persistence contract the client is built against.
+    foundry_features = req.headers.get("Foundry-Features") or req.headers.get("foundry-features")
+    assert foundry_features == "Routines=V2Preview", (
+        f"Foundry-Features opt-in header must be exactly 'Routines=V2Preview'; got {foundry_features!r}"
+    )
 
 
 # --------------------------------------------------------------------- #

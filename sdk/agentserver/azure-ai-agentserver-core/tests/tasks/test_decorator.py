@@ -59,16 +59,16 @@ class TestSpec037NameRequired:
 
 
 class TestSpec037TimeoutCap:
-    """Spec 037 #8 — per-turn timeout defaults to 1 day and is a hard 1-day
+    """Spec 037 #8 — per-turn timeout defaults to 1 day and is a hard 7-day
     ceiling (fail-fast on a larger or negative value; not clamped).
     """
 
-    def test_timeout_above_one_day_rejected(self) -> None:
+    def test_timeout_above_seven_days_rejected(self) -> None:
         from datetime import timedelta
 
         with pytest.raises(ValueError, match="timeout"):
 
-            @task(name="t", timeout=timedelta(days=2))
+            @task(name="t", timeout=timedelta(days=8))
             async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
                 return 0
 
@@ -81,14 +81,23 @@ class TestSpec037TimeoutCap:
             async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
                 return 0
 
-    def test_timeout_exactly_one_day_ok(self) -> None:
+    def test_timeout_exactly_seven_days_ok(self) -> None:
         from datetime import timedelta
 
-        @task(name="t", timeout=timedelta(days=1))
+        @task(name="t", timeout=timedelta(days=7))
         async def my_task(ctx: TaskContext[str]) -> int:
             return 0
 
-        assert my_task._opts.timeout == timedelta(days=1)
+        assert my_task._opts.timeout == timedelta(days=7)
+
+    def test_timeout_above_one_day_ok(self) -> None:
+        from datetime import timedelta
+
+        @task(name="t", timeout=timedelta(days=2))
+        async def my_task(ctx: TaskContext[str]) -> int:
+            return 0
+
+        assert my_task._opts.timeout == timedelta(days=2)
 
     def test_unset_timeout_resolves_to_one_day(self) -> None:
         from datetime import timedelta

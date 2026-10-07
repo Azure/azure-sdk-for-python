@@ -145,7 +145,7 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :keyword list_view_type: View type for including/excluding (for example)
             archived schedules. Default: ENABLED_ONLY.
-        :type list_view_type: Optional[ScheduleListViewType]
+        :paramtype list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list Schedule.
         :rtype: Iterable[Schedule]
         """

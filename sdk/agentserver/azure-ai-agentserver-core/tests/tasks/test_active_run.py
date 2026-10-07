@@ -214,30 +214,3 @@ class TestMultiTurnGetActiveRun:
             assert await chat.get_active_run(task_id, "i5") is None
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod, store_dir)
-
-
-class TestSC002SequentialMetadataAccumulation:
-    """SC-002 — multi-turn chat-style: N invocations accumulate per-turn metadata."""
-
-    @pytest.mark.asyncio
-    async def test_N_sequential_turns_metadata_accumulates(self):
-        @_multi_turn_task(name=_unique("metadata"))
-        async def chat(ctx: TaskContext[str]) -> str:
-            history = list(ctx.metadata.get("history", []))
-            output = f"O:{ctx.input}"
-            history.append([ctx.input, output])
-            ctx.metadata["history"] = history
-            return output
-
-        manager, mgr_mod, store_dir = await _ManagerFixture.setup()
-        try:
-            task_id = _unique("chat")
-            first = await chat.start(task_id=task_id, input_id="i1", input="I1")
-            assert _output(await asyncio.wait_for(first.result(), timeout=2.0)) == "O:I1"
-
-            second = await chat.start(task_id=task_id, input_id="i2", input="I2")
-            assert _output(await asyncio.wait_for(second.result(), timeout=2.0)) == "O:I2"
-
-            assert second.metadata.get("history") == [["I1", "O:I1"], ["I2", "O:I2"]]
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod, store_dir)

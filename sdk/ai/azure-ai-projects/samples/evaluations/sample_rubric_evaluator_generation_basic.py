@@ -13,8 +13,8 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
-      2. Calls `begin_create_generation_job` which returns an `LROPoller[EvaluatorVersion]`;
-         `.result()` polls automatically and returns the generated `EvaluatorVersion`.
+      2. Calls `begin_create_generation_job` and reports the standard LRO
+         poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
          testing criterion.
       4. Runs the evaluation against inline JSONL sample data.
@@ -30,7 +30,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -62,7 +62,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
@@ -87,39 +86,47 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
-    # The LRO polls automatically; `.result()` blocks until the job reaches a terminal state
-    # and returns the produced EvaluatorVersion directly.
-    print("Waiting for generation job to complete (polling is handled by the SDK)...")
-    evaluator = project_client.beta.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
-            inputs=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=evaluator_name,
-                evaluator_display_name="Reservation Quality (Generated)",
-                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-                sources=[
-                    PromptEvaluatorGenerationJobSource(
-                        description="Application overview - purpose, capabilities, and tools.",
-                        prompt=(
-                            "You are evaluating a restaurant reservation assistant. The assistant helps "
-                            "users create, modify, and cancel reservations at participating restaurants. "
-                            "It can:\n"
-                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                            "  - Check table availability for a requested date, time, and party size.\n"
-                            "  - Create, update, and cancel reservations on behalf of the user.\n"
-                            "  - Send SMS or email confirmations through a notifications tool.\n"
-                            "It must always confirm the user's intent before committing changes, "
-                            "ask follow-up questions when details are missing, and maintain a polite "
-                            "restaurant-host tone."
-                        ),
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.evaluators.begin_create_generation_job(
+        job=EvaluatorGenerationInputs(
+            model=model_name,
+            evaluator_name=evaluator_name,
+            evaluator_display_name="Reservation Quality (Generated)",
+            evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+            sources=[
+                PromptEvaluatorGenerationJobSource(
+                    description="Application overview - purpose, capabilities, and tools.",
+                    prompt=(
+                        "You are evaluating a restaurant reservation assistant. The assistant helps "
+                        "users create, modify, and cancel reservations at participating restaurants. "
+                        "It can:\n"
+                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                        "  - Check table availability for a requested date, time, and party size.\n"
+                        "  - Create, update, and cancel reservations on behalf of the user.\n"
+                        "  - Send SMS or email confirmations through a notifications tool.\n"
+                        "It must always confirm the user's intent before committing changes, "
+                        "ask follow-up questions when details are missing, and maintain a polite "
+                        "restaurant-host tone."
                     ),
-                ],
-            ),
+                ),
+            ],
         ),
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
         polling_interval=poll_interval_seconds,
-    ).result()
+    )
+
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
+        time.sleep(poll_interval_seconds)
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    evaluator = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {evaluator}")
 
     # On success, the evaluator is automatically saved as version 1.
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
@@ -196,4 +203,4 @@ with (
     # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)

@@ -1,5 +1,104 @@
 # Release History
 
+## 10.0.0 (2026-07-24)
+
+### Features Added
+
+  - Client `HybridComputeManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HybridComputeManagementClient` added method `begin_setup_extensions`
+  - Client `HybridComputeManagementClient` added method `send_request`
+  - Client `HybridComputeManagementClient` added operation group `extension_metadata_v2`
+  - Client `HybridComputeManagementClient` added operation group `extension_publisher`
+  - Client `HybridComputeManagementClient` added operation group `extension_type`
+  - Client `HybridComputeManagementClient` added operation group `gateways`
+  - Client `HybridComputeManagementClient` added operation group `machine_run_commands`
+  - Client `HybridComputeManagementClient` added operation group `settings`
+  - Model `HybridComputePrivateLinkScopeProperties` added property `service_extensions`
+  - Model `LicenseProfileMachineInstanceView` added property `product_profile`
+  - Enum `LicenseTarget` added member `WINDOWS_SERVER2016`
+  - Model `NetworkInterface` added property `id`
+  - Model `NetworkInterface` added property `mac_address`
+  - Model `NetworkInterface` added property `name`
+  - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
+  - Enum `StatusTypes` added member `AWAITING_CONNECTION`
+  - Model `WindowsParameters` added property `patch_name_masks_to_exclude`
+  - Model `WindowsParameters` added property `patch_name_masks_to_include`
+  - Added model `Disk`
+  - Added model `EsuProfileUpdateProperties`
+  - Added enum `ExecutionState`
+  - Added model `ExtensionPublisher`
+  - Added model `ExtensionType`
+  - Added model `ExtensionValueV2`
+  - Added model `ExtensionValueV2Properties`
+  - Added model `FirmwareProfile`
+  - Added model `Gateway`
+  - Added model `GatewayProperties`
+  - Added enum `GatewayType`
+  - Added model `GatewayUpdate`
+  - Added model `GatewayUpdateProperties`
+  - Added model `HardwareProfile`
+  - Added enum `IdentityKeyStore`
+  - Added model `LicenseProfileArmProductProfileProperties`
+  - Added model `LicenseProfilePropertiesSoftwareAssurance`
+  - Added model `LicenseProfileUpdatePropertiesSoftwareAssurance`
+  - Added model `LicenseUpdatePropertiesLicenseDetails`
+  - Added model `MachineRunCommand`
+  - Added model `MachineRunCommandInstanceView`
+  - Added model `MachineRunCommandProperties`
+  - Added model `MachineRunCommandScriptSource`
+  - Added enum `MachineStatusReason`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `Processor`
+  - Added model `ProductProfileUpdateProperties`
+  - Added model `RunCommandInputParameter`
+  - Added model `RunCommandManagedIdentity`
+  - Added model `ServiceExtension`
+  - Added enum `ServiceExtensionPublicNetworkAccess`
+  - Added model `Settings`
+  - Added model `SettingsGatewayProperties`
+  - Added model `SettingsProperties`
+  - Added model `SetupExtensionRequest`
+  - Added model `StorageProfile`
+  - Added model `UserAssignedIdentity`
+  - Operation group `MachinesOperations` added method `begin_delete`
+  - Operation group `MachinesOperations` added method `create_or_update`
+  - Added operation group `ExtensionMetadataV2Operations`
+  - Added operation group `ExtensionPublisherOperations`
+  - Added operation group `ExtensionTypeOperations`
+  - Added operation group `GatewaysOperations`
+  - Added operation group `MachineRunCommandsOperations`
+  - Added operation group `SettingsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AccessRule` moved instance variable `address_prefixes` and `direction` under property `properties` whose type is `AccessRuleProperties`
+  - Model `ExtensionValue` moved instance variable `extension_type`, `publisher` and `version` under property `properties` whose type is `ExtensionValueProperties`
+  - Model `License` moved instance variable `license_details`, `license_type`, `provisioning_state` and `tenant_id` under property `properties` whose type is `LicenseProperties`
+  - Model `LicenseProfile` moved instance variable `assigned_license`, `assigned_license_immutable_id`, `billing_end_date`, `billing_start_date`, `disenrollment_date`, `enrollment_date`, `error`, `esu_eligibility`, `esu_key_state`, `esu_keys`, `product_features`, `product_type`, `provisioning_state`, `server_type`, `software_assurance_customer` and `subscription_status` under property `properties` whose type is `LicenseProfileProperties`
+  - Model `LicenseProfileMachineInstanceView` moved instance variable `billing_end_date`, `billing_start_date`, `disenrollment_date`, `enrollment_date`, `error`, `product_features`, `product_type`, `software_assurance_customer` and `subscription_status` under property `software_assurance` whose type is `LicenseProfileMachineInstanceViewSoftwareAssurance`
+  - Model `LicenseProfileUpdate` moved instance variable `assigned_license`, `product_features`, `product_type`, `software_assurance_customer` and `subscription_status` under property `properties` whose type is `LicenseProfileUpdateProperties`
+  - Model `LicenseUpdate` moved instance variable `edition`, `license_type`, `processors`, `state`, `target` and `type` under property `properties` whose type is `LicenseUpdateProperties`
+  - Model `Machine` moved instance variable `ad_fqdn`, `agent_configuration`, `agent_upgrade`, `agent_version`, `client_public_key`, `cloud_metadata`, `detected_properties`, `display_name`, `dns_fqdn`, `domain_name`, `error_details`, `extensions`, `last_status_change`, `license_profile`, `location_data`, `machine_fqdn`, `mssql_discovered`, `network_profile`, `os_edition`, `os_name`, `os_profile`, `os_sku`, `os_type`, `os_version`, `parent_cluster_resource_id`, `private_link_scope_resource_id`, `provisioning_state`, `service_statuses`, `status`, `vm_id` and `vm_uuid` under property `properties` whose type is `MachineProperties`
+  - Model `MachineExtensionUpdate` moved instance variable `auto_upgrade_minor_version`, `enable_automatic_upgrade`, `force_update_tag`, `protected_settings`, `publisher`, `settings`, `type` and `type_handler_version` under property `properties` whose type is `MachineExtensionUpdateProperties`
+  - Model `MachineUpdate` moved instance variable `agent_upgrade`, `cloud_metadata`, `location_data`, `os_profile`, `parent_cluster_resource_id` and `private_link_scope_resource_id` under property `properties` whose type is `MachineUpdateProperties`
+  - Model `NetworkSecurityPerimeterConfiguration` moved instance variable `network_security_perimeter`, `profile`, `provisioning_issues`, `provisioning_state` and `resource_association` under property `properties` whose type is `NetworkSecurityPerimeterConfigurationProperties`
+  - Model `OSProfileLinuxConfiguration` moved instance variable `assessment_mode`, `enable_hotpatching`, `patch_mode` and `status` under property `patch_settings` whose type is `PatchSettings`
+  - Model `OSProfileWindowsConfiguration` moved instance variable `assessment_mode`, `enable_hotpatching`, `patch_mode` and `status` under property `patch_settings` whose type is `PatchSettings`
+  - Model `ProvisioningIssue` moved instance variable `description`, `issue_type`, `severity`, `suggested_access_rules` and `suggested_resource_ids` under property `properties` whose type is `ProvisioningIssueProperties`
+  - Deleted or renamed model `Identity`
+  - Method `MachineExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `MachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `MachinesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `MachinesOperations.delete`
+
+### Other Changes
+
+  - Deleted model `ExtensionValueListResult`/`HybridComputePrivateLinkScopeListResult`/`KeyDetails`/`KeyProperties`/`LicenseProfilesListResult`/`LicensesListResult`/`MachineExtensionsListResult`/`MachineListResult`/`NetworkSecurityPerimeterConfigurationListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`PrivateLinkResourceListResult`/`PrivateLinkScopesResource`/`ProxyResourceAutoGenerated`/`ResourceAutoGenerated` which actually were not used by SDK users
+  - Renamed operation group `HybridComputeManagementClientOperationsMixin` to `_HybridComputeManagementClientOperationsMixin`
+
 ## 9.1.0b5 (2026-07-13)
 
 ### Features Added

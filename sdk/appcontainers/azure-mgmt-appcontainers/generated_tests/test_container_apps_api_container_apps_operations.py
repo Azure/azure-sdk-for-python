@@ -109,6 +109,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                     "latestRevisionFqdn": "str",
                     "latestRevisionName": "str",
                     "managedEnvironmentId": "str",
+                    "networking": {"outboundVnetSubnetId": "str"},
                     "outboundIpAddresses": ["str"],
                     "provisioningState": "str",
                     "runningStatus": "str",
@@ -156,6 +157,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                         ],
                         "revisionSuffix": "str",
                         "scale": {
+                            "allowScalingRuleOverride": bool,
                             "cooldownPeriod": 0,
                             "maxReplicas": 0,
                             "minReplicas": 0,
@@ -299,6 +301,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                     "latestRevisionFqdn": "str",
                     "latestRevisionName": "str",
                     "managedEnvironmentId": "str",
+                    "networking": {"outboundVnetSubnetId": "str"},
                     "outboundIpAddresses": ["str"],
                     "provisioningState": "str",
                     "runningStatus": "str",
@@ -346,6 +349,7 @@ class TestContainerAppsAPIContainerAppsOperations(AzureMgmtRecordedTestCase):
                         ],
                         "revisionSuffix": "str",
                         "scale": {
+                            "allowScalingRuleOverride": bool,
                             "cooldownPeriod": 0,
                             "maxReplicas": 0,
                             "minReplicas": 0,

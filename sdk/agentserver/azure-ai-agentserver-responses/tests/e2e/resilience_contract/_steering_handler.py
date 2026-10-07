@@ -24,7 +24,7 @@ Output tags (parsed by the test):
 - first delta:  ``turn{n}_L{lifetime}_start``
 - final text:   ``turn{n}_L{lifetime}_done|input={input_text}``
 
-where ``n`` is the cross-turn ``turn_count`` watermark (survives crash) and
+where ``n`` is a process-local turn counter used only to label test output and
 ``lifetime`` is ``1`` for any recovered/resumed entry, ``0`` for a fresh one.
 
 Env vars consumed:
@@ -41,6 +41,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -77,7 +78,13 @@ options = ResponsesServerOptions(
     steerable_conversations=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
+# Steering (mid-turn input queuing) is implemented by the multi-turn task
+# primitive and needs the TaskManager. Since only ``resilient_background`` now
+# auto-enables the subsystem (steerable does not), enable it explicitly so the
+# steering conformance is valid even when CONFORMANCE_RESILIENT_BACKGROUND=false.
+set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
+_turn_counts: dict[str, int] = {}
 
 
 @app.response_handler
@@ -109,10 +116,8 @@ async def handler(
         # Client-visible reset point for the recovered attempt.
         yield stream.emit_in_progress()
 
-    # Cross-turn watermark — survives crash + turn boundaries.
-    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
-    context.conversation_chain_metadata["turn_count"] = turn_count
-    await context.conversation_chain_metadata.flush()
+    turn_count = _turn_counts.get(context.conversation_chain_id, 0) + 1
+    _turn_counts[context.conversation_chain_id] = turn_count
 
     input_text = await context.get_input_text()
 

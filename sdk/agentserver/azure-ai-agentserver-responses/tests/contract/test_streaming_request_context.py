@@ -16,17 +16,24 @@ Regression test for: request context not re-established for the streaming body.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core import get_request_context
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
+from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
 
-def _build_capturing_client(captured: dict[str, Any]) -> TestClient:
+def _build_capturing_client(
+    captured: dict[str, Any],
+    *,
+    resilient: bool = False,
+    storage_dir: Path | None = None,
+) -> TestClient:
     async def _capturing_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         # An async-generator handler: its body does not execute until Starlette
         # iterates the streaming response, AFTER handle_create returned and reset
@@ -41,7 +48,10 @@ def _build_capturing_client(captured: dict[str, Any]) -> TestClient:
         yield stream.emit_created()
         yield stream.emit_completed()
 
-    app = ResponsesAgentServerHost(store=InMemoryResponseProvider())
+    app = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(resilient_background=resilient),
+        store=FileResponseStore(storage_dir) if storage_dir is not None else InMemoryResponseProvider(),
+    )
     app.response_handler(_capturing_handler)
     return TestClient(app)
 
@@ -88,3 +98,54 @@ class TestStreamingRequestContext:
         assert "call_id" in captured
         assert captured.get("call_id") is None
         assert captured.get("user_id") is None
+
+    def test_stored_sync_handler_sees_call_id_and_user_id(self, tmp_path: Path) -> None:
+        captured: dict[str, Any] = {}
+        client = _build_capturing_client(captured, resilient=True, storage_dir=tmp_path / "sync")
+
+        r = client.post(
+            "/responses",
+            json={
+                "model": "m",
+                "input": "hi",
+                "stream": False,
+                "store": True,
+                "agent_session_id": "session_789",
+            },
+            headers={
+                "x-agent-user-id": "user_123",
+                "x-agent-foundry-call-id": "call_456",
+            },
+        )
+
+        assert r.status_code == 200
+        assert captured.get("call_id") == "call_456"
+        assert captured.get("user_id") == "user_123"
+        assert captured.get("session_id") == "session_789"
+
+    def test_stored_streaming_handler_sees_call_id_and_user_id(self, tmp_path: Path) -> None:
+        captured: dict[str, Any] = {}
+        client = _build_capturing_client(captured, resilient=True, storage_dir=tmp_path / "stream")
+
+        with client.stream(
+            "POST",
+            "/responses",
+            json={
+                "model": "m",
+                "input": "hi",
+                "stream": True,
+                "store": True,
+                "agent_session_id": "session_789",
+            },
+            headers={
+                "x-agent-user-id": "user_123",
+                "x-agent-foundry-call-id": "call_456",
+            },
+        ) as r:
+            assert r.status_code == 200
+            for _ in r.iter_lines():
+                pass
+
+        assert captured.get("call_id") == "call_456"
+        assert captured.get("user_id") == "user_123"
+        assert captured.get("session_id") == "session_789"

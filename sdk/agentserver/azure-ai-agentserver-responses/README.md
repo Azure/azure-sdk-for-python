@@ -108,11 +108,14 @@ The `ResponseContext` provides request-scoped state:
 | `is_recovery` | `bool` set on a crash-recovered re-entry |
 | `is_steered_turn` | `bool` set on the drain re-entry that follows a steering input |
 | `pending_input_count` | `int` count of queued steering inputs |
-| `conversation_chain_metadata` | `ConversationChainMetadataNamespace` for handler-managed checkpoint state |
 | `exit_for_recovery()` | `await` to opt into the graceful-shutdown recovery path |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |
 | `get_history()` | Load conversation history items |
+
+Persist cross-turn application state explicitly with
+`azure.ai.agentserver.core.storage.FoundryStateStore`, using
+`conversation_chain_id` as part of the store name.
 
 The per-request cancellation signal is delivered as the **3rd
 positional handler argument** (`cancellation_signal: asyncio.Event`),
@@ -129,6 +132,27 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 - **Streaming** — Pipe events as SSE in real-time, cancel on client disconnect
 - **Background** — Return immediately, handler runs in the background
 - **Streaming + Background** — SSE while connected, handler continues after disconnect
+
+### Telemetry flushing
+
+`AGENTSERVER_FLUSH_MODE` controls per-request telemetry flushing independently
+of the response's `background` flag:
+
+| Value | Behavior |
+|---|---|
+| `background` (default) | Schedule a background flush without awaiting export. |
+| `async` | Await export off the event loop before completing the request. |
+| `sync` | Flush synchronously, blocking the event loop. |
+
+Values are case-insensitive and whitespace is ignored. Unset, empty, or invalid
+values use `background`; each distinct invalid value logs a warning once.
+Streaming requests dispatch one flush after stream cleanup and before HTTP
+completion.
+
+Background flushing requires the platform to allow the process to keep running
+long enough to drain telemetry before suspension or shutdown. If that window
+is unavailable, set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited
+flushing. Response completion alone does not guarantee telemetry delivery.
 
 ### Response lifecycle
 

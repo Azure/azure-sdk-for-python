@@ -44,6 +44,7 @@ class TestSqlManagementManagedInstanceDtcsOperations(AzureMgmtRecordedTestCase):
                     "dtcEnabled": bool,
                     "dtcHostNameDnsSuffix": "str",
                     "externalDnsSuffixSearchList": ["str"],
+                    "fqdnEnabled": bool,
                     "provisioningState": "str",
                     "securitySettings": {
                         "snaLu6point2TransactionsEnabled": bool,

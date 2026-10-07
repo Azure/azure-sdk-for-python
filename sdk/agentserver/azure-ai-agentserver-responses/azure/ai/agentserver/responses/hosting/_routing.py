@@ -24,22 +24,20 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
-from ..models._generated import CreateResponse, ResponseStreamEvent
+from ..models import _generated as _generated_models
+
 from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..store._base import ResponseProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
-from ._orchestrator import _ResponseOrchestrator
+from ._orchestrator import _ResponseOrchestrator, _close_iterator
 from ._runtime_state import _RuntimeState
 
-CreateHandlerEvent = Union[ResponseStreamEvent, ResponseCheckpointEvent, dict[str, Any]]
+CreateHandlerEvent = Union["_generated_models.ResponseStreamEvent", ResponseCheckpointEvent, dict[str, Any]]
 
 CreateHandlerFn = Callable[
-    [CreateResponse, ResponseContext, asyncio.Event],
-    Union[
-        AsyncIterable[CreateHandlerEvent],
-        Awaitable[AsyncIterable[CreateHandlerEvent]],
-    ],
+    ["_generated_models.CreateResponse", ResponseContext, asyncio.Event],
+    Union[AsyncIterable[CreateHandlerEvent], Awaitable[AsyncIterable[CreateHandlerEvent]]],
 ]
 """Type alias for the user-registered create-response handler function.
 
@@ -49,8 +47,7 @@ Handlers MUST be ``async def`` and take exactly three positional parameters:
 - ``context``: The :class:`ResponseContext` for the current request
   (exposes ``context.shutdown`` event, ``context.client_cancelled``
   bool, ``context.is_recovery`` / ``context.is_steered_turn`` /
-  ``context.pending_input_count`` / ``context.conversation_chain_metadata`` /
-  ``context.exit_for_recovery()``).
+  ``context.pending_input_count`` / ``context.exit_for_recovery()``).
 - ``cancellation_signal``: An :class:`asyncio.Event` set when the
   request is cancelled (client disconnect on non-background create,
   explicit ``/cancel`` API call, or steering pressure). The cancel
@@ -75,8 +72,11 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
     :return: An async iterator yielding items from the synchronous generator.
     :rtype: AsyncIterator
     """
-    for item in sync_gen:
-        yield item
+    try:
+        for item in sync_gen:
+            yield item
+    finally:
+        sync_gen.close()
 
 
 def _serialize_event_payload(payload: Any) -> bytes:
@@ -173,6 +173,51 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
         streams.use_in_memory_replay(
             cursor_fn=_stream_cursor,
             ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,
+        )
+
+
+def _log_startup_configuration(
+    resolved_provider: "ResponseProviderProtocol", runtime_options: ResponsesServerOptions
+) -> None:
+    """Log the responses startup configuration and durability mode.
+
+    Emitted once at host construction. The resilience line reflects the final
+    resolved state (the resilient orchestrator auto-enables the switch when
+    ``resilient_background`` is set). When durability is disabled we log a
+    WARNING so operators are not surprised that a ``store=true`` response killed
+    mid-flight by an ungraceful crash stays ``in_progress`` on a later GET (no
+    crash recovery) — matching a plain stateless server.
+
+    :param resolved_provider: The resolved response persistence provider.
+    :type resolved_provider: ResponseProviderProtocol
+    :param runtime_options: The responses server options.
+    :type runtime_options: ResponsesServerOptions
+    """
+    logger.info(
+        "Responses protocol: storage_provider=%s, default_model=%s, "
+        "default_fetch_history_count=%s, shutdown_grace_period=%ss",
+        type(resolved_provider).__name__,
+        runtime_options.default_model or "(not set)",
+        runtime_options.default_fetch_history_count,
+        runtime_options.shutdown_grace_period_seconds,
+    )
+
+    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+        resilient_tasks_enabled,
+    )
+
+    if resilient_tasks_enabled():
+        logger.info(
+            "Responses resilience: ENABLED - store=true responses run inside durable "
+            "tasks with crash recovery (in-flight responses are recovered/marked failed "
+            "on restart)."
+        )
+    else:
+        logger.warning(
+            "Responses resilience: DISABLED - store=true responses run in-process and are "
+            "NOT durable across an ungraceful crash: a response in-flight when the process "
+            "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
+            "Enable durability via resilient_background, or set_resilient_tasks_enabled(True)."
         )
 
 
@@ -487,15 +532,8 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Stash endpoint reference for request_shutdown() access.
         self._endpoint = endpoint
 
-        # --- Responses startup configuration logging ---
-        logger.info(
-            "Responses protocol: storage_provider=%s, default_model=%s, "
-            "default_fetch_history_count=%s, shutdown_grace_period=%ss",
-            type(resolved_provider).__name__,
-            runtime_options.default_model or "(not set)",
-            runtime_options.default_fetch_history_count,
-            runtime_options.shutdown_grace_period_seconds,
-        )
+        # --- Responses startup configuration + durability-mode logging ---
+        _log_startup_configuration(resolved_provider, runtime_options)
 
     # ------------------------------------------------------------------
     # Shutdown notification
@@ -603,10 +641,10 @@ class ResponsesAgentServerHost(AgentServerHost):
 
     def _dispatch_create(
         self,
-        request: CreateResponse,
+        request: _generated_models.CreateResponse,
         context: ResponseContext,
         cancellation_signal: asyncio.Event,
-    ) -> AsyncIterator[ResponseStreamEvent]:
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
@@ -632,7 +670,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
-    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
+    def _normalize_handler_result(self, result: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.
 
         Supports sync generators, async generators, coroutines (async def
@@ -655,7 +693,9 @@ class ResponsesAgentServerHost(AgentServerHost):
             return result.__aiter__()  # type: ignore[union-attr, return-value]
         return result  # type: ignore[return-value]
 
-    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[ResponseStreamEvent]:  # type: ignore[misc]
+    async def _await_and_normalize(  # type: ignore[misc]
+        self, coro: Any
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Await a coroutine and yield events from its normalised result.
 
         :param coro: A coroutine to await.
@@ -664,5 +704,9 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         inner = await coro
-        async for event in self._normalize_handler_result(inner):
-            yield event
+        iterator = self._normalize_handler_result(inner)
+        try:
+            async for event in iterator:
+                yield event
+        finally:
+            await _close_iterator(iterator)

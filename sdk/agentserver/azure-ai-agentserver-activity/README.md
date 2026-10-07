@@ -20,7 +20,7 @@ pip install azure-ai-agentserver-activity
 
 `ActivityAgentServerHost` is an `AgentServerHost` subclass for Activity Protocol traffic. It provides:
 
-- `POST /activity/messages` (and the `POST /api/messages` alias) for inbound activities.
+- `POST /activity/messages` for inbound activities.
 
 ### Usage patterns
 

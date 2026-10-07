@@ -29,6 +29,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
+    MessageSettlementUnconfirmed,
 )
 from .._pyamqp.utils import (
     amqp_long_value,
@@ -46,7 +47,7 @@ from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
-from .._common.utils import utc_from_timestamp, utc_now
+from .._common.utils import utc_from_timestamp, utc_now, get_attempt_timeout
 from .._common.tracing import get_receive_links, receive_trace_context_manager
 from .._common.constants import (
     PYAMQP_LIBRARY,
@@ -754,7 +755,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
-            receiver._open()
+            receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(cast(Iterator["Message"], receiver._message_iter))
@@ -908,11 +909,22 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
+        *,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None,
     ) -> None:
         # pylint: disable=protected-access
+        if handler is None:
+            raise RuntimeError("handler is not initialized and cannot complete the message")
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, message._delivery_tag, "accepted")
+                return handler.settle_messages(
+                    message._delivery_id,
+                    message._delivery_tag,
+                    "accepted",
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
+                )
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
@@ -920,6 +932,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=False,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
@@ -934,6 +948,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         },
                     ),
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
@@ -942,9 +958,20 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=True,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except MessageSettlementUnconfirmed as mse:
+            # Result unknown: signal the caller to re-settle over the authoritative mgmt link.
+            raise RuntimeError("The service did not confirm the settlement on the receiver link.") from mse
+
+        except MessageException:
+            # Definitive answer: keep its condition (e.g. message-lock-lost) instead of letting the
+            # AMQPException handler below flatten it into ServiceBusConnectionError.
+            raise
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e

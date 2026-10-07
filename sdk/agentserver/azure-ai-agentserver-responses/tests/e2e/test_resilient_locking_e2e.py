@@ -131,7 +131,6 @@ class TestResilientOptOut:
             captured["is_recovery"] = context.is_recovery
             captured["is_steered_turn"] = context.is_steered_turn
             captured["pending_input_count"] = context.pending_input_count
-            captured["has_conversation_chain_metadata"] = hasattr(context, "conversation_chain_metadata")
             return TextResponse(context, request, text="Done")
 
         client = _make_app(handler, resilient=False)
@@ -142,7 +141,6 @@ class TestResilientOptOut:
         assert captured["is_recovery"] is False
         assert captured["is_steered_turn"] is False
         assert captured["pending_input_count"] == 0
-        assert captured["has_conversation_chain_metadata"] is True
 
     def test_non_resilient_store_false_still_works(self) -> None:
         """store=false + background=false → non-resilient foreground path."""

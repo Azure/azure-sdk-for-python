@@ -338,6 +338,7 @@ def test_readonly(send_request):
     response = send_request(HttpRequest("GET", "/health"))
 
     assert isinstance(response, RestRequestsTransportResponse)
+    # pylint: disable=no-name-in-module
     from azure.core.pipeline.transport import RequestsTransportResponse
 
     readonly_checks(response, old_response_class=RequestsTransportResponse)

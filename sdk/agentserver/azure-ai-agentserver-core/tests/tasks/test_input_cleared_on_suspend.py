@@ -5,7 +5,7 @@
   scenarios 1, 2: when a steerable task transitions to suspended,
 the framework clears the three input-bearing slots — ``payload["input"]``,
 ``_steering["active_input"]``, and ``_steering["previous_input"]`` — while
-preserving ``_steering`` mechanism state and ``metadata``.
+preserving the remaining ``_steering`` mechanism state.
 """
 
 from __future__ import annotations
@@ -67,32 +67,5 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
         assert info.payload.get("input") is None, (
             f"Expected payload['input'] to be cleared after suspend, got: " f"{info.payload.get('input')!r}"
         )
-    finally:
-        await _teardown_manager(manager, mgr_mod)
-
-
-@pytest.mark.asyncio
-async def test_suspend_preserves_metadata(tmp_path: Path) -> None:
-    """Metadata survives the suspend transition."""
-    manager, mgr_mod = await _setup_manager(tmp_path)
-    try:
-
-        @multi_turn_task(name="meta", steerable=True)
-        async def with_metadata(ctx: TaskContext[dict]) -> None:
-            ctx.metadata["dev_key"] = "dev_value"
-            await ctx.metadata.flush()
-            return None
-
-        await with_metadata.start(task_id="t-meta-survives", input={"msg": "hi"})
-        info = None
-        for _ in range(100):
-            info = await manager.provider.get("t-meta-survives")
-            if info is not None and info.status == "suspended":
-                break
-            await asyncio.sleep(0.05)
-        assert info is not None
-        assert info.status == "suspended"
-        meta = info.payload.get("metadata", {})
-        assert meta.get("dev_key") == "dev_value"
     finally:
         await _teardown_manager(manager, mgr_mod)

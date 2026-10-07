@@ -14,33 +14,41 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_NAME              - Required. The name of the agent to optimize.
+    2) FOUNDRY_AGENT_NAME      - Required. The name of the agent to optimize.
     3) DATASET_NAME            - Required. The name of the registered training dataset.
     4) EVALUATOR_NAME          - Required. The name of a registered project evaluator.
     5) DATASET_VERSION         - Optional. Version of the training dataset. Defaults to "1".
-    6) EVAL_MODEL              - Optional. The model used for evaluation. Defaults to "gpt-4o".
-    7) OPTIMIZATION_MODEL      - Optional. The model used for optimization. Defaults to "gpt-5.1".
+    6) POLL_INTERVAL_SECONDS   - Optional. Seconds between status polls. Defaults to 10.
+    7) EVAL_MODEL              - Required. The evaluation model deployment in
+                                 "{connectionName}/{deploymentName}" format.
+    8) OPTIMIZATION_MODEL      - Optional. The model used for optimization. Defaults to "gpt-5.1".
 
 """
 
 import os
+import time
 
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    OptimizationAgentIdentifier as AgentIdentifier,
-    OptimizationEvaluatorRef as EvaluatorRef,
-    OptimizationJob,
-    OptimizationJobInputs,
-    OptimizationOptions,
-    OptimizationReferenceDatasetInput as ReferenceDatasetInput,
+    AgentOptimizationCandidateSearchConfiguration,
+    AgentOptimizationConfiguration,
+    AgentOptimizationEvaluationConfiguration,
+    AgentOptimizationEvaluator,
+    AgentOptimizationFoundryAgentTargetConfiguration,
+    AgentOptimizationJob,
+    AgentOptimizationModelConfiguration,
+    AgentOptimizationSpace,
+    AgentOptimizationTargetCompletionDatasetReferenceDataSource,
+    AgentOptimizationTargetCompletionEvaluationSet,
+    EvaluationModelConfiguration,
 )
 
 load_dotenv()
@@ -50,7 +58,8 @@ agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 dataset_name = os.environ["DATASET_NAME"]
 evaluator_name = os.environ["EVALUATOR_NAME"]
 dataset_version = os.environ.get("DATASET_VERSION", "1")
-eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
+poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
+eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
 
@@ -60,41 +69,54 @@ with (
 ):
 
     # ------------------------------------------------------------------
-    # 1. Create a job.
+    # 1. Create an optimization job and retain the SDK-managed poller.
     # ------------------------------------------------------------------
-    print("Creating optimization job...")
-    created_jobs: list[OptimizationJob] = []
-
-    def capture_created_job(response):
-        created_jobs.append(OptimizationJob(response.http_response.json()))
-
-    project_client.beta.agents.begin_create_optimization_job(
-        job=OptimizationJob(
-            inputs=OptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
+    job = AgentOptimizationJob(
+        target_configuration=AgentOptimizationFoundryAgentTargetConfiguration(name=agent_name),
+        optimization_model_configuration=AgentOptimizationModelConfiguration(model=optimization_model),
+        optimization_configuration=AgentOptimizationConfiguration(
+            evaluation_configuration=AgentOptimizationEvaluationConfiguration(
+                training_set=AgentOptimizationTargetCompletionEvaluationSet(
+                    source=AgentOptimizationTargetCompletionDatasetReferenceDataSource(
+                        name=dataset_name,
+                        version=dataset_version,
+                    )
                 ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
-            )
+                evaluators=[AgentOptimizationEvaluator(name=evaluator_name)],
+                evaluation_model=EvaluationModelConfiguration(model=eval_model),
+            ),
+            candidate_search_configuration=AgentOptimizationCandidateSearchConfiguration(max_candidates=3),
+            agent_optimization_space=AgentOptimizationSpace(),
         ),
-        polling=False,
-        raw_response_hook=capture_created_job,
+    )
+
+    created_jobs: list[AgentOptimizationJob] = []
+
+    def raw_response_hook(response):
+        response.http_response.read()
+        created_jobs.append(AgentOptimizationJob(response.http_response.json()))
+
+    print("Begin creating an agent optimization job.")
+    poller = project_client.agents.begin_create_optimization_job(
+        job=job,
+        polling_interval=poll_interval,
+        raw_response_hook=raw_response_hook,
     )
     if not created_jobs:
         raise RuntimeError("The create operation did not return an optimization job.")
-    job = created_jobs[0]
-    print(f"Created job: id={job.id}, status={job.status}")
+    created_job = created_jobs[0]
+    print(f"Created job: id={created_job.id}, status={created_job.status}")
 
     # ------------------------------------------------------------------
     # 2. Cancel it immediately.
     # ------------------------------------------------------------------
-    print(f"Cancelling job {job.id}...")
-    cancelled = project_client.beta.agents.cancel_optimization_job(job_id=job.id)
+    print(f"Cancelling job {created_job.id}...")
+    cancelled = project_client.agents.cancel_optimization_job(job_id=created_job.id)
     print(f"Job {cancelled.id} status: {cancelled.status}")
+
+    print("Wait for the SDK poller to observe the cancellation.")
+    while not poller.done():
+        print(f"status=`{poller.status()}`")
+        time.sleep(poll_interval)
+
+    print(f"Final LRO status: `{poller.status()}`.")

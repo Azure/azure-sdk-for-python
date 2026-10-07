@@ -19,20 +19,20 @@ from azure.ai.ml.entities._util import load_from_dict
 class FeatureSetBackfillRequest(RestTranslatableMixin):
     """Feature Set Backfill Request
 
-    :param name: The name of the backfill job request
-    :type name: str
-    :param version: The version of the backfill job request.
-    :type version: str
-    :param feature_window: The time window for the feature set backfill request.
-    :type feature_window: ~azure.ai.ml._restclient.arm_ml_service.models.FeatureWindow
-    :param description: The description of the backfill job request. Defaults to None.
-    :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict[str, str]]
+    :keyword name: The name of the backfill job request
+    :paramtype name: str
+    :keyword version: The version of the backfill job request.
+    :paramtype version: str
+    :keyword feature_window: The time window for the feature set backfill request.
+    :paramtype feature_window: ~azure.ai.ml._restclient.v2023_04_01_preview.models.FeatureWindow
+    :keyword description: The description of the backfill job request. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :paramtype tags: Optional[dict[str, str]]
     :keyword resource: The compute resource settings. Defaults to None.
     :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
-    :param spark_configuration: Specifies the spark configuration. Defaults to None.
-    :type spark_configuration: Optional[dict[str, str]]
+    :keyword spark_configuration: Specifies the spark configuration. Defaults to None.
+    :paramtype spark_configuration: Optional[dict[str, str]]
     """
 
     def __init__(

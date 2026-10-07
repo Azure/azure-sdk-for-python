@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import (
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_http_logger(http_request, http_response):
+def test_http_logger(http_request, http_response):  # pylint: disable=too-many-statements
     class MockHandler(logging.Handler):
         def __init__(self):
             super(MockHandler, self).__init__()
@@ -133,7 +133,7 @@ def test_http_logger(http_request, http_response):
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_http_logger_operation_level(http_request, http_response):
+def test_http_logger_operation_level(http_request, http_response):  # pylint: disable=too-many-statements
     class MockHandler(logging.Handler):
         def __init__(self):
             super(MockHandler, self).__init__()

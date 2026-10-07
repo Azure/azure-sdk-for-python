@@ -571,7 +571,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncLROPoller[DedicatedHubResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -617,7 +617,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncLROPoller[DedicatedHubResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -627,7 +627,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> DedicatedHubResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def list_by_community_resource(
                 self, 
                 resource_group_name: str, 
@@ -636,7 +636,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncItemPaged[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def list_by_subscription(
                 self, 
                 community_name: str, 
@@ -3575,7 +3575,7 @@ namespace azure.mgmt.enclave.operations
             ) -> LROPoller[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3621,7 +3621,7 @@ namespace azure.mgmt.enclave.operations
             ) -> LROPoller[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3631,7 +3631,7 @@ namespace azure.mgmt.enclave.operations
             ) -> DedicatedHubResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def list_by_community_resource(
                 self, 
                 resource_group_name: str, 
@@ -3640,7 +3640,7 @@ namespace azure.mgmt.enclave.operations
             ) -> ItemPaged[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
         def list_by_subscription(
                 self, 
                 community_name: str, 
@@ -4412,21 +4412,21 @@ namespace azure.mgmt.enclave.types
 
     class azure.mgmt.enclave.types.ApprovalActionRequest(TypedDict, total=False):
         key "approvalStatus": Required[Union[Literal["Approved"], Literal["Rejected"], str]]
-        approval_status: Union[Literal[Approved], Literal[Rejected], str]
+        approvalStatus: Union[Literal[Approved], Literal[Rejected], str]
 
 
     class azure.mgmt.enclave.types.ApprovalCallbackRequest(TypedDict, total=False):
         key "approvalCallbackPayload": str
         key "approvalStatus": Required[Union[Literal["Approved"], Literal["Rejected"], str]]
         key "resourceRequestAction": Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str]]
-        approval_callback_payload: str
-        approval_status: Union[Literal[Approved], Literal[Rejected], str]
-        resource_request_action: Union[Literal[Create], Literal[Delete], Literal[Update], Literal[Reset], str]
+        approvalCallbackPayload: str
+        approvalStatus: Union[Literal[Approved], Literal[Rejected], str]
+        resourceRequestAction: Union[Literal[Create], Literal[Delete], Literal[Update], Literal[Reset], str]
 
 
     class azure.mgmt.enclave.types.ApprovalDeletionCallbackRequest(TypedDict, total=False):
         key "resourceRequestAction": Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], str]]
-        resource_request_action: Union[Literal[Create], Literal[Delete], Literal[Update], str]
+        resourceRequestAction: Union[Literal[Create], Literal[Delete], Literal[Update], str]
 
 
     class azure.mgmt.enclave.types.ApprovalPatchModel(TypedDict, total=False):
@@ -4442,12 +4442,12 @@ namespace azure.mgmt.enclave.types
         key "stateChangedAt": str
         key "ticketId": str
         approvers: list[Approver]
-        created_at: str
-        grandparent_resource_id: str
-        parent_resource_id: str
-        request_metadata: RequestMetadataUpdatableProperties
-        state_changed_at: str
-        ticket_id: str
+        createdAt: str
+        grandparentResourceId: str
+        parentResourceId: str
+        requestMetadata: RequestMetadataUpdatableProperties
+        stateChangedAt: str
+        ticketId: str
 
 
     class azure.mgmt.enclave.types.ApprovalProperties(TypedDict, total=False):
@@ -4462,20 +4462,18 @@ namespace azure.mgmt.enclave.types
         key "stateChangedAt": str
         key "ticketId": str
         approvedByEntraIds: list[str]
-        approved_by_entra_ids: list[str]
         approvers: list[Approver]
-        approvers_approved_count: int
-        created_at: str
-        grandparent_resource_id: str
+        approversApprovedCount: int
+        createdAt: str
+        grandparentResourceId: str
         mandatoryApprovers: list[MandatoryApprover]
-        mandatory_approvers: list[MandatoryApprover]
-        mandatory_approvers_approved_count: int
-        minimum_approvers_required: int
-        parent_resource_id: str
-        provisioning_state: Union[str, ProvisioningState]
-        request_metadata: RequestMetadata
-        state_changed_at: str
-        ticket_id: str
+        mandatoryApproversApprovedCount: int
+        minimumApproversRequired: int
+        parentResourceId: str
+        provisioningState: Union[str, ProvisioningState]
+        requestMetadata: RequestMetadata
+        stateChangedAt: str
+        ticketId: str
 
 
     class azure.mgmt.enclave.types.ApprovalResource(ExtensionResource):
@@ -4487,17 +4485,16 @@ namespace azure.mgmt.enclave.types
         id: str
         name: str
         properties: ApprovalProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.enclave.types.ApprovalSettingConfiguration(TypedDict, total=False):
         key "approvalPolicy": Union[str, ApprovalPolicy]
         key "minimumApproversRequired": int
-        approval_policy: Union[str, ApprovalPolicy]
+        approvalPolicy: Union[str, ApprovalPolicy]
         mandatoryApprovers: list[MandatoryApprover]
-        mandatory_approvers: list[MandatoryApprover]
-        minimum_approvers_required: int
+        minimumApproversRequired: int
 
 
     class azure.mgmt.enclave.types.ApprovalSettings(TypedDict, total=False):
@@ -4508,13 +4505,13 @@ namespace azure.mgmt.enclave.types
         key "enclaveCreation": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveEndpointUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveMaintenanceMode": ForwardRef('ApprovalSettingConfiguration', module='types')
-        community_endpoint_update: ApprovalSettingConfiguration
-        community_maintenance_mode: ApprovalSettingConfiguration
-        connection_creation: ApprovalSettingConfiguration
-        connection_update: ApprovalSettingConfiguration
-        enclave_creation: ApprovalSettingConfiguration
-        enclave_endpoint_update: ApprovalSettingConfiguration
-        enclave_maintenance_mode: ApprovalSettingConfiguration
+        communityEndpointUpdate: ApprovalSettingConfiguration
+        communityMaintenanceMode: ApprovalSettingConfiguration
+        connectionCreation: ApprovalSettingConfiguration
+        connectionUpdate: ApprovalSettingConfiguration
+        enclaveCreation: ApprovalSettingConfiguration
+        enclaveEndpointUpdate: ApprovalSettingConfiguration
+        enclaveMaintenanceMode: ApprovalSettingConfiguration
 
 
     class azure.mgmt.enclave.types.ApprovalSettingsPatchProperties(TypedDict, total=False):
@@ -4525,31 +4522,30 @@ namespace azure.mgmt.enclave.types
         key "enclaveCreation": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveEndpointUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveMaintenanceMode": ForwardRef('ApprovalSettingConfiguration', module='types')
-        community_endpoint_update: ApprovalSettingConfiguration
-        community_maintenance_mode: ApprovalSettingConfiguration
-        connection_creation: ApprovalSettingConfiguration
-        connection_update: ApprovalSettingConfiguration
-        enclave_creation: ApprovalSettingConfiguration
-        enclave_endpoint_update: ApprovalSettingConfiguration
-        enclave_maintenance_mode: ApprovalSettingConfiguration
+        communityEndpointUpdate: ApprovalSettingConfiguration
+        communityMaintenanceMode: ApprovalSettingConfiguration
+        connectionCreation: ApprovalSettingConfiguration
+        connectionUpdate: ApprovalSettingConfiguration
+        enclaveCreation: ApprovalSettingConfiguration
+        enclaveEndpointUpdate: ApprovalSettingConfiguration
+        enclaveMaintenanceMode: ApprovalSettingConfiguration
 
 
     class azure.mgmt.enclave.types.Approver(TypedDict, total=False):
         key "actionPerformed": Union[str, ActionPerformed]
         key "approverEntraId": Required[str]
         key "lastUpdatedAt": Required[str]
-        action_performed: Union[str, ActionPerformed]
-        approver_entra_id: str
-        last_updated_at: str
+        actionPerformed: Union[str, ActionPerformed]
+        approverEntraId: str
+        lastUpdatedAt: str
         mandatoryApprovalGroupMembershipIds: list[str]
-        mandatory_approval_group_membership_ids: list[str]
 
 
     class azure.mgmt.enclave.types.CheckAddressSpaceAvailabilityRequest(TypedDict, total=False):
         key "communityResourceId": Required[str]
         key "enclaveVirtualNetwork": Required[EnclaveVirtualNetworkModel]
-        community_resource_id: str
-        enclave_virtual_network: EnclaveVirtualNetworkModel
+        communityResourceId: str
+        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
 
 
     class azure.mgmt.enclave.types.CommunityEndpointDestinationRule(TypedDict, total=False):
@@ -4559,11 +4555,11 @@ namespace azure.mgmt.enclave.types
         key "ports": str
         key "transitHubResourceId": str
         destination: str
-        destination_type: Union[str, DestinationType]
-        endpoint_rule_name: str
+        destinationType: Union[str, DestinationType]
+        endpointRuleName: str
         ports: str
         protocols: list[Union[str, CommunityEndpointProtocol]]
-        transit_hub_resource_id: str
+        transitHubResourceId: str
 
 
     class azure.mgmt.enclave.types.CommunityEndpointPatchModel(TypedDict, total=False):
@@ -4575,19 +4571,18 @@ namespace azure.mgmt.enclave.types
     class azure.mgmt.enclave.types.CommunityEndpointPatchProperties(TypedDict, total=False):
         key "ruleCollection": Required[list[CommunityEndpointDestinationRule]]
         key "updateMode": Union[str, UpdateMode]
-        rule_collection: list[CommunityEndpointDestinationRule]
-        update_mode: Union[str, UpdateMode]
+        ruleCollection: list[CommunityEndpointDestinationRule]
+        updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.CommunityEndpointProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "ruleCollection": Required[list[CommunityEndpointDestinationRule]]
         key "updateMode": Union[str, UpdateMode]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
-        resource_collection: list[str]
-        rule_collection: list[CommunityEndpointDestinationRule]
-        update_mode: Union[str, UpdateMode]
+        ruleCollection: list[CommunityEndpointDestinationRule]
+        updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.CommunityEndpointResource(TrackedResource):
@@ -4601,7 +4596,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: CommunityEndpointProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4621,18 +4616,14 @@ namespace azure.mgmt.enclave.types
         key "monitoringSettings": ForwardRef('MonitoringSettingsPatchModel', module='types')
         key "policyOverride": Union[Literal["Enclave"], Literal["None"], str]
         addressSpaces: list[str]
-        address_spaces: list[str]
+        approvalSettings: ApprovalSettingsPatchProperties
         communityRoleAssignments: list[RoleAssignmentItem]
-        community_role_assignments: list[RoleAssignmentItem]
         dnsServers: list[str]
-        dns_servers: list[str]
-        firewall_sku: Union[str, FirewallSKU]
+        firewallSku: Union[str, FirewallSKU]
         governedServiceList: list[GovernedServiceItem]
-        governed_service_list: list[GovernedServiceItem]
-        granular_approval_settings: ApprovalSettingsPatchProperties
-        maintenance_mode_configuration: MaintenanceModeConfigurationPatchModel
-        monitoring_settings: MonitoringSettingsPatchModel
-        policy_override: Union[Literal[Enclave], Literal[None], str]
+        maintenanceModeConfiguration: MaintenanceModeConfigurationPatchModel
+        monitoringSettings: MonitoringSettingsPatchModel
+        policyOverride: Union[Literal[Enclave], Literal[None], str]
 
 
     class azure.mgmt.enclave.types.CommunityProperties(TypedDict, total=False):
@@ -4645,27 +4636,21 @@ namespace azure.mgmt.enclave.types
         key "monitoringSettings": ForwardRef('MonitoringSettingsModel', module='types')
         key "policyOverride": Union[Literal["Enclave"], Literal["None"], str]
         key "provisioningState": Union[str, ProvisioningState]
+        addressSpace: str
         addressSpaces: list[str]
-        address_space: str
-        address_spaces: list[str]
+        approvalSettings: ApprovalSettings
         communityRoleAssignments: list[RoleAssignmentItem]
-        community_role_assignments: list[RoleAssignmentItem]
         dedicatedHubList: list[DedicatedHubResource]
-        dedicated_hub_list: list[DedicatedHubResource]
         dnsServers: list[str]
-        dns_servers: list[str]
-        firewall_sku: Union[str, FirewallSKU]
+        firewallSku: Union[str, FirewallSKU]
         governedServiceList: list[GovernedServiceItem]
-        governed_service_list: list[GovernedServiceItem]
-        granular_approval_settings: ApprovalSettings
-        maintenance_mode_configuration: MaintenanceModeConfigurationModel
-        managed_on_behalf_of_configuration: ManagedOnBehalfOfConfiguration
-        managed_resource_group_name: str
-        monitoring_settings: MonitoringSettingsModel
-        policy_override: Union[Literal[Enclave], Literal[None], str]
-        provisioning_state: Union[str, ProvisioningState]
+        maintenanceModeConfiguration: MaintenanceModeConfigurationModel
+        managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
+        managedResourceGroupName: str
+        monitoringSettings: MonitoringSettingsModel
+        policyOverride: Union[Literal[Enclave], Literal[None], str]
+        provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
-        resource_collection: list[str]
 
 
     class azure.mgmt.enclave.types.CommunityResource(TrackedResource):
@@ -4681,7 +4666,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: CommunityProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4704,10 +4689,10 @@ namespace azure.mgmt.enclave.types
         key "provisioningState": Union[str, ProvisioningState]
         key "vHubResourceId": str
         designation: Union[str, Designation]
-        firewall_policy_resource_id: str
-        firewall_resource_id: str
-        provisioning_state: Union[str, ProvisioningState]
-        v_hub_resource_id: str
+        firewallPolicyResourceId: str
+        firewallResourceId: str
+        provisioningState: Union[str, ProvisioningState]
+        vHubResourceId: str
 
 
     class azure.mgmt.enclave.types.DedicatedHubResource(TrackedResource):
@@ -4721,7 +4706,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: DedicatedHubProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4729,8 +4714,8 @@ namespace azure.mgmt.enclave.types
     class azure.mgmt.enclave.types.EnclaveAddressSpacesModel(TypedDict, total=False):
         key "enclaveAddressSpace": str
         key "managedAddressSpace": str
-        enclave_address_space: str
-        managed_address_space: str
+        enclaveAddressSpace: str
+        managedAddressSpace: str
 
 
     class azure.mgmt.enclave.types.EnclaveConnectionPatchModel(TypedDict, total=False):
@@ -4741,7 +4726,7 @@ namespace azure.mgmt.enclave.types
 
     class azure.mgmt.enclave.types.EnclaveConnectionPatchProperties(TypedDict, total=False):
         key "sourceCidr": str
-        source_cidr: str
+        sourceCidr: str
 
 
     class azure.mgmt.enclave.types.EnclaveConnectionProperties(TypedDict, total=False):
@@ -4752,15 +4737,14 @@ namespace azure.mgmt.enclave.types
         key "sourceResourceId": Required[str]
         key "state": Union[str, EnclaveConnectionState]
         key "updateMode": Union[str, UpdateMode]
-        community_resource_id: str
-        destination_endpoint_id: str
-        provisioning_state: Union[str, ProvisioningState]
+        communityResourceId: str
+        destinationEndpointId: str
+        provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
-        resource_collection: list[str]
-        source_cidr: str
-        source_resource_id: str
+        sourceCidr: str
+        sourceResourceId: str
         state: Union[str, EnclaveConnectionState]
-        update_mode: Union[str, UpdateMode]
+        updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.EnclaveConnectionResource(TrackedResource):
@@ -4774,7 +4758,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: EnclaveConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4783,16 +4767,15 @@ namespace azure.mgmt.enclave.types
         key "diagnosticDestination": Union[str, DiagnosticDestination]
         key "keyVaultResourceId": str
         key "storageAccountResourceId": str
-        diagnostic_destination: Union[str, DiagnosticDestination]
-        key_vault_resource_id: str
+        diagnosticDestination: Union[str, DiagnosticDestination]
+        keyVaultResourceId: str
         logAnalyticsResourceIdCollection: list[str]
-        log_analytics_resource_id_collection: list[str]
-        storage_account_resource_id: str
+        storageAccountResourceId: str
 
 
     class azure.mgmt.enclave.types.EnclaveDefaultSettingsPatchModel(TypedDict, total=False):
         key "diagnosticDestination": Union[str, DiagnosticDestination]
-        diagnostic_destination: Union[str, DiagnosticDestination]
+        diagnosticDestination: Union[str, DiagnosticDestination]
 
 
     class azure.mgmt.enclave.types.EnclaveEndpointDestinationRule(TypedDict, total=False):
@@ -4800,7 +4783,7 @@ namespace azure.mgmt.enclave.types
         key "endpointRuleName": str
         key "ports": str
         destination: str
-        endpoint_rule_name: str
+        endpointRuleName: str
         ports: str
         protocols: list[Union[str, EnclaveEndpointProtocol]]
 
@@ -4814,19 +4797,18 @@ namespace azure.mgmt.enclave.types
     class azure.mgmt.enclave.types.EnclaveEndpointPatchProperties(TypedDict, total=False):
         key "ruleCollection": Required[list[EnclaveEndpointDestinationRule]]
         key "updateMode": Union[str, UpdateMode]
-        rule_collection: list[EnclaveEndpointDestinationRule]
-        update_mode: Union[str, UpdateMode]
+        ruleCollection: list[EnclaveEndpointDestinationRule]
+        updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.EnclaveEndpointProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "ruleCollection": Required[list[EnclaveEndpointDestinationRule]]
         key "updateMode": Union[str, UpdateMode]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
-        resource_collection: list[str]
-        rule_collection: list[EnclaveEndpointDestinationRule]
-        update_mode: Union[str, UpdateMode]
+        ruleCollection: list[EnclaveEndpointDestinationRule]
+        updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.EnclaveEndpointResource(TrackedResource):
@@ -4840,7 +4822,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: EnclaveEndpointProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4858,7 +4840,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: VirtualEnclaveProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4868,12 +4850,11 @@ namespace azure.mgmt.enclave.types
         key "customCidrRange": str
         key "networkName": str
         key "networkSize": str
-        allow_subnet_communication: bool
-        custom_cidr_range: str
-        network_name: str
-        network_size: str
+        allowSubnetCommunication: bool
+        customCidrRange: str
+        networkName: str
+        networkSize: str
         subnetConfigurations: list[SubnetConfiguration]
-        subnet_configurations: list[SubnetConfiguration]
 
 
     class azure.mgmt.enclave.types.ExtensionResource(Resource):
@@ -4883,7 +4864,7 @@ namespace azure.mgmt.enclave.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4896,9 +4877,9 @@ namespace azure.mgmt.enclave.types
         enforcement: Union[Literal[Enabled], Literal[Disabled], str]
         initiatives: list[str]
         option: Union[Literal[Allow], Literal[Deny], Literal[ExceptionOnly], Literal[NotApplicable], str]
-        policy_action: Union[Literal[AuditOnly], Literal[Enforce], Literal[None], str]
-        service_id: Union[str, ServiceIdentifier]
-        service_name: str
+        policyAction: Union[Literal[AuditOnly], Literal[Enforce], Literal[None], str]
+        serviceId: Union[str, ServiceIdentifier]
+        serviceName: str
 
 
     class azure.mgmt.enclave.types.MaintenanceModeConfigurationModel(TypedDict, total=False):
@@ -4919,23 +4900,21 @@ namespace azure.mgmt.enclave.types
 
     class azure.mgmt.enclave.types.ManagedOnBehalfOfConfiguration(TypedDict, total=False):
         moboBrokerResources: list[MoboBrokerResource]
-        mobo_broker_resources: list[MoboBrokerResource]
 
 
     class azure.mgmt.enclave.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.enclave.types.MandatoryApprover(TypedDict, total=False):
         key "approverEntraId": Required[str]
-        approver_entra_id: str
+        approverEntraId: str
 
 
     class azure.mgmt.enclave.types.MoboBrokerResource(TypedDict, total=False):
@@ -4947,32 +4926,30 @@ namespace azure.mgmt.enclave.types
         key "customWorkspaceResourceId": str
         key "destinationType": Required[Union[str, MonitoringDestinationType]]
         key "diagnosticSettingsName": str
-        custom_workspace_resource_id: str
-        destination_type: Union[str, MonitoringDestinationType]
-        diagnostic_settings_name: str
+        customWorkspaceResourceId: str
+        destinationType: Union[str, MonitoringDestinationType]
+        diagnosticSettingsName: str
 
 
     class azure.mgmt.enclave.types.MonitoringDestinationPatchModel(TypedDict, total=False):
         key "customWorkspaceResourceId": str
         key "destinationType": Required[Union[str, MonitoringDestinationType]]
         key "diagnosticSettingsName": str
-        custom_workspace_resource_id: str
-        destination_type: Union[str, MonitoringDestinationType]
-        diagnostic_settings_name: str
+        customWorkspaceResourceId: str
+        destinationType: Union[str, MonitoringDestinationType]
+        diagnosticSettingsName: str
 
 
     class azure.mgmt.enclave.types.MonitoringSettingsModel(TypedDict, total=False):
         key "flowLogDestination": ForwardRef('MonitoringDestination', module='types')
         diagnosticDestinations: list[MonitoringDestination]
-        diagnostic_destinations: list[MonitoringDestination]
-        flow_log_destination: MonitoringDestination
+        flowLogDestination: MonitoringDestination
 
 
     class azure.mgmt.enclave.types.MonitoringSettingsPatchModel(TypedDict, total=False):
         key "flowLogDestination": ForwardRef('MonitoringDestinationPatchModel', module='types')
         diagnosticDestinations: list[MonitoringDestinationPatchModel]
-        diagnostic_destinations: list[MonitoringDestinationPatchModel]
-        flow_log_destination: MonitoringDestinationPatchModel
+        flowLogDestination: MonitoringDestinationPatchModel
 
 
     class azure.mgmt.enclave.types.Principal(TypedDict, total=False):
@@ -4987,10 +4964,10 @@ namespace azure.mgmt.enclave.types
         key "approvalCallbackRoute": str
         key "approvalStatus": Union[str, ApprovalStatus]
         key "resourceAction": Required[str]
-        approval_callback_payload: str
-        approval_callback_route: str
-        approval_status: Union[str, ApprovalStatus]
-        resource_action: str
+        approvalCallbackPayload: str
+        approvalCallbackRoute: str
+        approvalStatus: Union[str, ApprovalStatus]
+        resourceAction: str
 
 
     class azure.mgmt.enclave.types.RequestMetadataUpdatableProperties(TypedDict, total=False):
@@ -4998,10 +4975,10 @@ namespace azure.mgmt.enclave.types
         key "approvalCallbackRoute": str
         key "approvalStatus": Union[str, ApprovalStatus]
         key "resourceAction": Required[str]
-        approval_callback_payload: str
-        approval_callback_route: str
-        approval_status: Union[str, ApprovalStatus]
-        resource_action: str
+        approvalCallbackPayload: str
+        approvalCallbackRoute: str
+        approvalStatus: Union[str, ApprovalStatus]
+        resourceAction: str
 
 
     class azure.mgmt.enclave.types.Resource(TypedDict, total=False):
@@ -5011,7 +4988,7 @@ namespace azure.mgmt.enclave.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5020,7 +4997,7 @@ namespace azure.mgmt.enclave.types
         key "roleDefinitionId": Required[str]
         condition: str
         principals: list[Principal]
-        role_definition_id: str
+        roleDefinitionId: str
 
 
     class azure.mgmt.enclave.types.SubnetConfiguration(TypedDict, total=False):
@@ -5030,12 +5007,12 @@ namespace azure.mgmt.enclave.types
         key "subnetDelegation": str
         key "subnetName": Required[str]
         key "subnetResourceId": str
-        address_prefix: str
-        network_prefix_size: int
-        network_security_group_resource_id: str
-        subnet_delegation: str
-        subnet_name: str
-        subnet_resource_id: str
+        addressPrefix: str
+        networkPrefixSize: int
+        networkSecurityGroupResourceId: str
+        subnetDelegation: str
+        subnetName: str
+        subnetResourceId: str
 
 
     class azure.mgmt.enclave.types.SystemData(TypedDict, total=False):
@@ -5045,12 +5022,12 @@ namespace azure.mgmt.enclave.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.enclave.types.TrackedResource(Resource):
@@ -5062,7 +5039,7 @@ namespace azure.mgmt.enclave.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5077,9 +5054,9 @@ namespace azure.mgmt.enclave.types
         key "securityProvider": Union[str, SecurityProvider]
         key "state": Union[str, TransitHubState]
         key "transitOption": ForwardRef('TransitOption', module='types')
-        security_provider: Union[str, SecurityProvider]
+        securityProvider: Union[str, SecurityProvider]
         state: Union[str, TransitHubState]
-        transit_option: TransitOption
+        transitOption: TransitOption
 
 
     class azure.mgmt.enclave.types.TransitHubProperties(TypedDict, total=False):
@@ -5087,12 +5064,11 @@ namespace azure.mgmt.enclave.types
         key "securityProvider": Union[str, SecurityProvider]
         key "state": Union[str, TransitHubState]
         key "transitOption": ForwardRef('TransitOption', module='types')
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
-        resource_collection: list[str]
-        security_provider: Union[str, SecurityProvider]
+        securityProvider: Union[str, SecurityProvider]
         state: Union[str, TransitHubState]
-        transit_option: TransitOption
+        transitOption: TransitOption
 
 
     class azure.mgmt.enclave.types.TransitHubResource(TrackedResource):
@@ -5106,7 +5082,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: TransitHubProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5121,15 +5097,15 @@ namespace azure.mgmt.enclave.types
     class azure.mgmt.enclave.types.TransitOptionParams(TypedDict, total=False):
         key "remoteVirtualNetworkId": str
         key "scaleUnits": int
-        remote_virtual_network_id: str
-        scale_units: int
+        remoteVirtualNetworkId: str
+        scaleUnits: int
 
 
     class azure.mgmt.enclave.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.enclave.types.VirtualEnclaveApprovalSettings(TypedDict, total=False):
@@ -5137,10 +5113,10 @@ namespace azure.mgmt.enclave.types
         key "connectionUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveEndpointUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveMaintenanceMode": ForwardRef('ApprovalSettingConfiguration', module='types')
-        connection_creation: ApprovalSettingConfiguration
-        connection_update: ApprovalSettingConfiguration
-        enclave_endpoint_update: ApprovalSettingConfiguration
-        enclave_maintenance_mode: ApprovalSettingConfiguration
+        connectionCreation: ApprovalSettingConfiguration
+        connectionUpdate: ApprovalSettingConfiguration
+        enclaveEndpointUpdate: ApprovalSettingConfiguration
+        enclaveMaintenanceMode: ApprovalSettingConfiguration
 
 
     class azure.mgmt.enclave.types.VirtualEnclaveApprovalSettingsPatchProperties(TypedDict, total=False):
@@ -5148,10 +5124,10 @@ namespace azure.mgmt.enclave.types
         key "connectionUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveEndpointUpdate": ForwardRef('ApprovalSettingConfiguration', module='types')
         key "enclaveMaintenanceMode": ForwardRef('ApprovalSettingConfiguration', module='types')
-        connection_creation: ApprovalSettingConfiguration
-        connection_update: ApprovalSettingConfiguration
-        enclave_endpoint_update: ApprovalSettingConfiguration
-        enclave_maintenance_mode: ApprovalSettingConfiguration
+        connectionCreation: ApprovalSettingConfiguration
+        connectionUpdate: ApprovalSettingConfiguration
+        enclaveEndpointUpdate: ApprovalSettingConfiguration
+        enclaveMaintenanceMode: ApprovalSettingConfiguration
 
 
     class azure.mgmt.enclave.types.VirtualEnclavePatchModel(TypedDict, total=False):
@@ -5172,21 +5148,18 @@ namespace azure.mgmt.enclave.types
         key "monitoringSettings": ForwardRef('MonitoringSettingsPatchModel', module='types')
         key "rbacInheritance": Union[str, RbacInheritanceMode]
         key "workloadResourceVisibility": Union[str, ResourceVisibilityMode]
-        approval_settings: VirtualEnclaveApprovalSettingsPatchProperties
-        bastion_enabled: bool
-        dedicated_hub_resource_id: str
+        approvalSettings: VirtualEnclaveApprovalSettingsPatchProperties
+        bastionEnabled: bool
+        dedicatedHubResourceId: str
+        enclaveDefaultSettings: EnclaveDefaultSettingsPatchModel
         enclaveRoleAssignments: list[RoleAssignmentItem]
-        enclave_default_settings: EnclaveDefaultSettingsPatchModel
-        enclave_role_assignments: list[RoleAssignmentItem]
-        enclave_virtual_network: EnclaveVirtualNetworkModel
+        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
         governedServiceList: list[GovernedServiceItem]
-        governed_service_list: list[GovernedServiceItem]
-        maintenance_mode_configuration: MaintenanceModeConfigurationPatchModel
-        monitoring_settings: MonitoringSettingsPatchModel
-        rbac_inheritance: Union[str, RbacInheritanceMode]
+        maintenanceModeConfiguration: MaintenanceModeConfigurationPatchModel
+        monitoringSettings: MonitoringSettingsPatchModel
+        rbacInheritance: Union[str, RbacInheritanceMode]
+        workloadResourceVisibility: Union[str, ResourceVisibilityMode]
         workloadRoleAssignments: list[RoleAssignmentItem]
-        workload_resource_visibility: Union[str, ResourceVisibilityMode]
-        workload_role_assignments: list[RoleAssignmentItem]
 
 
     class azure.mgmt.enclave.types.VirtualEnclaveProperties(TypedDict, total=False):
@@ -5204,28 +5177,24 @@ namespace azure.mgmt.enclave.types
         key "provisioningState": Union[str, ProvisioningState]
         key "rbacInheritance": Union[str, RbacInheritanceMode]
         key "workloadResourceVisibility": Union[str, ResourceVisibilityMode]
-        approval_settings: VirtualEnclaveApprovalSettings
-        bastion_enabled: bool
-        community_resource_id: str
-        dedicated_hub_resource_id: str
+        approvalSettings: VirtualEnclaveApprovalSettings
+        bastionEnabled: bool
+        communityResourceId: str
+        dedicatedHubResourceId: str
+        enclaveAddressSpaces: EnclaveAddressSpacesModel
+        enclaveDefaultSettings: EnclaveDefaultSettingsModel
         enclaveRoleAssignments: list[RoleAssignmentItem]
-        enclave_address_spaces: EnclaveAddressSpacesModel
-        enclave_default_settings: EnclaveDefaultSettingsModel
-        enclave_role_assignments: list[RoleAssignmentItem]
-        enclave_virtual_network: EnclaveVirtualNetworkModel
+        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
         governedServiceList: list[GovernedServiceItem]
-        governed_service_list: list[GovernedServiceItem]
-        maintenance_mode_configuration: MaintenanceModeConfigurationModel
-        managed_on_behalf_of_configuration: ManagedOnBehalfOfConfiguration
-        managed_resource_group_name: str
-        monitoring_settings: MonitoringSettingsModel
-        provisioning_state: Union[str, ProvisioningState]
-        rbac_inheritance: Union[str, RbacInheritanceMode]
+        maintenanceModeConfiguration: MaintenanceModeConfigurationModel
+        managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
+        managedResourceGroupName: str
+        monitoringSettings: MonitoringSettingsModel
+        provisioningState: Union[str, ProvisioningState]
+        rbacInheritance: Union[str, RbacInheritanceMode]
         resourceCollection: list[str]
-        resource_collection: list[str]
+        workloadResourceVisibility: Union[str, ResourceVisibilityMode]
         workloadRoleAssignments: list[RoleAssignmentItem]
-        workload_resource_visibility: Union[str, ResourceVisibilityMode]
-        workload_role_assignments: list[RoleAssignmentItem]
 
 
     class azure.mgmt.enclave.types.WorkloadPatchModel(TypedDict, total=False):
@@ -5236,16 +5205,14 @@ namespace azure.mgmt.enclave.types
 
     class azure.mgmt.enclave.types.WorkloadPatchProperties(TypedDict, total=False):
         resourceGroupCollection: list[str]
-        resource_group_collection: list[str]
 
 
     class azure.mgmt.enclave.types.WorkloadProperties(TypedDict, total=False):
         key "managedOnBehalfOfConfiguration": ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        managed_on_behalf_of_configuration: ManagedOnBehalfOfConfiguration
-        provisioning_state: Union[str, ProvisioningState]
+        managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
+        provisioningState: Union[str, ProvisioningState]
         resourceGroupCollection: list[str]
-        resource_group_collection: list[str]
 
 
     class azure.mgmt.enclave.types.WorkloadResource(TrackedResource):
@@ -5259,7 +5226,7 @@ namespace azure.mgmt.enclave.types
         location: str
         name: str
         properties: WorkloadProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 

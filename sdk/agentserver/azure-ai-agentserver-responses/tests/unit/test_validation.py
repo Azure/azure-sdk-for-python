@@ -11,7 +11,7 @@ from azure.ai.agentserver.responses.hosting._validation import (
     to_api_error_response,
     validate_create_response,
 )
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
+from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 
 class _FakeCreateRequest(dict):

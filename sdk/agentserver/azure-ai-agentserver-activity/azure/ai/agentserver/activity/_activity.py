@@ -500,12 +500,6 @@ class ActivityAgentServerHost(AgentServerHost):
                 methods=["POST"],
                 name=ActivityConstants.ACTIVITY_ROUTE_NAME,
             ),
-            Route(
-                ActivityConstants.API_MESSAGES_PATH,
-                self._create_activity_endpoint,
-                methods=["POST"],
-                name=ActivityConstants.API_MESSAGES_ROUTE_NAME,
-            ),
         ]
 
     def _resolve_storage(self, storage: Optional[Storage]) -> Storage:

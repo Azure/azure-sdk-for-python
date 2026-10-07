@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -48,6 +48,7 @@ USAGE:
 """
 
 import os
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List
@@ -60,7 +61,6 @@ from azure.ai.projects.models import (
     AgentEvaluatorGenerationJobSource,
     DatasetEvaluatorGenerationJobSource,
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     EvaluatorGenerationJobSource,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
@@ -124,21 +124,31 @@ with (
     else:
         print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
 
-    print("Waiting for multi-source job to complete (polling is handled by the SDK)...")
+    print("Begin creating an evaluator generation job.")
     try:
-        evaluator = project_client.beta.evaluators.begin_create_generation_job(
-            job=EvaluatorGenerationJob(
-                inputs=EvaluatorGenerationInputs(
-                    model=model_name,
-                    evaluator_name=multi_name,
-                    evaluator_display_name="Customer Support Quality (multi-source)",
-                    evaluator_description="Generated from prompt, agent, and dataset signals.",
-                    sources=multi_sources,
-                ),
+        poller = project_client.evaluators.begin_create_generation_job(
+            job=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=multi_name,
+                evaluator_display_name="Customer Support Quality (multi-source)",
+                evaluator_description="Generated from prompt, agent, and dataset signals.",
+                sources=multi_sources,
             ),
             operation_id=f"rubric-multi-{short}",
             polling_interval=poll_interval_seconds,
-        ).result()
+        )
+
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
+
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        evaluator = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Evaluator generation result: {evaluator}")
         # `isinstance` narrows the discriminated `definition` to the rubric subtype.
         definition = evaluator.definition
         assert isinstance(definition, RubricBasedEvaluatorDefinition)
@@ -160,32 +170,42 @@ with (
         start_time = now - timedelta(days=traces_window_days)
         end_time = now + timedelta(seconds=600)  # small padding for clock skew
 
-        print("Waiting for traces job to complete (polling is handled by the SDK)...")
+        print("Begin creating an evaluator generation job.")
         try:
-            evaluator = project_client.beta.evaluators.begin_create_generation_job(
-                job=EvaluatorGenerationJob(
-                    inputs=EvaluatorGenerationInputs(
-                        model=model_name,
-                        evaluator_name=traces_name,
-                        evaluator_display_name="Customer Support Quality (from traces)",
-                        evaluator_description="Generated from real Application Insights conversation traces.",
-                        sources=[
-                            TracesEvaluatorGenerationJobSource(
-                                description="Application Insights conversation traces for the agent.",
-                                agent_name=agent_name,
-                                start_time=start_time,
-                                end_time=end_time,
-                            ),
-                            AgentEvaluatorGenerationJobSource(
-                                description="Companion source (service rejects traces-only).",
-                                agent_name=agent_name,
-                            ),
-                        ],
-                    ),
+            poller = project_client.evaluators.begin_create_generation_job(
+                job=EvaluatorGenerationInputs(
+                    model=model_name,
+                    evaluator_name=traces_name,
+                    evaluator_display_name="Customer Support Quality (from traces)",
+                    evaluator_description="Generated from real Application Insights conversation traces.",
+                    sources=[
+                        TracesEvaluatorGenerationJobSource(
+                            description="Application Insights conversation traces for the agent.",
+                            agent_name=agent_name,
+                            start_time=start_time,
+                            end_time=end_time,
+                        ),
+                        AgentEvaluatorGenerationJobSource(
+                            description="Companion source (service rejects traces-only).",
+                            agent_name=agent_name,
+                        ),
+                    ],
                 ),
                 operation_id=f"rubric-traces-{short}",
                 polling_interval=poll_interval_seconds,
-            ).result()
+            )
+
+            # Optional: While SDK is polling, periodically print the job status until the job is complete
+            print("Periodically check job status:")
+            while not poller.done():
+                print(f"\tstatus=`{poller.status()}`")
+                time.sleep(poll_interval_seconds)
+
+            # Since done() is true, result() returns the final deserialized job result without
+            # waiting further. It also propagates any LRO polling exception.
+            evaluator = poller.result()
+            print(f"Final LRO status: `{poller.status()}`.")
+            print(f"Evaluator generation result: {evaluator}")
             # `isinstance` narrows the discriminated `definition` to the rubric subtype.
             definition = evaluator.definition
             assert isinstance(definition, RubricBasedEvaluatorDefinition)
@@ -200,6 +220,6 @@ with (
     # 3. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     if multi_evaluator_version:
-        project_client.beta.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
+        project_client.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
     if traces_evaluator_version:
-        project_client.beta.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)
+        project_client.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)

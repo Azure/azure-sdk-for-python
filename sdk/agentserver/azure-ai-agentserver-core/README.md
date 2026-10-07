@@ -176,6 +176,33 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+Azure Monitor uses 100% trace sampling by default. Standard OpenTelemetry
+sampling configuration through `OTEL_TRACES_SAMPLER` and
+`OTEL_TRACES_SAMPLER_ARG` takes precedence when explicitly set. This controls
+sampling only; exporter queues, process termination, and transport or ingestion
+failures can still prevent trace delivery.
+
+Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
+default to avoid automatically tracing every outbound HTTP request. To enable
+selected instrumentations, configure the host's observability callback:
+
+```python
+from functools import partial
+
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
+
+app = AgentServerHost(
+    configure_observability=partial(
+        configure_observability,
+        instrumentation_options={
+            "azure_sdk": {"enabled": True},
+            "httpx": {"enabled": True},
+            "requests": {"enabled": True},
+        },
+    )
+)
+```
+
 OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
 is the default protocol. To use an OTLP/gRPC collector, install the optional
 gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
@@ -191,8 +218,17 @@ python my_agent.py
 
 The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
 
+The resilient task subsystem is **opt-in**: call `set_resilient_tasks_enabled(True)` (before host startup, typically at import time) so the framework constructs the `TaskManager` and runs crash recovery. Without it, `.run()` / `.start()` raise `TaskManagerNotInitialized`.
+
 ```python
-from azure.ai.agentserver.core.tasks import task, TaskContext
+from azure.ai.agentserver.core.tasks import (
+    set_resilient_tasks_enabled,
+    task,
+    TaskContext,
+)
+
+# Opt in to the durable task subsystem (required for @task to run).
+set_resilient_tasks_enabled(True)
 
 @task(name="process_document")
 async def process_document(ctx: TaskContext[dict]) -> dict:

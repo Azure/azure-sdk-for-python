@@ -4,15 +4,21 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+import logging
+from collections.abc import Mapping, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Iterator, Sequence, cast
 
 from .. import models as response_models
-from ..models import AgentReference
+
 
 from .._id_generator import IdGenerator
+from .._metadata_constraints import (
+    MAX_METADATA_KEYS,
+    MAX_METADATA_KEY_LENGTH,
+    MAX_METADATA_VALUE_LENGTH,
+)
 from . import _internals
 from ._builders import (
     OutputItemBuilder,
@@ -30,10 +36,12 @@ from ._builders import (
 )
 from ._state_machine import EventStreamValidator
 from ._checkpoint import ResponseCheckpointEvent
+from ._internal_metadata import _ResponseInternalMetadataView
 
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
 _RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=protected-access
+_LOGGER = logging.getLogger(__name__)
 
 
 def _resolve_conversation_param(raw: Any) -> str | None:
@@ -74,6 +82,43 @@ def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
     return obj
 
 
+def _merge_response_metadata(response: dict[str, Any], metadata: Mapping[str, str]) -> None:
+    """Merge validated public metadata into a response envelope.
+
+    :param response: Mutable response envelope receiving the metadata.
+    :type response: dict[str, ~typing.Any]
+    :param metadata: Public metadata values to validate and merge.
+    :type metadata: ~collections.abc.Mapping[str, str]
+    """
+    current = response.get("metadata")
+    if current is None:
+        merged: dict[str, str] = {}
+    elif isinstance(current, dict):
+        merged = dict(current)
+    else:
+        raise TypeError("response metadata must be a mapping")
+
+    for key, value in metadata.items():
+        if not isinstance(key, str):
+            raise TypeError(f"metadata keys must be str, got {type(key).__name__}")
+        if not isinstance(value, str):
+            raise TypeError(f"metadata values must be str, got {type(value).__name__}")
+        if len(key) > MAX_METADATA_KEY_LENGTH:
+            raise ValueError(
+                f"metadata key exceeds the {MAX_METADATA_KEY_LENGTH}-character limit: "
+                f"{key[:MAX_METADATA_KEY_LENGTH]}..."
+            )
+        if len(value) > MAX_METADATA_VALUE_LENGTH:
+            raise ValueError(
+                f"metadata value for key '{key}' exceeds the {MAX_METADATA_VALUE_LENGTH}-character limit"
+            )
+        merged[key] = value
+
+    if len(merged) > MAX_METADATA_KEYS:
+        raise ValueError(f"response metadata must have at most {MAX_METADATA_KEYS} key-value pairs")
+    response["metadata"] = merged
+
+
 class _MutableResponseDict(dict[str, Any]):
     """Mutable response wire payload with legacy attribute access."""
 
@@ -94,7 +139,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: AgentReference | dict[str, Any] | None = None,
+        agent_reference: response_models.AgentReference | dict[str, Any] | None = None,
         model: str | None = None,
         request: response_models.CreateResponse | None = None,
         response: response_models.ResponseObject | None = None,
@@ -116,7 +161,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if request is not None and response is not None:
             raise ValueError("request and response cannot both be provided")
 
-        request_mapping = _internals.coerce_model_mapping(request)
+        # Request seeding reads only selected fields, copying mutable values below.
+        request_mapping = request if isinstance(request, dict) else None
         response_mapping = _internals.coerce_model_mapping(response)
 
         resolved_response_id = response_id
@@ -131,7 +177,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response_id = resolved_response_id
 
         if response_mapping is not None:
-            payload = _MutableResponseDict(deepcopy(response_mapping))
+            # Coercion already detached this graph from the caller's recovery seed.
+            payload = _MutableResponseDict(response_mapping)
             payload["id"] = self._response_id
             payload.setdefault("object", "response")
             payload.setdefault("output", [])
@@ -176,8 +223,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if agent_reference is not None:
             self._response["agent_reference"] = deepcopy(agent_reference)
 
+        _ResponseInternalMetadataView(self._response)
         self._agent_reference, self._model = _internals.extract_response_fields(
-            cast(response_models.ResponseObject, self._response)
+            cast("response_models.ResponseObject", self._response)
         )
         self._events: list[response_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
@@ -198,23 +246,16 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """Live, mutable response-level framework-internal metadata.
 
         A convenience proxy backed by a reserved ``_internal_metadata`` key
-        inside the response's public ``metadata`` map — read / write / delete in
-        place (``stream.internal_metadata["phase"] = 3``). Stripped from every
-        client-facing payload and persisted at the next ``yield
-        stream.checkpoint()`` (and at terminal). Values may be any
-        JSON-serialisable type.
+        inside the response's public ``metadata`` map. The private bag is
+        JSON-encoded into the string-valued metadata slot required by Foundry
+        storage. Read / write / delete in place
+        (``stream.internal_metadata["phase"] = 3``). Stripped from every
+        client-facing payload and persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal).
 
         :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
         """
-        metadata = self._response.get("metadata")
-        if not isinstance(metadata, dict):
-            metadata = {}
-            self._response["metadata"] = metadata
-        bag = metadata.get("_internal_metadata")
-        if not isinstance(bag, dict):
-            bag = {}
-            metadata["_internal_metadata"] = bag
-        return bag
+        return _ResponseInternalMetadataView(self._response)
 
     def checkpoint(self) -> "ResponseCheckpointEvent":
         """Return a checkpoint event to ``yield`` for persistence.
@@ -250,7 +291,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: The checkpoint event to yield.
         :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
         """
-        return ResponseCheckpointEvent(cast(response_models.ResponseObject, self._response))
+        return ResponseCheckpointEvent(cast("response_models.ResponseObject", self._response))
 
     def emit_queued(self) -> response_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
@@ -260,7 +301,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = "queued"
         return cast(
-            response_models.ResponseQueuedEvent,
+            "response_models.ResponseQueuedEvent",
             self._emit_event(
                 {
                     "type": "response.queued",
@@ -279,7 +320,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = status
         return cast(
-            response_models.ResponseCreatedEvent,
+            "response_models.ResponseCreatedEvent",
             self._emit_event(
                 {
                     "type": "response.created",
@@ -296,7 +337,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = "in_progress"
         return cast(
-            response_models.ResponseInProgressEvent,
+            "response_models.ResponseInProgressEvent",
             self._emit_event(
                 {
                     "type": "response.in_progress",
@@ -320,7 +361,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response["incomplete_details"] = None
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseCompletedEvent,
+            "response_models.ResponseCompletedEvent",
             self._emit_event(
                 {
                     "type": "response.completed",
@@ -334,6 +375,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         code: str = "server_error",
         message: str = "An internal server error occurred.",
+        metadata: Mapping[str, str] | None = None,
         usage: response_models.ResponseUsage | None = None,
     ) -> response_models.ResponseFailedEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
@@ -342,6 +384,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type code: str | ~azure.ai.agentserver.responses.models.ResponseErrorCode
         :keyword message: Human-readable error message.
         :keyword type message: str
+        :keyword metadata: Optional public response metadata to merge into the terminal response. Invalid
+            metadata is logged and omitted so it cannot suppress the original failure.
+        :keyword type metadata: ~collections.abc.Mapping[str, str] | None
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
         :returns: The emitted event model instance.
@@ -353,9 +398,18 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             "code": _internals.enum_value(code),
             "message": message,
         }
+        if metadata is not None:
+            try:
+                _merge_response_metadata(self._response, metadata)
+            except (TypeError, ValueError) as exc:
+                _LOGGER.warning(
+                    "Ignoring invalid metadata supplied to emit_failed; the response failure will be emitted "
+                    "without it: %s",
+                    exc,
+                )
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseFailedEvent,
+            "response_models.ResponseFailedEvent",
             self._emit_event(
                 {
                     "type": "response.failed",
@@ -388,7 +442,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             self._response["incomplete_details"] = {"reason": _internals.enum_value(reason)}
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseIncompleteEvent,
+            "response_models.ResponseIncompleteEvent",
             self._emit_event(
                 {
                     "type": "response.incomplete",
@@ -772,7 +826,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         candidate["sequence_number"] = len(self._events)
 
         # Apply response-level defaults to lifecycle events
-        typed_candidate = cast(response_models.ResponseStreamEvent, candidate)
+        typed_candidate = cast("response_models.ResponseStreamEvent", candidate)
         _internals.apply_common_defaults(
             [typed_candidate],
             response_id=self._response_id,
@@ -781,7 +835,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         )
         # Track completed output items on the response envelope
         _internals.track_completed_output_item(
-            cast(response_models.ResponseObject, self._response),
+            cast("response_models.ResponseObject", self._response),
             typed_candidate,
         )
 

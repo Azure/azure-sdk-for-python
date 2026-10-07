@@ -12,7 +12,7 @@ If turn A is executing when turn B arrives, turn B waits (not cancels).
 Key concepts:
 - ``resilient_background=True``, ``steerable_conversations=False``
 - Conversation history via ``context.get_history()`` (framework-managed)
-- Metadata for bounded execution state only (turn counter)
+- Conversation-isolated Foundry State Store for bounded execution state
 - Crash recovery: handler re-invoked, same input + history → same output
 
 Usage::
@@ -37,6 +37,8 @@ Usage::
 
 import asyncio
 
+from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -44,7 +46,6 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
 options = ResponsesServerOptions(
     resilient_background=True,
@@ -67,23 +68,64 @@ async def handler(
 ):
     """Multi-turn handler with perpetual task lifecycle."""
     input_text = await context.get_input_text()
-    turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
-
-    # Explicit session termination
-    if input_text.strip().lower() == "done":
-        context.conversation_chain_metadata.clear()
-        return TextResponse(context, request, text=f"Done! Session complete after {turn_count - 1} turns. Goodbye!")
-
-    # Get conversation history from framework store
-    history_items = await context.get_history()
-
-    # Generate reply (replace with your LLM of choice)
-    reply = (
-        f"Turn {turn_count}: You said '{input_text}'. " f"I have {len(history_items)} items of conversation context."
+    store = await FoundryStateStore.get_or_create(
+        f"responses/resilient-multiturn/{context.conversation_chain_id}",
+        description="State for the resilient multi-turn response sample",
     )
+    async with store:
+        item = await store.get_item("state")
+        state = (
+            dict(item.value)
+            if item is not None and isinstance(item.value, dict)
+            else {}
+        )
+        if (
+            state.get("terminated")
+            and state.get("last_response_id") != context.response_id
+        ):
+            state = {}
+        if state.get("last_response_id") == context.response_id:
+            turn_count = int(state.get("turn_count", 1))
+        else:
+            turn_count = int(state.get("turn_count", 0)) + 1
 
-    context.conversation_chain_metadata["turn_count"] = turn_count
-    return TextResponse(context, request, text=reply)
+        # Explicit session termination
+        if input_text.strip().lower() == "done":
+            if state.get("last_response_id") == context.response_id and state.get(
+                "terminated"
+            ):
+                completed_turns = int(state.get("completed_turns", 0))
+            else:
+                completed_turns = max(turn_count - 1, 0)
+                await store.set_item(
+                    "state",
+                    {
+                        "turn_count": completed_turns,
+                        "last_response_id": context.response_id,
+                        "terminated": True,
+                        "completed_turns": completed_turns,
+                    },
+                )
+            return TextResponse(
+                context,
+                request,
+                text=f"Done! Session complete after {completed_turns} turns. Goodbye!",
+            )
+
+        # Get conversation history from framework store
+        history_items = await context.get_history()
+
+        # Generate reply (replace with your LLM of choice)
+        reply = (
+            f"Turn {turn_count}: You said '{input_text}'. "
+            f"I have {len(history_items)} items of conversation context."
+        )
+
+        await store.set_item(
+            "state",
+            {"turn_count": turn_count, "last_response_id": context.response_id},
+        )
+        return TextResponse(context, request, text=reply)
 
 
 def main() -> None:

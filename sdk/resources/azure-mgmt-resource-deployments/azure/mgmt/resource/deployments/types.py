@@ -14,7 +14,6 @@ if TYPE_CHECKING:
         DeploymentIdentityType,
         DeploymentMode,
         ExpressionEvaluationOptionsScopeType,
-        ExtensionConfigPropertyType,
         OnErrorDeploymentType,
         ValidationLevel,
         WhatIfResultFormat,
@@ -24,13 +23,13 @@ if TYPE_CHECKING:
 class DebugSetting(TypedDict, total=False):
     """The debug setting.
 
-    :ivar detail_level: Specifies the type of information to log for debugging. The permitted
-     values are none, requestContent, responseContent, or both requestContent and responseContent
-     separated by a comma. The default is none. When setting this value, carefully consider the type
-     of information you are passing in during deployment. By logging information about the request
-     or response, you could potentially expose sensitive data that is retrieved through the
-     deployment operations.
-    :vartype detail_level: str
+    :ivar detailLevel: Specifies the type of information to log for debugging. The permitted values
+     are none, requestContent, responseContent, or both requestContent and responseContent separated
+     by a comma. The default is none. When setting this value, carefully consider the type of
+     information you are passing in during deployment. By logging information about the request or
+     response, you could potentially expose sensitive data that is retrieved through the deployment
+     operations.
+    :vartype detailLevel: str
     """
 
     detailLevel: str
@@ -65,26 +64,54 @@ class Deployment(TypedDict, total=False):
 
 
 class DeploymentExtensionConfigItem(TypedDict, total=False):
-    """DeploymentExtensionConfigItem.
+    """Represents the value for an extension config property.
 
-    :ivar type: The value type of the extension config property. Known values are: "String", "Int",
-     "Bool", "Array", "Object", "SecureString", and "SecureObject".
-    :vartype type: Union[str, "ExtensionConfigPropertyType"]
     :ivar value: The value of the extension config property.
     :vartype value: Any
-    :ivar key_vault_reference: The Azure Key Vault reference used to retrieve the secret value of
-     the extension config property.
-    :vartype key_vault_reference: "KeyVaultParameterReference"
+    :ivar keyVaultReference: The Azure Key Vault reference used to retrieve the secret value of the
+     extension config property.
+    :vartype keyVaultReference: "KeyVaultParameterReference"
     """
 
-    type: Union[str, "ExtensionConfigPropertyType"]
-    """The value type of the extension config property. Known values are: \"String\", \"Int\",
-     \"Bool\", \"Array\", \"Object\", \"SecureString\", and \"SecureObject\"."""
     value: Any
     """The value of the extension config property."""
     keyVaultReference: "KeyVaultParameterReference"
     """The Azure Key Vault reference used to retrieve the secret value of the extension config
      property."""
+
+
+class DeploymentExtensionDefinition(TypedDict, total=False):
+    """DeploymentExtensionDefinition.
+
+    :ivar alias: The alias of the extension as defined in the deployment template.
+    :vartype alias: str
+    :ivar name: The extension name.
+    :vartype name: str
+    :ivar version: The extension version.
+    :vartype version: str
+    :ivar configId: The extension configuration ID. It uniquely identifies a deployment target
+     within an extension.
+    :vartype configId: str
+    :ivar configHash: The extension configuration hash. Can be used to distinguish different
+     configurations that have the same config ID.
+    :vartype configHash: str
+    :ivar config: The extension configuration.
+    :vartype config: dict[str, "DeploymentExtensionConfigItem"]
+    """
+
+    alias: str
+    """The alias of the extension as defined in the deployment template."""
+    name: str
+    """The extension name."""
+    version: str
+    """The extension version."""
+    configId: str
+    """The extension configuration ID. It uniquely identifies a deployment target within an extension."""
+    configHash: str
+    """The extension configuration hash. Can be used to distinguish different configurations that have
+     the same config ID."""
+    config: dict[str, "DeploymentExtensionConfigItem"]
+    """The extension configuration."""
 
 
 class DeploymentExternalInput(TypedDict, total=False):
@@ -118,9 +145,8 @@ class DeploymentIdentity(TypedDict, total=False):
 
     :ivar type: The identity type. Required. Known values are: "None" and "UserAssigned".
     :vartype type: Union[str, "DeploymentIdentityType"]
-    :ivar user_assigned_identities: The set of user assigned identities associated with the
-     resource.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The set of user assigned identities associated with the resource.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     type: Required[Union[str, "DeploymentIdentityType"]]
@@ -156,27 +182,26 @@ class DeploymentProperties(TypedDict, total=False):
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
     :vartype template: Any
-    :ivar template_link: The URI of the template. Use either the templateLink property or the
+    :ivar templateLink: The URI of the template. Use either the templateLink property or the
      template property, but not both.
-    :vartype template_link: "TemplateLink"
+    :vartype templateLink: "TemplateLink"
     :ivar parameters: Name and value pairs that define the deployment parameters for the template.
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
     :vartype parameters: dict[str, "DeploymentParameter"]
-    :ivar external_inputs: External input values, used by external tooling for parameter
-     evaluation.
-    :vartype external_inputs: dict[str, "DeploymentExternalInput"]
-    :ivar external_input_definitions: External input definitions, used by external tooling to
-     define expected external input values.
-    :vartype external_input_definitions: dict[str, "DeploymentExternalInputDefinition"]
-    :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
+    :ivar externalInputs: External input values, used by external tooling for parameter evaluation.
+    :vartype externalInputs: dict[str, "DeploymentExternalInput"]
+    :ivar externalInputDefinitions: External input definitions, used by external tooling to define
+     expected external input values.
+    :vartype externalInputDefinitions: dict[str, "DeploymentExternalInputDefinition"]
+    :ivar parametersLink: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
-    :vartype parameters_link: "ParametersLink"
-    :ivar extension_configs: The configurations to use for deployment extensions. The keys of this
+    :vartype parametersLink: "ParametersLink"
+    :ivar extensionConfigs: The configurations to use for deployment extensions. The keys of this
      object are deployment extension aliases as defined in the deployment template.
-    :vartype extension_configs: dict[str, dict[str, "DeploymentExtensionConfigItem"]]
+    :vartype extensionConfigs: dict[str, dict[str, "DeploymentExtensionConfigItem"]]
     :ivar mode: The mode that is used to deploy resources. This value can be either Incremental or
      Complete. In Incremental mode, resources are deployed without deleting existing resources that
      are not included in the template. In Complete mode, resources are deployed and existing
@@ -184,17 +209,17 @@ class DeploymentProperties(TypedDict, total=False):
      when using Complete mode as you may unintentionally delete resources. Required. Known values
      are: "Incremental" and "Complete".
     :vartype mode: Union[str, "DeploymentMode"]
-    :ivar debug_setting: The debug setting of the deployment.
-    :vartype debug_setting: "DebugSetting"
-    :ivar on_error_deployment: The deployment on error behavior.
-    :vartype on_error_deployment: "OnErrorDeployment"
-    :ivar expression_evaluation_options: Specifies whether template expressions are evaluated
-     within the scope of the parent template or nested template. Only applicable to nested
-     templates. If not specified, default value is outer.
-    :vartype expression_evaluation_options: "ExpressionEvaluationOptions"
-    :ivar validation_level: The validation level of the deployment. Known values are: "Template",
+    :ivar debugSetting: The debug setting of the deployment.
+    :vartype debugSetting: "DebugSetting"
+    :ivar onErrorDeployment: The deployment on error behavior.
+    :vartype onErrorDeployment: "OnErrorDeployment"
+    :ivar expressionEvaluationOptions: Specifies whether template expressions are evaluated within
+     the scope of the parent template or nested template. Only applicable to nested templates. If
+     not specified, default value is outer.
+    :vartype expressionEvaluationOptions: "ExpressionEvaluationOptions"
+    :ivar validationLevel: The validation level of the deployment. Known values are: "Template",
      "Provider", and "ProviderNoRbac".
-    :vartype validation_level: Union[str, "ValidationLevel"]
+    :vartype validationLevel: Union[str, "ValidationLevel"]
     """
 
     template: Any
@@ -238,6 +263,39 @@ class DeploymentProperties(TypedDict, total=False):
      \"ProviderNoRbac\"."""
 
 
+class DeploymentResourceWhatIfPrediction(TypedDict, total=False):
+    """A prediction for a deployment resource by its symbolic name path.
+
+    :ivar symbolicNamePath: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable. Required.
+    :vartype symbolicNamePath: list[str]
+    :ivar resourceId: The predicted fully-qualified Azure resource ID.
+    :vartype resourceId: str
+    :ivar extension: The predicted extension usage.
+    :vartype extension: "DeploymentExtensionDefinition"
+    :ivar resourceType: The predicted resource type.
+    :vartype resourceType: str
+    :ivar identifiers: The predicted extensible resource identifiers.
+    :vartype identifiers: Any
+    :ivar apiVersion: The predicted API version.
+    :vartype apiVersion: str
+    """
+
+    symbolicNamePath: Required[list[str]]
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable. Required."""
+    resourceId: str
+    """The predicted fully-qualified Azure resource ID."""
+    extension: "DeploymentExtensionDefinition"
+    """The predicted extension usage."""
+    resourceType: str
+    """The predicted resource type."""
+    identifiers: Any
+    """The predicted extensible resource identifiers."""
+    apiVersion: str
+    """The predicted API version."""
+
+
 class DeploymentWhatIf(TypedDict, total=False):
     """Deployment What-if operation parameters.
 
@@ -261,27 +319,26 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
     :vartype template: Any
-    :ivar template_link: The URI of the template. Use either the templateLink property or the
+    :ivar templateLink: The URI of the template. Use either the templateLink property or the
      template property, but not both.
-    :vartype template_link: "TemplateLink"
+    :vartype templateLink: "TemplateLink"
     :ivar parameters: Name and value pairs that define the deployment parameters for the template.
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
     :vartype parameters: dict[str, "DeploymentParameter"]
-    :ivar external_inputs: External input values, used by external tooling for parameter
-     evaluation.
-    :vartype external_inputs: dict[str, "DeploymentExternalInput"]
-    :ivar external_input_definitions: External input definitions, used by external tooling to
-     define expected external input values.
-    :vartype external_input_definitions: dict[str, "DeploymentExternalInputDefinition"]
-    :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
+    :ivar externalInputs: External input values, used by external tooling for parameter evaluation.
+    :vartype externalInputs: dict[str, "DeploymentExternalInput"]
+    :ivar externalInputDefinitions: External input definitions, used by external tooling to define
+     expected external input values.
+    :vartype externalInputDefinitions: dict[str, "DeploymentExternalInputDefinition"]
+    :ivar parametersLink: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
-    :vartype parameters_link: "ParametersLink"
-    :ivar extension_configs: The configurations to use for deployment extensions. The keys of this
+    :vartype parametersLink: "ParametersLink"
+    :ivar extensionConfigs: The configurations to use for deployment extensions. The keys of this
      object are deployment extension aliases as defined in the deployment template.
-    :vartype extension_configs: dict[str, dict[str, "DeploymentExtensionConfigItem"]]
+    :vartype extensionConfigs: dict[str, dict[str, "DeploymentExtensionConfigItem"]]
     :ivar mode: The mode that is used to deploy resources. This value can be either Incremental or
      Complete. In Incremental mode, resources are deployed without deleting existing resources that
      are not included in the template. In Complete mode, resources are deployed and existing
@@ -289,31 +346,36 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      when using Complete mode as you may unintentionally delete resources. Required. Known values
      are: "Incremental" and "Complete".
     :vartype mode: Union[str, "DeploymentMode"]
-    :ivar debug_setting: The debug setting of the deployment.
-    :vartype debug_setting: "DebugSetting"
-    :ivar on_error_deployment: The deployment on error behavior.
-    :vartype on_error_deployment: "OnErrorDeployment"
-    :ivar expression_evaluation_options: Specifies whether template expressions are evaluated
-     within the scope of the parent template or nested template. Only applicable to nested
-     templates. If not specified, default value is outer.
-    :vartype expression_evaluation_options: "ExpressionEvaluationOptions"
-    :ivar validation_level: The validation level of the deployment. Known values are: "Template",
+    :ivar debugSetting: The debug setting of the deployment.
+    :vartype debugSetting: "DebugSetting"
+    :ivar onErrorDeployment: The deployment on error behavior.
+    :vartype onErrorDeployment: "OnErrorDeployment"
+    :ivar expressionEvaluationOptions: Specifies whether template expressions are evaluated within
+     the scope of the parent template or nested template. Only applicable to nested templates. If
+     not specified, default value is outer.
+    :vartype expressionEvaluationOptions: "ExpressionEvaluationOptions"
+    :ivar validationLevel: The validation level of the deployment. Known values are: "Template",
      "Provider", and "ProviderNoRbac".
-    :vartype validation_level: Union[str, "ValidationLevel"]
-    :ivar what_if_settings: Optional What-If operation settings.
-    :vartype what_if_settings: "DeploymentWhatIfSettings"
+    :vartype validationLevel: Union[str, "ValidationLevel"]
+    :ivar whatIfSettings: Optional What-If operation settings.
+    :vartype whatIfSettings: "DeploymentWhatIfSettings"
+    :ivar resourcePredictions: Resource predictions that can be utilized by what-if to produce
+     potential modification changes.
+    :vartype resourcePredictions: list["DeploymentResourceWhatIfPrediction"]
     """
 
     whatIfSettings: "DeploymentWhatIfSettings"
     """Optional What-If operation settings."""
+    resourcePredictions: list["DeploymentResourceWhatIfPrediction"]
+    """Resource predictions that can be utilized by what-if to produce potential modification changes."""
 
 
 class DeploymentWhatIfSettings(TypedDict, total=False):
     """Deployment What-If operation settings.
 
-    :ivar result_format: The format of the What-If results. Known values are: "ResourceIdOnly" and
+    :ivar resultFormat: The format of the What-If results. Known values are: "ResourceIdOnly" and
      "FullResourcePayloads".
-    :vartype result_format: Union[str, "WhatIfResultFormat"]
+    :vartype resultFormat: Union[str, "WhatIfResultFormat"]
     """
 
     resultFormat: Union[str, "WhatIfResultFormat"]
@@ -338,12 +400,12 @@ class ExpressionEvaluationOptions(TypedDict, total=False):
 class KeyVaultParameterReference(TypedDict, total=False):
     """Azure Key Vault parameter reference.
 
-    :ivar key_vault: Azure Key Vault reference. Required.
-    :vartype key_vault: "KeyVaultReference"
-    :ivar secret_name: Azure Key Vault secret name. Required.
-    :vartype secret_name: str
-    :ivar secret_version: Azure Key Vault secret version.
-    :vartype secret_version: str
+    :ivar keyVault: Azure Key Vault reference. Required.
+    :vartype keyVault: "KeyVaultReference"
+    :ivar secretName: Azure Key Vault secret name. Required.
+    :vartype secretName: str
+    :ivar secretVersion: Azure Key Vault secret version.
+    :vartype secretVersion: str
     """
 
     keyVault: Required["KeyVaultReference"]
@@ -371,8 +433,8 @@ class OnErrorDeployment(TypedDict, total=False):
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
      SpecificDeployment. Known values are: "LastSuccessful" and "SpecificDeployment".
     :vartype type: Union[str, "OnErrorDeploymentType"]
-    :ivar deployment_name: The deployment to be used on error case.
-    :vartype deployment_name: str
+    :ivar deploymentName: The deployment to be used on error case.
+    :vartype deploymentName: str
     """
 
     type: Union[str, "OnErrorDeploymentType"]
@@ -387,8 +449,8 @@ class ParametersLink(TypedDict, total=False):
 
     :ivar uri: The URI of the parameters file. Required.
     :vartype uri: str
-    :ivar content_version: If included, must match the ContentVersion in the template.
-    :vartype content_version: str
+    :ivar contentVersion: If included, must match the ContentVersion in the template.
+    :vartype contentVersion: str
     """
 
     uri: Required[str]
@@ -438,16 +500,16 @@ class TemplateLink(TypedDict, total=False):
     :vartype uri: str
     :ivar id: The resource id of a Template Spec. Use either the id or uri property, but not both.
     :vartype id: str
-    :ivar relative_path: The relativePath property can be used to deploy a linked template at a
+    :ivar relativePath: The relativePath property can be used to deploy a linked template at a
      location relative to the parent. If the parent template was linked with a TemplateSpec, this
      will reference an artifact in the TemplateSpec.  If the parent was linked with a URI, the child
      deployment will be a combination of the parent and relativePath URIs.
-    :vartype relative_path: str
-    :ivar content_version: If included, must match the ContentVersion in the template.
-    :vartype content_version: str
-    :ivar query_string: The query string (for example, a SAS token) to be used with the
-     templateLink URI.
-    :vartype query_string: str
+    :vartype relativePath: str
+    :ivar contentVersion: If included, must match the ContentVersion in the template.
+    :vartype contentVersion: str
+    :ivar queryString: The query string (for example, a SAS token) to be used with the templateLink
+     URI.
+    :vartype queryString: str
     """
 
     uri: str
@@ -468,10 +530,10 @@ class TemplateLink(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

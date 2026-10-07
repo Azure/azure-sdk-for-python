@@ -2,6 +2,8 @@
 # Licensed under the MIT license.
 """Public API surface for the Azure AI Agent Server Responses package."""
 
+from typing import TYPE_CHECKING, Any
+
 from ._version import VERSION
 
 __version__ = VERSION
@@ -9,19 +11,13 @@ __version__ = VERSION
 from . import _data_url as data_url
 from ._options import ResponsesServerOptions
 from ._response_context import (
-    ConversationChainMetadataNamespace,
     ExitForRecoverySignal,
     PlatformContext,
     ResponseContext,
     ResponseExitForRecovery,
 )
 from .hosting._routing import ResponsesAgentServerHost
-from .models import CreateResponse, ResponseObject
-from .models._helpers import (
-    get_conversation_id,
-    get_input_expanded,
-    to_output_item,
-)
+from . import models as _public_models
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
 from .store._foundry_errors import (
@@ -36,10 +32,12 @@ from .store._memory import InMemoryResponseProvider
 from .streaming._event_stream import ResponseEventStream
 from .streaming._text_response import TextResponse
 
+if TYPE_CHECKING:
+    from .models import CreateResponse, ResponseObject
+
 __all__ = [
     "__version__",
     "data_url",  # pylint: disable=naming-mismatch
-    "ConversationChainMetadataNamespace",
     "ExitForRecoverySignal",
     "ResponseExitForRecovery",
     "ResponsesAgentServerHost",
@@ -59,7 +57,16 @@ __all__ = [
     "TextResponse",
     "CreateResponse",
     "ResponseObject",
-    "get_conversation_id",
-    "get_input_expanded",
-    "to_output_item",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    if name not in ("CreateResponse", "ResponseObject"):
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+    value = getattr(_public_models, name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(__all__))

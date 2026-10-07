@@ -24,7 +24,7 @@ class TestAgentFileSearchAndFunction(TestBase):
     """Tests for agents using File Search + Function Tool combination."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_data_analysis_workflow(self, **kwargs):
         """
         Test data analysis workflow: upload data, search, save results.
@@ -155,7 +155,7 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_empty_vector_store_handling(self, **kwargs):
         """
         Test how agent handles empty vector store (no files uploaded).
@@ -230,7 +230,7 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_python_code_file_search(self, **kwargs):
         """
         Test searching for Python code files and saving findings.
@@ -359,7 +359,7 @@ print(f"Sum: {result}")
         print("Cleanup completed")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_multi_turn_search_and_save_workflow(self, **kwargs):  # pylint: disable=too-many-statements,too-many-locals
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.

@@ -258,7 +258,7 @@ class ComputeOperations(_ScopeDependentOperations):
         :param name: The name of the compute resource.
         :type name: str
         :keyword action: Action to perform. Possible values: ["Delete", "Detach"]. Defaults to "Delete".
-        :type action: str
+        :paramtype action: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
 

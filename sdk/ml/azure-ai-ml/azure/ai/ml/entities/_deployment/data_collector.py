@@ -19,12 +19,12 @@ class DataCollector:
 
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
     :type collections: Mapping[str, DeploymentCollection]
-    :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
-    :type rolling_rate: str
-    :param sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0].
-    :type sampling_rate: float
-    :param request_logging: Logging of request payload parameters.
-    :type request_logging: RequestLogging
+    :keyword rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
+    :paramtype rolling_rate: str
+    :keyword sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0].
+    :paramtype sampling_rate: float
+    :keyword request_logging: Logging of request payload parameters.
+    :paramtype request_logging: RequestLogging
     """
 
     def __init__(

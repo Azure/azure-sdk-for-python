@@ -76,9 +76,13 @@ TIMEOUT_SAMPLES = {
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
     "azure-appconfiguration-provider": [
+        "async_connection_string_sample.py",
+        "connection_string_sample.py",
         "key_vault_reference_customized_clients_sample.py",
         "aad_sample.py",
         "key_vault_reference_sample.py",
+        "async_entra_id_sample.py",
+        "entra_id_sample.py",
     ],
     "azure-appconfiguration": [
         "hello_world_sample_entra_id_and_bleu.py",

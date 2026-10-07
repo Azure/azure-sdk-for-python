@@ -18,21 +18,21 @@ class Project(Workspace):
 
     As a type of workspace, project management is controlled by an MLClient's workspace operations.
 
-    :param name: The name of the project.
-    :type name: str
-    :param hub_id: The hub parent of the project, as a resource ID.
-    :type hub_id: str
-    :param description: The description of the project.
-    :type description: Optional[str]
-    :param tags: Tags associated with the project.
-    :type tags: Optional[Dict[str, str]]
-    :param display_name: The display name of the project.
-    :type display_name: Optional[str]
-    :param location: The location of the project. Must match that of the parent hub
+    :keyword name: The name of the project.
+    :paramtype name: str
+    :keyword hub_id: The hub parent of the project, as a resource ID.
+    :paramtype hub_id: str
+    :keyword description: The description of the project.
+    :paramtype description: Optional[str]
+    :keyword tags: Tags associated with the project.
+    :paramtype tags: Optional[Dict[str, str]]
+    :keyword display_name: The display name of the project.
+    :paramtype display_name: Optional[str]
+    :keyword location: The location of the project. Must match that of the parent hub
         and is automatically assigned to match the parent hub's location during creation.
-    :type location: Optional[str]
-    :param resource_group: The project's resource group name.
-    :type resource_group: Optional[str]
+    :paramtype location: Optional[str]
+    :keyword resource_group: The project's resource group name.
+    :paramtype resource_group: Optional[str]
     """
 
     def __init__(

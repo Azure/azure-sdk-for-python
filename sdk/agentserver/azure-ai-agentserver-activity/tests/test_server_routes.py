@@ -30,7 +30,22 @@ async def test_post_activity_returns_200(asgi_client):
 
 
 @pytest.mark.asyncio
-async def test_server_version_registers_activity_segment():
+async def test_post_api_messages_alias_is_not_registered(asgi_client):
+    """The legacy ``/api/messages`` alias is removed; only ``/activity/messages`` is served."""
+
+    async def handle(request) -> Response:
+        return JSONResponse({"ok": True})
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    async with asgi_client(app) as client:
+        resp = await client.post(
+            "/api/messages",
+            json={"type": "message", "text": "hi"},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 404
+
     """The host advertises the activity package in its server version segments."""
     from azure.ai.agentserver.activity._version import VERSION
 

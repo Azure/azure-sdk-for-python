@@ -1,0 +1,56 @@
+name: sdk-health-trigger-eval
+description: Trigger and anti-trigger tests for the Python SDK health-reporting skill
+type: capability
+
+environment: azsdk-mcp-mock
+
+tags:
+  area: sdk-health
+  type: ci-gate
+
+config:
+  runs: 1
+  timeout: "90s"
+  model: claude-opus-4.6
+  executor: copilot-sdk
+
+scoring:
+  threshold: 0.8
+
+stimuli:
+  - name: trigger-health-status
+    prompt: "What is the health status of azure-storage-blob?"
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["sdk-health"]
+  - name: trigger-release-blocking
+    prompt: "Which health checks are blocking the release of azure-ai-projects?"
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["sdk-health"]
+  - name: trigger-health-report
+    prompt: "Show me the repository health report for azure-ai-inference."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["sdk-health"]
+  - name: anti-trigger-fix-ci
+    prompt: "Fix the failing Azure SDK pipeline build."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["sdk-health"]
+  - name: anti-trigger-pipeline-diagnosis
+    prompt: "Diagnose why the CI pipeline is failing for this package."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["sdk-health"]
+  - name: anti-trigger-release
+    prompt: "Release azure-ai-inference version 1.0.0."
+    graders:
+      - type: skill-invocation
+        config:
+          disallowed: ["sdk-health"]

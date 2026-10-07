@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/IpAccessRulesSecurityPolicyPatch.json
+# x-ms-original-file: 2026-03-01/IpAccessRulesSecurityPolicyPatch.json
 if __name__ == "__main__":
     main()

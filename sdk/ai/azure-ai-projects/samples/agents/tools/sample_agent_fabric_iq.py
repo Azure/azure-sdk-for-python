@@ -36,7 +36,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FabricIQPreviewTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 tool_payload = FabricIQPreviewTool(
     project_connection_id=os.environ["FABRIC_IQ_PROJECT_CONNECTION_ID"],

@@ -82,7 +82,7 @@ it layers on top.
 - §35. `TaskRun`
 - §35a. Read-only inspection (internal — via the task manager's provider)
 - §36. `TaskRun.result()` returns `Output` directly
-- §37. `TaskMetadata`
+- §37. Application state ownership
 - §38. `RetryPolicy`
 - §39. Error taxonomy
 
@@ -179,7 +179,7 @@ re-scoping:
 
 1. **Not deterministic replay.** No record-and-replay of effects.
    After a crash the handler is re-invoked from the top; only
-   resilient state (`ctx.input`, `ctx.metadata`, framework counters)
+   framework state (`ctx.input` and lifecycle counters)
    survives. Determinism inside the handler is the developer's
    responsibility — the standard at-most-once side-effect pattern in
    §10 covers the common case.
@@ -187,11 +187,10 @@ re-scoping:
    no signals or timers as first-class primitives. Use Temporal /
    Orleans for that — `@task` can live inside
    such an engine but does not replace it.
-3. **Not a bulk-data store.** `ctx.metadata` is small (tens of KB
-   per namespace; the whole task payload caps at 1 MB). It is a
-   watermark / dedup-token store, not a chat-log store. Per-input
-   payloads up to 10 MiB are accepted via the attachments mechanism
-   (§23) but anything larger MUST be externalized by the caller.
+3. **Not an application-data store.** Durable application state,
+   watermarks, and deduplication tokens belong in `FoundryStateStore`.
+   Per-input payloads up to 10 MiB are accepted via the attachments
+   mechanism (§23), but anything larger MUST be externalized by the caller.
 4. **Not a competing-consumer queue.** A `task_id` identifies one
    logical unit of work owned by one current lifetime. N workers
    pulling jobs off a shared queue is the wrong fit; use a queue.
@@ -228,10 +227,9 @@ Boxes are types/objects; arrows show the dominant call direction.
                                    ┌─────────────────┐                     │ classifier  │
                                    │   TaskContext   │                     └──────┬──────┘
                                    │  (ctx.input,    │                            │
-                                   │   ctx.metadata, │                            │
                                    │   ctx.cancel,…) │                            ▼
                                    └────────┬────────┘                  ┌──────────────────┐
-                                            │ flush / suspend /         │   Foundry Task   │
+                                            │ suspend /                 │   Foundry Task   │
                                             │ exit_for_recovery         │  Storage (HTTP)  │
                                             ▼                            └──────────────────┘
                                    ┌─────────────────┐                                ▲
@@ -442,10 +440,6 @@ SHOULD attempt model-aware serialization (`model_dump`) first.
 The framework persists:
 
 - The current `ctx.input` value (inline or as an attachment ref).
-- A snapshot of every touched `ctx.metadata` namespace at every
-  terminal-of-turn boundary (suspend, complete, cancel, raise,
-  steering drain, `exit_for_recovery`) and at every explicit
-  `metadata.flush()` call.
 - Lifecycle counters: `retry_attempt`, `recovery_count` (the
   `expiry_count` of the lease record), `last_input_id` (the
   optional caller-provided chain head — see §11).
@@ -469,14 +463,19 @@ The framework does NOT persist:
   lifetime; a crash discards them).
 - Streaming events (those live in the streaming subpackage, which has
   its own backings; see Part VI).
-- Any bulk data the developer chooses to compute. The developer is
-  responsible for that — typically through a sibling framework
-  (LangGraph checkpoint, custom DB, blob storage) with only a small
-  reference token in `ctx.metadata`.
+- Any application state the developer chooses to compute. The developer
+  is responsible for that through `FoundryStateStore`, a framework
+  checkpointer, a custom database, or blob storage.
 
 The dividing line is "what does the framework need to decide
 `entry_mode` and reproduce `ctx`?" — that is what it persists; nothing
 more.
+
+When the persisted input has a top-level string `call_id` field, the
+framework MUST bind a `FoundryAgentRequestContext` with that `call_id`
+before invoking every fresh, resumed, or recovered handler attempt, and
+MUST reset the binding afterward. Typed task inputs SHOULD declare
+`call_id` explicitly when handler SDK calls need Foundry call continuity.
 
 ### §10. Crash recovery
 
@@ -514,10 +513,9 @@ The reclaiming process:
    resume callback by `source.name` (§21), invokes the handler
    with `ctx.entry_mode="recovered"` and the persisted `ctx.input`
    re-hydrated.
-3. From the handler's perspective, the recovery looks identical to
-   a fresh entry except that `entry_mode == "recovered"` and any
-   `ctx.metadata` writes from the previous lifetime are already
-   present.
+3. From the handler's perspective, recovery looks identical to a fresh
+   entry except that `entry_mode == "recovered"`. Application state is
+   loaded independently from State Store.
 
 **Crash-recovery does NOT consume the retry budget** (§15). A
 lifetime that died before the handler raised does not advance
@@ -526,10 +524,15 @@ lifetime that died before the handler raised does not advance
 **Pattern — at-most-once side effect across recovery:**
 
 ```python
-if ctx.metadata.get("dedup_token") is None:
+store = await FoundryStateStore.get_or_create(
+    f"agents/my-agent/tasks/{ctx.task_id}",
+)
+item = await store.get_item("effect")
+state = dict(item.value) if item else {}
+if state.get("dedup_token") is None:
     token = uuid4().hex
-    ctx.metadata["dedup_token"] = token
-    await ctx.metadata.flush()      # fence
+    state["dedup_token"] = token
+    await store.set_item("effect", state)
     await do_side_effect(idempotency_key=token)
 # crash-recovered lifetimes re-issue the call with the SAME token,
 # letting the downstream system de-dupe.
@@ -547,17 +550,16 @@ handler. The framework treats this **return-is-implicit-suspend**:
 
 1. Transitions the stored status from `in_progress` to `suspended`
    with `suspension_reason="run_completion"`.
-2. Persists a snapshot of every touched metadata namespace.
-3. Does NOT persist `X` anywhere in the task record. `X` resolves
+2. Does NOT persist `X` anywhere in the task record. `X` resolves
    the caller's `await run.result()` in-process and is then gone.
-4. Clears `payload["input"]` (and the corresponding attachment if
+3. Clears `payload["input"]` (and the corresponding attachment if
    the input was promoted) — the consumed input is no longer needed
    and would inflate the next payload write.
-5. Clears `steering["active_input"]` (mechanism state lives, but
+4. Clears `steering["active_input"]` (mechanism state lives, but
    the consumed input value goes).
-6. Clears `payload["retry_attempt"]` so the next turn starts with
+5. Clears `payload["retry_attempt"]` so the next turn starts with
    a fresh retry budget.
-7. Preserves `payload["last_input_id"]` so the next
+6. Preserves `payload["last_input_id"]` so the next
    `if_last_input_id` precondition can be evaluated.
 
 The caller's `await run.result()` resolves to `X` directly (typed
@@ -566,8 +568,7 @@ as the handler's `Output`). No wrapper class.
 The next `.run(task_id=same, input=new)` or
 `.start(task_id=same, input=new)` transitions the status back to
 `in_progress` and re-invokes the handler with
-`ctx.entry_mode="resumed"`, `ctx.input=new`, and `ctx.metadata`
-re-hydrated.
+`ctx.entry_mode="resumed"` and `ctx.input=new`.
 
 The same machinery is what multi-turn conversations and
 human-in-the-loop approval flows ride.
@@ -918,15 +919,14 @@ responses:
 `ctx.exit_for_recovery()` is the resilient-deferral primitive. The
 method:
 
-1. Flushes all touched metadata namespaces.
-2. **Releases ownership** of the persisted record so the next
+1. **Releases ownership** of the persisted record so the next
    process can take over (force-expires the lease).
-3. Leaves status as `in_progress` (NOT `suspended`).
-4. Raises `TaskDeferred()` upward — the caller of `.result()`
+2. Leaves status as `in_progress` (NOT `suspended`).
+3. Raises `TaskDeferred()` upward — the caller of `.result()`
    sees this. Semantically distinct from `TaskCancelled`: the
    task is not cancelled; this lifetime is just deferring to the
    next.
-5. Preserves any queued steering inputs — they are NOT drained
+4. Preserves any queued steering inputs — they are NOT drained
    during shutdown; on recovery they remain queued.
 
 When the recovery scanner re-acquires the deferred task, the
@@ -939,54 +939,16 @@ Misuse: calling `ctx.exit_for_recovery()` when
 call site. This makes misuse loudly visible to operators (the task
 ends in error, not silently `in_progress`).
 
-### §17. Metadata namespaces
+### §17. Application state ownership
 
-`ctx.metadata` is a **callable namespace facade** for the small,
-resilient, per-task state the handler owns:
+The task record contains only framework lifecycle state and persisted
+task input. Handlers MUST use an application-owned `FoundryStateStore`
+or another dedicated persistence layer for conversation state,
+checkpoints, watermarks, and deduplication tokens.
 
-- `ctx.metadata["key"] = value` — read/write the **default**
-  namespace, persisted at `payload["metadata"]`.
-- `ctx.metadata("session")["upstream_id"] = sid` — read/write a
-  **named** sibling namespace, persisted at
-  `payload["metadata:session"]`.
-
-Each namespace is independent: a write to one does not dirty the
-other; `flush()` on one persists only that namespace's data.
-
-`metadata.flush()` is the fence the developer uses to make
-at-most-once side-effect patterns work across a crash. The framework
-**auto-flushes** all touched namespaces at every terminal-of-turn
-boundary, so writes the developer forgets to flush are still resilient
-across a graceful boundary. Explicit `flush()` is for mid-handler
-fence semantics.
-
-**Naming convention:** namespaces and top-level metadata keys
-starting with `_` are RESERVED for the framework. The primitive
-treats this as a convention at the API surface; layers built on top
-(e.g. the responses framework's `_responses` namespace) MAY enforce
-it more strictly.
-
-`TaskMetadata` MUST expose dict-like semantics
-(`__getitem__`/`__setitem__`/`__contains__`/`__iter__`/`.get()`/`.to_dict()`)
-plus:
-
-- `flush()` — persist this namespace only.
-- `increment(key)` — in-memory atomic numeric increment **on the
-  metadata namespace object** (read/modify/write under an in-
-  memory lock). The change is NOT pushed to the store until the
-  next `flush()` / auto-flush. This is NOT a store-level
-  compare-and-swap; concurrent processes incrementing the same
-  key would race at the store level. Use for handler-local
-  counters that get flushed at clean boundaries; for cross-
-  process atomic counters, use the store's CAS protocol directly
-  via the provider.
-- `append(key, value)` — append to a list-valued key. Same
-  in-memory semantics as `increment`: atomic within the namespace
-  object, NOT atomic against the resilient record.
-
-Flush failures are logged, not raised — a failed flush should not
-crash a handler. The framework retries on the next flush call or
-auto-flush boundary.
+State Store operations are independent from task lifecycle PATCHes.
+They MUST NOT renew the task lease, change the task etag, or become part
+of suspend, complete, fail, drain, or `exit_for_recovery` transitions.
 
 ---
 
@@ -1049,16 +1011,12 @@ fields MUST NOT be set by caller code.
 
 ### §20. Framework-reserved payload keys
 
-`payload` is the JSON object that holds both the framework's
-runtime state and the developer's metadata. The framework reserves
-the following top-level keys, all starting with `_` or named
-`input`/`metadata`/`output`:
+`payload` is the JSON object that holds the framework's runtime state.
+The framework reserves the following top-level keys:
 
 | Key | Type | Lifetime | Meaning |
 |---|---|---|---|
 | `input` | any JSON value, or a ref dict (§23) | Set on every `in_progress` transition; cleared at suspend; cleared by drain after consumption. | The current input value (or a ref to its attachment). |
-| `metadata` | object | Persisted at boundaries; auto-flushed. | The DEFAULT user metadata namespace. |
-| `metadata:<ns>` | object | Same as above. | NAMED user metadata namespace `<ns>`. |
 | `last_input_id` | string \| null | Set when caller supplies `input_id`. | Chain-head tracking (§11). |
 | `turn_started_at` | ISO-8601 UTC string | Set at every turn-start boundary; NEVER re-stamped on recovery. | Source of truth for the per-turn watchdog (§14). |
 | `retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Resilient retry counter (§15). |
@@ -2092,7 +2050,7 @@ Per-decorator kwarg semantics:
 |---|---|
 | `name` | **Required.** Stable identity for recovery routing — written to `source.name` and the `task_name` tag. Must be an explicit non-empty string; there is no function-derived default (deriving it from `func.__qualname__` would silently rebind identity on rename/move and strand in-flight tasks). Changing it strands existing tasks. |
 | `title` | Human-readable title written to `TaskInfo.title`. |
-| `timeout` | **Per-turn** cooperative wall-clock watchdog (§14). Defaults to **1 day** when unset; a supplied value may lower the budget but **1 day is a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`, fail-fast, not clamped). This caps a single uninterrupted handler invocation only; it is **not** a task-lifetime bound (a multi-turn chain lives indefinitely — the budget resets every turn; the task's overall lifetime is governed by the platform's 30-day sliding-TTL inactivity cleanup). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
+| `timeout` | **Per-turn** cooperative wall-clock watchdog (§14). Defaults to **1 day** when unset; a supplied value may raise the budget up to **7 days, which is a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`, fail-fast, not clamped). This caps a single uninterrupted handler invocation only; it is **not** a task-lifetime bound (a multi-turn chain lives indefinitely — the budget resets every turn; the task's overall lifetime is governed by the platform's 30-day sliding-TTL inactivity cleanup). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
 | `retry` | `RetryPolicy` for handler-raised exceptions (§15). `None` (default) = no retry. |
 | `steerable` | (`@multi_turn_task` only.) Enables `.start()` against an in-flight chain to queue a steering input instead of raising `TaskConflictError` (§12). |
 
@@ -2251,7 +2209,6 @@ The single argument every handler receives. Read-only properties:
 | `task_id` | `str` | Task identity. |
 | `input_id` | `str` | Per-turn input identity. For one-shot, defaults to `task_id` (1:1 invariant). For multi-turn, the framework auto-generates a GUID per turn unless the caller supplied one. |
 | `entry_mode` | `"fresh" \| "resumed" \| "recovered"` | Why this turn started (§6). |
-| `metadata` | `TaskMetadata` | Callable namespace facade (§17). |
 | `cancel` | event-like (`asyncio.Event` in Python) | Set when cancellation is requested for any reason. |
 | `shutdown` | event-like | Set when the container is shutting down. Precondition for `exit_for_recovery()`. |
 | `timeout_exceeded` | `bool` | True once the per-turn timeout fired. Set BEFORE `cancel` (§13 ordering invariant). Never reset within a turn. |
@@ -2293,7 +2250,6 @@ The handle returned by `.start()`. Slim public surface:
 |---|---|---|
 | `run.task_id` | `str` | Task identity. |
 | `run.input_id` | `str` | Per-turn input identity. |
-| `run.metadata` | `TaskMetadata` | Live reference to the run's metadata facade (the same instance the handler sees as `ctx.metadata`). |
 | `await run.result()` | `Output` | Block until terminal-for-this-caller; returns the handler's typed return value directly OR raises a typed exception (§39). |
 | `await run.cancel()` | `None` | Signal cooperative cancellation. MUST set `ctx.cancel_requested = True` BEFORE setting `ctx.cancel` (ordering invariant — handler observing `ctx.cancel` is guaranteed to see at least one cause boolean already True). The handler picks the terminal shape. |
 | `await run` | `Output` | Awaiting the run directly is sugar for `await run.result()`. |
@@ -2363,83 +2319,11 @@ not persist `X` anywhere in the task record — `X` lives only in
 the in-process future the caller is awaiting.
 
 
-### §37. `TaskMetadata`
+### §37. Application state ownership
 
-Mutable mapping-like type returned by `ctx.metadata` and
-`ctx.metadata(name)`. See §17 for semantics.
-
-Required surface:
-
-```
-metadata["key"]                # __getitem__
-metadata["key"] = value        # __setitem__
-"key" in metadata              # __contains__
-for k in metadata: ...         # __iter__
-metadata.get("key", default)   # MutableMapping behavior
-metadata.to_dict()             # plain dict snapshot
-await metadata.flush()         # persist this namespace only
-await metadata.increment(key)  # atomic numeric increment
-await metadata.append(key, v)  # append to a list-valued key
-```
-
-**Note: `_flush_all()` is framework-internal.** The framework's
-internal "persist every dirty namespace in one pass" helper is
-named with a leading underscore (`_flush_all`) on every public
-surface — both as a method on `TaskMetadata` and anywhere the
-framework calls it. The manager invokes `_flush_all` at suspend
-/ complete / fail / drain / `exit_for_recovery` boundaries to
-make every namespace the handler touched resilient in one PATCH.
-
-The underscore prefix is the Python-canonical signal for
-"package-private; not part of the documented developer surface."
-It is NOT exported from `tasks/__init__.py`, has no developer
-guide entry, and has no documented use case at the developer
-layer: per-namespace `metadata.flush()` is the only fence pattern
-developers should reach for (to commit a specific namespace before
-a side-effect operation). Other-language implementers MUST surface
-the equivalent helper at package-private visibility (or omit it
-from the public API entirely) — never as a documented developer
-API.
-
-#### Namespace facade behavior
-
-`TaskMetadata` is implemented as a **callable namespace facade**:
-
-- **Default namespace.** `ctx.metadata` itself binds to
-  `payload["metadata"]`. All dict-like operations on `ctx.metadata`
-  directly target this namespace.
-- **Named namespaces.** `ctx.metadata(name)` returns a sibling
-  `TaskMetadata` instance bound to `payload["metadata:<name>"]`.
-- **Auto-vivification.** A named namespace does NOT have to exist
-  in the persisted record before access — calling
-  `ctx.metadata("ns")` creates an in-memory empty namespace that is
-  persisted on first flush. The corresponding `payload["metadata:ns"]`
-  key materializes only when there is something to write.
-- **Sibling-independence.** A write to one namespace does NOT dirty
-  any other namespace. `metadata.flush()` on namespace `A` does NOT
-  persist namespace `B`.
-- **Restoration.** On every handler entry, the framework constructs
-  the root `TaskMetadata` instance via a restoration helper (e.g.
-  `TaskMetadata.from_payload(payload)`) that walks every
-  `metadata[:...]` key in the payload and pre-populates each
-  namespace with its persisted contents. Handler reads from any
-  named namespace see the post-restoration state without an
-  additional round-trip.
-
-#### Flush semantics
-
-- `metadata.flush()` persists the namespace it is called on, atomically
-  against the lease (the framework piggybacks lease ownership on
-  the PATCH so a flush also acts as a heartbeat).
-- **Framework-only auto-flush** at every terminal-of-turn boundary
-  walks every dirty namespace (the internal `_flush_all` helper
-  described in §37). Handlers do not need explicit flushes for
-  resilience across a graceful boundary; explicit `flush()` is
-  for mid-handler fence semantics across a CRASH.
-- Flush failures are logged at WARN, not raised. A failed flush
-  retries on the next flush call or the next auto-flush boundary.
-- Flush is **safe to call from a finished handler** (no-op if the
-  namespace has been auto-flushed and not subsequently dirtied).
+No task metadata facade is exposed on `TaskContext` or `TaskRun`.
+Application durability is provided by `FoundryStateStore` and remains
+independent from task leases and lifecycle transitions. See §17.
 
 ### §38. `RetryPolicy`
 
@@ -2672,9 +2556,8 @@ Method contracts:
   close clock, §46). Implementations MUST keep it side-effect-free.
 
   `last_cursor()` is the EMITTER's recovery primitive. It is NOT
-  the workflow-recovery primitive — workflow watermarks (what work
-  is done) belong in `ctx.metadata`, batched per side-effecting
-  operation, NEVER in stream cursors.
+  the workflow-recovery primitive — workflow watermarks belong in an
+  application-owned State Store, never in stream cursors.
 
 ### §42. The `streams` registry
 
@@ -3706,16 +3589,14 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   observability surface; the chain record itself does not
   carry the per-turn diagnostic.
 
-### C-MET (metadata)
+### C-STATE (application state)
 
-- **C-MET-1.** Default namespace MUST persist at `payload["metadata"]`.
-- **C-MET-2.** Named namespace `ns` MUST persist at
-  `payload["metadata:<ns>"]`.
-- **C-MET-3.** Top-level keys / namespace names starting with `_`
-  are RESERVED for the framework.
-- **C-MET-4.** Auto-flush MUST persist all touched namespaces at
-  every terminal-of-turn boundary.
-- **C-MET-5.** Flush failures MUST be logged, not raised.
+- **C-STATE-1.** Task payloads MUST NOT contain application metadata
+  namespaces.
+- **C-STATE-2.** Application State Store writes MUST NOT renew task
+  leases or change task etags.
+- **C-STATE-3.** Suspend, complete, fail, drain, and recovery-deferral
+  transitions MUST NOT implicitly flush application state.
 
 ### C-ATT (attachments + promotion)
 
@@ -4155,8 +4036,7 @@ A single JSON document showing how every concept in this spec
 composes. This is a deep-research task mid-life: function input
 was promoted, three steering inputs are queued (one inline, two
 promoted), one drain has already happened so `next_input_seq` is
-ahead of the live keys, both default and named
-metadata namespaces are populated, framework state slots are set.
+ahead of the live keys, and framework state slots are set.
 
 ```json
 {
@@ -4190,20 +4070,6 @@ metadata namespaces are populated, framework state slots are set.
         "key":  "input",
         "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
-    },
-
-
-    "metadata": {
-      "completed_phases":  3,
-      "in_progress_phase": 4,
-      "completed_subcalls": 2
-    },
-    "metadata:session": {
-      "history": [
-        { "role": "user",      "content": "Research deep learning trends" },
-        { "role": "assistant", "content": "Phase 3 of 15..." }
-      ],
-      "turn_count": 5
     },
 
     "steering": {
@@ -4267,7 +4133,7 @@ What this single document demonstrates:
 | Lease (§22) | `lease.owner`, `lease.instance_id`, `lease.generation` |
 | Framework-stamped routing (§21) | `tags.task_name`, `source.name` |
 | Input promoted to attachment (§23) | `payload.input` is a ref; `attachments.input` holds the value |
-| Multiple metadata namespaces (§17) | `payload.metadata` + `payload["metadata:session"]` |
+| Application state (§17) | Stored separately in Foundry State Store, not in this task record |
 | Steering queue with mixed shapes (§12, §23) | `steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
 | Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `steering_input_3` + `steering_input_4` — one drain consumed `steering_input_0/1/2`, no renumbering |
 | Steering mechanism state (§12) | `cancel_requested`, `drain_in_progress`, `active_input` |

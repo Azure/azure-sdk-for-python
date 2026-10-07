@@ -27,23 +27,23 @@ _HDFS_DATASTORE_TYPE = "Hdfs"
 class HdfsDatastore(Datastore):
     """HDFS datastore that is linked to an Azure ML workspace.
 
-    :param name: Name of the datastore.
-    :type name: str
-    :param name_node_address: IP Address or DNS HostName.
-    :type name_node_address: str
-    :param hdfs_server_certificate: The TLS cert of the HDFS server (optional).
+    :keyword name: Name of the datastore.
+    :paramtype name: str
+    :keyword name_node_address: IP Address or DNS HostName.
+    :paramtype name_node_address: str
+    :keyword hdfs_server_certificate: The TLS cert of the HDFS server (optional).
         Needs to be a local path on create and will be a base64 encoded string on get.
-    :type hdfs_server_certificate: str
-    :param protocol: http or https
-    :type protocol: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[KerberosKeytabCredentials, KerberosPasswordCredentials]
+    :paramtype hdfs_server_certificate: str
+    :keyword protocol: http or https
+    :paramtype protocol: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword credentials: Credentials to use for Azure ML workspace to connect to the storage.
+    :paramtype credentials: Union[KerberosKeytabCredentials, KerberosPasswordCredentials]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

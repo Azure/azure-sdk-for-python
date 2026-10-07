@@ -15,13 +15,13 @@ from azure.ai.ml.entities._util import load_from_dict
 class RetrySettings(RestTranslatableMixin, DictMixin):
     """Parallel RetrySettings.
 
-    :param timeout: Timeout in seconds for each invocation of the run() method.
+    :keyword timeout: Timeout in seconds for each invocation of the run() method.
         (optional) This value could be set through PipelineParameter.
-    :type timeout: int
-    :param max_retries: The number of maximum tries for a failed or timeout mini batch.
+    :paramtype timeout: int
+    :keyword max_retries: The number of maximum tries for a failed or timeout mini batch.
         The range is [1, int.max]. This value could be set through PipelineParameter.
         A mini batch with dequeue count greater than this won't be processed again and will be deleted directly.
-    :type max_retries: int
+    :paramtype max_retries: int
     """
 
     def __init__(

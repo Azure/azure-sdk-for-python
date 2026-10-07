@@ -16,6 +16,8 @@ from tracing_common import FakeSpan
 
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, HttpLoggingPolicy, UserAgentPolicy, RetryPolicy
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind

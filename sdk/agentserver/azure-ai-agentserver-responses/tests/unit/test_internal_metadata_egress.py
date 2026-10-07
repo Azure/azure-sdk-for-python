@@ -116,7 +116,7 @@ def test_t17a_t17r_live_objects_untouched_after_sse_encode():
     # Encode a terminal carrying the full envelope.
     encode_sse_event(stream.emit_completed())
     # T17r: live response still carries the reserved key.
-    assert dict(stream.response["metadata"]["_internal_metadata"]) == {"cp": 3}
+    assert stream.response["metadata"]["_internal_metadata"] == '{"cp":3}'
     # T17a: live output item still carries its bag.
     assert dict(stream.response["output"][0]["internal_metadata"]) == {"phase": "gather"}
 

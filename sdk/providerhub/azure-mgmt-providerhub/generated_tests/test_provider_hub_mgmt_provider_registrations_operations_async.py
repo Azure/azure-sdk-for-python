@@ -44,6 +44,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                         "crossTenantTokenValidation": "str",
                         "customManifestVersion": "str",
                         "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
+                        "enablePresetResourceTypes": bool,
                         "enableTenantLinkedNotification": bool,
                         "featuresRule": {"requiredFeaturesPolicy": "str"},
                         "globalNotificationEndpoints": [
@@ -91,6 +92,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                             "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                             "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                             "expeditedRolloutSubmitters": ["str"],
+                            "featureManagementOwners": ["str"],
                             "incidentContactEmail": "str",
                             "incidentRoutingService": "str",
                             "incidentRoutingTeam": "str",
@@ -133,6 +135,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                             ]
                         },
                         "notifications": [{"notificationType": "str", "skipNotifications": "str"}],
+                        "oboSubscriptionId": "str",
                         "optionalFeatures": ["str"],
                         "privateResourceProviderConfiguration": {"allowedSubscriptions": ["str"]},
                         "providerAuthentication": {"allowedAudiences": ["str"]},

@@ -149,12 +149,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -188,12 +189,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -313,8 +315,80 @@ jobs:
         EnvVars: ${{ parameters.EnvVars }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        BeforeTestSteps:
+          # PR jobs use ServiceDirectory=auto, so locate services from the job's package batch.
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+              $sdkRoot = Join-Path "$(Build.SourcesDirectory)" "sdk"
+              $serviceDirectories = @()
+              if ("${{ parameters.ServiceDirectory }}" -eq "auto" -or "${{ parameters.ServiceDirectory }}" -eq "") {
+                $targets = "$(TargetingString)".Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+                foreach ($service in Get-ChildItem -Path $sdkRoot -Directory) {
+                  $packages = Get-ChildItem -Path $service.FullName -Directory
+                  foreach ($target in $targets) {
+                    if ($packages | Where-Object { $_.Name -like $target }) {
+                      $serviceDirectories += $service.FullName
+                      break
+                    }
+                  }
+                }
+              }
+              else {
+                $serviceDirectories = "${{ parameters.ServiceDirectory }}".Split('|') `
+                  | Where-Object { $_ } `
+                  | ForEach-Object { Join-Path $sdkRoot $_.Trim() }
+              }
+              $found = @()
+              foreach ($root in $serviceDirectories) {
+                if (-not (Test-Path $root)) { continue }
+                $found += Get-ChildItem -Path $root -Filter pyproject.toml -Recurse `
+                  | Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^\[tool\.cibuildwheel\]' }
+              }
+              if ($found) {
+                $found | ForEach-Object { Write-Host "Found compiled package: $($_.Directory.Name)" }
+                Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]true"
+              }
+              else {
+                Write-Host "No [tool.cibuildwheel] packages in targeted services; nothing to configure."
+                Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]false"
+              }
+            displayName: 'Check for compiled dev requirements'
+
+          - pwsh: |
+              Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
+              Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
+              Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
+              # Passing the feed URL preserves the package's own cibuildwheel environment (CFLAGS).
+              Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+            displayName: 'Configure cibuildwheel for dev requirement builds'
+            condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+          # Populate cibuildwheel's CPython cache from CFS instead of public NuGet.
+          - task: NuGetAuthenticate@1
+            displayName: 'Authenticate to NuGet feed'
+            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+              $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+              $version = "3.10.11"
+              $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+              $nugetCpython = Join-Path $cache "nuget-cpython"
+              New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+              $nuget = (Get-Command nuget).Source
+              & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+              if ($LASTEXITCODE) {
+                Write-Error "Failed to download python $version"
+                exit 1
+              }
+              Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+            displayName: 'Pre-provision CPython for cibuildwheel'
+            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+          - ${{ each step in parameters.BeforeTestSteps }}:
+            - ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}

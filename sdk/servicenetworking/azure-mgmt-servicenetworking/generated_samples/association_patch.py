@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/AssociationPatch.json
+# x-ms-original-file: 2026-03-01/AssociationPatch.json
 if __name__ == "__main__":
     main()

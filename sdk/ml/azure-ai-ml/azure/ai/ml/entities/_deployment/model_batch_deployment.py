@@ -26,32 +26,32 @@ type: Literal["model"] = "model"
 class ModelBatchDeployment(BatchDeployment):
     """Model Batch Deployment entity.
 
-    :param name: Name of the deployment resource.
-    :type name: str
-    :param endpoint_name: Name of the endpoint.
-    :type endpoint_name: Optional[str]
-    :param environment: Environment to use for deployment.
-    :type environment: Optional[Union[str, Environment]]
-    :param properties: The asset property dictionary.
-    :type properties: Optional[Dict[str, str]]
-    :param model: Model to deploy.
-    :type model: Optional[Union[str, Model]]
-    :param description: Deployment description.
-    :type description: Optional[str]
-    :param tags: Deployment tags.
-    :type tags: Optional[Dict[str, Any]]
-    :param settings: Deployment settings.
-    :type settings: Optional[ModelBatchDeploymentSettings]
-    :param resources: Resource configuration.
-    :type resources: Optional[ResourceConfiguration]
-    :param compute: Compute target to use.
-    :type compute: Optional[str]
-    :param code_configuration: Code configuration for deployment.
-    :type code_configuration: Optional[CodeConfiguration]
-    :param code_path: Path to the code directory.
-    :type code_path: Optional[Union[str, PathLike]]
-    :param scoring_script: Path to the scoring script.
-    :type scoring_script: Optional[Union[str, PathLike]]
+    :keyword name: Name of the deployment resource.
+    :paramtype name: str
+    :keyword endpoint_name: Name of the endpoint.
+    :paramtype endpoint_name: Optional[str]
+    :keyword environment: Environment to use for deployment.
+    :paramtype environment: Optional[Union[str, Environment]]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: Optional[Dict[str, str]]
+    :keyword model: Model to deploy.
+    :paramtype model: Optional[Union[str, Model]]
+    :keyword description: Deployment description.
+    :paramtype description: Optional[str]
+    :keyword tags: Deployment tags.
+    :paramtype tags: Optional[Dict[str, Any]]
+    :keyword settings: Deployment settings.
+    :paramtype settings: Optional[ModelBatchDeploymentSettings]
+    :keyword resources: Resource configuration.
+    :paramtype resources: Optional[ResourceConfiguration]
+    :keyword compute: Compute target to use.
+    :paramtype compute: Optional[str]
+    :keyword code_configuration: Code configuration for deployment.
+    :paramtype code_configuration: Optional[CodeConfiguration]
+    :keyword code_path: Path to the code directory.
+    :paramtype code_path: Optional[Union[str, PathLike]]
+    :keyword scoring_script: Path to the scoring script.
+    :paramtype scoring_script: Optional[Union[str, PathLike]]
     """
 
     def __init__(

@@ -24,7 +24,7 @@ from devtools_testutils import (
     AzureMgmtRecordedTestCase,
     CachedResourceGroupPreparer,
     recorded_by_proxy,
-    set_bodiless_matcher,
+    set_custom_default_matcher,
     get_credential,
 )
 from sb_env_loader import ServiceBusPreparer
@@ -38,7 +38,9 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
     def test_mgmt_rule_create(self, servicebus_fully_qualified_namespace, **kwargs):
-        set_bodiless_matcher()
+        # Bodiless matching (rule filter bodies vary), and ignore api-version so the recordings
+        # captured at 2021-05 still match under the 2024-05 default (see tests/conftest.py).
+        set_custom_default_matcher(compare_bodies=False, ignored_query_parameters="api-version")
         credential = get_credential()
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential

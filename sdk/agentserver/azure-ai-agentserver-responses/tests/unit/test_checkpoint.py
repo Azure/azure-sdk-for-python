@@ -11,6 +11,7 @@ helper. End-to-end crash recovery is covered by the resilience_contract suite.
 from __future__ import annotations
 
 import asyncio
+import json
 import time
 from typing import Any
 
@@ -42,8 +43,8 @@ class _RecordingProvider:
 
 def _event(**md) -> ResponseCheckpointEvent:
     resp: ResponseObject = {"id": "r1", "object": "response", "status": "in_progress", "output": [], "model": "m"}
-    for k, v in md.items():
-        resp.setdefault("metadata", {}).setdefault("_internal_metadata", {})[k] = v
+    if md:
+        resp["metadata"] = {"_internal_metadata": json.dumps(md, separators=(",", ":"), sort_keys=True)}
     return ResponseCheckpointEvent(resp)
 
 
@@ -165,7 +166,7 @@ async def test_t21_status_as_is_in_snapshot():
     )
     assert p.updates[0]["status"] == "in_progress"
     # Reserved internal_metadata is in the persisted snapshot (storage retains it).
-    assert p.updates[0]["metadata"]["_internal_metadata"] == {"cp": 1}
+    assert p.updates[0]["metadata"]["_internal_metadata"] == '{"cp":1}'
 
 
 @pytest.mark.asyncio

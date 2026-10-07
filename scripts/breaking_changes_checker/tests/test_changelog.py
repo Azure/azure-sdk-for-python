@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import ast
 import os
 import json
 import sys
@@ -20,7 +21,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
 from breaking_changes_checker.checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
-from breaking_changes_checker.detect_breaking_changes import compare_report_dicts, drop_shadow_types_modules
+from breaking_changes_checker.detect_breaking_changes import compare_report_dicts, drop_shadow_types_modules, get_property_names
 from breaking_changes_checker.detect_breaking_changes import test_compare_reports as compare_reports
 
 
@@ -1137,3 +1138,218 @@ def test_added_keyword_only_param_to_model_method_still_reported_as_class():
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ["azure.contoso", "ContosoModel", "extra", "do_something"]
 
+def test_added_update_method_for_operation_group():
+    stable = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    },
+                    "properties": {}
+                }
+            }
+        }
+    }
+    current = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        },
+                        "update": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    },
+                    "properties": {}
+                }
+            }
+        }
+    }
+    IGNORE = {
+        "azure-mgmt-contoso": [
+            ("AddedClassMethod", "*", "*", "update")
+        ]
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso", ignore=IGNORE)
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_MSG
+    assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "update"]
+
+@pytest.mark.parametrize(
+    "stable_property,current_property,expected_breaking_changes",
+    [
+        pytest.param(
+            {"attr_type": "Optional[Foo]"}, {"attr_type": "Foo"}, 1, id="optional"
+        ),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "Foo"},
+            1,
+            id="qualified-optional",
+        ),
+        pytest.param(
+            {"attr_type": "Union[Foo, None]"}, {"attr_type": "Foo"}, 1, id="union"
+        ),
+        pytest.param(
+            {"attr_type": "typing.Union[None, Foo]"},
+            {"attr_type": "Foo"},
+            1,
+            id="qualified-union",
+        ),
+        pytest.param(
+            {"attr_type": "Foo | None"}, {"attr_type": "Foo"}, 1, id="pep604-union"
+        ),
+        pytest.param(
+            {"attr_type": "None | Foo"},
+            {"attr_type": "Foo"},
+            1,
+            id="reversed-pep604-union",
+        ),
+        pytest.param(
+            {"attr_type": "Optional[Foo]"},
+            {"attr_type": "Union[Foo, None]"},
+            0,
+            id="optional-to-union",
+        ),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "Foo | None"},
+            0,
+            id="qualified-optional-to-pep604-union",
+        ),
+        pytest.param(
+            {"attr_type": "Union[Foo, None]"},
+            {"attr_type": "Optional[Foo]"},
+            0,
+            id="union-to-optional",
+        ),
+        pytest.param(
+            {"attr_type": "typing.Union[None, Foo]"},
+            {"attr_type": "typing.Optional[Foo]"},
+            0,
+            id="qualified-union-to-qualified-optional",
+        ),
+        pytest.param(
+            {"attr_type": "Foo | None"},
+            {"attr_type": "Union[Foo, None]"},
+            0,
+            id="pep604-union-to-union",
+        ),
+        pytest.param(
+            {"attr_type": "None | Foo"},
+            {"attr_type": "typing.Optional[Foo]"},
+            0,
+            id="reversed-pep604-union-to-qualified-optional",
+        ),
+    ],
+)
+def test_class_property_is_required(
+    stable_property, current_property, expected_breaking_changes
+):
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": stable_property},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": current_property},
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.breaking_changes) == expected_breaking_changes
+    if expected_breaking_changes:
+        msg, _, *args = bc.breaking_changes[0]
+        assert msg == ChangelogTracker.REQUIRED_PROPERTY_MSG
+        assert args == ["azure.contoso.models", "ContosoModel", "foo"]
+
+
+def test_class_property_is_required_with_default_report():
+    stable_properties = {}
+    current_properties = {}
+    stable_class = ast.parse(
+        "class ContosoModel:\n    foo: Optional[Foo] = rest_field()\n"
+    ).body[0]
+    current_class = ast.parse(
+        "class ContosoModel:\n    foo: Foo = rest_field()\n"
+    ).body[0]
+    get_property_names(stable_class, stable_properties)
+    get_property_names(current_class, current_properties)
+
+    assert stable_properties == {"foo": "Optional"}
+    assert current_properties == {"foo": None}
+
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": stable_properties,
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": current_properties,
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == ChangelogTracker.REQUIRED_PROPERTY_MSG
+    assert args == ["azure.contoso.models", "ContosoModel", "foo"]

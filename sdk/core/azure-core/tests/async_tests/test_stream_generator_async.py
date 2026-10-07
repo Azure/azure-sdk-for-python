@@ -8,6 +8,7 @@ import requests
 import pytest
 from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,

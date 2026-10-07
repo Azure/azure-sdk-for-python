@@ -1,58 +1,66 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Explicit force-enable switch for the resilient task recovery scan.
+"""Explicit opt-in switch for the resilient task subsystem.
 
-The resilient ``TaskManager`` is always constructed by ``AgentServerHost`` (a
-cheap, in-memory object that makes no task-store calls), so ``get_task_manager``
-and ``.run()`` / ``.start()`` work regardless of this switch. What this switch
-affects is only the network-backed **startup recovery scan** (a hosted
-task-store ``list()`` plus credential-token acquisition) and the periodic
-recovery loop it spawns.
+The resilient ``TaskManager`` is constructed by ``AgentServerHost`` **only when
+this switch is on**. It is the single source of truth for the durable task
+subsystem: when the switch is off, no ``TaskManager`` is installed, so
+``get_task_manager()`` raises
+:class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` and
+``.run()`` / ``.start()`` cannot run a task. When on, the manager is
+constructed and the startup crash-recovery scan (plus the periodic recovery
+loop) runs.
 
-That recovery runs at startup when EITHER a durable task has been declared
-(``@task`` / ``@multi_turn_task``) OR this switch is on. So an app that uses
-tasks gets recovery automatically; this switch is a **force-enable** that
-starts the recovery loop even before any task is declared (useful when tasks
-are registered lazily after startup — the running loop then picks them up).
+Recovery — and durable tasks as a whole — is therefore strictly opt-in. Merely
+declaring a durable task (``@task`` / ``@multi_turn_task``) does **not** turn
+the subsystem on; you must set this switch (directly, or via a protocol option
+that maps to it, e.g. the responses ``resilient_background`` server option).
 
-The switch is process-global and defaults to ``False``. It is intentionally
-decoupled from any ``AgentServerHost`` instance so it can be flipped
-independently at import time, e.g.::
+The switch is process-global and defaults to ``False``. Set it before
+``AgentServerHost`` lifespan startup (typically at import time)::
 
     from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
     set_resilient_tasks_enabled(True)
 """
 
+from azure.ai.agentserver.core._experimental import experimental
+
 _RESILIENT_TASKS_ENABLED: bool = False
 
 
+@experimental
 def set_resilient_tasks_enabled(value: bool = True) -> None:
-    """Force-enable (or clear) the resilient task recovery scan process-wide.
+    """Opt in to (or clear) the resilient task subsystem process-wide.
 
-    Setting this to ``True`` starts the startup recovery scan + periodic
-    recovery loop even when no durable task is declared at startup. It does
-    NOT gate the ``TaskManager``'s existence: ``.run()`` / ``.start()`` work
-    whether or not this is set — this only controls automatic crash recovery.
+    This gates whether ``AgentServerHost`` constructs the ``TaskManager`` at
+    lifespan startup. Setting it to ``True`` constructs the manager, runs the
+    startup crash-recovery scan, and starts the periodic recovery loop. When it
+    is ``False`` no manager is installed: ``get_task_manager()`` raises
+    :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` and a
+    durable task cannot run (callers such as the responses ``store=true`` path
+    swallow that and degrade to non-durable in-process execution).
 
     Must be called before ``AgentServerHost`` lifespan startup (typically at
     import time) to take effect. Defaults to enabling when called with no
     argument.
 
-    :param value: ``True`` to force-enable recovery, ``False`` to clear.
+    :param value: ``True`` to enable the resilient task subsystem, ``False`` to
+        clear.
     :type value: bool
     """
     global _RESILIENT_TASKS_ENABLED  # pylint: disable=global-statement
     _RESILIENT_TASKS_ENABLED = bool(value)
 
 
+@experimental
 def resilient_tasks_enabled() -> bool:
-    """Return whether the recovery scan was explicitly force-enabled.
+    """Return whether the resilient task subsystem is enabled.
 
-    Note this reflects only the switch — recovery also runs automatically when
-    a durable task is declared, so a ``False`` return does not mean recovery is
-    off, nor that tasks are unavailable.
+    This is the authoritative gate: a ``False`` return means no ``TaskManager``
+    is constructed and durable tasks / crash recovery are inactive (declaring a
+    task does NOT change this — the subsystem is opt-in).
 
     :return: ``True`` if :func:`set_resilient_tasks_enabled` turned it on.
     :rtype: bool

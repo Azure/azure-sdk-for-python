@@ -84,7 +84,7 @@ with (
 
     # Create agent with file search tool
     agent = project_client.agents.create_version(
-        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent",
         definition=agent_definition,
         description="File search agent for product information queries.",
     )

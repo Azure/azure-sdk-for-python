@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from urllib.parse import quote as _url_quote
 
+from azure.ai.agentserver.core._experimental import experimental
 from azure.ai.agentserver.core._config import AgentConfig
 
 _DEFAULT_API_VERSION = "v1"
@@ -23,6 +24,7 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
+@experimental
 class FoundryStorageEndpoint:
     """Immutable Foundry storage endpoint configuration.
 

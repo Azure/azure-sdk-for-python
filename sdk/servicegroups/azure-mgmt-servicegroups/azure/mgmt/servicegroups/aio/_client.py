@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -19,20 +19,27 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ServiceGroupsMgmtClientConfiguration
-from .operations import ServiceGroupsOperations, _ServiceGroupsMgmtClientOperationsMixin
+from .operations import Operations, ServiceGroupsOperations, _ServiceGroupsMgmtClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ServiceGroupsMgmtClient(_ServiceGroupsMgmtClientOperationsMixin):
-    """The Groups RP provides Service Groups as a construct to group multiple resources, resource
-    groups, subscriptions and other service groups into an organizational hierarchy and centrally
-    manage access control, policies, alerting and reporting for those resources.
+class ServiceGroupsMgmtClient(
+    _ServiceGroupsMgmtClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ServiceGroupsMgmtClient.
 
     :ivar service_groups: ServiceGroupsOperations operations
     :vartype service_groups: azure.mgmt.servicegroups.aio.operations.ServiceGroupsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.servicegroups.aio.operations.Operations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service host. Default value is None.
@@ -40,9 +47,9 @@ class ServiceGroupsMgmtClient(_ServiceGroupsMgmtClientOperationsMixin):
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2024-02-01-preview". Default value is "2024-02-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -96,6 +103,7 @@ class ServiceGroupsMgmtClient(_ServiceGroupsMgmtClientOperationsMixin):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.service_groups = ServiceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

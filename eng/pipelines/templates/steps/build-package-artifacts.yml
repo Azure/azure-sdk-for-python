@@ -27,29 +27,11 @@ parameters:
 steps:
   - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
     - checkout: self
-      displayName: 'Sparse checkout eng/common/scripts for GitHub login'
-      path: s/_login_scripts
-      sparseCheckoutDirectories: eng/common/scripts
-      fetchDepth: 1
-
-    - pwsh: |
-        $source = "$(Build.SourcesDirectory)/_login_scripts/eng"
-        $dest = "$(Agent.TempDirectory)"
-        Copy-Item -Recurse -Force $source $dest
-        Remove-Item -Recurse -Force "$(Build.SourcesDirectory)/*" -ErrorAction SilentlyContinue
-        Remove-Item -Recurse -Force "$(Build.SourcesDirectory)/.git" -ErrorAction SilentlyContinue
-      displayName: Copy and clean repo checkout folder
-    
-    - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+  - ${{ else }}:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
-        ScriptDirectory: "$(Agent.TempDirectory)/eng/common/scripts"
-
-  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-    parameters:
-      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-        TokenToUseForAuth: $(GH_TOKEN)
-      Paths:
-        - '**'
+        Paths:
+          - '**'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -68,8 +50,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
@@ -109,8 +91,8 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-  # todo, walk the artifacts and ensure that one which includes an extension package is present
-  # if not, we only need to build on linux. if so, we need to build on all platforms
+  # Decides whether the mac/windows builds produce anything, based on whether any targeted package
+  # declares compiled binaries. If none do, only the linux build runs.
   - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
     parameters:
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo

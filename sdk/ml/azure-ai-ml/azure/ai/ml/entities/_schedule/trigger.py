@@ -86,7 +86,7 @@ class RecurrencePattern(RestTranslatableMixin):
     :paramtype minutes: Union[int, List[int]]
     :keyword week_days: A list of days of the week for the recurrence schedule pattern.
         Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-    :type week_days: Optional[Union[str, List[str]]]
+    :paramtype week_days: Optional[Union[str, List[str]]]
     :keyword month_days: A list of days of the month for the recurrence schedule pattern.
     :paramtype month_days: Optional[Union[int, List[int]]]
 
@@ -233,7 +233,7 @@ class RecurrenceTrigger(TriggerBase):
     :paramtype time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
     :keyword frequency: Specifies the frequency that the schedule should be triggered with.
      Possible values include: "minute", "hour", "day", "week", "month".
-    :type frequency: str
+    :paramtype frequency: str
     :keyword interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
         with.
     :paramtype interval: int

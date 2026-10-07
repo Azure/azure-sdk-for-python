@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_SimulateEviction.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_SimulateEviction.json
 if __name__ == "__main__":
     main()

@@ -32,6 +32,8 @@ from ._operations import CapacityReservationsOperations  # type: ignore
 from ._operations import InterconnectBlocksOperations  # type: ignore
 from ._operations import VirtualMachineRunCommandsOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMRunCommandsOperations  # type: ignore
+from ._operations import VirtualMachineDiagnosticRunCommandsOperations  # type: ignore
+from ._operations import VirtualMachineScaleSetVMDiagnosticRunCommandsOperations  # type: ignore
 from ._operations import DisksOperations  # type: ignore
 from ._operations import DiskAccessesOperations  # type: ignore
 from ._operations import DiskEncryptionSetsOperations  # type: ignore
@@ -91,6 +93,8 @@ __all__ = [
     "InterconnectBlocksOperations",
     "VirtualMachineRunCommandsOperations",
     "VirtualMachineScaleSetVMRunCommandsOperations",
+    "VirtualMachineDiagnosticRunCommandsOperations",
+    "VirtualMachineScaleSetVMDiagnosticRunCommandsOperations",
     "DisksOperations",
     "DiskAccessesOperations",
     "DiskEncryptionSetsOperations",

@@ -54,7 +54,7 @@ class CalendarEvent(BaseModel):
 
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,

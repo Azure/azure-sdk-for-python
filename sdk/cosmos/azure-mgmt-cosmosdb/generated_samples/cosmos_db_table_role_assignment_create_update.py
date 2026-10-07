@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/tablerbac/CosmosDBTableRoleAssignmentCreateUpdate.json
+# x-ms-original-file: 2026-04-01-preview/tablerbac/CosmosDBTableRoleAssignmentCreateUpdate.json
 if __name__ == "__main__":
     main()
