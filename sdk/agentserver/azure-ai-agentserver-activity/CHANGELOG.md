@@ -2,8 +2,6 @@
 
 ## 1.0.0b4 (2026-10-07)
 
-### Features Added
-
 ### Breaking Changes
 
 - Raised the `microsoft-agents-hosting-core` dependency floor from `>=1.1.0` to `>=1.4.0`.
@@ -11,8 +9,6 @@
 ### Bugs Fixed
 
 - Fixed a crash constructing the outbound `ClaimsIdentity` when `microsoft-agents-hosting-core>=1.8.0` is resolved: that release removed the `is_authenticated` constructor parameter entirely, which the package always passed. The package no longer passes `is_authenticated` (deprecated and ignored since `1.4.0`, where it already derives from `bool(claims)` instead), which also requires the floor raise above.
-
-### Other Changes
 
 ## 1.0.0b3 (2026-08-21)
 
