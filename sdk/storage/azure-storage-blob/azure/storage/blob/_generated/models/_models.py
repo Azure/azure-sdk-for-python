@@ -26,6 +26,7 @@ from .._utils.utils import FileType
 from ._enums import (
     AccessTier,
     ArchiveStatus,
+    AuthenticationType,
     BlobType,
     CopyStatus,
     GeoReplicationStatusType,
@@ -336,6 +337,241 @@ class BlobItemInternal(_Model):  # pylint: disable=docstring-keyword-should-matc
         blob_tags: Optional["_models.BlobTags"] = None,
         object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = None,
         has_versions_only: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobLayout(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result of the Get Blob Layout API.
+
+    :ivar ranges: The ranges that make up the blob.
+    :vartype ranges: ~azure.storage.blob._generated.models.BlobLayoutRanges
+    :ivar endpoints: The endpoints that serve the ranges of the blob.
+    :vartype endpoints: ~azure.storage.blob._generated.models.BlobLayoutEndpoints
+    :ivar marker: The continuation marker used for this request.
+    :vartype marker: str
+    :ivar next_marker: If the number of ranges exceeds MaxResults, a NextMarker is returned for use
+     in subsequent requests to continue listing.
+    :vartype next_marker: str
+    :ivar max_results: The maximum number of ranges to return per request.
+    :vartype max_results: int
+    """
+
+    ranges: Optional["_models.BlobLayoutRanges"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Ranges", "text": False, "unwrapped": False},
+    )
+    """The ranges that make up the blob."""
+    endpoints: Optional["_models.BlobLayoutEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Endpoints", "text": False, "unwrapped": False},
+    )
+    """The endpoints that serve the ranges of the blob."""
+    marker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The continuation marker used for this request."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """If the number of ranges exceeds MaxResults, a NextMarker is returned for use in subsequent
+     requests to continue listing."""
+    max_results: Optional[int] = rest_field(
+        name="maxResults",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The maximum number of ranges to return per request."""
+
+    _xml = {"attribute": False, "name": "BlobLayout", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ranges: Optional["_models.BlobLayoutRanges"] = None,
+        endpoints: Optional["_models.BlobLayoutEndpoints"] = None,
+        marker: Optional[str] = None,
+        next_marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobLayoutEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An endpoint that serves ranges of a blob.
+
+    :ivar index: The index of the endpoint, referenced by Range elements. Required.
+    :vartype index: int
+    :ivar value: The host:port of the endpoint. Required.
+    :vartype value: str
+    """
+
+    index: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "Index", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The index of the endpoint, referenced by Range elements. Required."""
+    value: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "Value", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The host:port of the endpoint. Required."""
+
+    _xml = {"attribute": False, "name": "Endpoint", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobLayoutEndpoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The endpoints that serve the ranges of a blob.
+
+    :ivar endpoint: The list of endpoints.
+    :vartype endpoint: ~azure.storage.blob._generated.models.BlobLayoutEndpoint
+    """
+
+    endpoint: Optional[list["_models.BlobLayoutEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Endpoint", "name": "Endpoint", "text": False, "unwrapped": True},
+    )
+    """The list of endpoints."""
+
+    _xml = {"attribute": False, "name": "Endpoints", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: Optional[list["_models.BlobLayoutEndpoint"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobLayoutRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A range of a blob, and the endpoint that serves it.
+
+    :ivar start: The start byte offset of the range. Required.
+    :vartype start: int
+    :ivar end: The end byte offset of the range. Required.
+    :vartype end: int
+    :ivar endpoint_index: Index into the Endpoints array indicating which endpoint serves this
+     range. Required.
+    :vartype endpoint_index: int
+    """
+
+    start: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The start byte offset of the range. Required."""
+    end: int = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "End", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """The end byte offset of the range. Required."""
+    endpoint_index: int = rest_field(
+        name="endpointIndex",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "EndpointIndex", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
+    )
+    """Index into the Endpoints array indicating which endpoint serves this range. Required."""
+
+    _xml = {"attribute": False, "name": "Range", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start: int,
+        end: int,
+        endpoint_index: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobLayoutRanges(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The ranges that make up a blob.
+
+    :ivar range: The list of ranges.
+    :vartype range: ~azure.storage.blob._generated.models.BlobLayoutRange
+    """
+
+    range: Optional[list["_models.BlobLayoutRange"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Range", "name": "Range", "text": False, "unwrapped": True},
+    )
+    """The list of ranges."""
+
+    _xml = {"attribute": False, "name": "Ranges", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        range: Optional[list["_models.BlobLayoutRange"]] = None,
     ) -> None: ...
 
     @overload
@@ -1472,6 +1708,107 @@ class CorsRule(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateSessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The configuration used to create a session.
+
+    :ivar authentication_type: The type of authentication required to create the session. The only
+     type currently supported is HMAC. Required. "HMAC"
+    :vartype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+    """
+
+    authentication_type: Union[str, "_models.AuthenticationType"] = rest_field(
+        name="authenticationType",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AuthenticationType", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, AuthenticationType),
+    )
+    """The type of authentication required to create the session. The only type currently supported is
+     HMAC. Required. \"HMAC\""""
+
+    _xml = {"attribute": False, "name": "CreateSessionRequest", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authentication_type: Union[str, "_models.AuthenticationType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response of the Create Session API.
+
+    :ivar id: A unique identifier for the created session.
+    :vartype id: str
+    :ivar expiration: The time when the session will expire.
+    :vartype expiration: ~datetime.datetime
+    :ivar authentication_type: The type of authentication required to create the session. The only
+     type currently supported is HMAC. "HMAC"
+    :vartype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+    :ivar credentials: The credentials used to authorize subsequent requests in the session.
+    :vartype credentials: ~azure.storage.blob._generated.models.SessionCredentials
+    """
+
+    id: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """A unique identifier for the created session."""
+    expiration: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Expiration", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
+    )
+    """The time when the session will expire."""
+    authentication_type: Optional[Union[str, "_models.AuthenticationType"]] = rest_field(
+        name="authenticationType",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "AuthenticationType", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, AuthenticationType),
+    )
+    """The type of authentication required to create the session. The only type currently supported is
+     HMAC. \"HMAC\""""
+    credentials: Optional["_models.SessionCredentials"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Credentials", "text": False, "unwrapped": False},
+    )
+    """The credentials used to authorize subsequent requests in the session."""
+
+    _xml = {"attribute": False, "name": "CreateSessionResult", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        expiration: Optional[datetime.datetime] = None,
+        authentication_type: Optional[Union[str, "_models.AuthenticationType"]] = None,
+        credentials: Optional["_models.SessionCredentials"] = None,
     ) -> None: ...
 
     @overload
@@ -2732,6 +3069,55 @@ class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match
         enabled: bool,
         days: Optional[int] = None,
         allow_permanent_delete: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The credentials associated with a session.
+
+    :ivar session_token: An opaque token used to authorize subsequent requests in the session. Must
+     be treated as a security credential.
+    :vartype session_token: str
+    :ivar session_key: Only returned when AuthenticationType is HMAC. A symmetric encryption key
+     used to sign requests in the session using the Shared Key protocol.
+    :vartype session_key: str
+    """
+
+    session_token: Optional[str] = rest_field(
+        name="sessionToken",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SessionToken", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """An opaque token used to authorize subsequent requests in the session. Must be treated as a
+     security credential."""
+    session_key: Optional[str] = rest_field(
+        name="sessionKey",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SessionKey", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """Only returned when AuthenticationType is HMAC. A symmetric encryption key used to sign requests
+     in the session using the Shared Key protocol."""
+
+    _xml = {"attribute": False, "name": "Credentials", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        session_token: Optional[str] = None,
+        session_key: Optional[str] = None,
     ) -> None: ...
 
     @overload

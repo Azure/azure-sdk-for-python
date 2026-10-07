@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
