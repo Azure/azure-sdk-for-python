@@ -5,10 +5,11 @@
 """Unit tests for the opt-in per-attempt timeout (`try_timeout`).
 
 `try_timeout` bounds a single attempt of an operation rather than the whole operation. It
-applies to sending, to management operations, and to AMQP link acquisition, where the wait for
-the link to become ready was previously unbounded. That includes the link acquisition performed
-by `receive_messages` and by the streaming iterator. It must be greater than 0 if given, and is
-off by default.
+applies to sending, to management operations (including management-link message settlement),
+and to AMQP link acquisition, where the wait for the link to become ready was previously
+unbounded. That includes the link acquisition performed by `receive_messages` and by the
+streaming iterator. It must be greater than 0 if given, and is off by default.
+Management-link settlement remains bounded by an internal 60-second default when it is off.
 
 It deliberately does not apply to the receive long poll or the iterator's own wait: bounding
 those would silently truncate a caller who asked for a long wait. That exclusion is the
@@ -22,16 +23,24 @@ Java (`AmqpRetryOptions.tryTimeout`) SDKs, which default it on at 60 seconds.
 import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 
-from unittest.mock import MagicMock, patch
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event, Lock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import azure.servicebus._common.utils as utils_module
 import azure.servicebus._servicebus_receiver as sync_receiver_module
 import azure.servicebus.aio._servicebus_receiver_async as async_receiver_module
+import azure.servicebus._pyamqp.client as pyamqp_client_module
+import azure.servicebus._pyamqp.aio._client_async as pyamqp_async_client_module
 
 import pytest
 
 from azure.servicebus._common._configuration import Configuration
-from azure.servicebus._common.constants import DEFAULT_RECEIVE_WAIT_TIME_SECS
+from azure.servicebus._common.constants import (
+    DEFAULT_RECEIVE_WAIT_TIME_SECS,
+    DEFAULT_SERVER_TIMEOUT_MS,
+    MESSAGE_COMPLETE,
+)
 from azure.servicebus._common.utils import (
     check_link_ready_deadline,
     get_attempt_timeout,
@@ -766,18 +775,53 @@ class TestDeadlineSentinels:
                 receiver._open(timeout=0)
 
 
-class TestSettlementIsNotBounded:
-    """Settlement is documented as excluded; pin it so opting it in fails loudly."""
+class TestManagementLinkSettlementIsBounded:
+    """Only the management-link fallback gets an attempt timeout."""
 
-    def _receiver(self):
+    def _receiver(self, try_timeout=5):
         from azure.servicebus import ServiceBusClient
 
-        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        client = ServiceBusClient(
+            "fake.servicebus.windows.net",
+            MagicMock(),
+            try_timeout=try_timeout,
+            retry_total=1,
+            retry_backoff_factor=0,
+        )
         receiver = client.get_queue_receiver("q")
         receiver._check_live = lambda: None
+        receiver._populate_message_properties = lambda m: None
+        receiver._running = True
         return receiver
 
-    def test_settle_message_never_receives_a_timeout(self):
+    def test_management_link_settlement_uses_the_direct_request_with_timeout(self):
+        receiver = self._receiver()
+        direct, wrapped = [], []
+        expected = object()
+
+        def fake_direct(*args, **kwargs):
+            direct.append(kwargs.get("timeout"))
+            return expected
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._mgmt_request_response_with_retry = lambda *args, **kwargs: wrapped.append(kwargs)
+
+        result = receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert result is expected
+        assert direct == [5]
+        assert wrapped == []
+
+    def test_management_link_settlement_uses_default_timeout_when_try_timeout_is_off(self):
+        receiver = self._receiver(try_timeout=None)
+        direct = []
+        receiver._mgmt_request_response = lambda *args, **kwargs: direct.append(kwargs.get("timeout"))
+
+        receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert direct == [DEFAULT_SERVER_TIMEOUT_MS / 1000]
+
+    def test_receiver_link_settlement_does_not_receive_a_timeout(self):
         from azure.servicebus import ServiceBusReceivedMessage
 
         receiver = self._receiver()
@@ -789,9 +833,668 @@ class TestSettlementIsNotBounded:
         message._settled = False
         message._lock_expired = False
         message.auto_renew_error = None
-        receiver._settle_message_with_retry(message, "completed")
+        receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
         assert seen == ["unset"]
+
+    def test_management_link_timeout_retries_only_at_the_settlement_layer(self):
+        from azure.servicebus import ServiceBusReceivedMessage
+        from azure.servicebus.exceptions import OperationTimeoutError
+
+        receiver = self._receiver()
+        attempts = []
+
+        def fake_direct(*args, **kwargs):
+            attempts.append(kwargs.get("timeout"))
+            if len(attempts) == 1:
+                raise OperationTimeoutError(message="settlement timed out")
+            return None
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._handle_exception = lambda exception: exception
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._is_deferred_message = True
+        message._is_peeked_message = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        message.lock_token = "tok"
+
+        receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
+
+        assert attempts == [5, 5]
+        assert message._settled is True
+
+
+class TestPyamqpManagementRequestReadiness:
+    """Management links must not depend on the associated receiver link remaining attached."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("response_path", ["pending", "message", "rejection"])
+    async def test_management_registration_handle_survives_early_completion(self, asynchronous, response_path):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink as AsyncManagementLink
+        from azure.servicebus._pyamqp.constants import LinkDeliverySettleReason, SEND_DISPOSITION_REJECT
+        from azure.servicebus._pyamqp.management_link import ManagementLink
+        from azure.servicebus._pyamqp.message import Message
+
+        kind = AsyncManagementLink if asynchronous else ManagementLink
+        link = kind.__new__(kind)
+        link.lock = Lock()
+        link._pending_operations = []
+        link._status_code_field = b"statusCode"
+        link._status_description_field = b"statusDescription"
+        callback = AsyncMock() if asynchronous else MagicMock()
+        registered = []
+        rejection = {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]}
+
+        def capture_registration(message):
+            assert len(link._pending_operations) == 1
+            pending = link._pending_operations[0]
+            assert pending.message is message
+            registered.append(pending)
+            return message._replace(
+                properties=message.properties._replace(correlation_id=message.properties.message_id),
+                application_properties={b"statusCode": 200},
+            )
+
+        def send(message, *, on_send_complete, timeout):
+            response = capture_registration(message)
+            if response_path == "message":
+                link._on_message_received(None, response)
+            elif response_path == "rejection":
+                on_send_complete(LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+
+        async def async_send(message, *, on_send_complete, timeout):
+            response = capture_registration(message)
+            if response_path == "message":
+                await link._on_message_received(None, response)
+            elif response_path == "rejection":
+                await on_send_complete(LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+
+        link._request_link = MagicMock()
+        link._request_link.send_transfer = AsyncMock(side_effect=async_send) if asynchronous else MagicMock(side_effect=send)
+        message = Message(application_properties={})
+        if asynchronous:
+            pending = await link.execute_operation(message, callback)
+        else:
+            pending = link.execute_operation(message, callback)
+
+        assert pending is registered[0]
+        assert link._pending_operations == ([pending] if response_path == "pending" else [])
+        link.cancel_operation(pending)
+        link.cancel_operation(pending)
+        assert link._pending_operations == []
+
+        response = pending.message._replace(
+            properties=pending.message.properties._replace(correlation_id=pending.message.properties.message_id),
+            application_properties={b"statusCode": 200},
+        )
+        delivery = MagicMock(message=pending.message)
+        if asynchronous:
+            await link._on_message_received(None, response)
+            await link._on_send_complete(delivery, LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+            assert callback.await_count == (0 if response_path == "pending" else 1)
+        else:
+            link._on_message_received(None, response)
+            link._on_send_complete(delivery, LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+            assert callback.call_count == (0 if response_path == "pending" else 1)
+
+    @pytest.mark.parametrize("response_path", ["message", "rejection"])
+    def test_sync_management_selection_cannot_skip_response_during_cancellation(self, response_path):
+        from azure.servicebus._pyamqp.constants import LinkDeliverySettleReason, SEND_DISPOSITION_REJECT
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+
+        iterating, cancelling, continue_iteration = Event(), Event(), Event()
+        link = ManagementLink.__new__(ManagementLink)
+        link.lock = Lock()
+        link._status_code_field = b"status-code"
+        link._status_description_field = b"status-description"
+        link._network_trace_params = {}
+        callback = MagicMock()
+        first = PendingManagementOperation(MagicMock(), MagicMock())
+        second = PendingManagementOperation(MagicMock(), callback)
+
+        class PausingOperations(list):
+            def __iter__(self):
+                iterator = super().__iter__()
+                yield next(iterator)
+                iterating.set()
+                assert continue_iteration.wait(5)
+                yield from iterator
+
+        link._pending_operations = PausingOperations([first, second])
+
+        def respond():
+            if response_path == "message":
+                message = MagicMock()
+                message.properties = [None] * 5 + [second.message.properties.message_id]
+                message.application_properties = {b"status-code": 200, b"status-description": "OK"}
+                link._on_message_received(None, message)
+            else:
+                delivery = MagicMock(message=second.message)
+                link._on_send_complete(
+                    delivery,
+                    LinkDeliverySettleReason.DISPOSITION_RECEIVED,
+                    {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]},
+                )
+
+        def cancel():
+            cancelling.set()
+            link.cancel_operation(first)
+
+        def on_complete(*args, **kwargs):
+            assert link.lock.acquire(timeout=1), "Callback invoked under the pending-operation lock"
+            link.lock.release()
+
+        callback.side_effect = on_complete
+        with ThreadPoolExecutor(max_workers=2) as threads:
+            response = threads.submit(respond)
+            try:
+                assert iterating.wait(5)
+                cancellation = threads.submit(cancel)
+                assert cancelling.wait(5)
+                assert link.lock.locked(), "Selection must hold the cancellation lock"
+            finally:
+                continue_iteration.set()
+            response.result(timeout=5)
+            cancellation.result(timeout=5)
+
+        callback.assert_called_once()
+        assert link._pending_operations == []
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("wall_clock_jump", [-3600, 3600])
+    async def test_management_response_deadline_ignores_wall_clock_adjustments(self, asynchronous, wall_clock_jump):
+        from azure.servicebus._pyamqp import management_operation
+        from azure.servicebus._pyamqp.aio import _management_operation_async
+
+        module = _management_operation_async if asynchronous else management_operation
+        clock = VirtualClock()
+        clock.time = MagicMock(side_effect=[0, wall_clock_jump])
+        operation = module.ManagementOperation(MagicMock())
+        operation._mgmt_link._pending_operations = []
+        operation._mgmt_link.lock = Lock()
+
+        def listen():
+            clock.sleep(0.02)
+
+        if asynchronous:
+            operation._mgmt_link.execute_operation = AsyncMock(return_value=None)
+            operation._connection.listen = AsyncMock(side_effect=listen)
+        else:
+            operation._mgmt_link.execute_operation.return_value = None
+            operation._connection.listen.side_effect = listen
+
+        with patch.object(module, "time", clock):
+            with pytest.raises(TimeoutError, match="0.05 seconds"):
+                if asynchronous:
+                    await operation.execute(MagicMock(), timeout=0.05)
+                else:
+                    operation.execute(MagicMock(), timeout=0.05)
+
+        clock.time.assert_not_called()
+        assert operation._connection.listen.call_count == 3
+        assert operation._responses == {}
+
+    def test_management_timeout_reports_budget_and_elapsed_seconds(self):
+        clock = VirtualClock()
+        started = clock.monotonic()
+        clock.sleep(0.06)
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError, match=r"after 0.060 seconds \(timeout: 0.05 seconds\)"):
+                pyamqp_client_module._get_mgmt_request_remaining_timeout(0.05, started)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("expiry", ["before-auth", "after-sleep", "auth-pending", "auth-ready"])
+    async def test_management_authentication_checks_deadline_before_and_after_call(self, asynchronous, expiry):
+        clock = VirtualClock(stall_before_first_check=0.06 if expiry == "before-auth" else 0)
+        module = pyamqp_async_client_module if asynchronous else pyamqp_client_module
+        client_type = module.AMQPClientAsync if asynchronous else module.AMQPClient
+        client = client_type.__new__(client_type)
+        mgmt_link = MagicMock()
+        client._mgmt_links = {"$management": mgmt_link}
+        auth_times = []
+
+        def authenticate():
+            auth_times.append(clock.now)
+            if expiry in ("auth-pending", "auth-ready"):
+                clock.sleep(0.06)
+            return expiry == "auth-ready"
+
+        if asynchronous:
+            client._mgmt_link_lock_async = AsyncMock()
+            client.auth_complete_async = AsyncMock(side_effect=authenticate)
+            mgmt_link.ready = AsyncMock(return_value=True)
+        else:
+            client._mgmt_link_lock = MagicMock()
+            client.auth_complete = MagicMock(side_effect=authenticate)
+            mgmt_link.ready.return_value = True
+
+        with (
+            patch.object(pyamqp_client_module, "time", clock),
+            patch.object(pyamqp_async_client_module, "time", clock),
+            patch.object(pyamqp_async_client_module.asyncio, "sleep", clock.sleep_async),
+        ):
+            with pytest.raises(TimeoutError):
+                if asynchronous:
+                    await client.mgmt_request_async(MagicMock(), timeout=0.03125)
+                else:
+                    client.mgmt_request(MagicMock(), timeout=0.03125)
+
+        assert len(auth_times) == (0 if expiry == "before-auth" else 1)
+        assert all(start < 1000.03125 for start in auth_times)
+        assert clock.now == pytest.approx(1000.03125 if expiry == "after-sleep" else 1000.06)
+        mgmt_link.ready.assert_not_called()
+        mgmt_link.execute.assert_not_called()
+
+    def test_sync_management_request_skips_broken_primary_link(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = True
+        mgmt_link.execute.return_value = (200, "OK", "response")
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+        client.client_ready = MagicMock(side_effect=AssertionError("primary link readiness must not be checked"))
+
+        result = client.mgmt_request(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        client.client_ready.assert_not_called()
+
+    def test_sync_management_link_readiness_uses_the_request_deadline(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        clock = VirtualClock()
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = False
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+        client._connection = MagicMock()
+        client._connection.listen.side_effect = lambda **kwargs: clock.sleep(0.02)
+
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                client.mgmt_request(MagicMock(), timeout=0.05)
+
+        assert client._connection.listen.call_count == 3
+
+    def test_sync_management_request_rejects_response_after_deadline(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        clock = VirtualClock()
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = True
+
+        def execute(*args, **kwargs):
+            clock.sleep(0.06)
+            return (200, "OK", "late response")
+
+        mgmt_link.execute = execute
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                client.mgmt_request(MagicMock(), timeout=0.05)
+
+    def test_timed_out_sync_management_request_cleans_operation_state(self):
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+        mgmt_link.lock = MagicMock()
+        mgmt_link.lock.__enter__.return_value = None
+        mgmt_link.lock.__exit__.return_value = None
+
+        def execute_operation(message, callback, **kwargs):
+            pending_operation = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending_operation)
+            return pending_operation
+
+        mgmt_link.execute_operation = execute_operation
+        operation = ManagementOperation.__new__(ManagementOperation)
+        operation._mgmt_link = mgmt_link
+        operation._responses = {}
+        operation._mgmt_error = None
+        operation._connection = MagicMock()
+        operation._connection.listen.side_effect = TimeoutError("transport timed out")
+
+        with pytest.raises(TimeoutError):
+            operation.execute(MagicMock(), timeout=5)
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    def test_sync_management_callback_selected_before_timeout_cannot_corrupt_retry(self, late_result):
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        selected, release = Event(), Event()
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+        mgmt_link.lock = Lock()
+        operation = ManagementOperation(MagicMock())
+        operation._mgmt_link = mgmt_link
+
+        def execute_operation(message, callback, **kwargs):
+            pending = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending)
+            return pending
+
+        mgmt_link.execute_operation = execute_operation
+
+        with ThreadPoolExecutor(max_workers=1) as listener:
+            late_callback = None
+
+            def invoke_selected_callback(callback):
+                selected.set()
+                assert release.wait(5)
+                callback(
+                    getattr(ManagementExecuteOperationResult, late_result),
+                    200,
+                    "OK",
+                    "late response",
+                    error=RuntimeError("late error"),
+                )
+
+            def time_out():
+                nonlocal late_callback
+                callback = mgmt_link._pending_operations[0].on_execute_operation_complete
+                late_callback = listener.submit(invoke_selected_callback, callback)
+                assert selected.wait(5)
+                raise TimeoutError("transport timed out")
+
+            operation._connection.listen.side_effect = time_out
+            try:
+                with pytest.raises(TimeoutError):
+                    operation.execute(MagicMock(), timeout=5)
+
+                assert operation._responses == {}
+                assert mgmt_link._pending_operations == []
+
+                def respond_to_retry():
+                    release.set()
+                    late_callback.result(timeout=5)
+                    assert len(operation._responses) == 1
+                    assert operation._mgmt_error is None
+                    mgmt_link._pending_operations[0].on_execute_operation_complete(
+                        ManagementExecuteOperationResult.OK, 200, "OK", "retry response"
+                    )
+
+                operation._connection.listen.side_effect = respond_to_retry
+                assert operation.execute(MagicMock(), timeout=5) == (200, "OK", "retry response")
+            finally:
+                release.set()
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    def test_sync_management_cleanup_invalidates_callback_before_cancelling_registration(self, late_result):
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
+        from azure.servicebus._pyamqp.management_link import ManagementLink, PendingManagementOperation
+        from azure.servicebus._pyamqp.management_operation import ManagementOperation
+
+        link = ManagementLink.__new__(ManagementLink)
+        link.lock = Lock()
+        link._pending_operations = []
+        operation = ManagementOperation(MagicMock())
+        operation._mgmt_link = link
+
+        def execute_operation(message, callback, **kwargs):
+            pending = PendingManagementOperation(message, callback)
+            link._pending_operations.append(pending)
+            return pending
+
+        link.execute_operation = execute_operation
+        operation._responses["concurrent-request"] = None
+        operation._connection.listen.side_effect = TimeoutError("transport timed out")
+        with ThreadPoolExecutor(max_workers=1) as listener:
+
+            def cancel_operation(pending):
+                listener.submit(
+                    pending.on_execute_operation_complete,
+                    getattr(ManagementExecuteOperationResult, late_result),
+                    200,
+                    "OK",
+                    "late response",
+                    error=RuntimeError("late error"),
+                ).result(timeout=5)
+                assert operation._responses == {"concurrent-request": None}
+                assert operation._mgmt_error is None
+                ManagementLink.cancel_operation(link, pending)
+
+            link.cancel_operation = cancel_operation
+            with pytest.raises(TimeoutError, match="transport timed out"):
+                operation.execute(MagicMock(), timeout=5)
+
+        assert link._pending_operations == []
+        assert operation._responses == {"concurrent-request": None}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("late_result", ["OK", "ERROR", "LINK_CLOSED"])
+    @pytest.mark.parametrize("cleanup", ["cancel", "timeout"])
+    async def test_async_management_cleanup_ignores_late_callbacks_during_retry(self, late_result, cleanup):
+        from azure.servicebus._pyamqp.aio import _management_operation_async as module
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.aio._management_operation_async import ManagementOperation
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        listening = asyncio.Event()
+        clock = VirtualClock()
+        captured_callback = None
+        mgmt_link = ManagementLink.__new__(ManagementLink)
+        mgmt_link._pending_operations = []
+
+        async def execute_operation(message, callback, **kwargs):
+            nonlocal captured_callback
+            captured_callback = callback
+            pending_operation = PendingManagementOperation(message, callback)
+            mgmt_link._pending_operations.append(pending_operation)
+            return pending_operation
+
+        async def listen():
+            listening.set()
+            if cleanup == "timeout":
+                clock.sleep(5)
+                return
+            await asyncio.Event().wait()
+
+        mgmt_link.execute_operation = execute_operation
+        operation = ManagementOperation.__new__(ManagementOperation)
+        operation._mgmt_link = mgmt_link
+        operation._responses = {}
+        operation._mgmt_error = None
+        operation._network_trace_params = {}
+        operation._connection = MagicMock()
+        operation._connection.listen = listen
+
+        with patch.object(module, "time", clock):
+            task = asyncio.create_task(operation.execute(MagicMock(), timeout=5))
+            await listening.wait()
+            late_callback = captured_callback
+            if cleanup == "cancel":
+                task.cancel()
+            with pytest.raises(asyncio.CancelledError if cleanup == "cancel" else TimeoutError):
+                await task
+
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+        async def respond_to_retry():
+            await late_callback(
+                getattr(ManagementExecuteOperationResult, late_result),
+                200,
+                "OK",
+                "late response",
+                error=RuntimeError("late error"),
+            )
+            assert len(operation._responses) == 1
+            assert operation._mgmt_error is None
+            await mgmt_link._pending_operations[0].on_execute_operation_complete(
+                ManagementExecuteOperationResult.OK, 200, "OK", "retry response"
+            )
+
+        operation._connection.listen = respond_to_retry
+        assert await operation.execute(MagicMock(), timeout=5) == (200, "OK", "retry response")
+        assert operation._responses == {}
+        assert mgmt_link._pending_operations == []
+
+    @pytest.mark.asyncio
+    async def test_async_management_response_removes_registration_before_awaiting_callback(self):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        entered, release = asyncio.Event(), asyncio.Event()
+        link = ManagementLink.__new__(ManagementLink)
+        link._status_code_field = b"status-code"
+        link._status_description_field = b"status-description"
+
+        async def callback(*args):
+            entered.set()
+            await release.wait()
+
+        pending = PendingManagementOperation(MagicMock(), callback)
+        link._pending_operations = [pending]
+        response = MagicMock()
+        response.properties = [None] * 5 + [pending.message.properties.message_id]
+        response.application_properties = {b"status-code": 200, b"status-description": "OK"}
+        task = asyncio.create_task(link._on_message_received(None, response))
+        try:
+            await asyncio.wait_for(entered.wait(), timeout=5)
+            link.cancel_operation(pending)
+        finally:
+            release.set()
+            await asyncio.wait_for(task, timeout=5)
+        assert link._pending_operations == []
+
+    @pytest.mark.asyncio
+    async def test_async_management_close_snapshots_registrations_before_awaiting_callbacks(self):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink
+        from azure.servicebus._pyamqp.constants import ManagementExecuteOperationResult, ManagementLinkState
+        from azure.servicebus._pyamqp.management_link import PendingManagementOperation
+
+        link = ManagementLink.__new__(ManagementLink)
+        link.state = ManagementLinkState.OPEN
+        link._response_link = AsyncMock()
+        link._request_link = AsyncMock()
+        second_callback = AsyncMock()
+        second = PendingManagementOperation(MagicMock(), second_callback)
+
+        async def first_callback(*args):
+            await asyncio.sleep(0)
+            link.cancel_operation(second)
+
+        link._pending_operations = [PendingManagementOperation(MagicMock(), first_callback), second]
+        await link.close()
+        second_callback.assert_awaited_once()
+        assert second_callback.call_args.args[0] == ManagementExecuteOperationResult.LINK_CLOSED
+        assert link._pending_operations == []
+        assert link.state == ManagementLinkState.IDLE
+
+    @pytest.mark.asyncio
+    async def test_async_management_request_skips_broken_primary_link(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        mgmt_link = MagicMock()
+
+        async def ready():
+            return True
+
+        async def execute(*args, **kwargs):
+            return (200, "OK", "response")
+
+        async def auth_complete():
+            return True
+
+        mgmt_link.ready = ready
+        mgmt_link.execute = execute
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete_async = auth_complete
+        client.client_ready_async = MagicMock(side_effect=AssertionError("primary link readiness must not be checked"))
+
+        result = await client.mgmt_request_async(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        client.client_ready_async.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_async_management_link_readiness_uses_the_request_deadline(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        clock = VirtualClock()
+        listen_calls = 0
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        mgmt_link = MagicMock()
+
+        async def ready():
+            return False
+
+        async def auth_complete():
+            return True
+
+        async def listen(**kwargs):
+            nonlocal listen_calls
+            listen_calls += 1
+            await clock.sleep_async(0.02)
+
+        mgmt_link.ready = ready
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete_async = auth_complete
+        client._connection = MagicMock()
+        client._connection.listen = listen
+
+        with patch.object(pyamqp_client_module, "time", clock), patch.object(pyamqp_async_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                await client.mgmt_request_async(MagicMock(), timeout=0.05)
+
+        assert listen_calls == 3
+
+    @pytest.mark.asyncio
+    async def test_cancelled_async_management_link_open_is_not_cached(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        client._mgmt_links = {}
+        client._session = MagicMock()
+        client.auth_complete_async = AsyncMock(return_value=True)
+        first, second = MagicMock(), MagicMock()
+        first.open = AsyncMock(side_effect=asyncio.CancelledError)
+        second.open = AsyncMock()
+        second.ready = AsyncMock(return_value=True)
+        second.execute = AsyncMock(return_value=(200, "OK", "response"))
+
+        with patch.object(pyamqp_async_client_module, "ManagementOperation", side_effect=[first, second]):
+            with pytest.raises(asyncio.CancelledError):
+                await client.mgmt_request_async(MagicMock(), timeout=5)
+            result = await client.mgmt_request_async(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        assert client._mgmt_links == {"$management": second}
 
 
 class TestAsyncLinkAcquisitionIsBounded:
@@ -1311,30 +2014,34 @@ class TestAsyncExpiredBudgetDoesNotIssueLinkCredit:
         assert credit_calls == [9]
 
 
-class TestAsyncSettlementIsNotBounded:
-    """Async settlement must use the direct request path like sync, not the retry wrapper.
+class TestAsyncManagementLinkSettlementIsBounded:
+    """Async management-link settlement mirrors the sync timeout and retry layering."""
 
-    The wrapper opts into try_timeout, which the docs exclude for settlement, and it nests a
-    retry inside the one _settle_message_with_retry already provides.
-    """
-
-    def _receiver(self):
+    def _receiver(self, try_timeout=5):
         from azure.servicebus.aio import ServiceBusClient as AsyncClient
 
-        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        client = AsyncClient(
+            "fake.servicebus.windows.net",
+            MagicMock(),
+            try_timeout=try_timeout,
+            retry_total=1,
+            retry_backoff_factor=0,
+        )
         receiver = client.get_queue_receiver("q")
         receiver._check_live = lambda: None
         receiver._populate_message_properties = lambda m: None
+        receiver._running = True
         return receiver
 
     @pytest.mark.asyncio
-    async def test_settlement_uses_the_direct_request_path(self):
+    async def test_management_link_settlement_uses_the_direct_request_with_timeout(self):
         receiver = self._receiver()
         direct, wrapped = [], []
+        expected = object()
 
         async def fake_direct(*args, **kwargs):
-            direct.append(kwargs.get("timeout", "unset"))
-            return None
+            direct.append(kwargs.get("timeout"))
+            return expected
 
         async def fake_wrapped(*args, **kwargs):
             wrapped.append(kwargs)
@@ -1342,14 +2049,27 @@ class TestAsyncSettlementIsNotBounded:
 
         receiver._mgmt_request_response = fake_direct
         receiver._mgmt_request_response_with_retry = fake_wrapped
-        await receiver._settle_message_via_mgmt_link("completed", ["tok"])
+        result = await receiver._settle_message_via_mgmt_link("completed", ["tok"])
 
-        assert wrapped == []  # the retry wrapper must not be used
-        assert direct == ["unset"]  # and no timeout is applied
+        assert result is expected
+        assert direct == [5]
+        assert wrapped == []
 
     @pytest.mark.asyncio
-    async def test_settle_message_never_receives_a_timeout(self):
-        # Mirrors the sync coverage in TestSettlementIsNotBounded.
+    async def test_management_link_settlement_uses_default_timeout_when_try_timeout_is_off(self):
+        receiver = self._receiver(try_timeout=None)
+        direct = []
+
+        async def fake_direct(*args, **kwargs):
+            direct.append(kwargs.get("timeout"))
+
+        receiver._mgmt_request_response = fake_direct
+        await receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert direct == [DEFAULT_SERVER_TIMEOUT_MS / 1000]
+
+    @pytest.mark.asyncio
+    async def test_receiver_link_settlement_does_not_receive_a_timeout(self):
         from azure.servicebus import ServiceBusReceivedMessage
 
         receiver = self._receiver()
@@ -1365,9 +2085,41 @@ class TestAsyncSettlementIsNotBounded:
         message._settled = False
         message._lock_expired = False
         message.auto_renew_error = None
-        await receiver._settle_message_with_retry(message, "completed")
+        await receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
         assert seen == ["unset"]
+
+    @pytest.mark.asyncio
+    async def test_management_link_timeout_retries_only_at_the_settlement_layer(self):
+        from azure.servicebus import ServiceBusReceivedMessage
+        from azure.servicebus.exceptions import OperationTimeoutError
+
+        receiver = self._receiver()
+        attempts = []
+
+        async def fake_direct(*args, **kwargs):
+            attempts.append(kwargs.get("timeout"))
+            if len(attempts) == 1:
+                raise OperationTimeoutError(message="settlement timed out")
+            return None
+
+        async def fake_handle_exception(exception):
+            return exception
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._handle_exception = fake_handle_exception
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._is_deferred_message = True
+        message._is_peeked_message = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        message.lock_token = "tok"
+
+        await receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
+
+        assert attempts == [5, 5]
+        assert message._settled is True
 
 
 class TestSleepCrossingDeadlineStopsPolling:
