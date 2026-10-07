@@ -64,7 +64,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_adherence.prompty"
     _RESULT_KEY = "task_adherence"
-    _OPTIONAL_PARAMS = ["tool_definitions"]
+    _OPTIONAL_PARAMS = ["tool_definitions", "system_message", "tool_calls"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 0
 
@@ -98,6 +98,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query: Union[str, List[dict]],
         response: Union[str, List[dict]],
         tool_definitions: Optional[Union[dict, List[dict]]] = None,
+        system_message: Optional[str] = None,
+        tool_calls: Optional[Union[str, dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate task adherence for a given query and response.
         The query and response must be lists of messages in conversation format.
@@ -114,6 +116,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: Union[str, List[dict]]
         :keyword response: The response being evaluated, must be a list of messages (full agent response including tool calls and results)
         :paramtype response: Union[str, List[dict]]
+        :keyword tool_definitions: An optional list of tool definitions the agent is aware of.
+        :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
+        :keyword system_message: An optional system message (developer instructions) given to the agent.
+            Useful when the query is a plain string that does not contain a system message.
+        :paramtype system_message: Optional[str]
+        :keyword tool_calls: Optional tool calls made by the agent and their results.
+            Useful when the response is a plain string that does not contain the tool calls.
+        :paramtype tool_calls: Optional[Union[str, dict, List[dict]]]
         :return: A dictionary with the task adherence evaluation results including score (pass/fail) and reasoning (str).
         :rtype: Dict[str, Union[str, float, bool]]
         """
@@ -144,6 +154,19 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator.validate_eval_input(kwargs)
 
         return await super()._real_call(**kwargs)
+
+    @staticmethod
+    def _format_tool_calls(tool_calls: Union[str, dict, List[dict]]) -> str:
+        """Format explicitly provided tool calls into the string expected by the prompty.
+
+        :param tool_calls: The tool calls, as a string, a single tool call dict or a list of tool call dicts.
+        :type tool_calls: Union[str, dict, List[dict]]
+        :return: The tool calls formatted as a string.
+        :rtype: str
+        """
+        if isinstance(tool_calls, list):
+            return "\n".join(str(tool_call) for tool_call in tool_calls)
+        return str(tool_calls)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str, bool]]:  # type: ignore[override]
@@ -227,6 +250,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_calls = "\n".join(tool_parts)
         elif isinstance(response_messages, str):
             assistant_response = response_messages
+
+        # Explicitly provided system_message and tool_calls take precedence over the derived values
+        if eval_input.get("system_message"):
+            system_message = str(eval_input["system_message"])
+        if eval_input.get("tool_calls"):
+            tool_calls = self._format_tool_calls(eval_input["tool_calls"])
 
         # Prepare inputs for prompty
         prompty_input = {
