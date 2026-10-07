@@ -1,6 +1,6 @@
 # Azure packaging
 
-[comment]: # ( cspell:ignore myservice )
+[comment]: # ( cspell:ignore myservice azuremyservice msvc MSRUSTUP )
 
 > **Note:** This document covers legacy packaging using `setup.py`. New packages should use `pyproject.toml` instead. See the [`sdk/template/azure-template`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template/azure-template) for the current package template.
 
