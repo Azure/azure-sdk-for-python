@@ -4,6 +4,7 @@
 # ------------------------------------
 """Offline wire and response tests for Command and Pipeline jobs."""
 
+import importlib
 import json
 import os
 import re
@@ -1116,6 +1117,26 @@ def test_dsl_source_snapshot_filters_files_before_hash_and_upload(tmp_path: Path
     ]
 
 
+def test_dsl_source_snapshot_amlignore_overrides_gitignore_and_excludes_directories(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    root.mkdir()
+    (root / ".gitignore").write_text("keep.txt\n", encoding="utf-8")
+    (root / ".amlignore").write_text("private/\n", encoding="utf-8")
+    (root / "keep.txt").write_text("included", encoding="utf-8")
+    private = root / "private"
+    private.mkdir()
+    (private / "secret.txt").write_text("excluded", encoding="utf-8")
+    stage = tmp_path / "stage"
+    stage.mkdir()
+
+    _stage_component_source(root, stage)
+
+    assert (stage / "keep.txt").read_text(encoding="utf-8") == "included"
+    assert not (stage / "private").exists()
+    assert not (stage / ".gitignore").exists()
+    assert not (stage / ".amlignore").exists()
+
+
 def test_dsl_source_snapshot_rejects_included_symlinks(tmp_path: Path) -> None:
     root = tmp_path / "code"
     root.mkdir()
@@ -1143,6 +1164,65 @@ def test_dsl_source_requires_importable_function_inside_root(tmp_path: Path) -> 
         @dsl.component(code=Path(__file__).resolve().parent)
         def nested(result: dsl.Output(type="uri_file")) -> None:
             Path(result).write_text("nested", encoding="utf-8")
+
+
+def test_dsl_source_runner_converts_primitive_ports(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    code_root = tmp_path / "code"
+    code_root.mkdir()
+    module_name = "source_numeric_component"
+    (code_root / f"{module_name}.py").write_text(
+        "from pathlib import Path\n"
+        "from azure.ai.projects.dsl import Output, component\n"
+        "@component(code='.')\n"
+        "def write(count: int, ratio: float, enabled: bool, result: Output(type='uri_file')) -> None:\n"
+        "    Path(result).write_text(f'{count}|{ratio}|{enabled}', encoding='utf-8')\n",
+        encoding="utf-8",
+    )
+    monkeypatch.syspath_prepend(str(code_root))
+    writer = importlib.import_module(module_name).write
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow():
+        return {"result": writer(count=3, ratio=1.5, enabled=True).outputs.result}
+
+    job = workflow()
+    try:
+        stage = _dsl_code_paths(job)["write"]
+        assert job.jobs["write"]["component"]["command"].startswith(
+            f"python {_RUNNER_NAME} {module_name} write count:int,ratio:float,enabled:bool,result:str "
+        )
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = os.pathsep.join(
+            [str(Path(__file__).resolve().parents[2]), environment.get("PYTHONPATH", "")]
+        )
+        result = tmp_path / "result.txt"
+        subprocess.run(
+            [
+                sys.executable,
+                str(stage / _RUNNER_NAME),
+                module_name,
+                "write",
+                "count:int,ratio:float,enabled:bool,result:str",
+                "3",
+                "1.5",
+                "True",
+                str(result),
+            ],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert result.read_text(encoding="utf-8") == "3|1.5|True"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
 
 
 def test_jobs_sync_job_only_names_are_unique() -> None:

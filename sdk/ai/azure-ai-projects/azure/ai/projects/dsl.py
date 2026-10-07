@@ -370,7 +370,10 @@ def pipeline(
             token = _ACTIVE_PIPELINE.set(context)
             job: Optional[PipelineJob] = None
             try:
-                result = func(**references)
+                try:
+                    result = func(**references)
+                finally:
+                    _ACTIVE_PIPELINE.reset(token)
                 job_outputs: Dict[str, Dict[str, Any]] = {}
                 if result is not None:
                     if not isinstance(result, dict):
@@ -397,7 +400,6 @@ def pipeline(
                 job._component_code_dirs = context.code_dirs
                 return job
             finally:
-                _ACTIVE_PIPELINE.reset(token)
                 if job is None:
                     for directory in context.code_dirs:
                         directory.cleanup()
