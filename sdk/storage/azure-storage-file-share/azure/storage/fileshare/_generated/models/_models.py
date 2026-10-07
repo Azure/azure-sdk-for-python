@@ -803,6 +803,84 @@ class HandleItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class HardLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A hard link to a file.
+
+    :ivar file_name: The name of the hard link. Required.
+    :vartype file_name: ~azure.storage.fileshare._generated.models.StringEncoded
+    :ivar parent_id: The fileId of the parent directory of the hard link. Required.
+    :vartype parent_id: str
+    """
+
+    file_name: "_models.StringEncoded" = rest_field(
+        name="fileName",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "FileName", "text": False, "unwrapped": False},
+    )
+    """The name of the hard link. Required."""
+    parent_id: str = rest_field(
+        name="parentId",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "ParentId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The fileId of the parent directory of the hard link. Required."""
+
+    _xml = {"attribute": False, "name": "HardLink", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_name: "_models.StringEncoded",
+        parent_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HardLinkList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The list of hard links for a file.
+
+    :ivar hard_links: The hard links. Required.
+    :vartype hard_links: ~azure.storage.fileshare._generated.models.HardLink
+    """
+
+    hard_links: list["_models.HardLink"] = rest_field(
+        name="hardLinks",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "HardLink", "name": "HardLink", "text": False, "unwrapped": True},
+    )
+    """The hard links. Required."""
+
+    _xml = {"attribute": False, "name": "HardLinks", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hard_links: list["_models.HardLink"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key information.
 
@@ -1563,8 +1641,6 @@ class SharePropertiesInternal(_Model):  # pylint: disable=docstring-keyword-shou
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
     :ivar enable_smb_directory_lease: Whether SMB directory lease is enabled.
     :vartype enable_smb_directory_lease: bool
-    :ivar creation_time: The creation time.
-    :vartype creation_time: ~datetime.datetime
     """
 
     last_modified: datetime.datetime = rest_field(
@@ -1767,14 +1843,6 @@ class SharePropertiesInternal(_Model):  # pylint: disable=docstring-keyword-shou
         deserializer=_xml_deser_bool,
     )
     """Whether SMB directory lease is enabled."""
-    creation_time: Optional[datetime.datetime] = rest_field(
-        name="creationTime",
-        visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
-        xml={"attribute": False, "name": "Creation-Time", "text": False, "unwrapped": False},
-        deserializer=_xml_deser_datetime_rfc7231,
-    )
-    """The creation time."""
 
     _xml = {"attribute": False, "name": "SharePropertiesInternal", "text": False, "unwrapped": False}
 
@@ -1809,7 +1877,6 @@ class SharePropertiesInternal(_Model):  # pylint: disable=docstring-keyword-shou
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
         enable_smb_directory_lease: Optional[bool] = None,
-        creation_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload

@@ -3,6 +3,9 @@
 ## 12.28.0b1 (Unreleased)
 
 ### Features Added
+- Added support for FileId-based clients via `ShareClient`'s `get_file_client_by_file_id` and
+`get_directory_client_by_file_id` APIs, and a new `get_file_links` API to `ShareFileClient` that returns the hard links
+to a file (FileId-based clients and `NFS` protocol only).
 
 ### Bugs Fixed
 - Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
