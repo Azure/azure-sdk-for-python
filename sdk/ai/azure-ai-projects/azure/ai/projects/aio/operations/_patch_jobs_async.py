@@ -341,8 +341,8 @@ class JobsOperations(_GeneratedJobsOps):
         rest_result = await super().get(name=name, **kwargs)
         return _from_rest_job(rest_result)
 
-    @overload
-    async def create_or_update(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def create_or_update(
         self,
         name: PipelineJob,
         job: None = None,

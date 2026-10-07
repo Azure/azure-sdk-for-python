@@ -349,8 +349,8 @@ class JobsOperations(_GeneratedJobsOps):
         rest_result = super().get(name=name, **kwargs)
         return _from_rest_job(rest_result)
 
-    @overload
-    def create_or_update(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    def create_or_update(
         self,
         name: PipelineJob,
         job: None = None,

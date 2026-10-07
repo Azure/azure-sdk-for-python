@@ -19,12 +19,12 @@ from azure.identity import AzureCliCredential
 
 
 @dsl.component
-def produce(text: str, message: Output(type="uri_file")) -> None:
+def produce(text: str, message: Output(type="uri_file")) -> None:  # type: ignore[valid-type]
     Path(message).write_text(text, encoding="utf-8")
 
 
 @dsl.component
-def consume(message: Input(type="uri_file"), receipt: Output(type="uri_file")) -> None:
+def consume(message: Input(type="uri_file"), receipt: Output(type="uri_file")) -> None:  # type: ignore[valid-type]
     Path(receipt).write_text(Path(message).read_text(encoding="utf-8").upper(), encoding="utf-8")
 
 
