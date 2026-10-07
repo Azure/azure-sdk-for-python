@@ -238,6 +238,7 @@ def create_package(
 
     should_log_build_output = logger.getEffectiveLevel() <= logging.DEBUG
     # Backends such as Maturin compile extensions without declaring setuptools ext_modules.
+    # Honor their cibuildwheel matrix instead of building only a host wheel.
     is_compiled = bool(setup_parsed.ext_modules) or setup_parsed.uses_cibuildwheel
 
     if setup_parsed.is_pyproject:

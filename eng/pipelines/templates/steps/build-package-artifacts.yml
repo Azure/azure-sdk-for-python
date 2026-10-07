@@ -167,6 +167,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
 
       if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
+        # Packages use this path as PYO3_CROSS_LIB_DIR when cross-compiling Windows ARM64 wheels.
         $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
         if (-not (Test-Path $arm64Libs)) {
           throw "Expected ARM64 Python import libraries at $arm64Libs"
@@ -182,6 +183,8 @@ steps:
   # dependencies from the Azure DevOps feed instead of PyPI. Using
   # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
   # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  # This replaces, rather than merges with, the package's environment-pass list.
+  # Include every variable required by its Linux build hooks.
   - pwsh: |
       $passVariables = @('PIP_INDEX_URL')
       if ($env:RUST_ENVIRONMENT_PASS) {
@@ -205,10 +208,14 @@ steps:
       timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      # The platform resolver selects DEBUG to stream native build output.
       LOGLEVEL: $(SDK_BUILD_LOGLEVEL)
       ${{ if parameters.InstallMsRustToolchain }}:
+        # Map secret tokens explicitly for container feed access. Package hooks can read them;
+        # enforce source-trust and credential permissions through external ADO controls.
         MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
         MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+        # CargoAuthenticate exports the registry token and credential-provider variables.
         CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
         CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
 

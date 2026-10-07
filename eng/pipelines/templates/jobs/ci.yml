@@ -76,6 +76,7 @@ parameters:
 
 jobs:
   - job: 'Build_Linux'
+    # Native multi-target builds need more time, especially ARM64 under Linux emulation.
     ${{ if parameters.InstallMsRustToolchain }}:
       timeoutInMinutes: 240
     ${{ else }}:

@@ -87,15 +87,19 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  # Rust setup applies only to wheel jobs, not source-installing test or documentation jobs.
   - name: InstallMsRustToolchain
     type: boolean
     default: false
+  # Package directory containing rust-toolchain.toml.
   - name: MsRustWorkingDirectory
     type: string
     default: ''
+  # Required when Rust is enabled; no shared toolchain feed is selected by default.
   - name: MsRustToolchainFeed
     type: string
     default: ''
+  # Space-separated Windows target triples; keep aligned with the package's wheel recipe.
   - name: MsRustAdditionalTargets
     type: string
     default: ''

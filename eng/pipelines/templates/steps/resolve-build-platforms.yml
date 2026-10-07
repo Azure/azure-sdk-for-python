@@ -29,10 +29,12 @@ steps:
         if ($binaryPackages) {
           Write-Host "Targeting package(s) with compiled binaries ($($binaryPackages -join ', ')), enabling extension build."
           Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
+          # DEBUG streams long native builds instead of buffering output until a failure.
           $logLevel = "DEBUG"
         }
         else {
           Write-Host "No targeted package declares compiled binaries, building on linux only."
         }
+        # Always define the variable used by the build step's LOGLEVEL mapping.
         Write-Host "##vso[task.setvariable variable=SDK_BUILD_LOGLEVEL]$logLevel"
       displayName: Check extension package presence
