@@ -1,0 +1,89 @@
+parameters:
+  - name: ToolchainFeed
+    type: string
+    default: ''
+  - name: WorkingDirectory
+    type: string
+    default: ''
+  - name: AdditionalTargets
+    type: string
+    default: ''
+  - name: CratesIoFeed
+    type: string
+    default: 'sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-rust-public~force-auth/Cargo/index/'
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      if (-not $env:RUST_TOOLCHAIN_FEED) {
+        throw 'An organization-local Rust toolchain feed must be configured.'
+      }
+      if (-not $env:RUST_WORKING_DIRECTORY) {
+        throw 'The directory containing rust-toolchain.toml must be configured.'
+      }
+      if (-not (Test-Path (Join-Path $env:RUST_WORKING_DIRECTORY 'rust-toolchain.toml') -PathType Leaf)) {
+        throw "No rust-toolchain.toml found in $env:RUST_WORKING_DIRECTORY"
+      }
+    displayName: 'Validate Rust build configuration'
+    condition: ${{ parameters.Condition }}
+    env:
+      RUST_TOOLCHAIN_FEED: ${{ parameters.ToolchainFeed }}
+      RUST_WORKING_DIRECTORY: ${{ parameters.WorkingDirectory }}
+
+  - task: RustInstaller@1
+    displayName: 'Install internal Rust toolchain'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      toolchainFeed: ${{ parameters.ToolchainFeed }}
+      workingDirectory: ${{ parameters.WorkingDirectory }}
+      ${{ if ne(parameters.AdditionalTargets, '') }}:
+        additionalTargets: ${{ parameters.AdditionalTargets }}
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      Write-Host "##vso[task.setvariable variable=MSRUSTUP_FEED_URL]$env:RUST_TOOLCHAIN_FEED"
+      $cargoHome = $env:CARGO_HOME
+      if (-not $cargoHome) {
+        throw 'RustInstaller did not define CARGO_HOME.'
+      }
+      New-Item -ItemType Directory -Force -Path $cargoHome | Out-Null
+      $configPath = Join-Path $cargoHome 'config.toml'
+      if (Test-Path $configPath) {
+        throw "Refusing to overwrite an existing Cargo configuration: $configPath"
+      }
+
+      @"
+      [registries]
+      azure-sdk-for-rust-public = { index = "$env:CARGO_FEED_URL" }
+
+      [source.crates-io]
+      replace-with = "azure-sdk-for-rust-public"
+
+      [net]
+      git-fetch-with-cli = true
+      "@ | Set-Content -Path $configPath -Encoding utf8
+
+      Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
+      # Linux containers cannot see the host config. Package hooks must write source replacement there.
+      Write-Host "##vso[task.setvariable variable=CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX]$env:CARGO_FEED_URL"
+    displayName: 'Configure Rust build feeds'
+    condition: ${{ parameters.Condition }}
+    env:
+      RUST_TOOLCHAIN_FEED: ${{ parameters.ToolchainFeed }}
+      CARGO_FEED_URL: ${{ parameters.CratesIoFeed }}
+
+  - task: NuGetAuthenticate@1
+    displayName: 'Acquire an Azure Artifacts token'
+    condition: ${{ parameters.Condition }}
+
+  # CargoAuthenticate needs the NuGet token for builds where System.AccessToken is unavailable.
+  - task: CargoAuthenticate@0
+    displayName: 'Authenticate cargo to the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      configFile: $(CargoConfigPath)
+    env:
+      SYSTEM_ACCESSTOKEN: $(VSS_NUGET_ACCESSTOKEN)

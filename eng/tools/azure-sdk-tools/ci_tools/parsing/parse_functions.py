@@ -308,6 +308,7 @@ class ParsedSetup:
         self.is_pyproject = self.setup_filename.endswith(".toml")
 
         self.folder = os.path.dirname(self.setup_filename)
+        self.uses_cibuildwheel: bool = has_cibuildwheel_config(self.folder)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -826,6 +827,20 @@ def parse_setup(
         result = parse_setup_py(resolved_filename)
 
     return result
+
+
+def has_cibuildwheel_config(folder: str) -> bool:
+    """Return whether the package opts into cibuildwheel, including non-setuptools backends."""
+    pyproject_filename = os.path.join(folder, "pyproject.toml")
+    if not os.path.exists(pyproject_filename):
+        return False
+
+    config = get_value_from_dict(get_pyproject_dict(pyproject_filename), "tool.cibuildwheel")
+    if config is None:
+        return False
+    if not isinstance(config, dict):
+        raise ValueError(f"Expected a [tool.cibuildwheel] table in {pyproject_filename}")
+    return True
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:

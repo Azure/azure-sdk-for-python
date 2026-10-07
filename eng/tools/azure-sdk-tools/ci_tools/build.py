@@ -223,7 +223,7 @@ def create_package(
     """
     Builds a wheel and/or sdist file given a setup.py, pyproject.toml, or directory containing either.
 
-    For packages with compiled extensions (ext_modules):
+    For packages with compiled extensions (ext_modules or a [tool.cibuildwheel] table):
     - setup.py: uses cibuildwheel to build platform-specific wheels
     - pyproject.toml: uses cibuildwheel to build platform-specific wheels (respects [tool.cibuildwheel] config)
 
@@ -237,10 +237,12 @@ def create_package(
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
     should_log_build_output = logger.getEffectiveLevel() <= logging.DEBUG
+    # Backends such as Maturin compile extensions without declaring setuptools ext_modules.
+    is_compiled = bool(setup_parsed.ext_modules) or setup_parsed.uses_cibuildwheel
 
     if setup_parsed.is_pyproject:
         # when building with pyproject, check if package has compiled extensions
-        if enable_wheel and setup_parsed.ext_modules:
+        if enable_wheel and is_compiled:
             # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
             run_logged(
                 [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
@@ -289,7 +291,7 @@ def create_package(
             )
     else:
         if enable_wheel:
-            if setup_parsed.ext_modules:
+            if is_compiled:
                 run_logged(
                     [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
                     cwd=setup_parsed.folder,
