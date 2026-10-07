@@ -5,6 +5,7 @@
 """Offline wire and response tests for Command and Pipeline jobs."""
 
 import json
+import os
 import re
 import runpy
 import subprocess
@@ -35,6 +36,8 @@ from azure.ai.projects.models import (
     JobType,
     PipelineJob,
 )
+from azure.ai.projects.operations._job_helper import _content_hash
+from azure.ai.projects._component_source import _RUNNER_NAME, _stage_component_source
 
 _ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
 _COMPUTE = "/subscriptions/test/resourceGroups/test/providers/Microsoft.CognitiveServices/accounts/test/computes/cpu"
@@ -599,6 +602,17 @@ def _dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
     return sample["workflow"](text="hello")
 
 
+def _source_dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
+    monkeypatch.setenv("JOB_COMPUTE_ID", _COMPUTE)
+    monkeypatch.setenv("JOB_ENVIRONMENT_IMAGE", "example.azurecr.io/train:latest")
+    monkeypatch.setenv("JOB_NODE_UAI_RESOURCE_ID", "/subscriptions/test/identities/hello")
+    monkeypatch.setenv("JOB_INSTANCE_TYPE", "Singularity.D4_v3")
+    sample = Path(__file__).resolve().parents[2] / "samples" / "jobs" / "pipeline_source"
+    monkeypatch.syspath_prepend(str(sample))
+    workflow = runpy.run_path(str(sample / "sample_pipeline_source.py"))["workflow"]
+    return workflow(text=" world ")
+
+
 def _dsl_code_paths(job: PipelineJob) -> dict[str, Path]:
     assert job.jobs is not None
     return {name: Path(node["component"]["code"]) for name, node in job.jobs.items()}
@@ -948,6 +962,173 @@ def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
         write_with_global()
     with pytest.raises(ValueError, match="unsupported module globals"):
         workflow()
+
+
+def test_dsl_source_components_run_with_helpers_imports_and_resources(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = _source_dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    snapshot = paths["produce"]
+    try:
+        assert snapshot == paths["consume"]
+        assert len(job._component_code_dirs) == 1
+        assert (snapshot / _RUNNER_NAME).is_file()
+        assert (snapshot / "steps" / "components.py").is_file()
+        assert (snapshot / "steps" / "helpers.py").is_file()
+        assert (snapshot / "steps" / "greeting.txt").read_text(encoding="utf-8").strip() == "hello"
+        assert job.jobs["produce"]["component"]["command"] == (
+            f'python {_RUNNER_NAME} steps.components produce text:str,message:str '
+            '"${{inputs.text}}" "${{outputs.message}}"'
+        )
+        assert job.jobs["consume"]["inputs"]["message"]["value"] == "${{parent.jobs.produce.outputs.message}}"
+
+        source_root = Path(__file__).resolve().parents[2]
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = os.pathsep.join([str(source_root), environment.get("PYTHONPATH", "")])
+        message = tmp_path / "message.txt"
+        receipt = tmp_path / "receipt.txt"
+        subprocess.run(
+            [sys.executable, str(snapshot / _RUNNER_NAME), "steps.components", "produce", "text:str,message:str",
+             " world ", str(message)],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            [sys.executable, str(snapshot / _RUNNER_NAME), "steps.components", "consume",
+             "message:str,receipt:str", str(message), str(receipt)],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert message.read_text(encoding="utf-8") == "hello world"
+        assert receipt.read_text(encoding="utf-8") == "HELLO WORLD"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_dsl_source_sync_uploads_shared_snapshot_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _source_dsl_job(monkeypatch)
+    snapshot = _dsl_code_paths(job)["produce"]
+    transport = _Transport([_response("Pipeline")])
+    uploads: list[tuple[str, str]] = []
+
+    def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        assert (Path(folder) / "steps" / "helpers.py").is_file()
+        uploads.append((name, folder))
+        return _uploaded_code(name, version)
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert len(uploads) == 1
+    assert uploads[0][1] == str(snapshot)
+    assert not snapshot.exists()
+    assert len(transport.requests) == 1
+    properties = json.loads(transport.requests[0].body)["properties"]
+    assert properties["jobs"]["produce"]["component"]["code"] == properties["jobs"]["consume"]["component"]["code"]
+    assert properties["jobs"]["produce"]["component"]["code"] == job.jobs["produce"]["component"]["code"]
+    assert properties["experimentName"] == "pipeline_samples"
+
+
+@pytest.mark.asyncio
+async def test_dsl_source_async_uploads_shared_snapshot_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _source_dsl_job(monkeypatch)
+    snapshot = _dsl_code_paths(job)["produce"]
+    transport = _AsyncTransport([_response("Pipeline")])
+    uploads: list[str] = []
+
+    async def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    async def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        uploads.append(folder)
+        return _uploaded_code(name, version)
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        await client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert uploads == [str(snapshot)]
+    assert not snapshot.exists()
+    assert len(transport.requests) == 1
+    properties = json.loads(transport.requests[0].body)["properties"]
+    assert properties["jobs"]["produce"]["component"]["code"] == properties["jobs"]["consume"]["component"]["code"]
+
+
+def test_dsl_source_snapshot_filters_files_before_hash_and_upload(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    nested = root / "pkg"
+    nested.mkdir(parents=True)
+    (root / ".gitignore").write_text("*.tmp\n!keep.tmp\n", encoding="utf-8")
+    (root / ".env").write_text("not-for-upload", encoding="utf-8")
+    (root / "discard.tmp").write_text("ignored", encoding="utf-8")
+    (root / "keep.tmp").write_text("included", encoding="utf-8")
+    (nested / ".gitignore").write_text("private.txt\n", encoding="utf-8")
+    (nested / "private.txt").write_text("ignored", encoding="utf-8")
+    (nested / "public.txt").write_text("included", encoding="utf-8")
+
+    snapshots = [tmp_path / "first", tmp_path / "second"]
+    snapshots[0].mkdir()
+    _stage_component_source(root, snapshots[0])
+    (root / "discard.tmp").write_text("changed", encoding="utf-8")
+    (nested / "private.txt").write_text("changed", encoding="utf-8")
+    snapshots[1].mkdir()
+    _stage_component_source(root, snapshots[1])
+
+    assert _content_hash(snapshots[0]) == _content_hash(snapshots[1])
+    assert sorted(path.relative_to(snapshots[0]).as_posix() for path in snapshots[0].rglob("*") if path.is_file()) == [
+        _RUNNER_NAME,
+        "keep.tmp",
+        "pkg/public.txt",
+    ]
+
+
+def test_dsl_source_snapshot_rejects_included_symlinks(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    root.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    try:
+        (root / "link.txt").symlink_to(outside)
+    except OSError:
+        pytest.skip("Symbolic links are unavailable on this host")
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    with pytest.raises(ValueError, match="included symbolic link"):
+        _stage_component_source(root, stage)
+
+
+def test_dsl_source_requires_importable_function_inside_root(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="inside its code root"):
+
+        @dsl.component(code=tmp_path)
+        def outside(result: dsl.Output(type="uri_file")) -> None:
+            Path(result).write_text("outside", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="module-level"):
+
+        @dsl.component(code=Path(__file__).resolve().parent)
+        def nested(result: dsl.Output(type="uri_file")) -> None:
+            Path(result).write_text("nested", encoding="utf-8")
 
 
 def test_jobs_sync_job_only_names_are_unique() -> None:

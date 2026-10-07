@@ -10,11 +10,13 @@ import textwrap
 from contextvars import ContextVar
 from dataclasses import dataclass
 from functools import wraps
+from os import PathLike
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, get_type_hints
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, get_type_hints, overload
 
+from ._component_source import _ComponentSource, _RUNNER_NAME, _source_for_component, _stage_component_source
 from .models import AssetTypes, CommandJob, Input, InputOutputModes, JobResourceConfiguration, PipelineJob
 from .models import Output as _JobOutput
 
@@ -168,9 +170,15 @@ class _PipelineContext:
         self.instance_type = instance_type
         self.jobs: Dict[str, Dict[str, Any]] = {}
         self.code_dirs: List[TemporaryDirectory] = []
+        self.code_dirs_by_root: Dict[Path, TemporaryDirectory] = {}
 
     def add(
-        self, func: Callable[..., Any], inputs: List[_Port], outputs: List[_Port], arguments: Dict[str, Any]
+        self,
+        func: Callable[..., Any],
+        inputs: List[_Port],
+        outputs: List[_Port],
+        arguments: Dict[str, Any],
+        source: Optional[_ComponentSource],
     ) -> SimpleNamespace:
         name = func.__name__
         suffix = 2
@@ -203,15 +211,31 @@ class _PipelineContext:
             input_type = AssetTypes.URI_FILE if port.type == AssetTypes.URI_FILE else AssetTypes.LITERAL
             bound_inputs[port.name] = Input(type=input_type, value=serialized)
 
-        code_dir = TemporaryDirectory(prefix="foundry-component-")
-        self.code_dirs.append(code_dir)
-        (Path(code_dir.name) / "component.py").write_text(_function_script(func, inputs, outputs), encoding="utf-8")
+        arguments_in_command = " ".join(
+            [f'"${{{{inputs.{port.name}}}}}"' for port in inputs]
+            + [f'"${{{{outputs.{port.name}}}}}"' for port in outputs]
+        )
+        if source is None:
+            code_dir = TemporaryDirectory(prefix="foundry-component-")
+            self.code_dirs.append(code_dir)
+            (Path(code_dir.name) / "component.py").write_text(_function_script(func, inputs, outputs), encoding="utf-8")
+            command = "python component.py " + arguments_in_command
+        else:
+            code_dir = self.code_dirs_by_root.get(source.root)
+            if code_dir is None:
+                code_dir = TemporaryDirectory(prefix="foundry-component-source-")
+                self.code_dirs.append(code_dir)
+                self.code_dirs_by_root[source.root] = code_dir
+                _stage_component_source(source.root, Path(code_dir.name))
+            if not (Path(code_dir.name) / source.relative_file).is_file():
+                raise ValueError(f"Component '{func.__name__}' source file is excluded by its code ignore rules.")
+            port_spec = ",".join(f"{port.name}:{port.conversion}" for port in inputs + outputs) or "-"
+            command = f"python {_RUNNER_NAME} {source.module} {func.__name__} {port_spec}"
+            if arguments_in_command:
+                command += " " + arguments_in_command
+
         job = CommandJob(
-            command="python component.py "
-            + " ".join(
-                [f'"${{{{inputs.{port.name}}}}}"' for port in inputs]
-                + [f'"${{{{outputs.{port.name}}}}}"' for port in outputs]
-            ),
+            command=command,
             code=code_dir.name,
             environment_image_reference=self.image,
             compute=self.compute_id,
@@ -243,27 +267,48 @@ class _PipelineContext:
         )
 
 
-def component(func: Callable[..., Any]) -> Callable[..., SimpleNamespace]:
+@overload
+def component(
+    func: Callable[..., Any], *, code: Optional[Union[str, PathLike[str]]] = None
+) -> Callable[..., SimpleNamespace]: ...
+
+
+@overload
+def component(
+    func: None = None, *, code: Optional[Union[str, PathLike[str]]] = None
+) -> Callable[[Callable[..., Any]], Callable[..., SimpleNamespace]]: ...
+
+
+def component(
+    func: Optional[Callable[..., Any]] = None, *, code: Optional[Union[str, PathLike[str]]] = None
+) -> Union[Callable[..., SimpleNamespace], Callable[[Callable[..., Any]], Callable[..., SimpleNamespace]]]:
     """Decorate a Python function to create a command node when invoked inside a pipeline.
 
-    The function body is packaged as code and runs remotely, not during graph creation.
+    With ``code``, snapshot that directory and import the original module at runtime.
+    Otherwise, package the function body as a standalone script. Code-backed components
+    require the authoring SDK and their other imports in the container image.
     """
-    inputs, outputs = _component_ports(func)
-    input_names = {port.name for port in inputs}
-    input_signature = inspect.Signature(
-        [parameter for parameter in inspect.signature(func).parameters.values() if parameter.name in input_names]
-    )
 
-    @wraps(func)
-    def invoke(**kwargs: Any) -> SimpleNamespace:
-        context = _ACTIVE_PIPELINE.get()
-        if context is None:
-            raise RuntimeError(f"Component '{func.__name__}' must be called inside a @pipeline function.")
-        bound = input_signature.bind(**kwargs)
-        bound.apply_defaults()
-        return context.add(func, inputs, outputs, dict(bound.arguments))
+    def decorate(source_func: Callable[..., Any]) -> Callable[..., SimpleNamespace]:
+        inputs, outputs = _component_ports(source_func)
+        source = _source_for_component(source_func, code) if code is not None else None
+        input_names = {port.name for port in inputs}
+        input_signature = inspect.Signature(
+            [parameter for parameter in inspect.signature(source_func).parameters.values() if parameter.name in input_names]
+        )
 
-    return invoke
+        @wraps(source_func)
+        def invoke(**kwargs: Any) -> SimpleNamespace:
+            context = _ACTIVE_PIPELINE.get()
+            if context is None:
+                raise RuntimeError(f"Component '{source_func.__name__}' must be called inside a @pipeline function.")
+            bound = input_signature.bind(**kwargs)
+            bound.apply_defaults()
+            return context.add(source_func, inputs, outputs, dict(bound.arguments), source)
+
+        return invoke
+
+    return decorate(func) if func is not None else decorate
 
 
 command_component = component
@@ -317,36 +362,39 @@ def pipeline(
                 references[name] = _InputRef(context, name, port_type)
 
             token = _ACTIVE_PIPELINE.set(context)
+            job: Optional[PipelineJob] = None
             try:
                 result = func(**references)
+                job_outputs: Dict[str, Dict[str, Any]] = {}
+                if result is not None:
+                    if not isinstance(result, dict):
+                        raise TypeError("Pipeline outputs must be returned as a dictionary of node outputs.")
+                    for name, value in result.items():
+                        if not isinstance(value, _OutputRef) or value.owner is not context:
+                            raise TypeError(f"Pipeline output '{name}' must reference an output from this pipeline.")
+                        node_output = context.jobs[value.node]["outputs"][value.name]
+                        if "path" in node_output:
+                            raise ValueError(
+                                f"Node output '{value.node}.{value.name}' cannot bind to multiple pipeline outputs."
+                            )
+                        node_output["path"] = f"${{{{parent.outputs.{name}}}}}"
+                        job_outputs[name] = {"type": value.type, "mode": value.mode}
+
+                job = PipelineJob(
+                    display_name=func.__name__,
+                    compute_id=compute_id,
+                    settings={"default_compute": compute_id, "force_rerun": True},
+                    inputs=job_inputs,
+                    outputs=job_outputs,
+                    jobs=context.jobs,
+                )
+                job._component_code_dirs = context.code_dirs
+                return job
             finally:
                 _ACTIVE_PIPELINE.reset(token)
-
-            job_outputs: Dict[str, Dict[str, Any]] = {}
-            if result is not None:
-                if not isinstance(result, dict):
-                    raise TypeError("Pipeline outputs must be returned as a dictionary of node outputs.")
-                for name, value in result.items():
-                    if not isinstance(value, _OutputRef) or value.owner is not context:
-                        raise TypeError(f"Pipeline output '{name}' must reference an output from this pipeline.")
-                    node_output = context.jobs[value.node]["outputs"][value.name]
-                    if "path" in node_output:
-                        raise ValueError(
-                            f"Node output '{value.node}.{value.name}' cannot bind to multiple pipeline outputs."
-                        )
-                    node_output["path"] = f"${{{{parent.outputs.{name}}}}}"
-                    job_outputs[name] = {"type": value.type, "mode": value.mode}
-
-            job = PipelineJob(
-                display_name=func.__name__,
-                compute_id=compute_id,
-                settings={"default_compute": compute_id, "force_rerun": True},
-                inputs=job_inputs,
-                outputs=job_outputs,
-                jobs=context.jobs,
-            )
-            job._component_code_dirs = context.code_dirs
-            return job
+                if job is None:
+                    for directory in context.code_dirs:
+                        directory.cleanup()
 
         return build
 
