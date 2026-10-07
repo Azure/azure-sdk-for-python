@@ -595,9 +595,7 @@ def _dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
     monkeypatch.setenv("JOB_ENVIRONMENT_IMAGE", "example.azurecr.io/train:latest")
     monkeypatch.setenv("JOB_NODE_UAI_RESOURCE_ID", "/subscriptions/test/identities/hello")
     monkeypatch.setenv("JOB_INSTANCE_TYPE", "Singularity.D4_v3")
-    sample = runpy.run_path(
-        str(Path(__file__).resolve().parents[2] / "samples" / "jobs" / "sample_pipeline_dsl.py")
-    )
+    sample = runpy.run_path(str(Path(__file__).resolve().parents[2] / "samples" / "jobs" / "sample_pipeline_dsl.py"))
     return sample["workflow"](text="hello")
 
 
@@ -739,10 +737,7 @@ def test_dsl_sync_uploads_code_and_cleans_after_submission(monkeypatch: pytest.M
     assert [folder for _, folder in uploads] == [str(paths["produce"]), str(paths["consume"])]
     assert all(not path.exists() for path in paths.values())
     assert len(transport.requests) == 1
-    code_uris = {
-        name.rsplit("-", 2)[-2]: job.jobs[name.rsplit("-", 2)[-2]]["component"]["code"]
-        for name, _ in uploads
-    }
+    code_uris = {name.rsplit("-", 2)[-2]: job.jobs[name.rsplit("-", 2)[-2]]["component"]["code"] for name, _ in uploads}
     _assert_dsl_request(transport.requests[0], code_uris)
 
 
@@ -837,6 +832,7 @@ def test_dsl_repeated_component_calls_get_distinct_nodes() -> None:
     @dsl.component
     def write(text: str, result: dsl.Output(type="uri_file", mode="Upload")) -> None:
         from pathlib import Path
+
         Path(result).write_text(text, encoding="utf-8")
 
     @dsl.pipeline(

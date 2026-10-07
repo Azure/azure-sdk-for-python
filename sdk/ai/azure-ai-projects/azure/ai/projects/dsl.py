@@ -117,7 +117,9 @@ def _function_script(func: Callable[..., Any], inputs: List[_Port], outputs: Lis
 
     free_vars = inspect.getclosurevars(func)
     if free_vars.nonlocals:
-        raise ValueError(f"Component '{func.__name__}' cannot capture enclosing variables: {sorted(free_vars.nonlocals)}.")
+        raise ValueError(
+            f"Component '{func.__name__}' cannot capture enclosing variables: {sorted(free_vars.nonlocals)}."
+        )
     globals_needed = set(free_vars.globals)
     imports: List[str] = []
     for statement in module_tree.body:
@@ -138,9 +140,7 @@ def _function_script(func: Callable[..., Any], inputs: List[_Port], outputs: Lis
 
     definition.decorator_list = []
     definition.returns = None
-    for parameter in (
-        definition.args.posonlyargs + definition.args.args + definition.args.kwonlyargs
-    ):
+    for parameter in definition.args.posonlyargs + definition.args.args + definition.args.kwonlyargs:
         parameter.annotation = None
     definition.args.defaults = []
     definition.args.kw_defaults = [None] * len(definition.args.kwonlyargs)
@@ -191,10 +191,11 @@ class _PipelineContext:
                 serialized = f"${{{{parent.jobs.{value.node}.outputs.{value.name}}}}}"
             elif port.type == AssetTypes.URI_FILE:
                 raise TypeError(f"Component input '{port.name}' needs a pipeline input or node file output.")
-            elif (port.conversion == "int" and type(value) is int) or (
-                port.conversion == "float" and type(value) is float
-            ) or (port.conversion == "bool" and type(value) is bool) or (
-                port.conversion == "str" and type(value) is str
+            elif (
+                (port.conversion == "int" and type(value) is int)
+                or (port.conversion == "float" and type(value) is float)
+                or (port.conversion == "bool" and type(value) is bool)
+                or (port.conversion == "str" and type(value) is str)
             ):
                 serialized = str(value)
             else:
@@ -223,9 +224,7 @@ class _PipelineContext:
                 }
             ),
             inputs=bound_inputs,
-            outputs={
-                port.name: _JobOutput(type=port.type, asset_name=port.name, mode=port.mode) for port in outputs
-            },
+            outputs={port.name: _JobOutput(type=port.type, asset_name=port.name, mode=port.mode) for port in outputs},
         )
         node = PipelineJob._command_node(name, job, self.compute_id)
         for port in inputs:
@@ -235,7 +234,9 @@ class _PipelineContext:
         return SimpleNamespace(
             outputs=SimpleNamespace(
                 **{
-                    port.name: _OutputRef(self, name, port.name, port.type, port.mode or InputOutputModes.READ_WRITE_MOUNT)
+                    port.name: _OutputRef(
+                        self, name, port.name, port.type, port.mode or InputOutputModes.READ_WRITE_MOUNT
+                    )
                     for port in outputs
                 }
             )
@@ -288,16 +289,24 @@ def pipeline(
         def build(*args: Any, **kwargs: Any) -> PipelineJob:
             bound = signature.bind(*args, **kwargs)
             bound.apply_defaults()
-            context = _PipelineContext(compute_id, environment_image_reference, user_assigned_identity_id, instance_type)
+            context = _PipelineContext(
+                compute_id, environment_image_reference, user_assigned_identity_id, instance_type
+            )
             job_inputs: Dict[str, Input] = {}
             references: Dict[str, _InputRef] = {}
             for name, value in bound.arguments.items():
                 annotation = annotations.get(name, signature.parameters[name].annotation)
                 if isinstance(annotation, Input):
-                    if annotation.type != AssetTypes.URI_FILE or not isinstance(value, Input) or value.type != AssetTypes.URI_FILE:
+                    if (
+                        annotation.type != AssetTypes.URI_FILE
+                        or not isinstance(value, Input)
+                        or value.type != AssetTypes.URI_FILE
+                    ):
                         raise TypeError(f"Pipeline input '{name}' requires Input(type='uri_file', path=...).")
                     if not value.path or "://" not in value.path:
-                        raise ValueError(f"Pipeline input '{name}' requires a remote URI; local files are not supported.")
+                        raise ValueError(
+                            f"Pipeline input '{name}' requires a remote URI; local files are not supported."
+                        )
                     job_inputs[name] = value
                     port_type = AssetTypes.URI_FILE
                 elif annotation in _PRIMITIVES and type(value) is annotation:
@@ -322,7 +331,9 @@ def pipeline(
                         raise TypeError(f"Pipeline output '{name}' must reference an output from this pipeline.")
                     node_output = context.jobs[value.node]["outputs"][value.name]
                     if "path" in node_output:
-                        raise ValueError(f"Node output '{value.node}.{value.name}' cannot bind to multiple pipeline outputs.")
+                        raise ValueError(
+                            f"Node output '{value.node}.{value.name}' cannot bind to multiple pipeline outputs."
+                        )
                     node_output["path"] = f"${{{{parent.outputs.{name}}}}}"
                     job_outputs[name] = {"type": value.type, "mode": value.mode}
 
