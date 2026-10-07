@@ -309,6 +309,62 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             token_intent=self.file_request_intent,
         )
 
+    def get_file_client_by_file_id(self, file_id: str) -> ShareFileClient:
+        """Get a client to interact with the file that has the specified file ID.
+
+        :param str file_id: The file ID of the file.
+        :returns: A File Client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
+        """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
+        )
+        return ShareFileClient(
+            self.url,
+            share_name=self.share_name,
+            file_path="",
+            snapshot=self.snapshot,
+            credential=self.credential,
+            token_intent=self.file_request_intent,
+            api_version=self.api_version,
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _location_mode=self._location_mode,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            _file_id=file_id,
+        )
+
+    def get_directory_client_by_file_id(self, file_id: str) -> ShareDirectoryClient:
+        """Get a client to interact with the directory that has the specified file ID.
+
+        :param str file_id: The file ID of the directory.
+        :returns: A Directory Client.
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
+        """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
+        )
+        return ShareDirectoryClient(
+            self.url,
+            share_name=self.share_name,
+            directory_path="",
+            snapshot=self.snapshot,
+            credential=self.credential,
+            token_intent=self.file_request_intent,
+            api_version=self.api_version,
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _location_mode=self._location_mode,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            _file_id=file_id,
+        )
+
     @distributed_trace_async
     async def acquire_lease(self, **kwargs: Any) -> ShareLeaseClient:
         """Requests a new lease.
