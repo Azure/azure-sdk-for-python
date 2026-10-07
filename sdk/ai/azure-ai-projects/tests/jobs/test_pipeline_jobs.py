@@ -932,7 +932,7 @@ def test_dsl_typed_primitives_and_remote_file_input(tmp_path: Path) -> None:
 
 def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
     @dsl.component
-    def write(result: dsl.Output(type="uri_file")) -> None:
+    def write_with_global(result: dsl.Output(type="uri_file")) -> None:
         Path(result).write_text(_COMPUTE, encoding="utf-8")
 
     @dsl.pipeline(
@@ -942,10 +942,10 @@ def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
         instance_type="Singularity.D4_v3",
     )
     def workflow() -> None:
-        write()
+        write_with_global()
 
     with pytest.raises(RuntimeError, match="inside a @pipeline"):
-        write()
+        write_with_global()
     with pytest.raises(ValueError, match="unsupported module globals"):
         workflow()
 
