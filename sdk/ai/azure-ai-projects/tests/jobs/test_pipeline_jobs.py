@@ -891,10 +891,13 @@ def test_dsl_typed_primitives_and_remote_file_input(tmp_path: Path) -> None:
         source=dsl.Input(type="uri_file", path="azureml://datastores/test/paths/input.txt"),
     )
     try:
-        assert job.inputs["count"].value == "3"
-        assert job.inputs["scale"].value == "1.5"
-        assert job.inputs["enabled"].value == "True"
-        assert job.inputs["source"].path == "azureml://datastores/test/paths/input.txt"
+        assert job.inputs["count"] == {"jobInputType": "literal", "value": "3"}
+        assert job.inputs["scale"] == {"jobInputType": "literal", "value": "1.5"}
+        assert job.inputs["enabled"] == {"jobInputType": "literal", "value": "True"}
+        assert job.inputs["source"] == {
+            "jobInputType": "uri_file",
+            "uri": "azureml://datastores/test/paths/input.txt",
+        }
         node = job.jobs["transform"]
         assert node["component"]["inputs"] == {
             "count": {"type": "integer"},
