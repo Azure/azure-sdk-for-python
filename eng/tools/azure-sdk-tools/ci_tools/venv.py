@@ -16,6 +16,17 @@ import sys
 from typing import List, Optional
 
 
+def _enable_uv_native_tls() -> None:
+    """Ensure uv consults the OS certificate store instead of its bundled webpki-roots.
+
+    Some CI agents route HTTPS through a TLS-inspecting proxy whose root CA is trusted by the
+    OS but not by uv's bundled roots, causing 'invalid peer certificate: UnknownIssuer' errors
+    when uv downloads interpreters (python-build-standalone) or packages. Respects an explicit
+    user override via setdefault.
+    """
+    os.environ.setdefault("UV_NATIVE_TLS", "1")
+
+
 def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str] = None) -> List[str]:
     """Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
 
@@ -32,6 +43,7 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         cmd = ["uv", "venv"]
         if python_version:
             cmd += ["--python", python_version]
@@ -52,6 +64,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
