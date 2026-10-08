@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Fixed prompty-based evaluators scoring an unparseable judge reply with the first digit in the text instead of the judge's verdict score. The fallback now prefers a bare-number reply, then an explicit `Score: N` label, then the last number in the reply ([#49153](https://github.com/Azure/azure-sdk-for-python/issues/49153)).
+- Fixed prompty-based evaluators scoring an unparsable judge reply with the first digit in the text instead of the judge's verdict score. The fallback now prefers a bare-number reply, then an explicit `Score: N` label, then the last number in the reply ([#49153](https://github.com/Azure/azure-sdk-for-python/issues/49153)).
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
 
 ## 1.18.7 (2026-09-25)
