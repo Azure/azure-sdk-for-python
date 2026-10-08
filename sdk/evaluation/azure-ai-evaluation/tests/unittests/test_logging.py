@@ -61,15 +61,21 @@ def test_nested_node_log_manager_does_not_recurse(monkeypatch):
     monkeypatch.setattr(sys, "__stderr__", base_err)
 
     original_limit = sys.getrecursionlimit()
-    sys.setrecursionlimit(300)
+    managers = []
     try:
-        with ExitStack() as stack:
-            for _ in range(500):
-                stack.enter_context(NodeLogManager())
+        for _ in range(500):
+            mgr = NodeLogManager()
+            mgr.__enter__()
+            managers.append(mgr)
+        sys.setrecursionlimit(300)
+        try:
             print("nested")
             sys.stderr.write("stderr")
+        finally:
+            sys.setrecursionlimit(original_limit)
     finally:
-        sys.setrecursionlimit(original_limit)
+        for mgr in reversed(managers):
+            mgr.__exit__(None, None, None)
 
     assert "nested" in base_out.getvalue()
     assert "stderr" in base_err.getvalue()
