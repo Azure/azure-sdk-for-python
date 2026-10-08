@@ -50,6 +50,7 @@ Get the connection string from the Azure portal or Azure CLI, and store it secur
 <!-- SNIPPET:sample_authentication.connection_string_auth -->
 
 ```python
+# <ChatPython_connection_string_auth>
 import os
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
@@ -58,6 +59,7 @@ with WebPubSubChatServiceClient.from_connection_string(
     os.environ["WPS_CHAT_CONNECTION_STRING"], hub
 ) as connection_string_client:
     print(type(connection_string_client).__name__)
+# </ChatPython_connection_string_auth>
 ```
 
 <!-- END SNIPPET -->
@@ -67,6 +69,7 @@ with WebPubSubChatServiceClient.from_connection_string(
 <!-- SNIPPET:sample_authentication.key_auth -->
 
 ```python
+# <ChatPython_key_auth>
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
@@ -79,6 +82,7 @@ with WebPubSubChatServiceClient(
     AzureKeyCredential(os.environ["WPS_CHAT_ACCESS_KEY"]),
 ) as key_client:
     print(type(key_client).__name__)
+# </ChatPython_key_auth>
 ```
 
 <!-- END SNIPPET -->
@@ -90,6 +94,7 @@ For recommended passwordless authentication, assign an appropriate Web PubSub da
 <!-- SNIPPET:sample_authentication.entra_auth -->
 
 ```python
+# <ChatPython_entra_auth>
 import os
 from azure.identity import DefaultAzureCredential
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
@@ -98,6 +103,7 @@ endpoint = os.environ["WPS_CHAT_ENDPOINT"]
 hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
 with WebPubSubChatServiceClient(endpoint, hub, DefaultAzureCredential()) as entra_client:
     print(type(entra_client).__name__)
+# </ChatPython_entra_auth>
 ```
 
 <!-- END SNIPPET -->
@@ -153,6 +159,7 @@ Generate credentials that a Chat WebSocket client can use to connect as a specif
 <!-- SNIPPET:sample_client_access.client_access -->
 
 ```python
+# <ChatPython_client_access>
 import os
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
@@ -165,6 +172,7 @@ with WebPubSubChatServiceClient.from_connection_string(
     # Give access["url"] to the intended client to connect; it includes the access token.
     # Print only the token-free base URL here. Do not log access["url"].
     print(access["baseUrl"])
+# </ChatPython_client_access>
 ```
 
 <!-- END SNIPPET -->
