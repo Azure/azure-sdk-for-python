@@ -48,6 +48,7 @@ class _LifecycleState:
     before_snapshot_fn: Optional[Callable[[], Awaitable[None]]] = None
     after_restore_fn: Optional[Callable[[AgentSessionContext], Awaitable[None]]] = None
     before_snapshot_completed: bool = False
+    assigned_session_id: Optional[str] = None
     restored_session_context: Optional[AgentSessionContext] = None
     completed_restore_ids: set[str] = field(default_factory=set)
     captured_environment_values: dict[str, Optional[str]] = field(default_factory=dict)

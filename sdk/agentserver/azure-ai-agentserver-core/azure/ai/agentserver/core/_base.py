@@ -768,16 +768,17 @@ class AgentServerHost(Starlette):
             )
 
         async with self._lifecycle.lock:
-            previous_context = self._lifecycle.restored_session_context
-            if previous_context is not None:
-                if previous_context.session_id != context.session_id:
-                    return create_error_response(
-                        "session_mismatch",
-                        "The restored process is already assigned to another session.",
-                        status_code=409,
-                    )
+            assigned_session_id = self._lifecycle.assigned_session_id
+            if assigned_session_id is not None and assigned_session_id != context.session_id:
+                return create_error_response(
+                    "session_mismatch",
+                    "The restored process is already assigned to another session.",
+                    status_code=409,
+                )
             if context.restore_id in self._lifecycle.completed_restore_ids:
                 return JSONResponse({"status": "ok"})
+            if assigned_session_id is None:
+                self._lifecycle.assigned_session_id = context.session_id
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)

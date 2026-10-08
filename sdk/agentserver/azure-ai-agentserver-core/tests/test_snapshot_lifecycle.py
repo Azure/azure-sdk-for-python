@@ -396,12 +396,21 @@ async def test_subclass_after_restore_failure_rolls_back_and_retries(
         assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
         assert agent.config.session_id == "captured-session"
 
+        different_session = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                session_id="different-session",
+                restore_id="restore-2",
+            ),
+        )
         retried = await lifecycle_client.post(
             "/_agent/after-restore",
             json=_after_restore_payload(session_id="restored-session"),
         )
 
     assert failed.status_code == 500
+    assert different_session.status_code == 409
+    assert different_session.json()["error"]["code"] == "session_mismatch"
     assert retried.status_code == 200
     assert events == ["subclass", "subclass", "application"]
 
