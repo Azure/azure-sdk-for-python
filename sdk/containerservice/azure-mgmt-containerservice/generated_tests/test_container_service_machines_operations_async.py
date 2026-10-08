@@ -54,7 +54,12 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                             "gpuProfile": {
                                 "driver": "str",
                                 "driverType": "str",
-                                "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
+                                "nvidia": {
+                                    "driverMode": "str",
+                                    "managementMode": "str",
+                                    "migProfiles": ["str"],
+                                    "migStrategy": "str",
+                                },
                             },
                             "ultraSsdEnabled": bool,
                             "vmSize": "str",

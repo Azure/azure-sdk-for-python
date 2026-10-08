@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
+from ._async_utils import await_with_deadline
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import (
@@ -345,6 +346,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :rtype: Message
         """
         attempt_started = time.monotonic()
+        deadline = (attempt_started + timeout) if timeout is not None else None
         await self._open(timeout)
         # Open and request share one attempt budget, so the request gets what is left.
         timeout = get_remaining_timeout(timeout, attempt_started)
@@ -372,14 +374,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
 
         try:
-            return await self._amqp_transport.mgmt_client_request_async(
-                self._handler,
-                mgmt_msg,
-                operation=mgmt_operation,
-                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-                node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout,
-                callback=callback,
+            return await await_with_deadline(
+                self._amqp_transport.mgmt_client_request_async(
+                    self._handler,
+                    mgmt_msg,
+                    operation=mgmt_operation,
+                    operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                    node=self._mgmt_target.encode(self._config.encoding),
+                    timeout=timeout,
+                    callback=callback,
+                ),
+                deadline,
+                "Timed out waiting for the management operation to complete.",
             )
         except Exception as exp:
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):

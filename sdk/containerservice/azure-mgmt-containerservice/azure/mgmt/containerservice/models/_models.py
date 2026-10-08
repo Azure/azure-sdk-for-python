@@ -2137,6 +2137,13 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
      and "Schedule".
     :vartype undrainable_node_behavior: str or
      ~azure.mgmt.containerservice.models.UndrainableNodeBehavior
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades of this agent pool. Health
+     signals are ``HealthSignal`` custom resources published by monitoring components running in the
+     cluster. When the cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in
+     independently. When the cluster-level ``enabled`` is ``true``, gating is inherited and setting
+     this agent pool's ``enabled`` to ``false`` is rejected; an omitted value on a newly created
+     agent pool is defaulted to ``true``.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     max_surge: Optional[str] = rest_field(name="maxSurge", visibility=["read", "create", "update", "delete", "query"])
@@ -2186,6 +2193,15 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
      nodes is Pod Disruption Budgets (PDBs), but other issues, such as pod termination grace period
      is exceeding the remaining per-node drain timeout or pod is still being in a running state, can
      also cause undrainable nodes. Known values are: \"Cordon\" and \"Schedule\"."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades of this agent pool. Health signals are ``HealthSignal``
+     custom resources published by monitoring components running in the cluster. When the
+     cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in independently. When
+     the cluster-level ``enabled`` is ``true``, gating is inherited and setting this agent pool's
+     ``enabled`` to ``false`` is rejected; an omitted value on a newly created agent pool is
+     defaulted to ``true``."""
 
     @overload
     def __init__(
@@ -2197,6 +2213,7 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
         drain_timeout_in_minutes: Optional[int] = None,
         node_soak_duration_in_minutes: Optional[int] = None,
         undrainable_node_behavior: Optional[Union[str, "_models.UndrainableNodeBehavior"]] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2456,11 +2473,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar key_id: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar key_id: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype key_id: str
     :ivar key_vault_network_access: Network access of the key vault. Network access of key vault.
      The possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows
@@ -2478,11 +2499,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable Azure Key Vault key management service. The default is false."""
     key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     key_vault_network_access: Optional[Union[str, "_models.KeyVaultNetworkAccessTypes"]] = rest_field(
         name="keyVaultNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2795,18 +2820,31 @@ class ClusterUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-shoul
 
     :ivar override_settings: Settings for overrides.
     :vartype override_settings: ~azure.mgmt.containerservice.models.UpgradeOverrideSettings
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades in this managed cluster.
+     Health signals are ``HealthSignal`` custom resources published by monitoring components running
+     in the cluster. Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to
+     all agent pool upgrades in this cluster; an agent pool cannot opt out of it.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     override_settings: Optional["_models.UpgradeOverrideSettings"] = rest_field(
         name="overrideSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Settings for overrides."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades in this managed cluster. Health signals are
+     ``HealthSignal`` custom resources published by monitoring components running in the cluster.
+     Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to all agent pool
+     upgrades in this cluster; an agent pool cannot opt out of it."""
 
     @overload
     def __init__(
         self,
         *,
         override_settings: Optional["_models.UpgradeOverrideSettings"] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -3984,6 +4022,11 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.containerservice.models.IdentityBindingProperties
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -3995,6 +4038,11 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create"])
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -4006,6 +4054,7 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         properties: Optional["_models.IdentityBindingProperties"] = None,
+        managed_by: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5080,8 +5129,7 @@ class KubernetesResourceObjectEncryptionProfile(
     :ivar infrastructure_encryption: Whether to enable encryption at rest of Kubernetes resource
      objects using service-managed keys. More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
     :vartype infrastructure_encryption: str or
      ~azure.mgmt.containerservice.models.InfrastructureEncryption
     """
@@ -5092,8 +5140,7 @@ class KubernetesResourceObjectEncryptionProfile(
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
      More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
     @overload
     def __init__(
@@ -10494,7 +10541,10 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      enforces FIPS compliance for all AKS-managed components, such as the node operating system,
      addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
      `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
     :vartype enable_fips: bool
     :ivar enable_node_hardening: Whether to enable node hardening at the cluster level. When
      enabled, AKS applies hardened defaults for soft eviction thresholds, kube-reserved, and
@@ -10696,7 +10746,10 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      compliance for all AKS-managed components, such as the node operating system, addons, and
      `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
      cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     enable_node_hardening: Optional[bool] = rest_field(
         name="enableNodeHardening", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13110,6 +13163,14 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
      MIG support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
      When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
     :vartype mig_strategy: str or ~azure.mgmt.containerservice.models.MigStrategy
+    :ivar mig_profiles: The ordered list of MIG (Multi-Instance GPU) partition profiles to assign
+     to each supported NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be
+     specified. When ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the
+     combination is validated against the supported MIG geometry for the agent pool's GPU VM size.
+     The same value may appear more than once to request multiple partitions of that size. This
+     field is mutually exclusive with the top-level ``gpuInstanceProfile`` property. For more
+     information, see `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_.
+    :vartype mig_profiles: list[str or ~azure.mgmt.containerservice.models.GPUInstanceProfile]
     """
 
     management_mode: Optional[Union[str, "_models.ManagementMode"]] = rest_field(
@@ -13129,6 +13190,16 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
     """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
      information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
      the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
+    mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = rest_field(
+        name="migProfiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to each supported
+     NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be specified. When
+     ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the combination is
+     validated against the supported MIG geometry for the agent pool's GPU VM size. The same value
+     may appear more than once to request multiple partitions of that size. This field is mutually
+     exclusive with the top-level ``gpuInstanceProfile`` property. For more information, see
+     `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_."""
 
     @overload
     def __init__(
@@ -13137,6 +13208,7 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
         management_mode: Optional[Union[str, "_models.ManagementMode"]] = None,
         driver_mode: Optional[Union[str, "_models.NvidiaDriverMode"]] = None,
         mig_strategy: Optional[Union[str, "_models.MigStrategy"]] = None,
+        mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = None,
     ) -> None: ...
 
     @overload
@@ -15385,6 +15457,50 @@ class TrustedAccessRoleRule(_Model):
     """List of allowed names."""
     non_resource_ur_ls: Optional[list[str]] = rest_field(name="nonResourceURLs", visibility=["read"])
     """List of allowed nonResourceURLs."""
+
+
+class UpgradeGateSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for health-aware upgrade gating.
+
+    :ivar enabled: Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a
+     newly created agent pool in a cluster where upgrade gating is enabled, which defaults to
+     ``true``. When ``true``, upgrade-gated health checks are enabled for upgrades in the
+     corresponding scope. Setting this to ``true`` at the cluster scope enables gating for the
+     entire cluster, including all agent pool upgrades. When the cluster scope is unset or
+     ``false``, an agent pool can opt in independently by setting this to ``true``. When the cluster
+     scope is ``true``, an agent pool cannot set this to ``false``. Force upgrade
+     (``overrideSettings.forceUpgrade``) overrides the gate: while the override window is active,
+     the upgrade skips health signal validation and proceeds.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a newly created
+     agent pool in a cluster where upgrade gating is enabled, which defaults to ``true``. When
+     ``true``, upgrade-gated health checks are enabled for upgrades in the corresponding scope.
+     Setting this to ``true`` at the cluster scope enables gating for the entire cluster, including
+     all agent pool upgrades. When the cluster scope is unset or ``false``, an agent pool can opt in
+     independently by setting this to ``true``. When the cluster scope is ``true``, an agent pool
+     cannot set this to ``false``. Force upgrade (``overrideSettings.forceUpgrade``) overrides the
+     gate: while the override window is active, the upgrade skips health signal validation and
+     proceeds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UpgradeOverrideSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

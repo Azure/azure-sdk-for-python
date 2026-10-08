@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/Endpoint-PATCH-External-Target.json
+# x-ms-original-file: 2026-09-01/Endpoint-PATCH-External-Target.json
 if __name__ == "__main__":
     main()

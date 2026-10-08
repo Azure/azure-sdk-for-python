@@ -2827,6 +2827,9 @@ def _extract_metric_values(
                     type(metric_value).__name__,
                 )
             continue
+        # Skip per-turn breakdown columns; they are per-turn lists, not scalar AOAI result fields, and misroute by suffix into scalar slots.
+        if metric_key == "evaluation_per_turn" or metric_key.startswith("evaluation_per_turn."):
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
