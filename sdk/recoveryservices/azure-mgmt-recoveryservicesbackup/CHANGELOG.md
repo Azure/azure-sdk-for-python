@@ -32,8 +32,8 @@
   - Added model `StorageSpaceInfo`
   - Added enum `VMWorkloadPolicyType`
   - Added model `ValidateAzureWorkloadRestoreOperationRequest`
-  - Model `RecoveryPointsOperations` added method `begin_get_rp_extended_info`
-  - Model `RecoveryPointsOperations` added method `begin_get_rp_extended_info_operation_result`
+  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info`
+  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info_operation_result`
   - Added operation group `ProtectionContainerRefreshOperationStatusesOperations`
 
 ## 11.1.0 (2026-08-31)
