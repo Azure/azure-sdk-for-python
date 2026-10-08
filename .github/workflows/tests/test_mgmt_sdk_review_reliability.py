@@ -42,11 +42,8 @@ import mgmt_sdk_review_context as collector
 import mgmt_sdk_review_evidence as evidence
 import mgmt_sdk_review_service as service
 
-RULES = WORKFLOW.parents[1] / "copilot-instructions.md"
-RULE_TEXT = (
-    "## MGMT SDK Code Review Rules"
-    + RULES.read_text(encoding="utf-8").split("## MGMT SDK Code Review Rules", 1)[1].split("\n## ", 1)[0]
-)
+RULES = WORKFLOW.parents[1] / "instructions" / "reviewer" / "management.instructions.md"
+RULE_TEXT = RULES.read_text(encoding="utf-8")
 
 
 def fixture():
