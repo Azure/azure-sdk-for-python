@@ -259,7 +259,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         Returns True if a directory exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
