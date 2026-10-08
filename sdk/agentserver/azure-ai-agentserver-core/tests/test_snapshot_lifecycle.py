@@ -720,11 +720,11 @@ async def test_after_restore_retry_and_new_materialization_are_idempotent(
 ) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
     agent = AgentServerHost()
-    restore_ids: list[str] = []
+    restores: list[tuple[str, str]] = []
 
     @agent.after_restore_handler
     async def after_restore(context: AgentSessionContext) -> None:
-        restore_ids.append(context.restore_id)
+        restores.append((context.restore_id, os.environ["RESTORE_VALUE"]))
 
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent),
@@ -732,21 +732,42 @@ async def test_after_restore_retry_and_new_materialization_are_idempotent(
     ) as lifecycle_client:
         first = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-1"),
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
         retry = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-1"),
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
         later_restore = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-2"),
+            json=_after_restore_payload(
+                restore_id="restore-2",
+                overrides={"RESTORE_VALUE": "second"},
+            ),
+        )
+        delayed_retry = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
 
     assert first.status_code == 200
     assert retry.status_code == 200
     assert later_restore.status_code == 200
-    assert restore_ids == ["restore-1", "restore-2"]
+    assert delayed_retry.status_code == 200
+    assert restores == [
+        ("restore-1", "first"),
+        ("restore-2", "second"),
+    ]
+    assert os.environ["RESTORE_VALUE"] == "second"
 
 
 @pytest.mark.asyncio

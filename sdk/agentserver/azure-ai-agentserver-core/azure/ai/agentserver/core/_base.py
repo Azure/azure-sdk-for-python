@@ -776,8 +776,8 @@ class AgentServerHost(Starlette):
                         "The restored process is already assigned to another session.",
                         status_code=409,
                     )
-                if previous_context.restore_id == context.restore_id:
-                    return JSONResponse({"status": "ok"})
+            if context.restore_id in self._lifecycle.completed_restore_ids:
+                return JSONResponse({"status": "ok"})
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
@@ -851,11 +851,25 @@ class AgentServerHost(Starlette):
                     status_code=500,
                 )
 
-            self._lifecycle.restored_session_context = context
-            self._lifecycle.captured_environment_values = captured_environment
-            self._lifecycle.applied_environment_variables.update(effective_environment)
-            self._lifecycle.before_snapshot_completed = False
+            AgentServerHost._complete_restore(
+                self,
+                context,
+                captured_environment,
+                effective_environment,
+            )
             return JSONResponse({"status": "ok"})
+
+    def _complete_restore(
+        self,
+        context: AgentSessionContext,
+        captured_environment: dict[str, Optional[str]],
+        effective_environment: dict[str, str],
+    ) -> None:
+        self._lifecycle.restored_session_context = context
+        self._lifecycle.completed_restore_ids.add(context.restore_id)
+        self._lifecycle.captured_environment_values = captured_environment
+        self._lifecycle.applied_environment_variables.update(effective_environment)
+        self._lifecycle.before_snapshot_completed = False
 
     def _restore_lifecycle_environment(
         self,
