@@ -7,14 +7,35 @@
 - Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
-- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
+  an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
-- Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
 
 ### Other Changes
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
+
+## 12.31.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Features Added
+- Stable release of features from 12.31.0b1
+- Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
+
+### Bugs Fixed
+- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+
+## 12.30.3 (2026-09-22)
+
+### Bugs Fixed
+- Async clients now reject header names and values containing a `\r` or `\n` when sending a batch request, matching the behavior of the sync clients.
+
+## 12.30.2 (2026-09-16)
+
+### Bugs Fixed
+- Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
 
 ## 12.30.1 (2026-08-27)
 

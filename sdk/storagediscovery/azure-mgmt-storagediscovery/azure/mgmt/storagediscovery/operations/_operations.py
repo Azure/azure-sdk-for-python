@@ -30,12 +30,11 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import StorageDiscoveryMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -50,7 +49,7 @@ def build_storage_discovery_workspaces_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +80,7 @@ def build_storage_discovery_workspaces_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,7 +113,7 @@ def build_storage_discovery_workspaces_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,7 +144,7 @@ def build_storage_discovery_workspaces_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageDiscovery/storageDiscoveryWorkspaces/{storageDiscoveryWorkspaceName}"
     path_format_arguments = {
@@ -170,7 +169,7 @@ def build_storage_discovery_workspaces_list_by_resource_group_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,7 +196,7 @@ def build_storage_discovery_workspaces_list_by_subscription_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -221,7 +220,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +235,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class StorageDiscoveryWorkspacesOperations:
+class StorageDiscoveryWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -297,6 +296,7 @@ class StorageDiscoveryWorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -311,11 +311,14 @@ class StorageDiscoveryWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StorageDiscoveryWorkspace, response.json())
 
@@ -357,7 +360,7 @@ class StorageDiscoveryWorkspacesOperations:
         self,
         resource_group_name: str,
         storage_discovery_workspace_name: str,
-        resource: JSON,
+        resource: _types.StorageDiscoveryWorkspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -370,7 +373,7 @@ class StorageDiscoveryWorkspacesOperations:
         :param storage_discovery_workspace_name: The name of the StorageDiscoveryWorkspace. Required.
         :type storage_discovery_workspace_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.storagediscovery.types.StorageDiscoveryWorkspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -413,7 +416,7 @@ class StorageDiscoveryWorkspacesOperations:
         self,
         resource_group_name: str,
         storage_discovery_workspace_name: str,
-        resource: Union[_models.StorageDiscoveryWorkspace, JSON, IO[bytes]],
+        resource: Union[_models.StorageDiscoveryWorkspace, _types.StorageDiscoveryWorkspace, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageDiscoveryWorkspace:
         """Create a StorageDiscoveryWorkspace.
@@ -423,10 +426,10 @@ class StorageDiscoveryWorkspacesOperations:
         :type resource_group_name: str
         :param storage_discovery_workspace_name: The name of the StorageDiscoveryWorkspace. Required.
         :type storage_discovery_workspace_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         StorageDiscoveryWorkspace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspace or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a StorageDiscoveryWorkspace type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspace or
+         ~azure.mgmt.storagediscovery.types.StorageDiscoveryWorkspace or IO[bytes]
         :return: StorageDiscoveryWorkspace. The StorageDiscoveryWorkspace is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspace
@@ -468,6 +471,7 @@ class StorageDiscoveryWorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -482,11 +486,14 @@ class StorageDiscoveryWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StorageDiscoveryWorkspace, response.json())
 
@@ -528,7 +535,7 @@ class StorageDiscoveryWorkspacesOperations:
         self,
         resource_group_name: str,
         storage_discovery_workspace_name: str,
-        properties: JSON,
+        properties: _types.StorageDiscoveryWorkspaceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -541,7 +548,7 @@ class StorageDiscoveryWorkspacesOperations:
         :param storage_discovery_workspace_name: The name of the StorageDiscoveryWorkspace. Required.
         :type storage_discovery_workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storagediscovery.types.StorageDiscoveryWorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -584,7 +591,7 @@ class StorageDiscoveryWorkspacesOperations:
         self,
         resource_group_name: str,
         storage_discovery_workspace_name: str,
-        properties: Union[_models.StorageDiscoveryWorkspaceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.StorageDiscoveryWorkspaceUpdate, _types.StorageDiscoveryWorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageDiscoveryWorkspace:
         """Update a StorageDiscoveryWorkspace.
@@ -594,10 +601,10 @@ class StorageDiscoveryWorkspacesOperations:
         :type resource_group_name: str
         :param storage_discovery_workspace_name: The name of the StorageDiscoveryWorkspace. Required.
         :type storage_discovery_workspace_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         StorageDiscoveryWorkspaceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspaceUpdate or JSON
-         or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         StorageDiscoveryWorkspaceUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspaceUpdate or
+         ~azure.mgmt.storagediscovery.types.StorageDiscoveryWorkspaceUpdate or IO[bytes]
         :return: StorageDiscoveryWorkspace. The StorageDiscoveryWorkspace is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspace
@@ -639,6 +646,7 @@ class StorageDiscoveryWorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -653,11 +661,14 @@ class StorageDiscoveryWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StorageDiscoveryWorkspace, response.json())
 
@@ -716,7 +727,10 @@ class StorageDiscoveryWorkspacesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -777,7 +791,10 @@ class StorageDiscoveryWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -790,7 +807,10 @@ class StorageDiscoveryWorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StorageDiscoveryWorkspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StorageDiscoveryWorkspace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -806,7 +826,10 @@ class StorageDiscoveryWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -862,7 +885,10 @@ class StorageDiscoveryWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -875,7 +901,10 @@ class StorageDiscoveryWorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StorageDiscoveryWorkspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StorageDiscoveryWorkspace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -891,7 +920,10 @@ class StorageDiscoveryWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -899,7 +931,7 @@ class StorageDiscoveryWorkspacesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -965,7 +997,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -978,7 +1013,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -994,7 +1032,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

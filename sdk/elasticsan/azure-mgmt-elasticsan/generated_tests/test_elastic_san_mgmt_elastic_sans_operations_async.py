@@ -40,8 +40,6 @@ class TestElasticSanMgmtElasticSansOperationsAsync(AzureMgmtRecordedTestCase):
                 parameters={
                     "location": "str",
                     "properties": {
-                        "baseSizeTiB": 0,
-                        "extendedCapacitySizeTiB": 0,
                         "sku": {"name": "str", "tier": "str"},
                         "autoScaleProperties": {
                             "scaleUpProperties": {
@@ -52,6 +50,8 @@ class TestElasticSanMgmtElasticSansOperationsAsync(AzureMgmtRecordedTestCase):
                             }
                         },
                         "availabilityZones": ["str"],
+                        "baseSizeTiB": 0,
+                        "extendedCapacitySizeTiB": 0,
                         "privateEndpointConnections": [
                             {
                                 "properties": {
@@ -81,8 +81,12 @@ class TestElasticSanMgmtElasticSansOperationsAsync(AzureMgmtRecordedTestCase):
                         "publicNetworkAccess": "str",
                         "totalIops": 0,
                         "totalMBps": 0,
+                        "totalReservedIops": 0,
+                        "totalReservedMBps": 0,
                         "totalSizeTiB": 0,
                         "totalVolumeSizeGiB": 0,
+                        "usedCapacityGiB": 0,
+                        "version": "str",
                         "volumeGroupCount": 0,
                     },
                     "id": "str",
@@ -124,6 +128,9 @@ class TestElasticSanMgmtElasticSansOperationsAsync(AzureMgmtRecordedTestCase):
                         "baseSizeTiB": 0,
                         "extendedCapacitySizeTiB": 0,
                         "publicNetworkAccess": "str",
+                        "totalIops": 0,
+                        "totalMBps": 0,
+                        "totalSizeTiB": 0,
                     },
                     "tags": {"str": "str"},
                 },

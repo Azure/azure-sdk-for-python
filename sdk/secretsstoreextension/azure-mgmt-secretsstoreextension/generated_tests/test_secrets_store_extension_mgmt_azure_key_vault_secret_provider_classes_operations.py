@@ -44,6 +44,7 @@ class TestSecretsStoreExtensionMgmtAzureKeyVaultSecretProviderClassesOperations(
                     "clientId": "str",
                     "keyvaultName": "str",
                     "tenantId": "str",
+                    "cloudName": "str",
                     "objects": "str",
                     "provisioningState": "str",
                 },
@@ -70,7 +71,13 @@ class TestSecretsStoreExtensionMgmtAzureKeyVaultSecretProviderClassesOperations(
             resource_group_name=resource_group.name,
             azure_key_vault_secret_provider_class_name="str",
             properties={
-                "properties": {"clientId": "str", "keyvaultName": "str", "objects": "str", "tenantId": "str"},
+                "properties": {
+                    "clientId": "str",
+                    "cloudName": "str",
+                    "keyvaultName": "str",
+                    "objects": "str",
+                    "tenantId": "str",
+                },
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result

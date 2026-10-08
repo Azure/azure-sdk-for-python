@@ -114,7 +114,10 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "agent_insights",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_agent_insights_on_demand.py",  # Skipped until recordings are available.
+                "sample_agent_insights_scheduled.py",  # Skipped until recordings are available.
+            ],
         ),
     )
     @agentInsightsServicePreparer()
@@ -245,6 +248,9 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_dataset_generation_job_simpleqna_with_agent_source.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_with_file_source.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py",  # Need test recordings
+                "sample_dataset_generation_job_management.py",  # Need test recordings
+                "sample_dataset_generation_job_traces_for_evaluation_merge.py",  # Need test recordings
+                "sample_dataset_generation_job_simulation_seed_for_evaluation.py",  # Need test recordings
             ],
         ),
     )

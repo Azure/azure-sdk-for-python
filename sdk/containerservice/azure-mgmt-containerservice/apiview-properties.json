@@ -280,6 +280,7 @@
         "azure.mgmt.containerservice.models.TrustedAccessRoleBinding": "Microsoft.ContainerService.TrustedAccessRoleBinding",
         "azure.mgmt.containerservice.models.TrustedAccessRoleBindingProperties": "Microsoft.ContainerService.TrustedAccessRoleBindingProperties",
         "azure.mgmt.containerservice.models.TrustedAccessRoleRule": "Microsoft.ContainerService.TrustedAccessRoleRule",
+        "azure.mgmt.containerservice.models.UpgradeGateSettings": "Microsoft.ContainerService.UpgradeGateSettings",
         "azure.mgmt.containerservice.models.UpgradeOverrideSettings": "Microsoft.ContainerService.UpgradeOverrideSettings",
         "azure.mgmt.containerservice.models.VirtualMachineNodes": "Microsoft.ContainerService.VirtualMachineNodes",
         "azure.mgmt.containerservice.models.VirtualMachinesProfile": "Microsoft.ContainerService.VirtualMachinesProfile",
@@ -615,5 +616,5 @@
         "azure.mgmt.containerservice.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list",
         "azure.mgmt.containerservice.aio.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list"
     },
-    "CrossLanguageVersion": "4faaba15fd40"
+    "CrossLanguageVersion": "f5b5a0dac83d"
 }

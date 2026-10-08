@@ -29,7 +29,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.7.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
+    pip install "azure-ai-projects>=2.6.1" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
@@ -51,7 +51,6 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
-
 
 ANALYSIS_INTERVAL_HOURS = 6
 

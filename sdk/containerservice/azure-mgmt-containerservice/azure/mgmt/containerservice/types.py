@@ -1138,6 +1138,13 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      still being in a running state, can also cause undrainable nodes. Known values are: "Cordon"
      and "Schedule".
     :vartype undrainableNodeBehavior: Union[str, "UndrainableNodeBehavior"]
+    :ivar upgradeGateSettings: Settings for upgrade gating on upgrades of this agent pool. Health
+     signals are ``HealthSignal`` custom resources published by monitoring components running in the
+     cluster. When the cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in
+     independently. When the cluster-level ``enabled`` is ``true``, gating is inherited and setting
+     this agent pool's ``enabled`` to ``false`` is rejected; an omitted value on a newly created
+     agent pool is defaulted to ``true``.
+    :vartype upgradeGateSettings: "UpgradeGateSettings"
     """
 
     maxSurge: str
@@ -1177,6 +1184,13 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      nodes is Pod Disruption Budgets (PDBs), but other issues, such as pod termination grace period
      is exceeding the remaining per-node drain timeout or pod is still being in a running state, can
      also cause undrainable nodes. Known values are: \"Cordon\" and \"Schedule\"."""
+    upgradeGateSettings: "UpgradeGateSettings"
+    """Settings for upgrade gating on upgrades of this agent pool. Health signals are ``HealthSignal``
+     custom resources published by monitoring components running in the cluster. When the
+     cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in independently. When
+     the cluster-level ``enabled`` is ``true``, gating is inherited and setting this agent pool's
+     ``enabled`` to ``false`` is rejected; an omitted value on a newly created agent pool is
+     defaulted to ``true``."""
 
 
 class AgentPoolWindowsProfile(TypedDict, total=False):
@@ -1306,11 +1320,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar keyId: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar keyId: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype keyId: str
     :ivar keyVaultNetworkAccess: Network access of the key vault. Network access of key vault. The
      possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows public
@@ -1326,11 +1344,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
     enabled: bool
     """Whether to enable Azure Key Vault key management service. The default is false."""
     keyId: str
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     keyVaultNetworkAccess: Union[str, "KeyVaultNetworkAccessTypes"]
     """Network access of the key vault. Network access of key vault. The possible values are
      ``Public`` and ``Private``. ``Public`` means the key vault allows public access from all
@@ -1441,10 +1463,20 @@ class ClusterUpgradeSettings(TypedDict, total=False):
 
     :ivar overrideSettings: Settings for overrides.
     :vartype overrideSettings: "UpgradeOverrideSettings"
+    :ivar upgradeGateSettings: Settings for upgrade gating on upgrades in this managed cluster.
+     Health signals are ``HealthSignal`` custom resources published by monitoring components running
+     in the cluster. Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to
+     all agent pool upgrades in this cluster; an agent pool cannot opt out of it.
+    :vartype upgradeGateSettings: "UpgradeGateSettings"
     """
 
     overrideSettings: "UpgradeOverrideSettings"
     """Settings for overrides."""
+    upgradeGateSettings: "UpgradeGateSettings"
+    """Settings for upgrade gating on upgrades in this managed cluster. Health signals are
+     ``HealthSignal`` custom resources published by monitoring components running in the cluster.
+     Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to all agent pool
+     upgrades in this cluster; an agent pool cannot opt out of it."""
 
 
 class ContainerServiceLinuxProfile(TypedDict, total=False):
@@ -1914,6 +1946,11 @@ class IdentityBinding(ProxyResource):
     :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "IdentityBindingProperties"
+    :ivar managedBy: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managedBy: str
     :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -1923,6 +1960,11 @@ class IdentityBinding(ProxyResource):
 
     properties: "IdentityBindingProperties"
     """The resource-specific properties for this resource."""
+    managedBy: str
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     eTag: str
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -2510,8 +2552,7 @@ class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pyli
     :ivar infrastructureEncryption: Whether to enable encryption at rest of Kubernetes resource
      objects using service-managed keys. More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
     :vartype infrastructureEncryption: Union[str, "InfrastructureEncryption"]
     """
 
@@ -2519,8 +2560,7 @@ class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pyli
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
      More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
 
 class LabelSelector(TypedDict, total=False):
@@ -5465,7 +5505,10 @@ class ManagedClusterProperties(TypedDict, total=False):
      enforces FIPS compliance for all AKS-managed components, such as the node operating system,
      addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
      `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
     :vartype enableFIPS: bool
     :ivar enableNodeHardening: Whether to enable node hardening at the cluster level. When enabled,
      AKS applies hardened defaults for soft eviction thresholds, kube-reserved, and system-reserved
@@ -5627,7 +5670,10 @@ class ManagedClusterProperties(TypedDict, total=False):
      compliance for all AKS-managed components, such as the node operating system, addons, and
      `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
      cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     enableNodeHardening: bool
     """Whether to enable node hardening at the cluster level. When enabled, AKS applies hardened
      defaults for soft eviction thresholds, kube-reserved, and system-reserved on all Linux node
@@ -6679,6 +6725,14 @@ class NvidiaGPUProfile(TypedDict, total=False):
      support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
      When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
     :vartype migStrategy: Union[str, "MigStrategy"]
+    :ivar migProfiles: The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to
+     each supported NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be
+     specified. When ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the
+     combination is validated against the supported MIG geometry for the agent pool's GPU VM size.
+     The same value may appear more than once to request multiple partitions of that size. This
+     field is mutually exclusive with the top-level ``gpuInstanceProfile`` property. For more
+     information, see `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_.
+    :vartype migProfiles: list[Union[str, "GPUInstanceProfile"]]
     """
 
     managementMode: Union[str, "ManagementMode"]
@@ -6692,6 +6746,14 @@ class NvidiaGPUProfile(TypedDict, total=False):
     """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
      information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
      the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
+    migProfiles: list[Union[str, "GPUInstanceProfile"]]
+    """The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to each supported
+     NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be specified. When
+     ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the combination is
+     validated against the supported MIG geometry for the agent pool's GPU VM size. The same value
+     may appear more than once to request multiple partitions of that size. This field is mutually
+     exclusive with the top-level ``gpuInstanceProfile`` property. For more information, see
+     `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_."""
 
 
 class PortRange(TypedDict, total=False):
@@ -7482,6 +7544,33 @@ class TrustedAccessRoleBindingProperties(TypedDict, total=False):
     roles: Required[list[str]]
     """A list of roles to bind, each item is a resource type qualified role name. For example:
      'Microsoft.MachineLearningServices/workspaces/reader'. Required."""
+
+
+class UpgradeGateSettings(TypedDict, total=False):
+    """Settings for health-aware upgrade gating.
+
+    :ivar enabled: Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a
+     newly created agent pool in a cluster where upgrade gating is enabled, which defaults to
+     ``true``. When ``true``, upgrade-gated health checks are enabled for upgrades in the
+     corresponding scope. Setting this to ``true`` at the cluster scope enables gating for the
+     entire cluster, including all agent pool upgrades. When the cluster scope is unset or
+     ``false``, an agent pool can opt in independently by setting this to ``true``. When the cluster
+     scope is ``true``, an agent pool cannot set this to ``false``. Force upgrade
+     (``overrideSettings.forceUpgrade``) overrides the gate: while the override window is active,
+     the upgrade skips health signal validation and proceeds.
+    :vartype enabled: bool
+    """
+
+    enabled: bool
+    """Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a newly created
+     agent pool in a cluster where upgrade gating is enabled, which defaults to ``true``. When
+     ``true``, upgrade-gated health checks are enabled for upgrades in the corresponding scope.
+     Setting this to ``true`` at the cluster scope enables gating for the entire cluster, including
+     all agent pool upgrades. When the cluster scope is unset or ``false``, an agent pool can opt in
+     independently by setting this to ``true``. When the cluster scope is ``true``, an agent pool
+     cannot set this to ``false``. Force upgrade (``overrideSettings.forceUpgrade``) overrides the
+     gate: while the override window is active, the upgrade skips health signal validation and
+     proceeds."""
 
 
 class UpgradeOverrideSettings(TypedDict, total=False):

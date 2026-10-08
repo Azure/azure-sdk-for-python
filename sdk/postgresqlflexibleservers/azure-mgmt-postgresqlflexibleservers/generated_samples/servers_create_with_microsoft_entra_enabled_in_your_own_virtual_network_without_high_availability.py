@@ -45,7 +45,7 @@ def main():
                     "tenantId": "tttttt-tttt-tttt-tttt-tttttttttttt",
                 },
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled", "immutableBackup": "Enabled"},
                 "createMode": "Create",
                 "dataEncryption": {"type": "SystemManaged"},
                 "highAvailability": {"mode": "Disabled"},
@@ -62,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ServersCreateWithMicrosoftEntraEnabledInYourOwnVirtualNetworkWithoutHighAvailability.json
+# x-ms-original-file: 2026-07-01-preview/ServersCreateWithMicrosoftEntraEnabledInYourOwnVirtualNetworkWithoutHighAvailability.json
 if __name__ == "__main__":
     main()

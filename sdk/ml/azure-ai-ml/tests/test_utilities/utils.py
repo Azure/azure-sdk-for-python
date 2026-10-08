@@ -472,8 +472,7 @@ def mock_artifact_download_to_temp_directory():
             (artifact / f"file_{version}").touch(exist_ok=True)
             return str(artifact)
 
-        with patch(
-            "azure.ai.ml._utils._artifact_utils.ArtifactCache.get",
-            side_effect=mock_get_artifacts,
-        ):
+        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.check_artifact_extension"), patch(
+            "azure.ai.ml._utils._artifact_utils.ArtifactCache.DEFAULT_DISK_CACHE_DIRECTORY", Path(temp_dir) / "cache"
+        ), patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
             yield temp_dir

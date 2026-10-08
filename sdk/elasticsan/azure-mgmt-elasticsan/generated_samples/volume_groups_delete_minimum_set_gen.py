@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-09-01/VolumeGroups_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/VolumeGroups_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

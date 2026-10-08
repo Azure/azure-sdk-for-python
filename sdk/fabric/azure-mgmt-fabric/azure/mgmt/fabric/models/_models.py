@@ -371,7 +371,7 @@ class FabricCapacityProperties(_Model):  # pylint: disable=docstring-keyword-sho
      "Updating", "Deleting", "Suspending", "Suspended", "Pausing", "Paused", "Resuming", "Scaling",
      and "Preparing".
     :vartype state: str or ~azure.mgmt.fabric.models.ResourceState
-    :ivar overage: The capacity overage properties of the Fabric capacity resource.
+    :ivar overage: The capacity overage properties of the Fabric capacity resource. Required.
     :vartype overage: ~azure.mgmt.fabric.models.CapacityOverageProperties
     :ivar administration: The capacity administration. Required.
     :vartype administration: ~azure.mgmt.fabric.models.CapacityAdministration
@@ -388,10 +388,10 @@ class FabricCapacityProperties(_Model):  # pylint: disable=docstring-keyword-sho
      resource provisioning. Known values are: \"Active\", \"Provisioning\", \"Failed\",
      \"Updating\", \"Deleting\", \"Suspending\", \"Suspended\", \"Pausing\", \"Paused\",
      \"Resuming\", \"Scaling\", and \"Preparing\"."""
-    overage: Optional["_models.CapacityOverageProperties"] = rest_field(
+    overage: "_models.CapacityOverageProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The capacity overage properties of the Fabric capacity resource."""
+    """The capacity overage properties of the Fabric capacity resource. Required."""
     administration: "_models.CapacityAdministration" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -401,8 +401,8 @@ class FabricCapacityProperties(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
+        overage: "_models.CapacityOverageProperties",
         administration: "_models.CapacityAdministration",
-        overage: Optional["_models.CapacityOverageProperties"] = None,
     ) -> None: ...
 
     @overload

@@ -1,13 +1,15 @@
 import json
 from datetime import timedelta
 
-import yaml
 import pytest
+import yaml
 
+from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
+from azure.ai.ml.entities import ServerlessSparkCompute
+from azure.ai.ml.entities._load_functions import load_schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._load_functions import load_schedule
-from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
+from azure.ai.ml.exceptions import MlException
 
 
 def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
@@ -32,6 +34,18 @@ def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
 
 @pytest.mark.unittest
 class TestMonitorSchedule:
+    @pytest.mark.parametrize("runtime_version", ["3.4", "3.5"])
+    def test_serverless_spark_compute_supported_runtime_versions(self, runtime_version: str) -> None:
+        compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version=runtime_version)
+
+        assert compute._to_rest_object().runtime_version == runtime_version
+
+    def test_serverless_spark_compute_unsupported_runtime_version(self) -> None:
+        compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
+
+        with pytest.raises(MlException, match="Compute runtime version must be one of: 3.4, 3.5"):
+            compute._validate()
+
     def test_data_drift_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/data_drift_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/data_drift.yaml"

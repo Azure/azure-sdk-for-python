@@ -6,33 +6,29 @@
 
 """
 DESCRIPTION:
-    End-to-end multi-turn evaluation with no hand-authored test data. This sample
-    chains three services:
+    End-to-end multi-turn evaluation with no hand-authored test data. A single
+    `azure_ai_synthetic_data_generation_with_simulation` data source has the
+    service:
 
-      1. Data generation produces a seed dataset with the `simulation_seed`
-         recipe. Each generated row describes a scenario for a simulated user:
-         `id`, `category`, `test_case_description`, and `desired_num_turns`.
-      2. Conversation simulation replays those scenarios against a Foundry agent
-         to produce full multi-turn conversations.
-      3. Conversation-level evaluators score the generated conversations.
+      1. Synthesize test-case scenarios from the agent's instructions.
+      2. Simulate multi-turn conversations for those scenarios against a Foundry
+         agent.
+      3. Score the generated conversations with conversation-level evaluators.
 
-    The generated seed rows have the same shape that
-    `sample_multiturn_conversation_simulation.py` uploads from
-    `data_folder/sample_data_simulation_scenarios.jsonl`. Use that sample when
-    you want to author scenarios yourself; use this sample to derive scenarios
-    from an agent's instructions.
+    Generation and simulation happen in one eval run — no separate data
+    generation job is required. Use `sample_multiturn_conversation_simulation.py`
+    when you want to author the seed scenarios yourself; use this sample to
+    derive scenarios from an agent's instructions.
 
     For single-turn synthetic evaluation, see
     `sample_synthetic_data_agent_evaluation.py`.
-
-    This feature is currently in preview.
 
 USAGE:
     python sample_synthetic_multiturn_evaluation.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.5.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -47,30 +43,22 @@ import time
 from pprint import pprint
 
 from dotenv import load_dotenv
-from openai.types.eval_create_params import DataSourceConfigCustom
-
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentDataGenerationJobSource,
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
-    DataGenerationModelOptions,
-    DatasetDataGenerationJobOutput,
+    AzureAIDataSourceConfig,
     PromptAgentDefinition,
-    SimulationSeedDataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
 )
 
-SEED_COUNT = 15
+SEED_COUNT = 1
 CONVERSATIONS_PER_SEED = 1
-MAX_TURNS = 5
+MAX_TURNS = 2
+DESIRED_TURNS = 1
 
 
 def main() -> None:
-    """Generate simulation seeds, simulate conversations, and evaluate them."""
+    """Generate synthetic scenarios, simulate conversations, and evaluate them."""
     load_dotenv()
 
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
@@ -91,55 +79,50 @@ def main() -> None:
         )
         print(f"Agent created (name: {agent.name}, version: {agent.version})")
 
-        # max_samples must be in [15, 1000]. The agent source lets the service
-        # derive seed scenarios from the agent's instructions and metadata.
-        print(f"\nGenerating {SEED_COUNT} seed scenarios (this takes a few minutes)...")
-        poller = project_client.beta.datasets.begin_create_generation_job(
-            job=DataGenerationJob(
-                inputs=DataGenerationJobInputs(
-                    name=f"{agent_name}-simulation-seeds",
-                    scenario=DataGenerationJobScenario.EVALUATION,
-                    sources=[
-                        AgentDataGenerationJobSource(
-                            description="Agent instructions and metadata used to generate simulation scenarios.",
-                            agent_name=agent.name,
-                            agent_version=agent.version,
-                        ),
-                    ],
-                    options=SimulationSeedDataGenerationJobOptions(
-                        max_samples=SEED_COUNT,
-                        model_options=DataGenerationModelOptions(model=model_deployment_name),
-                    ),
-                    output_options=DataGenerationJobOutputOptions(name=f"{agent_name}-simulation-seeds"),
-                ),
-            ),
-            polling_interval=10,
-        )
-
-        generation_result = poller.result()
-        seeds = generation_result.outputs[0] if generation_result.outputs else None
-        assert isinstance(seeds, DatasetDataGenerationJobOutput), "Expected a dataset output from the generation job"
-        assert seeds.id is not None, "Generation job returned a dataset without an id"
-
-        print(f"Generated {generation_result.generated_samples} seed scenarios")
-        print(f"Seed dataset: {seeds.name} v{seeds.version}")
-        if generation_result.token_usage:
-            print(f"Generation tokens: {generation_result.token_usage.total_tokens}")
-
-        # Simulation emits conversations in the standard messages schema.
-        data_source_config = DataSourceConfigCustom(
-            type="custom",
-            item_schema={
-                "type": "object",
-                "properties": {
-                    "messages": {"type": "array"},
-                },
-                "required": ["messages"],
-            },
-            include_sample_schema=False,
-        )
+        # Synthetic-data-generation-with-simulation groups declare an
+        # "azure_ai_source" config with the "synthetic_data_gen" scenario. The
+        # service generates the seed scenarios and simulated conversations at run
+        # time, so no inline item schema is supplied.
+        data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="synthetic_data_gen")
 
         testing_criteria = [
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="tool_use_quality",
+                evaluator_name="builtin.tool_use_quality",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="output_quality",
+                evaluator_name="builtin.output_quality",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="deflection_rate",
+                evaluator_name="builtin.deflection_rate",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={
+                    "messages": "{{item.messages}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                },
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="customer_satisfaction",
+                evaluator_name="builtin.customer_satisfaction",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="task_completion",
@@ -149,8 +132,15 @@ def main() -> None:
             ),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
-                name="customer_satisfaction",
-                evaluator_name="builtin.customer_satisfaction",
+                name="coherence",
+                evaluator_name="builtin.coherence",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="groundedness",
+                evaluator_name="builtin.groundedness",
                 initialization_parameters={"model": model_deployment_name},
                 data_mapping={"messages": "{{item.messages}}"},
             ),
@@ -165,32 +155,38 @@ def main() -> None:
         print(f"Evaluation created (id: {eval_object.id})")
 
         try:
-            # The data mapping binds the generated seed columns directly to the
-            # simulator inputs; no conversion or renaming is required.
+            # A single data source generates synthetic scenarios from the agent's
+            # instructions and simulates multi-turn conversations for them.
             eval_run = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="synthetic-multiturn-run",
                 data_source={
-                    "type": "azure_ai_target_completions",
-                    "source": {
-                        "type": "file_id",
-                        "id": seeds.id,
+                    "type": "azure_ai_synthetic_data_generation_with_simulation",
+                    "synthetic_data_generation_configuration": {
+                        "test_case_count": SEED_COUNT,
+                        "output_test_case_dataset_name": f"{agent_name}-synthetic-scenarios",
+                        "generation_sources": [
+                            {
+                                "type": "agent",
+                                "agent_name": agent.name,
+                                "agent_version": agent.version,
+                            },
+                        ],
+                    },
+                    "model_configuration": {
+                        "model": model_deployment_name,
+                    },
+                    "default_simulation_configuration": {
+                        "max_num_turns": MAX_TURNS,
+                        "conversation_repetitions": CONVERSATIONS_PER_SEED,
+                        "desired_num_turns": DESIRED_TURNS,
+                        "enable_conversation_dataset_generation": True,
+                        "output_conversation_dataset_name": f"{agent_name}-synthetic-conversations",
                     },
                     "target": {
                         "type": "azure_ai_agent",
                         "name": agent.name,
                         "version": agent.version,
-                    },
-                    "item_generation_params": {
-                        "type": "conversation_gen_preview",
-                        "model": model_deployment_name,
-                        "num_conversations": CONVERSATIONS_PER_SEED,
-                        "max_turns": MAX_TURNS,
-                        "data_mapping": {
-                            "id": "id",
-                            "test_case_description": "test_case_description",
-                            "desired_num_turns": "desired_num_turns",
-                        },
                     },
                 },  # type: ignore
                 extra_body={"evaluation_level": "conversation"},
@@ -213,19 +209,13 @@ def main() -> None:
             if run.result_counts.errored:
                 raise RuntimeError(f"{run.result_counts.errored} evaluation item(s) errored")
 
-            expected_conversations = generation_result.generated_samples * CONVERSATIONS_PER_SEED
+            expected_conversations = SEED_COUNT * CONVERSATIONS_PER_SEED
             print(
-                f"Expected: {expected_conversations} conversations "
-                f"({generation_result.generated_samples} generated scenarios x "
-                f"{CONVERSATIONS_PER_SEED} per scenario)"
+                f"Expected up to: {expected_conversations} conversations "
+                f"({SEED_COUNT} synthetic scenarios x {CONVERSATIONS_PER_SEED} per scenario)"
             )
 
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
-            if run.result_counts.total != expected_conversations or len(output_items) != expected_conversations:
-                raise RuntimeError(
-                    f"Expected {expected_conversations} conversations, got "
-                    f"{run.result_counts.total} results and {len(output_items)} output items"
-                )
 
             print(f"\nOutput items: {len(output_items)}")
             if output_items:
@@ -233,7 +223,6 @@ def main() -> None:
                 pprint(output_items[0])
 
             print(f"\nEval Run Report URL: {run.report_url}")
-            print(f"Reusable seed dataset: {seeds.name} v{seeds.version}")
         finally:
             client.evals.delete(eval_id=eval_object.id)
             print("Evaluation deleted")
