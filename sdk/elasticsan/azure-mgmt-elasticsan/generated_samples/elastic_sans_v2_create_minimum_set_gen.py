@@ -15,7 +15,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_get_maximum_set_gen.py
+    python elastic_sans_v2_create_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.elastic_sans.get(
+    response = client.elastic_sans.begin_create(
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
-    )
+        parameters={
+            "location": "France Central",
+            "properties": {
+                "sku": {"name": "ElasticSAN_LRS"},
+                "totalIops": 22,
+                "totalMBps": 4,
+                "totalSizeTiB": 27,
+                "version": "V2",
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ElasticSans_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ElasticSans_V2_Create_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

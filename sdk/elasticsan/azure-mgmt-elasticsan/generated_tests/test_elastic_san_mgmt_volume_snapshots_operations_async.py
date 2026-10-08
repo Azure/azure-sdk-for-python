@@ -44,7 +44,9 @@ class TestElasticSanMgmtVolumeSnapshotsOperationsAsync(AzureMgmtRecordedTestCase
                 parameters={
                     "properties": {
                         "creationData": {"sourceId": "str"},
+                        "completionPercent": 0.0,
                         "provisioningState": "str",
+                        "snapshotAccessState": "str",
                         "sourceVolumeSizeGiB": 0,
                         "volumeName": "str",
                     },
