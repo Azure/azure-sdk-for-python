@@ -132,9 +132,7 @@ async def test_mixed_idd_and_idless_output_positions(tmp_path: Path) -> None:
     assert fil_out == mem_out == mixed
 
     # On disk: A and C are stubs, B is inline.
-    envelope = json.loads(
-        (tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text()
-    )
+    envelope = json.loads((tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text())
     assert envelope["output"][0] == {_ITEM_REF_KEY: "oA"}
     assert envelope["output"][1]["type"] == "reasoning"
     assert envelope["output"][2] == {_ITEM_REF_KEY: "oC"}
@@ -155,9 +153,7 @@ async def test_update_response_rehydrates(tmp_path: Path) -> None:
     assert [it["id"] for it in out] == ["o1", "o2"]
     assert out[1]["content"][0]["text"] == "second"
 
-    envelope = json.loads(
-        (tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text()
-    )
+    envelope = json.loads((tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text())
     assert envelope["output"] == [{_ITEM_REF_KEY: "o1"}, {_ITEM_REF_KEY: "o2"}]
 
 
