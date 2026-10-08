@@ -128,6 +128,35 @@ class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class ExceptionWindowAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action performed by an exception window."""
+
+    BLOCK = "Block"
+    """Prevent upgrades during the exception window."""
+    ALLOW = "Allow"
+    """Allow upgrades during the exception window."""
+
+
+class FabricShortcutStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a Microsoft Fabric shortcut."""
+
+    PENDING = "Pending"
+    """The shortcut is awaiting approval."""
+    APPROVED = "Approved"
+    """The shortcut is approved."""
+    REJECTED = "Rejected"
+    """The shortcut is rejected."""
+
+
+class FabricShortcutType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Microsoft Fabric shortcut."""
+
+    ENTITY = "Entity"
+    """An entity shortcut."""
+    NETWORK = "Network"
+    """A network shortcut."""
+
+
 class GeoDRRoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GeoDR Role Types."""
 
@@ -427,3 +456,22 @@ class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NAME_IN_LOCKDOWN."""
     TOO_MANY_NAMESPACE_IN_CURRENT_SUBSCRIPTION = "TooManyNamespaceInCurrentSubscription"
     """TOO_MANY_NAMESPACE_IN_CURRENT_SUBSCRIPTION."""
+
+
+class UpgradePreferenceDayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A day of the week."""
+
+    SUNDAY = "Sunday"
+    """The maintenance window occurs on Sunday."""
+    MONDAY = "Monday"
+    """The maintenance window occurs on Monday."""
+    TUESDAY = "Tuesday"
+    """The maintenance window occurs on Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """The maintenance window occurs on Wednesday."""
+    THURSDAY = "Thursday"
+    """The maintenance window occurs on Thursday."""
+    FRIDAY = "Friday"
+    """The maintenance window occurs on Friday."""
+    SATURDAY = "Saturday"
+    """The maintenance window occurs on Saturday."""
