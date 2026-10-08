@@ -330,3 +330,5 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+
+<!-- dummy CI trigger: no-op -->
