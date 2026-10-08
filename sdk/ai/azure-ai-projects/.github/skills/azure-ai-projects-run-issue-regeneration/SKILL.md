@@ -43,10 +43,11 @@ Before installing dependencies or editing files:
 Do not derive either input from the issue title. Do not infer, shorten, or silently correct
 either input.
 
-Confirm an open pull request already targets the validated base branch from the current working
-branch (`gh pr view --json number,baseRefName,isDraft`). If none exists, or its base does not
-match the validated base branch, stop and report the mismatch instead of creating a new branch
-or pull request.
+Confirm a pull request already targets the validated base branch from the current working branch
+(`gh pr view --json number,state,baseRefName,isDraft`). Require `state` to equal `OPEN`,
+`isDraft` to equal `true`, and `baseRefName` to equal the validated base branch. If the pull
+request does not exist, or any of these three checks fails, stop and report the mismatch instead
+of creating a new branch or pull request.
 
 ## Managed-session overrides for the called skills
 
@@ -66,15 +67,30 @@ themselves to apply these overrides.
   new pull request. The issue assignment already owns the working branch and draft pull request
   confirmed above. Push the commits from Steps 7, 9, and 14 to the current branch and leave
   finalizing the pull request title and description to the last step of this skill, below.
+- **`azure-ai-projects-emit-from-typespec` Steps 7, 9, and 14 (commit message quoting):** each
+  step's `git commit -m "..."` snippet closes its quote after the title instead of after the
+  trailer, leaving a stray unmatched quote on the `Co-authored-by` line; executed as shown, this
+  breaks the shell. Use two `-m` flags instead, which git joins with a blank line between them:
+
+  ```bash
+  git add -A -- ':!.env*'
+  git commit -m "Part 1: Emit SDK from TypeSpec" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+  git push -u origin <topic-branch>
+  ```
+
+  Substitute the matching title (`Part 2: Apply post-emitter-fixes.cmd` for Step 9, `Part 3:
+  Additional edits` for Step 14) and keep each step's own `git push` target.
+- **`azure-ai-projects-emit-from-typespec` Step 13 (cleanup command):** `rmdir /s /q build` is a
+  Windows `cmd.exe` command and does not run in this Linux session. Use `rm -rf build` instead.
 - All other steps of `azure-ai-projects-emit-from-typespec` (1, 4 through 14 excluding the
-  branch-creation command in Step 4) run exactly as written, including its own STOP conditions.
-  Still perform Step 4's `git fetch`, but skip its `git switch -c <topic-branch> ...` command
-  since there is no new topic branch to create.
+  branch-creation command in Step 4 and the overridden commands above) run exactly as written,
+  including its own STOP conditions. Still perform Step 4's `git fetch`, but skip its
+  `git switch -c <topic-branch> ...` command since there is no new topic branch to create.
 
 `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and
 `azure-ai-projects-update-changelog` do not create branches or pull requests, so they need no
-branch/PR overrides. `azure-ai-projects-update-changelog` also does not commit its own changes;
-commit and push `CHANGELOG.md` yourself after it finishes (see below).
+branch/PR overrides. None of the three commit their own changes; stage, commit, and push
+everything yourself after `azure-ai-projects-update-changelog` finishes (see below).
 
 ## Run the skills in order
 
@@ -84,11 +100,13 @@ order:
 1. `.github/skills/azure-ai-projects-emit-from-typespec/SKILL.md`, with the overrides above.
 2. `.github/skills/azure-ai-projects-author-samples/SKILL.md`.
 3. `.github/skills/azure-ai-projects-author-tests/SKILL.md`.
-4. `.github/skills/azure-ai-projects-update-changelog/SKILL.md`. When it finishes, stage,
-   commit, and push `CHANGELOG.md`:
+4. `.github/skills/azure-ai-projects-update-changelog/SKILL.md`. Neither it nor the two skills
+   before it (`azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`) commit their
+   own edits. When it finishes, stage every remaining change — samples, tests, and
+   `CHANGELOG.md` — commit, and push:
 
    ```bash
-   git add -- CHANGELOG.md
+   git add -A -- ':!.env*'
    git commit -m "Part 4: Update changelog
 
    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"

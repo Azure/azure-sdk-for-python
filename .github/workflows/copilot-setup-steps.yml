@@ -56,7 +56,11 @@ jobs:
           BRANCH="$(git rev-parse --abbrev-ref HEAD)"
           if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
             echo "On branch '$BRANCH' (matches azure-ai-projects); installing its dev dependencies."
-            python -m pip install -r sdk/ai/azure-ai-projects/dev_requirements.txt
+            # dev_requirements.txt contains bare local paths (e.g. "../../core/azure-core") that
+            # pip resolves against the current working directory, not the requirements file's own
+            # directory. Run it with cwd set to the package directory, in a subshell so the rest
+            # of this job keeps the repository root as its working directory.
+            (cd sdk/ai/azure-ai-projects && python -m pip install -r dev_requirements.txt)
           else
             echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
           fi
