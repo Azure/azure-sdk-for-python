@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# <ChatPython_users_rooms_members>
 import os
 import uuid
 
@@ -64,3 +65,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+# </ChatPython_users_rooms_members>

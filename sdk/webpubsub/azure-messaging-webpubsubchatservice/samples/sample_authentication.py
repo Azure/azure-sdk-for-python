@@ -6,6 +6,7 @@ import os
 
 
 def connection_string_auth():
+    # <ChatPython_connection_string_auth>
     # [START connection_string_auth]
     import os
     from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
@@ -16,9 +17,11 @@ def connection_string_auth():
     ) as connection_string_client:
         print(type(connection_string_client).__name__)
     # [END connection_string_auth]
+    # </ChatPython_connection_string_auth>
 
 
 def key_auth():
+    # <ChatPython_key_auth>
     # [START key_auth]
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -33,9 +36,11 @@ def key_auth():
     ) as key_client:
         print(type(key_client).__name__)
     # [END key_auth]
+    # </ChatPython_key_auth>
 
 
 def entra_auth():
+    # <ChatPython_entra_auth>
     # [START entra_auth]
     import os
     from azure.identity import DefaultAzureCredential
@@ -46,6 +51,7 @@ def entra_auth():
     with WebPubSubChatServiceClient(endpoint, hub, DefaultAzureCredential()) as entra_client:
         print(type(entra_client).__name__)
     # [END entra_auth]
+    # </ChatPython_entra_auth>
 
 
 def main():

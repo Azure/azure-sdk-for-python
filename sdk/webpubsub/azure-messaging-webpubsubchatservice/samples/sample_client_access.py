@@ -6,6 +6,7 @@ import os
 
 
 def client_access():
+    # <ChatPython_client_access>
     # [START client_access]
     import os
     from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
@@ -20,6 +21,7 @@ def client_access():
         # Print only the token-free base URL here. Do not log access["url"].
         print(access["baseUrl"])
     # [END client_access]
+    # </ChatPython_client_access>
 
 
 def main():

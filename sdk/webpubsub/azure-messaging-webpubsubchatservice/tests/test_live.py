@@ -29,6 +29,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
     @recorded_by_proxy
     def test_role_lifecycle_and_paging(self, wps_chat_endpoint):
         client = self.create_client(wps_chat_endpoint)
+        # <ChatPython_roles>
         role_names = ["user.python_e2e_role_1", "user.python_e2e_role_2"]
         try:
             for role_name in role_names:
@@ -55,6 +56,7 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             for role_name in role_names:
                 self.cleanup(client.delete_role, role_name)
             client.close()
+        # </ChatPython_roles>
 
     @WebPubSubChatAccessPreparer()
     @recorded_by_proxy
