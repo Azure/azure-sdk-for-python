@@ -89,6 +89,7 @@ from ...operations._operations import (
     build_protected_items_get_request,
     build_protection_container_operation_results_get_request,
     build_protection_container_refresh_operation_results_get_request,
+    build_protection_container_refresh_operation_statuses_get_request,
     build_protection_containers_get_request,
     build_protection_containers_inquire_request,
     build_protection_containers_refresh_request,
@@ -104,6 +105,8 @@ from ...operations._operations import (
     build_protection_policy_operation_results_get_request,
     build_protection_policy_operation_statuses_get_request,
     build_recovery_points_get_request,
+    build_recovery_points_get_rp_extended_info_operation_result_request,
+    build_recovery_points_get_rp_extended_info_request,
     build_recovery_points_list_request,
     build_recovery_points_recommended_for_move_list_request,
     build_recovery_services_backup_bms_prepare_data_move_request,
@@ -2251,7 +2254,7 @@ class ConfigureSourceScanOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01", "2026-08-01"],
+        api_versions_list=["2026-07-01", "2026-08-01", "2026-08-31-preview", "2026-10-01"],
     )
     async def _execute_initial(
         self,
@@ -2466,7 +2469,7 @@ class ConfigureSourceScanOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01", "2026-08-01"],
+        api_versions_list=["2026-07-01", "2026-08-01", "2026-08-31-preview", "2026-10-01"],
     )
     async def begin_execute(
         self,
@@ -4131,6 +4134,395 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
 
         return AsyncItemPaged(get_next, extract_data)
 
+    async def _get_rp_extended_info_initial(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: Union[_models.GetRPExtendedInfoRequestResource, _types.GetRPExtendedInfoRequestResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_recovery_points_get_rp_extended_info_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: _models.GetRPExtendedInfoRequestResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: _types.GetRPExtendedInfoRequestResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: Union[_models.GetRPExtendedInfoRequestResource, _types.GetRPExtendedInfoRequestResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Is either a GetRPExtendedInfoRequestResource type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource or
+         ~azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._get_rp_extended_info_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                fabric_name=fabric_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _get_rp_extended_info_operation_result_initial(  # pylint: disable=name-too-long
+        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_recovery_points_get_rp_extended_info_operation_result_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_get_rp_extended_info_operation_result(  # pylint: disable=name-too-long
+        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Returns the additional details of the recovery points fetched by a prior getRPExtendedInfo
+        operation. Returns 202 Accepted while the operation is still running.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param operation_id: OperationID which represents the prior getRPExtendedInfo operation whose
+         result needs to be fetched. Required.
+        :type operation_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._get_rp_extended_info_operation_result_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                fabric_name=fabric_name,
+                operation_id=operation_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
 
 class RestoresOperations:  # pylint: disable=docstring-missing-param
     """
@@ -4930,7 +5322,7 @@ class ItemLevelRecoveryConnectionsOperations:  # pylint: disable=docstring-missi
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-01"],
+        api_versions_list=["2026-08-01", "2026-08-31-preview", "2026-10-01"],
     )
     async def list_instant_item_recovery_operation_result(  # pylint: disable=name-too-long
         self,
@@ -9881,6 +10273,124 @@ class TieringCostOperationStatusOperations:  # pylint: disable=docstring-missing
         _request = build_tiering_cost_operation_status_get_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ProtectionContainerRefreshOperationStatusesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.recoveryservicesbackup.aio.RecoveryServicesBackupClient`'s
+        :attr:`protection_container_refresh_operation_statuses` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RecoveryServicesBackupClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "fabric_name",
+                "operation_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.OperationStatus:
+        """Fetches the status of the fabric level asynchronous operation identified by the given operation
+        id. The status can be in progress, completed or failed. You can refer to the OperationStatus
+        enum for all the possible states of an operation. This is the endpoint reported in the
+        Azure-AsyncOperation header of the fabric level operations that start one, such as
+        RefreshContainers and GetRPExtendedInfo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the operation. Required.
+        :type fabric_name: str
+        :param operation_id: OperationID which represents the operation whose status needs to be
+         fetched. Required.
+        :type operation_id: str
+        :return: OperationStatus. The OperationStatus is compatible with MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.OperationStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatus] = kwargs.pop("cls", None)
+
+        _request = build_protection_container_refresh_operation_statuses_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,

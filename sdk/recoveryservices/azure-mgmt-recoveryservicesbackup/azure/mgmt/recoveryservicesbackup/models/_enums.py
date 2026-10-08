@@ -273,6 +273,13 @@ class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
 
 
+class ExistingBasicVMProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how existing Basic VM protection is handled when configuring protection."""
+
+    DISABLE_WITH_DELETE_RPS_NOW = "DisableWithDeleteRPsNow"
+    """Disables existing Basic VM protection and immediately deletes its recovery points."""
+
+
 class FabricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the fabric name - Azure or AD."""
 
@@ -432,6 +439,21 @@ class InquiryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SUCCESS."""
     FAILED = "Failed"
     """FAILED."""
+
+
+class InstanceProtectionReadiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of instance protection."""
+
+    UNKNOWN = "Unknown"
+    """Instance protection readiness is unknown."""
+    READY = "Ready"
+    """Instance is ready for protection."""
+    SCHEDULE_DISABLED = "ScheduleDisabled"
+    """Backup schedule is disabled for this instance."""
+    PARTIAL_PROTECTION = "PartialProtection"
+    """Instance is partially protected."""
+    PROTECTION_ERROR = "ProtectionError"
+    """Instance protection encountered an error."""
 
 
 class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -714,6 +736,15 @@ class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_WORKLOAD_SQL_AUTO_PROTECTION_INTENT."""
 
 
+class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protection type in case protected as part of a parent."""
+
+    DATABASE = "Database"
+    """Protected at database level."""
+    DATABASE_UNDER_INSTANCE = "DatabaseUnderInstance"
+    """Database protected under an instance."""
+
+
 class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup state of this backup item."""
 
@@ -804,6 +835,8 @@ class RecoveryPointTierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HARDENED_RP."""
     ARCHIVED_RP = "ArchivedRP"
     """ARCHIVED_RP."""
+    IA_SNAPSHOT_RP = "IASnapshotRP"
+    """Instant Access snapshot tier, retained for the policy's instantAccessDurationMinutes."""
 
 
 class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1130,6 +1163,19 @@ class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_BACKUP_SECONDARY."""
     AZURE_SITE_RECOVERY = "AzureSiteRecovery"
     """AZURE_SITE_RECOVERY."""
+
+
+class VMWorkloadPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the protection policy."""
+
+    INVALID = "Invalid"
+    """Invalid policy type."""
+    SNAPSHOT_V1 = "SnapshotV1"
+    """Snapshot V1 policy type."""
+    SNAPSHOT_V2 = "SnapshotV2"
+    """Snapshot V2 policy type."""
+    STREAMING = "Streaming"
+    """Streaming policy type."""
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

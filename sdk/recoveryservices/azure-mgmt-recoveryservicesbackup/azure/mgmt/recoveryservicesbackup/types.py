@@ -28,10 +28,12 @@ if TYPE_CHECKING:
         DedupState,
         EncryptionAtRestType,
         EnhancedSecurityState,
+        ExistingBasicVMProtection,
         HealthStatus,
         IAASVMPolicyType,
         IaasVMSnapshotConsistencyType,
         InfrastructureEncryptionState,
+        InstanceProtectionReadiness,
         LastBackupStatus,
         LastUpdateStatus,
         MonthOfYear,
@@ -41,6 +43,7 @@ if TYPE_CHECKING:
         PrivateEndpointConnectionStatus,
         ProtectedItemHealthStatus,
         ProtectedItemState,
+        ProtectionLevel,
         ProtectionState,
         ProtectionStatus,
         ProvisioningState,
@@ -62,6 +65,7 @@ if TYPE_CHECKING:
         StorageTypeState,
         TargetDiskNetworkAccessOption,
         TieringMode,
+        VMWorkloadPolicyType,
         VaultSubResourceType,
         WeekOfMonth,
         WorkloadItemType,
@@ -618,6 +622,9 @@ class AzureIaaSClassicComputeVMProtectedItem(TypedDict, total=False):
     :vartype extendedInfo: "AzureIaaSVMProtectedItemExtendedInfo"
     :ivar extendedProperties: Extended Properties for Azure IaasVM Backup.
     :vartype extendedProperties: "ExtendedProperties"
+    :ivar existingBasicVMProtection: Specifies how existing Basic VM protection is handled when
+     configuring protection. "DisableWithDeleteRPsNow"
+    :vartype existingBasicVMProtection: Union[str, "ExistingBasicVMProtection"]
     :ivar policyType: Type of the policy used for protection.
     :vartype policyType: str
     :ivar protectedItemType: backup item type. Required. Default value is
@@ -697,6 +704,9 @@ class AzureIaaSClassicComputeVMProtectedItem(TypedDict, total=False):
     """Additional information for this backup item."""
     extendedProperties: "ExtendedProperties"
     """Extended Properties for Azure IaasVM Backup."""
+    existingBasicVMProtection: Union[str, "ExistingBasicVMProtection"]
+    """Specifies how existing Basic VM protection is handled when configuring protection.
+     \"DisableWithDeleteRPsNow\""""
     policyType: str
     """Type of the policy used for protection."""
     protectedItemType: Required[Literal["Microsoft.ClassicCompute/virtualMachines"]]
@@ -846,6 +856,9 @@ class AzureIaaSComputeVMProtectedItem(TypedDict, total=False):
     :vartype extendedInfo: "AzureIaaSVMProtectedItemExtendedInfo"
     :ivar extendedProperties: Extended Properties for Azure IaasVM Backup.
     :vartype extendedProperties: "ExtendedProperties"
+    :ivar existingBasicVMProtection: Specifies how existing Basic VM protection is handled when
+     configuring protection. "DisableWithDeleteRPsNow"
+    :vartype existingBasicVMProtection: Union[str, "ExistingBasicVMProtection"]
     :ivar policyType: Type of the policy used for protection.
     :vartype policyType: str
     :ivar protectedItemType: backup item type. Required. Default value is
@@ -925,6 +938,9 @@ class AzureIaaSComputeVMProtectedItem(TypedDict, total=False):
     """Additional information for this backup item."""
     extendedProperties: "ExtendedProperties"
     """Extended Properties for Azure IaasVM Backup."""
+    existingBasicVMProtection: Union[str, "ExistingBasicVMProtection"]
+    """Specifies how existing Basic VM protection is handled when configuring protection.
+     \"DisableWithDeleteRPsNow\""""
     policyType: str
     """Type of the policy used for protection."""
     protectedItemType: Required[Literal["Microsoft.Compute/virtualMachines"]]
@@ -1023,6 +1039,14 @@ class AzureIaaSVMProtectionPolicy(TypedDict, total=False):
     :vartype tieringPolicy: dict[str, "TieringPolicy"]
     :ivar instantRpRetentionRangeInDays: Instant RP retention policy range in days.
     :vartype instantRpRetentionRangeInDays: int
+    :ivar instantAccessSnapshotEnabled: Specifies whether Instant Access snapshot is enabled for
+     the policy. If false or omitted, instantAccessDurationMinutes is ignored and no Instant Access
+     snapshot is retained.
+    :vartype instantAccessSnapshotEnabled: bool
+    :ivar instantAccessDurationMinutes: Duration in minutes for which the Instant Access snapshot
+     is retained, when instantAccessSnapshotEnabled is true. Must be between 60 and 300 minutes;
+     defaults to 300 minutes if not specified.
+    :vartype instantAccessDurationMinutes: int
     :ivar timeZone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
      Time".
     :vartype timeZone: str
@@ -1050,6 +1074,13 @@ class AzureIaaSVMProtectionPolicy(TypedDict, total=False):
      tier."""
     instantRpRetentionRangeInDays: int
     """Instant RP retention policy range in days."""
+    instantAccessSnapshotEnabled: bool
+    """Specifies whether Instant Access snapshot is enabled for the policy. If false or omitted,
+     instantAccessDurationMinutes is ignored and no Instant Access snapshot is retained."""
+    instantAccessDurationMinutes: int
+    """Duration in minutes for which the Instant Access snapshot is retained, when
+     instantAccessSnapshotEnabled is true. Must be between 60 and 300 minutes; defaults to 300
+     minutes if not specified."""
     timeZone: str
     """TimeZone optional input as string. For example: TimeZone = \"Pacific Standard Time\"."""
     policyType: Union[str, "IAASVMPolicyType"]
@@ -1636,6 +1667,9 @@ class AzureVmWorkloadProtectionPolicy(TypedDict, total=False):
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
      "SAPAseDatabase", and "SAPHanaDBInstance".
     :vartype workLoadType: Union[str, "WorkloadType"]
+    :ivar vmWorkloadPolicyType: Type of the protection policy. Known values are: "Invalid",
+     "SnapshotV1", "SnapshotV2", and "Streaming".
+    :vartype vmWorkloadPolicyType: Union[str, "VMWorkloadPolicyType"]
     :ivar settings: Common settings for the backup management.
     :vartype settings: "Settings"
     :ivar subProtectionPolicy: List of sub-protection policies which includes schedule and
@@ -1657,6 +1691,9 @@ class AzureVmWorkloadProtectionPolicy(TypedDict, total=False):
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
      \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+    vmWorkloadPolicyType: Union[str, "VMWorkloadPolicyType"]
+    """Type of the protection policy. Known values are: \"Invalid\", \"SnapshotV1\", \"SnapshotV2\",
+     and \"Streaming\"."""
     settings: "Settings"
     """Common settings for the backup management."""
     subProtectionPolicy: list["SubProtectionPolicy"]
@@ -2288,6 +2325,12 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(TypedDict, total=False):
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLDatabase".
     :vartype protectedItemType: Literal["AzureVmWorkloadSQLDatabase"]
+    :ivar parentProtectedItem: Name of the parent protected item (e.g., SQL Instance name) when
+     this database is protected as part of a parent.
+    :vartype parentProtectedItem: str
+    :ivar protectionLevel: Protection type in case protected as part of a parent. Known values are:
+     "Database" and "DatabaseUnderInstance".
+    :vartype protectionLevel: Union[str, "ProtectionLevel"]
     """
 
     backupManagementType: Union[str, "BackupManagementType"]
@@ -2370,6 +2413,198 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(TypedDict, total=False):
     protectedItemType: Required[Literal["AzureVmWorkloadSQLDatabase"]]
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLDatabase\"."""
+    parentProtectedItem: str
+    """Name of the parent protected item (e.g., SQL Instance name) when this database is protected as
+     part of a parent."""
+    protectionLevel: Union[str, "ProtectionLevel"]
+    """Protection type in case protected as part of a parent. Known values are: \"Database\" and
+     \"DatabaseUnderInstance\"."""
+
+
+class AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
+    """Azure VM workload-specific protected item representing SQL Instance.
+
+    :ivar backupManagementType: Type of backup management for the backed up item. Known values are:
+     "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
+     "AzureWorkload", and "DefaultBackup".
+    :vartype backupManagementType: Union[str, "BackupManagementType"]
+    :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
+     "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "SAPAseDatabase", and "SAPHanaDBInstance".
+    :vartype workloadType: Union[str, "DataSourceType"]
+    :ivar containerName: Unique name of container.
+    :vartype containerName: str
+    :ivar sourceResourceId: ARM ID of the resource to be backed up.
+    :vartype sourceResourceId: str
+    :ivar policyId: ID of the backup policy with which this item is backed up.
+    :vartype policyId: str
+    :ivar lastRecoveryPoint: Timestamp when the last (latest) backup copy was created for this
+     backup item.
+    :vartype lastRecoveryPoint: str
+    :ivar backupSetName: Name of the backup set the backup item belongs to.
+    :vartype backupSetName: str
+    :ivar createMode: Create mode to indicate recovery of existing soft deleted data source or
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
+    :vartype createMode: Union[str, "CreateMode"]
+    :ivar deferredDeleteTimeInUTC: Time for deferred deletion in UTC.
+    :vartype deferredDeleteTimeInUTC: str
+    :ivar isScheduledForDeferredDelete: Flag to identify whether the DS is scheduled for deferred
+     delete.
+    :vartype isScheduledForDeferredDelete: bool
+    :ivar deferredDeleteTimeRemaining: Time remaining before the DS marked for deferred delete is
+     permanently deleted.
+    :vartype deferredDeleteTimeRemaining: str
+    :ivar isDeferredDeleteScheduleUpcoming: Flag to identify whether the deferred deleted DS is to
+     be purged soon.
+    :vartype isDeferredDeleteScheduleUpcoming: bool
+    :ivar isRehydrate: Flag to identify that deferred deleted DS is to be moved into Pause state.
+    :vartype isRehydrate: bool
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar isArchiveEnabled: Flag to identify whether datasource is protected in archive.
+    :vartype isArchiveEnabled: bool
+    :ivar policyName: Name of the policy used for protection.
+    :vartype policyName: str
+    :ivar softDeleteRetentionPeriodInDays: Soft delete retention period in days.
+    :vartype softDeleteRetentionPeriodInDays: int
+    :ivar sourceLocation: Source location of the protected item datasource.
+    :vartype sourceLocation: str
+    :ivar vaultId: ID of the vault which protects this item.
+    :vartype vaultId: str
+    :ivar sourceSideScanInfo: Source side threat information.
+    :vartype sourceSideScanInfo: "SourceSideScanInfo"
+    :ivar friendlyName: Friendly name of the DB represented by this backup item.
+    :vartype friendlyName: str
+    :ivar serverName: Host/Cluster Name for instance or AG.
+    :vartype serverName: str
+    :ivar parentName: Parent name of the DB such as Instance or Availability Group.
+    :vartype parentName: str
+    :ivar parentType: Parent type of protected item, example: for a DB, standalone server or
+     distributed.
+    :vartype parentType: str
+    :ivar protectionStatus: Backup status of this backup item.
+    :vartype protectionStatus: str
+    :ivar protectionState: Backup state of this backup item. Known values are: "Invalid",
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused", and
+     "BackupsSuspended".
+    :vartype protectionState: Union[str, "ProtectionState"]
+    :ivar lastBackupStatus: Last backup operation status. Possible values: Healthy, Unhealthy.
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
+    :vartype lastBackupStatus: Union[str, "LastBackupStatus"]
+    :ivar lastBackupTime: Timestamp of the last backup operation on this backup item.
+    :vartype lastBackupTime: str
+    :ivar lastBackupErrorDetail: Error details in last backup.
+    :vartype lastBackupErrorDetail: "ErrorDetail"
+    :ivar protectedItemDataSourceId: Data ID of the protected item.
+    :vartype protectedItemDataSourceId: str
+    :ivar protectedItemHealthStatus: Health status of the backup item, evaluated based on last
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
+     "IRPending".
+    :vartype protectedItemHealthStatus: Union[str, "ProtectedItemHealthStatus"]
+    :ivar extendedInfo: Additional information for this backup item.
+    :vartype extendedInfo: "AzureVmWorkloadProtectedItemExtendedInfo"
+    :ivar kpisHealths: Health details of different KPIs.
+    :vartype kpisHealths: dict[str, "KPIResourceHealthDetails"]
+    :ivar nodesList: List of the nodes in case of distributed container.
+    :vartype nodesList: list["DistributedNodesInfo"]
+    :ivar protectedItemType: This property will be used as the discriminator for deciding the
+     specific types in the polymorphic chain of types. Required. Default value is
+     "AzureVmWorkloadSQLInstance".
+    :vartype protectedItemType: Literal["AzureVmWorkloadSQLInstance"]
+    :ivar childDBNames: Name of Child Dbs protected under this parent.
+    :vartype childDBNames: list[str]
+    :ivar instanceProtectionReadiness: The state of instance protection. Known values are:
+     "Unknown", "Ready", "ScheduleDisabled", "PartialProtection", and "ProtectionError".
+    :vartype instanceProtectionReadiness: Union[str, "InstanceProtectionReadiness"]
+    """
+
+    backupManagementType: Union[str, "BackupManagementType"]
+    """Type of backup management for the backed up item. Known values are: \"Invalid\",
+     \"AzureIaasVM\", \"MAB\", \"DPM\", \"AzureBackupServer\", \"AzureSql\", \"AzureStorage\",
+     \"AzureWorkload\", and \"DefaultBackup\"."""
+    workloadType: Union[str, "DataSourceType"]
+    """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
+     \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
+     \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
+     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+    containerName: str
+    """Unique name of container."""
+    sourceResourceId: str
+    """ARM ID of the resource to be backed up."""
+    policyId: str
+    """ID of the backup policy with which this item is backed up."""
+    lastRecoveryPoint: str
+    """Timestamp when the last (latest) backup copy was created for this backup item."""
+    backupSetName: str
+    """Name of the backup set the backup item belongs to."""
+    createMode: Union[str, "CreateMode"]
+    """Create mode to indicate recovery of existing soft deleted data source or creation of new data
+     source. Known values are: \"Invalid\", \"Default\", and \"Recover\"."""
+    deferredDeleteTimeInUTC: str
+    """Time for deferred deletion in UTC."""
+    isScheduledForDeferredDelete: bool
+    """Flag to identify whether the DS is scheduled for deferred delete."""
+    deferredDeleteTimeRemaining: str
+    """Time remaining before the DS marked for deferred delete is permanently deleted."""
+    isDeferredDeleteScheduleUpcoming: bool
+    """Flag to identify whether the deferred deleted DS is to be purged soon."""
+    isRehydrate: bool
+    """Flag to identify that deferred deleted DS is to be moved into Pause state."""
+    resourceGuardOperationRequests: list[str]
+    """ResourceGuardOperationRequests on which LAC check will be performed."""
+    isArchiveEnabled: bool
+    """Flag to identify whether datasource is protected in archive."""
+    policyName: str
+    """Name of the policy used for protection."""
+    softDeleteRetentionPeriodInDays: int
+    """Soft delete retention period in days."""
+    sourceLocation: str
+    """Source location of the protected item datasource."""
+    vaultId: str
+    """ID of the vault which protects this item."""
+    sourceSideScanInfo: "SourceSideScanInfo"
+    """Source side threat information."""
+    friendlyName: str
+    """Friendly name of the DB represented by this backup item."""
+    serverName: str
+    """Host/Cluster Name for instance or AG."""
+    parentName: str
+    """Parent name of the DB such as Instance or Availability Group."""
+    parentType: str
+    """Parent type of protected item, example: for a DB, standalone server or distributed."""
+    protectionStatus: str
+    """Backup status of this backup item."""
+    protectionState: Union[str, "ProtectionState"]
+    """Backup state of this backup item. Known values are: \"Invalid\", \"IRPending\", \"Protected\",
+     \"ProtectionError\", \"ProtectionStopped\", \"ProtectionPaused\", and \"BackupsSuspended\"."""
+    lastBackupStatus: Union[str, "LastBackupStatus"]
+    """Last backup operation status. Possible values: Healthy, Unhealthy. Known values are:
+     \"Invalid\", \"Healthy\", \"Unhealthy\", and \"IRPending\"."""
+    lastBackupTime: str
+    """Timestamp of the last backup operation on this backup item."""
+    lastBackupErrorDetail: "ErrorDetail"
+    """Error details in last backup."""
+    protectedItemDataSourceId: str
+    """Data ID of the protected item."""
+    protectedItemHealthStatus: Union[str, "ProtectedItemHealthStatus"]
+    """Health status of the backup item, evaluated based on last heartbeat received. Known values are:
+     \"Invalid\", \"Healthy\", \"Unhealthy\", \"NotReachable\", and \"IRPending\"."""
+    extendedInfo: "AzureVmWorkloadProtectedItemExtendedInfo"
+    """Additional information for this backup item."""
+    kpisHealths: dict[str, "KPIResourceHealthDetails"]
+    """Health details of different KPIs."""
+    nodesList: list["DistributedNodesInfo"]
+    """List of the nodes in case of distributed container."""
+    protectedItemType: Required[Literal["AzureVmWorkloadSQLInstance"]]
+    """This property will be used as the discriminator for deciding the specific types in the
+     polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLInstance\"."""
+    childDBNames: list[str]
+    """Name of Child Dbs protected under this parent."""
+    instanceProtectionReadiness: Union[str, "InstanceProtectionReadiness"]
+    """The state of instance protection. Known values are: \"Unknown\", \"Ready\",
+     \"ScheduleDisabled\", \"PartialProtection\", and \"ProtectionError\"."""
 
 
 class AzureWorkloadBackupRequest(TypedDict, total=False):
@@ -3571,10 +3806,10 @@ class FetchTieringCostInfoForRehydrationRequest(TypedDict, total=False):  # pyli
     """Request parameters for fetching cost info of rehydration.
 
     :ivar sourceTierType: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype sourceTierType: Union[str, "RecoveryPointTierType"]
     :ivar targetTierType: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype targetTierType: Union[str, "RecoveryPointTierType"]
     :ivar containerName: Name of the protected item container. Required.
     :vartype containerName: str
@@ -3594,10 +3829,10 @@ class FetchTieringCostInfoForRehydrationRequest(TypedDict, total=False):  # pyli
 
     sourceTierType: Required[Union[str, "RecoveryPointTierType"]]
     """Source tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     targetTierType: Required[Union[str, "RecoveryPointTierType"]]
     """target tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     containerName: Required[str]
     """Name of the protected item container. Required."""
     protectedItemName: Required[str]
@@ -3616,10 +3851,10 @@ class FetchTieringCostSavingsInfoForPolicyRequest(TypedDict, total=False):  # py
     """Request parameters for tiering cost info for policy.
 
     :ivar sourceTierType: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype sourceTierType: Union[str, "RecoveryPointTierType"]
     :ivar targetTierType: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype targetTierType: Union[str, "RecoveryPointTierType"]
     :ivar policyName: Name of the backup policy for which the cost savings information is
      requested. Required.
@@ -3632,10 +3867,10 @@ class FetchTieringCostSavingsInfoForPolicyRequest(TypedDict, total=False):  # py
 
     sourceTierType: Required[Union[str, "RecoveryPointTierType"]]
     """Source tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     targetTierType: Required[Union[str, "RecoveryPointTierType"]]
     """target tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     policyName: Required[str]
     """Name of the backup policy for which the cost savings information is requested. Required."""
     objectType: Required[Literal["FetchTieringCostSavingsInfoForPolicyRequest"]]
@@ -3648,10 +3883,10 @@ class FetchTieringCostSavingsInfoForProtectedItemRequest(TypedDict, total=False)
     """Request parameters for tiering cost info for protected item.
 
     :ivar sourceTierType: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype sourceTierType: Union[str, "RecoveryPointTierType"]
     :ivar targetTierType: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype targetTierType: Union[str, "RecoveryPointTierType"]
     :ivar containerName: Name of the protected item container. Required.
     :vartype containerName: str
@@ -3665,10 +3900,10 @@ class FetchTieringCostSavingsInfoForProtectedItemRequest(TypedDict, total=False)
 
     sourceTierType: Required[Union[str, "RecoveryPointTierType"]]
     """Source tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     targetTierType: Required[Union[str, "RecoveryPointTierType"]]
     """target tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     containerName: Required[str]
     """Name of the protected item container. Required."""
     protectedItemName: Required[str]
@@ -3683,10 +3918,10 @@ class FetchTieringCostSavingsInfoForVaultRequest(TypedDict, total=False):  # pyl
     """Request parameters for tiering cost info for vault.
 
     :ivar sourceTierType: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype sourceTierType: Union[str, "RecoveryPointTierType"]
     :ivar targetTierType: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype targetTierType: Union[str, "RecoveryPointTierType"]
     :ivar objectType: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required. Default value is
@@ -3696,10 +3931,10 @@ class FetchTieringCostSavingsInfoForVaultRequest(TypedDict, total=False):  # pyl
 
     sourceTierType: Required[Union[str, "RecoveryPointTierType"]]
     """Source tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     targetTierType: Required[Union[str, "RecoveryPointTierType"]]
     """target tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     objectType: Required[Literal["FetchTieringCostSavingsInfoForVaultRequest"]]
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is
@@ -3952,6 +4187,54 @@ class GenericProtectionPolicy(TypedDict, total=False):
     backupManagementType: Required[Literal["GenericProtectionPolicy"]]
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"GenericProtectionPolicy\"."""
+
+
+class GetRPExtendedInfoRequest(TypedDict, total=False):
+    """Request for fetching the additional details of a recovery point.
+
+    :ivar recoveryPointIds: ARM id of the recovery point whose additional details are to be
+     fetched. Exactly one recovery point id can be specified. Required.
+    :vartype recoveryPointIds: list[str]
+    """
+
+    recoveryPointIds: Required[list[str]]
+    """ARM id of the recovery point whose additional details are to be fetched. Exactly one recovery
+     point id can be specified. Required."""
+
+
+class GetRPExtendedInfoRequestResource(Resource):
+    """Request for fetching the additional details of a recovery point, wrapped in a resource
+    envelope.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar eTag: Optional ETag.
+    :vartype eTag: str
+    :ivar properties: GetRPExtendedInfoRequestResource properties. Required.
+    :vartype properties: "GetRPExtendedInfoRequest"
+    """
+
+    location: str
+    """Resource location."""
+    tags: dict[str, str]
+    """Resource tags."""
+    eTag: str
+    """Optional ETag."""
+    properties: Required["GetRPExtendedInfoRequest"]
+    """GetRPExtendedInfoRequestResource properties. Required."""
 
 
 class HourlySchedule(TypedDict, total=False):
@@ -4750,10 +5033,10 @@ class MoveRPAcrossTiersRequest(TypedDict, total=False):
     :ivar objectType: Gets the class type.
     :vartype objectType: str
     :ivar sourceTierType: Source tier from where RP needs to be moved. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype sourceTierType: Union[str, "RecoveryPointTierType"]
     :ivar targetTierType: Target tier where RP needs to be moved. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype targetTierType: Union[str, "RecoveryPointTierType"]
     """
 
@@ -4761,10 +5044,10 @@ class MoveRPAcrossTiersRequest(TypedDict, total=False):
     """Gets the class type."""
     sourceTierType: Union[str, "RecoveryPointTierType"]
     """Source tier from where RP needs to be moved. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     targetTierType: Union[str, "RecoveryPointTierType"]
     """Target tier where RP needs to be moved. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
 
 
 class PerDiskEncryptionSetId(TypedDict, total=False):
@@ -5406,10 +5689,15 @@ class SnapshotRestoreParameters(TypedDict, total=False):
     :vartype skipAttachAndMount: bool
     :ivar logPointInTimeForDBRecovery:
     :vartype logPointInTimeForDBRecovery: str
+    :ivar disksToDetachOnClash: List of disk ARM IDs the customer should detach in case of
+     filesystem clash.
+    :vartype disksToDetachOnClash: list[str]
     """
 
     skipAttachAndMount: bool
     logPointInTimeForDBRecovery: str
+    disksToDetachOnClash: list[str]
+    """List of disk ARM IDs the customer should detach in case of filesystem clash."""
 
 
 class SourceSideScanInfo(TypedDict, total=False):
@@ -5703,6 +5991,27 @@ class UserAssignedManagedIdentityDetails(TypedDict, total=False):
     """User assigned managed identity properties."""
 
 
+class ValidateAzureWorkloadRestoreOperationRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Restore validation request for Azure Workload backups. This subtype provides the distinct
+    objectType discriminator used for Azure Workload (SQL/HANA/SAP ASE/AnyDatabase) restore
+    validation.
+
+    :ivar objectType: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required. Default value is
+     "ValidateAzureWorkloadRestoreOperationRequest".
+    :vartype objectType: Literal["ValidateAzureWorkloadRestoreOperationRequest"]
+    :ivar restoreRequest: Sets restore request to be validated.
+    :vartype restoreRequest: "RestoreRequest"
+    """
+
+    objectType: Required[Literal["ValidateAzureWorkloadRestoreOperationRequest"]]
+    """This property will be used as the discriminator for deciding the specific types in the
+     polymorphic chain of types. Required. Default value is
+     \"ValidateAzureWorkloadRestoreOperationRequest\"."""
+    restoreRequest: "RestoreRequest"
+    """Sets restore request to be validated."""
+
+
 class ValidateIaasVMRestoreOperationRequest(TypedDict, total=False):
     """AzureRestoreValidation request.
 
@@ -5877,6 +6186,7 @@ AzureVmWorkloadProtectedItem = Union[
     AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
     AzureVmWorkloadSAPHanaDatabaseProtectedItem,
     AzureVmWorkloadSQLDatabaseProtectedItem,
+    AzureVmWorkloadSQLInstanceProtectedItem,
 ]
 ProtectedItem = Union[
     AzureFileshareProtectedItem,
@@ -5886,6 +6196,7 @@ ProtectedItem = Union[
     AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
     AzureVmWorkloadSAPHanaDatabaseProtectedItem,
     AzureVmWorkloadSQLDatabaseProtectedItem,
+    AzureVmWorkloadSQLInstanceProtectedItem,
     DPMProtectedItem,
     GenericProtectedItem,
     MabFileFolderProtectedItem,
@@ -5966,4 +6277,6 @@ FetchTieringCostInfoRequest = Union[
 SchedulePolicy = Union[LogSchedulePolicy, LongTermSchedulePolicy, SimpleSchedulePolicy, SimpleSchedulePolicyV2]
 RetentionPolicy = Union[LongTermRetentionPolicy, SimpleRetentionPolicy]
 ValidateRestoreOperationRequest = Union[ValidateIaasVMRestoreOperationRequest]
-ValidateOperationRequest = Union[ValidateIaasVMRestoreOperationRequest, ValidateRestoreOperationRequest]
+ValidateOperationRequest = Union[
+    ValidateAzureWorkloadRestoreOperationRequest, ValidateIaasVMRestoreOperationRequest, ValidateRestoreOperationRequest
+]
