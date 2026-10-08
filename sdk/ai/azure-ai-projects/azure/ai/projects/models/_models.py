@@ -4675,11 +4675,11 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype type: str
     :ivar misalignment:
     :vartype misalignment: ~azure.ai.projects.models.MisalignmentErrorDetailsResource
-    :ivar details:
+    :ivar details: Additional errors that contributed to this failure.
     :vartype details: list[~azure.ai.projects.models.ApiError]
-    :ivar additional_info:
+    :ivar additional_info: Additional structured information about the failure.
     :vartype additional_info: dict[str, any]
-    :ivar debug_info:
+    :ivar debug_info: Diagnostic information supplied by the service for troubleshooting.
     :vartype debug_info: dict[str, any]
     """
 
@@ -4693,12 +4693,15 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         visibility=["read", "create", "update", "delete", "query"]
     )
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional errors that contributed to this failure."""
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Additional structured information about the failure."""
     debug_info: Optional[dict[str, Any]] = rest_field(
         name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Diagnostic information supplied by the service for troubleshooting."""
 
     @overload
     def __init__(
@@ -7679,10 +7682,10 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     """The request to create a telephony binding.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CreateTeamsPhoneExtensionTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
+    CreateTeamsPhoneExtensibilityTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
 
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -7692,7 +7695,8 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
 
     __mapping__: dict[str, _Model] = {}
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7718,18 +7722,18 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class CreateTeamsPhoneExtensionTelephonyBindingRequest(
-    CreateTelephonyBindingRequest, discriminator="teams_phone_extension"
+class CreateTeamsPhoneExtensibilityTelephonyBindingRequest(
+    CreateTelephonyBindingRequest, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The request to create a Microsoft Teams Phone Extension binding.
+    """The request to create a Microsoft Teams Phone extensibility binding.
 
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
     :ivar label: An optional display label for the binding.
     :vartype label: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -7737,8 +7741,9 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7763,7 +7768,7 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -7772,13 +7777,13 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
-     inbound telephony binding is required. Required.
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
+     No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
-     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
-     connection, provide the Teams Resource Account object ID. The identity type is inferred from
-     the connection category; originating does not change inbound routing. Required.
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     extensibility connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
     :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
@@ -7800,11 +7805,11 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
-     binding is required. Required."""
+     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
-     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     E.164 phone number. For an Azure Communication Services / Teams Phone extensibility connection,
      provide the Teams Resource Account object ID. The identity type is inferred from the connection
      category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -22601,16 +22606,16 @@ class SessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-
     """Session defaults applied to sessions created for a hosted agent version.
 
     :ivar idle_timeout_seconds: The idle duration, in seconds, before a session's sandbox is
-     suspended. Optional — when unset, the server default of 900 seconds is used. Must be between
-     120 and 3600 seconds (inclusive).
+     suspended. When omitted, the server defaults to 900 seconds. Must be between 120 and 14400
+     seconds (4 hours).
     :vartype idle_timeout_seconds: ~datetime.timedelta
     """
 
     idle_timeout_seconds: Optional[datetime.timedelta] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
     )
-    """The idle duration, in seconds, before a session's sandbox is suspended. Optional — when unset,
-     the server default of 900 seconds is used. Must be between 120 and 3600 seconds (inclusive)."""
+    """The idle duration, in seconds, before a session's sandbox is suspended. When omitted, the
+     server defaults to 900 seconds. Must be between 120 and 14400 seconds (4 hours)."""
 
     @overload
     def __init__(
@@ -23799,12 +23804,12 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     """A telephony binding owned by a voice agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensionTelephonyBinding, TwilioTelephonyBinding
+    TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -23821,7 +23826,8 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23856,10 +23862,10 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class TeamsPhoneExtensionTelephonyBinding(
-    TelephonyBinding, discriminator="teams_phone_extension"
+class TeamsPhoneExtensibilityTelephonyBinding(
+    TelephonyBinding, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A Microsoft Teams Phone Extension binding owned by a voice agent.
+    """A Microsoft Teams Phone extensibility binding owned by a voice agent.
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
@@ -23872,9 +23878,9 @@ class TeamsPhoneExtensionTelephonyBinding(
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
      provider. Required.
     :vartype incoming_call_url: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -23882,8 +23888,9 @@ class TeamsPhoneExtensionTelephonyBinding(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23911,19 +23918,19 @@ class TeamsPhoneExtensionTelephonyBinding(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A telephony binding returned in a list, including its entity tag.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensionTelephonyBindingListItem, TwilioTelephonyBindingListItem
+    TeamsPhoneExtensibilityTelephonyBindingListItem, TwilioTelephonyBindingListItem
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar connection_name: The Foundry connection name for the telephony provider. Required.
     :vartype connection_name: str
@@ -23943,7 +23950,8 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23981,10 +23989,10 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class TeamsPhoneExtensionTelephonyBindingListItem(
-    TelephonyBindingListItem, discriminator="teams_phone_extension"
+class TeamsPhoneExtensibilityTelephonyBindingListItem(
+    TelephonyBindingListItem, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A Microsoft Teams Phone Extension binding returned in a list, including its entity tag.
+    """A Microsoft Teams Phone extensibility binding returned in a list, including its entity tag.
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
@@ -24000,9 +24008,9 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
     :vartype etag: str
-    :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
-     Extension.
-    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSION
+    :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
+     Phone extensibility.
+    :vartype provider: str or ~azure.ai.projects.models.TEAMS_PHONE_EXTENSIBILITY
     :ivar phone_number: The optional display phone number for the Teams resource account.
     :vartype phone_number: str
     :ivar resource_account_object_id: The Microsoft Teams resource-account object identifier as a
@@ -24010,8 +24018,9 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
     :vartype resource_account_object_id: str
     """
 
-    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone Extension."""
+    provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams Phone
+     extensibility."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display phone number for the Teams resource account."""
     resource_account_object_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24039,7 +24048,7 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
+        self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
 class TeamsTelephonyTransferDestination(
@@ -24115,13 +24124,13 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
-     inbound telephony binding is required. Required.
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
+     No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
-     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
-     connection, provide the Teams Resource Account object ID. The identity type is inferred from
-     the connection category; originating does not change inbound routing. Required.
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     extensibility connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
     :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
@@ -24178,11 +24187,11 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
-     binding is required. Required."""
+     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
-     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     E.164 phone number. For an Azure Communication Services / Teams Phone extensibility connection,
      provide the Teams Resource Account object ID. The identity type is inferred from the connection
      category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24378,7 +24387,7 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
      "telephony.call.transfer", "telephony.call.hangup", and "telephony.call.disconnect".
     :vartype name: str or ~azure.ai.projects.models.TelephonyCallLifecycleEventName
     :ivar source: The component that supplied the observation. Required. Known values are:
-     "gateway", "teams_phone_extension", "twilio", and "voice_agent".
+     "gateway", "teams_phone_extensibility", "twilio", and "voice_agent".
     :vartype source: str or ~azure.ai.projects.models.TelephonyCallLifecycleEventSource
     :ivar outcome: The outcome of the observed lifecycle operation. Required. Known values are:
      "observed", "started", "succeeded", "failed", "rejected", and "cancelled".
@@ -24429,7 +24438,7 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The component that supplied the observation. Required. Known values are: \"gateway\",
-     \"teams_phone_extension\", \"twilio\", and \"voice_agent\"."""
+     \"teams_phone_extensibility\", \"twilio\", and \"voice_agent\"."""
     outcome: Union[str, "_models.TelephonyCallLifecycleEventOutcome"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24505,14 +24514,14 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
     :ivar caller_number: The caller's phone number, when supplied by the provider.
     :vartype caller_number: str
-    :ivar provider_number: The Teams Phone Extension or Twilio number that received the call.
+    :ivar provider_number: The Teams Phone extensibility or Twilio number that received the call.
     :vartype provider_number: str
     :ivar status: The lifecycle status of the call. Required. Known values are: "in_progress",
      "success", and "failed".
@@ -24571,13 +24580,14 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller's phone number, when supplied by the provider."""
     provider_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Teams Phone Extension or Twilio number that received the call."""
+    """The Teams Phone extensibility or Twilio number that received the call."""
     status: Union[str, "_models.TelephonyCallStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24691,14 +24701,14 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
-     "twilio".
+    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
+     and "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
     :ivar caller_number: The caller's phone number, when supplied by the provider.
     :vartype caller_number: str
-    :ivar provider_number: The Teams Phone Extension or Twilio number that received the call.
+    :ivar provider_number: The Teams Phone extensibility or Twilio number that received the call.
     :vartype provider_number: str
     :ivar status: The lifecycle status of the call. Required. Known values are: "in_progress",
      "success", and "failed".
@@ -24748,13 +24758,14 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
+     \"twilio\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller's phone number, when supplied by the provider."""
     provider_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Teams Phone Extension or Twilio number that received the call."""
+    """The Teams Phone extensibility or Twilio number that received the call."""
     status: Union[str, "_models.TelephonyCallStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -27045,11 +27056,11 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
      clear it.
     :vartype label: str
     :ivar connection_name: The replacement Foundry connection name. This property is valid only for
-     a Teams Phone Extension binding; a Twilio binding's connection is immutable.
+     a Teams Phone extensibility binding; a Twilio binding's connection is immutable.
     :vartype connection_name: str
-    :ivar phone_number: The replacement Teams Phone Extension display phone number. Omit it to
+    :ivar phone_number: The replacement Teams Phone extensibility display phone number. Omit it to
      preserve the current value; use null to clear it. This property is valid only for a Teams Phone
-     Extension binding.
+     extensibility binding.
     :vartype phone_number: str
     """
 
@@ -27061,10 +27072,11 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     """The replacement display label. Omit it to preserve the current value; use null to clear it."""
     connection_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement Foundry connection name. This property is valid only for a Teams Phone
-     Extension binding; a Twilio binding's connection is immutable."""
+     extensibility binding; a Twilio binding's connection is immutable."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Teams Phone Extension display phone number. Omit it to preserve the current
-     value; use null to clear it. This property is valid only for a Teams Phone Extension binding."""
+    """The replacement Teams Phone extensibility display phone number. Omit it to preserve the current
+     value; use null to clear it. This property is valid only for a Teams Phone extensibility
+     binding."""
 
     @overload
     def __init__(

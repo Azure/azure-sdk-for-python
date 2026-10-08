@@ -167,7 +167,7 @@
         "azure.ai.projects.models.CreateAsyncResponse": "Azure.AI.Projects.createAsync.Response.anonymous",
         "azure.ai.projects.models.CreateSkillVersionFromFilesBody": "Azure.AI.Projects.CreateSkillVersionFromFilesBody",
         "azure.ai.projects.models.CreateTelephonyBindingRequest": "Azure.AI.Projects.CreateTelephonyBindingRequest",
-        "azure.ai.projects.models.CreateTeamsPhoneExtensionTelephonyBindingRequest": "Azure.AI.Projects.CreateTeamsPhoneExtensionTelephonyBindingRequest",
+        "azure.ai.projects.models.CreateTeamsPhoneExtensibilityTelephonyBindingRequest": "Azure.AI.Projects.CreateTeamsPhoneExtensibilityTelephonyBindingRequest",
         "azure.ai.projects.models.CreateTelephonyCallJobRequest": "Azure.AI.Projects.CreateTelephonyCallJobRequest",
         "azure.ai.projects.models.CreateTranscriptionResponseJsonUsage": "OpenAI.CreateTranscriptionResponseJsonUsage",
         "azure.ai.projects.models.CreateTwilioTelephonyBindingRequest": "Azure.AI.Projects.CreateTwilioTelephonyBindingRequest",
@@ -502,9 +502,9 @@
         "azure.ai.projects.models.TaxonomyCategory": "Azure.AI.Projects.TaxonomyCategory",
         "azure.ai.projects.models.TaxonomySubCategory": "Azure.AI.Projects.TaxonomySubCategory",
         "azure.ai.projects.models.TelephonyBinding": "Azure.AI.Projects.TelephonyBinding",
-        "azure.ai.projects.models.TeamsPhoneExtensionTelephonyBinding": "Azure.AI.Projects.TeamsPhoneExtensionTelephonyBinding",
+        "azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBinding": "Azure.AI.Projects.TeamsPhoneExtensibilityTelephonyBinding",
         "azure.ai.projects.models.TelephonyBindingListItem": "Azure.AI.Projects.TelephonyBindingListItem",
-        "azure.ai.projects.models.TeamsPhoneExtensionTelephonyBindingListItem": "Azure.AI.Projects.TeamsPhoneExtensionTelephonyBindingListItem",
+        "azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBindingListItem": "Azure.AI.Projects.TeamsPhoneExtensibilityTelephonyBindingListItem",
         "azure.ai.projects.models.TeamsTelephonyTransferDestination": "Azure.AI.Projects.TeamsTelephonyTransferDestination",
         "azure.ai.projects.models.TelemetryConfig": "Azure.AI.Projects.TelemetryConfig",
         "azure.ai.projects.models.TelephonyCallJob": "Azure.AI.Projects.TelephonyCallJob",
@@ -838,6 +838,7 @@
         "azure.ai.projects.models.RealtimeServerEventType": "OpenAI.RealtimeServerEventType",
         "azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType": "OpenAI.CreateTranscriptionResponseJsonUsageType",
         "azure.ai.projects.models.VoiceAgentSubagentAbortReason": "Azure.AI.Projects.VoiceAgentSubagentAbortReason",
+        "azure.ai.projects.models.VoiceAgentTransport": "Azure.AI.Projects.VoiceAgentTransport",
         "azure.ai.projects.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.operations.AgentsOperations.delete": "Azure.AI.Projects.Agents.deleteAgent",
@@ -995,5 +996,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "668f4b97fbcf"
+    "CrossLanguageVersion": "bf336b437360"
 }

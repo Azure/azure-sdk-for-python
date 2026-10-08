@@ -18613,8 +18613,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose bindings are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extension" and
-         "twilio". Default value is None.
+        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility"
+         and "twilio". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
         :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
          "suspended". Default value is None.
@@ -19075,7 +19075,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose calls are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extension" and
+        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility" and
          "twilio". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
         :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
