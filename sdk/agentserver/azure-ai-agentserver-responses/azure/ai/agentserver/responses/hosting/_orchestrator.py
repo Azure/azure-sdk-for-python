@@ -2333,8 +2333,9 @@ class _ResponseOrchestrator:
         *,
         message: str = "An internal server error occurred.",
         code: str | None = None,
+        publish_to_stream: bool = True,
     ) -> generated_models.ResponseStreamEvent:
-        """Build a standalone ``error`` event and emit it to the wire stream.
+        """Build a standalone ``error`` event and optionally publish it to the wire stream.
 
         Shared by the pre-creation error paths (B8 / B30 / first-event-contract):
         each constructs the same ``error`` event shape and, for store+stream
@@ -2347,6 +2348,8 @@ class _ResponseOrchestrator:
         :paramtype message: str
         :keyword code: The optional error code.
         :paramtype code: str | None
+        :keyword publish_to_stream: Whether to publish to the response's registry stream.
+        :paramtype publish_to_stream: bool
         :returns: The constructed ``error`` event.
         :rtype: generated_models.ResponseStreamEvent
         """
@@ -2359,7 +2362,7 @@ class _ResponseOrchestrator:
                 "sequence_number": 0,
             }
         )
-        if ctx.store and ctx.stream:
+        if publish_to_stream and ctx.store and ctx.stream:
             _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_err_stream, event)
         return event
@@ -3297,8 +3300,12 @@ class _ResponseOrchestrator:
             assert request_task is not None
             start_record.execution_task = request_task
             if not await self._runtime_state.add_pending(start_record):
-                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
-                await self._safe_close(wire_stream)
+                with anyio.CancelScope(shield=True):
+                    if stream_created and await self._runtime_state.get(ctx.response_id, ctx.user_id) is None:
+                        await streams.delete(lifecycle_id)
+                yield encode_sse_any_event(
+                    await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+                )
                 return
 
             try:

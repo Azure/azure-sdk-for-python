@@ -27,6 +27,7 @@ from azure.ai.agentserver.responses.hosting import _routing as routing
 from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput
 from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 from azure.ai.agentserver.responses.models._generated import CreateResponse, ResponseObject
+from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 from tests.contract.test_user_isolation_enforcement import _PartitionedProvider
 
 
@@ -165,6 +166,125 @@ async def test_rejected_admission_preserves_preexisting_stream(
     assert await registry.get(lifecycle_id) is existing
     await existing.close()
     assert [event async for event in existing.subscribe()] == [{"sequence_number": 0, "type": "response.created"}]
+
+
+@pytest.mark.parametrize("file_backed", [False, True])
+@pytest.mark.parametrize("send_error", [False, True])
+async def test_shutdown_rejection_deletes_new_replay_before_yield_and_reservation_release(
+    registry: _StreamsRegistry,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    file_backed: bool,
+    send_error: bool,
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    lifecycle_id = derive_lifecycle_id(RESPONSE_ID, "owner")
+    other_id = derive_lifecycle_id(RESPONSE_ID, "other")
+    storage_dir = tmp_path / "replay"
+    if file_backed:
+        registry.use_file_backed_replay(storage_dir=storage_dir, cursor_fn=lambda event: event["sequence_number"])
+    other = await registry.get_or_create(other_id)
+    started = AsyncMock()
+    monkeypatch.setattr(resilience.ResilientResponseOrchestrator, "start_resilient", started)
+    response = await host._endpoint.handle_create(_request())
+    await state.begin_draining()
+    deleting = asyncio.Event()
+    release_delete = asyncio.Event()
+    original_delete = registry.delete
+    frames: list[bytes] = []
+
+    async def delete(stream_id: str) -> None:
+        assert stream_id == lifecycle_id
+        deleting.set()
+        await release_delete.wait()
+        await original_delete(stream_id)
+
+    async def send(message: dict[str, Any]) -> None:
+        if message["type"] == "http.response.body" and message.get("body"):
+            with pytest.raises(EventStreamNotFoundError):
+                await registry.get(lifecycle_id)
+            frames.append(message["body"])
+            if send_error:
+                raise OSError("client disconnected")
+
+    monkeypatch.setattr(registry, "delete", delete)
+    sending = asyncio.create_task(response.stream_response(send))
+    try:
+        await asyncio.wait_for(deleting.wait(), 2)
+        assert not frames
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        competing = await host._endpoint.handle_create(_request())
+        assert competing.status_code == 409
+        assert json.loads(competing.body)["error"]["code"] == "response_id_conflict"
+        assert await state.list_records() == []
+    finally:
+        release_delete.set()
+    if send_error:
+        with pytest.raises(OSError, match="client disconnected"):
+            await asyncio.wait_for(sending, 2)
+    else:
+        await asyncio.wait_for(sending, 2)
+    started.assert_not_awaited()
+    error = json.loads(frames[0].decode().split("data: ", 1)[1].strip())
+    assert error["type"] == "error"
+    assert error["code"] == "server_error"
+    with pytest.raises(EventStreamNotFoundError):
+        await registry.get(lifecycle_id)
+    assert await registry.get(other_id) is other
+    assert await state.reserve(RESPONSE_ID, "owner")
+    await state.release_reservation(RESPONSE_ID, "owner")
+    with pytest.raises(KeyError):
+        await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+    if file_backed:
+        # Only the other user's log remains; failed admission left no cleanup owner.
+        assert len(list(storage_dir.glob("*.jsonl"))) == 1
+        await original_delete(other_id)
+
+
+@pytest.mark.parametrize("existing_stream", [False, True])
+async def test_shutdown_rejection_preserves_existing_stream_and_started_record(
+    registry: _StreamsRegistry, monkeypatch: pytest.MonkeyPatch, existing_stream: bool
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    response = await host._endpoint.handle_create(_request())
+    lifecycle_id = derive_lifecycle_id(RESPONSE_ID, "owner")
+    active = await registry.get_or_create(lifecycle_id) if existing_stream else None
+    if active is not None:
+        await active.emit({"type": "response.created", "sequence_number": 0})
+    record = ResponseExecution(
+        response_id=RESPONSE_ID,
+        user_id_key="owner",
+        mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+        status="in_progress",
+        subject=active,
+    )
+    running = asyncio.create_task(asyncio.Event().wait())
+    record.execution_task = running
+    await state.add(record)
+    await state.begin_draining()
+    started = AsyncMock()
+    monkeypatch.setattr(resilience.ResilientResponseOrchestrator, "start_resilient", started)
+    delete = AsyncMock(wraps=registry.delete)
+    monkeypatch.setattr(registry, "delete", delete)
+    try:
+        await asyncio.wait_for(response.stream_response(_send), 2)
+        started.assert_not_awaited()
+        delete.assert_not_awaited()
+        assert await state.get(RESPONSE_ID, "owner") is record
+        assert not running.done()
+        retained = await registry.get(lifecycle_id)
+        if active is not None:
+            assert retained is active
+        else:
+            active = retained
+            await active.emit({"type": "response.created", "sequence_number": 0})
+        await active.emit({"type": "response.completed", "sequence_number": 1}, close=True)
+        assert [event["type"] async for event in active.subscribe()] == ["response.created", "response.completed"]
+    finally:
+        running.cancel()
+        await asyncio.gather(running, return_exceptions=True)
 
 
 @pytest.mark.parametrize("background", [False, True])
