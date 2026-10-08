@@ -746,6 +746,10 @@ class AgentServerHost(Starlette):
                     "The before-snapshot hook failed.",
                     status_code=500,
                 )
+            self._lifecycle.captured_environment_values = {
+                key: os.environ.get(key)
+                for key in self._lifecycle.applied_environment_variables
+            }
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 

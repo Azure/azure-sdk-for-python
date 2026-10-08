@@ -616,6 +616,58 @@ async def test_after_restore_resets_omitted_overrides_to_captured_values(
 
 
 @pytest.mark.asyncio
+async def test_before_snapshot_refreshes_environment_baseline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("UPDATED_VALUE", "captured")
+    monkeypatch.setenv("REMOVED_VALUE", "captured")
+    agent = AgentServerHost()
+    observed: list[tuple[str, str | None]] = []
+
+    @agent.before_snapshot_handler
+    async def before_snapshot() -> None:
+        os.environ.pop("REMOVED_VALUE")
+
+    @agent.after_restore_handler
+    async def after_restore(context: AgentSessionContext) -> None:
+        del context
+        observed.append(
+            (
+                os.environ["UPDATED_VALUE"],
+                os.environ.get("REMOVED_VALUE"),
+            )
+        )
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as lifecycle_client:
+        first = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={
+                    "UPDATED_VALUE": "snapshot-value",
+                    "REMOVED_VALUE": "restored-value",
+                },
+            ),
+        )
+        before = await lifecycle_client.post("/_agent/before-snapshot", json={})
+        second = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(restore_id="restore-2"),
+        )
+
+    assert first.status_code == 200
+    assert before.status_code == 200
+    assert second.status_code == 200
+    assert observed == [
+        ("snapshot-value", "restored-value"),
+        ("snapshot-value", None),
+    ]
+
+
+@pytest.mark.asyncio
 async def test_after_restore_hydrates_ambient_request_context(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
