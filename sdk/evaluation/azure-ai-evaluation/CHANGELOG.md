@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
+- Fixed `TaskAdherenceEvaluator` silently dropping the `system_message` and `tool_calls` keyword arguments. Both are now accepted as optional inputs and passed to the evaluation prompt, so callers using plain-string `query`/`response` no longer get evaluated without their system instructions or tool calls.
 
 ## 1.18.7 (2026-09-25)
 
