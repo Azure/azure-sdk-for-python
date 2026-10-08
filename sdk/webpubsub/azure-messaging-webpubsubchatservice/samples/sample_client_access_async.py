@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# <ChatPython_async_client>
 import asyncio
 import os
 
@@ -29,3 +30,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+# </ChatPython_async_client>
