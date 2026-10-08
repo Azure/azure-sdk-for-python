@@ -1,0 +1,121 @@
+---
+name: azure-ai-projects-run-issue-regeneration
+license: MIT
+metadata:
+  version: "1.0.0"
+  distribution: local
+description: "Runs the issue-assigned azure-ai-projects TypeSpec regeneration workflow from required issue-description inputs through a reviewable draft pull request, without the interactive prompts the per-step skills normally ask a human developer. WHEN: \"regen from <commit> against <branch>\", \"regenerate azure-ai-projects\" issue assignment, issue titled \"[azure-ai-projects] regen from ... against ...\". DO NOT USE FOR: other Azure SDK packages, interactive/local regeneration where a human can answer the emit skill's questions directly (use azure-ai-projects-emit-from-typespec instead). INVOKES: azure-ai-projects-emit-from-typespec, azure-ai-projects-author-samples, azure-ai-projects-author-tests, azure-ai-projects-update-changelog, git, gh CLI."
+compatibility:
+  requires: "local azure-sdk-for-python clone, git, gh CLI, an already-assigned working branch and draft pull request (as created by GitHub issue assignment to Copilot)"
+---
+
+# Run an issue-assigned TypeSpec regeneration for azure-ai-projects
+
+Run the `azure-ai-projects` TypeSpec regeneration from its pinned upstream commit through the
+already-open draft pull request. Work only in `sdk/ai/azure-ai-projects/` except for repository
+setup commands.
+
+This skill is a thin orchestrator: it does not duplicate the step-by-step instructions already
+defined in `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`,
+`azure-ai-projects-author-tests`, and `azure-ai-projects-update-changelog`. It validates the
+issue inputs, then runs those four skills in order with the specific overrides below so they
+behave correctly for an unattended, issue-assigned session instead of an interactive one.
+
+## Validate the assignment
+
+Before installing dependencies or editing files:
+
+1. Read exactly one unambiguous value labeled `TypeSpec commit` and exactly one unambiguous
+   value labeled `Base branch` from the issue description. If either value is missing,
+   duplicated, or ambiguous, stop without making changes and report the required labels.
+2. Require the TypeSpec commit to match `^[0-9a-f]{40}$` exactly.
+3. Require the entire base branch to case-sensitively match the conservative ASCII pattern
+   `^[A-Za-z0-9][A-Za-z0-9._/-]*\z` and pass `git check-ref-format --branch`. Treat it only as a
+   quoted command argument.
+4. Require the current branch to be a working branch other than the base branch. Fetch
+   `origin/<base-branch>` successfully before proceeding. Do not require `HEAD` to match the
+   base branch tip; issue-assigned sessions run on a separate working branch that may already
+   contain commits. Instead, require the working branch to be either (a) ahead of
+   `origin/<base-branch>` or (b) able to merge or rebase cleanly onto `origin/<base-branch>`. If
+   neither condition holds, stop without making changes and report the divergence details,
+   including the merge base and ahead/behind state relative to `origin/<base-branch>`.
+
+Do not derive either input from the issue title. Do not infer, shorten, or silently correct
+either input.
+
+Confirm an open pull request already targets the validated base branch from the current working
+branch (`gh pr view --json number,baseRefName,isDraft`). If none exists, or its base does not
+match the validated base branch, stop and report the mismatch instead of creating a new branch
+or pull request.
+
+## Managed-session overrides for the called skills
+
+The four skills below were written for an interactive human developer. Apply these overrides
+so they run correctly for this unattended, issue-assigned session. Do not edit the skill files
+themselves to apply these overrides.
+
+- **`azure-ai-projects-emit-from-typespec` Step 2a (topic branch):** do not create a new topic
+  branch. Proceed as if the user selected option 3, "Emit to current branch".
+- **`azure-ai-projects-emit-from-typespec` Step 2b (TypeSpec source):** proceed as if the user
+  selected option 3, "TypeSpec commit hash", and supplied the validated 40-character commit from
+  this issue.
+- **`azure-ai-projects-emit-from-typespec` Step 3 (record `BASE_BRANCH`):** use the validated
+  base branch from this issue, not the result of `git branch --show-current` (the current branch
+  is the working branch, which is not the pull request's base).
+- **`azure-ai-projects-emit-from-typespec` Step 15 (create a Pull Request):** do not create a
+  new pull request. The issue assignment already owns the working branch and draft pull request
+  confirmed above. Push the commits from Steps 7, 9, and 14 to the current branch and leave
+  finalizing the pull request title and description to the last step of this skill, below.
+- All other steps of `azure-ai-projects-emit-from-typespec` (1, 4 through 14 excluding the
+  branch-creation command in Step 4) run exactly as written, including its own STOP conditions.
+  Still perform Step 4's `git fetch`, but skip its `git switch -c <topic-branch> ...` command
+  since there is no new topic branch to create.
+
+`azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and
+`azure-ai-projects-update-changelog` do not create branches or pull requests, so they need no
+branch/PR overrides. `azure-ai-projects-update-changelog` also does not commit its own changes;
+commit and push `CHANGELOG.md` yourself after it finishes (see below).
+
+## Run the skills in order
+
+Read each `SKILL.md` in full immediately before executing it, and execute them in this exact
+order:
+
+1. `.github/skills/azure-ai-projects-emit-from-typespec/SKILL.md`, with the overrides above.
+2. `.github/skills/azure-ai-projects-author-samples/SKILL.md`.
+3. `.github/skills/azure-ai-projects-author-tests/SKILL.md`.
+4. `.github/skills/azure-ai-projects-update-changelog/SKILL.md`. When it finishes, stage,
+   commit, and push `CHANGELOG.md`:
+
+   ```bash
+   git add -- CHANGELOG.md
+   git commit -m "Part 4: Update changelog
+
+   Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+   git push
+   ```
+
+Do not proceed to the next skill until the current skill's success criteria pass. Apply every
+STOP condition from the four skills: on failure, preserve the working tree for diagnosis, do not
+publish partial manual branches or pull requests, and report the failing command and its output.
+
+Samples and tests are conditional. A step may be a documented no-op when the API diff contains
+no qualifying surface; state that explicitly in the pull request rather than creating
+placeholder files.
+
+## Finish the managed pull request
+
+Keep the pull request in draft. Update its title and description
+(`gh pr edit <number> --title "..." --body "..."`) to:
+
+- Use the title `[azure-ai-projects] Regenerate from azure-rest-api-specs@<7-character-commit>`.
+- Link the full upstream commit.
+- Summarize public API changes from the changelog entry just written.
+- Explain any sample or test no-ops.
+- Report each validation command from the four skills honestly, including any that were skipped
+  and why.
+
+Before finishing, verify that no diff3 conflict markers remain under `azure/`, that the package
+installs cleanly from source (`azure-ai-projects-emit-from-typespec` Step 12 already did this),
+and that the changelog entry is non-empty. Never report the regeneration as complete while any
+required skill is pending or failed.

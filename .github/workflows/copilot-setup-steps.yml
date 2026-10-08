@@ -45,6 +45,12 @@ jobs:
         # session.
         run: npm ci --prefix eng/common/tsp-client
 
+      - name: Pre-install azure-ai-projects dev dependencies
+        # Package-level dev_requirements.txt installs (e.g. for issue-assigned TypeSpec
+        # regeneration skills) otherwise run for the first time inside the agent's firewalled
+        # Bash-tool session and can fail to resolve package-index/artifact hosts there.
+        run: python -m pip install -r sdk/ai/azure-ai-projects/dev_requirements.txt
+
       - name: Install azsdk mcp server
         shell: pwsh
         run: |
