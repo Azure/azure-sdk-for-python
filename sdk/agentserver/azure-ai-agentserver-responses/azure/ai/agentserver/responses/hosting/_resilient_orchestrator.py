@@ -1448,6 +1448,7 @@ class ResilientResponseOrchestrator:
         # ``update`` would now succeed and overwrite a progressed snapshot with
         # empty output.
         existing_snapshot: "_generated_models.ResponseObject | None" = None
+        existing_status: Any = None
         response_known_absent = False
         for _attempt in range(2):
             try:
