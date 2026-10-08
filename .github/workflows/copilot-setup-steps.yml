@@ -60,7 +60,9 @@ jobs:
             # pip resolves against the current working directory, not the requirements file's own
             # directory. Run it with cwd set to the package directory, in a subshell so the rest
             # of this job keeps the repository root as its working directory.
-            (cd sdk/ai/azure-ai-projects && python -m pip install -r dev_requirements.txt)
+            (cd sdk/ai/azure-ai-projects && \
+              python -m pip install -r dev_requirements.txt && \
+              python -m pip install -e .)
           else
             echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
           fi
