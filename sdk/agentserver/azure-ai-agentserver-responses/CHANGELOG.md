@@ -24,7 +24,8 @@
   recovery cannot resume execution, preventing indefinite SSE waits.
 - Remove newly allocated replay streams when durable task admission fails or
   shutdown rejects the request before execution starts, allowing response ID
-  reuse after cleanup.
+  reuse after cleanup. Emit startup errors only on the requesting HTTP stream
+  without recreating rejected replay or closing another execution's stream.
 - Release streaming create reservations and stop disconnect monitors even
   when sending HTTP headers fails before the first body iteration.
 

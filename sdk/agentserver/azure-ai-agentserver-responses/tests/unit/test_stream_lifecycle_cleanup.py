@@ -15,6 +15,7 @@ import pytest
 from starlette.requests import Request
 
 from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
+from azure.ai.agentserver.core.platform_headers import PLATFORM_ERROR_TAG
 from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
 from azure.ai.agentserver.core.tasks import LastInputIdPreconditionFailed, TaskConflictError
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
@@ -166,6 +167,114 @@ async def test_rejected_admission_preserves_preexisting_stream(
     assert await registry.get(lifecycle_id) is existing
     await existing.close()
     assert [event async for event in existing.subscribe()] == [{"sequence_number": 0, "type": "response.created"}]
+
+
+@pytest.mark.parametrize("file_backed", [False, True])
+@pytest.mark.parametrize("failure", ["conflict", "precondition"])
+@pytest.mark.parametrize("ownership", ["new", "preexisting", "started"])
+async def test_tagged_platform_start_error_is_http_only_and_preserves_stream_ownership(
+    registry: _StreamsRegistry,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    file_backed: bool,
+    failure: str,
+    ownership: str,
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    provider = host._endpoint._provider
+    lifecycle_id = derive_lifecycle_id(RESPONSE_ID, "owner")
+    other_id = derive_lifecycle_id(RESPONSE_ID, "other")
+    storage_dir = tmp_path / "replay"
+    if file_backed:
+        registry.use_file_backed_replay(storage_dir=storage_dir, cursor_fn=lambda event: event["sequence_number"])
+    other = await registry.get_or_create(other_id)
+    response = await host._endpoint.handle_create(_request())
+    existing = None
+    if ownership == "preexisting":
+        existing = await registry.get_or_create(lifecycle_id)
+        await existing.emit({"type": "response.created", "sequence_number": 0})
+    release_execution = asyncio.Event()
+    execution: asyncio.Task[Any] | None = None
+    started_record = None
+    attempts = 0
+
+    async def start(*args: Any, record: Any, **kwargs: Any) -> bool:
+        nonlocal attempts, execution, started_record
+        attempts += 1
+        if attempts == 1:
+            if ownership == "started":
+                await record.subject.emit({"type": "response.created", "sequence_number": 0})
+                execution = asyncio.create_task(release_execution.wait())
+                record.execution_task = execution
+                record.resilient_task_run = SimpleNamespace(is_queued=False)
+                started_record = record
+                await state.add(record)
+            error = (
+                TaskConflictError(current_status="in_progress")
+                if failure == "conflict"
+                else LastInputIdPreconditionFailed(actual_last_input_id="latest")
+            )
+            setattr(error, PLATFORM_ERROR_TAG, True)
+            raise error
+        snapshot = {"id": RESPONSE_ID, "object": "response", "status": "completed", "background": True, "output": []}
+        await provider.create_response(snapshot, [], None, context=PlatformContext(user_id_key="owner"))
+        await record.subject.emit({"type": "response.created", "sequence_number": 0})
+        await record.subject.emit(
+            {"type": "response.completed", "sequence_number": 1, "response": snapshot}, close=True
+        )
+        record.resilient_task_run = SimpleNamespace(is_queued=False)
+        await state.discard_pending(RESPONSE_ID, "owner")
+        return True
+
+    monkeypatch.setattr(resilience.ResilientResponseOrchestrator, "start_resilient", start)
+    frames: list[bytes] = []
+
+    async def send(message: dict[str, Any]) -> None:
+        if message["type"] == "http.response.body" and message.get("body"):
+            frames.append(message["body"])
+
+    try:
+        await asyncio.wait_for(response.stream_response(send), 2)
+        error = json.loads(frames[0].decode().split("data: ", 1)[1].strip())
+        assert error["type"] == "error"
+        assert error["code"] == "server_error"
+        assert await registry.get(other_id) is other
+        await other.emit({"type": "response.in_progress", "sequence_number": 0})
+        if ownership == "new":
+            with pytest.raises(EventStreamNotFoundError):
+                await registry.get(lifecycle_id)
+            assert await state.list_records() == []
+            with pytest.raises(KeyError):
+                await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+            if file_backed:
+                assert not (storage_dir / f"{lifecycle_id}.jsonl").exists()
+                assert not (storage_dir / f"{lifecycle_id}.jsonl.lock").exists()
+            frames.clear()
+            retry = await host._endpoint.handle_create(_request())
+            assert retry.status_code == 200
+            await asyncio.wait_for(retry.stream_response(send), 2)
+            assert attempts == 2
+            assert b"response.completed" in b"".join(frames)
+            persisted = await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+            assert persisted["status"] == "completed"
+        else:
+            retained = await registry.get(lifecycle_id)
+            if ownership == "preexisting":
+                assert retained is existing
+            else:
+                assert execution is not None and not execution.done()
+                assert await state.get(RESPONSE_ID, "owner") is started_record
+                assert retained is started_record.subject
+            await retained.emit({"type": "response.completed", "sequence_number": 1}, close=True)
+            events = [event async for event in retained.subscribe()]
+            assert [event["type"] for event in events] == ["response.created", "response.completed"]
+    finally:
+        release_execution.set()
+        if execution is not None:
+            await asyncio.wait_for(execution, 2)
+        await registry.delete(lifecycle_id)
+        await registry.delete(other_id)
 
 
 @pytest.mark.parametrize("file_backed", [False, True])
