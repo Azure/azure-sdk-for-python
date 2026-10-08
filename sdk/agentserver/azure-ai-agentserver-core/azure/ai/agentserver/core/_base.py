@@ -811,7 +811,9 @@ class AgentServerHost(Starlette):
                 self.config.session_id = context.session_id
                 self.config.session_guid = os.environ.get(_SESSION_GUID_ENV, "")
                 if task_manager is not None:
-                    task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+                    task_manager._rehydrate_session_state(  # pylint: disable=protected-access
+                        context.restore_id
+                    )
 
                 current_request_context = get_request_context()
                 request_context_token = set_request_context(
