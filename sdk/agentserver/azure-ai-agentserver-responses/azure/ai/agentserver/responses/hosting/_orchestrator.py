@@ -3335,10 +3335,12 @@ class _ResponseOrchestrator:
                 # is impossible; surface the failure the streaming-native way —
                 # a standalone ``error`` SSE event (the same B8 pre-creation
                 # contract used for every other streaming creation failure) —
-                # then close the wire stream. The platform error is already
-                # logged + tagged by ``_start_resilient_background``.
-                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
-                await self._safe_close(wire_stream)
+                # on this HTTP connection only. Never recreate deleted replay
+                # or close a stream owned by an existing/started execution.
+                # The platform error is already logged + tagged by startup.
+                yield encode_sse_any_event(
+                    await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+                )
                 return
 
             # Relay the resilient wire stream to this client, interleaving
