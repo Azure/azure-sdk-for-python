@@ -98,6 +98,23 @@ themselves to apply these overrides.
   the overridden commands above) run exactly as written, including its own STOP conditions.
   Still perform Step 4's `git fetch`, but skip its `git switch -c <topic-branch> ...` command
   since there is no new topic branch to create.
+- **`azure-ai-projects-update-changelog` Step 2 (fetch the latest released version):** do not
+  call the PyPI JSON API; `pypi.org` is not reachable from this firewalled session. Derive
+  `LATEST_PYPI_VERSION` instead from the same release tags this skill's own Step 4 already
+  treats as the source of truth for a released version's code. Use `git ls-remote` rather than
+  `git fetch`/`git tag` so this only lists matching ref names from `origin` (likely GitHub,
+  already reachable for this session's git and `gh` operations) instead of downloading tag
+  objects into what may be a shallow clone. Filter to stable `X.Y.Z` tags only (excluding
+  pre-releases like `2.0.0b1`), matching what PyPI's `info.version` itself would report:
+
+  ```bash
+  LATEST_PYPI_VERSION="$(git ls-remote --tags origin 'azure-ai-projects_*' \
+    | sed -n 's#.*refs/tags/azure-ai-projects_\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)$#\1#p' \
+    | sort -V | tail -1)"
+  ```
+
+  Verified against the real repository's tags: this returns `2.8.0`, matching
+  `https://pypi.org/pypi/azure-ai-projects/json`'s current `info.version`.
 
 `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and
 `azure-ai-projects-update-changelog` do not create branches or pull requests, so they need no
@@ -135,10 +152,23 @@ placeholder files.
 
 ## Finish the managed pull request
 
-Keep the pull request in draft. Update its title and description
-(`gh pr edit <number> --title "..." --body "..."`) to:
+Keep the pull request in draft. The description will contain Markdown code spans for API names
+(e.g. `` `AgentDetails` ``); a double-quoted `gh pr edit --body "..."` argument would let Bash
+expand those backticks as command substitutions and silently drop their contents. Write the
+description to a file with a quoted heredoc (which disables all shell expansion inside it), then
+pass that file to `gh pr edit` instead:
 
-- Use the title `[azure-ai-projects] Regenerate from azure-rest-api-specs@<7-character-commit>`.
+```bash
+cat > /tmp/pr-body.md <<'EOF'
+<description text, meeting the requirements below>
+EOF
+gh pr edit <number> \
+  --title "[azure-ai-projects] Regenerate from azure-rest-api-specs@<7-character-commit>" \
+  --body-file /tmp/pr-body.md
+```
+
+The description must:
+
 - Link the full upstream commit.
 - Summarize public API changes from the changelog entry just written.
 - Explain any sample or test no-ops.
