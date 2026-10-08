@@ -9,6 +9,7 @@ from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import logger, configure_logging, run_logged
+from ci_tools.certificates import cibuildwheel_environment
 
 
 def build_package() -> None:
@@ -217,6 +218,17 @@ def build_packages(
         create_package(package_root, dist_dir, enable_wheel, enable_sdist)
 
 
+def _build_compiled_wheel(package_folder: str, dist: str, should_log_build_output: bool) -> None:
+    with cibuildwheel_environment() as env:
+        run_logged(
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+            cwd=package_folder,
+            check=True,
+            should_stream_to_console=should_log_build_output,
+            env=env,
+        )
+
+
 def create_package(
     setup_directory_or_file: str, dest_folder: str, enable_wheel: bool = True, enable_sdist: bool = True
 ):
@@ -242,12 +254,7 @@ def create_package(
         # when building with pyproject, check if package has compiled extensions
         if enable_wheel and setup_parsed.ext_modules:
             # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                cwd=setup_parsed.folder,
-                check=True,
-                should_stream_to_console=should_log_build_output,
-            )
+            _build_compiled_wheel(setup_parsed.folder, dist, should_log_build_output)
             if enable_sdist:
                 # Build sdist separately with python -m build
                 run_logged(
@@ -290,12 +297,7 @@ def create_package(
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
-                run_logged(
-                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                    cwd=setup_parsed.folder,
-                    check=True,
-                    should_stream_to_console=should_log_build_output,
-                )
+                _build_compiled_wheel(setup_parsed.folder, dist, should_log_build_output)
             else:
                 run_logged(
                     [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
