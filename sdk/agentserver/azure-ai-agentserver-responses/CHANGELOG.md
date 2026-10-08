@@ -22,8 +22,9 @@
   POST cannot reuse the ID before stream, runtime, and provider cleanup finish.
 - Finish retained replay with the persisted terminal snapshot when crash
   recovery cannot resume execution, preventing indefinite SSE waits.
-- Remove newly allocated replay streams when durable task admission fails
-  before execution starts, allowing response ID reuse after cleanup.
+- Remove newly allocated replay streams when durable task admission fails or
+  shutdown rejects the request before execution starts, allowing response ID
+  reuse after cleanup.
 - Release streaming create reservations and stop disconnect monitors even
   when sending HTTP headers fails before the first body iteration.
 

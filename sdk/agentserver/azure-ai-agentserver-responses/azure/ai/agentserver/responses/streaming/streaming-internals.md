@@ -41,12 +41,21 @@ Why these choices:
 ## Persistence file layout
 
 When the host is configured with `resilient_background=True`, the
-file-backed backing writes one JSONL file per response under the
+file-backed backing writes one JSONL file per caller-scoped lifecycle ID under the
 configured `storage_dir`:
 
 ```text
-<storage_dir>/<response_id>.jsonl
+<storage_dir>/<lifecycle_id>.jsonl
 ```
+
+The host derives `lifecycle_id` using
+`derive_lifecycle_id(response_id, user_id_key)`. For identified users this is
+`lifecycle-` followed by the SHA-256 digest of the user key and public response
+ID, so different users' replay logs cannot collide. The public response ID in
+HTTP paths and SSE payloads does not change. Anonymous requests (`user_id_key`
+is `None`) retain the original response ID as their lifecycle key and keep the
+previous file naming convention. Identified users never adopt those shared
+legacy replay logs.
 
 Each line is a single JSON object of the form
 `{"emit_time": <unix-float>, "payload": <event-dict>}`, ending with
@@ -63,9 +72,17 @@ subdirectories (`tasks/`, `streams/`, `responses/`).
 
 ## Recovery on restart
 
-A fresh process that calls `await streams.get_or_create(response_id)`
-for a `response_id` whose `.jsonl` file already exists on disk
-rehydrates the stream from the persisted events automatically:
+A fresh process looks up replay using the same caller-scoped lifecycle ID:
+
+```python
+lifecycle_id = derive_lifecycle_id(response_id, user_id_key)
+stream = await streams.get(lifecycle_id)
+```
+
+`get` rehydrates an existing `.jsonl` file from persisted events, but never
+creates a file for an absent ID. Missing or expired replay raises
+`EventStreamNotFoundError`. `get_or_create(lifecycle_id)` is reserved for
+admitted execution that owns the producer lifecycle, not GET replay lookup.
 
 - Buffered events become available to new subscribers immediately.
 - `await stream.last_cursor()` returns the highest `sequence_number`
@@ -76,8 +93,9 @@ rehydrates the stream from the persisted events automatically:
 
 If the previous run finished cleanly (terminator on disk) AND every
 persisted event has since expired, the rehydrated stream is in the
-`GONE` state. Calling `streams.delete(id)` + `streams.get_or_create(id)`
-mints a fresh stream.
+`GONE` state; `streams.get(lifecycle_id)` cleans up and reports it as missing.
+Only a newly admitted producer may use `streams.get_or_create(lifecycle_id)`
+to mint a fresh stream.
 
 ## HTTP / SSE wire mapping
 
@@ -87,16 +105,16 @@ The responses host exposes events through Server-Sent-Events on:
   layer subscribes to the per-response stream and yields each emit as
   an SSE event.
 - `GET /responses/{id}?stream=true` — **replay**. The endpoint looks up
-  the per-response stream from the registry and iterates its buffered
-  history.
+  the persisted response using the caller's user partition before calling
+  `streams.get(lifecycle_id)` and iterating buffered history. Storage errors
+  fail closed rather than falling through to cached replay.
   - Cursored reconnect: the SSE `Last-Event-ID: N` header (or the
     `?starting_after=N` query alias retained for backward compatibility)
     is forwarded as `stream.subscribe(after=N)`.
-  - When no stream exists for `id` (never registered, or destroyed via
-    `DELETE /responses/{id}`), the endpoint returns HTTP `404`. The
-    underlying registry exceptions
-    (`EventStreamNotFoundError` / `EventStreamGoneError`) both map to
-    `404` on this endpoint.
+  - A missing or unauthorized response returns HTTP `404`. If an authorized
+    background response exists but its replay is absent or expired, the
+    endpoint returns HTTP `400` with an invalid-mode error. The registry's
+    `EventStreamNotFoundError` never causes a lookup to create a new replay log.
 
 ## Other modules in this sub-package
 
