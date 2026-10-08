@@ -135,14 +135,13 @@ class SenderLink(Link):
                 self.delivery_count = delivery_count
                 self.current_link_credit -= 1
                 delivery.sent = True
-                if delivery.settled:
-                    delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
-                    sent_and_settled = True
-                elif delivery.early_disposition_received:
-                    delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
-                    sent_and_settled = True
+                sent_and_settled = delivery.settled or delivery.early_disposition_received
                 if sent_and_settled and id(delivery) in self._pending_ids():
                     self._remove_pending(delivery)
+                if delivery.settled:
+                    delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
+                elif delivery.early_disposition_received:
+                    delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
             self._session._notify_discarding_links()  # pylint: disable=protected-access
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
@@ -160,9 +159,9 @@ class SenderLink(Link):
                         delivery.early_disposition_received = True
                         delivery.early_disposition_state = frame[4]
                     else:
-                        delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                         if id(delivery) in self._pending_ids():
                             self._remove_pending(delivery)
+                        delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
 
     def _remove_pending_deliveries(self):
         with self.lock:
@@ -183,9 +182,6 @@ class SenderLink(Link):
             if self._session.state == SessionState.DISCARDING:
                 self._session._notify_discarding_links()  # pylint: disable=protected-access
                 return
-            if self.current_link_credit <= 0:
-                self.current_link_credit = self.link_credit
-                self._outgoing_flow()
             now = time.time()
             pending = []
             blocked = False
@@ -205,7 +201,9 @@ class SenderLink(Link):
                     delivery.frame["aborted"] = True
                     delivery.frame["payload"] = b""
                     delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                if not delivery.sent and not blocked:
+                if not delivery.sent and not blocked and (
+                    self.current_link_credit > 0 or (delivery.frame and delivery.frame["more"])
+                ):
                     sent_and_settled = self._outgoing_transfer(delivery)
                     if sent_and_settled or (
                         delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
@@ -239,7 +237,7 @@ class SenderLink(Link):
         )
         with self.lock:
             if (
-                self.current_link_credit == 0
+                self.current_link_credit <= 0
                 or send_async
                 or any(pending.frame and pending.frame["more"] for pending in self._pending_deliveries)
             ):

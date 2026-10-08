@@ -599,6 +599,181 @@ async def test_presettled_send_completes_once(monkeypatch, async_session, queued
 
 
 @pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("queued", [False, True])
+@pytest.mark.parametrize("settled", [False, True])
+@pytest.mark.asyncio
+async def test_sender_drains_only_peer_link_credit(monkeypatch, async_session, queued, settled):
+    sender, session, connection = _sender(monkeypatch, async_session)
+    connection._remote_max_frame_size = 1024
+    session.remote_incoming_window = 10
+    sender.link_credit = 10
+    sender.current_link_credit = 1
+    first_message = MagicMock(_code=0, payload=b"first")
+    second_message = MagicMock(_code=0, payload=b"second")
+    if async_session:
+        first = await sender.send_transfer(first_message, send_async=True, settled=settled)
+        second = await sender.send_transfer(second_message, send_async=queued, settled=settled)
+        await sender.update_pending_deliveries()
+        await sender.update_pending_deliveries()
+    else:
+        first = sender.send_transfer(first_message, send_async=True, settled=settled)
+        second = sender.send_transfer(second_message, send_async=queued, settled=settled)
+        sender.update_pending_deliveries()
+        sender.update_pending_deliveries()
+    transfers = [call.args[1] for call in connection._process_outgoing_frame.call_args_list
+                 if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) == 1
+    assert sum(delivery.sent for delivery in (first, second)) == 1
+    assert sender.current_link_credit == 0
+    peer_flow = [None, 10, 0, 10, sender.handle, sender.delivery_count, 1]
+    if async_session:
+        await sender._incoming_flow(peer_flow)
+    else:
+        sender._incoming_flow(peer_flow)
+    transfers = [call.args[1] for call in connection._process_outgoing_frame.call_args_list
+                 if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) == 2
+    assert first.sent and second.sent
+    assert sender.current_link_credit == 0
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("credit", [0, -1])
+@pytest.mark.parametrize("queued", [False, True])
+@pytest.mark.asyncio
+async def test_sender_checks_timeouts_without_link_credit(monkeypatch, async_session, credit, queued):
+    sender, _, connection = _sender(monkeypatch, async_session)
+    sender.link_credit = 10
+    sender.current_link_credit = credit
+    reasons = []
+
+    def completed(reason, _state):
+        reasons.append(reason)
+
+    async def completed_async(reason, state):
+        completed(reason, state)
+
+    callback = completed_async if async_session else completed
+    if async_session:
+        first = await sender.send_transfer(MagicMock(_code=0, payload=b"first"), send_async=queued)
+        later = await sender.send_transfer(
+            MagicMock(_code=0, payload=b"later"), send_async=True, timeout=1, on_send_complete=callback
+        )
+    else:
+        first = sender.send_transfer(MagicMock(_code=0, payload=b"first"), send_async=queued)
+        later = sender.send_transfer(
+            MagicMock(_code=0, payload=b"later"), send_async=True, timeout=1, on_send_complete=callback
+        )
+    later.start -= 10
+    if async_session:
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+    assert reasons == [LinkDeliverySettleReason.TIMEOUT]
+    assert sender._pending_deliveries == [first]
+    assert sender.current_link_credit == credit
+    assert not first.sent
+    assert not connection._process_outgoing_frame.call_args_list
+
+
+@pytest.mark.parametrize("async_session", [False, True])
+@pytest.mark.parametrize("termination", [None, "cancel", "timeout"])
+@pytest.mark.asyncio
+async def test_sender_continues_partial_delivery_without_link_credit(monkeypatch, async_session, termination):
+    sender, session, connection = _sender(monkeypatch, async_session)
+    sender.link_credit = 10
+    sender.current_link_credit = 1
+    message = MagicMock(_code=0, payload=b"a" * 120)
+    if async_session:
+        first = await sender.send_transfer(message, settled=False)
+        later = await sender.send_transfer(MagicMock(_code=0, payload=b"later"), send_async=True)
+    else:
+        first = sender.send_transfer(message, settled=False)
+        later = sender.send_transfer(MagicMock(_code=0, payload=b"later"), send_async=True)
+    assert first.frame["more"] and not first.sent
+    sender.current_link_credit = 0
+    if termination == "cancel":
+        if async_session:
+            await sender.cancel_transfer(first)
+        else:
+            sender.cancel_transfer(first)
+    elif termination == "timeout":
+        first.timeout = 1
+        first.start -= 10
+    session.remote_incoming_window = 10
+    if async_session:
+        await sender.update_pending_deliveries()
+        await sender.update_pending_deliveries()
+    else:
+        sender.update_pending_deliveries()
+        sender.update_pending_deliveries()
+    transfers = [call.args[1] for call in connection._process_outgoing_frame.call_args_list
+                 if isinstance(call.args[1], TransferFrame)]
+    assert len(transfers) > 1
+    assert all(frame.delivery_id == transfers[0].delivery_id for frame in transfers)
+    assert not transfers[-1].more
+    assert bool(transfers[-1].aborted) == (termination is not None)
+    assert first.sent and not later.sent
+    assert sender.current_link_credit <= 0
+    peer_flow = [None, 10, 0, 10, sender.handle, sender.delivery_count, 1]
+    if async_session:
+        await sender._incoming_flow(peer_flow)
+    else:
+        sender._incoming_flow(peer_flow)
+    assert later.sent and sender.current_link_credit == 0
+
+
+@pytest.mark.parametrize("completion_path", ["presettled", "early_disposition", "disposition"])
+@pytest.mark.asyncio
+async def test_async_cancelled_completion_callback_withdraws_delivery(monkeypatch, completion_path):
+    sender, _, connection = _sender(monkeypatch, True)
+    connection._remote_max_frame_size = 1024
+    entered, release = asyncio.Event(), asyncio.Event()
+    reasons = []
+
+    async def completed(reason, _state):
+        reasons.append(reason)
+        entered.set()
+        await release.wait()
+
+    delivery = await sender.send_transfer(
+        MagicMock(_code=0, payload=b"message"), send_async=True,
+        settled=completion_path == "presettled", on_send_complete=completed,
+    )
+    disposition = [None, 0, None, True, b"accepted"]
+    if completion_path == "early_disposition":
+        original_send = connection._process_outgoing_frame
+
+        async def send_frame(channel, frame):
+            await original_send(channel, frame)
+            if isinstance(frame, FlowFrame):
+                await sender._incoming_disposition(disposition)
+
+        connection._process_outgoing_frame = send_frame
+    if completion_path == "disposition":
+        await sender.update_pending_deliveries()
+        task = asyncio.create_task(sender._incoming_disposition(disposition))
+    else:
+        task = asyncio.create_task(sender.update_pending_deliveries())
+    try:
+        await asyncio.wait_for(entered.wait(), 5)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        assert delivery.sent and delivery.settled
+        assert delivery not in sender._pending_deliveries
+        await sender.update_pending_deliveries()
+        assert delivery not in sender._pending_deliveries
+        assert len(reasons) == 1
+    finally:
+        release.set()
+        if not task.done():
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+
+
+@pytest.mark.parametrize("async_session", [False, True])
 @pytest.mark.asyncio
 async def test_sender_resumes_partial_delivery_before_sending_next(
     monkeypatch, async_session

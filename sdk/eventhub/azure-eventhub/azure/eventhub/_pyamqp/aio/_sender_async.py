@@ -127,16 +127,15 @@ class SenderLink(Link):
                 self.delivery_count = delivery_count
                 self.current_link_credit -= 1
                 delivery.sent = True
+                sent_and_settled = delivery.settled or delivery.early_disposition_received
+                if sent_and_settled and delivery in self._pending_deliveries:
+                    self._pending_deliveries.remove(delivery)
                 if delivery.settled:
                     await delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
-                    sent_and_settled = True
                 elif delivery.early_disposition_received:
                     await delivery.on_settled(
                         LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state
                     )
-                    sent_and_settled = True
-                if sent_and_settled and delivery in self._pending_deliveries:
-                    self._pending_deliveries.remove(delivery)
             await self._session._notify_discarding_links()  # pylint: disable=protected-access
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
@@ -153,9 +152,9 @@ class SenderLink(Link):
                     delivery.early_disposition_received = True
                     delivery.early_disposition_state = frame[4]
                 else:
-                    await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                     if delivery in self._pending_deliveries:
                         self._pending_deliveries.remove(delivery)
+                    await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
 
     async def _remove_pending_deliveries(self):
         pending = self._pending_deliveries
@@ -178,9 +177,6 @@ class SenderLink(Link):
             return
         self._updating_deliveries = True
         try:
-            if self.current_link_credit <= 0:
-                self.current_link_credit = self.link_credit
-                await self._outgoing_flow()
             now = time.time()
             blocked = False
             index = 0
@@ -199,7 +195,9 @@ class SenderLink(Link):
                         index = 0
                         continue
                     index = self._pending_deliveries.index(delivery)
-                if not delivery.sent and not blocked:
+                if not delivery.sent and not blocked and (
+                    self.current_link_credit > 0 or (delivery.frame and delivery.frame["more"])
+                ):
                     try:
                         sent_and_settled = await self._outgoing_transfer(delivery)
                     except asyncio.CancelledError:
@@ -254,7 +252,7 @@ class SenderLink(Link):
         )
         self._pending_deliveries.append(delivery)
         try:
-            if not send_async and self.current_link_credit != 0:
+            if not send_async and self.current_link_credit > 0:
                 drain = asyncio.create_task(self.update_pending_deliveries())
                 try:
                     await asyncio.shield(drain)
