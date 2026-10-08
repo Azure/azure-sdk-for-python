@@ -24,7 +24,7 @@ def _enable_uv_native_tls() -> None:
     when uv downloads interpreters (python-build-standalone) or packages. Respects an explicit
     user override via setdefault.
     """
-    os.environ.setdefault("UV_NATIVE_TLS", "1")
+    os.environ.setdefault("UV_SYSTEM_CERTS", "1")
 
 
 def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str] = None) -> List[str]:
