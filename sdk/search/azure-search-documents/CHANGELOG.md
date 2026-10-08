@@ -1,5 +1,112 @@
 # Release History
 
+## 12.1.0 (2026-10-01)
+
+### Features Added
+
+- Added support for the `2026-10-01` GA API, which is now the default.
+- Below enum members and parameters are added for API version selection and document search:
+  - `azure.search.documents.ApiVersion.V2026_10_01`
+  - `azure.search.documents.SearchClient.search.more_like_this`
+- Below models and operations are added for File knowledge sources:
+  - `azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.list_knowledge_source_files`
+  - `azure.search.documents.indexes.SearchIndexClient.update_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file_multipart`
+  - `azure.search.documents.indexes.models.FileKnowledgeSource`
+  - `azure.search.documents.indexes.models.FileKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.FileUploadMetadata`
+  - `azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest`
+  - `azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest`
+  - `azure.search.documents.knowledgebases.models.FileKnowledgeSourceParams`
+- Below models are added for indexed SQL and SharePoint knowledge sources:
+  - `azure.search.documents.indexes.models.ContentColumnMapping`
+  - `azure.search.documents.indexes.models.EmbeddingColumnMapping`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSourceParameters`
+  - `azure.search.documents.knowledgebases.models.IndexedSharePointKnowledgeSourceParams`
+  - `azure.search.documents.knowledgebases.models.IndexedSqlKnowledgeSourceParams`
+- Below operations and models are added for resource listing and indexer resynchronization:
+  - `azure.search.documents.indexes.SearchIndexClient.list_index_stats_summary`
+  - `azure.search.documents.indexes.SearchIndexerClient.resync`
+  - `azure.search.documents.indexes.models.IndexStatisticsSummary`
+  - `azure.search.documents.indexes.models.IndexerRuntime`
+  - `azure.search.documents.indexes.models.ListingSearchType`
+  - `azure.search.documents.indexes.models.ServiceIndexersRuntime`
+- Added `search`, `page_size`, and `search_type` parameters to resource listing operations.
+  File listings also support `prefix`.
+- Below models and properties are added for document permissions and private ingestion:
+  - `azure.search.documents.indexes.models.IndexerPermissionOption`
+  - `azure.search.documents.indexes.models.PermissionFilter`
+  - `azure.search.documents.indexes.models.SearchField.organization_access_expiration`
+  - `azure.search.documents.indexes.models.SearchField.permission_filter`
+  - `azure.search.documents.indexes.models.SearchField.sharepoint_site_url`
+  - `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`
+  - `azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration`
+  - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.federated_identity_client_id`
+  - `azure.search.documents.indexes.models.SharePointConnectorAppRegistration`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters.ingestion_permission_options`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters.network_access_mode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceNetworkAccessMode`
+- Below models, operations, and properties are added for knowledge base retrieval:
+  - `azure.search.documents.indexes.models.KnowledgeBase.answer_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.cors_options`
+  - `azure.search.documents.indexes.models.KnowledgeBase.output_mode`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_reasoning_effort`
+  - `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.max_output_documents`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.messages`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.output_mode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.retrieval_reasoning_effort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalLowReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalMediumReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalOutputMode`
+- Added citation URLs to knowledge base references and timestamps to retrieval activity records.
+- Added content understanding model selection and token-based chunking.
+- Added asynchronous equivalents of the new operations.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 12.0.0.
+> Only code written against a beta version such as 12.1.0b2 may be affected.
+
+- Below operations do not exist in this GA release:
+  - `azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexerClient.reset_documents`
+  - `azure.search.documents.indexes.SearchIndexerClient.reset_skills`
+- Removed preview-only search parameters `query_language`, `speller`, `query_rewrites`,
+  `semantic_fields`, and `hybrid_search`, and the `SearchItemPaged.get_debug_info` accessor.
+- Removed preview-only indexer cache options and Work IQ retrieval authorization.
+- Preview-only MCP server, Fabric, Work IQ, and remote SharePoint knowledge sources are not included.
+  Knowledge base tags, persisted retrieval defaults, and query hints are also not included.
+- Removed `ApiVersion.V2026_08_01_PREVIEW` from this GA build.
+
+### Bugs Fixed
+
+- Search continuation tokens now use the client's configured API version rather than a hardcoded
+  preview version.
+- Index list projections preserve SharePoint connector app registration settings.
+- Retained the `AzureOpenAIModelName.GPT_5_MINI`, `GPT_5_NANO`, `GPT_5_4_MINI`, and `GPT_5_4_NANO`
+  names as aliases of their generated counterparts for compatibility with 12.0.0.
+
+### Other Changes
+
+- Updated `tsp-location.yaml` to spec commit `198fc02e732431e0fb35832cb9f004c79da0f59e`.
+- Dropped Python 3.9 support. Python 3.10 or later is now required.
+- Added Python 3.14 support.
+- Removed unsupported preview sample scenarios from this GA branch.
+
 ## 12.1.0b2 (2026-08-27)
 
 ### Features Added

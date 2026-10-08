@@ -38,6 +38,9 @@ Use the Azure.Search.Documents client library to:
 
 ## Getting started
 
+This release targets the `2026-10-01` GA API by default. Features available only in preview API
+versions are not included in this GA build.
+
 ### Install the package
 
 Install the Azure AI Search client library for Python with [pip](https://pypi.org/project/pip/):
@@ -48,7 +51,7 @@ pip install azure-search-documents
 
 ### Prerequisites
 
-* Python 3.9 or later is required to use this package.
+* Python 3.10 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and an
 [Azure AI Search service][search_resource] to use this package.
 

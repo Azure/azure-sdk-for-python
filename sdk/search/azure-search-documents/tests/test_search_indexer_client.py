@@ -162,7 +162,8 @@ class TestSearchIndexerResync:
 
 class TestSearchIndexerResetDocuments:
     @mock.patch(
-        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_documents"
+        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_documents",
+        create=True,
     )
     def test_reset_documents_forwards_keys_and_overwrite(self, mock_reset):
         require_capability("azure.search.documents.indexes.SearchIndexerClient.reset_documents")
@@ -179,7 +180,8 @@ class TestSearchIndexerResetDocuments:
         assert kwargs["overwrite"] is True
 
     @mock.patch(
-        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_documents"
+        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_documents",
+        create=True,
     )
     def test_reset_documents_defaults_keys_to_none(self, mock_reset):
         require_capability("azure.search.documents.indexes.SearchIndexerClient.reset_documents")
@@ -195,7 +197,8 @@ class TestSearchIndexerResetDocuments:
 
 class TestSearchIndexerResetSkills:
     @mock.patch(
-        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_skills"
+        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_skills",
+        create=True,
     )
     def test_reset_skills_forwards_skill_names(self, mock_reset):
         require_capability("azure.search.documents.indexes.SearchIndexerClient.reset_skills")
@@ -212,7 +215,8 @@ class TestSearchIndexerResetSkills:
         assert kwargs["request_id"] == "req-2"
 
     @mock.patch(
-        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_skills"
+        "azure.search.documents.indexes._operations._operations._SearchIndexerClientOperationsMixin._reset_skills",
+        create=True,
     )
     def test_reset_skills_accepts_json_dict(self, mock_reset):
         require_capability("azure.search.documents.indexes.SearchIndexerClient.reset_skills")

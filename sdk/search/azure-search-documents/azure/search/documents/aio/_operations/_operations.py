@@ -123,16 +123,16 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={
-            "2026-05-01-preview": [
-                "query_source_authorization",
-                "enable_elevated_read",
-                "query_rewrites",
-                "query_language",
-                "speller",
-                "semantic_fields",
-            ]
+            "2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"],
+            "2026-10-01": ["more_like_this"],
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     async def _search_get(  # pylint: disable=too-many-locals
         self,
@@ -147,6 +147,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
         scoring_parameters: Optional[list[str]] = None,
@@ -164,11 +165,7 @@ class _SearchClientOperationsMixin(
         answers: Optional[Union[str, _models2.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models2.QueryCaptionType]] = None,
         semantic_query: Optional[str] = None,
-        query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
         debug: Optional[Union[str, _models2.QueryDebugMode]] = None,
-        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
-        speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -208,6 +205,9 @@ class _SearchClientOperationsMixin(
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100. Default value is None.
         :paramtype minimum_coverage: float
+        :keyword more_like_this: The key of the document to use as the basis for finding similar
+         documents. This parameter cannot be used together with search text. Default value is None.
+        :paramtype more_like_this: str
         :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, and
@@ -297,33 +297,10 @@ class _SearchClientOperationsMixin(
          is a need to use different queries between the base retrieval and ranking phase, and the L2
          semantic phase. Default value is None.
         :paramtype semantic_query: str
-        :keyword query_rewrites: When QueryRewrites is set to ``generative``, the query terms are sent
-         to a generate model which will produce 10 (default) rewrites to help increase the recall of the
-         request. The requested count can be configured by appending the pipe character ``|`` followed
-         by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
-         ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
-         "none" and "generative". Default value is None.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         :keyword debug: Enables a debugging tool that can be used to further explore your search
          results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
          "all". Default value is None.
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword query_language: The language of the query. Known values are: "none", "en-us", "en-gb",
-         "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn", "zh-tw",
-         "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl", "hu-hu",
-         "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo", "da-dk",
-         "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn", "el-gr",
-         "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es", "fi-fi",
-         "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es", "gu-in",
-         "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", and "ur-pk". Default
-         value is None.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword speller: Improve search recall by spell-correcting individual search query terms.
-         Known values are: "none" and "lexicon". Default value is None.
-        :paramtype speller: str or ~azure.search.documents.models.QuerySpellerType
-        :keyword semantic_fields: The list of field names used for semantic ranking. Default value is
-         None.
-        :paramtype semantic_fields: list[str]
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -353,6 +330,7 @@ class _SearchClientOperationsMixin(
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
+            more_like_this=more_like_this,
             order_by=order_by,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
@@ -370,11 +348,7 @@ class _SearchClientOperationsMixin(
             answers=answers,
             captions=captions,
             semantic_query=semantic_query,
-            query_rewrites=query_rewrites,
             debug=debug,
-            query_language=query_language,
-            speller=speller,
-            semantic_fields=semantic_fields,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -431,6 +405,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
         scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
@@ -441,8 +416,6 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models2.SearchMode]] = None,
-        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -452,11 +425,8 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, _models2.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models2.QueryCaptionType]] = None,
-        query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult: ...
     @overload
@@ -483,7 +453,13 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     async def _search_post(  # pylint: disable=too-many-locals
         self,
@@ -498,6 +474,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models2.QueryType]] = None,
         scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
@@ -508,8 +485,6 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models2.SearchMode]] = None,
-        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -519,11 +494,8 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, _models2.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models2.QueryCaptionType]] = None,
-        query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -562,6 +534,9 @@ class _SearchClientOperationsMixin(
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100. Default value is None.
         :paramtype minimum_coverage: float
+        :keyword more_like_this: The key of the document to use as the basis for finding similar
+         documents. This parameter cannot be used together with search text. Default value is None.
+        :paramtype more_like_this: str
         :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
          results. Each expression can be either a field name or a call to either the geo.distance() or
          the search.score() functions. Each expression can be followed by asc to indicate ascending, or
@@ -610,19 +585,6 @@ class _SearchClientOperationsMixin(
          matched in order to count the document as a match. Known values are: "any" and "all". Default
          value is None.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: A value that specifies the language of the search query. Known values
-         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-         "te-in", and "ur-pk". Default value is None.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specifies the type of the speller to use to spell-correct
-         individual search query terms. Known values are: "none" and "lexicon". Default value is None.
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
          marked as retrievable in the schema are included. Default value is None.
         :paramtype select: list[str]
@@ -658,12 +620,6 @@ class _SearchClientOperationsMixin(
         :keyword captions: A value that specifies whether captions should be returned as part of the
          search response. Known values are: "none" and "extractive". Default value is None.
         :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
-         augment the search query. Known values are: "none" and "generative". Default value is None.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
-         Default value is None.
-        :paramtype semantic_fields: list[str]
         :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
          value is None.
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
@@ -671,9 +627,6 @@ class _SearchClientOperationsMixin(
          vector search is performed. Default is 'preFilter' for new indexes. Known values are:
          "postFilter", "preFilter", and "strictPostFilter". Default value is None.
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
-         value is None.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -703,11 +656,9 @@ class _SearchClientOperationsMixin(
                 "highlight": highlight_fields,
                 "highlightPostTag": highlight_post_tag,
                 "highlightPreTag": highlight_pre_tag,
-                "hybridSearch": hybrid_search,
                 "minimumCoverage": minimum_coverage,
+                "moreLikeThis": more_like_this,
                 "orderby": order_by,
-                "queryLanguage": query_language,
-                "queryRewrites": query_rewrites,
                 "queryType": query_type,
                 "scoringParameters": scoring_parameters,
                 "scoringProfile": scoring_profile,
@@ -718,12 +669,10 @@ class _SearchClientOperationsMixin(
                 "select": select,
                 "semanticConfiguration": semantic_configuration_name,
                 "semanticErrorHandling": semantic_error_handling,
-                "semanticFields": semantic_fields,
                 "semanticMaxWaitInMilliseconds": semantic_max_wait_in_milliseconds,
                 "semanticQuery": semantic_query,
                 "sessionId": session_id,
                 "skip": skip,
-                "speller": query_speller,
                 "top": top,
                 "vectorFilterMode": vector_filter_mode,
                 "vectorQueries": vector_queries,
@@ -787,7 +736,13 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["query_source_authorization", "enable_elevated_read"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+        ],
     )
     async def get_document(
         self,

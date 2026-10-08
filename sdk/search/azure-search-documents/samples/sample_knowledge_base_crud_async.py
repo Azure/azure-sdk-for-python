@@ -48,12 +48,10 @@ async def create_knowledge_base_async():
     knowledge_base = KnowledgeBase(
         name=knowledge_base_name,
         knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
-        tags={"environment": "sample", "owner": "search-team"},
     )
 
     async with index_client:
         result = await index_client.create_or_update_knowledge_base(knowledge_base=knowledge_base)
-    assert result.tags == {"environment": "sample", "owner": "search-team"}
     print(f"Created: knowledge base '{result.name}'")
     # [END create_knowledge_base_async]
 
@@ -67,7 +65,6 @@ async def get_knowledge_base_async():
 
     async with index_client:
         result = await index_client.get_knowledge_base(knowledge_base_name)
-    assert result.tags == {"environment": "sample", "owner": "search-team"}
     print(f"Retrieved: knowledge base '{result.name}'")
     # [END get_knowledge_base_async]
 
@@ -80,10 +77,9 @@ async def update_knowledge_base_async():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     async with index_client:
         knowledge_base = await index_client.get_knowledge_base(knowledge_base_name)
-        knowledge_base.tags = {"environment": "sample", "owner": "retrieval-team"}
+        knowledge_base.description = "Updated hotel knowledge base"
         result = await index_client.create_or_update_knowledge_base(knowledge_base=knowledge_base)
-    assert result.tags == {"environment": "sample", "owner": "retrieval-team"}
-    print("Tags are metadata labels; this sample does not use them for billing attribution.")
+    assert result.description == "Updated hotel knowledge base"
     print(f"Updated: knowledge base '{result.name}'")
     # [END update_knowledge_base_async]
 

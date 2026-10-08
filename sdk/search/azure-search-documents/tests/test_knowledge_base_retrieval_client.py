@@ -64,6 +64,45 @@ class TestKnowledgeBaseRetrievalClientConstructor:
 
 
 class TestKnowledgeBaseRetrievalStream:
+    def test_retrieve_stream_rejects_work_iq_authorization_before_sending(self):
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+        client = KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        )
+        with mock.patch(
+            "azure.search.documents.knowledgebases._patch._KnowledgeBaseRetrievalClient.retrieve_stream"
+        ) as generated_retrieve_stream:
+            with pytest.raises(TypeError, match="query_work_iq_source_authorization"):
+                client.retrieve_stream(
+                    KnowledgeBaseRetrievalRequest(), query_work_iq_source_authorization="work-iq-token"
+                )
+
+        generated_retrieve_stream.assert_not_called()
+
+    def test_retrieve_stream_forwards_work_iq_authorization_when_available(self):
+        require_capability(
+            "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream."
+            "query_work_iq_source_authorization"
+        )
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+        client = KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        )
+        with mock.patch(
+            "azure.search.documents.knowledgebases._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
+            return_value=mock.sentinel.stream,
+        ) as generated_retrieve_stream:
+            stream = client.retrieve_stream(
+                KnowledgeBaseRetrievalRequest(), query_work_iq_source_authorization="work-iq-token"
+            )
+
+        assert stream is mock.sentinel.stream
+        assert generated_retrieve_stream.call_args.kwargs["query_work_iq_source_authorization"] == "work-iq-token"
+
     def test_stream_deserializes_all_known_event_types(self):
         require_capability("KnowledgeBaseRetrievalEvent", "KnowledgeBaseRetrievalStream")
         from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalStream
@@ -193,11 +232,9 @@ class TestKnowledgeBaseRetrievalStream:
             stream = client.retrieve_stream(
                 KnowledgeBaseRetrievalRequest(),
                 query_source_authorization="query-token",
-                query_work_iq_source_authorization="work-iq-token",
             )
         assert isinstance(stream, KnowledgeBaseRetrievalStream)
         assert generated_kwargs["query_source_authorization"] == "query-token"
-        assert generated_kwargs["query_work_iq_source_authorization"] == "work-iq-token"
         assert KnowledgeBaseRetrievalStream.__module__ == "azure.search.documents.knowledgebases"
         stream.close()
 

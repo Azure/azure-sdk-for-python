@@ -14,18 +14,15 @@ from .._utils.utils import FileType
 from .models._enums import (
     KnowledgeBaseModelKind,
     KnowledgeSourceKind,
-    McpServerAuthenticationKind,
-    McpServerOutputParsingKind,
-    SearchIndexKnowledgeSourceBoostKind,
     VectorSearchAlgorithmKind,
     VectorSearchCompressionKind,
     VectorSearchVectorizerKind,
 )
 
 if TYPE_CHECKING:
+    from ..knowledgebases.models import KnowledgeRetrievalOutputMode
     from ..knowledgebases.models import KnowledgeSourceIngestionParameters
     from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort
-    from ..knowledgebases.models import KnowledgeRetrievalOutputMode
     from .models import (
         AIFoundryModelCatalogName,
         AzureOpenAIModelName,
@@ -57,7 +54,6 @@ if TYPE_CHECKING:
         IndexerPermissionOption,
         IndexerResyncOption,
         KeyPhraseExtractionSkillLanguage,
-        KnowledgeSourceResultsProcessing,
         LexicalAnalyzerName,
         LexicalNormalizerName,
         LexicalTokenizerName,
@@ -79,9 +75,7 @@ if TYPE_CHECKING:
         SearchIndexerDataSourceType,
         SentimentSkillLanguage,
         SnowballTokenFilterLanguage,
-        SplitSkillEncoderModelName,
         SplitSkillLanguage,
-        SplitSkillUnit,
         StemmerTokenFilterLanguage,
         StopwordsList,
         TextSplitMode,
@@ -149,61 +143,6 @@ the resource's subdomain.
  to a skillset. Required. Default value is "#Microsoft.Azure.Search.AIServicesByKey".
 :vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.AIServicesByKey"]
 """
-
-
-class AIServicesVisionParameters(TypedDict, total=False):
-    """Specifies the AI Services Vision parameters for vectorizing a query image or text.
-
-    :ivar modelVersion: The version of the model to use when calling the AI Services Vision
-     service. It will default to the latest available when not specified. Required.
-    :vartype modelVersion: str
-    :ivar resourceUri: The resource URI of the AI Services resource. Required.
-    :vartype resourceUri: str
-    :ivar apiKey: API key of the designated AI Services resource.
-    :vartype apiKey: str
-    :ivar authIdentity: The user-assigned managed identity used for outbound connections. If an
-     authResourceId is provided and it's not specified, the system-assigned managed identity is
-     used. On updates to the index, if the identity is unspecified, the value remains unchanged. If
-     set to "none", the value of this property is cleared.
-    :vartype authIdentity: "SearchIndexerDataIdentity"
-    """
-
-    modelVersion: Required[Optional[str]]
-    """The version of the model to use when calling the AI Services Vision service. It will default to
-     the latest available when not specified. Required."""
-    resourceUri: Required[str]
-    """The resource URI of the AI Services resource. Required."""
-    apiKey: str
-    """API key of the designated AI Services resource."""
-    authIdentity: Optional["SearchIndexerDataIdentity"]
-    """The user-assigned managed identity used for outbound connections. If an authResourceId is
-     provided and it's not specified, the system-assigned managed identity is used. On updates to
-     the index, if the identity is unspecified, the value remains unchanged. If set to \"none\", the
-     value of this property is cleared."""
-
-
-class AIServicesVisionVectorizer(TypedDict, total=False):
-    """Clears the identity property of a datasource.
-
-    :ivar name: The name to associate with this particular vectorization method. Required.
-    :vartype name: str
-    :ivar aiServicesVisionParameters: Contains the parameters specific to AI Services Vision
-     embedding vectorization.
-    :vartype aiServicesVisionParameters: "AIServicesVisionParameters"
-    :ivar kind: The name of the kind of vectorization method being configured for use with vector
-     search. Required. Generate embeddings for an image or text input at query time using the Azure
-     AI Services Vision Vectorize API.
-    :vartype kind: Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION]
-    """
-
-    name: Required[str]
-    """The name to associate with this particular vectorization method. Required."""
-    aiServicesVisionParameters: "AIServicesVisionParameters"
-    """Contains the parameters specific to AI Services Vision embedding vectorization."""
-    kind: Required[Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION]]
-    """The name of the kind of vectorization method being configured for use with vector search.
-     Required. Generate embeddings for an image or text input at query time using the Azure AI
-     Services Vision Vectorize API."""
 
 
 class AnalyzeTextOptions(TypedDict, total=False):
@@ -342,7 +281,6 @@ AzureBlobKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.AZURE_BLOB]],
@@ -356,10 +294,6 @@ AzureBlobKnowledgeSource.__doc__ = """Configuration for Azure Blob Storage knowl
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -393,10 +327,6 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     :vartype isADLSGen2: bool
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -411,9 +341,6 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     """Set to true if connecting to an ADLS Gen2 storage account. Default is false."""
     ingestionParameters: Optional["KnowledgeSourceIngestionParameters"]
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -463,71 +390,6 @@ class AzureMachineLearningParameters(TypedDict, total=False):
      \"OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336\",
      \"Facebook-DinoV2-Image-Embeddings-ViT-Base\", \"Facebook-DinoV2-Image-Embeddings-ViT-Giant\",
      \"Cohere-embed-v3-english\", \"Cohere-embed-v3-multilingual\", and \"Cohere-embed-v4\"."""
-
-
-AzureMachineLearningSkill = TypedDict(
-    "AzureMachineLearningSkill",
-    {
-        "name": str,
-        "description": str,
-        "context": str,
-        "inputs": Required[list["InputFieldMappingEntry"]],
-        "outputs": Required[list["OutputFieldMappingEntry"]],
-        "uri": Optional[str],
-        "key": Optional[str],
-        "resourceId": Optional[str],
-        "timeout": Optional[str],
-        "region": Optional[str],
-        "degreeOfParallelism": Optional[int],
-        "@odata.type": Required[Literal["#Microsoft.Skills.Custom.AmlSkill"]],
-    },
-    total=False,
-)
-AzureMachineLearningSkill.__doc__ = """The AML skill allows you to extend AI enrichment with a custom Azure Machine Learning (AML)
-model. Once an AML model is trained and deployed, an AML skill integrates it into AI
-enrichment.
-
-:ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
- with no name defined will be given a default name of its 1-based index in the skills array,
- prefixed with the character '#'.
-:vartype name: str
-:ivar description: The description of the skill which describes the inputs, outputs, and usage
- of the skill.
-:vartype description: str
-:ivar context: Represents the level at which operations take place, such as the document root
- or document content (for example, /document or /document/content). The default is /document.
-:vartype context: str
-:ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
- an upstream skill. Required.
-:vartype inputs: list["InputFieldMappingEntry"]
-:ivar outputs: The output of a skill is either a field in a search index, or a value that can
- be consumed as an input by another skill. Required.
-:vartype outputs: list["OutputFieldMappingEntry"]
-:ivar uri: (Required for no authentication or key authentication) The scoring URI of the AML
- service to which the JSON payload will be sent. Only the https URI scheme is allowed.
-:vartype uri: str
-:ivar key: (Required for key authentication) The key for the AML service.
-:vartype key: str
-:ivar resourceId: (Required for token authentication). The Azure Resource Manager resource ID
- of the AML service. It should be in the format
- subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-:vartype resourceId: str
-:ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
- API call.
-:vartype timeout: str
-:ivar region: (Optional for token authentication). The region the AML service is deployed in.
-:vartype region: str
-:ivar degreeOfParallelism: (Optional) When specified, indicates the number of calls the indexer
- will make in parallel to the endpoint you have provided. You can decrease this value if your
- endpoint is failing under too high of a request load, or raise it if your endpoint is able to
- accept more requests and you would like an increase in the performance of the indexer. If not
- set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10 and a
- minimum of 1.
-:vartype degreeOfParallelism: int
-:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
- "#Microsoft.Skills.Custom.AmlSkill".
-:vartype ``@odata.type``: Literal["#Microsoft.Skills.Custom.AmlSkill"]
-"""
 
 
 class AzureMachineLearningVectorizer(TypedDict, total=False):
@@ -601,9 +463,7 @@ resource.
 :vartype authIdentity: "SearchIndexerDataIdentity"
 :ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
  path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
- "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
- "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
- "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+ "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
 :vartype modelName: Union[str, "AzureOpenAIModelName"]
 :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
  supported in text-embedding-3 and later models.
@@ -612,28 +472,6 @@ resource.
  "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill".
 :vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"]
 """
-
-
-class AzureOpenAITokenizerParameters(TypedDict, total=False):
-    """Azure OpenAI Tokenizer parameters.
-
-    :ivar encoderModelName: Only applies if the unit is set to azureOpenAITokens. Options include
-     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'.
-     Known values are: "r50k_base", "p50k_base", "p50k_edit", and "cl100k_base".
-    :vartype encoderModelName: Union[str, "SplitSkillEncoderModelName"]
-    :ivar allowedSpecialTokens: (Optional) Only applies if the unit is set to azureOpenAITokens.
-     This parameter defines a collection of special tokens that are permitted within the
-     tokenization process.
-    :vartype allowedSpecialTokens: list[str]
-    """
-
-    encoderModelName: Optional[Union[str, "SplitSkillEncoderModelName"]]
-    """Only applies if the unit is set to azureOpenAITokens. Options include 'R50k_base', 'P50k_base',
-     'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'. Known values are:
-     \"r50k_base\", \"p50k_base\", \"p50k_edit\", and \"cl100k_base\"."""
-    allowedSpecialTokens: list[str]
-    """(Optional) Only applies if the unit is set to azureOpenAITokens. This parameter defines a
-     collection of special tokens that are permitted within the tokenization process."""
 
 
 class AzureOpenAIVectorizer(TypedDict, total=False):
@@ -671,9 +509,7 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
     :vartype authIdentity: "SearchIndexerDataIdentity"
     :ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
-     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
     :vartype modelName: Union[str, "AzureOpenAIModelName"]
     """
 
@@ -688,9 +524,7 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
     modelName: Union[str, "AzureOpenAIModelName"]
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
-     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
 
 
 class BinaryQuantizationCompression(TypedDict, total=False):
@@ -1129,6 +963,8 @@ ContentUnderstandingSkill = TypedDict(
         "outputs": Required[list["OutputFieldMappingEntry"]],
         "extractionOptions": Optional[list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]],
         "chunkingProperties": Optional["ContentUnderstandingSkillChunkingProperties"],
+        "modelName": str,
+        "modelDeployment": str,
         "@odata.type": Required[Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]],
     },
     total=False,
@@ -1158,6 +994,12 @@ and retrieval.
 :vartype extractionOptions: list[Union[str, "ContentUnderstandingSkillExtractionOptions"]]
 :ivar chunkingProperties: Controls the cardinality for chunking the content.
 :vartype chunkingProperties: "ContentUnderstandingSkillChunkingProperties"
+:ivar modelName: The name of the chat-completion model used for image description. Must be
+ provided together with modelDeployment.
+:vartype modelName: str
+:ivar modelDeployment: The deployment name of the chat-completion model used for image
+ description. Must be provided together with modelName.
+:vartype modelDeployment: str
 :ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Util.ContentUnderstandingSkill".
 :vartype ``@odata.type``: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"]
@@ -1711,21 +1553,6 @@ class DocumentIntelligenceLayoutSkillChunkingProperties(TypedDict, total=False):
     """The length of overlap provided between two text chunks. Default is 0."""
 
 
-class DocumentKeysOrIds(TypedDict, total=False):
-    """The type of the keysOrIds.
-
-    :ivar documentKeys: document keys to be reset.
-    :vartype documentKeys: list[str]
-    :ivar datasourceDocumentIds: datasource document identifiers to be reset.
-    :vartype datasourceDocumentIds: list[str]
-    """
-
-    documentKeys: list[str]
-    """document keys to be reset."""
-    datasourceDocumentIds: list[str]
-    """datasource document identifiers to be reset."""
-
-
 EdgeNGramTokenFilter = TypedDict(
     "EdgeNGramTokenFilter",
     {
@@ -1962,32 +1789,6 @@ EntityRecognitionSkillV3.__doc__ = """Using the Text Analytics API, extracts ent
 """
 
 
-class EntraAppAuthentication(TypedDict, total=False):
-    """Configuration for a customer-owned Microsoft Entra app registration used for federated
-    credential-based on-behalf-of authentication.
-
-    :ivar applicationId: The application (client) ID of the customer-owned Entra app registration.
-     Required.
-    :vartype applicationId: str
-    :ivar federatedCredentialId: The federated credential ID configured on the app registration,
-     enabling the search service to authenticate as the app without a stored client secret.
-     Required.
-    :vartype federatedCredentialId: str
-    :ivar tenantId: The tenant ID of the app registration. Required when the app registration is in
-     a different tenant than the search service. If omitted, the search service's tenant is used.
-    :vartype tenantId: str
-    """
-
-    applicationId: Required[str]
-    """The application (client) ID of the customer-owned Entra app registration. Required."""
-    federatedCredentialId: Required[str]
-    """The federated credential ID configured on the app registration, enabling the search service to
-     authenticate as the app without a stored client secret. Required."""
-    tenantId: str
-    """The tenant ID of the app registration. Required when the app registration is in a different
-     tenant than the search service. If omitted, the search service's tenant is used."""
-
-
 class ExhaustiveKnnAlgorithmConfiguration(TypedDict, total=False):
     """Contains configuration options specific to the exhaustive KNN algorithm used during querying,
     which will perform brute-force search across the entire vector index.
@@ -2021,122 +1822,6 @@ class ExhaustiveKnnParameters(TypedDict, total=False):
     metric: Optional[Union[str, "VectorSearchAlgorithmMetric"]]
     """The similarity metric to use for vector comparisons. Known values are: \"cosine\",
      \"euclidean\", \"dotProduct\", and \"hamming\"."""
-
-
-FabricDataAgentKnowledgeSource = TypedDict(
-    "FabricDataAgentKnowledgeSource",
-    {
-        "name": Required[str],
-        "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
-        "@odata.etag": str,
-        "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "kind": Required[Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]],
-        "fabricDataAgentParameters": Required["FabricDataAgentKnowledgeSourceParameters"],
-    },
-    total=False,
-)
-FabricDataAgentKnowledgeSource.__doc__ = """Configuration for Fabric Data Agent knowledge source.
-
-:ivar name: The name of the knowledge source. Required.
-:vartype name: str
-:ivar description: Optional user-defined description.
-:vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar ``@odata.etag``: The ETag of the knowledge source.
-:vartype ``@odata.etag``: str
-:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
- This key is used to provide an additional level of encryption-at-rest for your knowledge source
- definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
- you have encrypted your knowledge source definition, it will always remain encrypted. The
- search service will ignore attempts to set this property to null. You can change this property
- as needed if you want to rotate your encryption key; Your knowledge source definition will be
- unaffected. Encryption with customer-managed keys is not available for free search services,
- and is only available for paid services created on or after January 1, 2019.
-:vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar kind: The discriminator value. Required. A knowledge source that retrieves data from a
- Fabric Data Agent.
-:vartype kind: Literal[KnowledgeSourceKind.FABRIC_DATA_AGENT]
-:ivar fabricDataAgentParameters: The parameters for the Fabric Data Agent knowledge source.
- Required.
-:vartype fabricDataAgentParameters: "FabricDataAgentKnowledgeSourceParameters"
-"""
-
-
-class FabricDataAgentKnowledgeSourceParameters(TypedDict, total=False):
-    """Parameters for Fabric Data Agent knowledge source.
-
-    :ivar workspaceId: Fabric workspace ID. Required.
-    :vartype workspaceId: str
-    :ivar dataAgentId: Specifies which Fabric Data Agent to access. Required.
-    :vartype dataAgentId: str
-    """
-
-    workspaceId: Required[str]
-    """Fabric workspace ID. Required."""
-    dataAgentId: Required[str]
-    """Specifies which Fabric Data Agent to access. Required."""
-
-
-FabricOntologyKnowledgeSource = TypedDict(
-    "FabricOntologyKnowledgeSource",
-    {
-        "name": Required[str],
-        "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
-        "@odata.etag": str,
-        "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "kind": Required[Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]],
-        "fabricOntologyParameters": Required["FabricOntologyKnowledgeSourceParameters"],
-    },
-    total=False,
-)
-FabricOntologyKnowledgeSource.__doc__ = """Configuration for Fabric Ontology knowledge source.
-
-:ivar name: The name of the knowledge source. Required.
-:vartype name: str
-:ivar description: Optional user-defined description.
-:vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar ``@odata.etag``: The ETag of the knowledge source.
-:vartype ``@odata.etag``: str
-:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
- This key is used to provide an additional level of encryption-at-rest for your knowledge source
- definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
- you have encrypted your knowledge source definition, it will always remain encrypted. The
- search service will ignore attempts to set this property to null. You can change this property
- as needed if you want to rotate your encryption key; Your knowledge source definition will be
- unaffected. Encryption with customer-managed keys is not available for free search services,
- and is only available for paid services created on or after January 1, 2019.
-:vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar kind: The discriminator value. Required. A knowledge source that retrieves data from
- Microsoft Fabric Ontology ontologies.
-:vartype kind: Literal[KnowledgeSourceKind.FABRIC_ONTOLOGY]
-:ivar fabricOntologyParameters: The parameters for the Fabric Ontology knowledge source.
- Required.
-:vartype fabricOntologyParameters: "FabricOntologyKnowledgeSourceParameters"
-"""
-
-
-class FabricOntologyKnowledgeSourceParameters(TypedDict, total=False):
-    """Parameters for Fabric Ontology knowledge source.
-
-    :ivar workspaceId: The Fabric workspace ID containing the ontology. Required.
-    :vartype workspaceId: str
-    :ivar ontologyId: The ID of the ontology to use from the Fabric workspace. Required.
-    :vartype ontologyId: str
-    """
-
-    workspaceId: Required[str]
-    """The Fabric workspace ID containing the ontology. Required."""
-    ontologyId: Required[str]
-    """The ID of the ontology to use from the Fabric workspace. Required."""
 
 
 class FieldMapping(TypedDict, total=False):
@@ -2181,7 +1866,6 @@ FileKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.FILE]],
@@ -2196,10 +1880,6 @@ FileKnowledgeSource.__doc__ = """Configuration for File knowledge source that su
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -2228,10 +1908,6 @@ class FileKnowledgeSourceParameters(TypedDict, total=False):
     :ivar ingestionParameters: Consolidates all general ingestion settings for the File knowledge
      source, including the content extraction mode and an optional embeddingModel.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the file knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2239,9 +1915,6 @@ class FileKnowledgeSourceParameters(TypedDict, total=False):
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings for the File knowledge source, including the
      content extraction mode and an optional embeddingModel."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the file knowledge source."""
 
@@ -2448,7 +2121,6 @@ IndexedOneLakeKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.INDEXED_ONELAKE]],
@@ -2462,10 +2134,6 @@ IndexedOneLakeKnowledgeSource.__doc__ = """Configuration for OneLake knowledge s
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -2495,10 +2163,6 @@ class IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
     :vartype targetPath: str
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2511,9 +2175,6 @@ class IndexedOneLakeKnowledgeSourceParameters(TypedDict, total=False):
     """Optional OneLakehouse folder or shortcut to filter OneLake content."""
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2523,7 +2184,6 @@ IndexedSharePointKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]],
@@ -2537,10 +2197,6 @@ IndexedSharePointKnowledgeSource.__doc__ = """Configuration for SharePoint knowl
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -2568,16 +2224,13 @@ class IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pyl
      Required.
     :vartype connectionString: str
     :ivar containerName: Specifies which SharePoint libraries to access. Required. Known values
-     are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
+     are: "defaultSiteLibrary", "allSiteLibraries", "useQuery", "allSiteLists", "allSitePages", and
+     "allSiteContent".
     :vartype containerName: Union[str, "IndexedSharePointContainerName"]
     :ivar query: Optional query to filter SharePoint content.
     :vartype query: str
     :ivar ingestionParameters: Consolidates all general ingestion settings.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2588,14 +2241,12 @@ class IndexedSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pyl
      secret];TenantId=[SharePoint site tenant id]. Required."""
     containerName: Required[Union[str, "IndexedSharePointContainerName"]]
     """Specifies which SharePoint libraries to access. Required. Known values are:
-     \"defaultSiteLibrary\", \"allSiteLibraries\", and \"useQuery\"."""
+     \"defaultSiteLibrary\", \"allSiteLibraries\", \"useQuery\", \"allSiteLists\", \"allSitePages\",
+     and \"allSiteContent\"."""
     query: Optional[str]
     """Optional query to filter SharePoint content."""
     ingestionParameters: Optional["KnowledgeSourceIngestionParameters"]
     """Consolidates all general ingestion settings."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2605,7 +2256,6 @@ IndexedSqlKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.INDEXED_SQL]],
@@ -2619,10 +2269,6 @@ IndexedSqlKnowledgeSource.__doc__ = """Configuration for indexed SQL knowledge s
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -2663,10 +2309,6 @@ class IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
     :ivar ingestionParameters: Consolidates all general ingestion settings including embedding
      model, schedule, and identity.
     :vartype ingestionParameters: "KnowledgeSourceIngestionParameters"
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this index-backed knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     :ivar createdResources: Resources created by the knowledge source.
     :vartype createdResources: "CreatedResources"
     """
@@ -2685,9 +2327,6 @@ class IndexedSqlKnowledgeSourceParameters(TypedDict, total=False):
     """Optional column mappings for embedding vector fields. If omitted, no vector fields are created."""
     ingestionParameters: "KnowledgeSourceIngestionParameters"
     """Consolidates all general ingestion settings including embedding model, schedule, and identity."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this index-backed
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
     createdResources: "CreatedResources"
     """Resources created by the knowledge source."""
 
@@ -2808,6 +2447,12 @@ class IndexingParametersConfiguration(TypedDict, total=False):
     :ivar queryTimeout: Increases the timeout beyond the 5-minute default for Azure SQL database
      data sources, specified in the format "hh:mm:ss".
     :vartype queryTimeout: str
+    :ivar refreshAllAcls: For ADLS Gen2 data sources that ingest permissions, indicates whether the
+     indexer refreshes the access control lists of documents whose content has not changed. Changing
+     a file's permissions does not change its last-modified time, so without this the index keeps
+     serving stale permissions. The refresh runs at most once every 24 hours, and only updates
+     permission metadata: content and enriched fields are left as they are. Set to false to disable.
+    :vartype refreshAllAcls: bool
     """
 
     parsingMode: Union[str, "BlobIndexerParsingMode"]
@@ -2874,6 +2519,12 @@ class IndexingParametersConfiguration(TypedDict, total=False):
     queryTimeout: str
     """Increases the timeout beyond the 5-minute default for Azure SQL database data sources,
      specified in the format \"hh:mm:ss\"."""
+    refreshAllAcls: bool
+    """For ADLS Gen2 data sources that ingest permissions, indicates whether the indexer refreshes the
+     access control lists of documents whose content has not changed. Changing a file's permissions
+     does not change its last-modified time, so without this the index keeps serving stale
+     permissions. The refresh runs at most once every 24 hours, and only updates permission
+     metadata: content and enriched fields are left as they are. Set to false to disable."""
 
 
 class IndexingSchedule(TypedDict, total=False):
@@ -3077,11 +2728,9 @@ KnowledgeBase = TypedDict(
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "description": str,
-        "tags": dict[str, str],
         "retrievalInstructions": str,
         "answerInstructions": str,
         "corsOptions": "CorsOptions",
-        "retrieveDefaults": "KnowledgeBaseRetrieveDefaults",
     },
     total=False,
 )
@@ -3104,9 +2753,6 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
 :vartype encryptionKey: "SearchResourceEncryptionKey"
 :ivar description: The description of the knowledge base.
 :vartype description: str
-:ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
- its usage and costs.
-:vartype tags: dict[str, str]
 :ivar retrievalInstructions: Instructions considered by the knowledge base when developing
  query plan.
 :vartype retrievalInstructions: str
@@ -3116,10 +2762,6 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
 :ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
  base.
 :vartype corsOptions: "CorsOptions"
-:ivar retrieveDefaults: Persisted request-wide retrieve defaults for this knowledge base. These
- values apply to retrieve requests that omit the corresponding fields; request-time values take
- precedence when present.
-:vartype retrieveDefaults: "KnowledgeBaseRetrieveDefaults"
 """
 
 
@@ -3138,52 +2780,15 @@ class KnowledgeBaseAzureOpenAIModel(TypedDict, total=False):
     """Azure OpenAI parameters. Required."""
 
 
-class KnowledgeBaseRetrieveDefaults(TypedDict, total=False):
-    """Persisted request-wide defaults for knowledge base retrieve requests. Each value provides the
-    default for the matching retrieve-request field; service defaults apply when unset, and
-    request-time values take precedence when present.
-
-    :ivar maxRuntimeInSeconds: The default maximum runtime in seconds for a retrieve request.
-    :vartype maxRuntimeInSeconds: int
-    :ivar maxOutputDocuments: The default maximum number of documents in the retrieve output.
-    :vartype maxOutputDocuments: int
-    :ivar maxOutputSizeInTokens: The default maximum size, in tokens, of the content in the
-     retrieve output.
-    :vartype maxOutputSizeInTokens: int
-    """
-
-    maxRuntimeInSeconds: int
-    """The default maximum runtime in seconds for a retrieve request."""
-    maxOutputDocuments: int
-    """The default maximum number of documents in the retrieve output."""
-    maxOutputSizeInTokens: int
-    """The default maximum size, in tokens, of the content in the retrieve output."""
-
-
 class KnowledgeSourceReference(TypedDict, total=False):
     """Reference to a knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
-    :ivar enableImageServing: Indicates whether image serving should be enabled for this knowledge
-     source. When true, images extracted during ingestion are delivered to downstream models at
-     query time.
-    :vartype enableImageServing: bool
-    :ivar enableFreshness: Indicates whether freshness-aware retrieval should be enabled for this
-     knowledge source. When true, a freshness scoring profile is applied during retrieval to bias
-     results toward newer documents.
-    :vartype enableFreshness: bool
     """
 
     name: Required[str]
     """The name of the knowledge source. Required."""
-    enableImageServing: bool
-    """Indicates whether image serving should be enabled for this knowledge source. When true, images
-     extracted during ingestion are delivered to downstream models at query time."""
-    enableFreshness: bool
-    """Indicates whether freshness-aware retrieval should be enabled for this knowledge source. When
-     true, a freshness scoring profile is applied during retrieval to bias results toward newer
-     documents."""
 
 
 LanguageDetectionSkill = TypedDict(
@@ -3446,259 +3051,6 @@ string. This character filter is implemented using Apache Lucene.
  value is "#Microsoft.Azure.Search.MappingCharFilter".
 :vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.MappingCharFilter"]
 """
-
-
-class McpServerAutoOutputParsing(TypedDict, total=False):
-    """Automatically detect the output format and parse accordingly.
-
-    :ivar kind: The discriminator value. Required. Automatically detect the output format and parse
-     accordingly.
-    :vartype kind: Literal[McpServerOutputParsingKind.AUTO]
-    """
-
-    kind: Required[Literal[McpServerOutputParsingKind.AUTO]]
-    """The discriminator value. Required. Automatically detect the output format and parse
-     accordingly."""
-
-
-class McpServerFoundryConnectionAuthentication(TypedDict, total=False):
-    """Authentication using an Azure AI Foundry connection.
-
-    :ivar kind: The discriminator value. Required. Authenticate using an Azure AI Foundry
-     connection.
-    :vartype kind: Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION]
-    :ivar foundryConnectionParameters: Parameters for Foundry connection authentication. Required.
-    :vartype foundryConnectionParameters: "McpServerFoundryConnectionParameters"
-    """
-
-    kind: Required[Literal[McpServerAuthenticationKind.FOUNDRY_CONNECTION]]
-    """The discriminator value. Required. Authenticate using an Azure AI Foundry connection."""
-    foundryConnectionParameters: Required["McpServerFoundryConnectionParameters"]
-    """Parameters for Foundry connection authentication. Required."""
-
-
-class McpServerFoundryConnectionParameters(TypedDict, total=False):
-    """Parameters for Foundry connection authentication.
-
-    :ivar connectionId: The Azure AI Foundry connection identifier.
-    :vartype connectionId: str
-    """
-
-    connectionId: str
-    """The Azure AI Foundry connection identifier."""
-
-
-class McpServerHeaders(TypedDict, total=False):
-    """A dictionary of HTTP header names and values."""
-
-
-class McpServerJsonOutputParsing(TypedDict, total=False):
-    """Parse the output as a JSON document using the configured JSON parameters.
-
-    :ivar kind: The discriminator value. Required. Parse the output as a JSON document using the
-     configured JSON parameters.
-    :vartype kind: Literal[McpServerOutputParsingKind.JSON]
-    :ivar jsonParameters: Parameters for JSON output parsing. Required when kind is 'json'.
-     Required.
-    :vartype jsonParameters: "McpServerOutputParsingJsonParameters"
-    """
-
-    kind: Required[Literal[McpServerOutputParsingKind.JSON]]
-    """The discriminator value. Required. Parse the output as a JSON document using the configured
-     JSON parameters."""
-    jsonParameters: Required["McpServerOutputParsingJsonParameters"]
-    """Parameters for JSON output parsing. Required when kind is 'json'. Required."""
-
-
-McpServerKnowledgeSource = TypedDict(
-    "McpServerKnowledgeSource",
-    {
-        "name": Required[str],
-        "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
-        "@odata.etag": str,
-        "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "kind": Required[Literal[KnowledgeSourceKind.MCP_SERVER]],
-        "mcpServerParameters": Required["McpServerKnowledgeSourceParameters"],
-    },
-    total=False,
-)
-McpServerKnowledgeSource.__doc__ = """Configuration for a knowledge source backed by an MCP (Model Context Protocol) server.
-
-:ivar name: The name of the knowledge source. Required.
-:vartype name: str
-:ivar description: Optional user-defined description.
-:vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar ``@odata.etag``: The ETag of the knowledge source.
-:vartype ``@odata.etag``: str
-:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
- This key is used to provide an additional level of encryption-at-rest for your knowledge source
- definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
- you have encrypted your knowledge source definition, it will always remain encrypted. The
- search service will ignore attempts to set this property to null. You can change this property
- as needed if you want to rotate your encryption key; Your knowledge source definition will be
- unaffected. Encryption with customer-managed keys is not available for free search services,
- and is only available for paid services created on or after January 1, 2019.
-:vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar kind: The discriminator value. Required. A knowledge source backed by an MCP (Model
- Context Protocol) server.
-:vartype kind: Literal[KnowledgeSourceKind.MCP_SERVER]
-:ivar mcpServerParameters: The parameters for the MCP server knowledge source. Required.
-:vartype mcpServerParameters: "McpServerKnowledgeSourceParameters"
-"""
-
-
-class McpServerKnowledgeSourceParameters(TypedDict, total=False):
-    """Parameters for an MCP server knowledge source.
-
-    :ivar serverURL: The URL of the MCP server endpoint. Required.
-    :vartype serverURL: str
-    :ivar authentication: The authentication configuration for the MCP server.
-    :vartype authentication: "McpServerAuthentication"
-    :ivar tools: The list of tools to invoke on the MCP server. Required.
-    :vartype tools: list["McpServerTool"]
-    """
-
-    serverURL: Required[str]
-    """The URL of the MCP server endpoint. Required."""
-    authentication: "McpServerAuthentication"
-    """The authentication configuration for the MCP server."""
-    tools: Required[list["McpServerTool"]]
-    """The list of tools to invoke on the MCP server. Required."""
-
-
-class McpServerNoneOutputParsing(TypedDict, total=False):
-    """Treat the output as a single block without any parsing.
-
-    :ivar kind: The discriminator value. Required. Treat the output as a single block without any
-     parsing.
-    :vartype kind: Literal[McpServerOutputParsingKind.NONE]
-    """
-
-    kind: Required[Literal[McpServerOutputParsingKind.NONE]]
-    """The discriminator value. Required. Treat the output as a single block without any parsing."""
-
-
-class McpServerOutputParsingJsonParameters(TypedDict, total=False):
-    """Parameters for JSON output parsing.
-
-    :ivar documentsPath: The JSON path to the array of documents in the tool output. Required.
-    :vartype documentsPath: str
-    :ivar includeContext: Whether to include surrounding context from the JSON output alongside
-     extracted documents.
-    :vartype includeContext: bool
-    """
-
-    documentsPath: Required[str]
-    """The JSON path to the array of documents in the tool output. Required."""
-    includeContext: bool
-    """Whether to include surrounding context from the JSON output alongside extracted documents."""
-
-
-class McpServerOutputParsingSplitParameters(TypedDict, total=False):
-    """Parameters for split output parsing.
-
-    :ivar textSplitMode: The text split mode to use. Known values are: "pages" and "sentences".
-    :vartype textSplitMode: Union[str, "TextSplitMode"]
-    :ivar maximumPageLength: The maximum number of characters per page.
-    :vartype maximumPageLength: int
-    :ivar pageOverlapLength: The number of characters to overlap between pages.
-    :vartype pageOverlapLength: int
-    :ivar maximumPagesToTake: The maximum number of pages to take from the output.
-    :vartype maximumPagesToTake: int
-    :ivar defaultLanguageCode: A value indicating which language code to use. Default is ``en``.
-     Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hr",
-     "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru", "sk", "sl",
-     "sr", "sv", "tr", "ur", and "zh".
-    :vartype defaultLanguageCode: Union[str, "SplitSkillLanguage"]
-    """
-
-    textSplitMode: Union[str, "TextSplitMode"]
-    """The text split mode to use. Known values are: \"pages\" and \"sentences\"."""
-    maximumPageLength: int
-    """The maximum number of characters per page."""
-    pageOverlapLength: int
-    """The number of characters to overlap between pages."""
-    maximumPagesToTake: int
-    """The maximum number of pages to take from the output."""
-    defaultLanguageCode: Union[str, "SplitSkillLanguage"]
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"am\",
-     \"bs\", \"cs\", \"da\", \"de\", \"en\", \"es\", \"et\", \"fi\", \"fr\", \"he\", \"hi\", \"hr\",
-     \"hu\", \"id\", \"is\", \"it\", \"ja\", \"ko\", \"lv\", \"nb\", \"nl\", \"pl\", \"pt\",
-     \"pt-br\", \"ru\", \"sk\", \"sl\", \"sr\", \"sv\", \"tr\", \"ur\", and \"zh\"."""
-
-
-class McpServerSplitOutputParsing(TypedDict, total=False):
-    """Split the output into pages using the configured split parameters.
-
-    :ivar kind: The discriminator value. Required. Split the output into pages using the configured
-     split parameters.
-    :vartype kind: Literal[McpServerOutputParsingKind.SPLIT]
-    :ivar splitParameters: Parameters for split output parsing.
-    :vartype splitParameters: "McpServerOutputParsingSplitParameters"
-    """
-
-    kind: Required[Literal[McpServerOutputParsingKind.SPLIT]]
-    """The discriminator value. Required. Split the output into pages using the configured split
-     parameters."""
-    splitParameters: "McpServerOutputParsingSplitParameters"
-    """Parameters for split output parsing."""
-
-
-class McpServerStoredHeadersAuthentication(TypedDict, total=False):
-    """Authentication using stored HTTP headers.
-
-    :ivar kind: The discriminator value. Required. Authenticate using stored HTTP headers.
-    :vartype kind: Literal[McpServerAuthenticationKind.STORED_HEADERS]
-    :ivar storedHeadersParameters: Parameters for stored headers authentication. Required.
-    :vartype storedHeadersParameters: "McpServerStoredHeadersParameters"
-    """
-
-    kind: Required[Literal[McpServerAuthenticationKind.STORED_HEADERS]]
-    """The discriminator value. Required. Authenticate using stored HTTP headers."""
-    storedHeadersParameters: Required["McpServerStoredHeadersParameters"]
-    """Parameters for stored headers authentication. Required."""
-
-
-class McpServerStoredHeadersParameters(TypedDict, total=False):
-    """Parameters for stored headers authentication.
-
-    :ivar headers: The stored HTTP headers to include in MCP server requests.
-    :vartype headers: "McpServerHeaders"
-    """
-
-    headers: "McpServerHeaders"
-    """The stored HTTP headers to include in MCP server requests."""
-
-
-class McpServerTool(TypedDict, total=False):
-    """Represents a single tool within an MCP server knowledge source.
-
-    :ivar name: The name of the MCP tool to invoke.
-    :vartype name: str
-    :ivar outputParsing: Optional configuration for parsing the tool's output.
-    :vartype outputParsing: "McpServerOutputParsing"
-    :ivar resultsProcessing: Controls whether the parsed results from this tool are reranked.
-     Defaults to 'rerank' when not specified. Known values are: "rerank" and "none".
-    :vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-    :ivar maxOutputTokens: Optional post-parsing token cap for this tool's output. Must be greater
-     than 0 when specified.
-    :vartype maxOutputTokens: int
-    """
-
-    name: str
-    """The name of the MCP tool to invoke."""
-    outputParsing: "McpServerOutputParsing"
-    """Optional configuration for parsing the tool's output."""
-    resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-    """Controls whether the parsed results from this tool are reranked. Defaults to 'rerank' when not
-     specified. Known values are: \"rerank\" and \"none\"."""
-    maxOutputTokens: int
-    """Optional post-parsing token cap for this tool's output. Must be greater than 0 when specified."""
 
 
 MergeSkill = TypedDict(
@@ -4289,73 +3641,6 @@ the option of masking it.
 """
 
 
-RemoteSharePointKnowledgeSource = TypedDict(
-    "RemoteSharePointKnowledgeSource",
-    {
-        "name": Required[str],
-        "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
-        "@odata.etag": str,
-        "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "kind": Required[Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]],
-        "remoteSharePointParameters": "RemoteSharePointKnowledgeSourceParameters",
-    },
-    total=False,
-)
-RemoteSharePointKnowledgeSource.__doc__ = """Configuration for remote SharePoint knowledge source.
-
-:ivar name: The name of the knowledge source. Required.
-:vartype name: str
-:ivar description: Optional user-defined description.
-:vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar ``@odata.etag``: The ETag of the knowledge source.
-:vartype ``@odata.etag``: str
-:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
- This key is used to provide an additional level of encryption-at-rest for your knowledge source
- definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
- you have encrypted your knowledge source definition, it will always remain encrypted. The
- search service will ignore attempts to set this property to null. You can change this property
- as needed if you want to rotate your encryption key; Your knowledge source definition will be
- unaffected. Encryption with customer-managed keys is not available for free search services,
- and is only available for paid services created on or after January 1, 2019.
-:vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar kind: Required. A knowledge source that reads data from remote SharePoint.
-:vartype kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT]
-:ivar remoteSharePointParameters: The parameters for the remote SharePoint knowledge source.
-:vartype remoteSharePointParameters: "RemoteSharePointKnowledgeSourceParameters"
-"""
-
-
-class RemoteSharePointKnowledgeSourceParameters(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Parameters for remote SharePoint knowledge source.
-
-    :ivar filterExpression: Keyword Query Language (KQL) expression with queryable SharePoint
-     properties and attributes to scope the retrieval before the query runs.
-    :vartype filterExpression: str
-    :ivar resourceMetadata: A list of metadata fields to be returned for each item in the response.
-     Only retrievable metadata properties can be included in this list. By default, no metadata is
-     returned.
-    :vartype resourceMetadata: list[str]
-    :ivar containerTypeId: Container ID for SharePoint Embedded connection. When this is null, it
-     will use SharePoint Online.
-    :vartype containerTypeId: str
-    """
-
-    filterExpression: str
-    """Keyword Query Language (KQL) expression with queryable SharePoint properties and attributes to
-     scope the retrieval before the query runs."""
-    resourceMetadata: list[str]
-    """A list of metadata fields to be returned for each item in the response. Only retrievable
-     metadata properties can be included in this list. By default, no metadata is returned."""
-    containerTypeId: str
-    """Container ID for SharePoint Embedded connection. When this is null, it will use SharePoint
-     Online."""
-
-
 class RescoringOptions(TypedDict, total=False):
     """Contains the options for rescoring.
 
@@ -4565,16 +3850,16 @@ class SearchField(TypedDict, total=False):
     :ivar permissionFilter: A value indicating whether the field should be used as a permission
      filter. Known values are: "userIds", "groupIds", and "rbacScope".
     :vartype permissionFilter: Union[str, "PermissionFilter"]
-    :ivar sensitivityLabelId: A value indicating whether the field should be used for sensitivity
-     label ID filtering. This enables document-level filtering based on Microsoft Purview
-     sensitivity label IDs.
-    :vartype sensitivityLabelId: bool
-    :ivar sensitivityLabelName: A value indicating whether the field contains the name of a
-     Microsoft Purview sensitivity label applied to the document.
-    :vartype sensitivityLabelName: bool
-    :ivar sourceDocumentId: A value indicating whether the field contains the source document
-     identifier used for Purview audit tracking.
-    :vartype sourceDocumentId: bool
+    :ivar organizationAccessExpiration: A value indicating whether the field contains the
+     expiration timestamp for organization-scoped SharePoint sharing links. At most one top-level
+     field of type Edm.DateTimeOffset can have this property set to true. On permission-filtered
+     queries, expiration applies only to orgLink:<tenantId> values in a userIds permission-filter
+     field whose tenant ID matches the validated user's tenant ID. The grant is valid only before
+     the timestamp; an absent expiration field or a null timestamp means no time limit. Expiration
+     does not affect orgGroup:<tenantId> values in groupIds permission-filter fields or ordinary
+     user and group grants. If omitted or false, this field is not used for organization-link
+     expiration.
+    :vartype organizationAccessExpiration: bool
     :ivar sharepointSiteUrl: A value indicating whether the field contains a SharePoint site URL
      used for SharePoint group-based filtering.
     :vartype sharepointSiteUrl: bool
@@ -4735,15 +4020,15 @@ class SearchField(TypedDict, total=False):
     permissionFilter: Optional[Union[str, "PermissionFilter"]]
     """A value indicating whether the field should be used as a permission filter. Known values are:
      \"userIds\", \"groupIds\", and \"rbacScope\"."""
-    sensitivityLabelId: bool
-    """A value indicating whether the field should be used for sensitivity label ID filtering. This
-     enables document-level filtering based on Microsoft Purview sensitivity label IDs."""
-    sensitivityLabelName: bool
-    """A value indicating whether the field contains the name of a Microsoft Purview sensitivity label
-     applied to the document."""
-    sourceDocumentId: bool
-    """A value indicating whether the field contains the source document identifier used for Purview
-     audit tracking."""
+    organizationAccessExpiration: bool
+    """A value indicating whether the field contains the expiration timestamp for organization-scoped
+     SharePoint sharing links. At most one top-level field of type Edm.DateTimeOffset can have this
+     property set to true. On permission-filtered queries, expiration applies only to
+     orgLink:<tenantId> values in a userIds permission-filter field whose tenant ID matches the
+     validated user's tenant ID. The grant is valid only before the timestamp; an absent expiration
+     field or a null timestamp means no time limit. Expiration does not affect orgGroup:<tenantId>
+     values in groupIds permission-filter fields or ordinary user and group grants. If omitted or
+     false, this field is not used for organization-link expiration."""
     sharepointSiteUrl: bool
     """A value indicating whether the field contains a SharePoint site URL used for SharePoint
      group-based filtering."""
@@ -4863,7 +4148,6 @@ SearchIndex = TypedDict(
         "semantic": Optional["SemanticSearch"],
         "vectorSearch": Optional["VectorSearch"],
         "permissionFilterOption": Optional[Union[str, "SearchIndexPermissionFilterOption"]],
-        "purviewEnabled": Optional[bool],
         "sharePointConnectorAppRegistration": "SharePointConnectorAppRegistration",
         "@odata.etag": str,
     },
@@ -4919,8 +4203,6 @@ index.
 :ivar permissionFilterOption: A value indicating whether permission filtering is enabled for
  the index. Known values are: "enabled" and "disabled".
 :vartype permissionFilterOption: Union[str, "SearchIndexPermissionFilterOption"]
-:ivar purviewEnabled: A value indicating whether Purview is enabled for the index.
-:vartype purviewEnabled: bool
 :ivar sharePointConnectorAppRegistration: Configures a SharePoint connector app registration
  for the index, enabling document-level permissions from SharePoint. If provided, the
  applicationId and federatedCredentialId properties are required.
@@ -4945,7 +4227,6 @@ SearchIndexer = TypedDict(
         "disabled": Optional[bool],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "cache": Optional["SearchIndexerCache"],
     },
     total=False,
 )
@@ -4985,42 +4266,7 @@ SearchIndexer.__doc__ = """Represents an indexer.
  keys is not available for free search services, and is only available for paid services created
  on or after January 1, 2019.
 :vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
- without having to rebuild the index every time.
-:vartype cache: "SearchIndexerCache"
 """
-
-
-class SearchIndexerCache(TypedDict, total=False):
-    """The type of the cache.
-
-    :ivar id: A guid for the SearchIndexerCache.
-    :vartype id: str
-    :ivar storageConnectionString: The connection string to the storage account where the cache
-     data will be persisted.
-    :vartype storageConnectionString: str
-    :ivar enableReprocessing: Specifies whether incremental reprocessing is enabled.
-    :vartype enableReprocessing: bool
-    :ivar identity: The user-assigned managed identity used for connections to the enrichment
-     cache.  If the connection string indicates an identity (ResourceId) and it's not specified, the
-     system-assigned managed identity is used. On updates to the indexer, if the identity is
-     unspecified, the value remains unchanged. If set to "none", the value of this property is
-     cleared.
-    :vartype identity: "SearchIndexerDataIdentity"
-    """
-
-    id: str
-    """A guid for the SearchIndexerCache."""
-    storageConnectionString: str
-    """The connection string to the storage account where the cache data will be persisted."""
-    enableReprocessing: Optional[bool]
-    """Specifies whether incremental reprocessing is enabled."""
-    identity: Optional["SearchIndexerDataIdentity"]
-    """The user-assigned managed identity used for connections to the enrichment cache.  If the
-     connection string indicates an identity (ResourceId) and it's not specified, the
-     system-assigned managed identity is used. On updates to the indexer, if the identity is
-     unspecified, the value remains unchanged. If set to \"none\", the value of this property is
-     cleared."""
 
 
 class SearchIndexerDataContainer(TypedDict, total=False):
@@ -5064,7 +4310,6 @@ SearchIndexerDataSourceConnection = TypedDict(
         "name": Required[str],
         "description": str,
         "type": Required[Union[str, "SearchIndexerDataSourceType"]],
-        "subType": str,
         "credentials": Required["DataSourceCredentials"],
         "container": Required["SearchIndexerDataContainer"],
         "identity": Optional["SearchIndexerDataIdentity"],
@@ -5085,9 +4330,6 @@ SearchIndexerDataSourceConnection.__doc__ = """Represents a datasource definitio
 :ivar type: The type of the datasource. Required. Known values are: "azuresql", "cosmosdb",
  "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", and "sharepoint".
 :vartype type: Union[str, "SearchIndexerDataSourceType"]
-:ivar subType: A specific type of the data source, in case the resource is capable of different
- modalities. For example, 'MongoDb' for certain 'cosmosDb' accounts.
-:vartype subType: str
 :ivar credentials: Credentials for the datasource. Required.
 :vartype credentials: "DataSourceCredentials"
 :ivar container: The data container for the datasource. Required.
@@ -5219,9 +4461,6 @@ class SearchIndexerKnowledgeStore(TypedDict, total=False):
      to the indexer, if the identity is unspecified, the value remains unchanged. If set to "none",
      the value of this property is cleared.
     :vartype identity: "SearchIndexerDataIdentity"
-    :ivar parameters: A dictionary of knowledge store-specific configuration properties. Each name
-     is the name of a specific property. Each value must be of a primitive type.
-    :vartype parameters: "SearchIndexerKnowledgeStoreParameters"
     """
 
     storageConnectionString: Required[str]
@@ -5234,9 +4473,6 @@ class SearchIndexerKnowledgeStore(TypedDict, total=False):
      specified, the system-assigned managed identity is used. On updates to the indexer, if the
      identity is unspecified, the value remains unchanged. If set to \"none\", the value of this
      property is cleared."""
-    parameters: "SearchIndexerKnowledgeStoreParameters"
-    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
-     specific property. Each value must be of a primitive type."""
 
 
 class SearchIndexerKnowledgeStoreProjectionSelector(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -5327,19 +4563,6 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(
     :ivar storageContainer: Blob container to store projections in. Required.
     :vartype storageContainer: str
     """
-
-
-class SearchIndexerKnowledgeStoreParameters(TypedDict, total=False):
-    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
-    specific property. Each value must be of a primitive type.
-
-    :ivar synthesizeGeneratedKeyName: Whether or not projections should synthesize a generated key
-     name if one isn't already present.
-    :vartype synthesizeGeneratedKeyName: bool
-    """
-
-    synthesizeGeneratedKeyName: bool
-    """Whether or not projections should synthesize a generated key name if one isn't already present."""
 
 
 class SearchIndexerKnowledgeStoreProjection(TypedDict, total=False):
@@ -5451,7 +4674,6 @@ SearchIndexKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.SEARCH_INDEX]],
@@ -5465,10 +4687,6 @@ SearchIndexKnowledgeSource.__doc__ = """Knowledge Source targeting a search inde
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -5487,82 +4705,6 @@ SearchIndexKnowledgeSource.__doc__ = """Knowledge Source targeting a search inde
 """
 
 
-class SearchIndexKnowledgeSourceFieldValueBoost(TypedDict, total=False):  # pylint: disable=name-too-long
-    """A hint that boosts documents based on a field value.
-
-    :ivar boostInstructions: Natural-language instructions that explain when and how to apply the
-     boost.
-    :vartype boostInstructions: str
-    :ivar kind: The discriminator value. Required. Boost documents based on a field value.
-    :vartype kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE]
-    :ivar field: The name of the search index field. Required.
-    :vartype field: str
-    :ivar fieldValues: Representative values for the field.
-    :vartype fieldValues: list[str]
-    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
-    """
-
-    boostInstructions: str
-    """Natural-language instructions that explain when and how to apply the boost."""
-    kind: Required[Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE]]
-    """The discriminator value. Required. Boost documents based on a field value."""
-    field: Required[str]
-    """The name of the search index field. Required."""
-    fieldValues: list[str]
-    """Representative values for the field."""
-    boost: Required[float]
-    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
-
-
-class SearchIndexKnowledgeSourceFilterHint(TypedDict, total=False):
-    """A hint that identifies a field and representative values the query planner can use when
-    constructing a filter.
-
-    :ivar field: The name of the filterable search index field. Required.
-    :vartype field: str
-    :ivar fieldValues: Representative values for the field. Required.
-    :vartype fieldValues: list[str]
-    :ivar filterInstructions: Natural-language instructions that explain when and how to filter on
-     the field.
-    :vartype filterInstructions: str
-    """
-
-    field: Required[str]
-    """The name of the filterable search index field. Required."""
-    fieldValues: Required[list[str]]
-    """Representative values for the field. Required."""
-    filterInstructions: str
-    """Natural-language instructions that explain when and how to filter on the field."""
-
-
-class SearchIndexKnowledgeSourceMultiWordExpressionBoost(TypedDict, total=False):  # pylint: disable=name-too-long
-    """A hint that boosts documents based on a multi-word expression.
-
-    :ivar boostInstructions: Natural-language instructions that explain when and how to apply the
-     boost.
-    :vartype boostInstructions: str
-    :ivar kind: The discriminator value. Required. Boost documents based on a multi-word
-     expression.
-    :vartype kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION]
-    :ivar fieldValues: Representative values for the boost.
-    :vartype fieldValues: list[str]
-    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
-     Required.
-    :vartype boost: float
-    """
-
-    boostInstructions: str
-    """Natural-language instructions that explain when and how to apply the boost."""
-    kind: Required[Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION]]
-    """The discriminator value. Required. Boost documents based on a multi-word expression."""
-    fieldValues: list[str]
-    """Representative values for the boost."""
-    boost: Required[float]
-    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
-
-
 class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
     """Parameters for search index knowledge source.
 
@@ -5578,10 +4720,6 @@ class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
     :ivar baseFilter: A default filter condition applied to the index at retrieval time (e.g.,
      'State eq VA'). Can be overridden at query time via knowledge source runtime parameters.
     :vartype baseFilter: str
-    :ivar queryHints: Default hints that guide query planning toward useful filters and boosts for
-     this search index knowledge source. Request-time query hints replace these defaults as a
-     complete object.
-    :vartype queryHints: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     searchIndexName: Required[str]
@@ -5596,28 +4734,6 @@ class SearchIndexKnowledgeSourceParameters(TypedDict, total=False):
     baseFilter: str
     """A default filter condition applied to the index at retrieval time (e.g., 'State eq VA'). Can be
      overridden at query time via knowledge source runtime parameters."""
-    queryHints: "SearchIndexKnowledgeSourceQueryHints"
-    """Default hints that guide query planning toward useful filters and boosts for this search index
-     knowledge source. Request-time query hints replace these defaults as a complete object."""
-
-
-class SearchIndexKnowledgeSourceQueryHints(TypedDict, total=False):
-    """Hints that guide query planning toward useful filters and boosts for a search index knowledge
-    source.
-
-    :ivar filters: Filter hints that identify fields and representative values the query planner
-     can use when constructing filters.
-    :vartype filters: list["SearchIndexKnowledgeSourceFilterHint"]
-    :ivar boosts: Boost hints that identify conditions the query planner can use to influence
-     document ranking.
-    :vartype boosts: list["SearchIndexKnowledgeSourceBoost"]
-    """
-
-    filters: list["SearchIndexKnowledgeSourceFilterHint"]
-    """Filter hints that identify fields and representative values the query planner can use when
-     constructing filters."""
-    boosts: list["SearchIndexKnowledgeSourceBoost"]
-    """Boost hints that identify conditions the query planner can use to influence document ranking."""
 
 
 class SearchResourceEncryptionKey(TypedDict, total=False):
@@ -5642,9 +4758,6 @@ class SearchResourceEncryptionKey(TypedDict, total=False):
      update to the resource, if the explicit identity is unspecified, it remains unchanged. If
      "none" is specified, the value of this property is cleared.
     :vartype identity: "SearchIndexerDataIdentity"
-    :ivar isServiceLevelKey: An optional value indicating whether this key is a service-level key.
-     Default is false.
-    :vartype isServiceLevelKey: bool
     """
 
     keyVaultKeyName: Required[str]
@@ -5663,8 +4776,6 @@ class SearchResourceEncryptionKey(TypedDict, total=False):
      credentials property is null, the system-assigned managed identity is used. On update to the
      resource, if the explicit identity is unspecified, it remains unchanged. If \"none\" is
      specified, the value of this property is cleared."""
-    isServiceLevelKey: bool
-    """An optional value indicating whether this key is a service-level key. Default is false."""
 
 
 class SearchSuggester(TypedDict, total=False):
@@ -5702,9 +4813,6 @@ class SemanticConfiguration(TypedDict, total=False):
     :ivar rankingOrder: Specifies the score type to be used for the sort order of the search
      results. Known values are: "BoostedRerankerScore" and "RerankerScore".
     :vartype rankingOrder: Union[str, "RankingOrder"]
-    :ivar flightingOptIn: Determines which semantic or query rewrite models to use during model
-     flighting/upgrades.
-    :vartype flightingOptIn: bool
     """
 
     name: Required[str]
@@ -5716,8 +4824,6 @@ class SemanticConfiguration(TypedDict, total=False):
     rankingOrder: Optional[Union[str, "RankingOrder"]]
     """Specifies the score type to be used for the sort order of the search results. Known values are:
      \"BoostedRerankerScore\" and \"RerankerScore\"."""
-    flightingOptIn: bool
-    """Determines which semantic or query rewrite models to use during model flighting/upgrades."""
 
 
 class SemanticField(TypedDict, total=False):
@@ -5941,17 +5047,6 @@ Lucene.
 """
 
 
-class SkillNames(TypedDict, total=False):
-    """The type of the skill names.
-
-    :ivar skillNames: the names of skills to be reset.
-    :vartype skillNames: list[str]
-    """
-
-    skillNames: list[str]
-    """the names of skills to be reset."""
-
-
 SnowballTokenFilter = TypedDict(
     "SnowballTokenFilter",
     {
@@ -6016,8 +5111,6 @@ SplitSkill = TypedDict(
         "maximumPageLength": Optional[int],
         "pageOverlapLength": Optional[int],
         "maximumPagesToTake": Optional[int],
-        "unit": Optional[Union[str, "SplitSkillUnit"]],
-        "azureOpenAITokenizerParameters": Optional["AzureOpenAITokenizerParameters"],
         "@odata.type": Required[Literal["#Microsoft.Skills.Text.SplitSkill"]],
     },
     total=False,
@@ -6058,15 +5151,6 @@ SplitSkill.__doc__ = """A skill to split a string into chunks of text.
  pages, in order to improve performance when only a few initial pages are needed from each
  document.
 :vartype maximumPagesToTake: int
-:ivar unit: Only applies if textSplitMode is set to pages. There are two possible values. The
- choice of the values will decide the length (maximumPageLength and pageOverlapLength)
- measurement. The default is 'characters', which means the length will be measured by character.
- Known values are: "characters" and "azureOpenAITokens".
-:vartype unit: Union[str, "SplitSkillUnit"]
-:ivar azureOpenAITokenizerParameters: Only applies if the unit is set to azureOpenAITokens. If
- specified, the splitSkill will use these parameters when performing the tokenization. The
- parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property.
-:vartype azureOpenAITokenizerParameters: "AzureOpenAITokenizerParameters"
 :ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
  "#Microsoft.Skills.Text.SplitSkill".
 :vartype ``@odata.type``: Literal["#Microsoft.Skills.Text.SplitSkill"]
@@ -6572,47 +5656,6 @@ class VectorSearchProfile(TypedDict, total=False):
      optional parameters."""
 
 
-VisionVectorizeSkill = TypedDict(
-    "VisionVectorizeSkill",
-    {
-        "name": str,
-        "description": str,
-        "context": str,
-        "inputs": Required[list["InputFieldMappingEntry"]],
-        "outputs": Required[list["OutputFieldMappingEntry"]],
-        "modelVersion": Required[Optional[str]],
-        "@odata.type": Required[Literal["#Microsoft.Skills.Vision.VectorizeSkill"]],
-    },
-    total=False,
-)
-VisionVectorizeSkill.__doc__ = """Allows you to generate a vector embedding for a given image or text input using the Azure AI
-Services Vision Vectorize API.
-
-:ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
- with no name defined will be given a default name of its 1-based index in the skills array,
- prefixed with the character '#'.
-:vartype name: str
-:ivar description: The description of the skill which describes the inputs, outputs, and usage
- of the skill.
-:vartype description: str
-:ivar context: Represents the level at which operations take place, such as the document root
- or document content (for example, /document or /document/content). The default is /document.
-:vartype context: str
-:ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
- an upstream skill. Required.
-:vartype inputs: list["InputFieldMappingEntry"]
-:ivar outputs: The output of a skill is either a field in a search index, or a value that can
- be consumed as an input by another skill. Required.
-:vartype outputs: list["OutputFieldMappingEntry"]
-:ivar modelVersion: The version of the model to use when calling the AI Services Vision
- service. It will default to the latest available when not specified. Required.
-:vartype modelVersion: str
-:ivar ``@odata.type``: A URI fragment specifying the type of skill. Required. Default value is
- "#Microsoft.Skills.Vision.VectorizeSkill".
-:vartype ``@odata.type``: Literal["#Microsoft.Skills.Vision.VectorizeSkill"]
-"""
-
-
 class WebApiHttpHeaders(TypedDict, total=False):
     """A dictionary of http request headers."""
 
@@ -6762,7 +5805,6 @@ WebKnowledgeSource = TypedDict(
     {
         "name": Required[str],
         "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
         "@odata.etag": str,
         "encryptionKey": Optional["SearchResourceEncryptionKey"],
         "kind": Required[Literal[KnowledgeSourceKind.WEB]],
@@ -6776,10 +5818,6 @@ WebKnowledgeSource.__doc__ = """Knowledge Source targeting web results.
 :vartype name: str
 :ivar description: Optional user-defined description.
 :vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
 :ivar ``@odata.etag``: The ETag of the knowledge source.
 :vartype ``@odata.etag``: str
 :ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
@@ -6922,73 +5960,8 @@ filter is implemented using Apache Lucene.
  value is "#Microsoft.Azure.Search.WordDelimiterTokenFilter".
 :vartype ``@odata.type``: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"]
 """
-
-
-WorkIQKnowledgeSource = TypedDict(
-    "WorkIQKnowledgeSource",
-    {
-        "name": Required[str],
-        "description": str,
-        "resultsProcessing": Union[str, "KnowledgeSourceResultsProcessing"],
-        "@odata.etag": str,
-        "encryptionKey": Optional["SearchResourceEncryptionKey"],
-        "kind": Required[Literal[KnowledgeSourceKind.WORK_IQ]],
-        "workIQParameters": Required["WorkIQKnowledgeSourceParameters"],
-    },
-    total=False,
-)
-WorkIQKnowledgeSource.__doc__ = """Configuration for WorkIQ knowledge source.
-
-:ivar name: The name of the knowledge source. Required.
-:vartype name: str
-:ivar description: Optional user-defined description.
-:vartype description: str
-:ivar resultsProcessing: Controls whether results from this knowledge source are reranked
- before they are included in the final result set. Defaults to 'rerank' when not specified.
- Known values are: "rerank" and "none".
-:vartype resultsProcessing: Union[str, "KnowledgeSourceResultsProcessing"]
-:ivar ``@odata.etag``: The ETag of the knowledge source.
-:vartype ``@odata.etag``: str
-:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
- This key is used to provide an additional level of encryption-at-rest for your knowledge source
- definition when you want full assurance that no one, not even Microsoft, can decrypt them. Once
- you have encrypted your knowledge source definition, it will always remain encrypted. The
- search service will ignore attempts to set this property to null. You can change this property
- as needed if you want to rotate your encryption key; Your knowledge source definition will be
- unaffected. Encryption with customer-managed keys is not available for free search services,
- and is only available for paid services created on or after January 1, 2019.
-:vartype encryptionKey: "SearchResourceEncryptionKey"
-:ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
-:vartype kind: Literal[KnowledgeSourceKind.WORK_IQ]
-:ivar workIQParameters: The parameters for the WorkIQ knowledge source, including the
- customer-owned Entra app configuration used for on-behalf-of authentication. Required.
-:vartype workIQParameters: "WorkIQKnowledgeSourceParameters"
-"""
-
-
-class WorkIQKnowledgeSourceParameters(TypedDict, total=False):
-    """Parameters for a WorkIQ knowledge source.
-
-    :ivar entraAppAuthentication: The customer-owned Microsoft Entra app registration configuration
-     used for on-behalf-of authentication to the Work IQ API. The customer registers a tenant-owned
-     Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a federated
-     credential so Azure AI Search can authenticate as that app without a stored client secret.
-     Required.
-    :vartype entraAppAuthentication: "EntraAppAuthentication"
-    """
-
-    entraAppAuthentication: Required["EntraAppAuthentication"]
-    """The customer-owned Microsoft Entra app registration configuration used for on-behalf-of
-     authentication to the Work IQ API. The customer registers a tenant-owned Entra app, grants it
-     the WorkIQAgent.Ask delegated permission, and configures a federated credential so Azure AI
-     Search can authenticate as that app without a stored client secret. Required."""
-
-
 CognitiveServicesAccount = Union[
     AIServicesAccountIdentity, AIServicesAccountKey, CognitiveServicesAccountKey, DefaultCognitiveServicesAccount
-]
-VectorSearchVectorizer = Union[
-    AIServicesVisionVectorizer, AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer
 ]
 TokenFilter = Union[
     AsciiFoldingTokenFilter,
@@ -7019,20 +5992,15 @@ TokenFilter = Union[
 ]
 KnowledgeSource = Union[
     AzureBlobKnowledgeSource,
-    FabricDataAgentKnowledgeSource,
-    FabricOntologyKnowledgeSource,
     FileKnowledgeSource,
     IndexedOneLakeKnowledgeSource,
     IndexedSharePointKnowledgeSource,
     IndexedSqlKnowledgeSource,
-    McpServerKnowledgeSource,
-    RemoteSharePointKnowledgeSource,
     SearchIndexKnowledgeSource,
     WebKnowledgeSource,
-    WorkIQKnowledgeSource,
 ]
+VectorSearchVectorizer = Union[AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer]
 SearchIndexerSkill = Union[
-    AzureMachineLearningSkill,
     ChatCompletionSkill,
     WebApiSkill,
     AzureOpenAIEmbeddingSkill,
@@ -7053,7 +6021,6 @@ SearchIndexerSkill = Union[
     ShaperSkill,
     ImageAnalysisSkill,
     OcrSkill,
-    VisionVectorizeSkill,
 ]
 VectorSearchCompression = Union[BinaryQuantizationCompression, ScalarQuantizationCompression]
 SimilarityAlgorithm = Union[BM25SimilarityAlgorithm, ClassicSimilarityAlgorithm]
@@ -7081,11 +6048,4 @@ DataDeletionDetectionPolicy = Union[
 ScoringFunction = Union[DistanceScoringFunction, FreshnessScoringFunction, MagnitudeScoringFunction, TagScoringFunction]
 VectorSearchAlgorithmConfiguration = Union[ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration]
 KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]
-McpServerAuthentication = Union[McpServerFoundryConnectionAuthentication, McpServerStoredHeadersAuthentication]
-McpServerOutputParsing = Union[
-    McpServerAutoOutputParsing, McpServerJsonOutputParsing, McpServerNoneOutputParsing, McpServerSplitOutputParsing
-]
 SearchIndexerDataIdentity = Union[SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity]
-SearchIndexKnowledgeSourceBoost = Union[
-    SearchIndexKnowledgeSourceFieldValueBoost, SearchIndexKnowledgeSourceMultiWordExpressionBoost
-]

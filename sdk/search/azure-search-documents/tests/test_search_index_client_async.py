@@ -56,6 +56,10 @@ def _index_response_stub(name="hotels"):
     response.vector_search = None
     response.permission_filter_option = None
     response.purview_enabled = None
+    response.share_point_connector_app_registration = {
+        "applicationId": "sharepoint-app",
+        "federatedCredentialId": "sharepoint-credential",
+    }
     response.e_tag = '"etag"'
     return response
 
@@ -91,7 +95,7 @@ class TestListIndexesAsync:
             "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
-            "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
+            "azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration",
         )
 
         with mock.patch(
@@ -112,6 +116,10 @@ class TestListIndexesAsync:
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
+        registration = converted[0].share_point_connector_app_registration
+        assert registration.application_id == "sharepoint-app"
+        assert registration.federated_credential_id == "sharepoint-credential"
+        assert converted[0].e_tag == '"etag"'
 
 
 @pytest.mark.asyncio

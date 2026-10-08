@@ -8,7 +8,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
+
+from azure.core import CaseInsensitiveEnumMeta
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
@@ -19,8 +22,6 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from enum import Enum
-
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
@@ -29,7 +30,23 @@ if TYPE_CHECKING:
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
     )
-    from ._enums import SearchIndexerDataSourceType
+    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
+
+
+class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure Open AI model name that will be called."""
+
+    TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
+    TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
+    TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
+    GPT5_MINI = "gpt-5-mini"
+    GPT5_NANO = "gpt-5-nano"
+    GPT5_4_MINI = "gpt-5.4-mini"
+    GPT5_4_NANO = "gpt-5.4-nano"
+    GPT_5_MINI = GPT5_MINI
+    GPT_5_NANO = GPT5_NANO
+    GPT_5_4_MINI = GPT5_4_MINI
+    GPT_5_4_NANO = GPT5_4_NANO
 
 
 class SearchField(_SearchField):
@@ -90,6 +107,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -106,6 +124,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -135,7 +154,6 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
         key_version: Optional[str] = None,
         access_credentials: Optional["AzureActiveDirectoryApplicationCredentials"] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        is_service_level_key: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -485,6 +503,7 @@ def ComplexField(
 
 
 __all__: list[str] = [
+    "AzureOpenAIModelName",
     "KnowledgeBase",
     "SearchField",
     "SearchFieldDataType",

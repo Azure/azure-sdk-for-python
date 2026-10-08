@@ -97,9 +97,7 @@ def update_knowledge_source():
     from azure.search.documents.indexes.models import (
         SearchIndexFieldReference,
         SearchIndexKnowledgeSource,
-        SearchIndexKnowledgeSourceFilterHint,
         SearchIndexKnowledgeSourceParameters,
-        SearchIndexKnowledgeSourceQueryHints,
     )
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
@@ -113,15 +111,6 @@ def update_knowledge_source():
                 SearchIndexFieldReference(name="HotelId"),
                 SearchIndexFieldReference(name="HotelName"),
             ],
-            query_hints=SearchIndexKnowledgeSourceQueryHints(
-                filters=[
-                    SearchIndexKnowledgeSourceFilterHint(
-                        field="Category",
-                        field_values=["Luxury", "Boutique"],
-                        filter_instructions="Use Category when the user asks for a hotel type.",
-                    )
-                ]
-            ),
         ),
     )
 
