@@ -116,6 +116,23 @@ def _resilient_tasks_enabled() -> bool:
     return resilient_tasks_enabled()
 
 
+def _get_active_task_manager() -> Any:
+    try:
+        from .tasks._exceptions import (  # pylint: disable=import-outside-toplevel
+            TaskManagerNotInitialized,
+        )
+        from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+            get_task_manager,
+        )
+    except ImportError:
+        return None
+
+    try:
+        return get_task_manager()
+    except TaskManagerNotInitialized:
+        return None
+
+
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
@@ -343,7 +360,7 @@ class AgentServerHost(Starlette):
             # recoverable. Declaring a durable task (``@task`` /
             # ``@multi_turn_task``) does NOT implicitly turn the subsystem on;
             # an app that wants durable tasks / recovery must set the switch.
-            task_manager = None
+            task_manager: Any = None
             if _resilient_tasks_enabled():
                 # Resilient tasks were explicitly enabled. Construct the manager
                 # and run startup recovery. If EITHER fails, durability was
@@ -774,8 +791,11 @@ class AgentServerHost(Starlette):
                     captured_environment[key] = (
                         None if value is _MISSING_ENV else str(value)
                     )
-            previous_session_id = self.config.session_id
-            previous_session_guid = self.config.session_guid
+            previous_session_id, previous_session_guid = (
+                self.config.session_id,
+                self.config.session_guid,
+            )
+            task_manager = _get_active_task_manager()
 
             try:
                 for key in environment_variables:
@@ -786,6 +806,8 @@ class AgentServerHost(Starlette):
                         os.environ[key] = value
                 self.config.session_id = context.session_id
                 self.config.session_guid = os.environ.get(_SESSION_GUID_ENV, "")
+                if task_manager is not None:
+                    task_manager._rehydrate_session_state()  # pylint: disable=protected-access
 
                 current_request_context = get_request_context()
                 request_context_token = set_request_context(
@@ -807,6 +829,7 @@ class AgentServerHost(Starlette):
                     previous_environment,
                     previous_session_id,
                     previous_session_guid,
+                    task_manager,
                 )
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
@@ -815,6 +838,7 @@ class AgentServerHost(Starlette):
                     previous_environment,
                     previous_session_id,
                     previous_session_guid,
+                    task_manager,
                 )
                 logger.exception("The after-restore lifecycle hook failed")
                 return create_error_response(
@@ -825,9 +849,7 @@ class AgentServerHost(Starlette):
 
             self._lifecycle.restored_session_context = context
             self._lifecycle.captured_environment_values = captured_environment
-            self._lifecycle.applied_environment_variables = set(
-                effective_environment
-            )
+            self._lifecycle.applied_environment_variables.update(effective_environment)
             self._lifecycle.before_snapshot_completed = False
             return JSONResponse({"status": "ok"})
 
@@ -836,6 +858,7 @@ class AgentServerHost(Starlette):
         previous_environment: dict[str, object],
         previous_session_id: str,
         previous_session_guid: str,
+        task_manager: Any,
     ) -> None:
         for key, value in previous_environment.items():
             if value is _MISSING_ENV:
@@ -844,6 +867,8 @@ class AgentServerHost(Starlette):
                 os.environ[key] = str(value)
         self.config.session_id = previous_session_id
         self.config.session_guid = previous_session_guid
+        if task_manager is not None:
+            task_manager._rehydrate_session_state()  # pylint: disable=protected-access
 
     # ------------------------------------------------------------------
     # Run helpers

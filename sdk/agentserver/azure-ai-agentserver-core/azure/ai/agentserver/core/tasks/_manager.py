@@ -452,6 +452,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # on terminal exit.
         self._timeout_watchdogs: dict[str, asyncio.Task[None]] = {}
 
+    def _rehydrate_session_state(self) -> None:
+        self._lease_owner = derive_lease_owner(
+            self._config.agent_name or "unknown-agent",
+            self._config.session_id or "local",
+        )
+
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
         """Build the framework-owned source stamp for a task.
