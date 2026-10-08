@@ -2,15 +2,20 @@
     "CrossLanguagePackageId": "Storage.File",
     "CrossLanguageDefinitionId": {
         "azure.storage.fileshare.models.AccessPolicy": "Storage.File.AccessPolicy",
+        "azure.storage.fileshare.models.BlockDeviceItem": "Storage.File.BlockDeviceItem",
+        "azure.storage.fileshare.models.CharDeviceItem": "Storage.File.CharDeviceItem",
         "azure.storage.fileshare.models.ClearRange": "Storage.File.ClearRange",
         "azure.storage.fileshare.models.CorsRule": "Storage.File.CorsRule",
         "azure.storage.fileshare.models.DirectoryItem": "Storage.File.DirectoryItem",
         "azure.storage.fileshare.models.Error": "Storage.File.Error",
+        "azure.storage.fileshare.models.FifoItem": "Storage.File.FifoItem",
         "azure.storage.fileshare.models.FileItem": "Storage.File.FileItem",
         "azure.storage.fileshare.models.FileProperty": "Storage.File.FileProperty",
         "azure.storage.fileshare.models.FileRange": "Storage.File.FileRange",
         "azure.storage.fileshare.models.FilesAndDirectoriesListSegment": "Storage.File.FilesAndDirectoriesListSegment",
         "azure.storage.fileshare.models.HandleItem": "Storage.File.HandleItem",
+        "azure.storage.fileshare.models.HardLink": "Storage.File.HardLink",
+        "azure.storage.fileshare.models.HardLinkList": "Storage.File.HardLinkList",
         "azure.storage.fileshare.models.KeyInfo": "Storage.File.KeyInfo",
         "azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse": "Storage.File.ListFilesAndDirectoriesSegmentResponse",
         "azure.storage.fileshare.models.ListHandlesResponse": "Storage.File.ListHandlesResponse",
@@ -31,8 +36,10 @@
         "azure.storage.fileshare.models.SignedIdentifier": "Storage.File.SignedIdentifier",
         "azure.storage.fileshare.models.SignedIdentifiers": "Storage.File.SignedIdentifiers",
         "azure.storage.fileshare.models.SmbMultichannel": "Storage.File.SmbMultichannel",
+        "azure.storage.fileshare.models.SocketItem": "Storage.File.SocketItem",
         "azure.storage.fileshare.models.StorageServiceProperties": "Storage.File.StorageServiceProperties",
         "azure.storage.fileshare.models.StringEncoded": "Storage.File.StringEncoded",
+        "azure.storage.fileshare.models.SymLinkItem": "Storage.File.SymLinkItem",
         "azure.storage.fileshare.models.UserDelegationKey": "Storage.File.UserDelegationKey",
         "azure.storage.fileshare.models.NfsFileType": "Storage.File.NfsFileType",
         "azure.storage.fileshare.models.StorageErrorCode": "Storage.File.StorageErrorCode",
@@ -117,6 +124,8 @@
         "azure.storage.fileshare.aio.operations.FileOperations.get_symbolic_link": "Storage.File.File.getSymbolicLink",
         "azure.storage.fileshare.operations.FileOperations.create_hard_link": "Storage.File.File.createHardLink",
         "azure.storage.fileshare.aio.operations.FileOperations.create_hard_link": "Storage.File.File.createHardLink",
+        "azure.storage.fileshare.operations.FileOperations.get_hard_links": "Storage.File.File.getHardLinks",
+        "azure.storage.fileshare.aio.operations.FileOperations.get_hard_links": "Storage.File.File.getHardLinks",
         "azure.storage.fileshare.operations.ServiceOperations.set_properties": "Storage.File.Service.setProperties",
         "azure.storage.fileshare.aio.operations.ServiceOperations.set_properties": "Storage.File.Service.setProperties",
         "azure.storage.fileshare.operations.ServiceOperations.get_properties": "Storage.File.Service.getProperties",
@@ -160,5 +169,5 @@
         "azure.storage.fileshare.operations.ShareOperations.restore": "Storage.File.Share.restore",
         "azure.storage.fileshare.aio.operations.ShareOperations.restore": "Storage.File.Share.restore"
     },
-    "CrossLanguageVersion": "177a161ef4e5"
+    "CrossLanguageVersion": "1b20e62c0911"
 }

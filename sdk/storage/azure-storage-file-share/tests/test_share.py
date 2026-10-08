@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -669,6 +670,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         # Assert
         assert exists
+        assert exists.creation_time is not None
         self._delete_shares()
 
     @FileSharePreparer()
@@ -898,6 +900,7 @@ class TestStorageShare(StorageRecordedTestCase):
         assert shares[0] is not None
         assert shares[0].name == share.share_name
         assert shares[0].metadata is None
+        assert shares[0].creation_time is not None
         self._delete_shares()
 
     @FileSharePreparer()
