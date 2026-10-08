@@ -224,7 +224,7 @@ async def with_keep_alive(
             yield item
         return
 
-    queue: asyncio.Queue[Any] = asyncio.Queue()
+    queue: asyncio.Queue[Any] = asyncio.Queue(maxsize=1)
     sentinel = object()
     pump_error: BaseException | None = None
 
@@ -232,11 +232,10 @@ async def with_keep_alive(
         nonlocal pump_error
         try:
             async for item in source:
-                queue.put_nowait(item)
+                await queue.put(item)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             pump_error = exc
-        finally:
-            queue.put_nowait(sentinel)
+        await queue.put(sentinel)
 
     pump_task = asyncio.ensure_future(_pump())
     get_task: "asyncio.Future[Any] | None" = None

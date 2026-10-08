@@ -113,6 +113,24 @@ async def test_with_keep_alive__emits_heartbeat_on_idle_gap() -> None:
     assert out.index("a") < out.index("b")
 
 
+async def test_with_keep_alive__applies_backpressure_to_slow_consumer() -> None:
+    """A slow consumer bounds how far the source can be advanced ahead."""
+    produced = 0
+
+    async def source() -> AsyncIterator[str]:
+        nonlocal produced
+        for index in range(100):
+            produced += 1
+            yield str(index)
+
+    stream = with_keep_alive(source(), 5)
+    assert await stream.__anext__() == "0"
+    await asyncio.sleep(0.01)
+
+    assert produced <= 3
+    await stream.aclose()
+
+
 async def test_with_keep_alive__preserves_contextvars_across_yields() -> None:
     """A ContextVar the source sets once stays set across all of its yields, because the
     source is advanced by a single task."""
