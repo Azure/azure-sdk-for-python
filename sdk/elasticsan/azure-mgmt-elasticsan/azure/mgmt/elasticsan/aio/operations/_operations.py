@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,10 +33,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_elastic_san_mgmt_restore_volume_request,
     build_elastic_sans_create_request,
     build_elastic_sans_delete_request,
     build_elastic_sans_get_request,
@@ -71,11 +74,10 @@ from .._configuration import ElasticSanMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -139,7 +141,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -152,7 +157,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -179,7 +187,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticSansOperations:
+class ElasticSansOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -235,6 +243,7 @@ class ElasticSansOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -256,7 +265,7 @@ class ElasticSansOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticSan, response.json())
 
@@ -269,7 +278,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: Union[_models.ElasticSan, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticSan, _types.ElasticSan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -308,6 +317,7 @@ class ElasticSansOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -332,7 +342,7 @@ class ElasticSansOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -372,7 +382,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: JSON,
+        parameters: _types.ElasticSan,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -385,7 +395,7 @@ class ElasticSansOperations:
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
         :param parameters: Elastic San object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.ElasticSan
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -428,7 +438,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: Union[_models.ElasticSan, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticSan, _types.ElasticSan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ElasticSan]:
         """Create ElasticSan.
@@ -438,9 +448,10 @@ class ElasticSansOperations:
         :type resource_group_name: str
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
-        :param parameters: Elastic San object. Is one of the following types: ElasticSan, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.ElasticSan or JSON or IO[bytes]
+        :param parameters: Elastic San object. Is either a ElasticSan type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.ElasticSan or
+         ~azure.mgmt.elasticsan.types.ElasticSan or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ElasticSan. The ElasticSan is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.ElasticSan]
@@ -502,7 +513,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: Union[_models.ElasticSanUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticSanUpdate, _types.ElasticSanUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -541,6 +552,7 @@ class ElasticSansOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -565,7 +577,7 @@ class ElasticSansOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -605,7 +617,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: JSON,
+        parameters: _types.ElasticSanUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -618,7 +630,7 @@ class ElasticSansOperations:
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
         :param parameters: Elastic San object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.ElasticSanUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -661,7 +673,7 @@ class ElasticSansOperations:
         self,
         resource_group_name: str,
         elastic_san_name: str,
-        parameters: Union[_models.ElasticSanUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticSanUpdate, _types.ElasticSanUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ElasticSan]:
         """Update a Elastic San.
@@ -671,9 +683,10 @@ class ElasticSansOperations:
         :type resource_group_name: str
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
-        :param parameters: Elastic San object. Is one of the following types: ElasticSanUpdate, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.ElasticSanUpdate or JSON or IO[bytes]
+        :param parameters: Elastic San object. Is either a ElasticSanUpdate type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.ElasticSanUpdate or
+         ~azure.mgmt.elasticsan.types.ElasticSanUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ElasticSan. The ElasticSan is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.ElasticSan]
@@ -760,6 +773,7 @@ class ElasticSansOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -784,7 +798,7 @@ class ElasticSansOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -902,7 +916,10 @@ class ElasticSansOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -915,7 +932,10 @@ class ElasticSansOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticSan], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticSan],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -989,7 +1009,10 @@ class ElasticSansOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1002,7 +1025,10 @@ class ElasticSansOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticSan], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticSan],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1029,7 +1055,7 @@ class ElasticSansOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1091,6 +1117,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1112,7 +1139,7 @@ class PrivateEndpointConnectionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -1126,7 +1153,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1166,6 +1193,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1190,7 +1218,7 @@ class PrivateEndpointConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1235,7 +1263,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1250,7 +1278,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the Private Endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Private Endpoint Connection Approval object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1299,7 +1327,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the Elastic San.
@@ -1311,9 +1339,10 @@ class PrivateEndpointConnectionsOperations:
         :type elastic_san_name: str
         :param private_endpoint_connection_name: The name of the Private Endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Private Endpoint Connection Approval object. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param parameters: Private Endpoint Connection Approval object. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.PrivateEndpointConnection or
+         ~azure.mgmt.elasticsan.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -1403,6 +1432,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1427,7 +1457,7 @@ class PrivateEndpointConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1554,7 +1584,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1567,7 +1600,10 @@ class PrivateEndpointConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateEndpointConnection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1594,7 +1630,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VolumesOperations:
+class VolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1658,6 +1694,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1679,7 +1716,7 @@ class VolumesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Volume, response.json())
 
@@ -1694,7 +1731,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: Union[_models.Volume, JSON, IO[bytes]],
+        parameters: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1735,6 +1772,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1759,7 +1797,7 @@ class VolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1807,7 +1845,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: JSON,
+        parameters: _types.Volume,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1824,7 +1862,7 @@ class VolumesOperations:
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
         :param parameters: Volume object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.Volume
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1875,7 +1913,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: Union[_models.Volume, JSON, IO[bytes]],
+        parameters: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Volume]:
         """Create a Volume.
@@ -1889,9 +1927,9 @@ class VolumesOperations:
         :type volume_group_name: str
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
-        :param parameters: Volume object. Is one of the following types: Volume, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.Volume or JSON or IO[bytes]
+        :param parameters: Volume object. Is either a Volume type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.Volume or ~azure.mgmt.elasticsan.types.Volume
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.Volume]
@@ -1957,7 +1995,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: Union[_models.VolumeUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeUpdate, _types.VolumeUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1998,6 +2036,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2022,7 +2061,7 @@ class VolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2070,7 +2109,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: JSON,
+        parameters: _types.VolumeUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2087,7 +2126,7 @@ class VolumesOperations:
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
         :param parameters: Volume object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.VolumeUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2138,7 +2177,7 @@ class VolumesOperations:
         elastic_san_name: str,
         volume_group_name: str,
         volume_name: str,
-        parameters: Union[_models.VolumeUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeUpdate, _types.VolumeUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Volume]:
         """Update an Volume.
@@ -2152,9 +2191,9 @@ class VolumesOperations:
         :type volume_group_name: str
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
-        :param parameters: Volume object. Is one of the following types: VolumeUpdate, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.VolumeUpdate or JSON or IO[bytes]
+        :param parameters: Volume object. Is either a VolumeUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeUpdate or
+         ~azure.mgmt.elasticsan.types.VolumeUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.Volume]
@@ -2214,6 +2253,10 @@ class VolumesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["delete_type"]},
+        api_versions_list=["2025-09-01", "2026-05-01-preview"],
+    )
     async def _delete_initial(
         self,
         resource_group_name: str,
@@ -2223,6 +2266,7 @@ class VolumesOperations:
         *,
         x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
         x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        delete_type: Optional[Union[str, _models.DeleteType]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2246,6 +2290,7 @@ class VolumesOperations:
             subscription_id=self._config.subscription_id,
             x_ms_delete_snapshots=x_ms_delete_snapshots,
             x_ms_force_delete=x_ms_force_delete,
+            delete_type=delete_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2255,6 +2300,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2279,7 +2325,7 @@ class VolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2287,6 +2333,10 @@ class VolumesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["delete_type"]},
+        api_versions_list=["2025-09-01", "2026-05-01-preview"],
+    )
     async def begin_delete(
         self,
         resource_group_name: str,
@@ -2296,6 +2346,7 @@ class VolumesOperations:
         *,
         x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
         x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        delete_type: Optional[Union[str, _models.DeleteType]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an Volume.
@@ -2317,6 +2368,10 @@ class VolumesOperations:
          value are only true or false. Default value is false. Known values are: "true" and "false".
          Default value is None.
         :paramtype x_ms_force_delete: str or ~azure.mgmt.elasticsan.models.XMsForceDelete
+        :keyword delete_type: Optional. Specifies that the delete operation should be a permanent
+         delete for the soft deleted volume. The value of deleteType can only be 'permanent'.
+         "permanent" Default value is None.
+        :paramtype delete_type: str or ~azure.mgmt.elasticsan.models.DeleteType
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2336,6 +2391,7 @@ class VolumesOperations:
                 volume_name=volume_name,
                 x_ms_delete_snapshots=x_ms_delete_snapshots,
                 x_ms_force_delete=x_ms_force_delete,
+                delete_type=delete_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2370,8 +2426,18 @@ class VolumesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["x_ms_access_soft_deleted_resources"]},
+        api_versions_list=["2025-09-01", "2026-05-01-preview"],
+    )
     def list_by_volume_group(
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        *,
+        x_ms_access_soft_deleted_resources: Optional[Union[str, _models.XMsAccessSoftDeletedResources]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.Volume"]:
         """List Volumes in a VolumeGroup.
 
@@ -2382,6 +2448,11 @@ class VolumesOperations:
         :type elastic_san_name: str
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
+        :keyword x_ms_access_soft_deleted_resources: Optional, returns only soft deleted volumes if set
+         to true. If set to false or if not specified, returns only active volumes. Known values are:
+         "true" and "false". Default value is None.
+        :paramtype x_ms_access_soft_deleted_resources: str or
+         ~azure.mgmt.elasticsan.models.XMsAccessSoftDeletedResources
         :return: An iterator like instance of Volume
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.elasticsan.models.Volume]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2407,6 +2478,7 @@ class VolumesOperations:
                     elastic_san_name=elastic_san_name,
                     volume_group_name=volume_group_name,
                     subscription_id=self._config.subscription_id,
+                    x_ms_access_soft_deleted_resources=x_ms_access_soft_deleted_resources,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2429,7 +2501,10 @@ class VolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2442,7 +2517,10 @@ class VolumesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Volume], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Volume],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2473,7 +2551,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeNameList, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeNameList, _types.VolumeNameList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2513,6 +2591,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2537,7 +2616,7 @@ class VolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2582,7 +2661,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: JSON,
+        parameters: _types.VolumeNameList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2598,7 +2677,7 @@ class VolumesOperations:
         :type volume_group_name: str
         :param parameters: Volume Name List (currently only one volume name in the list is supported.
          Server would return error if list is bigger). Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.VolumeNameList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2646,7 +2725,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeNameList, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeNameList, _types.VolumeNameList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PreValidationResponse]:
         """Validate whether a disk snapshot backup can be taken for list of volumes.
@@ -2659,9 +2738,10 @@ class VolumesOperations:
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
         :param parameters: Volume Name List (currently only one volume name in the list is supported.
-         Server would return error if list is bigger). Is one of the following types: VolumeNameList,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.VolumeNameList or JSON or IO[bytes]
+         Server would return error if list is bigger). Is either a VolumeNameList type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeNameList or
+         ~azure.mgmt.elasticsan.types.VolumeNameList or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PreValidationResponse. The
          PreValidationResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
@@ -2691,14 +2771,10 @@ class VolumesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.PreValidationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2729,7 +2805,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.DiskSnapshotList, JSON, IO[bytes]],
+        parameters: Union[_models.DiskSnapshotList, _types.DiskSnapshotList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2769,6 +2845,7 @@ class VolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2793,7 +2870,7 @@ class VolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2839,7 +2916,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: JSON,
+        parameters: _types.DiskSnapshotList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2856,7 +2933,7 @@ class VolumesOperations:
         :param parameters: Disk Snapshot List (currently only one Disk Snapshot in the list is
          supported and that the Disk Snapshot must be in same azure region as the ElasticSan. Server
          would return error if list is bigger). Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.DiskSnapshotList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2905,7 +2982,7 @@ class VolumesOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.DiskSnapshotList, JSON, IO[bytes]],
+        parameters: Union[_models.DiskSnapshotList, _types.DiskSnapshotList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PreValidationResponse]:
         """Validate whether a list of backed up disk snapshots can be restored into ElasticSan volumes.
@@ -2919,9 +2996,10 @@ class VolumesOperations:
         :type volume_group_name: str
         :param parameters: Disk Snapshot List (currently only one Disk Snapshot in the list is
          supported and that the Disk Snapshot must be in same azure region as the ElasticSan. Server
-         would return error if list is bigger). Is one of the following types: DiskSnapshotList, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.DiskSnapshotList or JSON or IO[bytes]
+         would return error if list is bigger). Is either a DiskSnapshotList type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.DiskSnapshotList or
+         ~azure.mgmt.elasticsan.types.DiskSnapshotList or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PreValidationResponse. The
          PreValidationResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.PreValidationResponse]
@@ -2951,14 +3029,10 @@ class VolumesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.PreValidationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2985,7 +3059,7 @@ class VolumesOperations:
         )
 
 
-class VolumeGroupsOperations:
+class VolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3046,6 +3120,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3067,7 +3142,7 @@ class VolumeGroupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VolumeGroup, response.json())
 
@@ -3081,7 +3156,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeGroup, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeGroup, _types.VolumeGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3121,6 +3196,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3145,7 +3221,7 @@ class VolumeGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3189,7 +3265,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: JSON,
+        parameters: _types.VolumeGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3204,7 +3280,7 @@ class VolumeGroupsOperations:
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
         :param parameters: Volume Group object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.VolumeGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3251,7 +3327,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeGroup, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeGroup, _types.VolumeGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VolumeGroup]:
         """Create a Volume Group.
@@ -3263,9 +3339,10 @@ class VolumeGroupsOperations:
         :type elastic_san_name: str
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
-        :param parameters: Volume Group object. Is one of the following types: VolumeGroup, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.VolumeGroup or JSON or IO[bytes]
+        :param parameters: Volume Group object. Is either a VolumeGroup type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeGroup or
+         ~azure.mgmt.elasticsan.types.VolumeGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VolumeGroup. The VolumeGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.VolumeGroup]
@@ -3329,7 +3406,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeGroupUpdate, _types.VolumeGroupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3369,6 +3446,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3393,7 +3471,7 @@ class VolumeGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3437,7 +3515,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: JSON,
+        parameters: _types.VolumeGroupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3452,7 +3530,7 @@ class VolumeGroupsOperations:
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
         :param parameters: Volume Group object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.VolumeGroupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3499,7 +3577,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         elastic_san_name: str,
         volume_group_name: str,
-        parameters: Union[_models.VolumeGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VolumeGroupUpdate, _types.VolumeGroupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VolumeGroup]:
         """Update an VolumeGroup.
@@ -3511,9 +3589,10 @@ class VolumeGroupsOperations:
         :type elastic_san_name: str
         :param volume_group_name: The name of the VolumeGroup. Required.
         :type volume_group_name: str
-        :param parameters: Volume Group object. Is one of the following types: VolumeGroupUpdate, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.VolumeGroupUpdate or JSON or IO[bytes]
+        :param parameters: Volume Group object. Is either a VolumeGroupUpdate type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.VolumeGroupUpdate or
+         ~azure.mgmt.elasticsan.types.VolumeGroupUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VolumeGroup. The VolumeGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.VolumeGroup]
@@ -3602,6 +3681,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3626,7 +3706,7 @@ class VolumeGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3696,8 +3776,17 @@ class VolumeGroupsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["x_ms_access_soft_deleted_resources"]},
+        api_versions_list=["2025-09-01", "2026-05-01-preview"],
+    )
     def list_by_elastic_san(
-        self, resource_group_name: str, elastic_san_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        *,
+        x_ms_access_soft_deleted_resources: Optional[Union[str, _models.XMsAccessSoftDeletedResources]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.VolumeGroup"]:
         """List VolumeGroups.
 
@@ -3706,6 +3795,11 @@ class VolumeGroupsOperations:
         :type resource_group_name: str
         :param elastic_san_name: The name of the ElasticSan. Required.
         :type elastic_san_name: str
+        :keyword x_ms_access_soft_deleted_resources: Optional, returns only soft deleted volume groups
+         if set to true. If set to false or if not specified, returns only active volume groups. Known
+         values are: "true" and "false". Default value is None.
+        :paramtype x_ms_access_soft_deleted_resources: str or
+         ~azure.mgmt.elasticsan.models.XMsAccessSoftDeletedResources
         :return: An iterator like instance of VolumeGroup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.elasticsan.models.VolumeGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3730,6 +3824,7 @@ class VolumeGroupsOperations:
                     resource_group_name=resource_group_name,
                     elastic_san_name=elastic_san_name,
                     subscription_id=self._config.subscription_id,
+                    x_ms_access_soft_deleted_resources=x_ms_access_soft_deleted_resources,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3752,7 +3847,10 @@ class VolumeGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3765,7 +3863,10 @@ class VolumeGroupsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VolumeGroup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VolumeGroup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3792,7 +3893,7 @@ class VolumeGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3851,6 +3952,7 @@ class PrivateLinkResourcesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3872,7 +3974,7 @@ class PrivateLinkResourcesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateLinkResourceListResult, response.json())
 
@@ -3882,7 +3984,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class VolumeSnapshotsOperations:
+class VolumeSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3946,6 +4048,7 @@ class VolumeSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3967,7 +4070,7 @@ class VolumeSnapshotsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Snapshot, response.json())
 
@@ -3982,7 +4085,7 @@ class VolumeSnapshotsOperations:
         elastic_san_name: str,
         volume_group_name: str,
         snapshot_name: str,
-        parameters: Union[_models.Snapshot, JSON, IO[bytes]],
+        parameters: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4023,6 +4126,7 @@ class VolumeSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4047,7 +4151,7 @@ class VolumeSnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4095,7 +4199,7 @@ class VolumeSnapshotsOperations:
         elastic_san_name: str,
         volume_group_name: str,
         snapshot_name: str,
-        parameters: JSON,
+        parameters: _types.Snapshot,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4112,7 +4216,7 @@ class VolumeSnapshotsOperations:
         :param snapshot_name: The name of the volume snapshot within the given volume group. Required.
         :type snapshot_name: str
         :param parameters: Snapshot object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.elasticsan.types.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4163,7 +4267,7 @@ class VolumeSnapshotsOperations:
         elastic_san_name: str,
         volume_group_name: str,
         snapshot_name: str,
-        parameters: Union[_models.Snapshot, JSON, IO[bytes]],
+        parameters: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Snapshot]:
         """Create a Volume Snapshot.
@@ -4177,9 +4281,9 @@ class VolumeSnapshotsOperations:
         :type volume_group_name: str
         :param snapshot_name: The name of the volume snapshot within the given volume group. Required.
         :type snapshot_name: str
-        :param parameters: Snapshot object. Is one of the following types: Snapshot, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.elasticsan.models.Snapshot or JSON or IO[bytes]
+        :param parameters: Snapshot object. Is either a Snapshot type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.elasticsan.models.Snapshot or
+         ~azure.mgmt.elasticsan.types.Snapshot or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.Snapshot]
@@ -4270,6 +4374,7 @@ class VolumeSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4294,7 +4399,7 @@ class VolumeSnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4437,7 +4542,10 @@ class VolumeSnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4450,7 +4558,10 @@ class VolumeSnapshotsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Snapshot], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Snapshot],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4477,7 +4588,7 @@ class VolumeSnapshotsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4548,7 +4659,10 @@ class SkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4561,7 +4675,10 @@ class SkusOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SkuInformation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SkuInformation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4586,3 +4703,173 @@ class SkusOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class _ElasticSanMgmtClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ElasticSanMgmtClientConfiguration]
+):
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "elastic_san_name",
+                "volume_group_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _restore_volume_initial(
+        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_elastic_san_mgmt_restore_volume_request(
+            resource_group_name=resource_group_name,
+            elastic_san_name=elastic_san_name,
+            volume_group_name=volume_group_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "elastic_san_name",
+                "volume_group_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_restore_volume(
+        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.Volume]:
+        """Restore Soft Deleted Volumes. The volume name is obtained by using the API to list soft deleted
+        volumes by volume group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param elastic_san_name: The name of the ElasticSan. Required.
+        :type elastic_san_name: str
+        :param volume_group_name: The name of the VolumeGroup. Required.
+        :type volume_group_name: str
+        :param volume_name: The name of the Volume. Required.
+        :type volume_name: str
+        :return: An instance of AsyncLROPoller that returns Volume. The Volume is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.elasticsan.models.Volume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Volume] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_volume_initial(
+                resource_group_name=resource_group_name,
+                elastic_san_name=elastic_san_name,
+                volume_group_name=volume_group_name,
+                volume_name=volume_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Volume, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Volume].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Volume](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
