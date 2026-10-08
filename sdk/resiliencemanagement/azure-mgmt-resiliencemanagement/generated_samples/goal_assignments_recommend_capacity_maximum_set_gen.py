@@ -32,8 +32,8 @@ def main():
     )
 
     client.goal_assignments.begin_recommend_capacity(
-        service_group_name="sg1",
-        goal_assignment_name="ga1",
+        service_group_name="production-sg",
+        goal_assignment_name="zonal-resiliency-goal",
         body={
             "resourceIds": [
                 "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/vm1",
@@ -43,6 +43,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalAssignments_RecommendCapacity_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/GoalAssignments_RecommendCapacity_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

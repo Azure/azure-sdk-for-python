@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.goal_resources.list(
-        service_group_name="sg1",
-        goal_assignment_name="ga1",
+        service_group_name="production-sg",
+        goal_assignment_name="zonal-resiliency-goal",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalResources_List_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/GoalResources_List_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

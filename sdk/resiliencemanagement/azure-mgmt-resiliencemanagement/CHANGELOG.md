@@ -1,5 +1,76 @@
 # Release History
 
+## 1.0.0 (2026-10-08)
+
+### Features Added
+
+  - Model `AttentionReason` added property `drill_rbac_on_goal_assignment`
+  - Model `AttentionReason` added property `goal_assignment`
+  - Model `AttentionReason` added property `health_model_associated_with_service_group`
+  - Model `AttentionReason` added property `rbac_needed_for_drill_on_goal_assignment`
+  - Model `AttentionReason` added property `recovery_plan`
+  - Model `DrillProperties` added property `goal_assignment_properties`
+  - Model `DrillResourceProperties` added property `drill_type`
+  - Model `DrillUpdateProperties` added property `goal_assignment_properties`
+  - Model `GoalsData` added property `zonal_resiliency`
+  - Model `HealthModelMonitoringProperties` added property `health_model_id`
+  - Model `RegionalDrillProperties` added property `goal_assignment_properties`
+  - Model `UnifiedResilienceItemProperties` added property `billing_info`
+  - Model `UnifiedResilienceItemProperties` added property `resiliency_posture`
+  - Model `ZonalDrillProperties` added property `goal_assignment_properties`
+  - Added model `GoalAssignmentPropertiesOfDrill`
+  - Added model `RegionalDrillResourceProperties`
+  - Added model `UnifiedResilienceItemBillingInfo`
+  - Added model `UnifiedResilienceItemGoalRequirement`
+  - Added model `UnifiedResilienceItemResiliencyPosture`
+  - Added model `UnifiedResilienceItemZonalResiliencyPosture`
+  - Added model `ZonalDrillResourceProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ResilienceManagementClient.goal_templates`
+  - Model `DrillResourceProperties` deleted or renamed its instance variable `active_physical_zones`
+  - Model `DrillResourceProperties` deleted or renamed its instance variable `advisor_ha_recommendation_id`
+  - Model `DrillResourceProperties` deleted or renamed its instance variable `ha_status`
+  - Model `DrillResourceProperties` deleted or renamed its instance variable `recovery_physical_zones`
+  - Model `GoalAssignmentProperties` deleted or renamed its instance variable `goal_assignment_type`
+  - Model `GoalAssignmentProperties` deleted or renamed its instance variable `goal_template_id`
+  - `GoalAssignmentProperties.require_zonal_resiliency` is now required.
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `disaster_recovery_attestation_status`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `disaster_recovery_goal_participation`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `exclusion_reason_for_disaster_recovery_goals`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `exclusion_reason_for_high_availability_goals`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `high_availability_attestation_status`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `high_availability_goal_participation`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `service_group_memberships`
+  - Model `GoalResourceProperties` deleted or renamed its instance variable `user_confirmation_for_high_availability`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_point_estimated_in_minutes`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_point_objective_in_minutes`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_point_objective_status`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_time_actual_in_minutes`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_time_objective_in_minutes`
+  - Model `GoalsData` deleted or renamed its instance variable `regional_recovery_time_objective_status`
+  - Model `GoalsData` deleted or renamed its instance variable `require_disaster_recovery`
+  - Model `GoalsData` deleted or renamed its instance variable `require_high_availability`
+  - Model `GoalsData` deleted or renamed its instance variable `template_id`
+  - Model `HealthModelMonitoringProperties` deleted or renamed its instance variable `discovery_rule_id`
+  - Model `ServiceLevelResource` deleted or renamed its instance variable `service_level_objective_resource_id`
+  - Model `UnifiedResilienceItemProperties` deleted or renamed its instance variable `recommendations`
+  - Deleted or renamed enum value `UsagePlanType.BASIC`
+  - Deleted or renamed model `GoalAssignmentType`
+  - Deleted or renamed model `GoalTemplate`
+  - Deleted or renamed model `GoalTemplateProperties`
+  - Deleted or renamed model `GoalType`
+  - Deleted or renamed model `IsoDuration`
+  - Deleted or renamed model `MembershipType`
+  - Deleted or renamed model `RecommendationsData`
+  - Deleted or renamed model `RecommendationsHighAvailabilityData`
+  - Deleted or renamed model `RequirementSelected`
+  - Deleted or renamed model `ResilienceHealthStatus`
+  - Deleted or renamed model `ServiceGroupMembership`
+  - Deleted or renamed model `UnifiedResilienceItemRequirementSelected`
+  - Deleted or renamed model `GoalTemplatesOperations`
+
 ## 1.0.0b2 (2026-09-23)
 
 ### Features Added
