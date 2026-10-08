@@ -29,6 +29,7 @@ from azure.ai.agentserver.core.tasks import (
     multi_turn_task,
     task,
 )
+from azure.ai.agentserver.core.streaming import EventStreamClosedError, EventStreamNotFoundError, streams
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
@@ -36,6 +37,7 @@ from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_lifecycle_id, derive_task_id, derive_task_session_scope
 
 from ..models import _generated as _generated_models
+from ..streaming._internals import materialize_wire_payload
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -1342,6 +1344,41 @@ class ResilientResponseOrchestrator:
         is_queued = task_run.is_queued
         return not is_queued  # True = freshly started, False = queued
 
+    async def _settle_recovered_stream(
+        self,
+        response_id: str,
+        user_id_key: str | None,
+        response: _generated_models.ResponseObject,
+    ) -> None:
+        """Finish existing replay after a non-resumable recovery settles storage.
+
+        :param response_id: The recovered response identifier.
+        :type response_id: str
+        :param user_id_key: The durable input's user partition.
+        :type user_id_key: str | None
+        :param response: The successfully persisted terminal snapshot.
+        :type response: ~azure.ai.agentserver.responses.models.ResponseObject
+        :rtype: None
+        """
+        try:
+            subject = await streams.get(derive_lifecycle_id(response_id, user_id_key))
+        except EventStreamNotFoundError:
+            return
+        cursor = await subject.last_cursor()
+        snapshot = dict(response)
+        try:
+            await subject.emit(
+                {
+                    "type": f"response.{snapshot['status']}",
+                    "response": materialize_wire_payload(snapshot),
+                    "sequence_number": cursor + 1 if cursor is not None else 0,
+                },
+                close=True,
+            )
+        except EventStreamClosedError:
+            # A terminal already reached replay before the crash. Preserve it.
+            await subject.close()
+
     async def _persist_crash_failed(
         self,
         response_id: str,
@@ -1425,7 +1462,6 @@ class ResilientResponseOrchestrator:
                         response_id,
                         existing_status,
                     )
-                    return
                 existing_snapshot = existing
                 break
             except (KeyError, FoundryResourceNotFoundError):
@@ -1438,6 +1474,10 @@ class ResilientResponseOrchestrator:
                 # Unknown/transient store error — retry once, then fall through
                 # to the conservative create-only path below.
                 continue
+
+        if existing_snapshot is not None and isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
+            await self._settle_recovered_stream(response_id, platform_context.user_id_key, existing_snapshot)
+            return
 
         if existing_snapshot is not None:
             # Preserve the persisted snapshot; overlay only status + error.
@@ -1460,11 +1500,13 @@ class ResilientResponseOrchestrator:
                 ),
             )
 
+        persisted = False
         if existing_snapshot is not None or response_known_absent:
             # Safe to write: either we preserve the snapshot (overlay) or the
             # response is confirmed absent (a create lands a fresh terminal).
             try:
                 await self._provider.update_response(failed_response, context=platform_context)
+                persisted = True
             except (KeyError, FoundryResourceNotFoundError):
                 # Response was never persisted at response.created — try
                 # create instead so the failed terminal still lands. The Foundry
@@ -1478,6 +1520,7 @@ class ResilientResponseOrchestrator:
                         history_item_ids=None,
                         context=platform_context,
                     )
+                    persisted = True
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logger.error(
                         "_persist_crash_failed: create after update-not-found failed for %s: %s",
@@ -1504,9 +1547,12 @@ class ResilientResponseOrchestrator:
                     history_item_ids=None,
                     context=platform_context,
                 )
+                persisted = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "_persist_crash_failed: create-only (unknown store state) failed for %s: %s",
                     response_id,
                     exc,
                 )
+        if persisted:
+            await self._settle_recovered_stream(response_id, platform_context.user_id_key, failed_response)

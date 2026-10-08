@@ -16,7 +16,7 @@ from contextlib import aclosing
 import logging
 import os
 import threading
-from typing import TYPE_CHECKING, Any, AsyncGenerator, cast
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Callable, cast
 
 from anyio import CancelScope
 from opentelemetry import baggage as _otel_baggage
@@ -132,9 +132,12 @@ class _CreateStreamingResponse(StreamingResponse):
         interval_seconds: float | None,
         *,
         headers: dict[str, str],
+        on_finalize: Callable[[], Awaitable[None]] | None = None,
     ) -> None:
         self._source = source
         self._stream = cast(AsyncGenerator[str, None], with_keep_alive(source, interval_seconds))
+        self._on_finalize = on_finalize
+        self._finalized = False
         super().__init__(self._stream, media_type="text/event-stream", headers=headers)
 
     async def stream_response(self, send: Send) -> None:
@@ -143,13 +146,11 @@ class _CreateStreamingResponse(StreamingResponse):
         :param send: The ASGI ``send`` callable for the response.
         :type send: ~starlette.types.Send
         """
-        finalized = False
 
         async def finalize() -> None:
-            nonlocal finalized
-            if finalized:
+            if self._finalized:
                 return
-            finalized = True
+            self._finalized = True
             # Starlette's older ASGI path cancels this task's AnyIO scope on
             # disconnect. Finish iterator cleanup before flushing ended spans.
             with CancelScope(shield=True):
@@ -159,7 +160,11 @@ class _CreateStreamingResponse(StreamingResponse):
                     try:
                         await self._source.aclose()
                     finally:
-                        await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+                        try:
+                            if self._on_finalize is not None:
+                                await self._on_finalize()
+                        finally:
+                            await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
 
         async def send_with_flush(message: Message) -> None:
             if message["type"] == "http.response.body" and not message.get("more_body", False):
@@ -956,7 +961,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         raise
                     finally:
                         reset_request_context(stream_ctx_token)
+
+                async def _finalize_request_stream() -> None:
+                    # Unlike a generator's finally, response finalization also
+                    # runs when sending headers fails before the first iteration.
+                    try:
                         await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
+                    finally:
                         await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
 
                 sse_response = _CreateStreamingResponse(
@@ -965,6 +976,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     # pump would advance its handler ahead of HTTP sends.
                     self._runtime_options.sse_keep_alive_interval_seconds if ctx.store else None,
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
+                    on_finalize=_finalize_request_stream,
                 )
                 stream_owns_flush = True
                 stream_owns_reservation = True

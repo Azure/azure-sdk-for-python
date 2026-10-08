@@ -3209,7 +3209,13 @@ class _ResponseOrchestrator:
             # same instance for the same id, so the resilient body's
             # ``_register_bg_execution`` gets back this exact stream — every
             # emit fans out to the wire iterator below.
-            wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
+            lifecycle_id = derive_lifecycle_id(ctx.response_id, ctx.user_id)
+            stream_created = False
+            try:
+                wire_stream = await streams.get(lifecycle_id)
+            except EventStreamNotFoundError:
+                wire_stream = await streams.get_or_create(lifecycle_id)
+                stream_created = True
 
             async def _resilient_stream_fallback() -> None:
                 # In-process fallback if ``_start_resilient_background`` cannot
@@ -3302,12 +3308,18 @@ class _ResponseOrchestrator:
                     _resilient_stream_fallback,
                     disposition=_unified_disposition,
                 )
-            except asyncio.CancelledError:
-                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
-                raise
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
-                if not getattr(exc, PLATFORM_ERROR_TAG, False):
+            except (Exception, asyncio.CancelledError) as exc:  # pylint: disable=broad-exception-caught
+                # The HTTP response still owns the create reservation. Finish
+                # rejected admission cleanup before it can release that identity.
+                with anyio.CancelScope(shield=True):
+                    await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
+                    if (
+                        stream_created
+                        and getattr(start_record, "resilient_task_run", None) is None
+                        and start_record.execution_task is request_task
+                    ):
+                        await streams.delete(lifecycle_id)
+                if not isinstance(exc, Exception) or not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.
                     raise

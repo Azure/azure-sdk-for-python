@@ -20,6 +20,12 @@
   state so the owner can retry cleanup.
 - Reserve the caller-scoped response ID throughout DELETE cleanup so a new
   POST cannot reuse the ID before stream, runtime, and provider cleanup finish.
+- Finish retained replay with the persisted terminal snapshot when crash
+  recovery cannot resume execution, preventing indefinite SSE waits.
+- Remove newly allocated replay streams when durable task admission fails
+  before execution starts, allowing response ID reuse after cleanup.
+- Release streaming create reservations and stop disconnect monitors even
+  when sending HTTP headers fails before the first body iteration.
 
 ### Breaking Changes
 
