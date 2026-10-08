@@ -7,7 +7,7 @@
 import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import datetime
-from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
+from typing import Optional, Iterable, Any, Union, Callable, Awaitable, Set
 
 from .._common.message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
@@ -66,7 +66,7 @@ class AutoLockRenewer:
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._shutdown = asyncio.Event()
-        self._futures = []  # type: List[asyncio.Future]
+        self._futures = set()  # type: Set[asyncio.Future]
         self._sleep_time = 1
         self._renew_period = 10
         self._on_lock_renew_failure = on_lock_renew_failure
@@ -206,7 +206,14 @@ class AutoLockRenewer:
             ),
             **self._internal_kwargs
         )
-        self._futures.append(renew_future)
+        self._futures.add(renew_future)
+        # Drop the future once its renewal coroutine completes so the set stays
+        # bounded by the number of active renewals rather than the all-time
+        # count of register() calls. Without this, a long-lived renewer (the
+        # documented one-per-app pattern) accumulates one future per settled
+        # message until close(). discard is idempotent and the callback runs on
+        # the event loop, so no lock is needed. (#48366)
+        renew_future.add_done_callback(self._futures.discard)
 
     async def close(self) -> None:
         """Cease autorenewal by cancelling any remaining open lock renewal futures."""
