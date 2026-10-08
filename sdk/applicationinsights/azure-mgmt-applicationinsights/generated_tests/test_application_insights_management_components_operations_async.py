@@ -25,7 +25,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
         response = await self.client.components.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,8 +47,11 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
                     "Application_Type": "str",
                     "AppId": "str",
                     "ApplicationId": "str",
+                    "AzureMonitorWorkspaceIngestionMode": "str",
+                    "AzureMonitorWorkspaceResourceId": "str",
                     "ConnectionString": "str",
                     "CreationDate": "2020-02-20 00:00:00",
+                    "DataCollectionRuleResourceId": "str",
                     "DisableIpMasking": bool,
                     "DisableLocalAuth": bool,
                     "Flow_Type": "str",
@@ -60,6 +63,9 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
                     "InstrumentationKey": "str",
                     "LaMigrationDate": "2020-02-20 00:00:00",
                     "Name": "str",
+                    "OTLPLogsEndpoint": "str",
+                    "OTLPMetricsEndpoint": "str",
+                    "OTLPTracesEndpoint": "str",
                     "PrivateLinkScopedResources": [{"ResourceId": "str", "ScopeId": "str"}],
                     "Request_Source": "str",
                     "RetentionInDays": 0,
@@ -73,7 +79,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +92,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             resource_name="str",
             component_tags={"tags": {"str": "str"}},
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
@@ -98,7 +104,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
         response = await self.client.components.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +115,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
     async def test_components_list_by_resource_group(self, resource_group):
         response = self.client.components.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -119,7 +125,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
     @recorded_by_proxy_async
     async def test_components_list(self, resource_group):
         response = self.client.components.list(
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -132,7 +138,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             resource_name="str",
             body={"filters": [{"column": "str", "key": "str", "operator": "str", "value": {}}], "table": "str"},
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
@@ -145,7 +151,7 @@ class TestApplicationInsightsManagementComponentsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             resource_name="str",
             purge_id="str",
-            api_version="2020-02-02",
+            api_version="2025-01-23-preview",
         )
 
         # please add some check logic here by yourself
