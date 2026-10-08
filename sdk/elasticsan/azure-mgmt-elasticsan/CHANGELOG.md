@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-10-02)
+## 3.0.0b1 (2026-10-08)
 
 ### Features Added
 
@@ -35,9 +35,9 @@
   - Added model `SkuZoneDetails`
   - Added enum `SnapshotAccessState`
   - Added enum `XMsAccessSoftDeletedResources`
-  - Model `VolumeGroupsOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_elastic_san`
-  - Model `VolumesOperations` added parameter `delete_type` in method `begin_delete`
-  - Model `VolumesOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_volume_group`
+  - Operation groups `VolumeGroupsOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_elastic_san`
+  - Operation groups `VolumesOperations` added parameter `delete_type` in method `begin_delete`
+  - Operation groups `VolumesOperations` added parameter `x_ms_access_soft_deleted_resources` in method `list_by_volume_group`
 
 ### Breaking Changes
 
