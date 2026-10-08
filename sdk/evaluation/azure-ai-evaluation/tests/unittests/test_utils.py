@@ -579,12 +579,7 @@ class TestUtils(unittest.TestCase):
                 "content": [{"type": "text", "text": "What is AI?"}],
             },
         ]
-        expected = (
-            "SYSTEM_PROMPT:\n"
-            "  This is a system message.\n\n"
-            "User turn 1:\n"
-            "  What is AI?\n\n"
-        )
+        expected = "SYSTEM_PROMPT:\n" "  This is a system message.\n\n" "User turn 1:\n" "  What is AI?\n\n"
 
         for include_tool_calls in (False, True):
             with self.subTest(include_tool_calls=include_tool_calls):
