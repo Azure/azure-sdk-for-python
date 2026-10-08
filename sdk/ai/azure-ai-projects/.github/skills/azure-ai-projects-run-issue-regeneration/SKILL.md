@@ -30,7 +30,7 @@ Before installing dependencies or editing files:
    duplicated, or ambiguous, stop without making changes and report the required labels.
 2. Require the TypeSpec commit to match `^[0-9a-f]{40}$` exactly.
 3. Require the entire base branch to case-sensitively match the conservative ASCII pattern
-   `^[A-Za-z0-9][A-Za-z0-9._/-]*\z` and pass `git check-ref-format --branch`. Treat it only as a
+   `^[A-Za-z0-9][A-Za-z0-9._/-]*$` and pass `git check-ref-format --branch`. Treat it only as a
    quoted command argument.
 4. Require the current branch to be a working branch other than the base branch. Fetch
    `origin/<base-branch>` successfully before proceeding. Do not require `HEAD` to match the
@@ -55,6 +55,15 @@ The four skills below were written for an interactive human developer. Apply the
 so they run correctly for this unattended, issue-assigned session. Do not edit the skill files
 themselves to apply these overrides.
 
+- **`azure-ai-projects-emit-from-typespec` Step 1a (tsp-client presence check):** the bare
+  `tsp-client --version` command is not on `PATH`. `copilot-setup-steps.yml` installs it only
+  under `eng/common/tsp-client`'s own `node_modules/.bin` for this branch. From the repository
+  root, check `npm exec --prefix eng/common/tsp-client --no -- tsp-client --version` instead.
+- **`azure-ai-projects-emit-from-typespec` Step 1g (install dev dependencies):** do not rerun
+  `python -m pip install -r dev_requirements.txt`. `copilot-setup-steps.yml` already installed it
+  for this branch during the setup phase, while it still had full network access. Rerunning it
+  live would make pip refetch the direct HTTPS wheel URL it contains even though the package is
+  already installed, and that host is not reachable from this firewalled session.
 - **`azure-ai-projects-emit-from-typespec` Step 2a (topic branch):** do not create a new topic
   branch. Proceed as if the user selected option 3, "Emit to current branch".
 - **`azure-ai-projects-emit-from-typespec` Step 2b (TypeSpec source):** proceed as if the user
@@ -63,10 +72,9 @@ themselves to apply these overrides.
 - **`azure-ai-projects-emit-from-typespec` Step 3 (record `BASE_BRANCH`):** use the validated
   base branch from this issue, not the result of `git branch --show-current` (the current branch
   is the working branch, which is not the pull request's base).
-- **`azure-ai-projects-emit-from-typespec` Step 15 (create a Pull Request):** do not create a
-  new pull request. The issue assignment already owns the working branch and draft pull request
-  confirmed above. Push the commits from Steps 7, 9, and 14 to the current branch and leave
-  finalizing the pull request title and description to the last step of this skill, below.
+- **`azure-ai-projects-emit-from-typespec` Step 5 (emit SDK from TypeSpec):** the bare
+  `tsp-client update --debug` command is not on `PATH` either. From `sdk/ai/azure-ai-projects`,
+  run `npm exec --prefix ../../../eng/common/tsp-client --no -- tsp-client update --debug`.
 - **`azure-ai-projects-emit-from-typespec` Steps 7, 9, and 14 (commit message quoting):** each
   step's `git commit -m "..."` snippet closes its quote after the title instead of after the
   trailer, leaving a stray unmatched quote on the `Co-authored-by` line; executed as shown, this
@@ -82,10 +90,14 @@ themselves to apply these overrides.
   Additional edits` for Step 14) and use `git push -u origin HEAD` for all three steps.
 - **`azure-ai-projects-emit-from-typespec` Step 13 (cleanup command):** `rmdir /s /q build` is a
   Windows `cmd.exe` command and does not run in this Linux session. Use `rm -rf build` instead.
-- All other steps of `azure-ai-projects-emit-from-typespec` (1, 4 through 14 excluding the
-  branch-creation command in Step 4 and the overridden commands above) run exactly as written,
-  including its own STOP conditions. Still perform Step 4's `git fetch`, but skip its
-  `git switch -c <topic-branch> ...` command since there is no new topic branch to create.
+- **`azure-ai-projects-emit-from-typespec` Step 15 (create a Pull Request):** do not create a
+  new pull request. The issue assignment already owns the working branch and draft pull request
+  confirmed above. Push the commits from Steps 7, 9, and 14 to the current branch and leave
+  finalizing the pull request title and description to the last step of this skill, below.
+- All other steps of `azure-ai-projects-emit-from-typespec` (1, 4, and 6 through 14 excluding
+  the overridden commands above) run exactly as written, including its own STOP conditions.
+  Still perform Step 4's `git fetch`, but skip its `git switch -c <topic-branch> ...` command
+  since there is no new topic branch to create.
 
 `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and
 `azure-ai-projects-update-changelog` do not create branches or pull requests, so they need no
