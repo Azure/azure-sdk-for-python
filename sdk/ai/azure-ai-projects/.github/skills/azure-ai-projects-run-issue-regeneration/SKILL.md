@@ -75,11 +75,11 @@ themselves to apply these overrides.
   ```bash
   git add -A -- ':!.env*'
   git commit -m "Part 1: Emit SDK from TypeSpec" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
-  git push -u origin <topic-branch>
+  git push -u origin HEAD
   ```
 
   Substitute the matching title (`Part 2: Apply post-emitter-fixes.cmd` for Step 9, `Part 3:
-  Additional edits` for Step 14) and keep each step's own `git push` target.
+  Additional edits` for Step 14) and use `git push -u origin HEAD` for all three steps.
 - **`azure-ai-projects-emit-from-typespec` Step 13 (cleanup command):** `rmdir /s /q build` is a
   Windows `cmd.exe` command and does not run in this Linux session. Use `rm -rf build` instead.
 - All other steps of `azure-ai-projects-emit-from-typespec` (1, 4 through 14 excluding the
