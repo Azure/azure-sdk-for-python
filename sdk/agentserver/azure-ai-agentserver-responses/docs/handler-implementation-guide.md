@@ -1297,14 +1297,14 @@ Handlers that do not interact with an LLM typically omit usage.
 |--------|---------|-------------|
 | `default_model` | `None` | Default model when `model` is omitted from the request |
 | `default_fetch_history_count` | `-1` | Maximum history items resolved by `get_history()`; `-1` fetches all history |
-| `sse_keep_alive_interval_seconds` | `None` (disabled) | Interval between SSE keep-alive comments |
+| `sse_keep_alive_interval_seconds` | `None` (inherits from `AgentConfig`) | Interval between SSE keep-alive comments |
 | `shutdown_grace_period_seconds` | `10` | Seconds to wait for in-flight requests on shutdown |
 
 Platform environment variables (read once at startup via `AgentConfig`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval (seconds) between SSE keep-alive comments; `0` disables keep-alive |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval (seconds) between SSE keep-alive comments; `0` disables keep-alive when no explicit option overrides it |
 | `PORT` | `8088` | HTTP listen port |
 | `DEFAULT_FETCH_HISTORY_ITEM_COUNT` | `-1` | Override for `default_fetch_history_count` when using `ResponsesServerOptions.from_env()` |
 | `FOUNDRY_PROJECT_ENDPOINT` | — | Foundry project endpoint (enables persistence) |
@@ -1332,8 +1332,11 @@ The library sets baggage items on the span:
 
 ### SSE Keep-Alive
 
-The server can send periodic keep-alive comments during SSE streaming to prevent
-reverse proxies from closing idle connections. Disabled by default.
+The server sends periodic keep-alive comments during SSE streaming to prevent
+reverse proxies from closing idle connections. When
+`sse_keep_alive_interval_seconds` is unset, the host inherits the interval from
+`AgentConfig`, which defaults to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to
+disable keep-alives when no explicit option overrides it.
 
 Enable via environment variable:
 
