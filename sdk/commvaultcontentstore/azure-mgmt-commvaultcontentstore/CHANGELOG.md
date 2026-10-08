@@ -10,9 +10,9 @@
   - Added model `ActivateSaaSRequestParam`
   - Added model `CompanyProfile`
   - Added enum `ComplianceLockStatus`
-  - Model `StoragesOperations` added method `disable_compliance_lock`
-  - Model `StoragesOperations` added method `enable_compliance_lock`
-  - Model `StoragesOperations` added method `refresh`
+  - Operation group `StoragesOperations` added method `disable_compliance_lock`
+  - Operation group `StoragesOperations` added method `enable_compliance_lock`
+  - Operation group `StoragesOperations` added method `refresh`
 
 ### Breaking Changes
 
