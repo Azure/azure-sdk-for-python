@@ -1,6 +1,100 @@
 # Release History
 
-## 2.7.0 (Unreleased)
+## 2.9.0 (Unreleased)
+
+### Sample updates
+
+* Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
+* Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
+* Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
+
+## 2.8.0 (2026-10-02)
+
+### Features Added
+
+* Agent Optimization APIs are now GA, including job management, cost estimation, candidate retrieval, and candidate promotion.
+* Added typed Agent Optimization models for agent and prompt optimization, configuration, evaluation, candidate search and mutations, cost estimates, latency, token usage, and termination details.
+* Data generation job APIs are now GA.
+* Added scenario-specific data generation models for evaluation, supervised fine-tuning, reinforcement fine-tuning, and user-conversation simulation.
+* Evaluator lifecycle and generation job APIs are now GA.
+* Added GA Agent tools `BrowserAutomationTool` and `BrowserAutomationToolboxTool`, with `ToolboxToolType.BROWSER_AUTOMATION`.
+* Added `ChatCompletionTool`, `FunctionObject`, and `FunctionParameters` for describing function tools used by chat completions.
+* Added optional `async_property` to `CustomToolParam`, `FunctionTool`, and `FunctionToolParam`.
+* Added `ConnectionType.OPEN_API` and `ConnectionType.REMOTE_A2A`.
+* Added optional `ApiError.misalignment` with `MisalignmentErrorDetailsResource`, `MisalignmentErrorType`, and `MisalignmentSteer`.
+* Added `gpt-image-2` and `gpt-image-2-2026-04-21` as known `ImageGenTool.model` values.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in preview methods:
+
+* `list_optimization_jobs` now returns `ItemPaged[AgentOptimizationJob]` instead of `ItemPaged[AgentOptimizationJobListItem]`.
+* `.datasets.begin_create_generation_job` now accepts `DataGenerationJobInputs` instead of `DataGenerationJob`.
+* `.evaluators.begin_create_generation_job` now accepts `EvaluatorGenerationInputs` directly instead of an `EvaluatorGenerationJob` wrapping the inputs under an `inputs` property.
+
+Breaking changes in preview classes:
+
+* Restructured `AgentOptimizationCandidate`, `AgentOptimizationJob`, and `AgentOptimizationJobResult` around typed configuration, candidate output, evaluation, usage, latency, and termination models.
+* `DataGenerationJob` now requires `name`, `sources`, `generation_configuration`, and `scenario` instead of `inputs`.
+* `DataGenerationJobInputs` now uses `generation_configuration` and the scenario-specific input models for output configuration.
+* Renamed `DataGenerationJobOptions` to `DataGenerationJobConfiguration`, along with its derived classes: `SimpleQnADataGenerationJobOptions` to `SimpleQnADataGenerationJobConfiguration`, `SimulationSeedDataGenerationJobOptions` to `SimulationSeedDataGenerationJobConfiguration`, `ToolUseFineTuningDataGenerationJobOptions` to `ToolUseFineTuningDataGenerationJobConfiguration`, and `TracesDataGenerationJobOptions` to `TracesDataGenerationJobConfiguration`.
+* Replaced `DataGenerationJobOutputOptions` with scenario-specific `EvaluationDataGenerationJobOutputConfiguration`, `SupervisedFineTuningDataGenerationJobOutputConfiguration`, and `ReinforcementFineTuningDataGenerationJobOutputConfiguration` models.
+* Renamed the supervised and reinforcement fine-tuning `DataGenerationJobScenario` values with a `_PREVIEW` suffix. Their wire values now also end in `_preview`.
+* `EvaluatorGenerationJob` now exposes `sources`, `model`, `evaluator_name`, `evaluator_display_name`, and `evaluator_description` as top-level properties and no longer has an `inputs` property.
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
+* Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobConfiguration` to generate multi-turn evaluation seeds from a prompt source.
+* Replaced `sample_quality_grader.py` with `sample_output_quality.py` for the `builtin.output_quality` composite evaluator, and added `sample_tool_use_quality.py` for the `builtin.tool_use_quality` composite evaluator.
+* Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
+* Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
+* Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
+
+## 2.7.0 (2026-09-18)
+
+### Features Added
+
+* Added preview Voice Agent support, including voice agent definitions, realtime sessions and events, conversations, audio, and telephony models.
+* Added `.beta.agents.create_from_prompt()` to generate and create a Voice Agent from high-level inputs.
+* Added the `.beta.voice_agents.conversations` sub-client for managing voice conversations and retrieving their responses, conversation items, and audio.
+* Added `.beta.voice_agents.realtime.connect()` for sync and async realtime Voice Agent sessions with typed client and server events.
+* Added the `.beta.voice_agents.telephony` sub-client for managing calls, bindings, transfer targets, and durable outbound call jobs.
+* Added optional `harness` and `skills` properties to `PromptAgentDefinition`, with new GitHub Copilot harness, toolset, and skill-reference models.
+* Added invocation moderation through `RaiConfig.invocations_moderation` and `RaiInvocationModeration`.
+* Added `ToolboxesOperations.invoke_latest_toolbox_mcp()` and toolbox version metadata through `ToolboxObject.updated_at` and `ToolboxObject.versions`.
+* Added `DataGenerationJobOutputOptions.write_mode` for controlling dataset output writes and `TracesDataGenerationJobSource.trace_ids` for selecting explicit traces.
+* Made `TracesDataGenerationJobOptions.max_samples` optional.
+* Added read-only agent lifecycle properties `AgentDetails.configuration_state` and `AgentSessionResource.stopped_at`.
+
+### Breaking Changes 
+
+Breaking changes in beta classes:
+
+* Removed the `max_samples` constructor argument and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
+* The `ToolboxObject` constructor now requires `updated_at` and `versions`.
+
+### Dependency update
+
+* Added the optional `voice` dependency group, which installs `websockets` for sync realtime Voice Agent sessions and `aiohttp` for async sessions.
+
+### Sample updates
+
+* Added `sample_voice_agent_basic.py` under `samples/agents/voice/`, demonstrating the Voice Agent management lifecycle.
+* Added `sample_voice_agent_generate.py`, demonstrating guided Voice Agent authoring with `.beta.agents.create_from_prompt()`.
+* Added `sample_voice_agent_live_text_conversation.py`, demonstrating a persisted, typed realtime Voice Agent conversation.
+* Added `sample_voice_agent_live_audio_conversation_async.py`, demonstrating a hands-free realtime audio conversation with barge-in.
+* Added `sample_voice_agent_live_function_tool.py`, demonstrating client-side function execution during a realtime Voice Agent session.
+* Added `sample_voice_agent_read_conversation.py`, demonstrating how to read a persisted Voice Agent conversation and transcript.
+* Added `sample_voice_agent_read_conversation_audio.py`, demonstrating how to retrieve merged conversation audio and individual audio segments.
+* Added `sample_voice_agent_versions.py`, demonstrating Voice Agent version and draft management.
+* Added `sample_voice_agent_with_tools.py`, demonstrating audio configuration, tools, and self-deployed models.
+* Updated `sample_synthetic_multiturn_evaluation.py` to set the service-required simulation seed `max_samples` field through the model's mapping interface because `SimulationSeedDataGenerationJobOptions` no longer exposes it as a constructor argument.
+
+## 2.6.1 (2026-09-14)
 
 ### Sample updates
 

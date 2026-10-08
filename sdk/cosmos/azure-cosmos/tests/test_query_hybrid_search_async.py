@@ -37,14 +37,15 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
-        cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.sync_client.create_database(test_config.unique_database_id("hybrid-search"))
+        cls.addClassCleanup(test_config.TestConfig.try_delete_database_with_id, cls.sync_client, cls.test_db.id)
         cls.test_container = cls.test_db.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
             full_text_policy=test_config.get_full_text_policy(path="/text"))
-        data = hybrid_search_data.get_full_text_items()
+        data = hybrid_search_data.get_hybrid_search_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
@@ -189,7 +190,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [item async for item in results]
         assert len(result_list) == 13
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 1, 4]
+            assert res['index'] in [61, 49, 51, 24, 54, 75, 77, 76, 2, 80, 22, 57, 85]
 
         read_item = await self.test_container.read_item('50', '1')
         item_vector = read_item['vector']

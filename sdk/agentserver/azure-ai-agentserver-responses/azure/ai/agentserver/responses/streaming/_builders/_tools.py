@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+
 from typing import TYPE_CHECKING, Any, Iterator, cast
 
 from ... import models as response_models
@@ -38,7 +39,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseFileSearchCallInProgressEvent
         """
         return cast(
-            response_models.ResponseFileSearchCallInProgressEvent,
+            "response_models.ResponseFileSearchCallInProgressEvent",
             self._emit_item_state_event("response.file_search_call.in_progress"),
         )
 
@@ -49,7 +50,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseFileSearchCallSearchingEvent
         """
         return cast(
-            response_models.ResponseFileSearchCallSearchingEvent,
+            "response_models.ResponseFileSearchCallSearchingEvent",
             self._emit_item_state_event("response.file_search_call.searching"),
         )
 
@@ -60,7 +61,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseFileSearchCallCompletedEvent
         """
         return cast(
-            response_models.ResponseFileSearchCallCompletedEvent,
+            "response_models.ResponseFileSearchCallCompletedEvent",
             self._emit_item_state_event("response.file_search_call.completed"),
         )
 
@@ -91,7 +92,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseWebSearchCallInProgressEvent
         """
         return cast(
-            response_models.ResponseWebSearchCallInProgressEvent,
+            "response_models.ResponseWebSearchCallInProgressEvent",
             self._emit_item_state_event("response.web_search_call.in_progress"),
         )
 
@@ -102,7 +103,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseWebSearchCallSearchingEvent
         """
         return cast(
-            response_models.ResponseWebSearchCallSearchingEvent,
+            "response_models.ResponseWebSearchCallSearchingEvent",
             self._emit_item_state_event("response.web_search_call.searching"),
         )
 
@@ -113,7 +114,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseWebSearchCallCompletedEvent
         """
         return cast(
-            response_models.ResponseWebSearchCallCompletedEvent,
+            "response_models.ResponseWebSearchCallCompletedEvent",
             self._emit_item_state_event("response.web_search_call.completed"),
         )
 
@@ -166,7 +167,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseCodeInterpreterCallInProgressEvent
         """
         return cast(
-            response_models.ResponseCodeInterpreterCallInProgressEvent,
+            "response_models.ResponseCodeInterpreterCallInProgressEvent",
             self._emit_item_state_event("response.code_interpreter_call.in_progress"),
         )
 
@@ -177,7 +178,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseCodeInterpreterCallInterpretingEvent
         """
         return cast(
-            response_models.ResponseCodeInterpreterCallInterpretingEvent,
+            "response_models.ResponseCodeInterpreterCallInterpretingEvent",
             self._emit_item_state_event("response.code_interpreter_call.interpreting"),
         )
 
@@ -190,7 +191,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseCodeInterpreterCallCodeDeltaEvent
         """
         return cast(
-            response_models.ResponseCodeInterpreterCallCodeDeltaEvent,
+            "response_models.ResponseCodeInterpreterCallCodeDeltaEvent",
             self._emit_item_state_event(
                 "response.code_interpreter_call_code.delta",
                 extra_payload={"delta": delta},
@@ -207,7 +208,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         """
         self._final_code = code
         return cast(
-            response_models.ResponseCodeInterpreterCallCodeDoneEvent,
+            "response_models.ResponseCodeInterpreterCallCodeDoneEvent",
             self._emit_item_state_event(
                 "response.code_interpreter_call_code.done",
                 extra_payload={"code": code},
@@ -221,7 +222,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseCodeInterpreterCallCompletedEvent
         """
         return cast(
-            response_models.ResponseCodeInterpreterCallCompletedEvent,
+            "response_models.ResponseCodeInterpreterCallCompletedEvent",
             self._emit_item_state_event("response.code_interpreter_call.completed"),
         )
 
@@ -297,7 +298,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseImageGenCallInProgressEvent
         """
         return cast(
-            response_models.ResponseImageGenCallInProgressEvent,
+            "response_models.ResponseImageGenCallInProgressEvent",
             self._emit_item_state_event("response.image_generation_call.in_progress"),
         )
 
@@ -308,7 +309,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseImageGenCallGeneratingEvent
         """
         return cast(
-            response_models.ResponseImageGenCallGeneratingEvent,
+            "response_models.ResponseImageGenCallGeneratingEvent",
             self._emit_item_state_event("response.image_generation_call.generating"),
         )
 
@@ -323,7 +324,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         partial_index = self._partial_image_index
         self._partial_image_index += 1
         return cast(
-            response_models.ResponseImageGenCallPartialImageEvent,
+            "response_models.ResponseImageGenCallPartialImageEvent",
             self._emit_item_state_event(
                 "response.image_generation_call.partial_image",
                 extra_payload={"partial_image_index": partial_index, "partial_image_b64": partial_image_b64},
@@ -337,7 +338,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseImageGenCallCompletedEvent
         """
         return cast(
-            response_models.ResponseImageGenCallCompletedEvent,
+            "response_models.ResponseImageGenCallCompletedEvent",
             self._emit_item_state_event("response.image_generation_call.completed"),
         )
 
@@ -431,7 +432,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseMCPCallInProgressEvent
         """
         return cast(
-            response_models.ResponseMCPCallInProgressEvent,
+            "response_models.ResponseMCPCallInProgressEvent",
             self._emit_item_state_event("response.mcp_call.in_progress"),
         )
 
@@ -444,7 +445,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseMCPCallArgumentsDeltaEvent
         """
         return cast(
-            response_models.ResponseMCPCallArgumentsDeltaEvent,
+            "response_models.ResponseMCPCallArgumentsDeltaEvent",
             self._emit_item_state_event(
                 "response.mcp_call_arguments.delta",
                 extra_payload={"delta": delta},
@@ -461,7 +462,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         """
         self._final_arguments = arguments
         return cast(
-            response_models.ResponseMCPCallArgumentsDoneEvent,
+            "response_models.ResponseMCPCallArgumentsDoneEvent",
             self._emit_item_state_event(
                 "response.mcp_call_arguments.done",
                 extra_payload={"arguments": arguments},
@@ -476,7 +477,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         """
         self._terminal_status = "completed"
         return cast(
-            response_models.ResponseMCPCallCompletedEvent,
+            "response_models.ResponseMCPCallCompletedEvent",
             self._emit_item_state_event("response.mcp_call.completed"),
         )
 
@@ -488,7 +489,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         """
         self._terminal_status = "failed"
         return cast(
-            response_models.ResponseMCPCallFailedEvent,
+            "response_models.ResponseMCPCallFailedEvent",
             self._emit_item_state_event("response.mcp_call.failed"),
         )
 
@@ -592,7 +593,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         :rtype: ResponseMCPListToolsInProgressEvent
         """
         return cast(
-            response_models.ResponseMCPListToolsInProgressEvent,
+            "response_models.ResponseMCPListToolsInProgressEvent",
             self._emit_item_state_event("response.mcp_list_tools.in_progress"),
         )
 
@@ -603,7 +604,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         :rtype: ResponseMCPListToolsCompletedEvent
         """
         return cast(
-            response_models.ResponseMCPListToolsCompletedEvent,
+            "response_models.ResponseMCPListToolsCompletedEvent",
             self._emit_item_state_event("response.mcp_list_tools.completed"),
         )
 
@@ -614,7 +615,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         :rtype: ResponseMCPListToolsFailedEvent
         """
         return cast(
-            response_models.ResponseMCPListToolsFailedEvent,
+            "response_models.ResponseMCPListToolsFailedEvent",
             self._emit_item_state_event("response.mcp_list_tools.failed"),
         )
 
@@ -706,7 +707,7 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseCustomToolCallInputDeltaEvent
         """
         return cast(
-            response_models.ResponseCustomToolCallInputDeltaEvent,
+            "response_models.ResponseCustomToolCallInputDeltaEvent",
             self._emit_item_state_event(
                 "response.custom_tool_call_input.delta",
                 extra_payload={"delta": delta},
@@ -723,7 +724,7 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         """
         self._final_input = input_text
         return cast(
-            response_models.ResponseCustomToolCallInputDoneEvent,
+            "response_models.ResponseCustomToolCallInputDoneEvent",
             self._emit_item_state_event(
                 "response.custom_tool_call_input.done",
                 extra_payload={"input": input_text},

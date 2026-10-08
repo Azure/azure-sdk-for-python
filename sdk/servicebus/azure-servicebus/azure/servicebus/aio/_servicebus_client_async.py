@@ -6,7 +6,6 @@
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
 from datetime import datetime
 import logging
-import warnings
 from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
@@ -81,7 +80,9 @@ class ServiceBusClient(
      rather than the whole operation. Applies to sending, management operations, and AMQP link
      acquisition, including the link acquisition performed by `receive_messages`. The value must
      be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
-     bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
+     bound the `receive_messages` long poll, the receiver iterator's own wait, or receiver-link
+     settlement. Management-link settlement uses this value when configured and an internal
+     60-second default otherwise.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -128,16 +129,6 @@ class ServiceBusClient(
         ] = PyamqpTransportAsync
 
         if uamqp_transport:
-            # Deprecation of uamqp transport
-            warnings.warn(
-                "uAMQP legacy support will be removed in the 7.15.0 minor release. "
-                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
-                "to use the pure Python AMQP transport. "
-                "If you rely on this, please comment on [this issue]"
-                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning,
-                stacklevel=2,
-            )
             try:
                 from ._transport._uamqp_transport_async import UamqpTransportAsync
 
@@ -236,7 +227,9 @@ class ServiceBusClient(
          rather than the whole operation. Applies to sending, management operations, and AMQP link
          acquisition, including the link acquisition performed by `receive_messages`. The value must
          be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
-         bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
+         bound the `receive_messages` long poll, the receiver iterator's own wait, or receiver-link
+         settlement. Management-link settlement uses this value when configured and an internal
+         60-second default otherwise.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.

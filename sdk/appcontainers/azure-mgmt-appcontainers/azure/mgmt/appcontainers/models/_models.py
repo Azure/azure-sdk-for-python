@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AllowedAudiencesValidation(_Model):
+class AllowedAudiencesValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Allowed Audiences validation flow.
 
     :ivar allowed_audiences: The configuration settings of the allowed list of audiences from which
@@ -50,7 +50,7 @@ class AllowedAudiencesValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedPrincipals(_Model):
+class AllowedPrincipals(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory allowed principals.
 
     :ivar groups: The list of the allowed groups.
@@ -83,7 +83,37 @@ class AllowedPrincipals(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Apple(_Model):
+class AppInsightsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Application Insights.
+
+    :ivar connection_string: Application Insights connection string.
+    :vartype connection_string: str
+    """
+
+    connection_string: Optional[str] = rest_field(
+        name="connectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application Insights connection string."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_string: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Apple(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Apple provider.
 
     :ivar enabled: <code>false</code> if the Apple provider should not be enabled despite the set
@@ -125,7 +155,7 @@ class Apple(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppleRegistration(_Model):
+class AppleRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the registration for the Apple provider.
 
     :ivar client_id: The Client ID of the app used for login.
@@ -160,7 +190,7 @@ class AppleRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppLogsConfiguration(_Model):
+class AppLogsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of application logs.
 
     :ivar destination: Logs destination, can be 'log-analytics', 'azure-monitor' or 'none'.
@@ -198,7 +228,7 @@ class AppLogsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppRegistration(_Model):
+class AppRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for providers that have app ids and app
     secrets.
 
@@ -279,7 +309,7 @@ class ProxyResource(Resource):
     """
 
 
-class AuthConfig(ProxyResource):
+class AuthConfig(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration settings for the Azure ContainerApp Service Authentication / Authorization
     feature.
 
@@ -348,7 +378,7 @@ class AuthConfig(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthConfigProperties(_Model):
+class AuthConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AuthConfig resource specific properties.
 
     :ivar platform: The configuration settings of the platform of ContainerApp Service
@@ -421,7 +451,7 @@ class AuthConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthPlatform(_Model):
+class AuthPlatform(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the platform of ContainerApp Service
     Authentication/Authorization.
 
@@ -463,7 +493,68 @@ class AuthPlatform(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailableWorkloadProfile(ProxyResource):
+class AvailableEnvironmentMode(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An environment mode available to the subscription.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar location: The Azure region in which the environment mode is available.
+    :vartype location: str
+    :ivar properties: The environment mode details.
+    :vartype properties: ~azure.mgmt.appcontainers.models.AvailableEnvironmentModeProperties
+    """
+
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """The Azure region in which the environment mode is available."""
+    properties: Optional["_models.AvailableEnvironmentModeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The environment mode details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.AvailableEnvironmentModeProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvailableEnvironmentModeProperties(_Model):
+    """Details that describe an available environment mode.
+
+    :ivar display_name: The display name of the environment mode.
+    :vartype display_name: str
+    :ivar description: The description of the environment mode.
+    :vartype description: str
+    """
+
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """The display name of the environment mode."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The description of the environment mode."""
+
+
+class AvailableWorkloadProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A workload profile with specific hardware configure to run container apps.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -509,7 +600,7 @@ class AvailableWorkloadProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AvailableWorkloadProfileProperties(_Model):
+class AvailableWorkloadProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Revision resource specific properties.
 
     :ivar category: Used to categorize workload profiles.
@@ -570,7 +661,7 @@ class AvailableWorkloadProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectory(_Model):
+class AzureActiveDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active directory provider.
 
     :ivar enabled: <code>false</code> if the Azure Active Directory provider should not be enabled
@@ -633,7 +724,7 @@ class AzureActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryLogin(_Model):
+class AzureActiveDirectoryLogin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory login flow.
 
     :ivar login_parameters: Login parameters to send to the OpenID Connect authorization endpoint
@@ -674,7 +765,7 @@ class AzureActiveDirectoryLogin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryRegistration(_Model):
+class AzureActiveDirectoryRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory app registration.
 
     :ivar open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
@@ -770,7 +861,7 @@ class AzureActiveDirectoryRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureActiveDirectoryValidation(_Model):
+class AzureActiveDirectoryValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory token validation flow.
 
     :ivar jwt_claim_checks: The configuration settings of the checks that should be made while
@@ -818,7 +909,7 @@ class AzureActiveDirectoryValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureCredentials(_Model):
+class AzureCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App credentials.
 
     :ivar client_id: Client Id.
@@ -868,7 +959,7 @@ class AzureCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileProperties(_Model):
+class AzureFileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure File Properties.
 
     :ivar account_name: Storage account name for azure file.
@@ -925,7 +1016,7 @@ class AzureFileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStaticWebApps(_Model):
+class AzureStaticWebApps(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Static Web Apps provider.
 
     :ivar enabled: <code>false</code> if the Azure Static Web Apps provider should not be enabled
@@ -962,7 +1053,7 @@ class AzureStaticWebApps(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStaticWebAppsRegistration(_Model):
+class AzureStaticWebAppsRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the registration for the Azure Static Web Apps provider.
 
     :ivar client_id: The Client ID of the app used for login.
@@ -990,7 +1081,7 @@ class AzureStaticWebAppsRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseContainer(_Model):
+class BaseContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App base container definition.
 
     :ivar image: Container image tag.
@@ -1054,7 +1145,7 @@ class BaseContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingMeter(ProxyResource):
+class BillingMeter(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Billing meter.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1100,7 +1191,7 @@ class BillingMeter(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BillingMeterCollection(_Model):
+class BillingMeterCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of billing meters.
 
     :ivar value: Collection of billing meters. Required.
@@ -1128,7 +1219,7 @@ class BillingMeterCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingMeterProperties(_Model):
+class BillingMeterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Revision resource specific properties.
 
     :ivar category: Used to categorize billing meters.
@@ -1168,25 +1259,48 @@ class BillingMeterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobStorageTokenStore(_Model):
+class BlobStorageTokenStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the storage of the tokens if blob storage is used.
 
     :ivar sas_url_setting_name: The name of the app secrets containing the SAS URL of the blob
-     storage containing the tokens. Required.
+     storage containing the tokens.
     :vartype sas_url_setting_name: str
+    :ivar blob_container_uri: The URI of the blob storage containing the tokens. Should not be used
+     along with sasUrlSettingName.
+    :vartype blob_container_uri: str
+    :ivar client_id: The Client ID of a User-Assigned Managed Identity. Should not be used along
+     with managedIdentityResourceId.
+    :vartype client_id: str
+    :ivar managed_identity_resource_id: The Resource ID of a User-Assigned Managed Identity. Should
+     not be used along with clientId.
+    :vartype managed_identity_resource_id: str
     """
 
-    sas_url_setting_name: str = rest_field(
+    sas_url_setting_name: Optional[str] = rest_field(
         name="sasUrlSettingName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The name of the app secrets containing the SAS URL of the blob storage containing the tokens.
-     Required."""
+    """The name of the app secrets containing the SAS URL of the blob storage containing the tokens."""
+    blob_container_uri: Optional[str] = rest_field(
+        name="blobContainerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the blob storage containing the tokens. Should not be used along with
+     sasUrlSettingName."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """The Client ID of a User-Assigned Managed Identity. Should not be used along with
+     managedIdentityResourceId."""
+    managed_identity_resource_id: Optional[str] = rest_field(
+        name="managedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Resource ID of a User-Assigned Managed Identity. Should not be used along with clientId."""
 
     @overload
     def __init__(
         self,
         *,
-        sas_url_setting_name: str,
+        sas_url_setting_name: Optional[str] = None,
+        blob_container_uri: Optional[str] = None,
+        client_id: Optional[str] = None,
+        managed_identity_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1200,7 +1314,7 @@ class BlobStorageTokenStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1244,7 +1358,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Certificate(TrackedResource):
+class Certificate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate used for Custom Domain bindings of Container Apps in a Managed Environment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1291,7 +1405,7 @@ class Certificate(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CertificateKeyVaultProperties(_Model):
+class CertificateKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a certificate stored in a Key Vault.
 
     :ivar identity: Resource ID of a managed identity to authenticate with Azure Key Vault, or
@@ -1328,7 +1442,7 @@ class CertificateKeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificatePatch(_Model):
+class CertificatePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A certificate to update.
 
     :ivar tags: Application-specific metadata in the form of key-value pairs.
@@ -1356,7 +1470,7 @@ class CertificatePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProperties(_Model):
+class CertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the certificate. Known values are: "Succeeded",
@@ -1444,7 +1558,92 @@ class CertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckMigrationEligibilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for checking whether a managed environment can migrate to a target mode.
+
+    :ivar target_mode: The target environment mode to check migration eligibility against.
+     Required.
+    :vartype target_mode: str
+    """
+
+    target_mode: str = rest_field(name="targetMode", visibility=["read", "create", "update", "delete", "query"])
+    """The target environment mode to check migration eligibility against. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_mode: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckMigrationEligibilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Result of a read-only managed environment migration eligibility check.
+
+    :ivar is_eligible: Whether the managed environment can migrate to the requested target mode.
+     Required.
+    :vartype is_eligible: bool
+    :ivar environment_name: The name of the managed environment that was checked. Required.
+    :vartype environment_name: str
+    :ivar current_mode: The current mode of the managed environment. Required.
+    :vartype current_mode: str
+    :ivar target_mode: The requested target mode. Required.
+    :vartype target_mode: str
+    :ivar failure_reasons: The blocking reasons preventing migration. Empty when the managed
+     environment is eligible. Required.
+    :vartype failure_reasons:
+     list[~azure.mgmt.appcontainers.models.MigrationEligibilityFailureReason]
+    """
+
+    is_eligible: bool = rest_field(name="isEligible", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the managed environment can migrate to the requested target mode. Required."""
+    environment_name: str = rest_field(
+        name="environmentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the managed environment that was checked. Required."""
+    current_mode: str = rest_field(name="currentMode", visibility=["read", "create", "update", "delete", "query"])
+    """The current mode of the managed environment. Required."""
+    target_mode: str = rest_field(name="targetMode", visibility=["read", "create", "update", "delete", "query"])
+    """The requested target mode. Required."""
+    failure_reasons: list["_models.MigrationEligibilityFailureReason"] = rest_field(
+        name="failureReasons", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The blocking reasons preventing migration. Empty when the managed environment is eligible.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_eligible: bool,
+        environment_name: str,
+        current_mode: str,
+        target_mode: str,
+        failure_reasons: list["_models.MigrationEligibilityFailureReason"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -1477,7 +1676,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -1521,7 +1720,7 @@ class CheckNameAvailabilityResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientRegistration(_Model):
+class ClientRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for providers that have client ids and
     client secrets.
 
@@ -1557,7 +1756,7 @@ class ClientRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Configuration(_Model):
+class Configuration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Non versioned Container App configuration properties that define the mutable settings of a
     Container app.
 
@@ -1639,7 +1838,7 @@ class Configuration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironment(TrackedResource):
+class ConnectedEnvironment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An environment for Kubernetes cluster specialized for web workloads by Azure App Service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1720,7 +1919,7 @@ class ConnectedEnvironment(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ResourceTags(_Model):
+class ResourceTags(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of key value pairs that describe the resource. This will overwrite the existing tags.
 
     :ivar tags: Resource tags.
@@ -1748,7 +1947,7 @@ class ResourceTags(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironmentPatchResource(ResourceTags):
+class ConnectedEnvironmentPatchResource(ResourceTags):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected environment patch properties.
 
     :ivar tags: Resource tags.
@@ -1773,7 +1972,7 @@ class ConnectedEnvironmentPatchResource(ResourceTags):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironmentProperties(_Model):
+class ConnectedEnvironmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectedEnvironment resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Kubernetes Environment. Known values are:
@@ -1837,7 +2036,7 @@ class ConnectedEnvironmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironmentStorage(ProxyResource):
+class ConnectedEnvironmentStorage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage resource for connectedEnvironment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1878,7 +2077,7 @@ class ConnectedEnvironmentStorage(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironmentStorageProperties(_Model):
+class ConnectedEnvironmentStorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage properties.
 
     :ivar provisioning_state: Provisioning state of the storage. Known values are: "Succeeded",
@@ -1921,7 +2120,7 @@ class ConnectedEnvironmentStorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEnvironmentStoragesCollection(_Model):
+class ConnectedEnvironmentStoragesCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of Storage for Environments.
 
     :ivar value: Collection of storage resources. Required.
@@ -1951,7 +2150,7 @@ class ConnectedEnvironmentStoragesCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Container(BaseContainer):
+class Container(BaseContainer):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container definition.
 
     :ivar image: Container image tag.
@@ -2002,7 +2201,7 @@ class Container(BaseContainer):
         super().__init__(*args, **kwargs)
 
 
-class ContainerApp(TrackedResource):
+class ContainerApp(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2064,6 +2263,7 @@ class ContainerApp(TrackedResource):
         "running_status",
         "managed_environment_id",
         "environment_id",
+        "networking",
         "workload_profile_name",
         "latest_revision_name",
         "latest_ready_revision_name",
@@ -2117,7 +2317,7 @@ class ContainerApp(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ContainerAppAuthToken(TrackedResource):
+class ContainerAppAuthToken(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Auth Token.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2199,7 +2399,7 @@ class ContainerAppAuthTokenProperties(_Model):
     """Token expiration date."""
 
 
-class ContainerAppJobExecutions(_Model):
+class ContainerAppJobExecutions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App executions collection ARM resource.
 
     :ivar value: The JobExecution items on this page. Required.
@@ -2232,7 +2432,41 @@ class ContainerAppJobExecutions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppProbe(_Model):
+class ContainerAppNetworkingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Networking configuration for a Container App. Only supported for Container Apps deployed into
+    an Express managed environment.
+
+    :ivar outbound_vnet_subnet_id: Resource ID of a subnet used for outbound (egress) traffic from
+     this Container App. Only supported for Container Apps in an Express managed environment.
+     Mutually exclusive with the environment-level VNet configuration and immutable after the
+     Container App is created.
+    :vartype outbound_vnet_subnet_id: str
+    """
+
+    outbound_vnet_subnet_id: Optional[str] = rest_field(name="outboundVnetSubnetId", visibility=["read", "create"])
+    """Resource ID of a subnet used for outbound (egress) traffic from this Container App. Only
+     supported for Container Apps in an Express managed environment. Mutually exclusive with the
+     environment-level VNet configuration and immutable after the Container App is created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        outbound_vnet_subnet_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerAppProbe(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Probe describes a health check to be performed against a container to determine whether it is
     alive or ready to receive traffic.
 
@@ -2345,7 +2579,7 @@ class ContainerAppProbe(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppProbeHttpGet(_Model):
+class ContainerAppProbeHttpGet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTPGet specifies the http request to perform.
 
     :ivar host: Host name to connect to, defaults to the pod IP. You probably want to set "Host" in
@@ -2404,7 +2638,7 @@ class ContainerAppProbeHttpGet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppProbeHttpGetHttpHeadersItem(_Model):
+class ContainerAppProbeHttpGetHttpHeadersItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTPHeader describes a custom header to be used in HTTP probes.
 
     :ivar name: The header field name. Required.
@@ -2437,7 +2671,7 @@ class ContainerAppProbeHttpGetHttpHeadersItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppProbeTcpSocket(_Model):
+class ContainerAppProbeTcpSocket(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TCPSocket specifies an action involving a TCP port. TCP hooks not yet supported.
 
     :ivar host: Optional: Host name to connect to, defaults to the pod IP.
@@ -2472,7 +2706,7 @@ class ContainerAppProbeTcpSocket(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerAppProperties(_Model):
+class ContainerAppProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContainerApp resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Container App. Known values are:
@@ -2486,6 +2720,8 @@ class ContainerAppProperties(_Model):
     :vartype managed_environment_id: str
     :ivar environment_id: Resource ID of environment.
     :vartype environment_id: str
+    :ivar networking: Networking configuration for the Container App.
+    :vartype networking: ~azure.mgmt.appcontainers.models.ContainerAppNetworkingConfiguration
     :ivar workload_profile_name: Workload profile name to pin for container app execution.
     :vartype workload_profile_name: str
     :ivar latest_revision_name: Name of the latest revision of the Container App.
@@ -2521,6 +2757,10 @@ class ContainerAppProperties(_Model):
     """Deprecated. Resource ID of the Container App's environment."""
     environment_id: Optional[str] = rest_field(name="environmentId", visibility=["read", "create"])
     """Resource ID of environment."""
+    networking: Optional["_models.ContainerAppNetworkingConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Networking configuration for the Container App."""
     workload_profile_name: Optional[str] = rest_field(
         name="workloadProfileName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2550,6 +2790,7 @@ class ContainerAppProperties(_Model):
         *,
         managed_environment_id: Optional[str] = None,
         environment_id: Optional[str] = None,
+        networking: Optional["_models.ContainerAppNetworkingConfiguration"] = None,
         workload_profile_name: Optional[str] = None,
         configuration: Optional["_models.Configuration"] = None,
         template: Optional["_models.Template"] = None,
@@ -2592,7 +2833,141 @@ class ContainerAppSecret(_Model):
     """Azure Key Vault URL pointing to the secret referenced by the container app."""
 
 
-class ContainerResources(_Model):
+class ContainerAppsFunction(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Container App Function.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar properties: Function resource specific properties.
+    :vartype properties: ~azure.mgmt.appcontainers.models.ContainerAppsFunctionProperties
+    """
+
+    properties: Optional["_models.ContainerAppsFunctionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Function resource specific properties."""
+
+    __flattened_items = ["invoke_url_template", "trigger_type", "language", "is_disabled", "state"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ContainerAppsFunctionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ContainerAppsFunctionProperties(_Model):
+    """Function resource specific properties.
+
+    :ivar invoke_url_template: Invoke URL for the function.
+    :vartype invoke_url_template: str
+    :ivar trigger_type: Trigger type of the function.
+    :vartype trigger_type: str
+    :ivar language: Programming language of the function.
+    :vartype language: str
+    :ivar is_disabled: Indicates whether the function is disabled. This property is deprecated; use
+     ``state`` instead.
+    :vartype is_disabled: bool
+    :ivar state: The state of the function. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.appcontainers.models.ContainerAppsFunctionState
+    """
+
+    invoke_url_template: Optional[str] = rest_field(name="invokeUrlTemplate", visibility=["read"])
+    """Invoke URL for the function."""
+    trigger_type: Optional[str] = rest_field(name="triggerType", visibility=["read"])
+    """Trigger type of the function."""
+    language: Optional[str] = rest_field(visibility=["read"])
+    """Programming language of the function."""
+    is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
+    """Indicates whether the function is disabled. This property is deprecated; use ``state`` instead."""
+    state: Optional[Union[str, "_models.ContainerAppsFunctionState"]] = rest_field(visibility=["read"])
+    """The state of the function. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ContainerExecutionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Container Apps Job execution container status. Contains status code and reason.
+
+    :ivar name: Container Name.
+    :vartype name: str
+    :ivar code: Exit code.
+    :vartype code: int
+    :ivar additional_information: Additional information for the container status.
+    :vartype additional_information: str
+    :ivar status: Status of the container.
+    :vartype status: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Container Name."""
+    code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Exit code."""
+    additional_information: Optional[str] = rest_field(
+        name="additionalInformation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional information for the container status."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status of the container."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        code: Optional[int] = None,
+        additional_information: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container resource requirements.
 
     :ivar cpu: Required CPU in cores, e.g. 0.5.
@@ -2629,7 +3004,7 @@ class ContainerResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CookieExpiration(_Model):
+class CookieExpiration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the session cookie's expiration.
 
     :ivar convention: The convention used when determining the session cookie's expiration. Known
@@ -2669,7 +3044,7 @@ class CookieExpiration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsPolicy(_Model):
+class CorsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cross-Origin-Resource-Sharing policy.
 
     :ivar allowed_origins: Specifies the content for the access-control-allow-origins header.
@@ -2733,7 +3108,7 @@ class CorsPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomContainerTemplate(_Model):
+class CustomContainerTemplate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom container configuration.
 
     :ivar registry_credentials: Private container registry credentials for containers used by the
@@ -2776,7 +3151,7 @@ class CustomContainerTemplate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomain(_Model):
+class CustomDomain(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Domain of a Container App.
 
     :ivar name: Hostname. Required.
@@ -2821,7 +3196,7 @@ class CustomDomain(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainConfiguration(_Model):
+class CustomDomainConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration properties for apps environment custom domain.
 
     :ivar custom_domain_verification_id: Id used to verify domain name ownership.
@@ -2889,7 +3264,7 @@ class CustomDomainConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomHostnameAnalysisResult(_Model):
+class CustomHostnameAnalysisResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom domain analysis.
 
     :ivar host_name: Host name that was analyzed.
@@ -2996,7 +3371,9 @@ class CustomHostnameAnalysisResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomHostnameAnalysisResultCustomDomainVerificationFailureInfo(_Model):  # pylint: disable=name-too-long
+class CustomHostnameAnalysisResultCustomDomainVerificationFailureInfo(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Raw failure information if DNS verification fails.
 
     :ivar code: Standardized string to programmatically identify the error.
@@ -3062,7 +3439,7 @@ class CustomHostnameAnalysisResultCustomDomainVerificationFailureInfoDetailsItem
     """Detailed error description and debugging information."""
 
 
-class CustomOpenIdConnectProvider(_Model):
+class CustomOpenIdConnectProvider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the custom Open ID Connect provider.
 
     :ivar enabled: <code>false</code> if the custom Open ID provider provider should not be
@@ -3108,7 +3485,7 @@ class CustomOpenIdConnectProvider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomScaleRule(_Model):
+class CustomScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container Custom scaling rule.
 
     :ivar type: Type of the custom scale rule eg: azure-servicebus, redis etc.
@@ -3155,7 +3532,7 @@ class CustomScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dapr(_Model):
+class Dapr(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Dapr configuration.
 
     :ivar enabled: Boolean indicating if the Dapr side car is enabled.
@@ -3251,7 +3628,7 @@ class Dapr(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DaprAppHealth(_Model):
+class DaprAppHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dapr application health check configuration.
 
     :ivar enabled: Boolean indicating if the health probe is enabled.
@@ -3303,7 +3680,7 @@ class DaprAppHealth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DaprComponent(ProxyResource):
+class DaprComponent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dapr Component.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3375,7 +3752,7 @@ class DaprComponent(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DaprComponentProperties(_Model):
+class DaprComponentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dapr Component resource specific properties.
 
     :ivar component_type: Component type.
@@ -3461,6 +3838,320 @@ class DaprComponentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DaprComponentResiliencyPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar properties: Dapr Component Resiliency Policy resource specific properties.
+    :vartype properties: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyProperties
+    """
+
+    properties: Optional["_models.DaprComponentResiliencyPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Dapr Component Resiliency Policy resource specific properties."""
+
+    __flattened_items = ["inbound_policy", "outbound_policy"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DaprComponentResiliencyPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy Circuit Breaker Policy Configuration.
+
+    :ivar consecutive_errors: The number of consecutive errors before the circuit is opened.
+    :vartype consecutive_errors: int
+    :ivar timeout_in_seconds: The interval in seconds until a retry attempt is made after the
+     circuit is opened.
+    :vartype timeout_in_seconds: int
+    :ivar interval_in_seconds: The optional interval in seconds after which the error count resets
+     to 0. An interval of 0 will never reset. If not specified, the timeoutInSeconds value will be
+     used.
+    :vartype interval_in_seconds: int
+    """
+
+    consecutive_errors: Optional[int] = rest_field(
+        name="consecutiveErrors", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of consecutive errors before the circuit is opened."""
+    timeout_in_seconds: Optional[int] = rest_field(
+        name="timeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interval in seconds until a retry attempt is made after the circuit is opened."""
+    interval_in_seconds: Optional[int] = rest_field(
+        name="intervalInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional interval in seconds after which the error count resets to 0. An interval of 0 will
+     never reset. If not specified, the timeoutInSeconds value will be used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        consecutive_errors: Optional[int] = None,
+        timeout_in_seconds: Optional[int] = None,
+        interval_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DaprComponentResiliencyPolicyConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy Configuration.
+
+    :ivar http_retry_policy: The optional HTTP retry policy configuration.
+    :vartype http_retry_policy:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration
+    :ivar timeout_policy: The optional timeout policy configuration.
+    :vartype timeout_policy:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyTimeoutPolicyConfiguration
+    :ivar circuit_breaker_policy: The optional circuit breaker policy configuration.
+    :vartype circuit_breaker_policy:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration
+    """
+
+    http_retry_policy: Optional["_models.DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration"] = rest_field(
+        name="httpRetryPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional HTTP retry policy configuration."""
+    timeout_policy: Optional["_models.DaprComponentResiliencyPolicyTimeoutPolicyConfiguration"] = rest_field(
+        name="timeoutPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional timeout policy configuration."""
+    circuit_breaker_policy: Optional["_models.DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration"] = (
+        rest_field(name="circuitBreakerPolicy", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The optional circuit breaker policy configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        http_retry_policy: Optional["_models.DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration"] = None,
+        timeout_policy: Optional["_models.DaprComponentResiliencyPolicyTimeoutPolicyConfiguration"] = None,
+        circuit_breaker_policy: Optional[
+            "_models.DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration"
+        ] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy HTTP Retry Backoff Configuration.
+
+    :ivar initial_delay_in_milliseconds: The optional initial delay in milliseconds before an
+     operation is retried.
+    :vartype initial_delay_in_milliseconds: int
+    :ivar max_interval_in_milliseconds: The optional maximum time interval in milliseconds between
+     retry attempts.
+    :vartype max_interval_in_milliseconds: int
+    """
+
+    initial_delay_in_milliseconds: Optional[int] = rest_field(
+        name="initialDelayInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional initial delay in milliseconds before an operation is retried."""
+    max_interval_in_milliseconds: Optional[int] = rest_field(
+        name="maxIntervalInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional maximum time interval in milliseconds between retry attempts."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        initial_delay_in_milliseconds: Optional[int] = None,
+        max_interval_in_milliseconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy HTTP Retry Policy Configuration.
+
+    :ivar max_retries: The optional maximum number of retries.
+    :vartype max_retries: int
+    :ivar retry_back_off: The optional retry backoff configuration.
+    :vartype retry_back_off:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration
+    """
+
+    max_retries: Optional[int] = rest_field(
+        name="maxRetries", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional maximum number of retries."""
+    retry_back_off: Optional["_models.DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration"] = rest_field(
+        name="retryBackOff", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional retry backoff configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_retries: Optional[int] = None,
+        retry_back_off: Optional["_models.DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DaprComponentResiliencyPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy resource specific properties.
+
+    :ivar inbound_policy: The optional inbound component resiliency policy configuration.
+    :vartype inbound_policy:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyConfiguration
+    :ivar outbound_policy: The optional outbound component resiliency policy configuration.
+    :vartype outbound_policy:
+     ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyConfiguration
+    """
+
+    inbound_policy: Optional["_models.DaprComponentResiliencyPolicyConfiguration"] = rest_field(
+        name="inboundPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional inbound component resiliency policy configuration."""
+    outbound_policy: Optional["_models.DaprComponentResiliencyPolicyConfiguration"] = rest_field(
+        name="outboundPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional outbound component resiliency policy configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inbound_policy: Optional["_models.DaprComponentResiliencyPolicyConfiguration"] = None,
+        outbound_policy: Optional["_models.DaprComponentResiliencyPolicyConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DaprComponentResiliencyPolicyTimeoutPolicyConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Dapr Component Resiliency Policy Timeout Policy Configuration.
+
+    :ivar response_timeout_in_seconds: The optional response timeout in seconds.
+    :vartype response_timeout_in_seconds: int
+    """
+
+    response_timeout_in_seconds: Optional[int] = rest_field(
+        name="responseTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional response timeout in seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DaprConfiguration(_Model):
     """Configuration properties Dapr component.
 
@@ -3472,7 +4163,7 @@ class DaprConfiguration(_Model):
     """The version of Dapr."""
 
 
-class DaprMetadata(_Model):
+class DaprMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dapr component metadata.
 
     :ivar name: Metadata property name.
@@ -3526,7 +4217,7 @@ class DaprSecret(_Model):
     """Secret Value."""
 
 
-class DaprSecretsCollection(_Model):
+class DaprSecretsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dapr component Secrets Collection for ListSecrets Action.
 
     :ivar value: Collection of secrets used by a Dapr component. Required.
@@ -3554,7 +4245,40 @@ class DaprSecretsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultAuthorizationPolicy(_Model):
+class DataDogConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of datadog.
+
+    :ivar site: The data dog site.
+    :vartype site: str
+    :ivar key: The data dog api key.
+    :vartype key: str
+    """
+
+    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The data dog site."""
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The data dog api key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        site: Optional[str] = None,
+        key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefaultAuthorizationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Azure Active Directory default authorization policy.
 
     :ivar allowed_principals: The configuration settings of the Azure Active Directory allowed
@@ -3604,7 +4328,7 @@ class DefaultErrorResponse(_Model):
     """Error model."""
 
 
-class DefaultErrorResponseError(_Model):
+class DefaultErrorResponseError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error model.
 
     :ivar code: Standardized string to programmatically identify the error.
@@ -3669,7 +4393,44 @@ class DefaultErrorResponseErrorDetailsItem(_Model):
     """Detailed error description and debugging information."""
 
 
-class DiagnosticDataProviderMetadata(_Model):
+class DestinationsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Open Telemetry destinations.
+
+    :ivar data_dog_configuration: Open telemetry datadog destination configuration.
+    :vartype data_dog_configuration: ~azure.mgmt.appcontainers.models.DataDogConfiguration
+    :ivar otlp_configurations: Open telemetry otlp configurations.
+    :vartype otlp_configurations: list[~azure.mgmt.appcontainers.models.OtlpConfiguration]
+    """
+
+    data_dog_configuration: Optional["_models.DataDogConfiguration"] = rest_field(
+        name="dataDogConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry datadog destination configuration."""
+    otlp_configurations: Optional[list["_models.OtlpConfiguration"]] = rest_field(
+        name="otlpConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry otlp configurations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_dog_configuration: Optional["_models.DataDogConfiguration"] = None,
+        otlp_configurations: Optional[list["_models.OtlpConfiguration"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticDataProviderMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a diagnostics data provider.
 
     :ivar provider_name: Name of data provider.
@@ -3707,7 +4468,9 @@ class DiagnosticDataProviderMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticDataProviderMetadataPropertyBagItem(_Model):  # pylint: disable=name-too-long
+class DiagnosticDataProviderMetadataPropertyBagItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Property details.
 
     :ivar name: Property name.
@@ -3740,7 +4503,7 @@ class DiagnosticDataProviderMetadataPropertyBagItem(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticDataTableResponseColumn(_Model):
+class DiagnosticDataTableResponseColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics data column.
 
     :ivar column_name: Column name.
@@ -3782,7 +4545,7 @@ class DiagnosticDataTableResponseColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticDataTableResponseObject(_Model):
+class DiagnosticDataTableResponseObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics data table.
 
     :ivar table_name: Table name.
@@ -3822,7 +4585,7 @@ class DiagnosticDataTableResponseObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticRendering(_Model):
+class DiagnosticRendering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rendering details of a diagnostics table.
 
     :ivar type: Rendering type.
@@ -3867,7 +4630,7 @@ class DiagnosticRendering(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Diagnostics(ProxyResource):
+class Diagnostics(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics data for a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3908,7 +4671,7 @@ class Diagnostics(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsCollection(_Model):
+class DiagnosticsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics data collection for a resource.
 
     :ivar value: The Diagnostics items on this page. Required.
@@ -3941,7 +4704,7 @@ class DiagnosticsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsDataApiResponse(_Model):
+class DiagnosticsDataApiResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics data returned from a detector.
 
     :ivar table: Table response.
@@ -3978,7 +4741,7 @@ class DiagnosticsDataApiResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsDefinition(_Model):
+class DiagnosticsDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata of the diagnostics response.
 
     :ivar id: Unique detector name.
@@ -4043,7 +4806,7 @@ class DiagnosticsDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsProperties(_Model):
+class DiagnosticsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostics resource specific properties.
 
     :ivar metadata: Metadata of the diagnostics response.
@@ -4095,7 +4858,7 @@ class DiagnosticsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsStatus(_Model):
+class DiagnosticsStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rendering details of a diagnostics table.
 
     :ivar message: Diagnostic message.
@@ -4143,7 +4906,190 @@ class DiagnosticSupportTopic(_Model):
     """PES identifier."""
 
 
-class DynamicPoolConfiguration(_Model):
+class DotNetComponent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """.NET Component.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar properties: .NET Component resource specific properties.
+    :vartype properties: ~azure.mgmt.appcontainers.models.DotNetComponentProperties
+    """
+
+    properties: Optional["_models.DotNetComponentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """.NET Component resource specific properties."""
+
+    __flattened_items = ["component_type", "provisioning_state", "configurations", "service_binds"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DotNetComponentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class DotNetComponentConfigurationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration properties for a .NET Component.
+
+    :ivar property_name: The name of the property.
+    :vartype property_name: str
+    :ivar value: The value of the property.
+    :vartype value: str
+    """
+
+    property_name: Optional[str] = rest_field(
+        name="propertyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the property."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value of the property."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        property_name: Optional[str] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DotNetComponentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """.NET Component resource specific properties.
+
+    :ivar component_type: Type of the .NET Component. "AspireDashboard"
+    :vartype component_type: str or ~azure.mgmt.appcontainers.models.DotNetComponentType
+    :ivar provisioning_state: Provisioning state of the .NET Component. Known values are:
+     "Succeeded", "Failed", "Canceled", "Deleting", and "InProgress".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcontainers.models.DotNetComponentProvisioningState
+    :ivar configurations: List of .NET Components configuration properties.
+    :vartype configurations:
+     list[~azure.mgmt.appcontainers.models.DotNetComponentConfigurationProperty]
+    :ivar service_binds: List of .NET Components that are bound to the .NET component.
+    :vartype service_binds: list[~azure.mgmt.appcontainers.models.DotNetComponentServiceBind]
+    """
+
+    component_type: Optional[Union[str, "_models.DotNetComponentType"]] = rest_field(
+        name="componentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of the .NET Component. \"AspireDashboard\""""
+    provisioning_state: Optional[Union[str, "_models.DotNetComponentProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the .NET Component. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Deleting\", and \"InProgress\"."""
+    configurations: Optional[list["_models.DotNetComponentConfigurationProperty"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of .NET Components configuration properties."""
+    service_binds: Optional[list["_models.DotNetComponentServiceBind"]] = rest_field(
+        name="serviceBinds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of .NET Components that are bound to the .NET component."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        component_type: Optional[Union[str, "_models.DotNetComponentType"]] = None,
+        configurations: Optional[list["_models.DotNetComponentConfigurationProperty"]] = None,
+        service_binds: Optional[list["_models.DotNetComponentServiceBind"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DotNetComponentServiceBind(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration to bind a .NET Component to another .NET Component.
+
+    :ivar name: Name of the service bind.
+    :vartype name: str
+    :ivar service_id: Resource id of the target service.
+    :vartype service_id: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the service bind."""
+    service_id: Optional[str] = rest_field(name="serviceId", visibility=["read", "create", "update", "delete", "query"])
+    """Resource id of the target service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        service_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DynamicPoolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic pool configuration.
 
     :ivar lifecycle_configuration: The lifecycle configuration of a session in the dynamic session
@@ -4174,7 +5120,7 @@ class DynamicPoolConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSettings(_Model):
+class EncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the secrets references of encryption key and signing key for
     ContainerApp Service Authentication/Authorization.
 
@@ -4214,7 +5160,7 @@ class EncryptionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentAuthToken(TrackedResource):
+class EnvironmentAuthToken(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Environment Auth Token.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4296,7 +5242,7 @@ class EnvironmentAuthTokenProperties(_Model):
     """Token expiration date."""
 
 
-class EnvironmentVar(_Model):
+class EnvironmentVar(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container environment variable.
 
     :ivar name: Environment variable name.
@@ -4379,7 +5325,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorEntity(_Model):
+class ErrorEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Body of the error response returned from the API.
 
     :ivar extended_code: Type of error.
@@ -4450,7 +5396,7 @@ class ErrorEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -4478,7 +5424,37 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExecutionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Container Apps Job execution status.
+
+    :ivar replicas: Replicas in the execution.
+    :vartype replicas: list[~azure.mgmt.appcontainers.models.ReplicaExecutionStatus]
+    """
+
+    replicas: Optional[list["_models.ReplicaExecutionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Replicas in the execution."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        replicas: Optional[list["_models.ReplicaExecutionStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
@@ -4513,7 +5489,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Facebook(_Model):
+class Facebook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Facebook provider.
 
     :ivar enabled: <code>false</code> if the Facebook provider should not be enabled despite the
@@ -4563,7 +5539,7 @@ class Facebook(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForwardProxy(_Model):
+class ForwardProxy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of a forward proxy used to make the requests.
 
     :ivar convention: The convention used to determine the url of the request made. Known values
@@ -4609,7 +5585,7 @@ class ForwardProxy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHub(_Model):
+class GitHub(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the GitHub provider.
 
     :ivar enabled: <code>false</code> if the GitHub provider should not be enabled despite the set
@@ -4651,7 +5627,7 @@ class GitHub(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GithubActionConfiguration(_Model):
+class GithubActionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration properties that define the mutable settings of a Container App SourceControl.
 
     :ivar registry_info: Registry configurations.
@@ -4733,7 +5709,7 @@ class GithubActionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalValidation(_Model):
+class GlobalValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings that determines the validation flow of users using ContainerApp
     Service Authentication/Authorization.
 
@@ -4787,7 +5763,7 @@ class GlobalValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Google(_Model):
+class Google(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Google provider.
 
     :ivar enabled: <code>false</code> if the Google provider should not be enabled despite the set
@@ -4837,7 +5813,40 @@ class Google(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRoute(_Model):
+class Header(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Header of otlp configuration.
+
+    :ivar key: The key of otlp configuration header.
+    :vartype key: str
+    :ivar value: The value of otlp configuration header.
+    :vartype value: str
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key of otlp configuration header."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value of otlp configuration header."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HttpRoute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http Routes, including paths to match on and whether or not rewrites are to be done.
 
     :ivar match: Conditions route will match on.
@@ -4870,7 +5879,7 @@ class HttpRoute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRouteAction(_Model):
+class HttpRouteAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action to perform once matching of routes is done.
 
     :ivar prefix_rewrite: Rewrite prefix, default is no rewrites.
@@ -4900,7 +5909,7 @@ class HttpRouteAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRouteConfig(ProxyResource):
+class HttpRouteConfig(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of host names and http request routing rules for a Container App Environment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4941,7 +5950,7 @@ class HttpRouteConfig(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class HttpRouteConfigProperties(_Model):
+class HttpRouteConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http Route Config properties.
 
     :ivar provisioning_state: The provisioning state of the Http Route Config in cluster. Known
@@ -4998,7 +6007,7 @@ class HttpRouteConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRouteMatch(_Model):
+class HttpRouteMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Criteria to match on.
 
     :ivar prefix: match on all prefix's. Not exact.
@@ -5060,7 +6069,7 @@ class HttpRouteProvisioningErrors(_Model):
     """Description or error message."""
 
 
-class HttpRouteRule(_Model):
+class HttpRouteRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of routing conditions and targets.
 
     :ivar targets: Targets- container apps, revisions, labels.
@@ -5100,7 +6109,7 @@ class HttpRouteRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpRouteTarget(_Model):
+class HttpRouteTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Targets - Container App Names, Revision Names, Labels.
 
     :ivar container_app: Container App Name to route requests to. Required.
@@ -5138,7 +6147,7 @@ class HttpRouteTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpScaleRule(_Model):
+class HttpScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container Http scaling rule.
 
     :ivar metadata: Metadata properties to describe http scale rule.
@@ -5180,7 +6189,7 @@ class HttpScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpSettings(_Model):
+class HttpSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the HTTP requests for authentication and authorization requests
     made against ContainerApp Service Authentication/Authorization.
 
@@ -5227,7 +6236,7 @@ class HttpSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpSettingsRoutes(_Model):
+class HttpSettingsRoutes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the paths HTTP requests.
 
     :ivar api_prefix: The prefix that should precede all the authentication/authorization paths.
@@ -5255,7 +6264,7 @@ class HttpSettingsRoutes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviders(_Model):
+class IdentityProviders(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of each of the identity providers used to configure ContainerApp
     Service Authentication/Authorization.
 
@@ -5331,7 +6340,7 @@ class IdentityProviders(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentitySettings(_Model):
+class IdentitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional settings for a Managed Identity that is assigned to the Container App.
 
     :ivar identity: The resource ID of a user-assigned managed identity that is assigned to the
@@ -5370,7 +6379,7 @@ class IdentitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Ingress(_Model):
+class Ingress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Ingress configuration.
 
     :ivar fqdn: Hostname.
@@ -5490,7 +6499,7 @@ class Ingress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngressConfiguration(_Model):
+class IngressConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for the ingress component, including workload profile, scaling, and connection
     handling.
 
@@ -5549,7 +6558,7 @@ class IngressConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngressPortMapping(_Model):
+class IngressPortMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port mappings of container app ingress.
 
     :ivar external: Specifies whether the app port is accessible outside of the environment.
@@ -5591,7 +6600,7 @@ class IngressPortMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngressStickySessions(_Model):
+class IngressStickySessions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sticky Sessions for Single Revision Mode.
 
     :ivar affinity: Sticky Session Affinity. Known values are: "sticky" and "none".
@@ -5621,7 +6630,7 @@ class IngressStickySessions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InitContainer(BaseContainer):
+class InitContainer(BaseContainer):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App init container definition.
 
     :ivar image: Container image tag.
@@ -5664,7 +6673,7 @@ class InitContainer(BaseContainer):
         super().__init__(*args, **kwargs)
 
 
-class IpSecurityRestrictionRule(_Model):
+class IpSecurityRestrictionRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule to restrict incoming IP address.
 
     :ivar name: Name for the IP restriction rule. Required.
@@ -5713,7 +6722,7 @@ class IpSecurityRestrictionRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JavaComponent(ProxyResource):
+class JavaComponent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Java Component.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5754,7 +6763,7 @@ class JavaComponent(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JavaComponentConfigurationProperty(_Model):
+class JavaComponentConfigurationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration properties for a Java Component.
 
     :ivar property_name: The name of the property.
@@ -5800,7 +6809,7 @@ class JavaComponentIngress(_Model):
     """Hostname of the Java Component endpoint."""
 
 
-class JavaComponentProperties(_Model):
+class JavaComponentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Java Component common properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5867,7 +6876,7 @@ class JavaComponentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JavaComponentPropertiesScale(_Model):
+class JavaComponentPropertiesScale(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Java component scaling configurations.
 
     :ivar min_replicas: Optional. Minimum number of Java component replicas. Defaults to 1 if not
@@ -5905,7 +6914,7 @@ class JavaComponentPropertiesScale(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JavaComponentServiceBind(_Model):
+class JavaComponentServiceBind(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration to bind a Java Component to another Java Component.
 
     :ivar name: Name of the service bind.
@@ -5938,7 +6947,7 @@ class JavaComponentServiceBind(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Job(TrackedResource):
+class Job(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5973,6 +6982,7 @@ class Job(TrackedResource):
 
     __flattened_items = [
         "provisioning_state",
+        "running_state",
         "environment_id",
         "workload_profile_name",
         "configuration",
@@ -6020,7 +7030,7 @@ class Job(TrackedResource):
             super().__setattr__(key, value)
 
 
-class JobConfiguration(_Model):
+class JobConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Non versioned Container Apps Job configuration properties.
 
     :ivar secrets: Collection of secrets used by a Container Apps Job.
@@ -6113,7 +7123,7 @@ class JobConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobConfigurationEventTriggerConfig(_Model):
+class JobConfigurationEventTriggerConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger configuration of an event driven job.
 
     :ivar replica_completion_count: Minimum number of successful replica completions before overall
@@ -6154,7 +7164,7 @@ class JobConfigurationEventTriggerConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobConfigurationManualTriggerConfig(_Model):
+class JobConfigurationManualTriggerConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Manual trigger configuration for a single execution job. Properties replicaCompletionCount and
     parallelism would be set to 1 by default.
 
@@ -6191,7 +7201,7 @@ class JobConfigurationManualTriggerConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobConfigurationScheduleTriggerConfig(_Model):
+class JobConfigurationScheduleTriggerConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cron formatted repeating trigger schedule ("* * * * *") for cronjobs. Properties completions
     and parallelism would be set to 1 by default.
 
@@ -6233,7 +7243,7 @@ class JobConfigurationScheduleTriggerConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobExecution(ProxyResource):
+class JobExecution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job execution.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6256,7 +7266,7 @@ class JobExecution(ProxyResource):
     )
     """Container Apps Job execution specific properties."""
 
-    __flattened_items = ["status", "start_time", "end_time", "template"]
+    __flattened_items = ["status", "start_time", "end_time", "template", "detailed_status", "reason", "message"]
 
     @overload
     def __init__(
@@ -6294,7 +7304,7 @@ class JobExecution(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobExecutionBase(_Model):
+class JobExecutionBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App's Job execution name.
 
     :ivar name: Job execution name.
@@ -6327,7 +7337,7 @@ class JobExecutionBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobExecutionContainer(_Model):
+class JobExecutionContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Jobs execution container definition.
 
     :ivar image: Container image tag.
@@ -6384,7 +7394,7 @@ class JobExecutionContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobExecutionProperties(_Model):
+class JobExecutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job execution specific properties.
 
     :ivar status: Current running State of the job. Known values are: "Running", "Processing",
@@ -6396,6 +7406,13 @@ class JobExecutionProperties(_Model):
     :vartype end_time: ~datetime.datetime
     :ivar template: Job's execution container.
     :vartype template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate
+    :ivar detailed_status: Detailed status of the job execution.
+    :vartype detailed_status: ~azure.mgmt.appcontainers.models.ExecutionStatus
+    :ivar reason: Reason for the current condition of job execution.
+    :vartype reason: str
+    :ivar message: Human readable message indicating details about the current condition of the job
+     execution.
+    :vartype message: str
     """
 
     status: Optional[Union[str, "_models.JobExecutionRunningState"]] = rest_field(visibility=["read"])
@@ -6413,6 +7430,14 @@ class JobExecutionProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Job's execution container."""
+    detailed_status: Optional["_models.ExecutionStatus"] = rest_field(
+        name="detailedStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed status of the job execution."""
+    reason: Optional[str] = rest_field(visibility=["read"])
+    """Reason for the current condition of job execution."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Human readable message indicating details about the current condition of the job execution."""
 
     @overload
     def __init__(
@@ -6421,6 +7446,7 @@ class JobExecutionProperties(_Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         template: Optional["_models.JobExecutionTemplate"] = None,
+        detailed_status: Optional["_models.ExecutionStatus"] = None,
     ) -> None: ...
 
     @overload
@@ -6434,7 +7460,7 @@ class JobExecutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobExecutionTemplate(_Model):
+class JobExecutionTemplate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job's execution template, containing container configuration for a job's execution.
 
     :ivar containers: List of container definitions for the Container Apps Job.
@@ -6471,7 +7497,7 @@ class JobExecutionTemplate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobPatchProperties(_Model):
+class JobPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job resource specific properties.
 
     :ivar identity: Managed identities needed by a container app job to interact with other Azure
@@ -6515,7 +7541,7 @@ class JobPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobPatchPropertiesProperties(_Model):
+class JobPatchPropertiesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job patch properties.
 
     :ivar environment_id: Resource ID of environment.
@@ -6569,12 +7595,15 @@ class JobPatchPropertiesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Container Apps Job. Known values are:
      "InProgress", "Succeeded", "Failed", "Canceled", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.appcontainers.models.JobProvisioningState
+    :ivar running_state: Current running state of the job. Known values are: "Ready",
+     "Progressing", and "Suspended".
+    :vartype running_state: str or ~azure.mgmt.appcontainers.models.JobRunningState
     :ivar environment_id: Resource ID of environment.
     :vartype environment_id: str
     :ivar workload_profile_name: Workload profile name to pin for container apps job execution.
@@ -6594,6 +7623,11 @@ class JobProperties(_Model):
     )
     """Provisioning state of the Container Apps Job. Known values are: \"InProgress\", \"Succeeded\",
      \"Failed\", \"Canceled\", and \"Deleting\"."""
+    running_state: Optional[Union[str, "_models.JobRunningState"]] = rest_field(
+        name="runningState", visibility=["read"]
+    )
+    """Current running state of the job. Known values are: \"Ready\", \"Progressing\", and
+     \"Suspended\"."""
     environment_id: Optional[str] = rest_field(name="environmentId", visibility=["read", "create"])
     """Resource ID of environment."""
     workload_profile_name: Optional[str] = rest_field(
@@ -6632,7 +7666,7 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobScale(_Model):
+class JobScale(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scaling configurations for event driven jobs.
 
     :ivar polling_interval: Interval to check each event source in seconds. Defaults to 30s.
@@ -6685,7 +7719,7 @@ class JobScale(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobScaleRule(_Model):
+class JobScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scaling rule.
 
     :ivar name: Scale Rule Name.
@@ -6737,7 +7771,7 @@ class JobScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobSecretsCollection(_Model):
+class JobSecretsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job Secrets Collection ARM resource.
 
     :ivar value: Collection of resources. Required.
@@ -6765,7 +7799,7 @@ class JobSecretsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobTemplate(_Model):
+class JobTemplate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container Apps Job versioned application definition. Defines the desired state of an immutable
     revision. Any changes to this section Will result in a new revision being created.
 
@@ -6808,7 +7842,7 @@ class JobTemplate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JwtClaimChecks(_Model):
+class JwtClaimChecks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the checks that should be made while validating the JWT Claims.
 
     :ivar allowed_groups: The list of the allowed groups.
@@ -6856,7 +7890,86 @@ class KedaConfiguration(_Model):
     """The version of Keda."""
 
 
-class LifecycleConfiguration(_Model):
+class LabelHistory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Container App Label History.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar properties: Container App Label History resource specific properties.
+    :vartype properties: ~azure.mgmt.appcontainers.models.LabelHistoryProperties
+    """
+
+    properties: Optional["_models.LabelHistoryProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Container App Label History resource specific properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.LabelHistoryProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LabelHistoryProperties(_Model):
+    """Container App Label History resource specific properties.
+
+    :ivar records: List of label history records.
+    :vartype records: list[~azure.mgmt.appcontainers.models.LabelHistoryRecordItem]
+    """
+
+    records: Optional[list["_models.LabelHistoryRecordItem"]] = rest_field(visibility=["read"])
+    """List of label history records."""
+
+
+class LabelHistoryRecordItem(_Model):
+    """Container App Label History Item resource specific properties.
+
+    :ivar revision: Container App revision name that label was applied to.
+    :vartype revision: str
+    :ivar start: Timestamp describing when the label was applied to the revision.
+    :vartype start: ~datetime.datetime
+    :ivar stop: Timestamp describing when the label was removed from the revision. Only meaningful
+     when the label is currently applied to the revision.
+    :vartype stop: ~datetime.datetime
+    :ivar status: Status of the label history record. Known values are: "Succeeded", "Failed", and
+     "Starting".
+    :vartype status: str or ~azure.mgmt.appcontainers.models.Status
+    """
+
+    revision: Optional[str] = rest_field(visibility=["read"])
+    """Container App revision name that label was applied to."""
+    start: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """Timestamp describing when the label was applied to the revision."""
+    stop: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """Timestamp describing when the label was removed from the revision. Only meaningful when the
+     label is currently applied to the revision."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(visibility=["read"])
+    """Status of the label history record. Known values are: \"Succeeded\", \"Failed\", and
+     \"Starting\"."""
+
+
+class LifecycleConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The lifecycle configuration properties of a session in the dynamic session pool.
 
     :ivar lifecycle_type: The lifecycle type of the session pool. Known values are: "Timed" and
@@ -6903,7 +8016,7 @@ class LifecycleConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsConfiguration(_Model):
+class LogAnalyticsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Analytics configuration, must only be provided when destination is configured as
     'log-analytics'.
 
@@ -6956,7 +8069,7 @@ class LogicApp(ProxyResource):
     """
 
 
-class Login(_Model):
+class Login(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow of users using ContainerApp Service
     Authentication/Authorization.
 
@@ -7026,7 +8139,7 @@ class Login(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoginRoutes(_Model):
+class LoginRoutes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The routes that specify the endpoints used for login and logout requests.
 
     :ivar logout_endpoint: The endpoint at which a logout request should be made.
@@ -7056,7 +8169,7 @@ class LoginRoutes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoginScopes(_Model):
+class LoginScopes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow, including the scopes that should be requested.
 
     :ivar scopes: A list of the scopes that should be requested while authenticating.
@@ -7084,7 +8197,35 @@ class LoginScopes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceConfigurationResource(ProxyResource):
+class LogsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Open Telemetry logs.
+
+    :ivar destinations: Open telemetry logs destinations.
+    :vartype destinations: list[str]
+    """
+
+    destinations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Open telemetry logs destinations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destinations: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceConfigurationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the Maintenance Configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7145,7 +8286,7 @@ class MaintenanceConfigurationResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedCertificate(TrackedResource):
+class ManagedCertificate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed certificates used for Custom Domain bindings of Container Apps in a Managed
     Environment.
 
@@ -7193,7 +8334,7 @@ class ManagedCertificate(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCertificatePatch(_Model):
+class ManagedCertificatePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed certificate to update.
 
     :ivar tags: Application-specific metadata in the form of key-value pairs.
@@ -7221,7 +8362,7 @@ class ManagedCertificatePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCertificateProperties(_Model):
+class ManagedCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the certificate. Known values are: "Succeeded",
@@ -7280,7 +8421,7 @@ class ManagedCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironment(TrackedResource):
+class ManagedEnvironment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An environment for hosting container apps.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7326,6 +8467,8 @@ class ManagedEnvironment(TrackedResource):
         "default_domain",
         "static_ip",
         "app_logs_configuration",
+        "app_insights_configuration",
+        "open_telemetry_configuration",
         "zone_redundant",
         "custom_domain_configuration",
         "event_stream_endpoint",
@@ -7336,6 +8479,7 @@ class ManagedEnvironment(TrackedResource):
         "peer_authentication",
         "peer_traffic_configuration",
         "ingress_configuration",
+        "environment_mode",
         "private_endpoint_connections",
         "public_network_access",
     ]
@@ -7380,7 +8524,7 @@ class ManagedEnvironment(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedEnvironmentProperties(_Model):
+class ManagedEnvironmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed environment resource specific properties.
 
     :ivar provisioning_state: Provisioning state of the Environment. Known values are: "Succeeded",
@@ -7405,6 +8549,11 @@ class ManagedEnvironmentProperties(_Model):
     :ivar app_logs_configuration: Cluster configuration which enables the log daemon to export app
      logs to configured destination.
     :vartype app_logs_configuration: ~azure.mgmt.appcontainers.models.AppLogsConfiguration
+    :ivar app_insights_configuration: Environment level Application Insights configuration.
+    :vartype app_insights_configuration: ~azure.mgmt.appcontainers.models.AppInsightsConfiguration
+    :ivar open_telemetry_configuration: Environment Open Telemetry configuration.
+    :vartype open_telemetry_configuration:
+     ~azure.mgmt.appcontainers.models.OpenTelemetryConfiguration
     :ivar zone_redundant: Whether or not this Managed Environment is zone-redundant.
     :vartype zone_redundant: bool
     :ivar custom_domain_configuration: Custom domain configuration for the environment.
@@ -7430,6 +8579,10 @@ class ManagedEnvironmentProperties(_Model):
      ~azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerTrafficConfiguration
     :ivar ingress_configuration: Ingress configuration for the Managed Environment.
     :vartype ingress_configuration: ~azure.mgmt.appcontainers.models.IngressConfiguration
+    :ivar environment_mode: Mode of the environment. Allowed Values: 'ConsumptionOnly',
+     'WorkloadProfiles', 'Express', 'Archived'. Known values are: "ConsumptionOnly",
+     "WorkloadProfiles", "Express", and "Archived".
+    :vartype environment_mode: str or ~azure.mgmt.appcontainers.models.ManagedEnvironmentMode
     :ivar private_endpoint_connections: Private endpoint connections to the resource.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
@@ -7470,6 +8623,14 @@ class ManagedEnvironmentProperties(_Model):
     )
     """Cluster configuration which enables the log daemon to export app logs to configured
      destination."""
+    app_insights_configuration: Optional["_models.AppInsightsConfiguration"] = rest_field(
+        name="appInsightsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment level Application Insights configuration."""
+    open_telemetry_configuration: Optional["_models.OpenTelemetryConfiguration"] = rest_field(
+        name="openTelemetryConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment Open Telemetry configuration."""
     zone_redundant: Optional[bool] = rest_field(name="zoneRedundant", visibility=["read", "create"])
     """Whether or not this Managed Environment is zone-redundant."""
     custom_domain_configuration: Optional["_models.CustomDomainConfiguration"] = rest_field(
@@ -7508,6 +8669,12 @@ class ManagedEnvironmentProperties(_Model):
         name="ingressConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Ingress configuration for the Managed Environment."""
+    environment_mode: Optional[Union[str, "_models.ManagedEnvironmentMode"]] = rest_field(
+        name="environmentMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mode of the environment. Allowed Values: 'ConsumptionOnly', 'WorkloadProfiles', 'Express',
+     'Archived'. Known values are: \"ConsumptionOnly\", \"WorkloadProfiles\", \"Express\", and
+     \"Archived\"."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -7526,6 +8693,8 @@ class ManagedEnvironmentProperties(_Model):
         dapr_ai_connection_string: Optional[str] = None,
         vnet_configuration: Optional["_models.VnetConfiguration"] = None,
         app_logs_configuration: Optional["_models.AppLogsConfiguration"] = None,
+        app_insights_configuration: Optional["_models.AppInsightsConfiguration"] = None,
+        open_telemetry_configuration: Optional["_models.OpenTelemetryConfiguration"] = None,
         zone_redundant: Optional[bool] = None,
         custom_domain_configuration: Optional["_models.CustomDomainConfiguration"] = None,
         workload_profiles: Optional[list["_models.WorkloadProfile"]] = None,
@@ -7535,6 +8704,7 @@ class ManagedEnvironmentProperties(_Model):
         peer_authentication: Optional["_models.ManagedEnvironmentPropertiesPeerAuthentication"] = None,
         peer_traffic_configuration: Optional["_models.ManagedEnvironmentPropertiesPeerTrafficConfiguration"] = None,
         ingress_configuration: Optional["_models.IngressConfiguration"] = None,
+        environment_mode: Optional[Union[str, "_models.ManagedEnvironmentMode"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
@@ -7549,7 +8719,9 @@ class ManagedEnvironmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentPropertiesPeerAuthentication(_Model):  # pylint: disable=name-too-long
+class ManagedEnvironmentPropertiesPeerAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Peer authentication settings for the Managed Environment.
 
     :ivar mtls: Mutual TLS authentication settings for the Managed Environment.
@@ -7577,7 +8749,9 @@ class ManagedEnvironmentPropertiesPeerAuthentication(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentPropertiesPeerTrafficConfiguration(_Model):  # pylint: disable=name-too-long
+class ManagedEnvironmentPropertiesPeerTrafficConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Peer traffic settings for the Managed Environment.
 
     :ivar encryption: Peer traffic encryption settings for the Managed Environment.
@@ -7608,7 +8782,9 @@ class ManagedEnvironmentPropertiesPeerTrafficConfiguration(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption(_Model):  # pylint: disable=name-too-long
+class ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Peer traffic encryption settings for the Managed Environment.
 
     :ivar enabled: Boolean indicating whether the peer traffic encryption is enabled.
@@ -7636,7 +8812,7 @@ class ManagedEnvironmentPropertiesPeerTrafficConfigurationEncryption(_Model):  #
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentStorage(ProxyResource):
+class ManagedEnvironmentStorage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage resource for managedEnvironment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7677,7 +8853,7 @@ class ManagedEnvironmentStorage(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentStorageProperties(_Model):
+class ManagedEnvironmentStorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage properties.
 
     :ivar azure_file: Azure file properties.
@@ -7714,7 +8890,7 @@ class ManagedEnvironmentStorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedEnvironmentStoragesCollection(_Model):
+class ManagedEnvironmentStoragesCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of Storage for Environments.
 
     :ivar value: Collection of storage resources. Required.
@@ -7744,7 +8920,7 @@ class ManagedEnvironmentStoragesCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentitySetting(_Model):
+class ManagedIdentitySetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional settings for a Managed Identity that is assigned to the Session pool.
 
     :ivar identity: The resource ID of a user-assigned managed identity that is assigned to the
@@ -7783,7 +8959,7 @@ class ManagedIdentitySetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -7835,7 +9011,75 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Mtls(_Model):
+class MetricsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Open Telemetry metrics.
+
+    :ivar include_keda: Boolean indicating if including keda metrics.
+    :vartype include_keda: bool
+    :ivar destinations: Open telemetry metrics destinations.
+    :vartype destinations: list[str]
+    """
+
+    include_keda: Optional[bool] = rest_field(
+        name="includeKeda", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Boolean indicating if including keda metrics."""
+    destinations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Open telemetry metrics destinations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        include_keda: Optional[bool] = None,
+        destinations: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrationEligibilityFailureReason(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A blocking reason that prevents a managed environment migration.
+
+    :ivar code: The error code identifying the blocker. Required.
+    :vartype code: str
+    :ivar message: A human-readable description of the blocker. Required.
+    :vartype message: str
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error code identifying the blocker. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the blocker. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Mtls(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration properties for mutual TLS authentication.
 
     :ivar enabled: Boolean indicating whether the mutual TLS authentication is enabled.
@@ -7863,7 +9107,7 @@ class Mtls(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsAzureFileProperties(_Model):
+class NfsAzureFileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NFS Azure File Properties.
 
     :ivar server: Server for NFS azure file. Specify the Azure storage account server address.
@@ -7903,7 +9147,7 @@ class NfsAzureFileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Nonce(_Model):
+class Nonce(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the nonce used in the login flow.
 
     :ivar validate_nonce: <code>false</code> if the nonce should not be validated while completing
@@ -7943,7 +9187,7 @@ class Nonce(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectClientCredential(_Model):
+class OpenIdConnectClientCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication client credentials of the custom Open ID Connect provider.
 
     :ivar method: The method that should be used to authenticate the user. Default value is
@@ -7982,7 +9226,7 @@ class OpenIdConnectClientCredential(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectConfig(_Model):
+class OpenIdConnectConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the endpoints used for the custom Open ID Connect provider.
 
     :ivar authorization_endpoint: The endpoint to be used to make an authorization request.
@@ -8039,7 +9283,7 @@ class OpenIdConnectConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectLogin(_Model):
+class OpenIdConnectLogin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the login flow of the custom Open ID Connect provider.
 
     :ivar name_claim_type: The name of the claim that contains the users name.
@@ -8074,7 +9318,7 @@ class OpenIdConnectLogin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdConnectRegistration(_Model):
+class OpenIdConnectRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for the custom Open ID Connect provider.
 
     :ivar client_id: The client id of the custom Open ID Connect provider.
@@ -8117,7 +9361,58 @@ class OpenIdConnectRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetail(_Model):
+class OpenTelemetryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Open Telemetry.
+
+    :ivar destinations_configuration: Open telemetry destinations configuration.
+    :vartype destinations_configuration: ~azure.mgmt.appcontainers.models.DestinationsConfiguration
+    :ivar traces_configuration: Open telemetry trace configuration.
+    :vartype traces_configuration: ~azure.mgmt.appcontainers.models.TracesConfiguration
+    :ivar logs_configuration: Open telemetry logs configuration.
+    :vartype logs_configuration: ~azure.mgmt.appcontainers.models.LogsConfiguration
+    :ivar metrics_configuration: Open telemetry metrics configuration.
+    :vartype metrics_configuration: ~azure.mgmt.appcontainers.models.MetricsConfiguration
+    """
+
+    destinations_configuration: Optional["_models.DestinationsConfiguration"] = rest_field(
+        name="destinationsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry destinations configuration."""
+    traces_configuration: Optional["_models.TracesConfiguration"] = rest_field(
+        name="tracesConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry trace configuration."""
+    logs_configuration: Optional["_models.LogsConfiguration"] = rest_field(
+        name="logsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry logs configuration."""
+    metrics_configuration: Optional["_models.MetricsConfiguration"] = rest_field(
+        name="metricsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Open telemetry metrics configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destinations_configuration: Optional["_models.DestinationsConfiguration"] = None,
+        traces_configuration: Optional["_models.TracesConfiguration"] = None,
+        logs_configuration: Optional["_models.LogsConfiguration"] = None,
+        metrics_configuration: Optional["_models.MetricsConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OperationDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation detail payload.
 
     :ivar name: Name of the operation.
@@ -8164,7 +9459,7 @@ class OperationDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation display payload.
 
     :ivar provider: Resource provider of the operation.
@@ -8207,6 +9502,49 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OtlpConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of otlp.
+
+    :ivar name: The name of otlp configuration.
+    :vartype name: str
+    :ivar endpoint: The endpoint of otlp configuration.
+    :vartype endpoint: str
+    :ivar insecure: Boolean indicating if otlp configuration is insecure.
+    :vartype insecure: bool
+    :ivar headers: Headers of otlp configurations.
+    :vartype headers: list[~azure.mgmt.appcontainers.models.Header]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of otlp configuration."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint of otlp configuration."""
+    insecure: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Boolean indicating if otlp configuration is insecure."""
+    headers: Optional[list["_models.Header"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Headers of otlp configurations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        insecure: Optional[bool] = None,
+        headers: Optional[list["_models.Header"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PrivateEndpoint(_Model):
     """The Private Endpoint resource.
 
@@ -8218,7 +9556,7 @@ class PrivateEndpoint(_Model):
     """The ARM identifier for Private Endpoint."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8279,7 +9617,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -8334,7 +9672,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8395,7 +9733,7 @@ class PrivateLinkResource(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -8433,7 +9771,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -8479,7 +9817,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueScaleRule(_Model):
+class QueueScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container Azure Queue based scaling rule.
 
     :ivar account_name: Storage account name. required if using managed identity to authenticate.
@@ -8535,7 +9873,7 @@ class QueueScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryCredentials(_Model):
+class RegistryCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Private Registry.
 
     :ivar server: Container Registry Server.
@@ -8584,7 +9922,7 @@ class RegistryCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryInfo(_Model):
+class RegistryInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App registry information.
 
     :ivar registry_url: registry server Url.
@@ -8626,7 +9964,7 @@ class RegistryInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Replica(ProxyResource):
+class Replica(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Revision Replica.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8687,7 +10025,7 @@ class Replica(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ReplicaCollection(_Model):
+class ReplicaCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Revision Replicas collection ARM resource.
 
     :ivar value: Collection of resources. Required.
@@ -8715,7 +10053,7 @@ class ReplicaCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicaContainer(_Model):
+class ReplicaContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container object under Container App Revision Replica.
 
     :ivar name: The Name of the Container.
@@ -8738,6 +10076,8 @@ class ReplicaContainer(_Model):
     :vartype log_stream_endpoint: str
     :ivar exec_endpoint: Container exec endpoint.
     :vartype exec_endpoint: str
+    :ivar debug_endpoint: Container debug endpoint.
+    :vartype debug_endpoint: str
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8765,6 +10105,8 @@ class ReplicaContainer(_Model):
     """Log Stream endpoint."""
     exec_endpoint: Optional[str] = rest_field(name="execEndpoint", visibility=["read"])
     """Container exec endpoint."""
+    debug_endpoint: Optional[str] = rest_field(name="debugEndpoint", visibility=["read"])
+    """Container debug endpoint."""
 
     @overload
     def __init__(
@@ -8788,7 +10130,42 @@ class ReplicaContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicaProperties(_Model):
+class ReplicaExecutionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Container Apps Job execution replica status.
+
+    :ivar name: Replica Name.
+    :vartype name: str
+    :ivar containers: Containers in the execution replica.
+    :vartype containers: list[~azure.mgmt.appcontainers.models.ContainerExecutionStatus]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Replica Name."""
+    containers: Optional[list["_models.ContainerExecutionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Containers in the execution replica."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        containers: Optional[list["_models.ContainerExecutionStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReplicaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replica resource specific properties.
 
     :ivar created_time: Timestamp describing when the pod was created by controller.
@@ -8841,7 +10218,7 @@ class ReplicaProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Revision(ProxyResource):
+class Revision(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Revision.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8983,7 +10360,7 @@ class RevisionProperties(_Model):
      \"Stopped\", \"Degraded\", \"Failed\", and \"Unknown\"."""
 
 
-class Runtime(_Model):
+class Runtime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Runtime configuration.
 
     :ivar java: Java app configuration.
@@ -9011,7 +10388,7 @@ class Runtime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeJava(_Model):
+class RuntimeJava(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Java app configuration.
 
     :ivar enable_metrics: Enable jmx core metrics for the java app.
@@ -9041,7 +10418,183 @@ class RuntimeJava(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Scale(_Model):
+class SandboxGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SandboxGroup resource, representing a group of sandboxes that share configuration defaults
+    and quotas.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.appcontainers.models.SandboxGroupProperties
+    """
+
+    properties: Optional["_models.SandboxGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SandboxGroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SandboxGroupPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SandboxGroup resource for use in patch requests.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: SandboxGroup properties that can be updated.
+    :vartype properties: ~azure.mgmt.appcontainers.models.SandboxGroupPatchProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.SandboxGroupPatchProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SandboxGroup properties that can be updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SandboxGroupPatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SandboxGroupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SandboxGroup resource specific properties for patch requests.
+
+    :ivar environment_id: The resource ID of the Azure Container Apps environment to link to the
+     sandbox group. A sandbox group can be linked after creation, but the link cannot then be
+     changed or removed. For subsequent create-or-update (PUT) requests, specify the same
+     environment ID; omitting or changing it returns 409 Conflict. Omitting it from an update
+     (PATCH) request leaves the existing link unchanged.
+    :vartype environment_id: str
+    """
+
+    environment_id: Optional[str] = rest_field(
+        name="environmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the Azure Container Apps environment to link to the sandbox group. A sandbox
+     group can be linked after creation, but the link cannot then be changed or removed. For
+     subsequent create-or-update (PUT) requests, specify the same environment ID; omitting or
+     changing it returns 409 Conflict. Omitting it from an update (PATCH) request leaves the
+     existing link unchanged."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SandboxGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SandboxGroup resource specific properties.
+
+    :ivar environment_id: The resource ID of the Azure Container Apps environment to link to the
+     sandbox group. A sandbox group can be linked after creation, but the link cannot then be
+     changed or removed. For subsequent create-or-update (PUT) requests, specify the same
+     environment ID; omitting or changing it returns 409 Conflict. Omitting it from an update
+     (PATCH) request leaves the existing link unchanged.
+    :vartype environment_id: str
+    :ivar default_domain: The default domain of the linked Azure Container Apps environment.
+     Sandbox endpoints use subdomains of this domain. This read-only property is populated by the
+     service and is omitted when no environment is linked.
+    :vartype default_domain: str
+    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
+     "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcontainers.models.SandboxGroupProvisioningState
+    """
+
+    environment_id: Optional[str] = rest_field(
+        name="environmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the Azure Container Apps environment to link to the sandbox group. A sandbox
+     group can be linked after creation, but the link cannot then be changed or removed. For
+     subsequent create-or-update (PUT) requests, specify the same environment ID; omitting or
+     changing it returns 409 Conflict. Omitting it from an update (PATCH) request leaves the
+     existing link unchanged."""
+    default_domain: Optional[str] = rest_field(name="defaultDomain", visibility=["read"])
+    """The default domain of the linked Azure Container Apps environment. Sandbox endpoints use
+     subdomains of this domain. This read-only property is populated by the service and is omitted
+     when no environment is linked."""
+    provisioning_state: Optional[Union[str, "_models.SandboxGroupProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Updating\", and
+     \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Scale(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App scaling configurations.
 
     :ivar min_replicas: Optional. Minimum number of container replicas.
@@ -9054,6 +10607,9 @@ class Scale(_Model):
     :ivar polling_interval: Optional. KEDA Polling Interval in seconds. Defaults to 30 seconds if
      not set.
     :vartype polling_interval: int
+    :ivar allow_scaling_rule_override: Optional. Whether custom scale rules can override the
+     automatic scale rules. This property is only applicable to Function Apps.
+    :vartype allow_scaling_rule_override: bool
     :ivar rules: Scaling rules.
     :vartype rules: list[~azure.mgmt.appcontainers.models.ScaleRule]
     """
@@ -9074,6 +10630,11 @@ class Scale(_Model):
         name="pollingInterval", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional. KEDA Polling Interval in seconds. Defaults to 30 seconds if not set."""
+    allow_scaling_rule_override: Optional[bool] = rest_field(
+        name="allowScalingRuleOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Whether custom scale rules can override the automatic scale rules. This property is
+     only applicable to Function Apps."""
     rules: Optional[list["_models.ScaleRule"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Scaling rules."""
 
@@ -9085,6 +10646,7 @@ class Scale(_Model):
         max_replicas: Optional[int] = None,
         cooldown_period: Optional[int] = None,
         polling_interval: Optional[int] = None,
+        allow_scaling_rule_override: Optional[bool] = None,
         rules: Optional[list["_models.ScaleRule"]] = None,
     ) -> None: ...
 
@@ -9099,7 +10661,7 @@ class Scale(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleConfiguration(_Model):
+class ScaleConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale configuration.
 
     :ivar max_concurrent_sessions: The maximum count of sessions at the same time.
@@ -9136,7 +10698,7 @@ class ScaleConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleRule(_Model):
+class ScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container scaling rule.
 
     :ivar name: Scale Rule Name.
@@ -9186,7 +10748,7 @@ class ScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleRuleAuth(_Model):
+class ScaleRuleAuth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Auth Secrets for Scale Rule.
 
     :ivar secret_ref: Name of the secret from which to pull the auth params.
@@ -9221,7 +10783,7 @@ class ScaleRuleAuth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEntries(_Model):
+class ScheduledEntries(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of maintenance schedules for a managed environment.
 
     :ivar scheduled_entries: List of maintenance schedules for a managed environment. Required.
@@ -9251,7 +10813,7 @@ class ScheduledEntries(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEntry(_Model):
+class ScheduledEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance schedule entry for a managed environment.
 
     :ivar week_day: Day of the week when a managed environment can be patched. Required. Known
@@ -9294,7 +10856,7 @@ class ScheduledEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Secret(_Model):
+class Secret(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Secret definition.
 
     :ivar name: Secret Name.
@@ -9342,7 +10904,7 @@ class Secret(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretKeyVaultProperties(_Model):
+class SecretKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a secret stored in a Key Vault.
 
     :ivar identity: Resource ID of a managed identity to authenticate with Azure Key Vault, or
@@ -9379,7 +10941,7 @@ class SecretKeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretsCollection(_Model):
+class SecretsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App Secrets Collection ARM resource.
 
     :ivar value: Collection of resources. Required.
@@ -9407,7 +10969,7 @@ class SecretsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretVolumeItem(_Model):
+class SecretVolumeItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Secret to be added to volume.
 
     :ivar secret_ref: Name of the Container App secret from which to pull the secret value.
@@ -9442,7 +11004,7 @@ class SecretVolumeItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Service(_Model):
+class Service(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App to be a dev service.
 
     :ivar type: Dev ContainerApp service type. Required.
@@ -9470,7 +11032,7 @@ class Service(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceBind(_Model):
+class ServiceBind(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration to bind a ContainerApp to a dev ContainerApp Service.
 
     :ivar service_id: Resource id of the target service.
@@ -9503,7 +11065,7 @@ class ServiceBind(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionContainer(_Model):
+class SessionContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container definitions for the sessions of the session pool.
 
     :ivar image: Container image tag.
@@ -9518,6 +11080,8 @@ class SessionContainer(_Model):
     :vartype env: list[~azure.mgmt.appcontainers.models.EnvironmentVar]
     :ivar resources: Container resource requirements.
     :vartype resources: ~azure.mgmt.appcontainers.models.SessionContainerResources
+    :ivar probes: List of probes for the container.
+    :vartype probes: list[~azure.mgmt.appcontainers.models.SessionProbe]
     """
 
     image: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9536,6 +11100,10 @@ class SessionContainer(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Container resource requirements."""
+    probes: Optional[list["_models.SessionProbe"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of probes for the container."""
 
     @overload
     def __init__(
@@ -9547,6 +11115,7 @@ class SessionContainer(_Model):
         args: Optional[list[str]] = None,
         env: Optional[list["_models.EnvironmentVar"]] = None,
         resources: Optional["_models.SessionContainerResources"] = None,
+        probes: Optional[list["_models.SessionProbe"]] = None,
     ) -> None: ...
 
     @overload
@@ -9560,7 +11129,7 @@ class SessionContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionContainerResources(_Model):
+class SessionContainerResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container resource requirements for sessions of the session pool.
 
     :ivar cpu: Required CPU in cores, e.g. 0.5.
@@ -9593,7 +11162,7 @@ class SessionContainerResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionIngress(_Model):
+class SessionIngress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session pool ingress configuration.
 
     :ivar target_port: Target port in containers for traffic from ingress.
@@ -9623,7 +11192,7 @@ class SessionIngress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionNetworkConfiguration(_Model):
+class SessionNetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session network configuration.
 
     :ivar status: Network status for the sessions. Known values are: "EgressEnabled" and
@@ -9654,7 +11223,7 @@ class SessionNetworkConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionPool(TrackedResource):
+class SessionPool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App session pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9741,7 +11310,7 @@ class SessionPool(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SessionPoolProperties(_Model):
+class SessionPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App session pool resource specific properties.
 
     :ivar environment_id: Resource ID of the session pool's environment.
@@ -9852,7 +11421,7 @@ class SessionPoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionPoolSecret(_Model):
+class SessionPoolSecret(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Secret definition.
 
     :ivar name: Secret Name.
@@ -9885,7 +11454,7 @@ class SessionPoolSecret(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionPoolUpdatableProperties(_Model):
+class SessionPoolUpdatableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App session pool updatable properties.
 
     :ivar tags: Resource tags.
@@ -9955,7 +11524,7 @@ class SessionPoolUpdatableProperties(_Model):
             super().__setattr__(key, value)
 
 
-class SessionPoolUpdatablePropertiesProperties(_Model):
+class SessionPoolUpdatablePropertiesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session pool resource specific updatable properties.
 
     :ivar scale_configuration: The scale configuration of the session pool.
@@ -10016,7 +11585,252 @@ class SessionPoolUpdatablePropertiesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionRegistryCredentials(_Model):
+class SessionProbe(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Session probe configuration.
+
+    :ivar type: Denotes the type of probe. Can be Liveness or Startup, Readiness probe is not
+     supported in sessions. Type must be unique for each probe within the context of a list of
+     probes (SessionProbes). Known values are: "Liveness" and "Startup".
+    :vartype type: str or ~azure.mgmt.appcontainers.models.SessionProbeType
+    :ivar http_get: HTTPGet specifies the http request to perform.
+    :vartype http_get: ~azure.mgmt.appcontainers.models.SessionProbeHttpGet
+    :ivar tcp_socket: TCPSocket specifies an action involving a TCP port. TCP hooks not yet
+     supported.
+    :vartype tcp_socket: ~azure.mgmt.appcontainers.models.SessionProbeTcpSocket
+    :ivar failure_threshold: Minimum consecutive failures for the probe to be considered failed
+     after having succeeded. Defaults to 3. Minimum value is 1. Maximum value is 10.
+    :vartype failure_threshold: int
+    :ivar initial_delay_seconds: Number of seconds after the container has started before liveness
+     probes are initiated. Minimum value is 1. Maximum value is 60.
+    :vartype initial_delay_seconds: int
+    :ivar period_seconds: How often (in seconds) to perform the probe. Default to 10 seconds.
+     Minimum value is 1. Maximum value is 240.
+    :vartype period_seconds: int
+    :ivar success_threshold: Minimum consecutive successes for the probe to be considered
+     successful after having failed. Defaults to 1. Must be 1 for liveness and startup. Minimum
+     value is 1. Maximum value is 10.
+    :vartype success_threshold: int
+    :ivar termination_grace_period_seconds: Optional duration in seconds the pod needs to terminate
+     gracefully upon probe failure. The grace period is the duration in seconds after the processes
+     running in the pod are sent a termination signal and the time when the processes are forcibly
+     halted with a kill signal. Set this value longer than the expected cleanup time for your
+     process. If this value is nil, the pod's terminationGracePeriodSeconds will be used. Otherwise,
+     this value overrides the value provided by the pod spec. Value must be non-negative integer.
+     The value zero indicates stop immediately via the kill signal (no opportunity to shut down).
+     This is an alpha field and requires enabling ProbeTerminationGracePeriod feature gate. Maximum
+     value is 3600 seconds (1 hour).
+    :vartype termination_grace_period_seconds: int
+    :ivar timeout_seconds: Number of seconds after which the probe times out. Defaults to 1 second.
+     Minimum value is 1. Maximum value is 240.
+    :vartype timeout_seconds: int
+    """
+
+    type: Optional[Union[str, "_models.SessionProbeType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Denotes the type of probe. Can be Liveness or Startup, Readiness probe is not supported in
+     sessions. Type must be unique for each probe within the context of a list of probes
+     (SessionProbes). Known values are: \"Liveness\" and \"Startup\"."""
+    http_get: Optional["_models.SessionProbeHttpGet"] = rest_field(
+        name="httpGet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTPGet specifies the http request to perform."""
+    tcp_socket: Optional["_models.SessionProbeTcpSocket"] = rest_field(
+        name="tcpSocket", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """TCPSocket specifies an action involving a TCP port. TCP hooks not yet supported."""
+    failure_threshold: Optional[int] = rest_field(
+        name="failureThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum consecutive failures for the probe to be considered failed after having succeeded.
+     Defaults to 3. Minimum value is 1. Maximum value is 10."""
+    initial_delay_seconds: Optional[int] = rest_field(
+        name="initialDelaySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of seconds after the container has started before liveness probes are initiated. Minimum
+     value is 1. Maximum value is 60."""
+    period_seconds: Optional[int] = rest_field(
+        name="periodSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum
+     value is 240."""
+    success_threshold: Optional[int] = rest_field(
+        name="successThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum consecutive successes for the probe to be considered successful after having failed.
+     Defaults to 1. Must be 1 for liveness and startup. Minimum value is 1. Maximum value is 10."""
+    termination_grace_period_seconds: Optional[int] = rest_field(
+        name="terminationGracePeriodSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional duration in seconds the pod needs to terminate gracefully upon probe failure. The
+     grace period is the duration in seconds after the processes running in the pod are sent a
+     termination signal and the time when the processes are forcibly halted with a kill signal. Set
+     this value longer than the expected cleanup time for your process. If this value is nil, the
+     pod's terminationGracePeriodSeconds will be used. Otherwise, this value overrides the value
+     provided by the pod spec. Value must be non-negative integer. The value zero indicates stop
+     immediately via the kill signal (no opportunity to shut down). This is an alpha field and
+     requires enabling ProbeTerminationGracePeriod feature gate. Maximum value is 3600 seconds (1
+     hour)."""
+    timeout_seconds: Optional[int] = rest_field(
+        name="timeoutSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1.
+     Maximum value is 240."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.SessionProbeType"]] = None,
+        http_get: Optional["_models.SessionProbeHttpGet"] = None,
+        tcp_socket: Optional["_models.SessionProbeTcpSocket"] = None,
+        failure_threshold: Optional[int] = None,
+        initial_delay_seconds: Optional[int] = None,
+        period_seconds: Optional[int] = None,
+        success_threshold: Optional[int] = None,
+        termination_grace_period_seconds: Optional[int] = None,
+        timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionProbeHttpGet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """HTTPGet specifies the http request to perform.
+
+    :ivar host: Host name to connect to, defaults to the pod IP. You probably want to set "Host" in
+     httpHeaders instead.
+    :vartype host: str
+    :ivar http_headers: Custom headers to set in the request. HTTP allows repeated headers.
+    :vartype http_headers:
+     list[~azure.mgmt.appcontainers.models.SessionProbeHttpGetHttpHeadersItem]
+    :ivar path: Path to access on the HTTP server.
+    :vartype path: str
+    :ivar port: Name or number of the port to access on the container. Number must be in the range
+     1 to 65535. Name must be an IANA_SVC_NAME. Required.
+    :vartype port: int
+    :ivar scheme: Scheme to use for connecting to the host. Defaults to HTTP. Known values are:
+     "HTTP" and "HTTPS".
+    :vartype scheme: str or ~azure.mgmt.appcontainers.models.Scheme
+    """
+
+    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host name to connect to, defaults to the pod IP. You probably want to set \"Host\" in
+     httpHeaders instead."""
+    http_headers: Optional[list["_models.SessionProbeHttpGetHttpHeadersItem"]] = rest_field(
+        name="httpHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Custom headers to set in the request. HTTP allows repeated headers."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Path to access on the HTTP server."""
+    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name or number of the port to access on the container. Number must be in the range 1 to 65535.
+     Name must be an IANA_SVC_NAME. Required."""
+    scheme: Optional[Union[str, "_models.Scheme"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scheme to use for connecting to the host. Defaults to HTTP. Known values are: \"HTTP\" and
+     \"HTTPS\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port: int,
+        host: Optional[str] = None,
+        http_headers: Optional[list["_models.SessionProbeHttpGetHttpHeadersItem"]] = None,
+        path: Optional[str] = None,
+        scheme: Optional[Union[str, "_models.Scheme"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionProbeHttpGetHttpHeadersItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """HTTPHeader describes a custom header to be used in HTTP probes.
+
+    :ivar name: The header field name. Required.
+    :vartype name: str
+    :ivar value: The header field value. Required.
+    :vartype value: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The header field name. Required."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The header field value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionProbeTcpSocket(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """TCPSocket specifies an action involving a TCP port. TCP hooks not yet supported.
+
+    :ivar host: Optional: Host name to connect to, defaults to the pod IP.
+    :vartype host: str
+    :ivar port: Number or name of the port to access on the container. Number must be in the range
+     1 to 65535. Name must be an IANA_SVC_NAME. Required.
+    :vartype port: int
+    """
+
+    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional: Host name to connect to, defaults to the pod IP."""
+    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number or name of the port to access on the container. Number must be in the range 1 to 65535.
+     Name must be an IANA_SVC_NAME. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port: int,
+        host: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionRegistryCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session pool private registry credentials.
 
     :ivar server: Container registry server.
@@ -10065,7 +11879,7 @@ class SessionRegistryCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControl(ProxyResource):
+class SourceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App SourceControl.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10126,7 +11940,7 @@ class SourceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SourceControlProperties(_Model):
+class SourceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SourceControl resource specific properties.
 
     :ivar operation_state: Current provisioning State of the operation. Known values are:
@@ -10178,7 +11992,9 @@ class SourceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpringBootAdminComponent(JavaComponentProperties, discriminator="SpringBootAdmin"):
+class SpringBootAdminComponent(
+    JavaComponentProperties, discriminator="SpringBootAdmin"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spring Boot Admin properties.
 
     :ivar provisioning_state: Provisioning state of the Java Component. Known values are:
@@ -10227,7 +12043,9 @@ class SpringBootAdminComponent(JavaComponentProperties, discriminator="SpringBoo
         self.component_type = JavaComponentType.SPRING_BOOT_ADMIN  # type: ignore
 
 
-class SpringCloudConfigComponent(JavaComponentProperties, discriminator="SpringCloudConfig"):
+class SpringCloudConfigComponent(
+    JavaComponentProperties, discriminator="SpringCloudConfig"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spring Cloud Config properties.
 
     :ivar provisioning_state: Provisioning state of the Java Component. Known values are:
@@ -10269,7 +12087,9 @@ class SpringCloudConfigComponent(JavaComponentProperties, discriminator="SpringC
         self.component_type = JavaComponentType.SPRING_CLOUD_CONFIG  # type: ignore
 
 
-class SpringCloudEurekaComponent(JavaComponentProperties, discriminator="SpringCloudEureka"):
+class SpringCloudEurekaComponent(
+    JavaComponentProperties, discriminator="SpringCloudEureka"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spring Cloud Eureka properties.
 
     :ivar provisioning_state: Provisioning state of the Java Component. Known values are:
@@ -10318,7 +12138,7 @@ class SpringCloudEurekaComponent(JavaComponentProperties, discriminator="SpringC
         self.component_type = JavaComponentType.SPRING_CLOUD_EUREKA  # type: ignore
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10385,7 +12205,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TcpScaleRule(_Model):
+class TcpScaleRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App container Tcp scaling rule.
 
     :ivar metadata: Metadata properties to describe tcp scale rule.
@@ -10427,7 +12247,7 @@ class TcpScaleRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Template(_Model):
+class Template(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container App versioned application definition. Defines the desired state of an immutable
     revision. Any changes to this section Will result in a new revision being created.
 
@@ -10503,7 +12323,7 @@ class Template(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenStore(_Model):
+class TokenStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the token store.
 
     :ivar enabled: <code>true</code> to durably store platform-specific security tokens that are
@@ -10550,7 +12370,42 @@ class TokenStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficWeight(_Model):
+class TracesConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of Open Telemetry traces.
+
+    :ivar include_dapr: Boolean indicating if including dapr traces.
+    :vartype include_dapr: bool
+    :ivar destinations: Open telemetry traces destinations.
+    :vartype destinations: list[str]
+    """
+
+    include_dapr: Optional[bool] = rest_field(
+        name="includeDapr", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Boolean indicating if including dapr traces."""
+    destinations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Open telemetry traces destinations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        include_dapr: Optional[bool] = None,
+        destinations: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrafficWeight(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Traffic weight assigned to a revision.
 
     :ivar revision_name: Name of a revision.
@@ -10597,7 +12452,7 @@ class TrafficWeight(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Twitter(_Model):
+class Twitter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the Twitter provider.
 
     :ivar enabled: <code>false</code> if the Twitter provider should not be enabled despite the set
@@ -10635,7 +12490,7 @@ class Twitter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TwitterRegistration(_Model):
+class TwitterRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration settings of the app registration for the Twitter provider.
 
     :ivar consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
@@ -10678,7 +12533,7 @@ class TwitterRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Usage(_Model):
+class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Compute Resource Usage.
 
     :ivar unit: An enum describing the unit of usage measurement. Required. Default value is
@@ -10722,7 +12577,7 @@ class Usage(_Model):
         self.unit: Literal["Count"] = "Count"
 
 
-class UsageName(_Model):
+class UsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Usage Names.
 
     :ivar value: The name of the resource.
@@ -10772,7 +12627,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VnetConfiguration(_Model):
+class VnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration properties for apps environment to join a Virtual Network.
 
     :ivar internal: Boolean indicating the environment only has an internal load balancer. These
@@ -10832,7 +12687,86 @@ class VnetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Volume(_Model):
+class VnetConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A virtual network connection associated with a SandboxGroup.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.appcontainers.models.VnetConnectionProperties
+    """
+
+    properties: Optional["_models.VnetConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VnetConnectionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VnetConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """VnetConnection resource specific properties.
+
+    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
+     "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcontainers.models.VnetConnectionProvisioningState
+    :ivar subnet_id: Resource ID of the subnet that sandboxes in the parent SandboxGroup will be
+     connected to.
+    :vartype subnet_id: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.VnetConnectionProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Updating\", and
+     \"Deleting\"."""
+    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
+    """Resource ID of the subnet that sandboxes in the parent SandboxGroup will be connected to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnet_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Volume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume definitions for the Container App.
 
     :ivar name: Volume name.
@@ -10894,7 +12828,7 @@ class Volume(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeMount(_Model):
+class VolumeMount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume mount for the Container App.
 
     :ivar volume_name: This must match the Name of a Volume.
@@ -10937,7 +12871,7 @@ class VolumeMount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowEnvelope(ProxyResource):
+class WorkflowEnvelope(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema for the workflow object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10987,7 +12921,7 @@ class WorkflowEnvelope(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowEnvelopeProperties(_Model):
+class WorkflowEnvelopeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional workflow properties.
 
     :ivar files: Gets or sets the files.
@@ -11029,7 +12963,7 @@ class WorkflowEnvelopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowHealth(_Model):
+class WorkflowHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the workflow health.
 
     :ivar state: Gets or sets the workflow health state. Required. Known values are:
@@ -11066,7 +13000,7 @@ class WorkflowHealth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadProfile(_Model):
+class WorkloadProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload profile to scope container app execution.
 
     :ivar name: Workload profile type for the workloads to run on. Required.
@@ -11115,7 +13049,7 @@ class WorkloadProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadProfileStates(ProxyResource):
+class WorkloadProfileStates(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of all the workload Profile States for a Managed Environment..
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11156,7 +13090,7 @@ class WorkloadProfileStates(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadProfileStatesProperties(_Model):
+class WorkloadProfileStatesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Profile resource specific properties.
 
     :ivar minimum_count: Minimum count of instances.

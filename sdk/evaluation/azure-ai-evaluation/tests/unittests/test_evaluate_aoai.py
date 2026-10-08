@@ -24,6 +24,49 @@ def default_data_source_config():
 class TestCombineItemSchemas:
     """Unit tests for _combine_item_schemas"""
 
+    @pytest.mark.parametrize("required", [None, [], ["id"]])
+    @pytest.mark.parametrize("additional_properties", [True, False, {"type": "number"}])
+    def test_explicit_subtrees_override_inference_without_mutation(
+        self, default_data_source_config, required, additional_properties
+    ):
+        config = copy.deepcopy(default_data_source_config)
+        inferred_schema = config["item_schema"]
+        inferred_snapshot = copy.deepcopy(inferred_schema)
+        schema = {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "object",
+                    "properties": {
+                        "count": {"type": "integer", "minimum": 0, "maximum": 2, "enum": [0, 2]},
+                        "values": {"type": "array", "items": {"type": "number"}, "minItems": 1},
+                    },
+                    "required": ["count"],
+                    "additionalProperties": False,
+                }
+            },
+            "additionalProperties": additional_properties,
+        }
+        if required is not None:
+            schema["required"] = required
+        snapshot = copy.deepcopy(schema)
+
+        _combine_item_schemas(config, {"item_schema": schema})
+
+        combined = config["item_schema"]
+        assert combined["properties"]["id"] == schema["properties"]["id"]
+        if additional_properties is True:
+            assert combined["properties"]["text"] == {"type": "string"}
+            assert combined["required"] == ["text"] + (required or [])
+            combined["properties"]["text"]["type"] = "integer"
+        else:
+            assert set(combined["properties"]) == {"id"}
+            assert combined["required"] == (required or [])
+        assert combined["additionalProperties"] == additional_properties
+        combined["properties"]["id"]["properties"]["count"]["enum"].append(3)
+        assert schema == snapshot
+        assert inferred_schema == inferred_snapshot
+
     def test_combine_item_schemas_success(self, default_data_source_config):
         data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
