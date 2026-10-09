@@ -1,5 +1,18 @@
 # Release History
 
+## 10.5.0b3 (2026-10-09)
+
+### Features Added
+
+  - Model `NamespaceProperties` added property `auto_scale_configuration`
+  - Model `NamespaceProperties` added property `ip_address_type`
+  - Model `NamespaceUpdateParameterProperties` added property `auto_scale_configuration`
+  - Model `NamespaceUpdateParameterProperties` added property `ip_address_type`
+  - Enum `TlsVersion` added member `ONE3`
+  - Added model `AutoScaleConfiguration`
+  - Added enum `IpAddressType`
+  - Added model `UpdateAutoScaleConfiguration`
+
 ## 10.5.0b2 (2026-05-11)
 
 ### Features Added

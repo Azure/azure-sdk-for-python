@@ -2,6 +2,7 @@
     "CrossLanguagePackageId": "Microsoft.EventGrid",
     "CrossLanguageDefinitionId": {
         "azure.mgmt.eventgrid.models.AdvancedFilter": "Microsoft.EventGrid.AdvancedFilter",
+        "azure.mgmt.eventgrid.models.AutoScaleConfiguration": "Microsoft.EventGrid.AutoScaleConfiguration",
         "azure.mgmt.eventgrid.models.PartnerClientAuthentication": "Microsoft.EventGrid.PartnerClientAuthentication",
         "azure.mgmt.eventgrid.models.AzureADPartnerClientAuthentication": "Microsoft.EventGrid.AzureADPartnerClientAuthentication",
         "azure.mgmt.eventgrid.models.AzureADPartnerClientAuthenticationProperties": "Microsoft.EventGrid.AzureADPartnerClientAuthenticationProperties",
@@ -226,6 +227,7 @@
         "azure.mgmt.eventgrid.models.TopicTypeProperties": "Microsoft.EventGrid.TopicTypeProperties",
         "azure.mgmt.eventgrid.models.TopicUpdateParameterProperties": "Microsoft.EventGrid.TopicUpdateParameterProperties",
         "azure.mgmt.eventgrid.models.TopicUpdateParameters": "Microsoft.EventGrid.TopicUpdateParameters",
+        "azure.mgmt.eventgrid.models.UpdateAutoScaleConfiguration": "Microsoft.EventGrid.UpdateAutoScaleConfiguration",
         "azure.mgmt.eventgrid.models.UpdateTopicsConfigurationInfo": "Microsoft.EventGrid.UpdateTopicsConfigurationInfo",
         "azure.mgmt.eventgrid.models.UpdateTopicSpacesConfigurationInfo": "Microsoft.EventGrid.UpdateTopicSpacesConfigurationInfo",
         "azure.mgmt.eventgrid.models.UserIdentityProperties": "Microsoft.EventGrid.UserIdentityProperties",
@@ -253,6 +255,7 @@
         "azure.mgmt.eventgrid.models.PublicNetworkAccess": "Microsoft.EventGrid.PublicNetworkAccess",
         "azure.mgmt.eventgrid.models.IpActionType": "Microsoft.EventGrid.IpActionType",
         "azure.mgmt.eventgrid.models.TlsVersion": "Microsoft.EventGrid.TlsVersion",
+        "azure.mgmt.eventgrid.models.IpAddressType": "Microsoft.EventGrid.IpAddressType",
         "azure.mgmt.eventgrid.models.SkuName": "Microsoft.EventGrid.SkuName",
         "azure.mgmt.eventgrid.models.IdentityType": "Microsoft.EventGrid.IdentityType",
         "azure.mgmt.eventgrid.models.ChannelType": "Microsoft.EventGrid.ChannelType",
@@ -673,5 +676,6 @@
         "azure.mgmt.eventgrid.aio.operations.TopicTypesOperations.list": "Microsoft.EventGrid.TopicTypeInfos.list",
         "azure.mgmt.eventgrid.operations.TopicTypesOperations.list_event_types": "Microsoft.EventGrid.TopicTypeInfos.listEventTypes",
         "azure.mgmt.eventgrid.aio.operations.TopicTypesOperations.list_event_types": "Microsoft.EventGrid.TopicTypeInfos.listEventTypes"
-    }
+    },
+    "CrossLanguageVersion": "f1405d350e78"
 }
