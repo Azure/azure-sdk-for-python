@@ -30,7 +30,7 @@ from azure.ai.agentserver.responses.hosting._resilient_input import ResilientRes
 from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 from azure.ai.agentserver.responses.models._generated import CreateResponse, ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
-from tests.contract.test_user_isolation_enforcement import _PartitionedProvider
+from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 
 RESPONSE_ID = IdGenerator.new_response_id()
@@ -72,7 +72,7 @@ def _request(*, user: str = "owner", background: bool = True, stream: bool = Tru
 
 def _host() -> ResponsesAgentServerHost:
     host = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False), store=_PartitionedProvider()
+        options=ResponsesServerOptions(resilient_background=False), store=InMemoryResponseProvider()
     )
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
@@ -111,6 +111,7 @@ async def test_many_unstored_posts_do_not_retain_registry_lifecycle_locks(
     assert registry._id_locks == {}
     assert registry._slots == {}
     assert host._endpoint._runtime_state._reservations == set()
+    assert host._endpoint._runtime_state._publication_contexts == {}
 
 
 @pytest.mark.parametrize("background", [False, True])
@@ -465,10 +466,11 @@ async def test_shutdown_rejection_preserves_existing_stream_and_started_record(
         mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
         status="in_progress",
         subject=active,
+        response_context=state._publication_contexts[("owner", RESPONSE_ID)],
     )
     running = asyncio.create_task(asyncio.Event().wait())
     record.execution_task = running
-    await state.add(record)
+    assert await state.add(record)
     await state.begin_draining()
     started = AsyncMock()
     monkeypatch.setattr(resilience.ResilientResponseOrchestrator, "start_resilient", started)

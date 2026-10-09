@@ -1309,6 +1309,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
         status="in_progress",
         input_items=deepcopy(ctx.input_items),
         previous_response_id=ctx.previous_response_id,
+        response_context=ctx.context,
         agent_session_id=ctx.agent_session_id,
         conversation_id=ctx.conversation_id,
         user_id_key=ctx.user_id,
@@ -2018,7 +2019,8 @@ class _ResponseOrchestrator:
         """
         response_payload = await self._prepare_terminal_resolution(ctx, state, record)
         if response_payload is not None:
-            await self._runtime_state.add(record)
+            if not await self._runtime_state.add(record):
+                return
         await self._emit_pending_terminal_to_stream(ctx, state)
         if response_payload is None or not (ctx.store and record.response is not None):
             return
@@ -2173,7 +2175,8 @@ class _ResponseOrchestrator:
         # for the resilient body, which tracks its own task separately.
         if state.execution_task is not None:
             execution.execution_task = state.execution_task
-        await self._runtime_state.add(execution)
+        if not await self._runtime_state.add(execution):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
         if ctx.store:
             _context = ctx.context.platform_context if ctx.context else None
             _initial_response_obj = cast("generated_models.ResponseObject", initial_payload)
@@ -2940,7 +2943,7 @@ class _ResponseOrchestrator:
             # Skip eviction when persistence failed — the in-memory record is
             # the only remaining source of truth for GET.
             if record.is_terminal and not record.persistence_failed and not state.defer_evict:
-                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id, expected_record=record)
             return
 
         # --- Path B: No pre-existing record ---
@@ -3045,6 +3048,7 @@ class _ResponseOrchestrator:
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
+            response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
@@ -3062,7 +3066,9 @@ class _ResponseOrchestrator:
         # the deferred terminal provider write is still running.
         if state.execution_task is not None:
             execution.execution_task = state.execution_task
-        await self._runtime_state.add(execution)
+        if not await self._runtime_state.add(execution):
+            ctx.span.end(state.captured_error)
+            return
 
         ctx.span.end(state.captured_error)
 
@@ -3070,7 +3076,7 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — the in-memory record is the
         # only remaining source of truth for GET.
         if execution.is_terminal and not execution.persistence_failed and not state.defer_evict:
-            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id, expected_record=execution)
 
     # ------------------------------------------------------------------
     # Public execution methods
@@ -3264,7 +3270,8 @@ class _ResponseOrchestrator:
                             # window serves it (not 404) and any stamped
                             # persistence failure is reachable.
                             r = _make_ephemeral_record(ctx, state)
-                            await self._runtime_state.add(r)
+                            if not await self._runtime_state.add(r):
+                                return
                         r.execution_task = state.execution_task
                         await self._resolve_emit_and_defer_terminal_persist(ctx, state, r)
                 finally:
@@ -3667,7 +3674,8 @@ class _ResponseOrchestrator:
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
         )
-        await self._runtime_state.add(record)
+        if not await self._runtime_state.add(record):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
 
         async def _runner() -> None:
             """Fallback runner if _start_resilient_background's resilient start fails.
@@ -3865,7 +3873,8 @@ class _ResponseOrchestrator:
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
         # Always register so cancel/GET can find this record.
-        await self._runtime_state.add(record)
+        if not await self._runtime_state.add(record):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
 
         if ctx.store:
             # Persist via provider (non-bg sync: single create at terminal state).
@@ -3969,7 +3978,8 @@ class _ResponseOrchestrator:
         )
 
         # Register so GET can observe in-flight state
-        await self._runtime_state.add(record)
+        if not await self._runtime_state.add(record):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
 
         # Launch handler immediately (S-003: handler runs asynchronously)
         # Use anyio.CancelScope(shield=True) + suppress CancelledError so the

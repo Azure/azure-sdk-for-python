@@ -31,11 +31,16 @@ from azure.ai.agentserver.responses.hosting import _response_task_lifecycle as l
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilience
 from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput, RuntimeRefs
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
+from azure.ai.agentserver.responses.hosting._execution_context import _ExecutionContext
+from azure.ai.agentserver.responses.hosting._observability import CreateSpan
+from azure.ai.agentserver.responses.hosting._orchestrator import _PipelineState
 from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 from azure.ai.agentserver.responses.models._generated import CreateResponse, ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
-from tests.contract.test_user_isolation_enforcement import _AsyncAsgiClient, _PartitionedProvider, _noop_handler
+from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
+from azure.ai.agentserver.responses.store._file import FileResponseStore
+from tests.contract.test_user_isolation_enforcement import _AsyncAsgiClient, _noop_handler
 from tests.unit.test_stream_lifecycle_cleanup import RESPONSE_ID, _host, _request, registry
 
 
@@ -510,7 +515,7 @@ async def test_stale_recovery_callback_cannot_retire_a_newer_incarnation_record(
         if first:
             first = False
             await task_store.update(info.id, TaskPatchRequest(payload={"input": new}))
-            await state.add(replacement)
+            assert await state.add(replacement, expected_record=stale)
         return snapshot
 
     monkeypatch.setattr(task_store, "get", raced_get)
@@ -1154,6 +1159,138 @@ async def test_orphan_reclamation_holds_scoped_admission_until_file_cleanup_fini
 
 
 @pytest.mark.parametrize("runtime_record", [False, True])
+@pytest.mark.parametrize("outcome", ["success", "error", "cancel"])
+async def test_publication_during_provider_delete_preserves_exact_owner_and_retry(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    monkeypatch: pytest.MonkeyPatch,
+    runtime_record: bool,
+    outcome: str,
+) -> None:
+    host = _host()
+    provider = host._endpoint._provider
+    state = host._endpoint._runtime_state
+    await provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
+    original = _execution()
+    if runtime_record:
+        assert await state.reserve(RESPONSE_ID, "owner")
+        assert await state.add(original)
+    foreign = _execution(user="other")
+    assert await state.add(foreign)
+    reached = asyncio.Event()
+    release = asyncio.Event()
+    delete = provider.delete_response
+
+    async def paused_delete(*args: Any, **kwargs: Any) -> None:
+        reached.set()
+        await release.wait()
+        if outcome == "error":
+            raise OSError("provider deletion unavailable")
+        await delete(*args, **kwargs)
+
+    monkeypatch.setattr(provider, "delete_response", paused_delete)
+    deleting = asyncio.create_task(host._endpoint.handle_delete(_delete_request()))
+    try:
+        await asyncio.wait_for(reached.wait(), 2)
+        retained = await state.get(RESPONSE_ID, "owner")
+        assert retained is not None
+        if runtime_record:
+            assert retained is original
+        late = _execution(status="in_progress")
+        assert not await state.add(late, expected_record=retained)
+        assert not await state.add(retained)
+        assert not await state.add_pending(late)
+        assert await state.get(RESPONSE_ID, "owner") is retained
+        assert await state.get(RESPONSE_ID, "other") is foreign
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        if outcome == "cancel":
+            deleting.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await deleting
+        else:
+            release.set()
+            assert (await asyncio.wait_for(deleting, 2)).status_code == (200 if outcome == "success" else 500)
+        assert not await state.add(late)
+        if outcome == "success":
+            assert await state.get(RESPONSE_ID, "owner") is None
+            assert await state.is_deleted(RESPONSE_ID, "owner")
+        else:
+            assert await state.get(RESPONSE_ID, "owner") is retained
+            assert not await state.is_deleted(RESPONSE_ID, "owner")
+            monkeypatch.setattr(provider, "delete_response", delete)
+            assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+        assert await state.get(RESPONSE_ID, "other") is foreign
+        assert not await state.add(late)
+    finally:
+        release.set()
+        if not deleting.done():
+            deleting.cancel()
+        await asyncio.gather(deleting, return_exceptions=True)
+        await state.release_reservation(RESPONSE_ID, "owner")
+
+
+@pytest.mark.parametrize("retained", [False, True])
+async def test_late_stream_finalization_cannot_publish_over_delete_or_successor(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, retained: bool
+) -> None:
+    host = _host()
+    refs = _cached_refs(host, _params())
+    original = refs.record
+    context = refs.context
+    assert original is not None and context is not None
+    original.set_response_snapshot(_snapshot())
+    original.status = "completed"
+    state = host._endpoint._runtime_state
+    assert await state.reserve(RESPONSE_ID, "owner", publication_context=context)
+    assert await state.add(original)
+    assert await state.begin_deletion(RESPONSE_ID, "owner")
+    assert await state.retain_for_deletion(original)
+    pipeline = _PipelineState()
+    pipeline.bg_record = original
+    events = ResponseEventStream(response_id=RESPONSE_ID)
+    pipeline.handler_events = [events.emit_created(), events.emit_completed()]
+    ctx = _ExecutionContext(
+        response_id=RESPONSE_ID,
+        agent_reference={},
+        model="m",
+        store=True,
+        background=False,
+        stream=True,
+        input_items=[],
+        previous_response_id=None,
+        conversation_id=None,
+        cancellation_signal=asyncio.Event(),
+        span=CreateSpan(name="responses.test", tags={"response.id": RESPONSE_ID}),
+        parsed=CreateResponse({"model": "m", "input": "hi"}),
+        context=context,
+        user_id="owner",
+    )
+    orchestrator = host._endpoint._orchestrator
+    await orchestrator._finalize_stream(ctx, pipeline)
+    assert await state.get(RESPONSE_ID, "owner") is original
+    assert await state.is_retained_for_deletion(RESPONSE_ID, "owner")
+    assert not await state.is_deleted(RESPONSE_ID, "owner")
+    if retained:
+        await state.end_deletion(RESPONSE_ID, "owner")
+        await orchestrator._finalize_stream(ctx, pipeline)
+        assert await state.get(RESPONSE_ID, "owner") is original
+    else:
+        assert await state.delete(RESPONSE_ID, "owner", expected_record=original)
+        await state.end_deletion(RESPONSE_ID, "owner")
+        await orchestrator._finalize_stream(ctx, pipeline)
+        assert await state.is_deleted(RESPONSE_ID, "owner")
+        assert await state.get(RESPONSE_ID, "owner") is None
+        await state.release_reservation(RESPONSE_ID, "owner")
+        successor = _cached_refs(host, _params()).record
+        assert successor is not None
+        assert await state.reserve(RESPONSE_ID, "owner", publication_context=successor.response_context)
+        assert await state.add(successor)
+        await orchestrator._finalize_stream(ctx, pipeline)
+        assert await state.get(RESPONSE_ID, "owner") is successor
+        assert not await state.is_deleted(RESPONSE_ID, "owner")
+
+
+@pytest.mark.parametrize("runtime_record", [False, True])
 @pytest.mark.parametrize("failure", ["error", "cancel", "cancel_after_write"])
 @pytest.mark.parametrize("restart", [False, True])
 async def test_provider_delete_failure_and_cancellation_retain_retryable_ownership(
@@ -1384,10 +1521,11 @@ async def test_delete_then_same_id_post_resumes_same_conversation_with_a_new_inc
     task_store: LocalFileTaskProvider,
     monkeypatch: pytest.MonkeyPatch,
     steerable: bool,
+    tmp_path: Path,
 ) -> None:
     from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilience
 
-    provider = _PartitionedProvider()
+    provider = FileResponseStore(storage_dir=tmp_path / "responses")
     host = ResponsesAgentServerHost(
         options=ResponsesServerOptions(resilient_background=True, steerable_conversations=steerable), store=provider
     )

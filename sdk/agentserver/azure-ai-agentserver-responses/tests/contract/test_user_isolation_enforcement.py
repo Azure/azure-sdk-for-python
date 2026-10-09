@@ -31,41 +31,6 @@ from tests._helpers import poll_until
 # ── Shared helpers (sync, for GET / DELETE / INPUT_ITEMS) ──
 
 
-class _PartitionedProvider:
-    """Supply isolated storage so these tests exercise host lifecycle isolation.
-
-    Persistent provider partitioning is covered separately in PR #49025.
-    """
-
-    def __init__(self):
-        self.partitions: dict[str | None, InMemoryResponseProvider] = {}
-
-    def _partition(self, context):
-        key = context.user_id_key if context is not None else None
-        return self.partitions.setdefault(key, InMemoryResponseProvider())
-
-    async def create_response(self, *args, context=None, **kwargs):
-        return await self._partition(context).create_response(*args, context=context, **kwargs)
-
-    async def get_response(self, *args, context=None, **kwargs):
-        return await self._partition(context).get_response(*args, context=context, **kwargs)
-
-    async def update_response(self, *args, context=None, **kwargs):
-        return await self._partition(context).update_response(*args, context=context, **kwargs)
-
-    async def delete_response(self, *args, context=None, **kwargs):
-        return await self._partition(context).delete_response(*args, context=context, **kwargs)
-
-    async def get_items(self, *args, context=None, **kwargs):
-        return await self._partition(context).get_items(*args, context=context, **kwargs)
-
-    async def get_input_items(self, *args, context=None, **kwargs):
-        return await self._partition(context).get_input_items(*args, context=context, **kwargs)
-
-    async def get_history_item_ids(self, *args, context=None, **kwargs):
-        return await self._partition(context).get_history_item_ids(*args, context=context, **kwargs)
-
-
 async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
@@ -75,7 +40,7 @@ async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio
 
 
 def _make_client(handler=_noop_handler) -> TestClient:
-    host = ResponsesAgentServerHost(store=_PartitionedProvider())
+    host = ResponsesAgentServerHost(store=InMemoryResponseProvider())
     host.response_handler(handler)
     return TestClient(host)
 
@@ -243,7 +208,7 @@ def _make_cancellable_bg_handler() -> Any:
 
 
 def _build_async_client(handler: Any) -> _AsyncAsgiClient:
-    app = ResponsesAgentServerHost(store=_PartitionedProvider())
+    app = ResponsesAgentServerHost(store=InMemoryResponseProvider())
     app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
@@ -428,7 +393,7 @@ async def test_same_id_streams_cancel_replay_and_delete_independently(first_user
         return events()
 
     host = ResponsesAgentServerHost(
-        store=_PartitionedProvider(), options=ResponsesServerOptions(resilient_background=False)
+        store=InMemoryResponseProvider(), options=ResponsesServerOptions(resilient_background=False)
     )
     host.response_handler(handler)
     client = _AsyncAsgiClient(host)
@@ -498,7 +463,7 @@ async def test_same_id_streams_cancel_replay_and_delete_independently(first_user
 @pytest.mark.asyncio
 async def test_persisted_response_remains_accessible_while_same_id_is_live_for_another_user() -> None:
     handler = _make_cancellable_bg_handler()
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     response_id = IdGenerator.new_response_id()
     await provider.create_response(
         {"id": response_id, "status": "completed", "model": "owner", "output": []},
@@ -549,7 +514,7 @@ async def test_provider_failure_never_falls_through_to_retained_replay(monkeypat
     stream = await registry.get_or_create(derive_lifecycle_id(response_id, "owner"))
     await stream.emit({"sequence_number": 0, "type": "response.output_text.delta", "delta": "private-data"})
     await stream.close()
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     errors = {
         "missing": FoundryResourceNotFoundError("missing"),
         "denied": FoundryBadRequestError("denied"),
@@ -571,7 +536,7 @@ async def test_provider_failure_never_falls_through_to_retained_replay(monkeypat
 @pytest.mark.parametrize("streaming", [False, True])
 async def test_reservation_only_create_cannot_access_another_users_stored_response(streaming):
     response_id = IdGenerator.new_response_id()
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     await provider.create_response(
         {"id": response_id, "status": "completed", "model": "owner-private", "output": []},
         input_items=[],
@@ -630,7 +595,7 @@ async def test_cold_file_replay_is_discovered_without_creating_absent_streams(tm
     from azure.ai.agentserver.responses.hosting import _endpoint_handler
     from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     host = ResponsesAgentServerHost(store=provider)
     host.response_handler(_noop_handler)
     client = _AsyncAsgiClient(host)
@@ -728,7 +693,7 @@ async def test_delete_blocks_same_user_recreation_until_cleanup_finishes(
     from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
     from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     host = ResponsesAgentServerHost(store=provider)
     host.response_handler(_noop_handler)
     client = _AsyncAsgiClient(host)
@@ -826,7 +791,7 @@ async def test_recovered_streaming_tasks_use_their_durable_user_partition(monkey
     from azure.ai.agentserver.responses.models import CreateResponse
 
     monkeypatch.setattr(_resilient_orchestrator, "_RUNTIME_REFS", {})
-    provider = _PartitionedProvider()
+    provider = InMemoryResponseProvider()
     response_id = IdGenerator.new_response_id()
     seen = []
 
