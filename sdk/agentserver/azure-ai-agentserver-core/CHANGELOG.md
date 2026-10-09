@@ -4,6 +4,14 @@
 
 ### Bugs Fixed
 
+- Release owned replay-file and writer-lock resources on every rehydration
+  failure, including callback errors and cancellation. Surface cleanup errors
+  with their original failure context and retain exact registry cleanup owners
+  when resource release must be retried.
+- Fail closed after compaction replaces the log but cannot establish a usable
+  writer. Retire stale handles, reject further writes, wake subscribers with an
+  explicit error, and reacquire ownership before deleting a failed replacement.
+  Keep the original writer usable when preparation fails before replacement.
 - Open existing replay logs in non-creating mode during cold lookup and
   compaction reopen, preventing concurrent removal from recreating an empty
   log. Preserve explicit creation and propagate backing-lock acquisition errors.

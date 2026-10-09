@@ -409,7 +409,19 @@ class _ReplayIterator:  # pylint: disable=protected-access
             self._attach()
         return self
 
+    def _check_file_writer(self) -> None:
+        if isinstance(self._owner, FileBackedReplayEventStream):
+            try:
+                self._owner._raise_if_write_failed()
+            except RuntimeError:
+                self._terminated = True
+                if self._queue is not None:
+                    self._owner._remove_subscriber(self._queue)
+                raise
+
     async def __anext__(self) -> Any:
+        if not self._terminated:
+            self._check_file_writer()
         if not self._attached and not self._terminated:
             self._attach()
         if self._terminated:
@@ -440,6 +452,7 @@ class _ReplayIterator:  # pylint: disable=protected-access
         assert self._queue is not None
         try:
             item = await self._queue.get()
+            self._check_file_writer()
             if item is _GONE_SENTINEL:
                 self._terminated = True
                 self._owner._remove_subscriber(self._queue)
@@ -549,16 +562,29 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         self._evictions_since_compaction = 0
         self._lock_fd: Optional[int] = None
         self._lock_path: Optional[Path] = None
+        self._retired_files: list[BinaryIO] = []
+        self._write_failed = False
+        self._deletion_owner: Optional[_FileBackedReplayDeletion] = None
 
         self._file = self._open_file()
+        initialized = False
         try:
             self._acquire_file_lock()
-        except OSError:
-            self._file.close()
-            raise
-
-        # Rehydrate from disk if file already had content (rule 28).
-        self._rehydrate()
+            self._rehydrate()
+            initialized = True
+        finally:
+            if not initialized:
+                try:
+                    self._cleanup_locks()
+                except OSError as cleanup_error:
+                    self._state = self._STATE_GONE
+                    self._write_failed = True
+                    self._buffer.clear()
+                    self._evictions_since_compaction = 0
+                    # Let the registry retain the exact cleanup owner without
+                    # changing the primary or cleanup exception types.
+                    setattr(cleanup_error, "_replay_cleanup_owner", self)
+                    raise
 
     def _open_file(self) -> BinaryIO:
         """Open the replay for append and recovery.
@@ -647,7 +673,6 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 rec = self._deserialize_record(line)
             except (json.JSONDecodeError, UnicodeDecodeError) as exc:
                 # Mid-file malformed — RuntimeError at construction (rule 29).
-                self._cleanup_locks()
                 logger.error("FileBackedReplayEventStream: malformed record at line %d of %s", idx, self._path)
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: malformed record at " f"line {idx} of {self._path}"
@@ -668,7 +693,6 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                     )
                 continue
             if "emit_time" not in rec:
-                self._cleanup_locks()
                 logger.error(
                     "FileBackedReplayEventStream: record at line %d of %s missing 'emit_time' field", idx, self._path
                 )
@@ -713,6 +737,11 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             # resource recorded until its cleanup succeeds so retries are safe.
             if not self._file.closed:
                 self._file.close()
+            while self._retired_files:
+                retired = self._retired_files[0]
+                if not retired.closed:
+                    retired.close()
+                del self._retired_files[0]
             if self._lock_fd is not None:
                 os.close(self._lock_fd)
                 self._lock_fd = None
@@ -724,6 +753,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             raise
 
     def _evict_expired(self) -> None:
+        if self._state == self._STATE_GONE:
+            return
+        self._raise_if_write_failed()
         if self._ttl_seconds is None:
             return
         now = time.time()
@@ -744,38 +776,66 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         Lazy compaction (rule 30) — keeps the file bounded across
         repeated process restarts.
         """
+        if self._state == self._STATE_GONE:
+            raise EventStreamNotFoundError("stream id is tombstoned")
+        self._raise_if_write_failed()
         tmp_path = self._path.with_suffix(self._path.suffix + ".compact")
+        replaced = False
+        preparation_error: Optional[Exception] = None
         try:
-            with open(tmp_path, "wb") as tmp:
-                for entry in self._buffer:
-                    tmp.write(self._serialize(entry.payload, entry.emit_time))
-                if self._state == self._STATE_CLOSED:
-                    tmp.write(self._serialize_terminal())
-            # Atomic replace (POSIX guarantees atomicity on same fs).
-            os.replace(tmp_path, self._path)
-            # ``os.replace`` swapped ``self._path`` to a brand-new inode; our
-            # ``self._file`` handle still points at the old (now-unlinked)
-            # inode, so every subsequent ``emit``/``close`` write would land in
-            # the orphaned file and be lost on the next process lifetime (and
-            # the single-writer ``flock`` would be held on the dead inode).
-            # Reopen against the live path and re-acquire the lock. Open + lock
-            # the new handle BEFORE closing the old one so the single-writer
-            # guarantee is never released across the swap.
-            old_file = self._file
+            try:
+                with open(tmp_path, "wb") as tmp:
+                    for entry in self._buffer:
+                        tmp.write(self._serialize(entry.payload, entry.emit_time))
+                    if self._state == self._STATE_CLOSED:
+                        tmp.write(self._serialize_terminal())
+                os.replace(tmp_path, self._path)
+            except Exception as error:  # pylint: disable=broad-except
+                preparation_error = error
+                logger.warning(
+                    "FileBackedReplayEventStream: compaction preparation failed for %s; retaining writer",
+                    self._path,
+                    exc_info=True,
+                )
+                return
+            replaced = True
+            self._reopen_compacted_file()
+        finally:
+            if not replaced:
+                try:
+                    tmp_path.unlink(missing_ok=True)
+                except OSError as cleanup_error:
+                    if preparation_error is not None:
+                        raise cleanup_error from preparation_error
+                    raise
+
+    def _reopen_compacted_file(self) -> None:
+        """Replace the old inode's writer, or permanently reject further writes."""
+        old_file = self._file
+        new_file: Optional[BinaryIO] = None
+        ready = False
+        try:
             new_file = open(self._path, "r+b")  # pylint: disable=consider-using-with
             if fcntl is not None:
                 fcntl.flock(new_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             new_file.seek(0, os.SEEK_END)
             self._file = new_file
-            try:
-                old_file.close()
-            except Exception:  # pylint: disable=broad-except
-                pass
-        except Exception:  # pylint: disable=broad-except
-            try:
-                tmp_path.unlink(missing_ok=True)
-            except Exception:  # pylint: disable=broad-except
-                pass
+            old_file.close()
+            ready = True
+        finally:
+            if not ready:
+                self._write_failed = True
+                for queue in list(self._subscriber_queues):
+                    queue.put_nowait(_GONE_SENTINEL)
+                for handle in (old_file, new_file):
+                    if handle is not None and handle is not self._file:
+                        self._retired_files.append(handle)
+                self._cleanup_locks()
+
+    def _raise_if_write_failed(self) -> None:
+        """Fail closed after replacement leaves no usable, locked writer."""
+        if self._write_failed and self._state != self._STATE_GONE:
+            raise RuntimeError("FileBackedReplayEventStream: writer unavailable after compaction failure")
 
     def _maybe_auto_transition_to_gone(self) -> None:
         """— close-clock auto-tombstone.
@@ -823,6 +883,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
 
     async def close(self) -> None:
         async with self._lock:
+            self._raise_if_write_failed()
             if self._state != self._STATE_ACTIVE:
                 return
             self._file.write(self._serialize_terminal())
@@ -833,6 +894,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             await self._fanout_terminate()
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
+        self._raise_if_write_failed()
         if self._cursor_fn is None:
             after = None
         self._evict_expired()
@@ -842,6 +904,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         return _ReplayIterator(self, after=after)  # same iterator shape works
 
     async def last_cursor(self) -> Optional[int]:
+        self._raise_if_write_failed()
         if self._state == self._STATE_GONE:
             raise EventStreamNotFoundError("stream id is tombstoned")
         return self._highest_cursor
@@ -852,6 +915,14 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             self._buffer.clear()
             await self._fanout_terminate()
             self._cleanup_locks()
+            if self._write_failed:
+                if self._deletion_owner is None:
+                    try:
+                        self._deletion_owner = _FileBackedReplayDeletion(path=self._path)
+                    except _ReplayFileNotFoundError:
+                        return
+                await self._deletion_owner._on_delete()  # pylint: disable=protected-access
+                return
             try:
                 self._path.unlink(missing_ok=True)
             except OSError:

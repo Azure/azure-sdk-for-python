@@ -3914,6 +3914,12 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (corruption signal, not recoverable). The TERMINAL sentinel, if
   present anywhere mid-file, MUST be ignored unless it is the
   final line.
+  Every exceptional constructor exit after opening the file, including
+  deserializer/cursor callbacks and cancellation, MUST release the exact
+  resources acquired by that constructor. Cleanup errors MUST remain visible
+  with the original failure context. If cleanup fails, the registry MUST
+  retain the exact, stream-ID-bound cleanup owner for retry without exposing
+  it as a usable replay or releasing another stream's resources.
 - **C-STR-FBR-7.** **Concurrency.** Implementations MUST use a
   single-writer lock (POSIX `fcntl` advisory lock preferred,
   `.lock` sentinel-file fallback) to prevent two processes from
@@ -3923,6 +3929,15 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   implementations SHOULD rewrite the file to compact away evicted
   lines (avoids unbounded file growth on long-lived streams with
   short TTLs).
+  Before successful replacement, a preparation failure MAY retain the original
+  valid writer, but MUST be logged and temporary-file cleanup failures MUST
+  propagate. Cancellation MUST propagate after temporary-file cleanup.
+  After successful replacement, reopen/lock/seek/handle-retirement failures
+  MUST propagate and permanently prevent successful writes through the stale
+  inode. Owned handles MUST be retired with retryable cleanup; subscribers
+  MUST observe an explicit failure rather than hang or report normal completion.
+  Deleting a failed replacement MUST reacquire its backing-file ownership,
+  retaining any allocated deletion owner through cleanup failure or cancellation.
 
 ### C-OUT (output persistence) — *removed*
 
