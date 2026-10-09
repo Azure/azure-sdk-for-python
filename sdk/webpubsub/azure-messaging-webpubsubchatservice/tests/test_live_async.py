@@ -28,6 +28,7 @@ async def _collect(paged):
     return [item async for item in paged]
 
 
+@pytest.mark.skip(reason="Inherited operations await the runtime 2026-08-01-preview routing fix.")
 class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     @WebPubSubChatPreparer()
     @recorded_by_proxy_async
