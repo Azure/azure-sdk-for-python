@@ -77,9 +77,9 @@ async def test_row_4_path_c(
         await harness.restart()
 
         # (a) No leftover state in the response store.
-        resp_dir = tmp_path / "responses" / "responses"
+        resp_dir = tmp_path / "responses" / "partitions-v1"
         if resp_dir.exists():
-            files = list(resp_dir.glob("*.json"))
+            files = list(resp_dir.rglob("*.json"))
             assert not files, (
                 f"Row 4 Path C: store=false should leave no response files, " f"found: {[f.name for f in files]}"
             )
