@@ -28,6 +28,8 @@
   without recreating rejected replay or closing another execution's stream.
 - Release streaming create reservations and stop disconnect monitors even
   when sending HTTP headers fails before the first body iteration.
+- Shield non-streaming create reservation cleanup from request cancellation
+  so an interrupted request does not prevent later reuse of the response ID.
 - Reclaim empty crash-abandoned file replay only when no caller-scoped runtime,
   response provider, or durable task retains ownership.
 - Retain DELETE ownership through provider cleanup failures and cancellation,
