@@ -146,10 +146,12 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         status_description = response_detail.get(self._status_description_field)
 
         to_remove_operation = None
-        for operation in self._pending_operations:
-            if operation.message.properties.message_id == correlation_id:
-                to_remove_operation = operation
-                break
+        with self.lock:
+            for operation in self._pending_operations:
+                if operation.message.properties.message_id == correlation_id:
+                    to_remove_operation = operation
+                    self._pending_operations.remove(operation)
+                    break
         if to_remove_operation:
             mgmt_result = (
                 ManagementExecuteOperationResult.OK
@@ -159,8 +161,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
-        with self.lock:
-            self._pending_operations.remove(to_remove_operation)
+        else:
+            _LOGGER.debug("Ignoring response for a management operation that is no longer pending.")
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
@@ -240,8 +242,18 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
-        self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
+        with self.lock:
+            self._pending_operations.append(pending_operation)
+        sent = False
+        try:
+            self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
+            sent = True
+        finally:
+            if not sent:
+                with self.lock:
+                    if pending_operation in self._pending_operations:
+                        self._pending_operations.remove(pending_operation)
 
     def close(self):
         if self.state != ManagementLinkState.IDLE:

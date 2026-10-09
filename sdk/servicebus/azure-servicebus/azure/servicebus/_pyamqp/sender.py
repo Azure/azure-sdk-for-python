@@ -7,7 +7,7 @@ import struct
 import uuid
 import logging
 import time
-from threading import Lock
+from threading import RLock
 
 from ._encode import encode_payload
 from .link import Link
@@ -17,11 +17,14 @@ from .error import AMQPLinkError, ErrorCondition, MessageException
 _LOGGER = logging.getLogger(__name__)
 
 
-class PendingDelivery(object):
+class PendingDelivery(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.message = kwargs.get("message")
         self.sent = False
         self.frame = None
+        self.early_disposition_received = False
+        self.early_disposition_state = None
+        self.abort_pending = False
         self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
         self.transfer_state = None
@@ -30,12 +33,14 @@ class PendingDelivery(object):
         self._network_trace_params = kwargs.get("network_trace_params")
 
     def on_settled(self, reason, state):
-        if self.on_delivery_settled and not self.settled:
+        callback = self.on_delivery_settled
+        self.on_delivery_settled = None
+        self.settled = True
+        if callback:
             try:
-                self.on_delivery_settled(reason, state)
+                callback(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e, extra=self._network_trace_params)
-        self.settled = True
 
 
 class SenderLink(Link):
@@ -46,7 +51,19 @@ class SenderLink(Link):
             kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
-        self.lock = Lock()
+        self._pending_delivery_ids = set()
+        self.lock = RLock()
+
+    def _pending_ids(self):
+        return self._pending_delivery_ids
+
+    def _append_pending(self, delivery):
+        self._pending_deliveries.append(delivery)
+        self._pending_ids().add(id(delivery))
+
+    def _remove_pending(self, delivery):
+        self._pending_deliveries.remove(delivery)
+        self._pending_ids().discard(id(delivery))
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -79,40 +96,53 @@ class SenderLink(Link):
                     "Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
                     extra=self.network_trace_params,
                 )
-                self._remove_pending_deliveries()
                 self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+                self._remove_pending_deliveries()
             else:
                 self.current_link_credit = rcv_delivery_count + rcv_link_credit - self.delivery_count
         self.update_pending_deliveries()
 
     def _outgoing_transfer(self, delivery):
-        output = bytearray()
-        encode_payload(output, delivery.message)
         delivery_count = self.delivery_count + 1
-        delivery.frame = {
-            "handle": self.handle,
-            "delivery_tag": struct.pack(">I", abs(delivery_count)),
-            "message_format": delivery.message._code,  # pylint:disable=protected-access
-            "settled": delivery.settled,
-            "more": False,
-            "rcv_settle_mode": None,
-            "state": None,
-            "resume": None,
-            "aborted": None,
-            "batchable": None,
-            "payload": output,
-        }
-        self._session._outgoing_transfer(  # pylint:disable=protected-access
-            delivery, self.network_trace_params if self.network_trace else None
-        )
+        if not delivery.frame or not delivery.frame["more"]:
+            output = bytearray()
+            try:
+                encode_payload(output, delivery.message)
+            except Exception:
+                if id(delivery) in self._pending_ids():
+                    self._remove_pending(delivery)
+                raise
+            delivery.frame = {
+                "handle": self.handle,
+                "delivery_tag": struct.pack(">I", abs(delivery_count)),
+                "message_format": delivery.message._code,  # pylint:disable=protected-access
+                "settled": delivery.settled,
+                "more": False,
+                "rcv_settle_mode": None,
+                "state": None,
+                "resume": None,
+                "aborted": None,
+                "batchable": None,
+                "payload": output,
+            }
         sent_and_settled = False
-        if delivery.transfer_state == SessionTransferState.OKAY:
-            self.delivery_count = delivery_count
-            self.current_link_credit -= 1
-            delivery.sent = True
-            if delivery.settled:
-                delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
-                sent_and_settled = True
+        try:
+            self._session._outgoing_transfer(  # pylint:disable=protected-access
+                delivery, self.network_trace_params if self.network_trace else None
+            )
+        finally:
+            if delivery.transfer_state == SessionTransferState.OKAY and not delivery.sent:
+                self.delivery_count = delivery_count
+                self.current_link_credit -= 1
+                delivery.sent = True
+                sent_and_settled = delivery.settled or delivery.early_disposition_received
+                if sent_and_settled and id(delivery) in self._pending_ids():
+                    self._remove_pending(delivery)
+                if delivery.settled:
+                    delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
+                elif delivery.early_disposition_received:
+                    delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, delivery.early_disposition_state)
+            self._session._notify_discarding_links()  # pylint: disable=protected-access
         # elif delivery.transfer_state == SessionTransferState.ERROR:
         # TODO: Session wasn't mapped yet - re-adding to the outgoing delivery queue?
         return sent_and_settled
@@ -122,43 +152,74 @@ class SenderLink(Link):
             return
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
-        unsettled = []
-        for delivery in self._pending_deliveries:
-            if delivery.sent and delivery.frame["delivery_id"] in settled_ids:
-                delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
-                continue
-            unsettled.append(delivery)
-        self._pending_deliveries = unsettled
+        with self.lock:
+            for delivery in list(self._pending_deliveries):
+                if delivery.frame and delivery.frame.get("delivery_id") in settled_ids:
+                    if not delivery.sent:
+                        delivery.early_disposition_received = True
+                        delivery.early_disposition_state = frame[4]
+                    else:
+                        if id(delivery) in self._pending_ids():
+                            self._remove_pending(delivery)
+                        delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
 
     def _remove_pending_deliveries(self):
-        for delivery in self._pending_deliveries:
-            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
-        self._pending_deliveries = []
+        with self.lock:
+            pending = self._pending_deliveries
+            self._pending_deliveries = []
+            self._pending_ids().clear()
+            for delivery in pending:
+                delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
 
     def _on_session_state_change(self):
+        super()._on_session_state_change()
         if self._session.state == SessionState.DISCARDING:
             self._remove_pending_deliveries()
-        super()._on_session_state_change()
 
     def update_pending_deliveries(self):
         # TODO: Temporary fix until connection.listen removed from keep alive thread.
         with self.lock:
-            if self.current_link_credit <= 0:
-                self.current_link_credit = self.link_credit
-                self._outgoing_flow()
+            if self._session.state == SessionState.DISCARDING:
+                self._session._notify_discarding_links()  # pylint: disable=protected-access
+                return
             now = time.time()
             pending = []
+            blocked = False
 
-            for delivery in self._pending_deliveries:
-                if delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+            snapshot = list(self._pending_deliveries)
+            pending_ids = self._pending_ids()
+            for delivery in snapshot:
+                if id(delivery) not in pending_ids:
                     continue
-                if not delivery.sent:
-                    sent_and_settled = self._outgoing_transfer(delivery)
-                    if sent_and_settled:
+                if not delivery.abort_pending and delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    if not delivery.frame or not delivery.frame["more"]:
+                        if id(delivery) in pending_ids:
+                            self._remove_pending(delivery)
+                        delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                         continue
+                    delivery.abort_pending = True
+                    delivery.frame["aborted"] = True
+                    delivery.frame["payload"] = b""
+                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                if not delivery.sent and not blocked and (
+                    self.current_link_credit > 0 or (delivery.frame and delivery.frame["more"])
+                ):
+                    sent_and_settled = self._outgoing_transfer(delivery)
+                    if sent_and_settled or (
+                        delivery.abort_pending and delivery.transfer_state == SessionTransferState.OKAY
+                    ):
+                        continue
+                if id(delivery) not in pending_ids:
+                    continue
                 pending.append(delivery)
-            self._pending_deliveries = pending
+                if delivery.transfer_state == SessionTransferState.BUSY or delivery.abort_pending:
+                    blocked = True
+            current = self._pending_deliveries
+            snapshot_ids = {id(delivery) for delivery in snapshot}
+            self._pending_deliveries = [delivery for delivery in pending if id(delivery) in pending_ids]
+            self._pending_deliveries.extend(delivery for delivery in current if id(delivery) not in snapshot_ids)
+            pending_ids.clear()
+            pending_ids.update(id(delivery) for delivery in self._pending_deliveries)
 
     def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
@@ -174,15 +235,35 @@ class SenderLink(Link):
             settled=settled,
             network_trace_params=self.network_trace_params,
         )
-        if self.current_link_credit == 0 or send_async:
-            self._pending_deliveries.append(delivery)
-        else:
-            sent_and_settled = self._outgoing_transfer(delivery)
-            if not sent_and_settled:
-                self._pending_deliveries.append(delivery)
+        with self.lock:
+            if (
+                self.current_link_credit <= 0
+                or send_async
+                or any(pending.frame and pending.frame["more"] for pending in self._pending_deliveries)
+            ):
+                self._append_pending(delivery)
+            else:
+                self._append_pending(delivery)
+                try:
+                    sent_and_settled = self._outgoing_transfer(delivery)
+                except Exception:
+                    if id(delivery) in self._pending_ids() and not delivery.sent:
+                        if delivery.frame and delivery.frame["more"] and self._session.state == SessionState.MAPPED:
+                            delivery.abort_pending = True
+                            delivery.frame["aborted"] = True
+                            delivery.frame["payload"] = b""
+                        else:
+                            self._remove_pending(delivery)
+                    raise
+                if sent_and_settled and id(delivery) in self._pending_ids():
+                    self._remove_pending(delivery)
         return delivery
 
     def cancel_transfer(self, delivery):
+        with self.lock:
+            return self._cancel_transfer_locked(delivery)
+
+    def _cancel_transfer_locked(self, delivery):
         try:
             index = self._pending_deliveries.index(delivery)
         except ValueError:
@@ -193,5 +274,12 @@ class SenderLink(Link):
                 ErrorCondition.ClientError,
                 message="Transfer cannot be cancelled. Message has already been sent and awaiting disposition.",
             )
+        if delivery.abort_pending:
+            raise MessageException(ErrorCondition.ClientError, message="Transfer cancellation is already pending.")
+        if delivery.frame and delivery.frame["more"]:
+            delivery.abort_pending = True
+            delivery.frame["aborted"] = True
+            delivery.frame["payload"] = b""
+        else:
+            self._remove_pending(delivery)
         delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
-        self._pending_deliveries.pop(index)
