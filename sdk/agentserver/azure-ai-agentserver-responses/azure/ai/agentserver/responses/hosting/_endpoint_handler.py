@@ -1159,7 +1159,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             raise
         finally:
             if reservation_acquired and not stream_owns_reservation:
-                await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
+                with CancelScope(shield=True):
+                    await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
             _response_id_var.reset(rid_token)
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)

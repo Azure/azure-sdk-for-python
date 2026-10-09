@@ -12,6 +12,7 @@ from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
+from anyio import CancelScope, lowlevel
 from starlette.requests import Request
 
 from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
@@ -47,14 +48,14 @@ def registry(monkeypatch: pytest.MonkeyPatch) -> _StreamsRegistry:
     return value
 
 
-def _request(*, user: str = "owner", background: bool = True) -> Request:
+def _request(*, user: str = "owner", background: bool = True, stream: bool = True) -> Request:
     body = json.dumps(
         {
             "response_id": RESPONSE_ID,
             "model": "m",
             "input": "hi",
             "store": True,
-            "stream": True,
+            "stream": stream,
             "background": background,
         }
     ).encode()
@@ -84,6 +85,76 @@ def _host() -> ResponsesAgentServerHost:
 
 async def _send(message: dict[str, Any]) -> None:
     pass
+
+
+@pytest.mark.parametrize("background", [False, True])
+async def test_cancelled_anyio_scope_releases_non_streaming_reservation_exactly_once(
+    registry: _StreamsRegistry, monkeypatch: pytest.MonkeyPatch, background: bool
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    assert await state.reserve(RESPONSE_ID, "other")
+    original_release = state.release_reservation
+    releasing = asyncio.Event()
+    released = asyncio.Event()
+    calls: list[tuple[str, str | None]] = []
+    scope = CancelScope()
+
+    async def release(response_id: str, user_id_key: str | None) -> None:
+        calls.append((response_id, user_id_key))
+        releasing.set()
+        await original_release(response_id, user_id_key)
+        # A successor may claim the same ID immediately after cleanup. The old
+        # request must not release that successor's reservation a second time.
+        assert await state.reserve(response_id, user_id_key)
+        released.set()
+
+    async def unlock() -> None:
+        await releasing.wait()
+        await asyncio.sleep(0)
+        state._lock.release()
+
+    async def cancelled_execution(ctx: Any) -> dict[str, Any]:
+        # Force release_reservation to wait on its real state lock rather than
+        # taking the uncontended, checkpoint-free asyncio.Lock fast path.
+        await state._lock.acquire()
+        scope.cancel()
+        await lowlevel.checkpoint()
+        raise AssertionError("the cancelled request must not finish execution")
+
+    method = "run_background" if background else "run_sync"
+    monkeypatch.setattr(host._endpoint._orchestrator, method, cancelled_execution)
+    monkeypatch.setattr(state, "release_reservation", release)
+    unlocker = asyncio.create_task(unlock())
+    try:
+        with scope:
+            await host._endpoint.handle_create(_request(background=background, stream=False))
+        await asyncio.wait_for(unlocker, 2)
+        assert scope.cancelled_caught
+        assert calls == [(RESPONSE_ID, "owner")]
+        assert released.is_set()
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        assert not await state.reserve(RESPONSE_ID, "other")
+        conflict = await host._endpoint.handle_create(_request(background=background, stream=False))
+        assert conflict.status_code == 409
+        assert calls == [(RESPONSE_ID, "owner")]
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        await original_release(RESPONSE_ID, "owner")
+        monkeypatch.setattr(state, "release_reservation", original_release)
+        monkeypatch.setattr(
+            host._endpoint._orchestrator,
+            method,
+            AsyncMock(return_value={"id": RESPONSE_ID, "status": "completed", "output": []}),
+        )
+        retry = await host._endpoint.handle_create(_request(background=background, stream=False))
+        assert retry.status_code == 200
+        assert await state.reserve(RESPONSE_ID, "owner")
+        assert not await state.reserve(RESPONSE_ID, "other")
+        await original_release(RESPONSE_ID, "owner")
+    finally:
+        releasing.set()
+        await asyncio.gather(unlocker, return_exceptions=True)
+        await original_release(RESPONSE_ID, "other")
 
 
 @pytest.mark.parametrize("failure", ["conflict", "precondition", "cancel"])
