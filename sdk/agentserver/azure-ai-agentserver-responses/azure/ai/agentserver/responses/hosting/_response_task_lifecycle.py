@@ -188,6 +188,8 @@ async def _task_input_deleted(
         # An invalid nonce cannot prove incarnation ownership. Only the exact
         # current boundary, with no legacy deletion fence, may be failed closed.
         return not (isinstance(value, dict) and value == malformed_input)
+    if isinstance(value, dict):
+        platform_context_from_params(value)
     if incarnation_id is None:
         return isinstance(value, dict) and "response_incarnation_id" in value
     # Admission/recovery must refer to the exact persisted current input, not

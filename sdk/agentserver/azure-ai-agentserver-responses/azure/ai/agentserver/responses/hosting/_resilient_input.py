@@ -52,6 +52,21 @@ _K_QUERY_PARAMETERS = "query_parameters"
 _K_INCARNATION_ID = "response_incarnation_id"
 
 
+def user_id_key_from_params(params: dict[str, Any]) -> str | None:
+    """Validate the persisted partition before constructing any identity keys.
+
+    :param params: The persisted resilient boundary.
+    :type params: dict[str, Any]
+    :return: The string partition, including an empty string, or legacy None.
+    :rtype: str | None
+    :raises ValueError: If a present partition is neither a string nor None.
+    """
+    value = params.get(_K_USER_ID_KEY)
+    if value is not None and not isinstance(value, str):
+        raise ValueError("Invalid durable response user_id_key")
+    return value
+
+
 def incarnation_from_params(params: dict[str, Any]) -> str | None:
     """Read a private durable incarnation without generating one on recovery.
 
@@ -94,9 +109,10 @@ def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
     :type params: dict[str, Any]
     :returns: The platform context.
     :rtype: PlatformContext
+    :raises ValueError: If the persisted user partition is malformed.
     """
     return PlatformContext(
-        user_id_key=params.get(_K_USER_ID_KEY),
+        user_id_key=user_id_key_from_params(params),
         call_id=params.get(_K_CALL_ID),
     )
 
@@ -208,7 +224,7 @@ class ResilientResponseInput:
         self.agent_reference: dict[str, Any] = _normalize_agent_reference(agent_reference)
         self.agent_session_id = agent_session_id
         self.agent_session_guid = agent_session_guid
-        self.user_id_key = user_id_key
+        self.user_id_key = user_id_key_from_params({_K_USER_ID_KEY: user_id_key})
         self.call_id = call_id
         self.client_headers: dict[str, str] = dict(client_headers or {})
         self.query_parameters: dict[str, str] = dict(query_parameters or {})
@@ -241,10 +257,7 @@ class ResilientResponseInput:
             replayed for every storage operation over the response's lifetime.
         :rtype: PlatformContext
         """
-        return PlatformContext(
-            user_id_key=self.user_id_key,
-            call_id=self.call_id,
-        )
+        return platform_context_from_params({_K_USER_ID_KEY: self.user_id_key, _K_CALL_ID: self.call_id})
 
     def to_task_input(self) -> dict[str, Any]:
         """Serialize to the resilient-task input dict — the single producer.
@@ -255,6 +268,7 @@ class ResilientResponseInput:
         :returns: A JSON-serializable dict suitable for the resilient-task input.
         :rtype: dict[str, Any]
         :raises TypeError: If any field is not JSON-serializable.
+        :raises ValueError: If the user partition is malformed.
         """
         params: dict[str, Any] = {
             _K_RESPONSE_ID: self.response_id,
@@ -263,7 +277,7 @@ class ResilientResponseInput:
             _K_AGENT_REFERENCE: _normalize_agent_reference(self.agent_reference),
             _K_AGENT_SESSION_ID: self.agent_session_id,
             _K_AGENT_SESSION_GUID: self.agent_session_guid,
-            _K_USER_ID_KEY: self.user_id_key,
+            _K_USER_ID_KEY: user_id_key_from_params({_K_USER_ID_KEY: self.user_id_key}),
             _K_CALL_ID: self.call_id,
             _K_CLIENT_HEADERS: dict(self.client_headers),
             _K_QUERY_PARAMETERS: dict(self.query_parameters),
@@ -309,7 +323,7 @@ class ResilientResponseInput:
             agent_reference=params.get(_K_AGENT_REFERENCE),
             agent_session_id=params.get(_K_AGENT_SESSION_ID),
             agent_session_guid=params.get(_K_AGENT_SESSION_GUID),
-            user_id_key=params.get(_K_USER_ID_KEY),
+            user_id_key=user_id_key_from_params(params),
             call_id=params.get(_K_CALL_ID),
             client_headers=params.get(_K_CLIENT_HEADERS),
             query_parameters=params.get(_K_QUERY_PARAMETERS),

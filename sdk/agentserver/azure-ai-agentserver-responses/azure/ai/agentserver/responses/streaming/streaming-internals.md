@@ -127,13 +127,30 @@ exact persisted incarnation under scoped admission before it writes or runs.
 This permits DELETE followed by a same-ID POST in the same conversation without
 allowing an old recovered turn to reuse the new execution's references or
 reservation. Legacy inputs without an incarnation retain fail-closed deletion
-checks. Public HTTP/SSE IDs, task-chain input IDs, and replay filenames do not
-change.
+checks. Public HTTP/SSE response IDs remain the original `response_id`.
+Identified callers already use `derive_lifecycle_id` for task IDs, chain
+`input_id` / `if_last_input_id` values, and replay filenames; anonymous callers
+retain the legacy identifier layout. The private incarnation does not further
+change these already caller-scoped task/replay keys. It appears only in the
+durable input and private reference/deletion-fence keys.
 
 An invalid incarnation is never re-invoked. Only an exact match to the current
 persisted input, without a deletion fence and under scoped recovery admission,
 may reach fail-closed response settlement. Deleted or stale malformed callbacks
 cannot create a failure marker for a removed or replacement response.
+
+The durable `user_id_key` is validated as `str | None` before platform-context
+construction or lifecycle/runtime key derivation. Empty strings remain identified
+partitions; missing/`None` legacy values remain anonymous. Lists, mappings,
+numbers, and booleans are rejected, never coerced into the anonymous partition.
+If this identity is corrupt, a response can be settled only using its original
+process-local context and matching task-run, input-ID, and incarnation references,
+with the exact current-input and deletion checks still applied. Neither opaque
+task/input hashes nor a persisted call ID independently recover the missing user
+partition. Without that proof, the handler is not invoked and only the malformed
+task input is settled with a warning: existing response envelopes (possibly still
+`in_progress`), replay, and runtime references are left untouched. Operator repair
+or an authenticated caller operation is needed to address such orphaned storage.
 
 Recovered admission retires an exact stopped nonterminal runtime record only
 after all lifecycle guards pass, under the reservation lock. Early settlement

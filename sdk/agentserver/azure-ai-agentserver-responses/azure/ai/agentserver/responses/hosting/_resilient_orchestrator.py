@@ -44,7 +44,7 @@ from ..models import _generated as _generated_models
 from ..streaming._internals import materialize_wire_payload
 
 if TYPE_CHECKING:
-    from .._response_context import ResponseContext
+    from .._response_context import PlatformContext, ResponseContext
 
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
@@ -960,32 +960,51 @@ class ResilientResponseOrchestrator:
 
         params = ctx.input
         response_id = params.get("response_id") if isinstance(params, dict) else None
-        if not isinstance(response_id, str):
+        malformed_identity = False
+        platform_context = None
+        if isinstance(response_id, str):
+            try:
+                platform_context = platform_context_from_params(params)
+            except ValueError:
+                platform_context = self._trusted_input_identity(ctx, params, response_id)
+                malformed_identity = True
+        if not isinstance(response_id, str) or platform_context is None:
             return await self._execute_admitted_task(ctx)
-        user_id_key = platform_context_from_params(params).user_id_key
-        malformed_input = None
+        user_id_key = platform_context.user_id_key
+        malformed_input = params if malformed_identity else None
         try:
             incarnation_id = incarnation_from_params(params)
         except ValueError:
             incarnation_id = None
             malformed_input = params
-        refs_key = None if malformed_input is not None else _input_fence_key(response_id, user_id_key, incarnation_id)
+        refs_key = (
+            _input_fence_key(response_id, user_id_key, incarnation_id)
+            if malformed_input is None or malformed_identity
+            else None
+        )
         expected_refs = _RUNTIME_REFS.get(refs_key) if refs_key is not None else None
 
         async def _execute_with_refs() -> Any:
-            result = await self._execute_admitted_task(ctx)
+            if malformed_identity:
+                await self._persist_crash_failed(
+                    response_id,
+                    {**params, "user_id_key": user_id_key, "call_id": platform_context.call_id},
+                )
+                result = None
+            else:
+                result = await self._execute_admitted_task(ctx)
             if result is None:
                 _discard_runtime_refs(refs_key, expected_refs)
             return result
 
+        state = self._runtime_state
         if await _task_input_deleted(
             ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
-        ):
+        ) or (malformed_identity and state is not None and await state.is_deleted(response_id, user_id_key)):
             logger.info("Skipping deleted durable response input %s", response_id)
             _discard_runtime_refs(refs_key, expected_refs)
             return None
-        state = self._runtime_state
-        if not _is_recovered_entry(ctx.entry_mode) or state is None:
+        if (not _is_recovered_entry(ctx.entry_mode) and not malformed_identity) or state is None:
             return await _execute_with_refs()
         if not await state.reserve(response_id, user_id_key, recovery=True, incarnation_id=incarnation_id):
             if incarnation_id is None and await state.is_deleted(response_id, user_id_key):
@@ -1008,6 +1027,110 @@ class ResilientResponseOrchestrator:
         finally:
             with CancelScope(shield=True):
                 await state.release_reservation(response_id, user_id_key)
+
+    def _trusted_input_identity(
+        self, ctx: TaskContext[dict[str, Any]], params: dict[str, Any], response_id: str
+    ) -> "PlatformContext | None":
+        """Prove a malformed input's scope from its original admitted runtime references.
+
+        :param ctx: The framework's current task and input identity.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param params: The malformed persisted boundary.
+        :type params: dict[str, Any]
+        :param response_id: The public response identifier.
+        :type response_id: str
+        :return: An independently proven context, or None without sufficient evidence.
+        :rtype: PlatformContext | None
+        """
+        from ._resilient_input import incarnation_from_params  # pylint: disable=import-outside-toplevel
+
+        input_id = getattr(ctx, "input_id", None)
+        try:
+            incarnation = incarnation_from_params(params)
+        except ValueError:
+            return None
+        if not isinstance(input_id, str) or incarnation is None:
+            return None
+        refs = _RUNTIME_REFS.get(f"{input_id}:{incarnation}")
+        if refs is None or self._runtime_state is None or refs.runtime_state is not self._runtime_state:
+            return None
+        return self._trusted_runtime_platform_context(ctx, refs, response_id, input_id)
+
+    def _trusted_runtime_platform_context(
+        self, ctx: TaskContext[dict[str, Any]], refs: "RuntimeRefs", response_id: str, input_id: str
+    ) -> "PlatformContext | None":
+        """Validate the cached original context against its record and task run.
+
+        :param ctx: The framework's current task identity.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param refs: The exact incarnation's server-owned references.
+        :type refs: RuntimeRefs
+        :param response_id: The public response identifier.
+        :type response_id: str
+        :param input_id: The caller-scoped task input identifier.
+        :type input_id: str
+        :return: A proven platform context, or None.
+        :rtype: PlatformContext | None
+        """
+        from .._response_context import PlatformContext, ResponseContext  # pylint: disable=import-outside-toplevel
+        from ..models.runtime import ResponseExecution  # pylint: disable=import-outside-toplevel
+        from ._resilient_input import user_id_key_from_params  # pylint: disable=import-outside-toplevel
+
+        record, context = refs.record, refs.context
+        if not isinstance(record, ResponseExecution) or not isinstance(context, ResponseContext):
+            return None
+        if record.response_context is not context or not isinstance(context.platform_context, PlatformContext):
+            return None
+        try:
+            user_id_key = user_id_key_from_params({"user_id_key": context.platform_context.user_id_key})
+        except ValueError:
+            return None
+        if (
+            record.response_id != response_id
+            or context.response_id != response_id
+            or record.user_id_key != user_id_key
+            or derive_lifecycle_id(response_id, user_id_key) != input_id
+        ):
+            return None
+        task_run = getattr(record, "resilient_task_run", None)
+        if (
+            getattr(task_run, "task_id", None) != ctx.task_id
+            or getattr(task_run, "input_id", None) != input_id
+            or (context.platform_context.call_id is not None and not isinstance(context.platform_context.call_id, str))
+        ):
+            return None
+        return PlatformContext(user_id_key=user_id_key, call_id=context.platform_context.call_id)
+
+    async def _settle_invalid_input(self, ctx: TaskContext[dict[str, Any]], params: Any) -> None:
+        """Settle only response storage whose partition is valid independently of parsing.
+
+        :param ctx: The failing task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param params: The malformed persisted boundary.
+        :type params: Any
+        :rtype: None
+        """
+        from ._resilient_input import platform_context_from_params  # pylint: disable=import-outside-toplevel
+
+        response_id = params.get("response_id") if isinstance(params, dict) else None
+        logger.warning(
+            "Resilient input failed validation for task %s (response_id=%s); "
+            "failing closed without re-invoking the handler.",
+            getattr(ctx, "task_id", "?"),
+            response_id,
+        )
+        if not isinstance(response_id, str) or not response_id:
+            return
+        try:
+            platform_context_from_params(params)
+        except ValueError:
+            logger.warning(
+                "Task %s has no independently proven caller partition; settling only the input "
+                "and leaving response, replay, and runtime references untouched.",
+                ctx.task_id,
+            )
+            return
+        await self._persist_crash_failed(response_id, params)
 
     async def _execute_admitted_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
         """Execute the response pipeline inside the task body.
@@ -1048,15 +1171,7 @@ class ResilientResponseOrchestrator:
         try:
             resilient = ResilientResponseInput.from_task_input(params)
         except ValueError:
-            rid = params.get("response_id") if isinstance(params, dict) else None
-            logger.warning(
-                "Resilient input failed validation for task %s (response_id=%s); "
-                "failing closed without re-invoking the handler.",
-                getattr(ctx, "task_id", "?"),
-                rid,
-            )
-            if rid:
-                await self._persist_crash_failed(rid, params if isinstance(params, dict) else {})
+            await self._settle_invalid_input(ctx, params)
             return None
         request = resilient.request
 
