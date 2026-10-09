@@ -7,6 +7,9 @@ legacy ``TOX_PIP_IMPL`` for backward compatibility):
 
 * ``"uv"``  → uses ``uv venv`` / ``uv pip``
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
+
+For the uv backend, these helpers default ``UV_SYSTEM_CERTS`` to ``1`` to use the
+OS certificate store. Explicit settings, including ``UV_SYSTEM_CERTS=0``, are preserved.
 """
 
 import os
@@ -14,6 +17,17 @@ import re
 import subprocess
 import sys
 from typing import List, Optional
+
+
+def _enable_uv_native_tls() -> None:
+    """Ensure uv consults the OS certificate store instead of its bundled webpki-roots.
+
+    Some CI agents route HTTPS through a TLS-inspecting proxy whose root CA is trusted by the
+    OS but not by uv's bundled roots, causing 'invalid peer certificate: UnknownIssuer' errors
+    when uv downloads interpreters (python-build-standalone) or packages. Respects an explicit
+    user override via setdefault.
+    """
+    os.environ.setdefault("UV_SYSTEM_CERTS", "1")
 
 
 def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str] = None) -> List[str]:
@@ -32,6 +46,7 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         cmd = ["uv", "venv"]
         if python_version:
             cmd += ["--python", python_version]
@@ -52,6 +67,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
