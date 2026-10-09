@@ -14,7 +14,7 @@
   - Added enum `TableProtectionLevelEnum`
   - Added model `WorkspacePurgeLakeDataBody`
   - Added model `WorkspacePurgeLakeDataTimeRange`
-  - Model `WorkspacePurgeOperations` added method `begin_purge_lake_data`
+  - Operation group `WorkspacePurgeOperations` added method `begin_purge_lake_data`
 
 ## 14.0.0 (2026-06-24)
 
