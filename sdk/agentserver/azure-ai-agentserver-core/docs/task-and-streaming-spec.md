@@ -1859,7 +1859,8 @@ Implementation MUST:
   gesture (§23.10).**
 - **Support list-filter parity (§31a)** — `has_error`, `lease_expired`,
   pagination via `after` cursor (plain `task_id` for local; opaque
-  service token for hosted), `limit` (default 20, max 100), `order`
+  service token for hosted), `limit` (default `None` for all
+  matches; explicit positive total cap clamped to 100), `order`
   asc/desc by `created_at`, reject `before`, normalize "done" →
   "completed" in the status filter, `agent_name` + `session_id`
   optional.
@@ -1985,7 +1986,15 @@ backings.
 
 **Pagination**:
 
-- `limit` defaults to 20, max 100 (provider clamps over-cap to 100).
+- The Python provider `list()` defaults to `limit=None`, meaning complete
+  enumeration of every matching task, including all hosted continuation pages.
+  An explicit positive `limit` bounds the **total returned tasks**, clamped to
+  100, not the hosted service page size. Both backings reject nonpositive limits.
+  Hosted requests use at most 100 tasks per page and reduce that page size to
+  the remaining result budget for bounded calls.
+- The raw Task Storage service's `limit` remains a **page-size** parameter
+  (default 20, max 100); its default does not bound Python provider scans.
+  Recovery and response-ownership scans explicitly request `limit=None`.
 - `after` is an opaque cursor string. The local provider uses
   plain `task_id` (no Cosmos continuation-token concept). The
   hosted provider round-trips whatever opaque token the service
@@ -1996,7 +2005,16 @@ backings.
 - `order` accepts `"asc"` or `"desc"`. Default `"desc"`. Sorts by
   `created_at`.
 
-**Response**:
+**Python provider return**:
+
+- A materialized `list[TaskInfo]`, not a page envelope. It contains all matches
+  when `limit=None`, or at most the clamped explicit limit. Listing failures
+  propagate rather than returning an apparently complete partial scan.
+- Hosted continuation is consumed internally. A supplied `after` token is
+  forwarded unchanged; task IDs must not be substituted for service tokens.
+  The Python list return does not expose a hosted next-page token.
+
+**Raw service page response**:
 
 - `Data` — the page of tasks (or DTOs).
 - `LastId` — the opaque continuation cursor to pass back as `after`
@@ -3978,8 +3996,10 @@ outputs that must survive crashes are the handler's responsibility
   AND semantics), `source_type`, `status` (with legacy `"done"` →
   `"completed"` normalization).
 - **C-PRV-10.** `provider.list(...)` MUST support pagination via
-  opaque `after` cursor + `limit` (default 20, max 100, provider
-  clamps over-cap). `before` MUST be rejected as `invalid_request`
+  opaque `after` cursor + `limit` (Python default `None` enumerates all
+  matches; an explicit positive limit caps total results and is clamped
+  to 100). The raw service defaults to a page size of 20, not a total
+  provider result limit. `before` MUST be rejected as `invalid_request`
   (cursor pagination forward-only). `order` accepts `"asc"` or
   `"desc"` by `created_at` (default `"desc"`). Per §31a.
 - **C-PRV-11.** `provider.list(...)` MUST support
@@ -3990,7 +4010,10 @@ outputs that must survive crashes are the handler's responsibility
   (`LastId` / `next_page_token`) MUST be treated as opaque by the
   framework. The local provider mints its own cursor (plain
   `task_id`); the hosted provider round-trips whatever opaque
-  token the service returns (up to 4096 chars).
+  token the service returns (up to 4096 chars) internally when continuing
+  its scan. Python provider `list()` returns `list[TaskInfo]`, not the
+  service page envelope. Missing or repeated continuation cursors MUST
+  raise when further enumeration is needed, not return partial success.
 
 ### C-OBS (observability — minimal)
 
